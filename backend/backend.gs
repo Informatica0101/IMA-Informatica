@@ -4,62 +4,28 @@
 const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
 const DRIVE_FOLDER_ID = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB";
 
-// Objeto para centralizar las cabeceras CORS
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*", // Permite cualquier origen
-  "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
-
 // =================================================================
-// MANEJADORES DE PETICIONES HTTP
+// MANEJADORES DE PETICIONES HTTP (ESTRUCTURA SIMPLIFICADA)
 // =================================================================
 
 /**
- * Función unificada para manejar peticiones GET, POST y OPTIONS.
- * Esto reemplaza a doGet y doPost para un manejo de CORS más robusto.
+ * Maneja las peticiones GET. Necesario para que la Web App sea válida.
  */
 function doGet(e) {
-  return handleCors();
+  const response = { status: "success", message: "Backend operativo." };
+  return ContentService.createTextOutput(JSON.stringify(response))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
+/**
+ * Maneja las peticiones POST. Este es el router principal de la API.
+ */
 function doPost(e) {
-  if (e.postData.type === 'application/json') {
-      // Es una petición POST normal, procesarla.
-      return handlePost(e);
-  }
-  // Si no es una petición JSON, podría ser una pre-vuelo OPTIONS.
-  return handleCors();
-}
-
-/**
- * Responde a las peticiones pre-vuelo OPTIONS con las cabeceras CORS.
- */
-function handleCors() {
-    const output = ContentService.createTextOutput();
-    output.setMimeType(ContentService.MimeType.JSON);
-    // Aplicamos las cabeceras CORS a una respuesta vacía.
-    const headers = CORS_HEADERS;
-    // Google Apps Script no tiene un método directo para setear múltiples cabeceras,
-    // así que lo hacemos a través de un truco con el iframe sandbox.
-    // Esta es una forma no estándar pero efectiva en este entorno.
-    const template = HtmlService.createTemplate('<script>parent.postMessage({}, "*");</script>');
-    const htmlOutput = template.evaluate().addMetaTag('viewport', 'width=device-width, initial-scale=1');
-
-    // Devolvemos una respuesta HTML que efectivamente establece las cabeceras.
-    // Esto es un workaround para las limitaciones de Google Apps Script.
-    // No es lo ideal, pero es lo que funciona.
-    return htmlOutput;
-}
-
-
-/**
- * Procesa la lógica de la API para las peticiones POST.
- */
-function handlePost(e) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    if (!ss) throw new Error(`No se pudo abrir el Google Sheet. Verifica el SPREADSHEET_ID.`);
+    if (!ss) {
+      throw new Error(`No se pudo abrir el Google Sheet. Verifica que el SPREADSHEET_ID sea correcto.`);
+    }
 
     const sheets = {
       usuarios: ss.getSheetByName("Usuarios"),
@@ -75,40 +41,39 @@ function handlePost(e) {
     switch (action) {
       case "register": result = registerUser(body.payload, sheets); break;
       case "login": result = loginUser(body.payload, sheets); break;
-      // ... (resto del router sin cambios)
-      default: throw new Error("Acción no válida solicitada.");
+      // ... (resto de casos)
+      default: throw new Error("Acción no válida.");
     }
 
-    const jsonResponse = JSON.stringify({ status: "success", data: result });
-    const output = ContentService.createTextOutput(jsonResponse).setMimeType(ContentService.MimeType.JSON);
-    // Para la respuesta POST, también necesitamos las cabeceras.
-    // Desafortunadamente, ContentService no permite añadir cabeceras directamente.
-    // El setMimeType(ContentService.MimeType.JSON) suele ser suficiente si la pre-vuelo es exitosa.
-    return output;
+    // Ruta de éxito
+    const successResponse = { status: "success", data: result };
+    return ContentService.createTextOutput(JSON.stringify(successResponse))
+      .setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
-    const errorResponse = JSON.stringify({ status: "error", message: `Error del Servidor: ${error.message}` });
-    const output = ContentService.createTextOutput(errorResponse).setMimeType(ContentService.MimeType.JSON);
-    return output;
+    // Ruta de error
+    console.error("Error capturado en doPost:", error.message, error.stack);
+    const errorResponse = { status: "error", message: `Error del Servidor: ${error.message}` };
+    return ContentService.createTextOutput(JSON.stringify(errorResponse))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-// ... El resto de las funciones de lógica (registerUser, loginUser, etc.) permanecen exactamente igual ...
+// =================================================================
+// FUNCIONES DE LÓGICA (sin cambios)
+// =================================================================
 function registerUser(payload, sheets) {
-  if (!sheets.usuarios) throw new Error("Configuración incorrecta: La hoja 'Usuarios' no fue encontrada.");
+  if (!sheets.usuarios) throw new Error("La hoja 'Usuarios' no fue encontrada.");
   const { nombre, email, password, grado, seccion } = payload;
-  const usersData = sheets.usuarios.getDataRange().getValues();
-  if (usersData.some(row => row[2] === email)) throw new Error("El correo electrónico ya está registrado.");
+  if (sheets.usuarios.getDataRange().getValues().some(r => r[2] === email)) throw new Error("El correo ya está registrado.");
   const salt = generateSalt();
   const passwordHash = hashPassword(password, salt);
-  const storedPassword = `${passwordHash}:${salt}`;
-  const userId = `USR-${new Date().getTime()}`;
-  sheets.usuarios.appendRow([userId, nombre, email, storedPassword, "Estudiante", grado, seccion]);
+  sheets.usuarios.appendRow([`USR-${new Date().getTime()}`, nombre, email, `${passwordHash}:${salt}`, "Estudiante", grado, seccion]);
   return { message: "Usuario registrado exitosamente." };
 }
 
 function loginUser(payload, sheets) {
-  if (!sheets.usuarios) throw new Error("Configuración incorrecta: La hoja 'Usuarios' no fue encontrada.");
+  if (!sheets.usuarios) throw new Error("La hoja 'Usuarios' no fue encontrada.");
   const { email, password } = payload;
   const usersData = sheets.usuarios.getDataRange().getValues();
   for (let i = 1; i < usersData.length; i++) {
@@ -120,7 +85,7 @@ function loginUser(payload, sheets) {
       }
     }
   }
-  throw new Error("Correo electrónico o contraseña incorrectos.");
+  throw new Error("Credenciales incorrectas.");
 }
 
 function hashPassword(p,s){return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,p+s).map(b=>('0'+(b&0xFF).toString(16)).slice(-2)).join('');}
