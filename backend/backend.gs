@@ -8,18 +8,13 @@ const DRIVE_FOLDER_ID = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB";
 // MANEJADORES DE PETICIONES HTTP (ESTRUCTURA SIMPLIFICADA)
 // =================================================================
 
-/**
- * Maneja las peticiones GET. Necesario para que la Web App sea válida.
- */
 function doGet(e) {
   const response = { status: "success", message: "Backend operativo." };
+  // *** CORRECCIÓN CORS: Usar MimeType.TEXT ***
   return ContentService.createTextOutput(JSON.stringify(response))
-    .setMimeType(ContentService.MimeType.JSON);
+    .setMimeType(ContentService.MimeType.TEXT);
 }
 
-/**
- * Maneja las peticiones POST. Este es el router principal de la API.
- */
 function doPost(e) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -41,21 +36,20 @@ function doPost(e) {
     switch (action) {
       case "register": result = registerUser(body.payload, sheets); break;
       case "login": result = loginUser(body.payload, sheets); break;
-      // ... (resto de casos)
       default: throw new Error("Acción no válida.");
     }
 
-    // Ruta de éxito
     const successResponse = { status: "success", data: result };
+    // *** CORRECCIÓN CORS: Usar MimeType.TEXT ***
     return ContentService.createTextOutput(JSON.stringify(successResponse))
-      .setMimeType(ContentService.MimeType.JSON);
+      .setMimeType(ContentService.MimeType.TEXT);
 
   } catch (error) {
-    // Ruta de error
     console.error("Error capturado en doPost:", error.message, error.stack);
     const errorResponse = { status: "error", message: `Error del Servidor: ${error.message}` };
+    // *** CORRECCIÓN CORS: Usar MimeType.TEXT ***
     return ContentService.createTextOutput(JSON.stringify(errorResponse))
-      .setMimeType(ContentService.MimeType.JSON);
+      .setMimeType(ContentService.MimeType.TEXT);
   }
 }
 
