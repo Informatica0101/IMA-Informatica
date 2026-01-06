@@ -7,4 +7,4 @@
 // 6. Pega esa URL aquí para reemplazar el valor de `BACKEND_URL`.
 // ------------------------------------
 
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxnzIocb8Z7xBoX2hh_s7P75o1-Gr3k2FuE3Ijg7oVuN6uZ1oIK9E-treBPogChPHQ/exec';
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbys806zLd_bb29z_ipBVyEWQ6mUsbJtZXAr44sGdATqtZCedE7787Gd1mRsNXBpTj0/exec';
