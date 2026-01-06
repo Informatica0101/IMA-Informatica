@@ -37,12 +37,30 @@ Almacena las tareas o exámenes creados por los profesores.
 
 Registra cada entrega realizada por un estudiante.
 
-| Columna A   | Columna B | Columna C | Columna D    | Columna E  | Columna F      |
-|-------------|-----------|-----------|--------------|------------|----------------|
-| `entregaId` | `tareaId` | `userId`  | `fechaEntrega` | `archivoUrl` | `calificacion` |
+| Columna A   | Columna B | Columna C | Columna D    | Columna E  | Columna F      | Columna G | Columna H    |
+|-------------|-----------|-----------|--------------|------------|----------------|-----------|--------------|
+| `entregaId` | `tareaId` | `userId`  | `fechaEntrega` | `archivoUrl` | `calificacion` | `estado`  | `comentario` |
 
-- **entregaId:** Identificador único (ej. `ENT-1678886400000`).
-- **calificacion:** Inicialmente vacía. El profesor la actualiza después.
+- **estado:** Inicialmente "Pendiente". Cambia a "Revisada" o "Rechazada".
+
+### Hoja: `Examenes`
+
+Almacena la información general de cada examen. Su estructura es similar a la de `Tareas`, pero se mantiene separada para una mejor organización.
+
+| Columna A   | Columna B | Columna C   | ... |
+|-------------|-----------|-------------|-----|
+| `examenId`  | `titulo`  | `asignatura`| ... |
+
+### Hoja: `PreguntasExamen`
+
+Almacena las preguntas de opción múltiple para cada examen.
+
+| Columna A     | Columna B  | Columna C       | Columna D | Columna E | Columna F | Columna G           |
+|---------------|------------|-----------------|-----------|-----------|-----------|---------------------|
+| `preguntaId`  | `examenId` | `textoPregunta` | `opcionA` | `opcionB` | `opcionC` | `respuestaCorrecta` |
+
+- **examenId:** Vincula la pregunta al examen correspondiente en la hoja `Examenes`.
+- **respuestaCorrecta:** Almacena la letra de la opción correcta (ej. "A", "B", "C").
 
 ## Estructura de Archivos en Google Drive
 

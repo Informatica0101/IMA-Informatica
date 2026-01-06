@@ -6,6 +6,8 @@ const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 const usuariosSheet = ss.getSheetByName("Usuarios");
 const tareasSheet = ss.getSheetByName("Tareas");
 const entregasSheet = ss.getSheetByName("Entregas");
+const examenesSheet = ss.getSheetByName("Examenes");
+const preguntasSheet = ss.getSheetByName("PreguntasExamen");
 
 // --- PUNTO DE ENTRADA PRINCIPAL ---
 function doPost(e) {
@@ -37,6 +39,9 @@ function doPost(e) {
         break;
       case "gradeSubmission":
         result = gradeSubmission(payload);
+        break;
+      case "createExam":
+        result = createExam(payload);
         break;
       default:
         result = { status: "error", message: "Acción no reconocida." };
@@ -96,26 +101,29 @@ function createTask(payload) {
 }
 
 function getStudentTasks(payload) {
-  const { grado, seccion } = payload;
-  const tasksData = tareasSheet.getDataRange().getValues();
-  const studentTasks = [];
+  const { userId, grado, seccion } = payload;
+  const tasksData = tareasSheet.getDataRange().getValues().slice(1);
+  const entregasData = entregasSheet.getDataRange().getValues().slice(1);
 
-  // Empezar desde 1 para saltar la cabecera
-  for (let i = 1; i < tasksData.length; i++) {
-    const task = tasksData[i];
-    // task[6] es gradoAsignado, task[7] es seccionAsignada
-    if (task[6] === grado && (task[7] === seccion || task[7] === "" || !task[7])) {
-      studentTasks.push({
+  const studentTasks = tasksData
+    .filter(task => task[6] === grado && (task[7] === seccion || task[7] === "" || !task[7]))
+    .map(task => {
+      const entrega = entregasData.find(e => e[1] === task[0] && e[2] === userId);
+      return {
         tareaId: task[0],
         tipo: task[1],
         titulo: task[2],
         descripcion: task[3],
         parcial: task[4],
         asignatura: task[5],
-        fechaLimite: task[8]
-      });
-    }
-  }
+        fechaLimite: task[8],
+        entrega: entrega ? {
+            calificacion: entrega[5],
+            estado: entrega[6],
+            comentario: entrega[7]
+        } : null
+      };
+    });
 
   return { status: "success", data: studentTasks };
 }
@@ -161,7 +169,8 @@ function submitAssignment(payload) {
   // 5. Registrar entrega
   const entregaId = "ENT-" + new Date().getTime();
   const fechaEntrega = new Date();
-  entregasSheet.appendRow([entregaId, tareaId, userId, fechaEntrega, fileUrl, '']); // Calificación vacía
+  // Se añade "Pendiente" como estado inicial en la columna G
+  entregasSheet.appendRow([entregaId, tareaId, userId, fechaEntrega, fileUrl, '', 'Pendiente', '']);
 
   return { status: "success", message: "Tarea entregada." };
 }
@@ -181,7 +190,9 @@ function getTeacherSubmissions(payload) {
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
       fechaEntrega: new Date(entrega[3]).toLocaleString(),
       archivoUrl: entrega[4],
-      calificacion: entrega[5]
+      calificacion: entrega[5],
+      estado: entrega[6],
+      comentario: entrega[7]
     };
   });
 
@@ -189,15 +200,42 @@ function getTeacherSubmissions(payload) {
 }
 
 function gradeSubmission(payload) {
-  const { entregaId, calificacion } = payload;
+  const { entregaId, calificacion, estado, comentario } = payload;
   const entregasData = entregasSheet.getDataRange().getValues();
 
   for (let i = 1; i < entregasData.length; i++) {
     if (entregasData[i][0] === entregaId) {
-      entregasSheet.getRange(i + 1, 6).setValue(calificacion); // La columna F es la 6
+      // Columna F (6) es Calificación, G (7) es Estado, H (8) es Comentario
+      entregasSheet.getRange(i + 1, 6).setValue(calificacion);
+      entregasSheet.getRange(i + 1, 7).setValue(estado);
+      entregasSheet.getRange(i + 1, 8).setValue(comentario);
       return { status: "success", message: "Calificación actualizada." };
     }
   }
 
   return { status: "error", message: "Entrega no encontrada." };
+}
+
+function createExam(payload) {
+  const { titulo, asignatura, gradoAsignado, fechaLimite, preguntas } = payload;
+
+  // 1. Crear el examen principal
+  const examenId = "EXM-" + new Date().getTime();
+  examenesSheet.appendRow([examenId, titulo, asignatura, gradoAsignado, fechaLimite]);
+
+  // 2. Añadir las preguntas
+  preguntas.forEach(p => {
+    const preguntaId = "PRE-" + new Date().getTime() + Math.random();
+    preguntasSheet.appendRow([
+      preguntaId,
+      examenId,
+      p.textoPregunta,
+      p.opcionA,
+      p.opcionB,
+      p.opcionC,
+      p.respuestaCorrecta
+    ]);
+  });
+
+  return { status: "success", message: "Examen creado exitosamente." };
 }

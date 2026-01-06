@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchStudentTasks() {
         tasksList.innerHTML = '<p class="text-gray-500">Cargando tareas...</p>';
         try {
-            const result = await fetchApi('getStudentTasks', { grado: currentUser.grado, seccion: currentUser.seccion });
+            const result = await fetchApi('getStudentTasks', { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion });
             if (result.status === 'success') {
                 renderTasks(result.data);
             } else {
@@ -45,22 +45,49 @@ document.addEventListener('DOMContentLoaded', () => {
             tasksList.innerHTML = '<p class="text-gray-500">No hay tareas pendientes.</p>';
             return;
         }
-        tasksList.innerHTML = tasks.map(task => `
-            <div class="bg-white p-6 rounded-lg shadow-md flex justify-between items-center">
-                <div>
-                    <h3 class="text-xl font-bold">${task.titulo} (${task.asignatura} - ${task.parcial})</h3>
-                    <p class="text-gray-600">${task.descripcion}</p>
-                    <p class="text-sm text-red-600 font-medium mt-2">Fecha Límite: ${task.fechaLimite}</p>
+        tasksList.innerHTML = tasks.map(task => {
+            let feedbackHtml = '';
+            let actionHtml = '';
+
+            if (task.entrega) {
+                let icon = '';
+                if (task.entrega.estado === 'Revisada') icon = '✅';
+                if (task.entrega.estado === 'Rechazada') icon = '❌';
+
+                feedbackHtml = `
+                    <div class="mt-4 pt-4 border-t">
+                        <h4 class="font-bold">Estado de la Entrega: ${task.entrega.estado} ${icon}</h4>
+                        <p class="text-sm"><b>Calificación:</b> ${task.entrega.calificacion || 'Sin calificar'}</p>
+                        ${task.entrega.comentario ? `<p class="text-sm mt-1"><b>Comentario del profesor:</b> ${task.entrega.comentario}</p>` : ''}
+                    </div>
+                `;
+                actionHtml = '<button class="bg-gray-400 text-white font-bold py-2 px-4 rounded-lg" disabled>Entregado</button>';
+            } else {
+                actionHtml = `
+                    <button class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg submit-btn"
+                            data-task-id="${task.tareaId}"
+                            data-task-title="${task.titulo}"
+                            data-task-parcial="${task.parcial}"
+                            data-task-asignatura="${task.asignatura}">
+                        Entregar
+                    </button>
+                `;
+            }
+
+            return `
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-xl font-bold">${task.titulo} (${task.asignatura} - ${task.parcial})</h3>
+                            <p class="text-gray-600">${task.descripcion}</p>
+                            <p class="text-sm text-red-600 font-medium mt-2">Fecha Límite: ${task.fechaLimite}</p>
+                        </div>
+                        ${actionHtml}
+                    </div>
+                    ${feedbackHtml}
                 </div>
-                <button class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg submit-btn"
-                        data-task-id="${task.tareaId}"
-                        data-task-title="${task.titulo}"
-                        data-task-parcial="${task.parcial}"
-                        data-task-asignatura="${task.asignatura}">
-                    Entregar
-                </button>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     tasksList.addEventListener('click', (e) => {
