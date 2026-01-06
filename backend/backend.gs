@@ -10,16 +10,13 @@ const DRIVE_FOLDER_ID = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB";
 
 function doGet(e) {
   const response = { status: "success", message: "Backend operativo." };
-  return ContentService.createTextOutput(JSON.stringify(response))
-    .setMimeType(ContentService.MimeType.TEXT);
+  return ContentService.createTextOutput(JSON.stringify(response)).setMimeType(ContentService.MimeType.TEXT);
 }
 
 function doPost(e) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    if (!ss) {
-      throw new Error(`No se pudo abrir el Google Sheet. Verifica que el SPREADSHEET_ID sea correcto.`);
-    }
+    if (!ss) throw new Error(`No se pudo abrir el Google Sheet.`);
 
     const sheets = {
       usuarios: ss.getSheetByName("Usuarios"),
@@ -35,18 +32,20 @@ function doPost(e) {
     switch (action) {
       case "register": result = registerUser(body.payload, sheets); break;
       case "login": result = loginUser(body.payload, sheets); break;
+      case "createTask":
+        if (body.payload.tipo === 'Examen') result = createExam(body.payload, sheets);
+        else result = createTask(body.payload, sheets);
+        break;
+      // ... (Resto de las acciones que implementaremos después)
       default: throw new Error("Acción no válida.");
     }
 
     const successResponse = { status: "success", data: result };
-    return ContentService.createTextOutput(JSON.stringify(successResponse))
-      .setMimeType(ContentService.MimeType.TEXT);
+    return ContentService.createTextOutput(JSON.stringify(successResponse)).setMimeType(ContentService.MimeType.TEXT);
 
   } catch (error) {
-    console.error("Error capturado en doPost:", error.message, error.stack);
     const errorResponse = { status: "error", message: `Error del Servidor: ${error.message}` };
-    return ContentService.createTextOutput(JSON.stringify(errorResponse))
-      .setMimeType(ContentService.MimeType.TEXT);
+    return ContentService.createTextOutput(JSON.stringify(errorResponse)).setMimeType(ContentService.MimeType.TEXT);
   }
 }
 
@@ -60,7 +59,7 @@ function registerUser(payload, sheets) {
   const salt = generateSalt();
   const passwordHash = hashPassword(password, salt);
   sheets.usuarios.appendRow([`USR-${new Date().getTime()}`, nombre, email, `${passwordHash}:${salt}`, "Estudiante", grado, seccion]);
-  return { message: "Usuario registrado exitosamente." };
+  return { message: "Usuario registrado." };
 }
 
 function loginUser(payload, sheets) {
@@ -79,9 +78,46 @@ function loginUser(payload, sheets) {
   throw new Error("Credenciales incorrectas.");
 }
 
+function createTask(payload, sheets) {
+  if (!sheets.tareas) throw new Error("La hoja 'Tareas' no fue encontrada.");
+  // *** ACTUALIZACIÓN: Incluir parcial y asignatura ***
+  const { tipo, titulo, descripcion, parcial, asignatura, fechaLimite, gradoAsignado, seccionAsignada } = payload;
+  const tareaId = `TSK-${new Date().getTime()}`;
+  const fechaCreacion = new Date().toLocaleDateString('es-ES');
+
+  sheets.tareas.appendRow([
+    tareaId, tipo, titulo, descripcion,
+    parcial, asignatura, // Nuevos campos
+    fechaCreacion, fechaLimite, gradoAsignado, seccionAsignada
+  ]);
+  return { message: "Tarea creada." };
+}
+
+function createExam(payload, sheets) {
+    if (!sheets.tareas || !sheets.examenPreguntas) throw new Error("Faltan las hojas 'Tareas' o 'ExamenPreguntas'.");
+    // *** ACTUALIZACIÓN: Incluir parcial y asignatura ***
+    const { tipo, titulo, descripcion, parcial, asignatura, fechaLimite, gradoAsignado, seccionAsignada, preguntas } = payload;
+    const tareaId = `TSK-${new Date().getTime()}`;
+    const fechaCreacion = new Date().toLocaleDateString('es-ES');
+
+    sheets.tareas.appendRow([
+      tareaId, tipo, titulo, descripcion,
+      parcial, asignatura, // Nuevos campos
+      fechaCreacion, fechaLimite, gradoAsignado, seccionAsignada
+    ]);
+
+    if (preguntas && preguntas.length > 0) {
+        preguntas.forEach(p => {
+            sheets.examenPreguntas.appendRow([`PREG-${new Date().getTime()}-${Math.random()}`, tareaId, p.tipoPregunta, p.textoPregunta, p.enlaceImagen || ""]);
+        });
+    }
+    return { message: "Examen creado." };
+}
+
+// ... (Aquí irían las demás funciones como submitAssignment, etc.)
+
 // =================================================================
-// FUNCIONES DE UTILIDAD (CON CORRECCIÓN)
+// FUNCIONES DE UTILIDAD
 // =================================================================
 function hashPassword(p,s){return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,p+s).map(b=>('0'+(b&0xFF).toString(16)).slice(-2)).join('');}
-// *** CORRECCIÓN: Usar computeDigest en lugar de getDigest ***
 function generateSalt(){return Utilities.computeDigest(Utilities.DigestAlgorithm.MD5,Math.random().toString()).map(b=>('0'+(b&0xFF).toString(16)).slice(-2)).join('');}
