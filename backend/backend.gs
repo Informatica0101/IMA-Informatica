@@ -1,20 +1,15 @@
 // =================================================================
-// CONFIGURACIÓN GLOBAL - ¡ACCIÓN REQUERIDA!
+// CONFIGURACIÓN GLOBAL
 // =================================================================
-// REEMPLAZA ESTOS VALORES con los IDs de tu Google Sheet y tu carpeta de Google Drive.
-// Encontrarás instrucciones detalladas en el archivo README.md.
-const SPREADSHEET_ID = "TU_SPREADSHEET_ID_AQUI";
-const DRIVE_FOLDER_ID = "TU_DRIVE_FOLDER_ID_AQUI";
+// IDs de la Hoja de Cálculo de Google y la Carpeta de Google Drive del usuario.
+const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
+const DRIVE_FOLDER_ID = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB";
 
 // =================================================================
 // FUNCIÓN PRINCIPAL (ROUTER) - CON DEPURACIÓN AVANZADA
 // =================================================================
 function doPost(e) {
   try {
-    if (SPREADSHEET_ID === "TU_SPREADSHEET_ID_AQUI" || DRIVE_FOLDER_ID === "TU_DRIVE_FOLDER_ID_AQUI") {
-      throw new Error("Configuración Incompleta: Por favor, introduce tu SPREADSHEET_ID y DRIVE_FOLDER_ID en las primeras líneas del script de backend.");
-    }
-
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     if (!ss) {
       throw new Error(`No se pudo abrir el Google Sheet. Verifica que el SPREADSHEET_ID ('${SPREADSHEET_ID}') sea correcto y que tengas permisos de acceso.`);
@@ -33,7 +28,6 @@ function doPost(e) {
 
     switch (action) {
       case "register": result = registerUser(body.payload, sheets); break;
-      // ... (resto del router sin cambios)
       case "login": result = loginUser(body.payload, sheets); break;
       case "createTask":
         if (body.payload.tipo === 'Examen') result = createExam(body.payload, sheets);
@@ -55,19 +49,16 @@ function doPost(e) {
   }
 }
 
-// ... (El resto de las funciones permanecen igual, ya que reciben el objeto 'sheets')
+// ... (El resto del código permanece sin cambios)
 function registerUser(payload, sheets) {
   if (!sheets.usuarios) throw new Error("Configuración incorrecta: La hoja 'Usuarios' no fue encontrada.");
-
   const { nombre, email, password, grado, seccion } = payload;
   const usersData = sheets.usuarios.getDataRange().getValues();
   if (usersData.some(row => row[2] === email)) throw new Error("El correo electrónico ya está registrado.");
-
   const salt = generateSalt();
   const passwordHash = hashPassword(password, salt);
   const storedPassword = `${passwordHash}:${salt}`;
   const userId = `USR-${new Date().getTime()}`;
-
   sheets.usuarios.appendRow([userId, nombre, email, storedPassword, "Estudiante", grado, seccion]);
   return { message: "Usuario registrado exitosamente." };
 }
