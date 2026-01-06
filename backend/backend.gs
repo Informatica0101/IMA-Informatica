@@ -1,22 +1,25 @@
 // =================================================================
-// CONFIGURACIÓN GLOBAL
+// CONFIGURACIÓN GLOBAL - ¡ACCIÓN REQUERIDA!
 // =================================================================
-const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
-const DRIVE_FOLDER_ID = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB";
+// REEMPLAZA ESTOS VALORES con los IDs de tu Google Sheet y tu carpeta de Google Drive.
+// Encontrarás instrucciones detalladas en el archivo README.md.
+const SPREADSHEET_ID = "TU_SPREADSHEET_ID_AQUI";
+const DRIVE_FOLDER_ID = "TU_DRIVE_FOLDER_ID_AQUI";
 
 // =================================================================
-// FUNCIÓN PRINCIPAL (ROUTER) - AHORA CON DEPURACIÓN AVANZADA
+// FUNCIÓN PRINCIPAL (ROUTER) - CON DEPURACIÓN AVANZADA
 // =================================================================
 function doPost(e) {
   try {
-    // PASO 1: Mover la inicialización DENTRO del try...catch
-    // Si SpreadsheetApp.openById falla, el error será capturado.
+    if (SPREADSHEET_ID === "TU_SPREADSHEET_ID_AQUI" || DRIVE_FOLDER_ID === "TU_DRIVE_FOLDER_ID_AQUI") {
+      throw new Error("Configuración Incompleta: Por favor, introduce tu SPREADSHEET_ID y DRIVE_FOLDER_ID en las primeras líneas del script de backend.");
+    }
+
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     if (!ss) {
       throw new Error(`No se pudo abrir el Google Sheet. Verifica que el SPREADSHEET_ID ('${SPREADSHEET_ID}') sea correcto y que tengas permisos de acceso.`);
     }
 
-    // Colección de hojas para pasar a las funciones
     const sheets = {
       usuarios: ss.getSheetByName("Usuarios"),
       tareas: ss.getSheetByName("Tareas"),
@@ -24,14 +27,13 @@ function doPost(e) {
       examenPreguntas: ss.getSheetByName("ExamenPreguntas")
     };
 
-    // PASO 2: Procesar la solicitud
     const body = JSON.parse(e.postData.contents);
     const action = body.action;
     let result;
 
-    // El router ahora pasa el objeto 'sheets' a cada función
     switch (action) {
       case "register": result = registerUser(body.payload, sheets); break;
+      // ... (resto del router sin cambios)
       case "login": result = loginUser(body.payload, sheets); break;
       case "createTask":
         if (body.payload.tipo === 'Examen') result = createExam(body.payload, sheets);
@@ -48,16 +50,12 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({ status: "success", data: result })).setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
-    // Este bloque ahora captura errores de conexión, parseo, y de lógica.
     console.error("Error en doPost:", error.message, error.stack);
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: `Error del Servidor: ${error.message}` })).setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-// =================================================================
-// FUNCIONES DE LÓGICA (Ahora reciben 'sheets' como parámetro)
-// =================================================================
-
+// ... (El resto de las funciones permanecen igual, ya que reciben el objeto 'sheets')
 function registerUser(payload, sheets) {
   if (!sheets.usuarios) throw new Error("Configuración incorrecta: La hoja 'Usuarios' no fue encontrada.");
 
@@ -76,7 +74,6 @@ function registerUser(payload, sheets) {
 
 function loginUser(payload, sheets) {
   if (!sheets.usuarios) throw new Error("Configuración incorrecta: La hoja 'Usuarios' no fue encontrada.");
-  // ... (lógica sin cambios, solo usa sheets.usuarios)
   const { email, password } = payload;
   const usersData = sheets.usuarios.getDataRange().getValues();
   for (let i = 1; i < usersData.length; i++) {
@@ -113,11 +110,6 @@ function createExam(payload, sheets) {
     return { message: "Examen creado exitosamente." };
 }
 
-// ... (Adaptar las demás funciones de manera similar)
-
-// =================================================================
-// CÓDIGO RESTANTE (adaptado para usar el parámetro 'sheets')
-// =================================================================
 function getTeacherSubmissions(payload, sheets) {
     if (!sheets.entregas || !sheets.tareas || !sheets.usuarios) throw new Error("Faltan hojas (Entregas, Tareas, Usuarios).");
     const entregasData = sheets.entregas.getDataRange().getValues();
@@ -171,7 +163,6 @@ function submitAssignment(payload, sheets) {
     return { message: "Tarea entregada." };
 }
 
-// Funciones de utilidad (sin cambios)
 function getOrCreateFolder(p, n){const f=p.getFoldersByName(n);return f.hasNext()?f.next():p.createFolder(n);}
 function getRowIndexById(s,id,c){const d=s.getRange(1,c+1,s.getLastRow(),1).getValues();for(let i=0;i<d.length;i++){if(d[i][0]==id)return i+1;}return -1;}
 function hashPassword(p,s){return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,p+s).map(b=>('0'+(b&0xFF).toString(16)).slice(-2)).join('');}
