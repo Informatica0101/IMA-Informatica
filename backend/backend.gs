@@ -1,18 +1,33 @@
 // =================================================================
 // CONFIGURACIÓN GLOBAL
 // =================================================================
-// IDs de la Hoja de Cálculo de Google y la Carpeta de Google Drive del usuario.
 const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
 const DRIVE_FOLDER_ID = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB";
 
 // =================================================================
-// FUNCIÓN PRINCIPAL (ROUTER) - CON DEPURACIÓN AVANZADA
+// MANEJADORES DE PETICIONES HTTP (GET y POST)
 // =================================================================
+
+/**
+ * Maneja las peticiones GET.
+ * Su presencia es clave para resolver problemas de CORS con peticiones 'preflight'.
+ * También proporciona una respuesta amigable si alguien visita la URL del backend directamente.
+ */
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({
+    status: "success",
+    message: "El backend está operativo. Usa peticiones POST para interactuar con la API."
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Maneja las peticiones POST y actúa como el router principal de la API.
+ */
 function doPost(e) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     if (!ss) {
-      throw new Error(`No se pudo abrir el Google Sheet. Verifica que el SPREADSHEET_ID ('${SPREADSHEET_ID}') sea correcto y que tengas permisos de acceso.`);
+      throw new Error(`No se pudo abrir el Google Sheet. Verifica que el SPREADSHEET_ID ('${SPREADSHEET_ID}') sea correcto.`);
     }
 
     const sheets = {
@@ -49,7 +64,7 @@ function doPost(e) {
   }
 }
 
-// ... (El resto del código permanece sin cambios)
+// ... (El resto de las funciones de lógica permanecen sin cambios)
 function registerUser(payload, sheets) {
   if (!sheets.usuarios) throw new Error("Configuración incorrecta: La hoja 'Usuarios' no fue encontrada.");
   const { nombre, email, password, grado, seccion } = payload;
