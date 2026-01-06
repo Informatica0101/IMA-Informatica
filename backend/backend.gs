@@ -10,7 +10,6 @@ const DRIVE_FOLDER_ID = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB";
 
 function doGet(e) {
   const response = { status: "success", message: "Backend operativo." };
-  // *** CORRECCIÓN CORS: Usar MimeType.TEXT ***
   return ContentService.createTextOutput(JSON.stringify(response))
     .setMimeType(ContentService.MimeType.TEXT);
 }
@@ -40,21 +39,19 @@ function doPost(e) {
     }
 
     const successResponse = { status: "success", data: result };
-    // *** CORRECCIÓN CORS: Usar MimeType.TEXT ***
     return ContentService.createTextOutput(JSON.stringify(successResponse))
       .setMimeType(ContentService.MimeType.TEXT);
 
   } catch (error) {
     console.error("Error capturado en doPost:", error.message, error.stack);
     const errorResponse = { status: "error", message: `Error del Servidor: ${error.message}` };
-    // *** CORRECCIÓN CORS: Usar MimeType.TEXT ***
     return ContentService.createTextOutput(JSON.stringify(errorResponse))
       .setMimeType(ContentService.MimeType.TEXT);
   }
 }
 
 // =================================================================
-// FUNCIONES DE LÓGICA (sin cambios)
+// FUNCIONES DE LÓGICA
 // =================================================================
 function registerUser(payload, sheets) {
   if (!sheets.usuarios) throw new Error("La hoja 'Usuarios' no fue encontrada.");
@@ -82,5 +79,9 @@ function loginUser(payload, sheets) {
   throw new Error("Credenciales incorrectas.");
 }
 
+// =================================================================
+// FUNCIONES DE UTILIDAD (CON CORRECCIÓN)
+// =================================================================
 function hashPassword(p,s){return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,p+s).map(b=>('0'+(b&0xFF).toString(16)).slice(-2)).join('');}
-function generateSalt(){return Utilities.getDigest(Utilities.DigestAlgorithm.MD5,Math.random().toString()).map(b=>('0'+(b&0xFF).toString(16)).slice(-2)).join('');}
+// *** CORRECCIÓN: Usar computeDigest en lugar de getDigest ***
+function generateSalt(){return Utilities.computeDigest(Utilities.DigestAlgorithm.MD5,Math.random().toString()).map(b=>('0'+(b&0xFF).toString(16)).slice(-2)).join('');}
