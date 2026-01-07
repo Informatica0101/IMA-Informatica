@@ -21,9 +21,58 @@ const examenesSheet = getSheetOrThrow("Examenes");
 const preguntasSheet = getSheetOrThrow("PreguntasExamen");
 const entregasExamenSheet = getSheetOrThrow("EntregasExamen");
 
-// --- PUNTO DE ENTRADA PRINCIPAL (CON MANEJO DE CORS) ---
+// --- FUNCIÓN DOGET PARA PRUEBAS ---
+function doGet() {
+  return ContentService.createTextOutput(JSON.stringify({
+    status: "success",
+    message: "API funcionando",
+    timestamp: new Date().toISOString(),
+    endpoints: ["doPost", "doOptions"],
+    note: "Usa POST para las solicitudes de API"
+  }))
+    .setMimeType(ContentService.MimeType.JSON)
+    .setHeader("Access-Control-Allow-Origin", "https://informatica0101.github.io");
+}
+
+// --- REEMPLAZA TU DOOPTIONS ACTUAL CON ESTE ---
+function doOptions() {
+  const output = ContentService.createTextOutput();
+
+  // Headers MÁS COMPLETOS para CORS
+  output.setHeaders({
+    'Access-Control-Allow-Origin': 'https://informatica0101.github.io',
+    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+    'Access-Control-Max-Age': '3600',
+    'Content-Type': 'application/json'
+  });
+
+  return output;
+}
+
+// --- REEMPLAZA TU DOPOST ACTUAL CON ESTE VERSIÓN MEJORADA ---
 function doPost(e) {
+  // HEADERS CORS INMEDIATOS
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': 'https://informatica0101.github.io',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json'
+  };
+
   try {
+    // Manejar solicitud preflight
+    if (e.httpMethod && e.httpMethod === 'OPTIONS') {
+      return ContentService.createTextOutput(JSON.stringify({}))
+        .setMimeType(ContentService.MimeType.JSON)
+        .setHeaders(corsHeaders);
+    }
+
+    // Verificar que tenemos datos
+    if (!e || !e.postData || !e.postData.contents) {
+      throw new Error('No se recibieron datos en la solicitud');
+    }
+
     const requestData = JSON.parse(e.postData.contents);
     const action = requestData.action;
     const payload = requestData.payload;
@@ -64,27 +113,32 @@ function doPost(e) {
       case "reactivateExam":
         result = reactivateExam(payload);
         break;
+      case "testCORS": // Agrega este caso de prueba
+        result = {
+          status: "success",
+          message: "CORS funcionando correctamente",
+          timestamp: new Date().toISOString()
+        };
+        break;
       default:
         result = { status: "error", message: "Acción no reconocida." };
     }
 
     return ContentService.createTextOutput(JSON.stringify(result))
       .setMimeType(ContentService.MimeType.JSON)
-      .setHeader("Access-Control-Allow-Origin", "*");
+      .setHeaders(corsHeaders);
 
   } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader("Access-Control-Allow-Origin", "*");
-  }
-}
+    console.error('Error en doPost:', error);
 
-// --- FUNCIÓN PARA MANEJAR PREFLIGHT REQUESTS DE CORS ---
-function doOptions(e) {
-  return ContentService.createTextOutput()
-    .setHeader("Access-Control-Allow-Origin", "*")
-    .setHeader("Access-Control-Allow-Methods", "POST, OPTIONS")
-    .setHeader("Access-Control-Allow-Headers", "Content-Type");
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: error.toString(),
+      stack: error.stack
+    }))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeaders(corsHeaders);
+  }
 }
 
 // --- FUNCIONES DE LÓGICA ---
