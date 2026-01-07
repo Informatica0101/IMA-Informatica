@@ -233,3 +233,46 @@ Cada microservicio debe ser desplegado **de forma independiente**.
    - Copia la URL de la aplicación web que te proporciona Google.
    - Pégala en el objeto `SERVICE_URLS` dentro de `js/config.js` en la propiedad correspondiente.
 5. **Repetir**: Repite este proceso para los tres microservicios.
+
+---
+
+## 7. Portal Público de Contenidos
+
+Además del portal de gestión PWA, el sitio cuenta con una sección pública de contenidos estáticos accesibles para cualquier visitante.
+
+### 7.1. Arquitectura del Contenido
+
+- **Punto de Entrada**: `index.html` es la página principal. Contiene la navegación y la estructura para cargar dinámicamente el contenido y las actividades.
+- **Generación de Contenido**: El contenido no está hardcodeado en el HTML. Se define en tres objetos JavaScript dentro de `index.html`:
+  - `presentationData`: Define la estructura del menú "Cursos", enlazando a presentaciones (`.html`).
+  - `additionalResourcesData`: Define el menú "Recursos Adicionales", incluyendo artículos (`.html`) y actividades interactivas.
+  - `downloadContentData`: Define el contenido de la sección "Contenido de Clases", enlazando a archivos descargables (`.pdf`).
+- **Organización de Carpetas**: El contenido educativo está organizado jerárquicamente por grado y asignatura para facilitar su mantenimiento. Ejemplo:
+  - `Decimo_Info_Apli/`: Contiene los materiales para la clase de Informática Aplicada de Décimo Grado.
+  - `II_BTP_A/analisis_diseno/`: Materiales para Análisis y Diseño de II de BTP.
+
+### 7.2. Tipos de Contenido
+
+- **Temas de Clases y Presentaciones**:
+  - **Formato**: Son archivos `.html` que actúan como presentaciones interactivas o páginas de contenido.
+  - **Ubicación**: Se encuentran dentro de las carpetas de cada asignatura, como `Informatica_I/historia_computacion.htm`.
+  - **Acceso**: Se acceden a través del menú de navegación "Cursos". La estructura de este menú se genera a partir del objeto `presentationData` en `index.html`.
+
+- **Zona de Descargas**:
+  - **Formato**: Son principalmente archivos `.pdf` y `.docx` que sirven como guías de estudio, hojas de trabajo o versiones descargables de las presentaciones.
+  - **Ubicación**: Al igual que las presentaciones, están en las carpetas de las asignaturas.
+  - **Acceso**: Se acceden a través de la sección "Contenido de Clases" en `index.html`. El menú se genera a partir del objeto `downloadContentData`.
+
+- **Artículos**:
+  - **Formato**: Son archivos `.html` diseñados para ser leídos como artículos informativos.
+  - **Ubicación**: Típicamente dentro de las carpetas de asignaturas.
+  - **Acceso**: Se enlazan desde el menú "Recursos Adicionales", definido por el objeto `additionalResourcesData`.
+
+- **Zona de Actividades (Juegos)**:
+  - **Propósito**: Ofrecer herramientas interactivas para reforzar el aprendizaje de una manera lúdica.
+  - **Ubicación**: Centralizados en la carpeta `juegos/`.
+  - **Actividades Disponibles**:
+    - **`perifericos.html`**: Un juego para clasificar periféricos de computadora como dispositivos de entrada, salida o mixtos.
+    - **`webmaster_quiz.html`**: Un cuestionario sobre conceptos de desarrollo y cultura web.
+    - **`destreza_teclado.html`**: Una actividad para practicar y medir la velocidad y precisión al teclear.
+  - **Acceso**: Se cargan dinámicamente en la página principal a través de los menús "Recursos Adicionales" o "Actividades Prácticas".
