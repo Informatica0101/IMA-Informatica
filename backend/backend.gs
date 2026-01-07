@@ -8,6 +8,7 @@ const tareasSheet = ss.getSheetByName("Tareas");
 const entregasSheet = ss.getSheetByName("Entregas");
 const examenesSheet = ss.getSheetByName("Examenes");
 const preguntasSheet = ss.getSheetByName("PreguntasExamen");
+const entregasExamenSheet = ss.getSheetByName("EntregasExamen");
 
 // --- PUNTO DE ENTRADA PRINCIPAL ---
 function doPost(e) {
@@ -42,6 +43,12 @@ function doPost(e) {
         break;
       case "createExam":
         result = createExam(payload);
+        break;
+      case "getExamQuestions":
+        result = getExamQuestions(payload);
+        break;
+      case "submitExam":
+        result = submitExam(payload);
         break;
       default:
         result = { status: "error", message: "Acción no reconocida." };
@@ -125,7 +132,7 @@ function getStudentTasks(payload) {
       };
     });
 
-  return { status: "success", data: studentTasks };
+  return { status: "success", data: studentTasks.reverse() };
 }
 
 function getOrCreateFolder(parentFolder, folderName) {
@@ -217,25 +224,96 @@ function gradeSubmission(payload) {
 }
 
 function createExam(payload) {
-  const { titulo, asignatura, gradoAsignado, fechaLimite, preguntas } = payload;
+  const { titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite, preguntas } = payload;
 
   // 1. Crear el examen principal
   const examenId = "EXM-" + new Date().getTime();
-  examenesSheet.appendRow([examenId, titulo, asignatura, gradoAsignado, fechaLimite]);
+  examenesSheet.appendRow([examenId, titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite]);
 
   // 2. Añadir las preguntas
   preguntas.forEach(p => {
     const preguntaId = "PRE-" + new Date().getTime() + Math.random();
+    // La estructura de la fila ahora es flexible
     preguntasSheet.appendRow([
       preguntaId,
       examenId,
+      p.preguntaTipo,
       p.textoPregunta,
-      p.opcionA,
-      p.opcionB,
-      p.opcionC,
+      JSON.stringify(p.opciones || {}), // Guardar opciones como JSON
       p.respuestaCorrecta
     ]);
   });
 
   return { status: "success", message: "Examen creado exitosamente." };
+}
+
+// --- FUNCIONES AUXILIARES ---
+
+function normalizeString(str) {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .normalize("NFD") // Descomponer acentos
+    .replace(/[\u0300-\u036f]/g, "") // Eliminar diacríticos
+    .replace(/[^a-z0-9]/g, ''); // Eliminar caracteres no alfanuméricos
+}
+
+function getExamQuestions(payload) {
+  const { examenId } = payload;
+  const todasLasPreguntas = preguntasSheet.getDataRange().getValues().slice(1);
+  const preguntasDelExamen = todasLasPreguntas
+    .filter(p => p[1] === examenId)
+    .map(p => ({
+      preguntaId: p[0],
+      preguntaTipo: p[2],
+      textoPregunta: p[3],
+      opciones: JSON.parse(p[4] || '{}')
+    }));
+  return { status: "success", data: preguntasDelExamen };
+}
+
+function submitExam(payload) {
+  const { examenId, userId, respuestas } = payload;
+  const todasLasPreguntas = preguntasSheet.getDataRange().getValues().slice(1);
+  const preguntasDelExamen = todasLasPreguntas.filter(p => p[1] === examenId);
+
+  let correctas = 0;
+  const resultadosDetallados = [];
+
+  respuestas.forEach(resp => {
+    const pregunta = preguntasDelExamen.find(p => p[0] === resp.preguntaId);
+    if (!pregunta) return;
+
+    const respuestaCorrecta = pregunta[5];
+    const tipo = pregunta[2];
+    let esCorrecta = false;
+
+    if (tipo === 'completacion') {
+      esCorrecta = normalizeString(resp.respuestaEstudiante) === normalizeString(respuestaCorrecta);
+    } else if (tipo === 'verdadero_falso' || tipo === 'opcion_multiple') {
+      esCorrecta = resp.respuestaEstudiante === respuestaCorrecta;
+    }
+    // Tipos 'termino_pareado' y 'respuesta_breve' se omiten de la calificación automática por simplicidad.
+
+    if (esCorrecta) correctas++;
+    resultadosDetallados.push({
+      preguntaId: resp.preguntaId,
+      respuestaEstudiante: resp.respuestaEstudiante,
+      esCorrecta: esCorrecta
+    });
+  });
+
+  const calificacionTotal = (correctas / preguntasDelExamen.length) * 100;
+  const entregaExamenId = "EEX-" + new Date().getTime();
+
+  entregasExamenSheet.appendRow([
+    entregaExamenId,
+    examenId,
+    userId,
+    new Date(),
+    JSON.stringify(resultadosDetallados),
+    calificacionTotal.toFixed(2)
+  ]);
+
+  return { status: "success", message: `Examen entregado. Calificación: ${calificacionTotal.toFixed(2)}%` };
 }

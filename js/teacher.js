@@ -135,59 +135,108 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- LÓGICA DE CREACIÓN DE EXÁMENES ---
     let questionCount = 0;
-    function addQuestion() {
-        questionCount++;
-        const questionHtml = `
-            <div class="question-block border p-4 rounded-lg bg-gray-50" id="question-${questionCount}">
-                <div class="flex justify-between items-center mb-4">
-                    <label class="block font-bold">Pregunta ${questionCount}</label>
-                    <button type="button" class="text-red-500 remove-question-btn">Eliminar</button>
-                </div>
-                <div class="space-y-2">
-                    <textarea data-name="textoPregunta" placeholder="Texto de la pregunta" class="w-full p-2 border rounded" required></textarea>
+
+    function getAnswerFieldsHtml(type) {
+        switch (type) {
+            case 'opcion_multiple':
+                return `
                     <input type="text" data-name="opcionA" placeholder="Opción A" class="w-full p-2 border rounded" required>
                     <input type="text" data-name="opcionB" placeholder="Opción B" class="w-full p-2 border rounded" required>
                     <input type="text" data-name="opcionC" placeholder="Opción C" class="w-full p-2 border rounded" required>
                     <select data-name="respuestaCorrecta" class="w-full p-2 border rounded" required>
-                        <option value="">Selecciona la respuesta correcta</option>
-                        <option value="A">A</option>
-                        <option value="B">B</option>
-                        <option value="C">C</option>
-                    </select>
+                        <option value="">Respuesta Correcta</option>
+                        <option value="A">A</option> <option value="B">B</option> <option value="C">C</option>
+                    </select>`;
+            case 'completacion':
+                return `<input type="text" data-name="respuestaCorrecta" placeholder="Respuesta correcta" class="w-full p-2 border rounded" required>`;
+            case 'verdadero_falso':
+                return `
+                    <select data-name="respuestaCorrecta" class="w-full p-2 border rounded" required>
+                        <option value="Verdadero">Verdadero</option> <option value="Falso">Falso</option>
+                    </select>`;
+            case 'termino_pareado':
+                return `<textarea data-name="respuestaCorrecta" placeholder="Escribe los pares correctos, uno por línea, ej: Gato=Animal" class="w-full p-2 border rounded" rows="3" required></textarea>`;
+            case 'respuesta_breve':
+                return `<p class="text-sm text-gray-500">Este tipo de pregunta se califica manualmente.</p>`;
+            default: return '';
+        }
+    }
+
+    function addQuestion() {
+        questionCount++;
+        const questionId = `question-${questionCount}`;
+        const questionHtml = `
+            <div class="question-block border p-4 rounded-lg bg-gray-50" id="${questionId}">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="font-bold">Pregunta ${questionCount}</h4>
+                    <button type="button" class="text-red-500 remove-question-btn">Eliminar</button>
                 </div>
-            </div>
-        `;
+                <div class="space-y-2">
+                    <textarea data-name="textoPregunta" placeholder="Texto de la pregunta" class="w-full p-2 border rounded" required></textarea>
+                    <select data-name="preguntaTipo" class="w-full p-2 border rounded question-type-select">
+                        <option value="opcion_multiple">Opción Múltiple</option>
+                        <option value="completacion">Completación</option>
+                        <option value="verdadero_falso">Verdadero/Falso</option>
+                        <option value="termino_pareado">Término Pareado</option>
+                        <option value="respuesta_breve">Respuesta Breve</option>
+                    </select>
+                    <div class="answer-fields space-y-2">${getAnswerFieldsHtml('opcion_multiple')}</div>
+                </div>
+            </div>`;
         questionsContainer.insertAdjacentHTML('beforeend', questionHtml);
     }
 
     addQuestionBtn.addEventListener('click', addQuestion);
 
-    questionsContainer.addEventListener('click', (e) => {
+    document.addEventListener('click', (e) => {
         if (e.target.classList.contains('remove-question-btn')) {
             e.target.closest('.question-block').remove();
+        }
+    });
+
+    document.addEventListener('change', (e) => {
+        if (e.target.classList.contains('question-type-select')) {
+            const answerContainer = e.target.closest('.question-block').querySelector('.answer-fields');
+            answerContainer.innerHTML = getAnswerFieldsHtml(e.target.value);
         }
     });
 
     createExamForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
-
         const payload = {
             titulo: formData.get('titulo'),
             asignatura: formData.get('asignatura'),
             gradoAsignado: formData.get('gradoAsignado'),
+            seccionAsignada: formData.get('seccionAsignada'),
             fechaLimite: formData.get('fechaLimite'),
             preguntas: []
         };
 
         const questionBlocks = questionsContainer.querySelectorAll('.question-block');
         questionBlocks.forEach(block => {
+            const preguntaTipo = block.querySelector('[data-name=preguntaTipo]').value;
+            let opciones = {};
+            let respuestaCorrecta = '';
+
+            const respuestaCorrectaEl = block.querySelector('[data-name=respuestaCorrecta]');
+            if(respuestaCorrectaEl) {
+                respuestaCorrecta = respuestaCorrectaEl.value;
+            }
+
+            if (preguntaTipo === 'opcion_multiple') {
+                opciones = {
+                    A: block.querySelector('[data-name=opcionA]').value,
+                    B: block.querySelector('[data-name=opcionB]').value,
+                    C: block.querySelector('[data-name=opcionC]').value,
+                };
+            }
+
             payload.preguntas.push({
+                preguntaTipo: preguntaTipo,
                 textoPregunta: block.querySelector('[data-name=textoPregunta]').value,
-                opcionA: block.querySelector('[data-name=opcionA]').value,
-                opcionB: block.querySelector('[data-name=opcionB]').value,
-                opcionC: block.querySelector('[data-name=opcionC]').value,
-                respuestaCorrecta: block.querySelector('[data-name=respuestaCorrecta]').value
+                opciones: opciones,
+                respuestaCorrecta: respuestaCorrecta
             });
         });
 
@@ -202,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Examen creado exitosamente.');
                 createExamForm.reset();
                 questionsContainer.innerHTML = '';
-                addQuestion(); // Dejar una pregunta por defecto
+                addQuestion();
                 navDashboard.click();
             } else { throw new Error(result.message); }
         } catch (error) { alert(`Error: ${error.message}`); }
@@ -210,5 +259,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Carga Inicial ---
     fetchSubmissions();
-    addQuestion(); // Añadir una pregunta por defecto al cargar la página de creación de examen
+    addQuestion();
 });

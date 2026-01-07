@@ -62,6 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
                 actionHtml = '<button class="bg-gray-400 text-white font-bold py-2 px-4 rounded-lg" disabled>Entregado</button>';
+            } else if (task.tipo === 'Examen') {
+                actionHtml = `
+                    <a href="exam.html?examenId=${task.tareaId}&title=${encodeURIComponent(task.titulo)}" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg">
+                        Realizar Examen
+                    </a>`;
             } else {
                 actionHtml = `
                     <button class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg submit-btn"

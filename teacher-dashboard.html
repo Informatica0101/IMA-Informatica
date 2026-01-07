@@ -115,7 +115,16 @@
                             </div>
                             <div>
                                 <label for="exam-grado" class="block font-medium mb-2">Grado Asignado</label>
-                                <input type="text" id="exam-grado" name="gradoAsignado" class="w-full p-2 border rounded" required>
+                                <select id="exam-grado" name="gradoAsignado" class="w-full p-2 border rounded" required>
+                                    <option value="">Selecciona un Grado</option>
+                                    <option value="Décimo">Décimo</option>
+                                    <option value="Undécimo">Undécimo</option>
+                                    <option value="Duodécimo">Duodécimo</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="exam-seccion" class="block font-medium mb-2">Sección (Opcional)</label>
+                                <input type="text" id="exam-seccion" name="seccionAsignada" class="w-full p-2 border rounded">
                             </div>
                             <div>
                                 <label for="exam-fechaLimite" class="block font-medium mb-2">Fecha Límite</label>

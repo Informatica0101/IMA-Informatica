@@ -53,14 +53,36 @@ Almacena la información general de cada examen. Su estructura es similar a la d
 
 ### Hoja: `PreguntasExamen`
 
-Almacena las preguntas de opción múltiple para cada examen.
+Almacena las preguntas para cada examen, soportando múltiples tipos.
 
-| Columna A     | Columna B  | Columna C       | Columna D | Columna E | Columna F | Columna G           |
-|---------------|------------|-----------------|-----------|-----------|-----------|---------------------|
-| `preguntaId`  | `examenId` | `textoPregunta` | `opcionA` | `opcionB` | `opcionC` | `respuestaCorrecta` |
+| Columna A     | Columna B  | Columna C     | Columna D       | Columna E         | ... | Columna H           |
+|---------------|------------|---------------|-----------------|-------------------|-----|---------------------|
+| `preguntaId`  | `examenId` | `preguntaTipo`| `textoPregunta` | `opciones`        | ... | `respuestaCorrecta` |
 
-- **examenId:** Vincula la pregunta al examen correspondiente en la hoja `Examenes`.
-- **respuestaCorrecta:** Almacena la letra de la opción correcta (ej. "A", "B", "C").
+- **examenId:** Vincula la pregunta al examen correspondiente.
+- **preguntaTipo:** Define el tipo de pregunta. Valores posibles:
+    - `opcion_multiple`: Pregunta de opción múltiple.
+    - `completacion`: Rellenar el espacio en blanco.
+    - `termino_pareado`: Relacionar términos.
+    - `verdadero_falso`: Verdadero o Falso.
+    - `respuesta_breve`: Ensayo corto, calificado manualmente.
+- **opciones:** Un string JSON que almacena las opciones para `opcion_multiple` o los términos para `termino_pareado`.
+- **respuestaCorrecta:** Almacena la respuesta. El formato depende del `preguntaTipo`:
+    - `opcion_multiple`: La letra de la opción correcta (ej. "A").
+    - `completacion`: El texto de la respuesta esperada.
+    - `termino_pareado`: Un string JSON con los pares correctos.
+    - `verdadero_falso`: "Verdadero" o "Falso".
+    - `respuesta_breve`: Se deja vacío.
+
+### Hoja: `EntregasExamen`
+
+Almacena las respuestas de cada estudiante a un examen, junto con la calificación general.
+
+| Columna A           | Columna B  | Columna C | Columna D | Columna E    | Columna F       |
+|---------------------|------------|-----------|-----------|--------------|-----------------|
+| `entregaExamenId`   | `examenId` | `userId`  | `fecha`   | `respuestas` | `calificacionTotal` |
+
+- **respuestas:** Un string JSON que contiene un array de objetos, donde cada objeto representa la respuesta a una pregunta (`{preguntaId, respuestaEstudiante, esCorrecta}`).
 
 ## Estructura de Archivos en Google Drive
 
