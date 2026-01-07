@@ -61,7 +61,12 @@
                                 <select id="tipo" name="tipo" class="w-full p-2 border rounded">
                                     <option value="Tarea">Tarea</option>
                                     <option value="Examen">Examen</option>
+                                    <option value="Credito Extra">Crédito Extra</option>
                                 </select>
+                            </div>
+                            <div id="credito-extra-fields" class="hidden md:col-span-2">
+                                <label for="tareaOriginalId" class="block font-medium mb-2">ID de Tarea Original Rechazada (Opcional)</label>
+                                <input type="text" id="tareaOriginalId" name="tareaOriginalId" placeholder="TSK-..." class="w-full p-2 border rounded">
                             </div>
                             <div class="md:col-span-2">
                                 <label for="descripcion" class="block font-medium mb-2">Descripción</label>
@@ -129,6 +134,10 @@
                             <div>
                                 <label for="exam-fechaLimite" class="block font-medium mb-2">Fecha Límite</label>
                                 <input type="date" id="exam-fechaLimite" name="fechaLimite" class="w-full p-2 border rounded" required>
+                            </div>
+                             <div>
+                                <label for="exam-tiempoLimite" class="block font-medium mb-2">Tiempo Límite (minutos)</label>
+                                <input type="number" id="exam-tiempoLimite" name="tiempoLimite" class="w-full p-2 border rounded" min="1">
                             </div>
                         </div>
 

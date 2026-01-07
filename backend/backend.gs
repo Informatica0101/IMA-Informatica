@@ -35,8 +35,8 @@ function doPost(e) {
       case "submitAssignment":
         result = submitAssignment(payload);
         break;
-      case "getTeacherSubmissions":
-        result = getTeacherSubmissions(payload);
+      case "getTeacherActivity":
+        result = getTeacherActivity(payload);
         break;
       case "gradeSubmission":
         result = gradeSubmission(payload);
@@ -49,6 +49,9 @@ function doPost(e) {
         break;
       case "submitExam":
         result = submitExam(payload);
+        break;
+      case "reactivateExam":
+        result = reactivateExam(payload);
         break;
       default:
         result = { status: "error", message: "Acción no reconocida." };
@@ -101,9 +104,10 @@ function loginUser(payload) {
 }
 
 function createTask(payload) {
-  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite } = payload;
+  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId } = payload;
   const tareaId = "TSK-" + new Date().getTime();
-  tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite]);
+  // Añadimos tareaOriginalId a la fila (columna J)
+  tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId || '']);
   return { status: "success", message: "Tarea creada." };
 }
 
@@ -113,7 +117,21 @@ function getStudentTasks(payload) {
   const entregasData = entregasSheet.getDataRange().getValues().slice(1);
 
   const studentTasks = tasksData
-    .filter(task => task[6] === grado && (task[7] === seccion || task[7] === "" || !task[7]))
+    .filter(task => {
+        // Lógica de visibilidad general
+        const isForStudent = task[6] === grado && (task[7] === seccion || task[7] === "" || !task[7]);
+        if (!isForStudent) return false;
+
+        // Lógica para Crédito Extra
+        if (task[1] === 'Credito Extra') {
+            const tareaOriginalId = task[9];
+            if (!tareaOriginalId) return false; // No mostrar si no está vinculada
+            const entregaOriginal = entregasData.find(e => e[1] === tareaOriginalId && e[2] === userId);
+            return entregaOriginal && entregaOriginal[6] === 'Rechazada'; // Solo mostrar si la original fue rechazada
+        }
+
+        return true; // Mostrar todas las demás tareas
+    })
     .map(task => {
       const entrega = entregasData.find(e => e[1] === task[0] && e[2] === userId);
       return {
@@ -182,20 +200,22 @@ function submitAssignment(payload) {
   return { status: "success", message: "Tarea entregada." };
 }
 
-function getTeacherSubmissions(payload) {
-  const entregasData = entregasSheet.getDataRange().getValues();
+function getTeacherActivity(payload) {
   const usuariosData = usuariosSheet.getDataRange().getValues();
   const tareasData = tareasSheet.getDataRange().getValues();
+  const examenesData = examenesSheet.getDataRange().getValues();
 
-  const submissions = entregasData.slice(1).map(entrega => {
+  // Obtener entregas de tareas
+  const entregasData = entregasSheet.getDataRange().getValues().slice(1);
+  const submissions = entregasData.map(entrega => {
     const usuario = usuariosData.find(u => u[0] === entrega[2]);
     const tarea = tareasData.find(t => t[0] === entrega[1]);
-
     return {
+      tipo: 'Tarea',
       entregaId: entrega[0],
-      tareaTitulo: tarea ? tarea[2] : "Tarea Desconocida",
+      titulo: tarea ? tarea[2] : "Tarea Desconocida",
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
-      fechaEntrega: new Date(entrega[3]).toLocaleString(),
+      fecha: new Date(entrega[3]),
       archivoUrl: entrega[4],
       calificacion: entrega[5],
       estado: entrega[6],
@@ -203,7 +223,42 @@ function getTeacherSubmissions(payload) {
     };
   });
 
-  return { status: "success", data: submissions.reverse() }; // Mostrar las más recientes primero
+  // Obtener entregas de exámenes
+  const entregasExamenData = entregasExamenSheet.getDataRange().getValues().slice(1);
+  const examSubmissions = entregasExamenData.map(entrega => {
+      const usuario = usuariosData.find(u => u[0] === entrega[2]);
+      const examen = examenesData.find(ex => ex[0] === entrega[1]);
+      return {
+          tipo: 'Examen',
+          entregaId: entrega[0], // ID de la entrega del examen
+          titulo: examen ? examen[1] : "Examen Desconocido",
+          alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
+          fecha: new Date(entrega[3]),
+          calificacion: entrega[5],
+          estado: entrega[6] // Ej: 'Entregado', 'Bloqueado'
+      };
+  });
+
+  // Combinar y ordenar
+  const allActivity = submissions.concat(examSubmissions);
+  allActivity.sort((a, b) => b.fecha - a.fecha);
+
+  // Formatear fecha después de ordenar
+  const formattedActivity = allActivity.map(item => ({...item, fecha: item.fecha.toLocaleString()}));
+
+  return { status: "success", data: formattedActivity };
+}
+function reactivateExam(payload) {
+    const { entregaExamenId } = payload;
+    const entregasExamenData = entregasExamenSheet.getDataRange().getValues();
+
+    for (let i = 1; i < entregasExamenData.length; i++) {
+        if (entregasExamenData[i][0] === entregaExamenId) {
+            entregasExamenSheet.getRange(i + 1, 7).setValue('Reactivado'); // Columna G es Estado
+            return { status: "success", message: "Examen reactivado." };
+        }
+    }
+    return { status: "error", message: "Entrega de examen no encontrada." };
 }
 
 function gradeSubmission(payload) {
@@ -224,11 +279,11 @@ function gradeSubmission(payload) {
 }
 
 function createExam(payload) {
-  const { titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite, preguntas } = payload;
+  const { titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tiempoLimite, preguntas } = payload;
 
   // 1. Crear el examen principal
   const examenId = "EXM-" + new Date().getTime();
-  examenesSheet.appendRow([examenId, titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite]);
+  examenesSheet.appendRow([examenId, titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tiempoLimite || '']);
 
   // 2. Añadir las preguntas
   preguntas.forEach(p => {
@@ -260,6 +315,12 @@ function normalizeString(str) {
 
 function getExamQuestions(payload) {
   const { examenId } = payload;
+
+  // Obtener detalles del examen
+  const examenesData = examenesSheet.getDataRange().getValues().slice(1);
+  const examen = examenesData.find(ex => ex[0] === examenId);
+  if (!examen) throw new Error("Examen no encontrado.");
+
   const todasLasPreguntas = preguntasSheet.getDataRange().getValues().slice(1);
   const preguntasDelExamen = todasLasPreguntas
     .filter(p => p[1] === examenId)
@@ -269,11 +330,19 @@ function getExamQuestions(payload) {
       textoPregunta: p[3],
       opciones: JSON.parse(p[4] || '{}')
     }));
-  return { status: "success", data: preguntasDelExamen };
+
+  return {
+    status: "success",
+    data: {
+      titulo: examen[1],
+      tiempoLimite: examen[6],
+      preguntas: preguntasDelExamen
+    }
+  };
 }
 
 function submitExam(payload) {
-  const { examenId, userId, respuestas } = payload;
+  const { examenId, userId, respuestas, estado } = payload; // Añadir estado
   const todasLasPreguntas = preguntasSheet.getDataRange().getValues().slice(1);
   const preguntasDelExamen = todasLasPreguntas.filter(p => p[1] === examenId);
 
@@ -312,8 +381,16 @@ function submitExam(payload) {
     userId,
     new Date(),
     JSON.stringify(resultadosDetallados),
-    calificacionTotal.toFixed(2)
+    calificacionTotal.toFixed(2),
+    estado // Guardar estado
   ]);
 
-  return { status: "success", message: `Examen entregado. Calificación: ${calificacionTotal.toFixed(2)}%` };
+  return {
+    status: "success",
+    message: "Examen entregado.",
+    data: {
+      calificacionTotal: calificacionTotal.toFixed(2),
+      resultados: resultadosDetallados
+    }
+  };
 }

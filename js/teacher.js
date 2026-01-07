@@ -1,5 +1,67 @@
+// --- Funciones Globales para Testing y Lógica Principal ---
+let submissionsTableBody; // Se asignará en DOMContentLoaded
+
+async function fetchApi(action, payload) {
+    const response = await fetch(BACKEND_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action, payload }),
+        headers: { 'Content-Type': 'text/plain' }
+    });
+    return await response.json();
+}
+
+async function fetchTeacherActivity() {
+    if (!submissionsTableBody) {
+        console.error("submissionsTableBody no está inicializado.");
+        return;
+    }
+    submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">Cargando...</td></tr>';
+    try {
+        const result = await fetchApi('getTeacherActivity', {});
+        if (result.status === 'success') {
+            renderActivity(result.data);
+        } else { throw new Error(result.message); }
+    } catch (error) {
+        submissionsTableBody.innerHTML = `<tr><td colspan="7" class="text-center p-4 text-red-500">Error: ${error.message}</td></tr>`;
+    }
+}
+
+function renderActivity(activity) {
+    if (!submissionsTableBody) {
+        console.error("submissionsTableBody no está inicializado.");
+        return;
+    }
+    if (!activity || activity.length === 0) {
+        submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">No hay actividad.</td></tr>';
+        return;
+    }
+    submissionsTableBody.innerHTML = activity.map(item => {
+        let actionHtml = '';
+        if (item.tipo === 'Tarea') {
+            actionHtml = `<button class="bg-blue-500 text-white px-2 py-1 rounded text-sm" onclick='openGradeModal(${JSON.stringify(item)})'>Calificar</button>`;
+        } else if (item.tipo === 'Examen' && item.estado === 'Bloqueado') {
+            actionHtml = `<button class="bg-yellow-500 text-white px-2 py-1 rounded text-sm" onclick='reactivateExam("${item.entregaId}")'>Reactivar</button>`;
+        }
+
+        return `
+            <tr class="border-b">
+                <td class="p-4">${item.alumnoNombre}</td>
+                <td class="p-4">${item.titulo} <span class="text-xs font-semibold uppercase px-2 py-1 rounded-full ${item.tipo === 'Tarea' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">${item.tipo}</span></td>
+                <td class="p-4">${item.fecha}</td>
+                <td class="p-4">${item.archivoUrl ? `<a href="${item.archivoUrl}" target="_blank" class="text-blue-500">Ver Archivo</a>` : 'N/A'}</td>
+                <td class="p-4">${item.calificacion || 'N/A'}</td>
+                <td class="p-4">${item.estado || 'Pendiente'}</td>
+                <td class="p-4">${actionHtml}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Autenticación y Variables Globales ---
+    // --- Asignación de Elementos Globales ---
+    submissionsTableBody = document.getElementById('submissions-table-body');
+
+    // --- Autenticación ---
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser || currentUser.rol !== 'Profesor') {
         window.location.href = 'login.html';
@@ -17,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Elementos de Formularios y Modales ---
     const createAssignmentForm = document.getElementById('create-assignment-form');
-    const submissionsTableBody = document.getElementById('submissions-table-body');
     const createExamForm = document.getElementById('create-exam-form');
     const questionsContainer = document.getElementById('questions-container');
     const addQuestionBtn = document.getElementById('add-question-btn');
@@ -38,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     navDashboard.addEventListener('click', () => {
         navigateTo(sectionDashboard, navDashboard);
-        fetchSubmissions();
+        fetchTeacherActivity();
     });
     navCrear.addEventListener('click', () => navigateTo(sectionCrear, navCrear));
     navCrearExamen.addEventListener('click', () => navigateTo(sectionCrearExamen, navCrearExamen));
@@ -48,17 +109,17 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
     });
 
-    // --- API Helper ---
-    async function fetchApi(action, payload) {
-        const response = await fetch(BACKEND_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action, payload }),
-            headers: { 'Content-Type': 'text/plain' }
-        });
-        return await response.json();
-    }
-
     // --- Lógica de Tareas ---
+    const tipoTareaSelect = document.getElementById('tipo');
+    const creditoExtraFields = document.getElementById('credito-extra-fields');
+    tipoTareaSelect.addEventListener('change', () => {
+        if (tipoTareaSelect.value === 'Credito Extra') {
+            creditoExtraFields.classList.remove('hidden');
+        } else {
+            creditoExtraFields.classList.add('hidden');
+        }
+    });
+
     createAssignmentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const payload = Object.fromEntries(new FormData(e.target).entries());
@@ -72,36 +133,17 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { alert(`Error: ${error.message}`); }
     });
 
-    // --- Lógica de Entregas y Calificación ---
-    async function fetchSubmissions() {
-        submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">Cargando...</td></tr>';
+    // --- Lógica de Dashboard (Asignación de Handlers) ---
+    window.reactivateExam = async (entregaExamenId) => {
+        if (!confirm("¿Estás seguro de que quieres reactivar este examen para el estudiante?")) return;
         try {
-            const result = await fetchApi('getTeacherSubmissions', {});
+            const result = await fetchApi('reactivateExam', { entregaExamenId });
             if (result.status === 'success') {
-                renderSubmissions(result.data);
+                alert('Examen reactivado.');
+                fetchTeacherActivity();
             } else { throw new Error(result.message); }
-        } catch (error) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="7" class="text-center p-4 text-red-500">Error: ${error.message}</td></tr>`;
-        }
-    }
-
-    function renderSubmissions(submissions) {
-        if (!submissions || submissions.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">No hay entregas.</td></tr>';
-            return;
-        }
-        submissionsTableBody.innerHTML = submissions.map(s => `
-            <tr class="border-b">
-                <td class="p-4">${s.alumnoNombre}</td>
-                <td class="p-4">${s.tareaTitulo}</td>
-                <td class="p-4">${s.fechaEntrega}</td>
-                <td class="p-4"><a href="${s.archivoUrl}" target="_blank" class="text-blue-500">Ver Archivo</a></td>
-                <td class="p-4">${s.calificacion || 'N/A'}</td>
-                <td class="p-4">${s.estado || 'Pendiente'}</td>
-                <td class="p-4"><button class="bg-blue-500 text-white px-2 py-1 rounded" onclick='openGradeModal(${JSON.stringify(s)})'>Calificar</button></td>
-            </tr>
-        `).join('');
-    }
+        } catch (error) { alert(`Error: ${error.message}`); }
+    };
 
     window.openGradeModal = (entrega) => {
         currentEditingEntregaId = entrega.entregaId;
@@ -126,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result.status === 'success') {
                 alert('Calificación guardada.');
                 gradeModal.classList.add('hidden');
-                fetchSubmissions();
+                fetchTeacherActivity();
             } else { throw new Error(result.message); }
         } catch (error) { alert(`Error: ${error.message}`); }
     });
@@ -210,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gradoAsignado: formData.get('gradoAsignado'),
             seccionAsignada: formData.get('seccionAsignada'),
             fechaLimite: formData.get('fechaLimite'),
+            tiempoLimite: formData.get('tiempoLimite'),
             preguntas: []
         };
 
@@ -258,6 +301,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Carga Inicial ---
-    fetchSubmissions();
+    fetchTeacherActivity();
     addQuestion();
 });
