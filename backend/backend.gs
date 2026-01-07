@@ -3,12 +3,23 @@ const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
 const DRIVE_FOLDER_ID = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB";
 
 const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-const usuariosSheet = ss.getSheetByName("Usuarios");
-const tareasSheet = ss.getSheetByName("Tareas");
-const entregasSheet = ss.getSheetByName("Entregas");
-const examenesSheet = ss.getSheetByName("Examenes");
-const preguntasSheet = ss.getSheetByName("PreguntasExamen");
-const entregasExamenSheet = ss.getSheetByName("EntregasExamen");
+
+// --- FUNCIÓN DE VERIFICACIÓN DE HOJAS ---
+function getSheetOrThrow(name) {
+  const sheet = ss.getSheetByName(name);
+  if (!sheet) {
+    throw new Error(`La hoja de cálculo con el nombre "${name}" no fue encontrada. Por favor, verifica que la hoja exista y que el nombre sea correcto.`);
+  }
+  return sheet;
+}
+
+// --- INICIALIZACIÓN DE HOJAS ---
+const usuariosSheet = getSheetOrThrow("Usuarios");
+const tareasSheet = getSheetOrThrow("Tareas");
+const entregasSheet = getSheetOrThrow("Entregas");
+const examenesSheet = getSheetOrThrow("Examenes");
+const preguntasSheet = getSheetOrThrow("PreguntasExamen");
+const entregasExamenSheet = getSheetOrThrow("EntregasExamen");
 
 // --- PUNTO DE ENTRADA PRINCIPAL ---
 function doPost(e) {
