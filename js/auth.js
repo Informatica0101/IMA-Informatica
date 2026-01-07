@@ -2,11 +2,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
 
-    async function fetchAuth(action, payload) {
-        const response = await fetch(BACKEND_URL, {
+    // Si el usuario ya está logueado, redirigir al dashboard correspondiente
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser) {
+        if (currentUser.rol === 'Profesor') {
+            window.location.href = 'teacher-dashboard.html';
+        } else {
+            window.location.href = 'student-dashboard.html';
+        }
+    }
+
+    // Helper para la API
+    async function fetchApi(service, action, payload) {
+        if (!SERVICE_URLS[service]) {
+            throw new Error(`URL para el servicio "${service}" no encontrada.`);
+        }
+        const response = await fetch(SERVICE_URLS[service], {
             method: 'POST',
             body: JSON.stringify({ action, payload }),
-            headers: { 'Content-Type': 'text/plain' }
+            // No es necesario 'Content-Type' aquí, Apps Script lo maneja.
         });
         return await response.json();
     }
@@ -14,11 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const email = e.target.email.value;
+            const password = e.target.password.value;
+
             try {
-                const result = await fetchAuth('loginUser', { email, password });
-                if (result.status === 'success') {
+                const result = await fetchApi('USER', 'loginUser', { email, password });
+
+                if (result.status === 'success' && result.data) {
                     localStorage.setItem('currentUser', JSON.stringify(result.data));
                     if (result.data.rol === 'Profesor') {
                         window.location.href = 'teacher-dashboard.html';
@@ -26,10 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.location.href = 'student-dashboard.html';
                     }
                 } else {
-                    throw new Error(result.message);
+                    alert(result.message || 'Error al iniciar sesión.');
                 }
             } catch (error) {
-                alert(`Error: ${error.message}`);
+                console.error('Error en el fetch:', error);
+                alert('Hubo un problema de conexión. Revisa la consola.');
             }
         });
     }
@@ -38,22 +55,25 @@ document.addEventListener('DOMContentLoaded', () => {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const payload = {
-                nombre: document.getElementById('nombre').value,
-                email: document.getElementById('email').value,
-                grado: document.getElementById('grado').value,
-                seccion: document.getElementById('seccion').value,
-                password: document.getElementById('password').value
+                nombre: e.target.nombre.value,
+                grado: e.target.grado.value,
+                seccion: e.target.seccion.value,
+                email: e.target.email.value,
+                password: e.target.password.value
             };
+
             try {
-                const result = await fetchAuth('registerUser', payload);
+                const result = await fetchApi('USER', 'registerUser', payload);
+
                 if (result.status === 'success') {
-                    alert('Registro exitoso. Ahora puedes iniciar sesión.');
+                    alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
                     window.location.href = 'login.html';
                 } else {
-                    throw new Error(result.message);
+                    alert(result.message || 'Error en el registro.');
                 }
             } catch (error) {
-                alert(`Error: ${error.message}`);
+                console.error('Error en el fetch:', error);
+                alert('Hubo un problema de conexión. Revisa la consola.');
             }
         });
     }

@@ -1,10 +1,24 @@
-// --- INSTRUCCIONES DE DESPLIEGUE ---
-// 1. Abre el archivo `backend.gs` en el editor de Google Apps Script.
-// 2. Haz clic en "Implementar" > "Nueva implementación".
-// 3. Selecciona "Aplicación web" como tipo.
-// 4. En "Quién tiene acceso", selecciona "Cualquier persona".
-// 5. Haz clic en "Implementar" y copia la URL de la aplicación web.
-// 6. Pega esa URL aquí para reemplazar el valor de `BACKEND_URL`.
-// ------------------------------------
+// --- INSTRUCCIONES DE DESPLIEGUE DE MICROSERVICIOS ---
+// 1. Para cada carpeta en el directorio `backend` (ej. `user-service`), crea un NUEVO proyecto de Google Apps Script.
+// 2. Copia el contenido del archivo `Code.gs` de esa carpeta en el proyecto de Apps Script.
+// 3. Haz clic en "Implementar" > "Nueva implementación".
+// 4. Selecciona "Aplicación web" como tipo, dale una descripción (ej. "User Service v1").
+// 5. En "Quién tiene acceso", selecciona "Cualquiera".
+// 6. Haz clic en "Implementar" y copia la URL de la aplicación web.
+// 7. Pega esa URL en el campo correspondiente de este objeto de configuración.
+// 8. Repite este proceso para CADA microservicio.
+// ----------------------------------------------------------
 
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzqCT3S3n7Fqyo1kYZzDR7ntdvEOJDFveRjwWE4FJycMGZphNlakMhHAcR9RRlY-ok/exec';
+const SERVICE_URLS = {
+  // Pega aquí la URL del despliegue del microservicio de usuarios.
+  USER: 'https://script.google.com/macros/s/AKfycbxEux-PV9kmEYUMuPSBY-93SazdMwSZevQs-jmj1ql7uoxgxJJ3QnPHEvyzxs0LNiuI/exec',
+
+  // Pega aquí la URL del despliegue del microservicio de tareas.
+  TASK: 'https://script.google.com/macros/s/AKfycbxfxoUvymSyK_Su79zfNEiFNFMKIHiYihFJmQC1hClsJxO-nB-aIj2D1Ipv2ItUjWY/exec',
+
+  // Pega aquí la URL del despliegue del microservicio de exámenes.
+  EXAM: 'https://script.google.com/macros/s/AKfycbyU4x35ctnYPp0URzLnUptYwxAtuoXvxarcDhtwk51kTmJ27_OLLSaC6OlOsX8QaC0/exec'
+};
+
+// --- URL del sitio para CORS (si es necesario ajustarlo en el backend) ---
+const FRONTEND_URL = 'https://informatica0101.github.io';
