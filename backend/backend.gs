@@ -21,7 +21,7 @@ const examenesSheet = getSheetOrThrow("Examenes");
 const preguntasSheet = getSheetOrThrow("PreguntasExamen");
 const entregasExamenSheet = getSheetOrThrow("EntregasExamen");
 
-// --- PUNTO DE ENTRADA PRINCIPAL ---
+// --- PUNTO DE ENTRADA PRINCIPAL (CON MANEJO DE CORS) ---
 function doPost(e) {
   try {
     const requestData = JSON.parse(e.postData.contents);
@@ -69,12 +69,22 @@ function doPost(e) {
     }
 
     return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.TEXT);
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader("Access-Control-Allow-Origin", "*");
 
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
-      .setMimeType(ContentService.MimeType.TEXT);
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader("Access-Control-Allow-Origin", "*");
   }
+}
+
+// --- FUNCIÓN PARA MANEJAR PREFLIGHT REQUESTS DE CORS ---
+function doOptions(e) {
+  return ContentService.createTextOutput()
+    .setHeader("Access-Control-Allow-Origin", "*")
+    .setHeader("Access-Control-Allow-Methods", "POST, OPTIONS")
+    .setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
 // --- FUNCIONES DE LÓGICA ---
