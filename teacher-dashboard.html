@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard del Profesor</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="bg-gray-100 flex flex-col min-h-screen">
 
@@ -50,6 +51,42 @@
             <h2 class="text-2xl font-bold mb-4">Crear Nueva Tarea</h2>
             <div class="bg-white p-8 rounded-lg shadow-md">
                 <form id="create-assignment-form">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="assignment-title" class="block font-medium mb-2">Título</label>
+                                <input type="text" id="assignment-title" class="w-full p-3 border rounded-lg" required>
+                            </div>
+                            <div>
+                                <label for="assignment-date" class="block font-medium mb-2">Fecha de Entrega</label>
+                                <input type="date" id="assignment-date" class="w-full p-3 border rounded-lg" required>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="assignment-description" class="block font-medium mb-2">Descripción</label>
+                                <textarea id="assignment-description" rows="4" class="w-full p-3 border rounded-lg" required></textarea>
+                            </div>
+                            <div>
+                                <label for="assignment-grade" class="block font-medium mb-2">Grado</label>
+                                <select id="assignment-grade" class="w-full p-3 border rounded-lg" required>
+                                    <option value="Décimo">Décimo</option>
+                                    <option value="Undécimo">Undécimo</option>
+                                    <option value="Duodécimo">Duodécimo</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="assignment-subject" class="block font-medium mb-2">Asignatura</label>
+                                <input type="text" id="assignment-subject" class="w-full p-3 border rounded-lg" required>
+                            </div>
+                             <div>
+                                <label for="assignment-parcial" class="block font-medium mb-2">Parcial</label>
+                                <select id="assignment-parcial" class="w-full p-3 border rounded-lg" required>
+                                    <option value="Primer Parcial">Primer Parcial</option>
+                                    <option value="Segundo Parcial">Segundo Parcial</option>
+                                    <option value="Tercer Parcial">Tercer Parcial</option>
+                                    <option value="Cuarto Parcial">Cuarto Parcial</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full mt-6 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">Crear Tarea</button>
                     </form>
             </div>
         </section>
@@ -58,6 +95,33 @@
             <h2 class="text-2xl font-bold mb-4">Crear Nuevo Examen</h2>
             <div class="bg-white p-8 rounded-lg shadow-md">
                 <form id="create-exam-form">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="exam-title" class="block font-medium mb-2">Título del Examen</label>
+                                <input type="text" id="exam-title" class="w-full p-3 border rounded-lg" required>
+                            </div>
+                             <div>
+                                <label for="exam-grade" class="block font-medium mb-2">Grado</label>
+                                <select id="exam-grade" name="exam-grade" class="w-full p-3 border rounded-lg" required>
+                                    <option value="Décimo">Décimo</option>
+                                    <option value="Undécimo">Undécimo</option>
+                                    <option value="Duodécimo">Duodécimo</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="exam-seccion" class="block font-medium mb-2">Sección</label>
+                                <input type="text" id="exam-seccion" class="w-full p-3 border rounded-lg">
+                            </div>
+                        </div>
+
+                        <div id="questions-container" class="mt-8 space-y-6">
+                            <!-- Las preguntas se agregarán dinámicamente aquí -->
+                        </div>
+
+                        <div class="flex justify-between items-center mt-6">
+                            <button type="button" id="add-question-btn" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600">Agregar Pregunta</button>
+                            <button type="submit" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700">Crear Examen</button>
+                        </div>
                     </form>
             </div>
         </section>
@@ -66,6 +130,7 @@
     <div id="footer-container"></div>
 
     <script src="js/config.js"></script>
+    <script src="js/menu-data.js"></script>
     <script src="js/includes.js"></script>
     <script src="js/api.js"></script>
     <script src="js/teacher.js"></script>

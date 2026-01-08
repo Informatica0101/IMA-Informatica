@@ -156,22 +156,127 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { alert(`Error: ${error.message}`); }
     });
 
-    // Add logic for createExamForm if it exists
-    if(createExamForm) {
-        createExamForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            // Logic to gather exam data, including questions
-            const payload = {}; // Placeholder
-            try {
-                const result = await fetchApi('EXAM', 'createExam', payload);
-                if (result.status === 'success') {
-                    alert('Examen creado.');
-                    e.target.reset();
-                    navDashboard.click();
-                } else { throw new Error(result.message); }
-            } catch (error) { alert(`Error: ${error.message}`); }
-        });
+    // --- Lógica para Crear Examen ---
+    const addQuestionBtn = document.getElementById('add-question-btn');
+    const questionsContainer = document.getElementById('questions-container');
+    let questionCounter = 0;
+
+    function addQuestion() {
+        questionCounter++;
+        const questionId = `question-${questionCounter}`;
+        const questionDiv = document.createElement('div');
+        questionDiv.classList.add('p-4', 'border', 'rounded-lg', 'space-y-4', 'bg-gray-50');
+        questionDiv.innerHTML = `
+            <div class="flex justify-between items-center">
+                <h4 class="text-lg font-semibold">Pregunta ${questionCounter}</h4>
+                <button type="button" class="text-red-500 hover:text-red-700 font-bold remove-question-btn">Eliminar</button>
+            </div>
+            <div>
+                <label for="${questionId}-text" class="block font-medium mb-1">Texto de la Pregunta</label>
+                <input type="text" id="${questionId}-text" name="${questionId}-text" class="w-full p-2 border rounded-md" required>
+            </div>
+            <div>
+                <label for="${questionId}-type" class="block font-medium mb-1">Tipo de Pregunta</label>
+                <select id="${questionId}-type" name="${questionId}-type" class="w-full p-2 border rounded-md question-type-select">
+                    <option value="opcion_multiple">Opción Múltiple</option>
+                    <option value="verdadero_falso">Verdadero/Falso</option>
+                    <option value="respuesta_breve">Respuesta Breve</option>
+                </select>
+            </div>
+            <div id="${questionId}-options-container">
+                <!-- Las opciones se agregarán aquí -->
+            </div>
+        `;
+        questionsContainer.appendChild(questionDiv);
+        updateQuestionOptions(questionId, 'opcion_multiple'); // Inicializar con opciones
     }
+
+    function updateQuestionOptions(questionId, type) {
+        const container = document.getElementById(`${questionId}-options-container`);
+        container.innerHTML = ''; // Limpiar opciones anteriores
+
+        if (type === 'opcion_multiple') {
+            container.innerHTML = `
+                <label class="block font-medium mb-1">Opciones de Respuesta</label>
+                <div class="space-y-2">
+                    <input type="text" name="${questionId}-option" class="w-full p-2 border rounded-md" placeholder="Opción 1" required>
+                    <input type="text" name="${questionId}-option" class="w-full p-2 border rounded-md" placeholder="Opción 2" required>
+                    <input type="text" name="${questionId}-option" class="w-full p-2 border rounded-md" placeholder="Opción 3">
+                    <input type="text" name="${questionId}-option" class="w-full p-2 border rounded-md" placeholder="Opción 4">
+                </div>
+                <label for="${questionId}-correct" class="block font-medium mt-2 mb-1">Respuesta Correcta</label>
+                <input type="text" id="${questionId}-correct" name="${questionId}-correct" class="w-full p-2 border rounded-md" placeholder="Escriba el texto exacto de la opción correcta" required>
+            `;
+        } else if (type === 'verdadero_falso') {
+            container.innerHTML = `
+                <label for="${questionId}-correct" class="block font-medium mb-1">Respuesta Correcta</label>
+                <select id="${questionId}-correct" name="${questionId}-correct" class="w-full p-2 border rounded-md">
+                    <option value="Verdadero">Verdadero</option>
+                    <option value="Falso">Falso</option>
+                </select>
+            `;
+        } else if (type === 'respuesta_breve') {
+            container.innerHTML = `
+                <label for="${questionId}-correct" class="block font-medium mb-1">Respuesta Correcta</label>
+                <input type="text" id="${questionId}-correct" name="${questionId}-correct" class="w-full p-2 border rounded-md" required>
+            `;
+        }
+    }
+
+    questionsContainer.addEventListener('change', e => {
+        if (e.target.classList.contains('question-type-select')) {
+            const questionId = e.target.id.replace('-type', '');
+            updateQuestionOptions(questionId, e.target.value);
+        }
+    });
+
+    questionsContainer.addEventListener('click', e => {
+        if (e.target.classList.contains('remove-question-btn')) {
+            e.target.closest('.p-4.border.rounded-lg').remove();
+        }
+    });
+
+    addQuestionBtn.addEventListener('click', addQuestion);
+
+    createExamForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const questions = [];
+
+        for (let i = 1; i <= questionCounter; i++) {
+            const questionId = `question-${i}`;
+            if (document.getElementById(questionId + '-text')) {
+                questions.push({
+                    texto: formData.get(`${questionId}-text`),
+                    tipo: formData.get(`${questionId}-type`),
+                    opciones: formData.getAll(`${questionId}-option`).filter(opt => opt),
+                    respuestaCorrecta: formData.get(`${questionId}-correct`)
+                });
+            }
+        }
+
+        const payload = {
+            titulo: formData.get('exam-title'),
+            grado: formData.get('exam-grade'),
+            seccion: formData.get('exam-seccion'),
+            preguntas: questions
+        };
+
+        try {
+            const result = await fetchApi('EXAM', 'createExam', payload);
+            if (result.status === 'success') {
+                alert('Examen creado con éxito.');
+                e.target.reset();
+                questionsContainer.innerHTML = '';
+                questionCounter = 0;
+                navDashboard.click();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            alert(`Error al crear el examen: ${error.message}`);
+        }
+    });
 
     // Carga Inicial
     fetchTeacherActivity();
