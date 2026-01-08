@@ -1,15 +1,6 @@
 /**
- * URLs de los microservicios de Google Apps Script.
- * Estas son las URLs de despliegue reales obtenidas de js/config.js.
- */
-const SERVICE_URLS = {
-  USER: 'https://script.google.com/macros/s/AKfycbxm6hfPpWNDCzVgfl-rk4VUl1wsNJ6lTtEPFAGGZMquFv9I9buV60mH8OgPyb0eTR1U/exec',
-  TASK: 'https://script.google.com/macros/s/AKfycbzqQDzogIwMMZxMSRGd-OKTUG16Um6xlFNz5S4yA2yrHitdra708Op5-_SyGs33TgmO/exec',
-  EXAM: 'https://script.google.com/macros/s/AKfycbzz04XLSkhzhUboxpHYjaSP8B8jevpePbkW7UD7PUjWsRlOmKaQK0xEekVaBGNSW0m5/exec'
-};
-
-/**
  * Helper unificado para realizar llamadas a los microservicios.
+ * Utiliza la constante SERVICE_URLS definida en js/config.js.
  * Maneja correctamente los headers y la respuesta para evitar errores de CORS
  * con Google Apps Script.
  * @param {string} service - El nombre del servicio (ej. 'USER', 'TASK', 'EXAM').
