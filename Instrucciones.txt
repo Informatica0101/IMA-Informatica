@@ -363,6 +363,18 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**Archivo: js/teacher.js**
+
+*   **Componente: Creación de Exámenes**
+    *   **Problema:** El botón "Añadir Pregunta" no tenía ninguna acción asignada.
+    *   **Descripción:** Se implementó un `addEventListener` para el botón `add-question-btn` que genera y añade dinámicamente el HTML para una nueva pregunta en el `questions-container`.
+    *   **Referencia:** ChangesLogs.txt, Archivo: js/teacher.js, Línea(s): 158-241
+
+*   **Componente: Creación de Exámenes**
+    *   **Problema:** La función de guardar el examen enviaba un payload vacío, causando un error `forEach` en el backend.
+    *   **Descripción:** Se modificó el `addEventListener` del evento `submit` del formulario `create-exam-form` para que recolecte todos los datos del examen y de las preguntas añadidas dinámicamente, construyendo el objeto `payload` correcto antes de enviarlo a la API.
+    *   **Referencia:** ChangesLogs.txt, Archivo: js/teacher.js, Línea(s): 243-297
+
 En este bloque se agregarán las tareas realizadas cuyo
 resultado aún no ha sido validado por el PM.
 
