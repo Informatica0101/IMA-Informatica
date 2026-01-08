@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos de JavaScript</title>
+    <!-- CDN de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos base para un diseño consistente */
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow-x: hidden; /* Evita el scroll horizontal */
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            /* Flexbox para alinear el contenido principal */
+            justify-content: space-between;
+        }
+
+        /* Contenedor principal de la presentación */
+        #presentation-container {
+            width: 100%;
+            height: calc(100vh - 8rem); /* Altura dinámica para dejar espacio al header y footer */
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            max-width: 100vw;
+        }
+
+        /* Estilo para cada diapositiva */
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 2rem; /* Reduce el padding para móviles */
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            -ms-overflow-style: none; /* Oculta la barra de scroll en IE y Edge */
+            scrollbar-width: none; /* Oculta la barra de scroll en Firefox */
+            overflow-y: auto; /* Permite el scroll vertical en diapositivas largas */
+        }
+        .slide::-webkit-scrollbar {
+            display: none; /* Oculta la barra de scroll en Chrome, Safari y Opera */
+        }
+
+        /* Diapositiva activa con animación */
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation-name: fadeIn;
+            animation-duration: 0.8s;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Ajustes de tipografía para diferentes tamaños de pantalla */
+        @media (max-width: 768px) {
+            .slide h2, .slide h3 {
+                font-size: 1.5rem; /* Tamaño de fuente más pequeño para títulos */
+            }
+            .slide p, .slide li {
+                font-size: 1rem; /* Tamaño de fuente más pequeño para texto */
+            }
+            .nav-button {
+                padding: 0.5rem 1rem; /* Reduce el tamaño del botón */
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Estilo para los botones del cuestionario */
+        .quiz-option-button {
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .quiz-option-button.correct {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .quiz-option-button.incorrect {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header de la página -->
+    <header id="page-header" class="w-full bg-white p-4 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <!-- Reducción del tamaño del logo usando clases responsivas de Tailwind -->
+            <img src="https://azghell.github.io/IMA-Informatica/imagenes/logo.png" alt="Logo de la institución" class="w-24 sm:w-32 h-auto">
+            <h1 class="text-lg sm:text-xl font-bold text-gray-800 mt-2 sm:mt-0">Eventos de JavaScript</h1>
+        </div>
+        <nav class="mt-4 sm:mt-0">
+            <ul class="flex space-x-2 sm:space-x-4">
+                <li><a href="https://azghell.github.io/IMA-Informatica" class="text-gray-600 hover:text-blue-500 transition-colors text-sm sm:text-base">Inicio</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors text-sm sm:text-base">Acerca de</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors text-sm sm:text-base">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenido principal de la presentación -->
+    <main class="flex-grow flex justify-center items-center p-4">
+        <!-- Contenedor de las diapositivas -->
+        <div id="presentation-container" class="relative">
+
+            <!-- Diapositiva 1: Portada -->
+            <div id="slide-1" class="slide active">
+                <img src="https://azghell.github.io/IMA-Informatica/imagenes/logo.png" alt="Logo del instituto" class="w-48 sm:w-64 md:w-80 h-auto mb-4 sm:mb-8">
+                <h2 class="text-xl sm:text-2xl mb-2 sm:mb-4 text-blue-600">Eventos de JavaScript</h2>
+                <p class="text-sm sm:text-base text-gray-600">Diseño Web II</p>
+                <div class="mt-4 sm:mt-8 text-xs sm:text-sm text-gray-500">
+                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                    <p>Fecha: Domingo 28 de septiembre</p>
+                    <p>Grado: Duodécimo Sección "A"</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 2: ¿Qué son los Eventos? -->
+            <div id="slide-2" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¿Qué son los Eventos de JavaScript?</h3>
+                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
+                    En JavaScript, un evento es una acción o suceso que ocurre en el sistema y que el navegador detecta. Estos eventos pueden ser provocados por el usuario o por el propio navegador, como un clic de ratón, la carga de una página o el envío de un formulario.
+                </p>
+            </div>
+
+            <!-- Diapositiva 3: Manejadores de Eventos -->
+            <div id="slide-3" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Manejadores de Eventos (Event Handlers)</h3>
+                <ul class="mt-2 sm:mt-4 text-left text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-2 sm:space-y-4">
+                    <li><strong>Atributos HTML:</strong> Anticuado. `onclick="myFunction()"`. Mezcla la lógica con la estructura.</li>
+                    <li><strong>Propiedad del DOM:</strong> Asigna una función a la propiedad del evento. `element.onclick = myFunction;`. Permite un solo manejador por evento.</li>
+                    <li><strong>Método `addEventListener()`:</strong> La forma moderna y recomendada. Permite asignar múltiples funciones a un mismo evento. `element.addEventListener('click', myFunction);`.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 4: Tipos de Eventos Comunes -->
+            <div id="slide-4" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Tipos de Eventos Comunes</h3>
+                <ul class="mt-2 sm:mt-4 text-left text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-2 sm:space-y-4">
+                    <li><strong>Eventos de Ratón:</strong> `click`, `mouseover`, `mouseout`, `mousedown`, `mouseup`.</li>
+                    <li><strong>Eventos de Teclado:</strong> `keydown`, `keyup`, `keypress`.</li>
+                    <li><strong>Eventos de Formulario:</strong> `submit`, `change`, `focus`, `blur`.</li>
+                    <li><strong>Eventos de Carga:</strong> `load`, `unload`.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 5: El Objeto Evento -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">El Objeto Evento</h3>
+                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
+                    Cuando un evento ocurre, el navegador crea un objeto `Event` que contiene información detallada sobre el evento, como el tipo de evento, el elemento que lo disparó, las coordenadas del ratón, etc. Este objeto se pasa como argumento a la función manejadora.
+                </p>
+            </div>
+
+            <!-- Diapositiva 6: Bubbling y Capturing -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Bubbling y Capturing (Propagación de Eventos)</h3>
+                <div class="flex flex-col sm:flex-row justify-center items-center w-full h-1/2 space-y-4 sm:space-y-0 sm:space-x-8">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-lg sm:text-2xl mb-2 text-blue-700">Bubbling (Burbujeo)</h4>
+                        <p class="text-sm sm:text-base">El evento se propaga desde el elemento más interno hasta el más externo. Es el comportamiento por defecto.</p>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-lg sm:text-2xl mb-2 text-blue-700">Capturing (Captura)</h4>
+                        <p class="text-sm sm:text-base">El evento se propaga desde el elemento más externo hasta el más interno. Menos común, se habilita con `true` en `addEventListener()`.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Detener la Propagación -->
+            <div id="slide-7" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Detener la Propagación y el Comportamiento por Defecto</h3>
+                <ul class="mt-2 sm:mt-4 text-left text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-2 sm:space-y-4">
+                    <li><strong>`event.stopPropagation()`:</strong> Detiene la propagación del evento, impidiendo que el evento `bubbling` o `capturing` afecte a otros elementos.</li>
+                    <li><strong>`event.preventDefault()`:</strong> Evita el comportamiento predeterminado del navegador, como el envío de un formulario o la navegación de un enlace.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 8: Delegación de Eventos -->
+            <div id="slide-8" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Delegación de Eventos</h3>
+                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
+                    La delegación de eventos es una técnica para manejar eventos en un contenedor padre en lugar de en cada elemento hijo individual. Es muy eficiente, especialmente para listas grandes o elementos creados dinámicamente.
+                </p>
+            </div>
+
+            <!-- Diapositiva 9: Ejemplo: Evento 'click' -->
+            <div id="slide-9" class="slide text-left justify-center p-8 md:p-12 overflow-y-auto">
+                <h3 class="text-2xl sm:text-3xl font-bold mb-6 text-blue-600 w-full text-center">Ejemplo: Evento `click`</h3>
+                <div class="w-full max-w-3xl space-y-8">
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-inner">
+                        <p class="text-gray-600 mb-2 text-sm">Escucha un clic en un botón y muestra un mensaje.</p>
+                        <pre class="bg-gray-800 text-white p-3 rounded-lg text-xs md:text-sm overflow-x-auto"><code>&lt;button id="myButton" class="bg-blue-500 text-white px-4 py-2 rounded-lg"&gt;Haz Clic Aquí&lt;/button&gt;
+
+&lt;script&gt;
+  // Selecciona el botón por su ID
+  const myButton = document.getElementById('myButton');
+
+  // Añade un 'event listener' para el evento 'click'
+  myButton.addEventListener('click', function() {
+    alert('¡El botón ha sido clicado!');
+  });
+&lt;/script&gt;</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Ejemplo: Eventos de Ratón -->
+            <div id="slide-10" class="slide text-left justify-center p-8 md:p-12 overflow-y-auto">
+                <h3 class="text-2xl sm:text-3xl font-bold mb-6 text-blue-600 w-full text-center">Ejemplo: Eventos de Ratón (`mouseover` y `mouseout`)</h3>
+                <div class="w-full max-w-3xl space-y-8">
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-inner">
+                        <p class="text-gray-600 mb-2 text-sm">Cambia el color de un elemento cuando el cursor entra y sale de él.</p>
+                        <pre class="bg-gray-800 text-white p-3 rounded-lg text-xs md:text-sm overflow-x-auto"><code>&lt;div id="hoverDiv" class="w-48 h-24 bg-blue-200 rounded-lg flex items-center justify-center transition-colors duration-200"&gt;
+  Pasa el mouse aquí
+&lt;/div&gt;
+
+&lt;script&gt;
+  const hoverDiv = document.getElementById('hoverDiv');
+
+  hoverDiv.addEventListener('mouseover', function() {
+    hoverDiv.style.backgroundColor = '#3b82f6'; // Cambia a un azul más oscuro
+  });
+
+  hoverDiv.addEventListener('mouseout', function() {
+    hoverDiv.style.backgroundColor = '#93c5fd'; // Vuelve al color original
+  });
+&lt;/script&gt;</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 11: Ejemplo: Evento de Formulario ('submit') -->
+            <div id="slide-11" class="slide text-left justify-center p-8 md:p-12 overflow-y-auto">
+                <h3 class="text-2xl sm:text-3xl font-bold mb-6 text-blue-600 w-full text-center">Ejemplo: Evento de Formulario (`submit`)</h3>
+                <div class="w-full max-w-3xl space-y-8">
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-inner">
+                        <p class="text-gray-600 mb-2 text-sm">Maneja el envío de un formulario sin recargar la página.</p>
+                        <pre class="bg-gray-800 text-white p-3 rounded-lg text-xs md:text-sm overflow-x-auto"><code>&lt;form id="myForm" class="flex flex-col space-y-2"&gt;
+  &lt;input type="text" placeholder="Escribe algo" class="border p-2 rounded"&gt;
+  &lt;button type="submit" class="bg-green-500 text-white px-4 py-2 rounded"&gt;Enviar&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+  const myForm = document.getElementById('myForm');
+
+  myForm.addEventListener('submit', function(event) {
+    // Evita que el formulario se envíe y la página se recargue
+    event.preventDefault();
+
+    alert('El formulario ha sido enviado (sin recargar la página)');
+  });
+&lt;/script&gt;</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Cuestionario -->
+            <div id="slide-12" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¡Pon a prueba tus conocimientos!</h3>
+                <div id="quiz-container" class="bg-gray-100 p-4 sm:p-8 rounded-lg shadow-md max-w-3xl w-full text-center">
+                    <div id="quiz-question" class="text-base sm:text-2xl font-semibold mb-2 sm:mb-6 text-gray-800"></div>
+                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-4"></div>
+                    <div id="quiz-feedback" class="mt-4 sm:mt-6 text-sm sm:text-lg font-bold"></div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 13: Tarea -->
+            <div id="slide-13" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Asignación de Tareas</h3>
+                <div class="bg-gray-100 p-4 sm:p-8 rounded-lg shadow-inner max-w-3xl text-left">
+                    <p class="text-base sm:text-lg text-gray-700 mb-2 sm:mb-4 font-bold">Tarea:</p>
+                    <p class="text-sm sm:text-base text-gray-700 mb-2 sm:mb-4">
+                        Crear un archivo HTML con una tabla comparativa de los diferentes eventos en JavaScript, incluyendo al menos 5 eventos con su descripción y un ejemplo de uso en código.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 14: Fin de la Presentación -->
+            <div id="slide-14" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¡Gracias!</h3>
+                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
+                    Si tienen alguna duda, no duden en preguntar.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Botones de navegación -->
+        <div class="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-4 z-20">
+            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 text-sm sm:text-base">Anterior</button>
+            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 text-sm sm:text-base">Siguiente</button>
+        </div>
+        <div id="slide-counter" class="absolute bottom-4 sm:bottom-8 right-4 sm:right-8 font-semibold text-gray-400 z-10 text-xs sm:text-base">1 / 14</div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs sm:text-sm p-2">
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-2">
+            <img src="https://azghell.github.io/IMA-Informatica/imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-16 sm:w-20 h-auto">
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts para la navegación y la lógica del cuestionario -->
+    <script>
+        // Manejador de eventos global para capturar rechazos de promesas no manejados
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            event.preventDefault();
+        });
+
+        const slides = document.querySelectorAll('.slide');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const header = document.getElementById('page-header');
+        const footer = document.getElementById('page-footer');
+        let currentSlideIndex = 0;
+        let isTransitioning = false;
+
+        // Funcionalidad del cuestionario
+        const quizQuestions = [
+            {
+                question: "¿Qué es un evento en JavaScript?",
+                options: ["Una función", "Una acción o suceso que el navegador detecta", "Un tipo de variable", "Una estructura de control"],
+                correctAnswer: "Una acción o suceso que el navegador detecta"
+            },
+            {
+                question: "¿Cuál es el método recomendado para manejar eventos en JavaScript?",
+                options: ["`onclick`", "`element.addEventListener()`", "`element.onEvent =`", "`eventListener()`"],
+                correctAnswer: "`element.addEventListener()`"
+            },
+            {
+                question: "El evento `click` pertenece a la categoría de eventos de:",
+                options: ["Teclado", "Formulario", "Carga", "Ratón"],
+                correctAnswer: "Ratón"
+            },
+            {
+                question: "¿Qué tipo de evento se dispara cuando el usuario presiona una tecla?",
+                options: ["`submit`", "`mouseover`", "`keydown`", "`load`"],
+                correctAnswer: "`keydown`"
+            },
+            {
+                question: "¿Qué método se utiliza para evitar el comportamiento predeterminado del navegador?",
+                options: ["`event.stopPropagation()`", "`event.preventDefault()`", "`event.stop()`", "`event.cancel()`"],
+                correctAnswer: "`event.preventDefault()`"
+            },
+            {
+                question: "¿Qué es la propagación de eventos 'bubbling'?",
+                options: ["El evento se detiene en el elemento actual", "El evento viaja desde el elemento más externo al más interno", "El evento se propaga desde el elemento más interno hasta el más externo", "El evento se dispara solo una vez"],
+                correctAnswer: "El evento se propaga desde el elemento más interno hasta el más externo"
+            },
+            {
+                question: "Para que un evento se propague en fase de 'capturing', el tercer argumento en `addEventListener()` debe ser:",
+                options: ["`false`", "`null`", "Un número", "`true`"],
+                correctAnswer: "`true`"
+            },
+            {
+                question: "¿Qué propiedad del objeto evento te permite saber qué elemento lo disparó?",
+                options: ["`event.target`", "`event.type`", "`event.which`", "`event.bubbles`"],
+                correctAnswer: "`event.target`"
+            },
+            {
+                question: "¿Qué es la delegación de eventos?",
+                options: ["Asignar un evento a todos los elementos en la página", "Manejar eventos en un contenedor padre en lugar de cada elemento hijo", "Crear eventos personalizados", "Detener todos los eventos"],
+                correctAnswer: "Manejar eventos en un contenedor padre en lugar de cada elemento hijo"
+            },
+            {
+                question: "¿Qué evento de formulario se dispara cuando un usuario selecciona una opción en un `<select>` o cambia el valor de un `<input>`?",
+                options: ["`submit`", "`click`", "`change`", "`focus`"],
+                correctAnswer: "`change`"
+            }
+        ];
+        let currentQuizQuestionIndex = 0;
+
+        function updateQuizDisplay() {
+            const quizQuestionElement = document.getElementById('quiz-question');
+            const quizOptionsElement = document.getElementById('quiz-options');
+            const quizFeedbackElement = document.getElementById('quiz-feedback');
+
+            if (currentQuizQuestionIndex >= quizQuestions.length) {
+                quizQuestionElement.textContent = "¡Cuestionario completado!";
+                quizOptionsElement.innerHTML = '';
+                quizFeedbackElement.textContent = '';
+                return;
+            }
+
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            quizQuestionElement.textContent = currentQuestion.question;
+            quizOptionsElement.innerHTML = '';
+            quizFeedbackElement.textContent = '';
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = "quiz-option-button w-full px-6 py-3 rounded-xl border border-blue-400 bg-blue-50 text-blue-700 font-semibold transition-colors duration-200 hover:bg-blue-100";
+                button.onclick = () => checkAnswer(option);
+                quizOptionsElement.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            const quizFeedback = document.getElementById('quiz-feedback');
+            const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
+            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+
+            buttons.forEach(button => {
+                button.disabled = true;
+                if (button.textContent === currentQuestion.correctAnswer) {
+                    button.classList.add('correct');
+                } else if (button.textContent === selectedOption) {
+                    button.classList.add('incorrect');
+                }
+            });
+
+            if (isCorrect) {
+                quizFeedback.textContent = '¡Correcto!';
+                quizFeedback.classList.remove('text-red-500');
+                quizFeedback.classList.add('text-green-500');
+            } else {
+                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.correctAnswer;
+                quizFeedback.classList.remove('text-green-500');
+                quizFeedback.classList.add('text-red-500');
+            }
+
+            setTimeout(() => {
+                currentQuizQuestionIndex++;
+                updateQuizDisplay();
+            }, 3000); // Avanza después de 3 segundos
+        }
+
+        // --- Funcionalidad de la Presentación ---
+        function updateSlideCounter() {
+            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+        }
+
+        function updateNavigationButtons() {
+            prevButton.disabled = currentSlideIndex === 0;
+            nextButton.disabled = currentSlideIndex === slides.length - 1;
+        }
+
+        function showSlide(index) {
+            if (isTransitioning || index < 0 || index >= slides.length) {
+                return;
+            }
+
+            isTransitioning = true;
+            slides.forEach((slide) => {
+                slide.classList.remove('active');
+                slide.style.display = 'none';
+            });
+
+            currentSlideIndex = index;
+
+            // Llama a la función del cuestionario si la diapositiva actual es la del cuestionario
+            if (currentSlideIndex === 11) {
+                currentQuizQuestionIndex = 0; // Reinicia el cuestionario al volver a entrar
+                updateQuizDisplay();
+            }
+
+            const activeSlide = slides[currentSlideIndex];
+            activeSlide.style.display = 'flex';
+            setTimeout(() => {
+                activeSlide.classList.add('active');
+                updateSlideCounter();
+                updateNavigationButtons();
+                isTransitioning = false;
+            }, 10);
+        }
+
+        nextButton.addEventListener('click', () => {
+            showSlide(currentSlideIndex + 1);
+        });
+
+        prevButton.addEventListener('click', () => {
+            showSlide(currentSlideIndex - 1);
+        });
+
+        // Navegación con las teclas de flecha
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                showSlide(currentSlideIndex + 1);
+            } else if (event.key === 'ArrowLeft') {
+                showSlide(currentSlideIndex - 1);
+            }
+        });
+
+        // Ocultar el encabezado y pie de página al presionar F11 (pantalla completa)
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'F11') {
+                if (!document.fullscreenElement) {
+                    header.style.display = 'none';
+                    footer.style.display = 'none';
+                }
+            }
+        });
+
+        // Mostrar el encabezado y pie de página al salir de pantalla completa
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+        function handleFullscreenChange() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                header.style.display = 'flex';
+                footer.style.display = 'flex';
+            }
+        }
+
+        // --- Inicialización en DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentYearSpan = document.getElementById('current-year');
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>

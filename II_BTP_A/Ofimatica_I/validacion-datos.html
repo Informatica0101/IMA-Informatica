@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validación y Filtrado de Datos</title>
+    <!-- CDN de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos base para un diseño consistente */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Ajuste global para reducir el tamaño base en un 10%. (1rem = 0.9rem) */
+        html {
+            font-size: 90%;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            justify-content: space-between;
+        }
+
+        #presentation-container {
+            width: 100%;
+            height: calc(100vh - 7rem);
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            max-width: 100vw;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 1.8rem;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            overflow-y: auto;
+        }
+        .slide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation-name: fadeIn;
+            animation-duration: 0.8s;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .slide h2, .slide h3 {
+                font-size: 1.4rem;
+            }
+            .slide p, .slide li {
+                font-size: 0.9rem;
+            }
+            .nav-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            /* Ajuste para que la ventana de validación sea más pequeña en móvil */
+            .excel-window {
+                max-width: 95%;
+                transform: scale(0.9);
+                transform-origin: top center;
+            }
+            #content-configuracion {
+                padding: 0.5rem;
+            }
+            /* Ajuste de tabla en Diapositiva 10 */
+            .example-table th, .example-table td {
+                padding: 0.25rem 0.5rem !important;
+                font-size: 0.7rem !important;
+            }
+            .example-table {
+                max-width: 100%;
+            }
+        }
+
+        /* Estilos del Cuestionario */
+        .quiz-option-button {
+            transition: background-color 0.3s, transform 0.2s;
+            text-align: left;
+            padding-left: 1.5rem;
+        }
+
+        .quiz-option-button.correct {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .quiz-option-button.incorrect {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        /* LÓGICA DE SIMULACIÓN DE VALIDACIÓN (Slide 5) */
+        #validation-simulation {
+            position: relative;
+            width: 250px;
+            height: 50px;
+            margin: 2rem auto 0;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: #fff;
+        }
+        #dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: -1px;
+            width: calc(100% + 2px);
+            background-color: #fff;
+            border: 1px solid #06b6d4; /* Cian */
+            border-top: none;
+            border-radius: 0 0 0.5rem 0.5rem;
+            z-index: 10;
+            display: none;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+        }
+        #dropdown-list button {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            text-align: left;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #dropdown-list button:hover {
+            background-color: #e0f7fa; /* Cian muy claro */
+        }
+
+        /* ESTILOS DE LA VENTANA DE EXCEL (DIAPOSITIVA 4) */
+        .excel-window {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 0 15px 0 rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #c8c8c8;
+        }
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            margin-right: 2px;
+            transition: all 0.1s ease-in-out;
+            color: #333;
+            border: 1px solid transparent;
+            border-bottom: none;
+            background-color: #e0e0e0;
+        }
+        .tab.active {
+            background-color: #ffffff;
+            font-weight: 600;
+            border-color: #c8c8c8;
+            border-bottom-color: #ffffff;
+            margin-bottom: -1px;
+        }
+        .excel-input {
+            border: 1px solid #ababab;
+            transition: border-color 0.15s;
+        }
+        .excel-input:focus {
+            border-color: #0078d4;
+            box-shadow: 0 0 0 1px #0078d4;
+            outline: none;
+        }
+        .excel-table th {
+            background-color: #f0f0f0;
+            border: 1px solid #d4d4d4;
+            padding: 4px 8px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: #333;
+            text-align: center;
+        }
+        .excel-table td {
+            border: 1px solid #e5e5e5;
+            padding: 4px 8px;
+            font-size: 0.875rem;
+            color: #444;
+        }
+        .excel-table-container {
+            border: 1px solid #c8c8c8;
+            border-top: none;
+            max-height: 120px; /* Reducido para la diapositiva */
+            overflow-y: auto;
+            background-color: #ffffff;
+        }
+        .excel-button-sim {
+            background-color: #0078d4;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: background-color 0.15s;
+        }
+        .excel-button-sim:hover {
+            background-color: #005a9e;
+        }
+
+        /* ESTILOS DE LA TABLA DE EJEMPLO (DIAPOSITIVA 10) */
+        .example-table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        .example-table th {
+            background-color: #06b6d4; /* Azul Cian para encabezados */
+            color: white;
+            padding: 8px 12px;
+            text-align: center;
+            border: 1px solid #0891b2;
+            font-size: 0.8rem;
+            position: relative;
+        }
+        .example-table td {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            padding: 8px 12px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        .example-table tr.filtered {
+            display: none; /* Fila oculta por el filtro */
+        }
+        .filter-icon {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .filtered-header {
+            background-color: #0d9488 !important; /* Verde oscuro para indicar filtro activo */
+        }
+        .filtered-icon {
+            color: #f0fdfa;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header de la página -->
+    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
+            <!-- Logo con URL -->
+             <a href="https://azghell.github.io/IMA-Informatica/">
+            <img src="https://azghell.github.io/IMA-Informatica/imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
+            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Validación y Filtrado de Datos</h1>
+        </div>
+        <nav class="mt-3 sm:mt-0">
+            <ul class="flex space-x-2 sm:space-x-3">
+                <li><a href="#" class="text-gray-600 hover:text-cyan-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-cyan-500 transition-colors text-xs sm:text-sm">Acerca de</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-cyan-500 transition-colors text-xs sm:text-sm">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenido principal de la presentación -->
+    <main class="flex-grow flex justify-center items-center p-3">
+        <div id="presentation-container" class="relative">
+
+            <!-- Diapositiva 1: Portada -->
+            <div id="slide-1" class="slide active">
+                <!-- Logo con URL -->
+                <img src="https://azghell.github.io/IMA-Informatica/imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-3 sm:mb-7">
+                <h2 class="text-lg sm:text-xl mb-1 sm:mb-3 text-cyan-600">Herramientas de <strong>Validación y Filtrado de Datos</strong></h2>
+                <p class="text-xs sm:text-sm text-gray-600">Ofimática I</p>
+                <div class="mt-3 sm:mt-7 text-xs text-gray-500">
+                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                    <p>Fecha: Domingo 05 de octubre del 2025</p>
+                    <p>Grado: Undécimo de Informática</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 2: Introducción a la Calidad de Datos -->
+            <div id="slide-2" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">La Importancia de la <strong>Calidad de Datos</strong></h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    En una hoja de cálculo, la toma de decisiones depende de la <strong>exactitud</strong> de los datos. Las herramientas de validación y filtrado nos ayudan a mantener la <strong>integridad y consistencia</strong> de la información.
+                </p>
+                <!-- Espacio para Imagen de Calidad de Datos (Mantenemos placeholder local para estas imágenes) -->
+                <div class="mt-5 max-w-3xl w-full">
+                    <img src="imagenes/fujo_datos.jpg" alt="Diagrama de flujo de datos y decisiones" class="w-full h-48 object-contain rounded-md mx-auto" onerror="this.parentElement.textContent='ESPACIO PARA IMAGEN: Flujo de Datos y Decisiones (calidad_datos.png)'; this.remove();">
+                </div>
+                <div class="mt-5 text-sm sm:text-base bg-indigo-50 p-3 rounded-lg shadow-md max-w-3xl">
+                    <strong>Recuerde:</strong> Datos limpios equivalen a análisis confiables y mejores decisiones.
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: Integridad y Consistencia -->
+            <div id="slide-3" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Fundamentos: <strong>Integridad y Consistencia</strong></h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-7">
+                    Estas dos cualidades son el pilar de cualquier base de datos bien estructurada.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-8 mt-5 w-full max-w-3xl">
+                    <div class="bg-indigo-50 p-4 rounded-lg shadow-xl flex-1 border-b-4 border-indigo-500">
+                        <p class="font-bold text-indigo-800 text-lg mb-1">Integridad</p>
+                        <p class="text-sm text-gray-700">Asegurar que los datos sean <strong>correctos</strong>, <strong>completos</strong> y que no se hayan modificado o dañado accidentalmente. La Validación ayuda a garantizarla.</p>
+                    </div>
+                    <div class="bg-teal-50 p-4 rounded-lg shadow-xl flex-1 border-b-4 border-teal-500">
+                        <p class="font-bold text-teal-800 text-lg mb-1">Consistencia</p>
+                        <p class="text-sm text-gray-700">Mantener <strong>uniformidad</strong> en el formato y tipo de datos. Por ejemplo, si una columna es de fechas, todas deben tener el mismo formato (DD/MM/AAAA).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: Concepto de Validación de Datos (CON LA VENTANA INTERACTIVA) -->
+            <div id="slide-4" class="slide overflow-y-auto">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">1. Herramienta de <strong>Validación de Datos</strong></h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
+                    La Validación de Datos es una función que permite <strong>restringir</strong> el tipo de información o los valores que los usuarios pueden introducir en una celda.
+                </p>
+
+                <!-- VENTANA DE SIMULACIÓN DE VALIDACIÓN (Estilo Excel) -->
+                <div id="validation-simulation-container" class="w-full flex justify-center mt-2">
+                    <div id="validation-window" class="excel-window w-full max-w-md bg-white">
+
+                        <!-- Barra de Título (Similar a Office) -->
+                        <div class="bg-gray-200 p-2 border-b border-gray-300 flex justify-between items-center">
+                            <h2 class="text-sm font-semibold text-gray-700">Validación de datos</h2>
+                            <button onclick="slide4CloseModal()" class="text-gray-500 hover:text-gray-900 text-xl leading-none px-2 rounded-sm transition duration-100" aria-label="Cerrar">×</button>
+                        </div>
+
+                        <!-- Pestañas de Navegación -->
+                        <div class="flex px-4 pt-3">
+                            <div id="slide4-tab-configuracion" class="tab active" data-tab="configuracion">Configuración</div>
+                            <div id="slide4-tab-mensaje-entrada" class="tab" data-tab="mensaje-entrada">Mensaje de entrada</div>
+                            <div id="slide4-tab-error" class="tab" data-tab="alerta-error">Alerta de error</div>
+                        </div>
+
+                        <!-- Contenido de las Pestañas -->
+                        <div id="slide4-tab-content-container" class="p-4 pt-0 border-t border-gray-300">
+                            <!-- Contenido de Configuración -->
+                            <div id="slide4-content-configuracion" class="tab-content active bg-white p-4 border border-gray-300 rounded-b-md rounded-tr-md">
+                                <div class="space-y-4">
+                                    <h3 class="text-sm font-semibold text-gray-700 mb-2">Criterios de validación</h3>
+
+                                    <!-- Permitir -->
+                                    <div class="flex items-center space-x-4">
+                                        <label for="slide4-allow-select" class="w-1/4 text-sm font-medium text-gray-600">Permitir:</label>
+                                        <select id="slide4-allow-select" class="excel-input w-3/4 p-1 text-sm bg-white rounded">
+                                            <option value="entero">Número entero</option>
+                                            <option value="decimal">Decimal</option>
+                                            <option value="lista" selected>Lista</option>
+                                            <option value="fecha">Fecha</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Datos -->
+                                    <div class="flex items-center space-x-4">
+                                        <label for="slide4-data-select" class="w-1/4 text-sm font-medium text-gray-600">Datos:</label>
+                                        <select id="slide4-data-select" class="excel-input w-3/4 p-1 text-sm bg-white rounded">
+                                            <option value="entre" selected>entre</option>
+                                            <option value="no_entre">no está entre</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Origen (Solo visible para 'Lista') -->
+                                    <div id="slide4-source-section" class="space-y-2">
+                                        <div class="flex items-center space-x-4">
+                                            <label for="slide4-source-input" class="w-1/4 text-sm font-medium text-gray-600">Origen:</label>
+                                            <input type="text" id="slide4-source-input" value="Gerente, Analista, Soporte" class="excel-input w-3/4 p-1 text-sm rounded">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6">
+                                    <div class="excel-table-container">
+                                        <table class="excel-table w-full table-fixed border-collapse">
+                                            <thead>
+                                                <tr>
+                                                    <th class="w-1/12"></th>
+                                                    <th class="w-11/12">Columna de Ejemplo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th>1</th>
+                                                    <td class="bg-yellow-50 border-yellow-400">Gerente (Validado)</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>2</th>
+                                                    <td>Analista</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>3</th>
+                                                    <td>Soporte</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contenido de Mensaje de Entrada -->
+                            <div id="slide4-content-mensaje-entrada" class="tab-content hidden bg-white p-4 border border-gray-300 rounded-b-md rounded-tr-md">
+                                <div class="space-y-4">
+                                    <p class="text-sm font-medium text-gray-700">Aparece cuando el usuario selecciona la celda. ¡Es la instrucción preventiva!</p>
+                                    <label for="slide4-input-title" class="block text-xs font-medium text-gray-600">Título:</label>
+                                    <input type="text" id="slide4-input-title" value="¡ATENCIÓN! Usar lista." class="excel-input w-full p-1 text-sm rounded">
+
+                                    <label for="slide4-input-message" class="block text-xs font-medium text-gray-600">Mensaje de entrada:</label>
+                                    <textarea id="slide4-input-message" rows="3" class="excel-input w-full p-1 text-sm rounded resize-none">Seleccione el cargo de la lista desplegable. No ingrese texto manualmente.</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Contenido de Alerta de Error -->
+                            <div id="slide4-content-alerta-error" class="tab-content hidden bg-white p-4 border border-gray-300 rounded-b-md rounded-tr-md">
+                                <div class="space-y-4">
+                                    <p class="text-sm font-medium text-gray-700">Aparece si el usuario introduce un dato no válido.</p>
+                                    <div class="flex items-center space-x-4">
+                                        <label for="slide4-style-select" class="w-1/4 text-sm font-medium text-gray-600">Estilo:</label>
+                                        <select id="slide4-style-select" class="excel-input w-3/4 p-1 text-sm bg-white rounded">
+                                            <option value="detener" selected>Detener (Stop)</option>
+                                            <option value="advertencia">Advertencia (Warning)</option>
+                                        </select>
+                                    </div>
+
+                                    <label for="slide4-error-title" class="block text-xs font-medium text-gray-600">Título:</label>
+                                    <input type="text" id="slide4-error-title" value="ERROR DE DATOS" class="excel-input w-full p-1 text-sm rounded">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pie de Página y Botones -->
+                        <div class="bg-gray-100 p-3 border-t border-gray-300 flex justify-end space-x-2">
+                            <button onclick="slide4SaveChanges()" class="excel-button-sim text-sm">Aceptar</button>
+                            <button onclick="slide4CloseModal()" class="px-4 py-1.5 text-sm font-semibold text-gray-700 bg-white border border-gray-400 rounded-md hover:bg-gray-50 transition duration-100">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- FIN DE VENTANA DE SIMULACIÓN DE VALIDACIÓN -->
+
+                <div class="mt-4 text-sm sm:text-base bg-red-50 p-3 rounded-lg max-w-3xl">
+                    <strong>Función Clave:</strong> Evitar errores de entrada de datos desde el origen.
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Tipos de Criterios de Validación -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Criterios Comunes de <strong>Validación</strong></h3>
+                <div class="bg-gray-100 p-3 sm:p-5 rounded-lg shadow-inner max-w-3xl w-full text-left mt-3">
+                    <ul class="list-disc list-inside ml-4 mt-2 text-sm space-y-2">
+                        <li><strong>Lista (Desplegable):</strong> Permite elegir valores de una lista predefinida (ej. Nombres de departamentos, Sí/No).</li>
+                        <li><strong>Número Entero/Decimal:</strong> Restringe la entrada solo a números, permitiendo rangos (ej. Edad entre 18 y 65).</li>
+                        <li><strong>Longitud de Texto:</strong> Limita el número de caracteres (ej. Código de producto de 5 dígitos).</li>
+                        <li><strong>Fecha/Hora:</strong> Asegura que la entrada sea un formato de fecha válido y dentro de un período específico.</li>
+                        <li><strong>Personalizada:</strong> Permite usar una fórmula para definir reglas complejas.</li>
+                    </ul>
+                </div>
+
+                <!-- SIMULACIÓN EN HTML/CSS/JS (Criterio: Lista Desplegable) -->
+                <div class="mt-5">
+                    <p class="text-xs text-gray-500 mb-2">Ejemplo práctico de validación por <strong>Lista</strong>:</p>
+                    <div id="validation-simulation">
+                        <span id="selected-value" class="text-gray-700">Seleccione un Cargo</span>
+                        <svg class="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <div id="dropdown-list" style="display: none;">
+                            <button data-value="Gerente">Gerente</button>
+                            <button data-value="Analista">Analista</button>
+                            <button data-value="Soporte Técnico">Soporte Técnico</button>
+                            <button data-value="Ventas">Ventas</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: Mensajes de Validación (Input y Error) -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500"><strong>Mensajes de Validación</strong></h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Son cruciales para guiar al usuario y notificarle cuando comete un error.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-8 mt-5 w-full max-w-3xl">
+                    <div class="bg-green-100 p-4 rounded-lg shadow-md flex-1">
+                        <p class="font-bold text-green-800">Mensaje de Entrada (Input)</p>
+                        <p class="text-sm text-gray-700">Aparece cuando la celda es seleccionada. Sirve como una <strong>instrucción preventiva</strong>.</p>
+                    </div>
+                    <div class="bg-red-100 p-4 rounded-lg shadow-md flex-1">
+                        <p class="font-bold text-red-800">Mensaje de Error (Alerta)</p>
+                        <p class="text-sm text-gray-700">Aparece cuando el usuario ingresa un dato inválido. Puede ser un simple <strong>Aviso</strong> o una <strong>Detención</strong> obligatoria.</p>
+                    </div>
+                </div>
+                <!-- Espacio para Imagen de Mensajes de Validación (Mantenemos placeholder local para estas imágenes) -->
+                <div class="mt-5 max-w-3xl w-full">
+                    <img src="imagenes/mensaje-error.PNG" alt="Ejemplo de mensaje de error de validación" class="w-full h-48 object-contain rounded-md mx-auto" onerror="this.parentElement.textContent='ESPACIO PARA IMAGEN: Alerta de Error de Validación (mensajes_error.png)'; this.remove();">
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Concepto de Filtrado de Datos -->
+            <div id="slide-7" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">2. Herramienta de <strong>Filtrado de Datos</strong></h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    El Filtrado es el proceso de <strong>mostrar solo las filas</strong> que cumplen con un criterio específico, mientras que el resto de las filas se <strong>ocultan temporalmente</strong>. Esto facilita el análisis y la visualización de subconjuntos de datos.
+                </p>
+                <!-- Espacio para Imagen de Filtrado (Mantenemos placeholder local para estas imágenes) -->
+                <div class="mt-5 max-w-3xl w-full">
+                    <img src="imagenes/filtro.PNG" alt="Ícono de embudo de filtrado" class="w-full h-48 object-contain rounded-md mx-auto" onerror="this.parentElement.textContent='ESPACIO PARA IMAGEN: Icono de Embudo de Filtrado (icono_filtrado.png)'; this.remove();">
+                </div>
+                <div class="mt-3 bg-yellow-50 p-3 rounded-lg text-sm max-w-3xl">
+                    <strong>Función Clave:</strong> Simplificar la visualización y análisis de grandes tablas.
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Tipos de Filtrado -->
+            <div id="slide-8" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Tipos de <strong>Filtros</strong> y Aplicaciones</h3>
+                <div class="bg-gray-100 p-3 sm:p-5 rounded-lg shadow-inner max-w-3xl w-full text-left mt-3">
+                    <ul class="list-disc list-inside ml-4 mt-2 text-sm space-y-2">
+                        <li><strong>Filtro Básico (Por Valor):</strong> Muestra u oculta filas al seleccionar o deseleccionar elementos de una lista.</li>
+                        <li><strong>Filtro de Número:</strong> Aplica criterios lógicos a datos numéricos (ej. "Mayor que 100", "Entre 50 y 200").</li>
+                        <li><strong>Filtro de Texto:</strong> Aplica criterios a cadenas de texto (ej. "Comienza por 'Lic'", "Contiene la palabra 'ventas'").</li>
+                        <li><strong>Filtro de Color:</strong> Útil si la hoja de cálculo usa formato condicional; filtra por color de relleno o fuente.</li>
+                        <li><strong>Filtro Avanzado:</strong> Permite definir criterios complejos en un rango separado (usando AND/OR) para una extracción sofisticada.</li>
+                    </ul>
+                </div>
+                <!-- Espacio para Imagen de Opciones de Filtrado (Mantenemos placeholder local para estas imágenes) -->
+                <div class="mt-5 max-w-3xl w-full">
+                    <img src="imagenes/opciones-filtro.png" alt="Menú de opciones de filtrado en una columna" class="w-full h-48 object-contain rounded-md mx-auto" onerror="this.parentElement.textContent='ESPACIO PARA IMAGEN: Menú de Opciones de Filtro (opciones_filtrado.png)'; this.remove();">
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Proceso de Aplicación (Validación) -->
+            <div id="slide-9" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Proceso: Aplicación de <strong>Validación</strong></h3>
+                <div class="bg-yellow-50 p-4 sm:p-5 rounded-lg shadow-inner max-w-3xl w-full text-left mt-3">
+                    <p class="font-bold mb-2 text-base text-yellow-800">Pasos Generales:</p>
+                    <ol class="list-decimal list-inside ml-4 mt-2 text-sm space-y-1">
+                        <li><strong>Seleccionar</strong> el rango de celdas a restringir (ej. la columna de Edades).</li>
+                        <li>Ir a la pestaña <strong>Datos</strong> (o similar, según el software).</li>
+                        <li>Hacer clic en la opción <strong>Validación de Datos</strong>.</li>
+                        <li>Elegir el <strong>Criterio</strong> (ej. Número Entero).</li>
+                        <li>Definir los <strong>Límites</strong> (ej. Mínimo 18, Máximo 65).</li>
+                        <li>Configurar los <strong>Mensajes de Entrada y Error</strong>.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Proceso de Aplicación (Filtrado) - CON TABLA INTERACTIVA -->
+            <div id="slide-10" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Proceso: Aplicación de <strong>Filtrado</strong></h3>
+                <div class="bg-blue-50 p-4 sm:p-5 rounded-lg shadow-inner max-w-3xl w-full text-left mt-3">
+                    <p class="font-bold mb-2 text-base text-blue-800">Pasos Generales:</p>
+                    <ol class="list-decimal list-inside ml-4 mt-2 text-sm space-y-1">
+                        <li><strong>Seleccionar</strong> la tabla o el rango de encabezados que contienen los datos.</li>
+                        <li>Ir a la pestaña <strong>Datos</strong>.</li>
+                        <li>Hacer clic en el icono de <strong>Filtro</strong> (generalmente un embudo).</li>
+                        <li>Aparecerán flechas en los encabezados. Hacer clic en la flecha de la columna deseada.</li>
+                        <li>Elegir los <strong>Criterios</strong> (ej. Desmarcar todos los países excepto "Honduras").</li>
+                        <li>El filtro <strong>oculta</strong> las filas que no cumplen el criterio.</li>
+                    </ol>
+                </div>
+
+                <div class="mt-5 w-full flex flex-col items-center">
+                    <p class="text-xs text-gray-500 mb-2">Ejemplo práctico: Filtrar por <strong>Departamento</strong> = 'Ventas'</p>
+                    <table id="filter-example-table" class="example-table">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">ID</th>
+                                <th class="w-1/4">Nombre</th>
+                                <th class="w-1/4" id="header-departamento">
+                                    Departamento
+                                    <span id="filter-icon" class="filter-icon" onclick="toggleFilter()">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a1 1 0 011-1h8a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L5.293 7.707A1 1 0 015 7V4z"/></svg>
+                                    </span>
+                                </th>
+                                <th class="w-1/4">Salario (L.)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-dept="Ventas">
+                                <td>101</td>
+                                <td>Ana P.</td>
+                                <td>Ventas</td>
+                                <td>18,500</td>
+                            </tr>
+                            <tr data-dept="IT">
+                                <td>102</td>
+                                <td>Carlos M.</td>
+                                <td>IT</td>
+                                <td>22,000</td>
+                            </tr>
+                            <tr data-dept="Marketing">
+                                <td>103</td>
+                                <td>Elena G.</td>
+                                <td>Marketing</td>
+                                <td>19,000</td>
+                            </tr>
+                            <tr data-dept="Ventas">
+                                <td>104</td>
+                                <td>Juan R.</td>
+                                <td>Ventas</td>
+                                <td>17,200</td>
+                            </tr>
+                            <tr data-dept="IT">
+                                <td>105</td>
+                                <td>Laura S.</td>
+                                <td>IT</td>
+                                <td>25,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button id="filter-toggle-button" onclick="toggleFilter()" class="mt-4 px-4 py-2 text-sm font-semibold text-white bg-teal-500 rounded-lg shadow-md hover:bg-teal-600 transition duration-150">
+                        Aplicar Filtro: Mostrar solo "Ventas"
+                    </button>
+                    <button id="filter-reset-button" onclick="resetFilter()" class="mt-2 px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150 hidden">
+                        Limpiar Filtro
+                    </button>
+                </div>
+            </div>
+
+            <!-- Diapositiva 11: Cuestionario -->
+            <div id="slide-11" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">¡<strong>Cuestionario</strong> de Validación y Filtrado!</h3>
+                <div id="quiz-container" class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-md max-w-3xl w-full text-center">
+                    <div id="quiz-question" class="text-base sm:text-xl font-semibold mb-2 sm:mb-5 text-gray-800"></div>
+                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-3"></div>
+                    <div id="quiz-feedback" class="mt-3 sm:mt-5 text-sm sm:text-base font-bold"></div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Tarea Asignada -->
+            <div id="slide-12" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Asignación: <strong>Ejercicios de Validación Práctica</strong></h3>
+                <div class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-inner max-w-3xl text-left">
+                    <p class="text-sm sm:text-base text-gray-700 mb-2 font-bold text-red-700">Desarrollo en Hoja de Cálculo:</p>
+                    <p class="text-xs sm:text-sm text-gray-700 mb-4">
+                        Crear una tabla de 5 columnas con las siguientes reglas de <strong>Validación de Datos</strong>. Debe incluir el <strong>Mensaje de Entrada</strong> y el <strong>Mensaje de Error</strong> de Detención en cada columna:
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 mb-2 font-bold">Validaciones a Aplicar:</p>
+                    <ul class="list-disc list-inside ml-4 mt-2 text-xs sm:text-sm space-y-2">
+                        <li><strong>Columna 1 (Nombre):</strong> Validación de <strong>Longitud de Texto</strong> (Mínimo 5, Máximo 30 caracteres).</li>
+                        <li><strong>Columna 2 (ID Producto):</strong> Validación de <strong>Lista</strong> desplegable con 4 opciones predefinidas.</li>
+                        <li><strong>Columna 3 (Precio):</strong> Validación de <strong>Decimal</strong> (Mayor que 0.00).</li>
+                        <li><strong>Columna 4 (Fecha de Venta):</strong> Validación de <strong>Fecha</strong> (Entre el 01/01/2025 y 05/10/2025).</li>
+                        <li><strong>Columna 5 (Cantidad):</strong> Validación de <strong>Número Entero</strong> (Entre 1 y 100).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 13: Conclusión -->
+            <div id="slide-13" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500"><strong>Conclusión y Preguntas</strong></h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Dominar la validación y el filtrado es esencial para transformar grandes volúmenes de datos brutos en información <strong>confiable</strong> y fácil de analizar. Estas herramientas son su primera línea de defensa contra los errores.
+                </p>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mt-5 font-bold text-cyan-600">
+                    ¡Gracias por su atención! ¿Tienen alguna duda sobre la aplicación de estas herramientas en Excel o Google Sheets?
+                </p>
+            </div>
+        </div>
+
+        <!-- Botones de navegación -->
+        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
+            <button id="prev-btn" class="nav-button bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
+            <button id="next-btn" class="nav-button bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        </div>
+        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 13</div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
+            <!-- Bandera con URL -->
+            <img src="https://azghell.github.io/IMA-Informatica/imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts para la navegación, la lógica del cuestionario y la simulación -->
+    <script>
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            event.preventDefault();
+        });
+
+        const slides = document.querySelectorAll('.slide');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const header = document.getElementById('page-header');
+        const footer = document.getElementById('page-footer');
+        // Total de diapositivas es 13
+        let currentSlideIndex = 0;
+        let isTransitioning = false;
+
+        // LÓGICA DE LA VENTANA DE VALIDACIÓN (SLIDE 4)
+
+        function slide4SaveChanges() {
+            const allowValue = document.getElementById('slide4-allow-select').value;
+            const styleValue = document.getElementById('slide4-style-select').value;
+            console.log(`[Validación Guardada]: Permitir=${allowValue}, Estilo de Error=${styleValue}.`);
+            alertBox("Configuración de validación guardada con éxito (simulación).", "Éxito");
+        }
+
+        function slide4CloseModal() {
+            console.log("Ventana de Validación Cerrada.");
+        }
+
+        function slide4ChangeTab(tabName) {
+            document.querySelectorAll('#slide-4 .tab').forEach(tab => {
+                tab.classList.remove('active', 'bg-white', 'font-semibold');
+                tab.classList.add('bg-gray-200');
+            });
+
+            document.querySelectorAll('#slide-4 .tab-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('active');
+            });
+
+            const activeTab = document.querySelector(`#slide4-tab-${tabName}`);
+            activeTab.classList.add('active', 'bg-white', 'font-semibold');
+            activeTab.classList.remove('bg-gray-200');
+
+            document.getElementById(`slide4-content-${tabName}`).classList.remove('hidden');
+            document.getElementById(`slide4-content-${tabName}`).classList.add('active');
+        }
+
+        function setupSlide4Tabs() {
+            document.querySelectorAll('#slide-4 .tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    slide4ChangeTab(e.target.dataset.tab);
+                });
+            });
+            slide4ChangeTab('configuracion');
+        }
+
+        // LÓGICA DE FILTRADO DE DATOS (SLIDE 10)
+        let isFiltered = false;
+        const filterTargetDept = 'Ventas';
+
+        function toggleFilter() {
+            isFiltered = !isFiltered;
+            const rows = document.querySelectorAll('#filter-example-table tbody tr');
+            const header = document.getElementById('header-departamento');
+            const icon = document.getElementById('filter-icon');
+            const button = document.getElementById('filter-toggle-button');
+            const resetButton = document.getElementById('filter-reset-button');
+
+            rows.forEach(row => {
+                if (row.getAttribute('data-dept') !== filterTargetDept) {
+                    // Ocultar filas que no cumplen el criterio
+                    row.classList.toggle('filtered', isFiltered);
+                }
+            });
+
+            if (isFiltered) {
+                header.classList.add('filtered-header');
+                icon.classList.add('filtered-icon');
+                button.textContent = `Filtro Aplicado: ${filterTargetDept}. (Click para limpiar)`;
+                button.classList.remove('bg-teal-500', 'hover:bg-teal-600');
+                button.classList.add('bg-gray-500', 'hover:bg-gray-600');
+                resetButton.classList.remove('hidden');
+            } else {
+                resetFilter(); // Si se desactiva, simplemente reiniciamos
+            }
+        }
+
+        function resetFilter() {
+            isFiltered = false;
+            const rows = document.querySelectorAll('#filter-example-table tbody tr');
+            const header = document.getElementById('header-departamento');
+            const icon = document.getElementById('filter-icon');
+            const button = document.getElementById('filter-toggle-button');
+            const resetButton = document.getElementById('filter-reset-button');
+
+            rows.forEach(row => {
+                row.classList.remove('filtered');
+            });
+
+            header.classList.remove('filtered-header');
+            icon.classList.remove('filtered-icon');
+            button.textContent = `Aplicar Filtro: Mostrar solo "Ventas"`;
+            button.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+            button.classList.add('bg-teal-500', 'hover:bg-teal-600');
+            resetButton.classList.add('hidden');
+        }
+
+
+        // 10 Preguntas sobre Validación y Filtrado (Mismo Código)
+        const quizQuestions = [
+            {
+                question: "1. ¿Cuál es el principal objetivo de usar la herramienta de <strong>Validación de Datos</strong>?",
+                options: ["Cambiar el formato de la tabla", "Restringir los valores que se pueden introducir en una celda", "Ocultar filas que no cumplen un criterio", "Sumar automáticamente los datos"],
+                correctAnswer: "Restringir los valores que se pueden introducir en una celda"
+            },
+            {
+                question: "2. ¿Qué criterio de validación usaría si desea que el usuario solo elija entre 'Licenciado', 'Ingeniero' o 'Técnico'?",
+                options: ["Número Entero", "Lista", "Fecha", "Personalizada"],
+                correctAnswer: "Lista"
+            },
+            {
+                question: "3. ¿Qué herramienta nos permite ocultar filas temporalmente para enfocarnos solo en registros que cumplen un criterio (ej. solo ver ventas mayores a L. 5,000)?",
+                options: ["Validación de Datos", "Formato Condicional", "Buscar y Reemplazar", "Filtrado de Datos"],
+                correctAnswer: "Filtrado de Datos"
+            },
+            {
+                question: "4. Un <strong>Mensaje de Entrada</strong> en la Validación de Datos sirve como:",
+                options: ["Una alerta obligatoria que detiene la entrada", "Una instrucción preventiva que aparece al seleccionar la celda", "Una forma de aplicar formato de moneda", "Un resumen de la tabla"],
+                correctAnswer: "Una instrucción preventiva que aparece al seleccionar la celda"
+            },
+            {
+                question: "5. ¿Qué sucede con las filas que no cumplen el criterio cuando se aplica un <strong>Filtro</strong>?",
+                options: ["Se eliminan permanentemente de la hoja", "Se mueven a una hoja diferente", "Se marcan con un color, pero siguen visibles", "Se ocultan temporalmente"],
+                correctAnswer: "Se ocultan temporalmente"
+            },
+            {
+                question: "6. Si necesitas asegurarte de que un campo de ID solo contenga números entre 1000 y 9999, ¿qué criterio de validación sería más adecuado?",
+                options: ["Longitud de Texto", "Número Entero", "Decimal", "Lista"],
+                correctAnswer: "Número Entero"
+            },
+            {
+                question: "7. ¿En qué pestaña de la cinta de opciones se encuentran generalmente las herramientas de <strong>Validación y Filtrado</strong>?",
+                options: ["Inicio", "Insertar", "Fórmulas", "Datos"],
+                correctAnswer: "Datos"
+            },
+            {
+                question: "8. Deducción: Si la columna 'Salario' está validada para ser 'Mayor que 5000' y alguien ingresa '4999', ¿qué aparecerá?",
+                options: ["El dato se acepta y se formatea", "El dato se acepta, pero se marca con color", "El <strong>Mensaje de Error</strong> configurado", "Automáticamente se corrige a 5000"],
+                correctAnswer: "El <strong>Mensaje de Error</strong> configurado"
+            },
+            {
+                question: "9. ¿Cuál es un beneficio directo de la <strong>consistencia</strong> de datos, lograda mediante la validación?",
+                options: ["Permite usar más colores en la tabla", "Facilita la aplicación de fórmulas y filtros sin errores", "Reduce el tamaño del archivo", "Aumenta la velocidad de impresión"],
+                correctAnswer: "Facilita la aplicación de fórmulas y filtros sin errores"
+            },
+            {
+                question: "10. Deducción: Un <strong>Filtro Avanzado</strong> es útil cuando...",
+                options: ["Solo se quiere filtrar por un valor", "Se necesita buscar datos usando criterios complejos (ej. País = 'Honduras' Y Salario > 15000)", "Se quiere cambiar el nombre de las columnas", "Se desea hacer una gráfica de barras"],
+                correctAnswer: "Se necesita buscar datos usando criterios complejos (ej. País = 'Honduras' Y Salario > 15000)"
+            }
+        ];
+        let currentQuizQuestionIndex = 0;
+
+        function updateQuizDisplay() {
+            const quizQuestionElement = document.getElementById('quiz-question');
+            const quizOptionsElement = document.getElementById('quiz-options');
+            const quizFeedbackElement = document.getElementById('quiz-feedback');
+
+            if (currentQuizQuestionIndex >= quizQuestions.length) {
+                quizQuestionElement.innerHTML = "¡<strong>Cuestionario completado</strong>! ¡Excelente trabajo!";
+                quizOptionsElement.innerHTML = '';
+                quizFeedbackElement.textContent = '';
+                return;
+            }
+
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            quizQuestionElement.innerHTML = currentQuestion.question; // Usar innerHTML para interpretar <strong> en la pregunta
+            quizOptionsElement.innerHTML = '';
+            quizFeedbackElement.textContent = '';
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = "quiz-option-button w-full px-5 py-2 rounded-xl border border-cyan-400 bg-cyan-50 text-cyan-700 font-semibold transition-colors duration-200 hover:bg-cyan-100 text-sm";
+                button.onclick = () => checkAnswer(option);
+                quizOptionsElement.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            const quizFeedback = document.getElementById('quiz-feedback');
+            const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
+            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+
+            buttons.forEach(button => {
+                button.disabled = true;
+                if (button.textContent === currentQuestion.correctAnswer) {
+                    button.classList.add('correct');
+                } else if (button.textContent === selectedOption) {
+                    button.classList.add('incorrect');
+                }
+            });
+
+            if (isCorrect) {
+                quizFeedback.textContent = '¡Correcto!';
+                quizFeedback.classList.remove('text-red-500');
+                quizFeedback.classList.add('text-green-500');
+            } else {
+                // Usar innerHTML para que se muestre correctamente la negrita de la respuesta correcta si la tiene
+                quizFeedback.innerHTML = 'Incorrecto. La respuesta correcta es: <strong>' + currentQuestion.correctAnswer + '</strong>';
+                quizFeedback.classList.remove('text-green-500');
+                quizFeedback.classList.add('text-red-500');
+            }
+
+            setTimeout(() => {
+                currentQuizQuestionIndex++;
+                updateQuizDisplay();
+            }, 3000);
+        }
+
+        // LÓGICA DE SIMULACIÓN DE VALIDACIÓN (Slide 5)
+        function setupValidationSimulation() {
+            const simulationDiv = document.getElementById('validation-simulation');
+            const dropdownList = document.getElementById('dropdown-list');
+            const selectedValueSpan = document.getElementById('selected-value');
+            const options = dropdownList.querySelectorAll('button');
+
+            simulationDiv.onclick = (e) => {
+                if (e.target.tagName !== 'BUTTON') {
+                    dropdownList.style.display = dropdownList.style.display === 'block' ? 'none' : 'block';
+                }
+            };
+
+            options.forEach(button => {
+                button.onclick = () => {
+                    selectedValueSpan.textContent = button.getAttribute('data-value');
+                    dropdownList.style.display = 'none';
+                };
+            });
+
+            document.addEventListener('click', (e) => {
+                if (currentSlideIndex === 4 && !simulationDiv.contains(e.target)) {
+                    dropdownList.style.display = 'none';
+                }
+            });
+        }
+
+        // Simulación de una caja de mensaje/alerta
+        function alertBox(message, title) {
+            console.log(`[${title}]: ${message}`);
+        }
+
+
+        function updateSlideCounter() {
+            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+        }
+
+        function updateNavigationButtons() {
+            prevButton.disabled = currentSlideIndex === 0;
+            nextButton.disabled = currentSlideIndex === slides.length - 1;
+        }
+
+        function showSlide(index) {
+            if (isTransitioning || index < 0 || index >= slides.length) {
+                return;
+            }
+
+            isTransitioning = true;
+            slides.forEach((slide) => {
+                slide.classList.remove('active');
+                slide.style.display = 'none';
+            });
+
+            currentSlideIndex = index;
+
+            // Trigger quiz display when the quiz slide is shown (now slide 11)
+            if (currentSlideIndex === 10) {
+                currentQuizQuestionIndex = 0;
+                updateQuizDisplay();
+            }
+
+            // Re-setup the Slide 4 tabs if needed
+            if (currentSlideIndex === 3) {
+                 setupSlide4Tabs();
+            }
+
+            const activeSlide = slides[currentSlideIndex];
+            activeSlide.style.display = 'flex';
+            setTimeout(() => {
+                activeSlide.classList.add('active');
+                updateSlideCounter();
+                updateNavigationButtons();
+                isTransitioning = false;
+            }, 10);
+        }
+
+        nextButton.addEventListener('click', () => {
+            showSlide(currentSlideIndex + 1);
+        });
+
+        prevButton.addEventListener('click', () => {
+            showSlide(currentSlideIndex - 1);
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                showSlide(currentSlideIndex + 1);
+            } else if (event.key === 'ArrowLeft') {
+                showSlide(currentSlideIndex - 1);
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'F11') {
+                if (!document.fullscreenElement) {
+                    header.style.display = 'none';
+                    footer.style.display = 'none';
+                }
+            }
+        });
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+        function handleFullscreenChange() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                header.style.display = 'flex';
+                footer.style.display = 'flex';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentYearSpan = document.getElementById('current-year');
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+            setupValidationSimulation();
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>

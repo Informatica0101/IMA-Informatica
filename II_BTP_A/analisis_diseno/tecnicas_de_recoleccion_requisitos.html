@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación: Técnicas de Recolección de Requerimientos</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reduce base font size for overall scaling */
+        html {
+            font-size: 80%; /* Reduces overall size by 20% */
+        }
+
+        /* Custom animations for transitions */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOutUp {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px); /* Changed for slide-in effect */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOutDown {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(20px); /* Changed for slide-out effect */
+            }
+        }
+
+        /* Specific styles for slides */
+        .slide {
+            display: none; /* Hidden by default */
+            animation-duration: 0.5s;
+            animation-fill-mode: forwards;
+            /* Ensure it fills the parent container fully */
+            position: absolute; /* Position absolutely within presentation-container */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%; /* Fill the height of the presentation-container */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            background-color: white; /* Ensure background is white during transition */
+        }
+
+        .slide.active {
+            display: flex; /* Show active slide */
+            animation-name: fadeInUp; /* Animation for entering slide */
+            position: relative; /* Make active slide take up space */
+            z-index: 1; /* Ensure it's above any lingering old slides */
+        }
+
+        .slide.leaving {
+            animation-name: fadeOutDown; /* Animation for leaving slide */
+            position: absolute; /* It needs to stay absolute to animate out */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20; /* Ensure it animates on top of the incoming slide */
+            display: flex; /* Keep it flex during animation */
+        }
+
+        /* Custom styles for navigation buttons */
+        .nav-button {
+            background-color: #4F46E5; /* Indigo 600 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .nav-button:hover {
+            background-color: #4338CA; /* Indigo 700 */
+            transform: translateY(-2px);
+        }
+
+        .nav-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Mobile navigation menu specific styles */
+        .mobile-menu {
+            transition: transform 0.3s ease-out;
+            transform: translateX(100%); /* Hidden by default */
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0); /* Visible when open */
+        }
+
+        /* Ensure content takes available space */
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        /* Responsive adjustments for text and images */
+        .slide h1 {
+            font-size: 2.5rem; /* Default for larger screens */
+        }
+        .slide h2 {
+            font-size: 2rem;
+        }
+        .slide p, .slide ul {
+            font-size: 1.1rem;
+            max-width: 800px; /* Limit text width for readability */
+            margin: 0 auto;
+        }
+        /* General image styling - removed border-radius and box-shadow */
+        .slide img {
+            max-width: 80%;
+            height: auto;
+        }
+
+        /* Specific style for content images (not cover logo) */
+        .content-image-style {
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 1.5rem;
+        }
+
+        /* Specific style for the cover logo to ensure no square shadow */
+        .cover-logo {
+            box-shadow: none !important; /* Override any potential inherited shadows */
+        }
+
+
+        @media (max-width: 768px) {
+            html {
+                font-size: 75%; /* Further reduce for smaller screens */
+            }
+            .slide h1 {
+                font-size: 2rem;
+            }
+            .slide h2 {
+                font-size: 1.75rem;
+            }
+            .slide p, .slide ul {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+            .slide {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            html {
+                font-size: 70%;
+            }
+            .slide h1 {
+                font-size: 1.75rem;
+            }
+            .slide h2 {
+                font-size: 1.5rem;
+            }
+            .slide p, .slide ul {
+                font-size: 0.9rem;
+            }
+            .slide img {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+<body class="font-['Inter'] bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Desktop Navigation -->
+    <header class="bg-white shadow-md py-4 px-6 sticky top-0 z-50 hidden md:block">
+        <div class="container mx-auto flex items-center justify-between">
+            <!-- Left Section: Logo -->
+            <a href="https://azghell.github.io/IMA-Informatica" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
+                <img src="imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
+            </a>
+
+            <!-- Center Section: Area de Informatica -->
+            <span class="font-extrabold text-2xl text-center flex-grow">Area de Informatica</span>
+
+            <!-- Right Section: Desktop Nav Links -->
+            <nav class="flex space-x-6">
+                <a href="https://azghell.github.io/IMA-Informatica" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Inicio</a>
+                <!-- Dropdown Menu for Asignaturas -->
+                <div class="relative group">
+                    <button class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300 focus:outline-none flex items-center">
+                        Asignaturas
+                        <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 invisible group-hover:visible group-focus-within:visible">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Informática I</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ofimática I</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseño Web II</a>
+                    </div>
+                </div>
+                <a href="/fundamentos_ii.pdf" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation (hidden by default, shown on small screens) -->
+    <header class="bg-white shadow-md py-4 px-4 flex justify-between items-center md:hidden">
+        <!-- Logo and Area de Informatica for mobile -->
+        <a href="https://azghell.github.io/IMA-Informatica" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
+            <img src="imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
+            <span class="font-extrabold text-xl">Area de Informatica</span>
+        </a>
+        <!-- Hamburger Icon -->
+        <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+        <!-- Mobile Menu Sidebar -->
+        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 p-6 flex flex-col">
+            <button id="close-mobile-menu" class="self-end text-gray-600 hover:text-indigo-600 focus:outline-none mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <nav class="flex flex-col space-y-4">
+                <a href="https://azghell.github.io/IMA-Informatica" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Inicio</a>
+                <!-- Mobile Dropdown for Asignaturas -->
+                <div class="relative">
+                    <button id="mobile-asignaturas-button" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300 focus:outline-none flex items-center justify-between w-full">
+                        Asignaturas
+                        <svg class="ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="mobile-asignaturas-dropdown" class="hidden mt-2 pl-4 flex flex-col space-y-2">
+                        <a href="#" class="block text-base text-gray-700 hover:text-indigo-600">Informática I</a>
+                        <a href="#" class="block text-base text-gray-700 hover:bg-gray-100">Ofimática I</a>
+                        <a href="#" class="block text-base text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
+                        <a href="#" class="block text-base text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
+                        <a href="#" class="block text-base text-gray-700 hover:bg-gray-100">Diseño Web II</a>
+                    </div>
+                </div>
+                <a href="/fundamentos_ii.pdf" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8 flex flex-col items-center justify-center relative">
+        <!-- Presentation Slides Container -->
+        <div id="presentation-container" class="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden min-h-[60vh] flex flex-col justify-between">
+
+            <!-- Slide 1: Portada -->
+            <div id="slide-1" class="slide active">
+                <img src="imagenes/logo.png" alt="Logo de la Institución" style="width: 400px; height: auto;" class="mx-auto mb-8 cover-logo">
+                <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Técnicas de Recolección de Requerimientos</h1>
+                <h3 class="text-2xl text-gray-700 mb-2">Análisis y Diseño de Sistemas I</h3>
+                <p class="text-xl text-gray-600 mb-2">Undécimo A</p>
+                <p class="text-xl text-gray-600 mb-2">Docente: Pablo Antonio Peña</p>
+                <p class="text-xl text-gray-600 mb-2">San Pedro Sula</p>
+                <p class="text-xl text-gray-600">03 de agosto del 2025</p>
+            </div>
+
+            <!-- Slide 2: ¿Qué son los Requerimientos? -->
+            <div id="slide-2" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">¿Qué son los Requerimientos?</h2>
+                <p class="text-lg text-gray-700 mb-6">Condiciones o capacidades que un sistema debe poseer para satisfacer necesidades.</p>
+                <img src="imagenes/requerimientos_concepto.png" width="180" height="auto" alt="Concepto de Requerimientos" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Son las necesidades y expectativas de los usuarios.</li>
+                    <li>Fundamentales para el éxito de un proyecto de software.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 3: Tipos de Requerimientos -->
+            <div id="slide-3" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Tipos de Requerimientos</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
+                    <div class="bg-blue-50 p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-blue-700 mb-3">Funcionales</h3>
+                        <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
+                            <li>Lo que el sistema <strong>debe hacer</strong>.</li>
+                            <li>Ej: Registrar usuarios, generar reportes.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-green-700 mb-3">No Funcionales</h3>
+                        <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
+                            <li>Cómo el sistema <i>debe ser</i>.</li>
+                            <li>Ej: Rendimiento, seguridad, usabilidad.</li>
+                        </ul>
+                    </div>
+                </div>
+                <img src="imagenes/tipos_requerimientos.png" width="180" height="auto" alt="Tipos de Requerimientos" class="max-w-xl mx-auto content-image-style mt-6">
+            </div>
+
+            <!-- Slide 4: Proceso de Recolección -->
+            <div id="slide-4" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Proceso de Recolección</h2>
+                <p class="text-lg text-gray-700 mb-6">Pasos clave para obtener la información necesaria.</p>
+                <img src="imagenes/proceso_recoleccion.png" width="180" height="auto" alt="Proceso de Recolección de Requerimientos" class="max-w-md mx-auto content-image-style">
+                <ol class="list-decimal list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Identificación de <i>Stakeholders</i>.</li>
+                    <li>Definición del Alcance.</li>
+                    <li>Selección de Técnicas.</li>
+                    <li>Ejecución y Documentación.</li>
+                    <li>Validación y Verificación.</li>
+                </ol>
+            </div>
+
+            <!-- Slide 5: Técnica 1: Entrevistas -->
+            <div id="slide-5" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Técnica 1: Entrevistas</h2>
+                <p class="text-lg text-gray-700 mb-6">Conversaciones directas para entender necesidades.</p>
+                <img src="imagenes/entrevistas_tecnica.png" width="180" height="auto" alt="Técnica de Entrevistas" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Pueden ser estructuradas o no estructuradas.</li>
+                    <li>Ventaja: Información detallada, aclaración de dudas.</li>
+                    <li>Desventaja: Consume tiempo, posible sesgo.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 6: Técnica 2: Cuestionarios / Encuestas -->
+            <div id="slide-6" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Técnica 2: Cuestionarios / Encuestas</h2>
+                <p class="text-lg text-gray-700 mb-6">Preguntas escritas para grandes grupos.</p>
+                <img src="imagenes/cuestionarios_tecnica.png" width="180" height="auto" alt="Técnica de Cuestionarios" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Útiles para información cuantitativa.</li>
+                    <li>Ventaja: Eficiente para grandes grupos, anonimato.</li>
+                    <li>Desventaja: No permite aclaraciones, baja tasa de respuesta.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 7: Técnica 3: Observación -->
+            <div id="slide-7" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Técnica 3: Observación</h2>
+                <p class="text-lg text-gray-700 mb-6">Observar a los usuarios en su entorno de trabajo.</p>
+                <img src="imagenes/observacion_tecnica.png" width="180" height="auto" alt="Técnica de Observación" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Obtiene información de primera mano.</li>
+                    <li>Identifica problemas no mencionados.</li>
+                    <li>Desventaja: Puede ser intrusiva, efecto Hawthorne.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 8: Técnica 4: Análisis de Documentos -->
+            <div id="slide-8" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Técnica 4: Análisis de Documentos</h2>
+                <p class="text-lg text-gray-700 mb-6">Revisión de la documentación existente de la organización.</p>
+                <img src="imagenes/analisis_documentos_tecnica.png" width="180" height="auto" alt="Técnica de Análisis de Documentos" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Fuente de información formal y objetiva.</li>
+                    <li>Útil para entender el estado actual ("<i>as-is</i>").</li>
+                    <li>Desventaja: Documentos desactualizados o incompletos.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 9: Técnica 5: Prototipos -->
+            <div id="slide-9" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Técnica 5: Prototipos</h2>
+                <p class="text-lg text-gray-700 mb-6">Versión simplificada del sistema para feedback temprano.</p>
+                <img src="imagenes/prototipos_tecnica.png" width="180" height="auto" alt="Técnica de Prototipos" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Clarifica requerimientos, reduce malentendidos.</li>
+                    <li>Puede ser de baja o alta fidelidad.</li>
+                    <li>Desventaja: Usuarios pueden esperar el sistema final.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 10: Técnica 6: Lluvia de Ideas (Brainstorming) -->
+            <div id="slide-10" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Técnica 6: Lluvia de Ideas (<i>Brainstorming</i>)</h2>
+                <p class="text-lg text-gray-700 mb-6">Generación libre y espontánea de ideas en grupo.</p>
+                <img src="imagenes/brainstorming_tecnica.png" width="180" height="auto" alt="Técnica de Lluvia de Ideas" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Genera muchas ideas rápidamente.</li>
+                    <li>Fomenta la creatividad y colaboración.</li>
+                    <li>Requiere un facilitador eficaz.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 11: Técnica 7: Casos de Uso -->
+            <div id="slide-11" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Técnica 7: Casos de Uso</h2>
+                <p class="text-lg text-gray-700 mb-6">Describe interacciones entre usuario y sistema para un objetivo.</p>
+                <img src="imagenes/casos_uso_tecnica.png" width="180" height="auto" alt="Técnica de Casos de Uso" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Centrado en el usuario (actor).</li>
+                    <li>Fácil de entender para no técnicos.</li>
+                    <li>Ayuda a identificar escenarios de éxito y error.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 12: Consejos para el Éxito -->
+            <div id="slide-12" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Consejos para una Recolección Exitosa</h2>
+                <p class="text-lg text-gray-700 mb-6">Buenas prácticas para asegurar requerimientos de calidad.</p>
+                <img src="imagenes/consejos_recoleccion.png" width="180" height="auto" alt="Consejos para Recolección de Requerimientos" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Involucra a los <strong><i>Stakeholders</i> Correctos</strong>.</li>
+                    <li><strong>Escucha Activamente</strong> y sé neutral.</li>
+                    <li><strong>Documenta Claramente</strong> y sin ambigüedades.</li>
+                    <li><strong>Valida Constantemente</strong> con los usuarios.</li>
+                    <li><strong>Prioriza</strong> los requerimientos.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 13: ¿Sabías que...? -->
+            <div id="slide-13" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">¿Sabías que...?</h2>
+                <ul class="list-disc list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-xl">
+                    <li>La "deriva de alcance" (<i>scope creep</i>) es un error común en proyectos de software.</li>
+                    <li>Un error en la fase de requerimientos es hasta <strong>100 veces más costoso</strong> de corregir en el mantenimiento.</li>
+                    <li>La técnica "<i>JAD</i>" (<i>Joint Application Development</i>) reúne a usuarios y desarrolladores para definir requerimientos.</li>
+                </ul>
+                <img src="imagenes/curiosidades_requerimientos.png" width="180" height="auto" alt="Curiosidades sobre Recolección de Requerimientos" class="max-w-md mx-auto content-image-style mt-6">
+            </div>
+
+            <!-- Slide 14: Empareja la Técnica -->
+            <div id="slide-14" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Empareja la Técnica</h2>
+                <p class="text-lg text-gray-700 mb-6">¡Asocia la descripción con la técnica de recolección de requerimientos correcta!</p>
+
+                <div id="game-area-req" class="bg-gray-100 p-6 rounded-lg shadow-md w-full max-w-lg flex flex-col items-center">
+                    <p id="req-description" class="text-2xl font-bold text-indigo-800 mb-6 min-h-[2rem] flex items-center justify-center"></p>
+                    <div class="flex flex-wrap justify-center gap-4 mb-6">
+                        <button class="req-game-button bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-answer="Entrevistas">Entrevistas</button>
+                        <button class="req-game-button bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-answer="Cuestionarios">Cuestionarios</button>
+                        <button class="req-game-button bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-answer="Observación">Observación</button>
+                        <button class="req-game-button bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-answer="Prototipos">Prototipos</button>
+                        <button class="req-game-button bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-answer="Casos de Uso">Casos de Uso</button>
+                        <button class="req-game-button bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-answer="Lluvia de Ideas">Lluvia de Ideas</button>
+                    </div>
+                    <p id="req-feedback" class="text-2xl font-bold mb-4 min-h-[2rem] flex items-center justify-center"></p>
+                    <p class="text-lg text-gray-700">Aciertos: <span id="req-score" class="font-bold text-indigo-700">0</span> / <span id="req-total-questions" class="font-bold text-indigo-700">0</span></p>
+                    <button id="req-next-button" class="mt-6 bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-5 rounded-lg transition duration-200">Siguiente</button>
+                    <button id="req-restart-button" class="mt-3 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-lg transition duration-200">Reiniciar Juego</button>
+                </div>
+            </div>
+
+            <!-- Slide 15: Asignación de Tarea -->
+            <div id="slide-15" class="slide">
+                <h2 class="text-indigo-700 font-extrabold mb-4">Asignación de Tarea</h2>
+                <div class="bg-yellow-50 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
+                    <p class="text-xl font-semibold text-yellow-800 mb-4">Para entregar el 10 de agosto de 2025:</p>
+                    <ol class="list-decimal list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-md">
+                        <li>Para un sistema de gestión de inventario para una tienda pequeña, identifica y redacta al menos:
+                            <ul>
+                                <li><strong>3 requerimientos funcionales</strong> (qué debe hacer el sistema).</li>
+                                <li><strong>3 requerimientos no funcionales</strong> (cómo debe ser el sistema, ej. seguridad, rendimiento).</li>
+                            </ul>
+                            Asegúrate de que sean claros y específicos.
+                        </li>
+                        <li>Elige <strong>dos técnicas de recolección de requerimientos</strong> vistas en clase (ej. Entrevistas, Cuestionarios, Observación, Prototipos) y explica detalladamente cómo las aplicarías para recopilar información para el sistema de gestión de inventario mencionado en el punto anterior. Incluye un ejemplo concreto de cómo usarías cada técnica.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between w-full p-4 mt-auto">
+                <button id="prev-slide" class="nav-button flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Anterior
+                </button>
+                <span id="slide-counter" class="text-gray-600 font-medium text-lg flex items-center">1 / 15</span>
+                <button id="next-slide" class="nav-button flex items-center">
+                    Siguiente
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-6 px-6 mt-8">
+        <div class="container mx-auto text-center text-sm">
+            <p class="flex items-center justify-center">
+                &copy;&nbsp;<span id="current-year"></span>&nbsp;Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
+                <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" style="width: 50px; height: auto; margin-left: 0.5rem;">
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Mobile Menu Logic ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileAsignaturasButton = document.getElementById('mobile-asignaturas-button');
+        const mobileAsignaturasDropdown = document.getElementById('mobile-asignaturas-dropdown');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('open');
+            mobileMenuOverlay.classList.toggle('hidden');
+        }
+
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+        closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
+        mobileMenuOverlay.addEventListener('click', toggleMobileMenu); // Close when clicking outside
+
+        mobileAsignaturasButton.addEventListener('click', () => {
+            mobileAsignaturasDropdown.classList.toggle('hidden');
+            // Rotate arrow icon
+            mobileAsignaturasButton.querySelector('svg').classList.toggle('rotate-180');
+        });
+
+        // --- Presentation Logic ---
+        const slides = document.querySelectorAll('.slide');
+        const prevButton = document.getElementById('prev-slide');
+        const nextButton = document.getElementById('next-slide');
+        const slideCounter = document.getElementById('slide-counter');
+        let currentSlideIndex = 0;
+
+        function updateSlideCounter() {
+            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+        }
+
+        function showSlide(index, direction = 'next') {
+            // Ensure index is within bounds
+            if (index < 0 || index >= slides.length) {
+                return;
+            }
+
+            const currentActiveSlide = document.querySelector('.slide.active');
+            const newSlideElement = slides[index];
+
+            // If there's an active slide and it's not the same as the new one
+            if (currentActiveSlide && currentActiveSlide !== newSlideElement) {
+                // Animate out the current slide
+                currentActiveSlide.classList.add('leaving'); // Add leaving class for its animation
+                currentActiveSlide.style.animationName = (direction === 'next' ? 'fadeOutDown' : 'fadeOutUp');
+
+                // Listen for animation end to fully hide the leaving slide
+                currentActiveSlide.addEventListener('animationend', function handler() {
+                    currentActiveSlide.classList.remove('active', 'leaving'); // Remove both active and leaving
+                    currentActiveSlide.style.display = 'none'; // Hide it completely
+                    currentActiveSlide.style.animationName = ''; // Clear animation
+                    currentActiveSlide.removeEventListener('animationend', handler);
+                }, { once: true });
+
+                // Animate in the new slide
+                newSlideElement.classList.add('active'); // Make it active so it takes up space
+                newSlideElement.style.display = 'flex'; // Ensure it's displayed
+                newSlideElement.style.animationName = (direction === 'next' ? 'fadeInUp' : 'fadeInDown');
+
+            } else if (!currentActiveSlide && index === 0) {
+                // This block specifically handles the very first load if showSlide(0) is called
+                // and no slide is active yet. It ensures the first slide is shown without animation.
+                newSlideElement.classList.add('active');
+                newSlideElement.style.display = 'flex';
+                newSlideElement.style.animationName = ''; // No animation on initial display
+            }
+
+            currentSlideIndex = index;
+            updateSlideCounter();
+            updateNavigationButtons();
+
+            // Special handling for the game slide to initialize it when shown
+            if (newSlideElement.id === 'slide-14') { // Changed to slide-14 for the new minigame
+                initializeReqGame();
+            }
+        }
+
+
+        function updateNavigationButtons() {
+            prevButton.disabled = currentSlideIndex === 0;
+            nextButton.disabled = currentSlideIndex === slides.length - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                showSlide(currentSlideIndex + 1, 'next');
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                showSlide(currentSlideIndex - 1, 'prev');
+            }
+        }
+
+        // Event Listeners for Navigation Buttons
+        prevButton.addEventListener('click', prevSlide);
+        nextButton.addEventListener('click', nextSlide);
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // --- Minijuego de Recolección de Requerimientos Logic ---
+        const reqGameData = [
+            { description: "Conversaciones directas para obtener información detallada y clarificar dudas al instante.", answer: "Entrevistas" },
+            { description: "Distribución de preguntas escritas a un gran número de stakeholders para recopilar información cuantitativa.", answer: "Cuestionarios" },
+            { description: "El analista observa a los usuarios mientras realizan sus tareas diarias en su entorno de trabajo.", answer: "Observación" },
+            { description: "Creación de una versión simplificada del sistema para que los usuarios interactúen y den feedback temprano.", answer: "Prototipos" },
+            { description: "Descripción de las interacciones entre un usuario y el sistema para lograr un objetivo específico.", answer: "Casos de Uso" },
+            { description: "Reuniones grupales donde los participantes generan ideas de forma libre y espontánea.", answer: "Lluvia de Ideas" }
+        ];
+
+        let currentReqQuestionIndex = 0;
+        let reqScore = 0;
+        let shuffledReqQuestions = [];
+
+        const reqDescriptionDisplay = document.getElementById('req-description');
+        const reqGameButtons = document.querySelectorAll('.req-game-button');
+        const reqFeedbackDisplay = document.getElementById('req-feedback');
+        const reqScoreDisplay = document.getElementById('req-score');
+        const reqTotalQuestionsDisplay = document.getElementById('req-total-questions');
+        const reqNextButton = document.getElementById('req-next-button');
+        const reqRestartButton = document.getElementById('req-restart-button');
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function initializeReqGame() {
+            shuffledReqQuestions = shuffleArray([...reqGameData]); // Create a shuffled copy
+            currentReqQuestionIndex = 0;
+            reqScore = 0;
+            reqTotalQuestionsDisplay.textContent = shuffledReqQuestions.length;
+            updateReqGameDisplay();
+            enableReqGameButtons();
+            reqNextButton.style.display = 'none'; // Hide next button initially
+            reqRestartButton.style.display = 'none'; // Hide restart button initially
+        }
+
+        function updateReqGameDisplay() {
+            if (currentReqQuestionIndex < shuffledReqQuestions.length) {
+                reqDescriptionDisplay.textContent = shuffledReqQuestions[currentReqQuestionIndex].description;
+                reqFeedbackDisplay.textContent = ""; // Clear feedback for new question
+                reqFeedbackDisplay.classList.remove('text-green-600', 'text-red-600'); // Clear color
+                reqScoreDisplay.textContent = reqScore;
+                enableReqGameButtons();
+                reqNextButton.style.display = 'none'; // Hide next button until answered
+            } else {
+                reqDescriptionDisplay.textContent = "¡Juego Terminado!";
+                reqFeedbackDisplay.textContent = `Tu puntuación final es: ${reqScore} de ${shuffledReqQuestions.length}`;
+                reqFeedbackDisplay.classList.remove('text-red-600');
+                reqFeedbackDisplay.classList.add('text-indigo-700'); // Final score color
+                disableReqGameButtons();
+                reqNextButton.style.display = 'none';
+                reqRestartButton.style.display = 'block'; // Show restart button
+            }
+        }
+
+        function handleReqAnswer(selectedAnswer) {
+            const correctAnswer = shuffledReqQuestions[currentReqQuestionIndex].answer;
+            if (selectedAnswer === correctAnswer) {
+                reqFeedbackDisplay.textContent = "¡Correcto!";
+                reqFeedbackDisplay.classList.remove('text-red-600');
+                reqFeedbackDisplay.classList.add('text-green-600');
+                reqScore++;
+            } else {
+                reqFeedbackDisplay.textContent = `Incorrecto. La respuesta correcta es: ${correctAnswer}.`;
+                reqFeedbackDisplay.classList.remove('text-green-600');
+                reqFeedbackDisplay.classList.add('text-red-600');
+            }
+            reqScoreDisplay.textContent = reqScore;
+            disableReqGameButtons();
+            if (currentReqQuestionIndex < shuffledReqQuestions.length - 1) {
+                reqNextButton.style.display = 'block'; // Show next button
+            } else {
+                reqRestartButton.style.display = 'block'; // Show restart button if last question
+            }
+        }
+
+        function enableReqGameButtons() {
+            reqGameButtons.forEach(button => {
+                button.disabled = false;
+                button.classList.remove('opacity-50', 'cursor-not-allowed');
+            });
+        }
+
+        function disableReqGameButtons() {
+            reqGameButtons.forEach(button => {
+                button.disabled = true;
+                button.classList.add('opacity-50', 'cursor-not-allowed');
+            });
+        }
+
+        reqGameButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                handleReqAnswer(event.target.dataset.answer);
+            });
+        });
+
+        reqNextButton.addEventListener('click', () => {
+            currentReqQuestionIndex++;
+            updateReqGameDisplay();
+        });
+
+        reqRestartButton.addEventListener('click', () => {
+            initializeReqGame();
+        });
+
+
+        // --- Initialize on DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current year in footer
+            const currentYearSpan = document.getElementById('current-year');
+            if (currentYearSpan) { // Added a check to prevent TypeError if element is not found
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+
+            // Initialize the first slide directly without calling showSlide,
+            // to ensure it's immediately visible and not subject to initial animation issues.
+            slides[0].classList.add('active');
+            slides[0].style.display = 'flex';
+            slides[0].style.animationName = ''; // No animation on initial display
+
+            currentSlideIndex = 0; // Ensure index is correctly set for the first slide
+            updateSlideCounter(); // Update counter for initial display
+            updateNavigationButtons(); // Update buttons for initial display
+        });
+    </script>
+</body>
+</html>

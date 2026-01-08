@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formato de Texto y Tablas</title>
+    <!-- CDN de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos base para un diseño consistente */
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow-x: hidden; /* Evita el scroll horizontal */
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            /* Flexbox para alinear el contenido principal */
+            justify-content: space-between;
+        }
+
+        /* Contenedor principal de la presentación */
+        #presentation-container {
+            width: 100%;
+            height: calc(100vh - 8rem); /* Altura dinámica para dejar espacio al header y footer */
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            max-width: 100vw;
+        }
+
+        /* Estilo para cada diapositiva */
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 2rem; /* Reduce el padding para móviles */
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            -ms-overflow-style: none; /* Oculta la barra de scroll en IE y Edge */
+            scrollbar-width: none; /* Oculta la barra de scroll en Firefox */
+            overflow-y: auto; /* Permite el scroll vertical en diapositivas largas */
+        }
+        .slide::-webkit-scrollbar {
+            display: none; /* Oculta la barra de scroll en Chrome, Safari y Opera */
+        }
+
+        /* Diapositiva activa con animación */
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation-name: fadeIn;
+            animation-duration: 0.8s;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Ajustes de tipografía para diferentes tamaños de pantalla */
+        @media (max-width: 768px) {
+            .slide h2, .slide h3 {
+                font-size: 1.5rem; /* Tamaño de fuente más pequeño para títulos */
+            }
+            .slide p, .slide li {
+                font-size: 1rem; /* Tamaño de fuente más pequeño para texto */
+            }
+            .nav-button {
+                padding: 0.5rem 1rem; /* Reduce el tamaño del botón */
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Estilo para los botones del cuestionario */
+        .quiz-option-button {
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .quiz-option-button.correct {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .quiz-option-button.incorrect {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        /* Estilo para la tabla simple de la diapositiva 7 */
+        .simple-table {
+            width: 100%;
+            border-collapse: collapse; /* Combina los bordes de las celdas */
+        }
+
+        .simple-table th, .simple-table td {
+            border: 1px solid #ccc; /* Bordes simples y grises */
+            padding: 8px;
+            text-align: left;
+        }
+
+        /* Estilo para las tablas de la presentación */
+        .styled-table {
+            border-collapse: collapse;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            border-radius: 10px; /* Bordes redondeados */
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th, .styled-table td {
+            padding: 12px 15px;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+
+        .styled-table tbody tr:hover {
+            background-color: #e8f5e9;
+            transition: background-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header de la página -->
+    <header id="page-header" class="w-full bg-white p-4 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <!-- Reducción del tamaño del logo usando clases responsivas de Tailwind -->
+            <img src="https://azghell.github.io/IMA-Informatica/imagenes/logo.png" alt="Logo de la institución" class="w-24 sm:w-32 h-auto">
+            <h1 class="text-lg sm:text-xl font-bold text-gray-800 mt-2 sm:mt-0">Formato de Texto y Tablas</h1>
+        </div>
+        <nav class="mt-4 sm:mt-0">
+            <ul class="flex space-x-2 sm:space-x-4">
+                <li><a href="https://azghell.github.io/IMA-Informatica" class="text-gray-600 hover:text-blue-500 transition-colors text-sm sm:text-base">Inicio</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors text-sm sm:text-base">Acerca de</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors text-sm sm:text-base">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenido principal de la presentación -->
+    <main class="flex-grow flex justify-center items-center p-4">
+        <!-- Contenedor de las diapositivas -->
+        <div id="presentation-container" class="relative">
+
+            <!-- Diapositiva 1: Portada -->
+            <div id="slide-1" class="slide active">
+                <img src="https://azghell.github.io/IMA-Informatica/imagenes/logo.png" alt="Logo del instituto" class="w-48 sm:w-64 md:w-80 h-auto mb-4 sm:mb-8">
+                <h2 class="text-xl sm:text-2xl mb-2 sm:mb-4 text-blue-600">Formato de Texto y Tablas</h2>
+                <p class="text-sm sm:text-base text-gray-600">Informática I</p>
+                <div class="mt-4 sm:mt-8 text-xs sm:text-sm text-gray-500">
+                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                    <p>Fecha: Domingo 28 de septiembre</p>
+                    <p>Grado: Décimo Sección "A"</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 2: ¿Qué es el formato de texto? -->
+            <div id="slide-2" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¿Qué es el Formato de Texto?</h3>
+                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
+                    El formato de texto se refiere a la presentación y estilo del texto en un documento, como el tipo de fuente, tamaño, color y alineación. Es fundamental para mejorar la legibilidad y la estética de un documento.
+                </p>
+            </div>
+
+            <!-- Diapositiva 3: Herramientas de formato de texto -->
+            <div id="slide-3" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Herramientas de Formato de Texto</h3>
+                <ul class="mt-2 sm:mt-4 text-left text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-2 sm:space-y-4">
+                    <li><strong>Fuente:</strong> Permite cambiar el tipo de letra (Times New Roman, Arial, etc.).</li>
+                    <li><strong>Tamaño de Fuente:</strong> Ajusta el tamaño del texto.</li>
+                    <li><strong>Estilo de Fuente:</strong> Incluye negrita, cursiva y subrayado para enfatizar palabras o frases.</li>
+                    <li><strong>Alineación:</strong> Posiciona el texto a la izquierda, derecha, centro o justificado.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 4: Ejemplos de formato de texto -->
+            <div id="slide-4" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Ejemplos Prácticos</h3>
+                <div class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow-inner max-w-3xl w-full text-left">
+                    <p class="text-lg font-bold mb-2">Este texto está en negrita.</p>
+                    <p class="italic text-lg mb-2">Este texto está en cursiva.</p>
+                    <p class="underline text-lg mb-2">Este texto está subrayado.</p>
+                    <p class="text-lg font-bold italic underline">Este texto combina negrita, cursiva y subrayado.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: ¿Qué son las tablas? (CORREGIDA) -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¿Qué son las Tablas?</h3>
+                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
+                    Una tabla es una estructura que organiza la información en filas y columnas. Es una herramienta esencial en procesadores de texto para presentar datos de manera ordenada y clara.
+                </p>
+            </div>
+
+            <!-- Diapositiva 6: Componentes de una tabla -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Componentes de una Tabla</h3>
+                <ul class="mt-2 sm:mt-4 text-left text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-2 sm:space-y-4">
+                    <li><strong>Fila:</strong> Un conjunto horizontal de celdas.</li>
+                    <li><strong>Columna:</strong> Un conjunto vertical de celdas.</li>
+                    <li><strong>Celda:</strong> El recuadro individual que se forma en la intersección de una fila y una columna.</li>
+                    <li><strong>Encabezado:</strong> La primera fila o columna que describe el contenido del resto de la tabla.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 7: Ejemplos de una tabla simple -->
+            <div id="slide-7" class="slide p-4 sm:p-8">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Ejemplo de una Tabla Simple</h3>
+                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
+                    Una tabla es una estructura que organiza la información en filas y columnas.
+                </p>
+                <div class="w-full max-w-xl mx-auto mt-4">
+                    <table class="simple-table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Laptop</td>
+                                <td>$1200</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>Mouse</td>
+                                <td>$25</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>Teclado</td>
+                                <td>$75</td>
+                                <td>2</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Estilos y Formato de Tablas -->
+            <div id="slide-8" class="slide p-4 sm:p-8">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Estilos y Formato de Tablas</h3>
+                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl mb-4">
+                    Puedes aplicar estilos visuales para mejorar la legibilidad. Esto incluye cambiar los colores de las celdas, los bordes y el sombreado.
+                </p>
+                <div class="w-full max-w-xl mx-auto mt-4">
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Mes</th>
+                                <th>Ventas ($)</th>
+                                <th>Ganancias ($)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Enero</td>
+                                <td>5000</td>
+                                <td>1500</td>
+                            </tr>
+                            <tr>
+                                <td>Febrero</td>
+                                <td>6500</td>
+                                <td>2100</td>
+                            </tr>
+                            <tr>
+                                <td>Marzo</td>
+                                <td>7200</td>
+                                <td>2500</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Tablas con Encabezados de Fila -->
+            <div id="slide-9" class="slide p-4 sm:p-8">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Tablas con Encabezados de Fila</h3>
+                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl mb-4">
+                    En algunas tablas, la primera columna funciona como encabezado para cada fila.
+                </p>
+                <div class="w-full max-w-xl mx-auto mt-4">
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Enero</th>
+                                <th>Febrero</th>
+                                <th>Marzo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Ventas</td>
+                                <td>5000</td>
+                                <td>6500</td>
+                                <td>7200</td>
+                            </tr>
+                            <tr>
+                                <td>Gastos</td>
+                                <td>3000</td>
+                                <td>3500</td>
+                                <td>4000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Cuestionario -->
+            <div id="slide-10" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¡Pon a prueba tus conocimientos!</h3>
+                <div id="quiz-container" class="bg-gray-100 p-4 sm:p-8 rounded-lg shadow-md max-w-3xl w-full text-center">
+                    <div id="quiz-question" class="text-base sm:text-2xl font-semibold mb-2 sm:mb-6 text-gray-800"></div>
+                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-4"></div>
+                    <div id="quiz-feedback" class="mt-4 sm:mt-6 text-sm sm:text-lg font-bold"></div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 11: Tarea -->
+            <div id="slide-11" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Asignación de Tareas</h3>
+                <div class="bg-gray-100 p-4 sm:p-8 rounded-lg shadow-inner max-w-3xl text-left">
+                    <p class="text-base sm:text-lg text-gray-700 mb-2 sm:mb-4 font-bold">Tarea:</p>
+                    <p class="text-sm sm:text-base text-gray-700 mb-2 sm:mb-4">
+                        Crea un documento de texto con la información de al menos 3 compañeros de clase, utilizando diferentes formatos de texto (negrita, cursiva, etc.) y una tabla para organizar sus datos personales (nombre, edad, hobby).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Fin de la Presentación -->
+            <div id="slide-12" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¡Gracias!</h3>
+                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
+                    Si tienen alguna duda, no duden en preguntar.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Botones de navegación -->
+        <div class="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-4 z-20">
+            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 text-sm sm:text-base">Anterior</button>
+            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 text-sm sm:text-base">Siguiente</button>
+        </div>
+        <div id="slide-counter" class="absolute bottom-4 sm:bottom-8 right-4 sm:right-8 font-semibold text-gray-400 z-10 text-xs sm:text-base">1 / 12</div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs sm:text-sm p-2">
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-2">
+            <img src="https://azghell.github.io/IMA-Informatica/imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-16 sm:w-20 h-auto">
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts para la navegación y la lógica del cuestionario -->
+    <script>
+        // Manejador de eventos global para capturar rechazos de promesas no manejados
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            event.preventDefault();
+        });
+
+        const slides = document.querySelectorAll('.slide');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const header = document.getElementById('page-header');
+        const footer = document.getElementById('page-footer');
+        let currentSlideIndex = 0;
+        let isTransitioning = false;
+
+        // Funcionalidad del cuestionario
+        const quizQuestions = [
+            {
+                question: "¿Qué es una fila en una tabla?",
+                options: ["Una línea vertical de celdas", "Una línea horizontal de celdas", "Una celda principal", "El encabezado de la tabla"],
+                correctAnswer: "Una línea horizontal de celdas"
+            },
+            {
+                question: "¿Para qué sirve el estilo de fuente 'negrita'?",
+                options: ["Para justificar el texto", "Para cambiar el tamaño del texto", "Para enfatizar palabras o frases", "Para alinear el texto al centro"],
+                correctAnswer: "Para enfatizar palabras o frases"
+            },
+            {
+                question: "¿Cuál es el componente de una tabla que define el título de una columna?",
+                options: ["Fila", "Celda", "Encabezado", "Columna"],
+                correctAnswer: "Encabezado"
+            },
+            {
+                question: "¿Qué es la alineación de texto?",
+                options: ["El tipo de letra", "El color del texto", "La posición del texto", "El tamaño de la fuente"],
+                correctAnswer: "La posición del texto"
+            },
+            {
+                question: "¿Cuál es el componente que se usa para encabezar filas y columnas?",
+                options: ["Una celda de encabezado", "Una celda de datos", "Una fila", "Una columna"],
+                correctAnswer: "Una celda de encabezado"
+            },
+            {
+                question: "¿Cómo se llama la intersección de una fila y una columna?",
+                options: ["Cuadro", "Celda", "Segmento", "Intersección"],
+                correctAnswer: "Celda"
+            }
+        ];
+        let currentQuizQuestionIndex = 0;
+
+        function updateQuizDisplay() {
+            const quizQuestionElement = document.getElementById('quiz-question');
+            const quizOptionsElement = document.getElementById('quiz-options');
+            const quizFeedbackElement = document.getElementById('quiz-feedback');
+
+            if (currentQuizQuestionIndex >= quizQuestions.length) {
+                quizQuestionElement.textContent = "¡Cuestionario completado!";
+                quizOptionsElement.innerHTML = '';
+                quizFeedbackElement.textContent = '';
+                return;
+            }
+
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            quizQuestionElement.textContent = currentQuestion.question;
+            quizOptionsElement.innerHTML = '';
+            quizFeedbackElement.textContent = '';
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = "quiz-option-button w-full px-6 py-3 rounded-xl border border-blue-400 bg-blue-50 text-blue-700 font-semibold transition-colors duration-200 hover:bg-blue-100";
+                button.onclick = () => checkAnswer(option);
+                quizOptionsElement.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            const quizFeedback = document.getElementById('quiz-feedback');
+            const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
+            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+
+            buttons.forEach(button => {
+                button.disabled = true;
+                if (button.textContent === currentQuestion.correctAnswer) {
+                    button.classList.add('correct');
+                } else if (button.textContent === selectedOption) {
+                    button.classList.add('incorrect');
+                }
+            });
+
+            if (isCorrect) {
+                quizFeedback.textContent = '¡Correcto!';
+                quizFeedback.classList.remove('text-red-500');
+                quizFeedback.classList.add('text-green-500');
+            } else {
+                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.correctAnswer;
+                quizFeedback.classList.remove('text-green-500');
+                quizFeedback.classList.add('text-red-500');
+            }
+
+            setTimeout(() => {
+                currentQuizQuestionIndex++;
+                updateQuizDisplay();
+            }, 3000); // Avanza después de 3 segundos
+        }
+
+        // --- Funcionalidad de la Presentación ---
+        function updateSlideCounter() {
+            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+        }
+
+        function updateNavigationButtons() {
+            prevButton.disabled = currentSlideIndex === 0;
+            nextButton.disabled = currentSlideIndex === slides.length - 1;
+        }
+
+        function showSlide(index) {
+            if (isTransitioning || index < 0 || index >= slides.length) {
+                return;
+            }
+
+            isTransitioning = true;
+            slides.forEach((slide) => {
+                slide.classList.remove('active');
+                slide.style.display = 'none';
+            });
+
+            currentSlideIndex = index;
+
+            // Llama a la función del cuestionario si la diapositiva actual es la del cuestionario
+            if (currentSlideIndex === 9) {
+                currentQuizQuestionIndex = 0; // Reinicia el cuestionario al volver a entrar
+                updateQuizDisplay();
+            }
+
+            const activeSlide = slides[currentSlideIndex];
+            activeSlide.style.display = 'flex';
+            setTimeout(() => {
+                activeSlide.classList.add('active');
+                updateSlideCounter();
+                updateNavigationButtons();
+                isTransitioning = false;
+            }, 10);
+        }
+
+        nextButton.addEventListener('click', () => {
+            showSlide(currentSlideIndex + 1);
+        });
+
+        prevButton.addEventListener('click', () => {
+            showSlide(currentSlideIndex - 1);
+        });
+
+        // Navegación con las teclas de flecha
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                showSlide(currentSlideIndex + 1);
+            } else if (event.key === 'ArrowLeft') {
+                showSlide(currentSlideIndex - 1);
+            }
+        });
+
+        // Ocultar el encabezado y pie de página al presionar F11 (pantalla completa)
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'F11') {
+                if (!document.fullscreenElement) {
+                    header.style.display = 'none';
+                    footer.style.display = 'none';
+                }
+            }
+        });
+
+        // Mostrar el encabezado y pie de página al salir de pantalla completa
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+        function handleFullscreenChange() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                header.style.display = 'flex';
+                footer.style.display = 'flex';
+            }
+        }
+
+        // --- Inicialización en DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentYearSpan = document.getElementById('current-year');
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>

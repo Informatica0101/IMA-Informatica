@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referencias de Celda en Hojas de Cálculo</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Universal box-sizing for a consistent design */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Base configuration for page layout */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+        }
+
+        /* Main container for the presentation */
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Presentation styles */
+        #presentation-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 4rem;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            overflow-y: auto;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .slide::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation-name: fadeIn;
+            animation-duration: 0.8s;
+            animation-fill-mode: forwards;
+        }
+
+        .slide h2, .slide h3 {
+            font-weight: 800;
+            color: #1f2937;
+        }
+
+        .slide p, .slide li {
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+        }
+
+        /* Animation for slide transitions */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Styles for navigation buttons */
+        .nav-button {
+            background-color: #3b82f6;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .nav-button:hover {
+            background-color: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .nav-button:disabled {
+            background-color: #d1d5db;
+            color: #9ca3af;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        /* Styles for slide counter */
+        #slide-counter {
+            position: absolute;
+            bottom: 1.5rem;
+            right: 2rem;
+            font-weight: 600;
+            color: #9ca3af;
+            z-index: 10;
+        }
+
+        /* Specific styles for the quiz */
+        .quiz-option-button {
+            width: 100%;
+            text-align: left;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            background-color: #e5e7eb;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .quiz-option-button.correct {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .quiz-option-button.incorrect {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .quiz-option-button:hover:not(:disabled) {
+            transform: scale(1.02);
+            background-color: #d1d5db;
+        }
+
+        .quiz-option-button:disabled {
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Header -->
+    <header id="page-header" class="w-full bg-white p-4 shadow-md flex justify-between items-center z-50">
+        <div class="flex items-center space-x-4">
+            <img src="https://azghell.github.io/IMA-Informatica/imagenes/logo.png" alt="Logo de la institución" style="width: 180px; height: auto;">
+            <h1 class="text-xl font-bold text-gray-800">Referencias de Celda</h1>
+        </div>
+        <nav>
+            <ul class="flex space-x-4">
+                <li><a href="https://azghell.github.io/IMA-Informatica" class="text-gray-600 hover:text-blue-500 transition-colors">Inicio</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors">Acerca de</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content -->
+    <main>
+        <!-- Presentation container -->
+        <div id="presentation-container" class="relative">
+
+            <!-- Slide 1: Cover Page -->
+            <div id="slide-1" class="slide active">
+                <img src="https://azghell.github.io/IMA-Informatica/imagenes/logo.png" alt="Logo" style="width: 300px; height: auto;" class="mb-8">
+                <h2 class="text-3xl mb-4 text-blue-600">Referencias Relativas y Absolutas</h2>
+                <p class="text-lg text-gray-600">Ofimática I</p>
+                <div class="mt-8 text-sm text-gray-500">
+                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                    <p>Fecha: 07 de septiembre</p>
+                    <p>Grado: Undécimo Sección "A"</p>
+                </div>
+            </div>
+
+            <!-- Slide 2: What are Cell References? -->
+            <div id="slide-2" class="slide">
+                <h3 class="text-4xl mb-6 text-blue-500">¿Qué son las Referencias de Celda?</h3>
+                <p class="text-2xl text-gray-700 leading-relaxed max-w-3xl">
+                    Las <strong>referencias de celda</strong> indican a una hoja de cálculo dónde encontrar los datos que se usarán en una fórmula. Son esenciales para crear fórmulas dinámicas y eficientes que se pueden reutilizar.
+                </p>
+            </div>
+
+            <!-- Slide 3: Relative References -->
+            <div id="slide-3" class="slide">
+                <h3 class="text-4xl mb-6 text-blue-500">Referencias Relativas</h3>
+                <p class="text-2xl text-gray-700 leading-relaxed max-w-3xl">
+                    Una <strong>referencia relativa</strong> es la referencia estándar en una hoja de cálculo. Cuando copias una fórmula a otra celda, la referencia se ajusta automáticamente según su nueva posición.
+                </p>
+                <div class="mt-8 text-sm text-gray-500">
+                    <p class="text-xl font-bold mt-4">Ejemplo: `=A2+B2`</p>
+                </div>
+            </div>
+
+            <!-- Slide 4: Relative References Example -->
+            <div id="slide-4" class="slide">
+                <h3 class="text-4xl mb-6 text-blue-500">Ejemplo de Referencia Relativa</h3>
+                <p class="text-2xl text-gray-700 leading-relaxed max-w-3xl">
+                    Si la fórmula `=A2*B2` se copia de la celda C2 a la celda C3, la referencia cambia automáticamente a `=A3*B3` para mantener la relación de posición.
+                </p>
+                <div class="mt-8 text-sm text-gray-500">
+                    <img src="imagenes/referencias_relativas.gif" width="400" height="auto" alt="Diagrama de referencia relativa" class="rounded-lg shadow-md mt-4">
+                </div>
+            </div>
+
+            <!-- Slide 5: Absolute References -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-4xl mb-6 text-blue-500">Referencias Absolutas</h3>
+                <p class="text-2xl text-gray-700 leading-relaxed max-w-3xl">
+                    Una <strong>referencia absoluta</strong> no cambia cuando se copia a otra celda. Para crearla, se utiliza el signo de dólar (`$`) antes de la columna o la fila que quieres mantener fija.
+                </p>
+                <div class="mt-8 text-sm text-gray-500">
+                    <p class="text-xl font-bold mt-4">Ejemplo: `=$A$2`</p>
+                </div>
+            </div>
+
+            <!-- Slide 6: Absolute References Example -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-4xl mb-6 text-blue-500">Ejemplo de Referencia Absoluta</h3>
+                <p class="text-2xl text-gray-700 leading-relaxed max-w-3xl">
+                    Si la fórmula `=B2*$A$2` se copia a la celda C3, la referencia `$A$2` permanece inalterable, mientras que `B2` cambia a `B3`.
+                </p>
+                <div class="mt-8 text-sm text-gray-500">
+                    <img src="imagenes/referencias_absolutas.gif" width="400" height="auto" alt="Diagrama de referencia absoluta" class="rounded-lg shadow-md mt-4">
+                </div>
+            </div>
+
+            <!-- Slide 7: Mixed References -->
+            <div id="slide-7" class="slide">
+                <h3 class="text-4xl mb-6 text-blue-500">Referencias Mixtas</h3>
+                <p class="text-2xl text-gray-700 leading-relaxed max-w-3xl">
+                    Una <strong>referencia mixta</strong> combina una parte relativa y una absoluta. Fijas la columna o la fila, pero no ambas. Son muy útiles para crear tablas de doble entrada como una tabla de multiplicar.
+                </p>
+                <p class="text-xl text-gray-700 leading-relaxed mt-4 font-bold">
+                    Ejemplos: `$A2` (columna fija) y `A$2` (fila fija).
+                </p>
+            </div>
+
+            <!-- Slide 8: Practice Exercise -->
+            <div id="slide-8" class="slide">
+                <h3 class="text-4xl mb-6 text-blue-500">Ejercicio Práctico</h3>
+                <div class="bg-gray-100 p-8 rounded-lg shadow-inner max-w-3xl text-left">
+                    <p class="text-xl text-gray-700 mb-4 font-bold">Instrucciones:</p>
+                    <p class="text-lg text-gray-700 mb-4">
+                        En una hoja de cálculo, crea una tabla de multiplicación del 1 al 10. Usa una sola fórmula en la primera celda y luego arrástrala para completar el resto de la tabla. Asegúrate de usar <strong>referencias mixtas</strong> para lograrlo.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Slide 9: Summary Table -->
+            <div id="slide-9" class="slide">
+                <h3 class="text-4xl mb-6 text-blue-500">Resumen de Tipos de Referencia</h3>
+                <div class="flex justify-center items-center">
+                    <table class="table-auto w-full max-w-2xl bg-white border border-gray-300 rounded-lg shadow-md">
+                        <thead>
+                            <tr class="bg-blue-100 text-blue-800">
+                                <th class="px-4 py-2 border-r border-gray-300">Tipo</th>
+                                <th class="px-4 py-2 border-r border-gray-300">Formato</th>
+                                <th class="px-4 py-2">Comportamiento al Copiar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-gray-50">
+                                <td class="border px-4 py-2 text-center text-lg">Relativa</td>
+                                <td class="border px-4 py-2 text-center text-lg">`A1`</td>
+                                <td class="border px-4 py-2 text-center text-lg">Se ajusta a la nueva celda.</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="border px-4 py-2 text-center text-lg">Absoluta</td>
+                                <td class="border px-4 py-2 text-center text-lg">`$A$1`</td>
+                                <td class="border px-4 py-2 text-center text-lg">Permanece fija.</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="border px-4 py-2 text-center text-lg">Mixta</td>
+                                <td class="border px-4 py-2 text-center text-lg">`$A1` o `A$1`</td>
+                                <td class="border px-4 py-2 text-center text-lg">Fija la fila o la columna.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Slide 10: Interactive Quiz -->
+            <div id="slide-10" class="slide">
+                <h3 class="text-4xl mb-6 text-blue-500">¡Quiz Interactivo!</h3>
+                <div id="quiz-container" class="w-full max-w-2xl bg-white p-8 rounded-lg shadow-md text-left flex flex-col items-center">
+                    <p id="quiz-question" class="text-xl font-semibold mb-4 text-gray-800 text-center"></p>
+                    <div id="quiz-options-container" class="flex flex-col space-y-2 w-full"></div>
+                    <div id="quiz-feedback" class="mt-4 text-center font-bold"></div>
+                </div>
+            </div>
+
+            <!-- Slide 11: Assigned Task -->
+            <div id="slide-11" class="slide">
+                <h3 class="text-4xl mb-6 text-blue-500">Guía de Estudio</h3>
+                <div class="bg-gray-100 p-8 rounded-lg shadow-inner max-w-3xl">
+                    <p class="text-xl text-gray-700 mb-4">
+                        Continúa con los ejercicios de la <strong>Guía de Estudio</strong> para consolidar los conceptos de referencias relativas y absolutas.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Presentation navigation buttons -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-4 z-20">
+            <button id="prev-btn" class="nav-button">Anterior</button>
+            <button id="next-btn" class="nav-button">Siguiente</button>
+        </div>
+        <div id="slide-counter">1 / 11</div>
+    </main>
+
+    <!-- Footer -->
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-sm z-50">
+        <div class="flex items-center justify-center space-x-2">
+            <img src="https://azghell.github.io/IMA-Informatica/imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="80" height="auto">
+            <p>© 2025 Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Navigation and quiz script -->
+    <script>
+        // Add a global event handler to capture unhandled promise rejections
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            event.preventDefault(); // Prevents the browser console from showing the error
+        });
+
+        const slides = document.querySelectorAll('.slide');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const header = document.getElementById('page-header');
+        const footer = document.getElementById('page-footer');
+        let currentSlideIndex = 0;
+        let isTransitioning = false;
+        const quizContainer = document.getElementById('quiz-container');
+
+        function updateSlideCounter() {
+            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+        }
+
+        function updateNavigationButtons() {
+            prevButton.disabled = currentSlideIndex === 0;
+            nextButton.disabled = currentSlideIndex === slides.length - 1;
+        }
+
+        function showSlide(index) {
+            if (isTransitioning || index < 0 || index >= slides.length) {
+                return;
+            }
+
+            isTransitioning = true;
+            slides.forEach((slide) => {
+                slide.classList.remove('active');
+                slide.style.display = 'none';
+            });
+
+            currentSlideIndex = index;
+
+            const activeSlide = slides[currentSlideIndex];
+            activeSlide.style.display = 'flex';
+            setTimeout(() => {
+                activeSlide.classList.add('active');
+                updateSlideCounter();
+                updateNavigationButtons();
+                isTransitioning = false;
+                if (activeSlide.id === 'slide-10') {
+                    initializeQuiz();
+                }
+            }, 10);
+        }
+
+        nextButton.addEventListener('click', () => {
+            showSlide(currentSlideIndex + 1);
+        });
+
+        prevButton.addEventListener('click', () => {
+            showSlide(currentSlideIndex - 1);
+        });
+
+        // Navigation with arrow keys
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                showSlide(currentSlideIndex + 1);
+            } else if (event.key === 'ArrowLeft') {
+                showSlide(currentSlideIndex - 1);
+            }
+        });
+
+        // Event listener for F11 key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'F11') {
+                // Ocultar el encabezado y el pie de página
+                header.style.display = 'none';
+                footer.style.display = 'none';
+            }
+        });
+
+        // Event listener for fullscreen mode to show/hide header and footer
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+        function handleFullscreenChange() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                // Salir del modo de pantalla completa: mostrar el encabezado y el pie de página
+                header.style.display = 'flex';
+                footer.style.display = 'flex';
+            }
+        }
+
+        // --- Static Quiz Logic ---
+        const quizQuestions = [
+            {
+                question: "¿Qué tipo de referencia de celda cambia automáticamente cuando se copia a otra celda?",
+                options: ["Absoluta", "Relativa", "Mixta", "Fija"],
+                correctAnswer: "Relativa"
+            },
+            {
+                question: "¿Qué carácter se utiliza para indicar una referencia absoluta?",
+                options: ["*", "&", "#", "$"],
+                correctAnswer: "$"
+            },
+            {
+                question: "La fórmula `=A1+B1` en la celda C1 se copia a la celda C2. ¿Qué fórmula aparecerá en C2?",
+                options: ["`=A1+B1`", "`=A2+B2`", "`=C1+D1`", "`=A1+C1`"],
+                correctAnswer: "`=A2+B2`"
+            },
+            {
+                question: "En la fórmula `=$A1`, la referencia a la columna está:",
+                options: ["Relativa", "Mixta", "Absoluta", "No existe"],
+                correctAnswer: "Absoluta"
+            },
+            {
+                question: "¿Cuál de las siguientes es una referencia mixta?",
+                options: ["`A1`", "`$A$1`", "`A$1`", "`1A`"],
+                correctAnswer: "`A$1`"
+            },
+            {
+                question: "Si quieres calcular una serie de precios con IVA, ¿qué tipo de referencia usarías para la celda que contiene el porcentaje de IVA?",
+                options: ["Relativa", "Absoluta", "Mixta", "Ninguna de las anteriores"],
+                correctAnswer: "Absoluta"
+            },
+            {
+                question: "Al copiar la fórmula `=B$2` de la celda C3 a C4, ¿cómo cambia la fórmula?",
+                options: ["`=B$2`", "`=B$3`", "`=C$2`", "`=C$3`"],
+                correctAnswer: "`=B$2`"
+            },
+            {
+                question: "¿Qué ocurre con una referencia relativa como `A5` si la fórmula se copia una fila hacia abajo y una columna a la derecha?",
+                options: ["`A6`", "`B5`", "`B6`", "`$A$5`"],
+                correctAnswer: "`B6`"
+            },
+            {
+                question: "Si quieres fijar la fila pero permitir que la columna cambie, ¿cuál es la sintaxis correcta?",
+                options: ["`$B5`", "`B$5`", "`B5$`", "`B$5$`"],
+                correctAnswer: "`B$5`"
+            },
+            {
+                question: "En una fórmula que utiliza `SUMA`, ¿qué tipo de referencia se usa normalmente para el rango de celdas?",
+                options: ["Absoluta", "Mixta", "Relativa", "Ninguna de las anteriores"],
+                correctAnswer: "Relativa"
+            }
+        ];
+
+        let currentQuizQuestionIndex = 0;
+        const quizQuestionElement = document.getElementById('quiz-question');
+        const quizOptionsContainer = document.getElementById('quiz-options-container');
+        const quizFeedback = document.getElementById('quiz-feedback');
+
+        function initializeQuiz() {
+            currentQuizQuestionIndex = 0;
+            updateQuizDisplay();
+        }
+
+        function updateQuizDisplay() {
+            if (currentQuizQuestionIndex >= quizQuestions.length) {
+                quizQuestionElement.textContent = "¡Quiz terminado!";
+                quizOptionsContainer.innerHTML = '';
+                quizFeedback.textContent = '';
+                const restartButton = document.createElement('button');
+                restartButton.textContent = 'Reiniciar Quiz';
+                restartButton.classList.add('nav-button', 'mt-6', 'w-full', 'max-w-xs');
+                restartButton.addEventListener('click', initializeQuiz);
+                quizOptionsContainer.appendChild(restartButton);
+                return;
+            }
+
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            quizQuestionElement.textContent = currentQuestion.question;
+            quizOptionsContainer.innerHTML = '';
+            quizFeedback.textContent = '';
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('quiz-option-button', 'rounded-md', 'shadow-sm', 'hover:bg-gray-200');
+                button.addEventListener('click', () => checkAnswer(button, option));
+                quizOptionsContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedButton, selectedOption) {
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            const buttons = quizOptionsContainer.querySelectorAll('.quiz-option-button');
+            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+
+            buttons.forEach(button => {
+                button.disabled = true;
+                if (button.textContent === currentQuestion.correctAnswer) {
+                    button.classList.add('correct');
+                } else if (button.textContent === selectedOption) {
+                    button.classList.add('incorrect');
+                }
+            });
+
+            if (isCorrect) {
+                quizFeedback.textContent = '¡Correcto!';
+                quizFeedback.classList.remove('text-red-500');
+                quizFeedback.classList.add('text-green-500');
+            } else {
+                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.correctAnswer;
+                quizFeedback.classList.remove('text-green-500');
+                quizFeedback.classList.add('text-red-500');
+            }
+
+            setTimeout(() => {
+                currentQuizQuestionIndex++;
+                updateQuizDisplay();
+            }, 3000); // Advances after 3 seconds
+        }
+
+        // --- Initialization on DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentYearSpan = document.getElementById('current-year');
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>

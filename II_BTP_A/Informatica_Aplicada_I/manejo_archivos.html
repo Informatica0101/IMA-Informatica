@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manejo de Sistema de Archivos</title>
+    <!-- CDN de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos base para un diseño consistente */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Ajuste global para reducir el tamaño base en un 10%. (1rem = 0.9rem) */
+        html {
+            font-size: 90%;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            justify-content: space-between;
+        }
+
+        #presentation-container {
+            width: 100%;
+            height: calc(100vh - 7rem);
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            max-width: 100vw;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 1.8rem;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            overflow-y: auto;
+        }
+        .slide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation-name: fadeIn;
+            animation-duration: 0.8s;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .slide h2, .slide h3 {
+                font-size: 1.4rem;
+            }
+            .slide p, .slide li {
+                font-size: 0.9rem;
+            }
+            .nav-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Estilos del Cuestionario */
+        .quiz-option-button {
+            transition: background-color 0.3s, transform 0.2s;
+            text-align: left; /* Aseguramos que el texto esté a la izquierda */
+            padding-left: 1.5rem; /* Espaciado interno */
+        }
+
+        .quiz-option-button.correct {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .quiz-option-button.incorrect {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        /* Estilo para placeholder de imagen */
+        .image-placeholder {
+            height: 150px;
+            width: 250px;
+            color: #009688;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            border-radius: 8px;
+            margin: 1rem auto;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 10px;
+        }
+        @media (min-width: 640px) {
+            .image-placeholder {
+                height: 200px;
+                width: 350px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header de la página -->
+    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
+            <img src="https://azghell.github.io/IMA-Informatica/imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
+            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Manejo de Sistema de Archivos</h1>
+        </div>
+        <nav class="mt-3 sm:mt-0">
+            <ul class="flex space-x-2 sm:space-x-3">
+                <li><a href="https://azghell.github.io/IMA-Informatica" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Acerca de</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenido principal de la presentación -->
+    <main class="flex-grow flex justify-center items-center p-3">
+        <div id="presentation-container" class="relative">
+
+            <!-- Diapositiva 1: Portada -->
+            <div id="slide-1" class="slide active">
+                <img src="https://azghell.github.io/IMA-Informatica/imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-3 sm:mb-7">
+                <h2 class="text-lg sm:text-xl mb-1 sm:mb-3 text-blue-600">Manejo de Sistema de Archivos</h2>
+                <p class="text-xs sm:text-sm text-gray-600">Informática Aplicada I</p>
+                <div class="mt-3 sm:mt-7 text-xs text-gray-500">
+                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                    <!-- Fecha Actualizada -->
+                    <p>Fecha: Domingo 05 de octubre del 2025</p>
+                    <p>Grado: Undécimo de Informática</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 2: Introducción al Sistema de Archivos -->
+            <div id="slide-2" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¿Qué es un Sistema de Archivos?</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Es la estructura lógica y organizada que utiliza el sistema operativo (como Windows) para <b>almacenar, organizar, nombrar, manipular y proteger</b> los archivos y datos en un dispositivo de almacenamiento.
+                </p>
+                <br>
+                <div class="image-placeholder mt-5">
+                <img src="https://azghell.github.io/IMA-Informatica/II_BTP_A/Informatica_Aplicada_I/imagenes/gestion_archivos.png" alt="Diagrama de un sistema de archivos" height="50%">
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: El Navegador de Archivos (Explorador de Windows) -->
+            <div id="slide-3" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">El Explorador de Archivos de Windows</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Es la principal interfaz gráfica para acceder y gestionar el sistema de archivos. Permite <b>navegar</b> entre directorios, <b>crear</b> carpetas, <b>mover</b>, <b>copiar</b> y <b>eliminar</b> archivos de manera intuitiva.
+                </p>
+                <div class="image-placeholder mt-5">
+                    <img src="https://azghell.github.io/IMA-Informatica/II_BTP_A/Informatica_Aplicada_I/imagenes/administrador_Archivos.png" alt="Captura del Explorador de Archivos de Windows" class="w-full h-auto max-w-3xl">
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: Propiedades y Atributos de Archivos -->
+            <div id="slide-4" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Propiedades y Atributos</h3>
+                <div class="bg-gray-100 p-3 sm:p-5 rounded-lg shadow-inner max-w-3xl w-full text-left mt-3">
+                    <p class="font-bold mb-2 text-base text-blue-700">Propiedades (Metadatos)</p>
+                    <p class="text-sm">Información detallada sobre el archivo (tamaño, fecha de creación/modificación, autor, tipo, etc.). Accesible al hacer clic derecho y seleccionar "Propiedades".</p>
+                    <hr class="my-3">
+                    <p class="font-bold mb-2 text-base text-blue-700">Atributos (Comportamiento)</p>
+                    <p class="text-sm">Marcadores que definen cómo el sistema operativo debe manejar el archivo.</p>
+                    <ul class="list-disc list-inside ml-4 mt-2 text-sm">
+                        <li><b>Solo lectura:</b> Impide modificar o eliminar accidentalmente.</li>
+                        <li><b>Oculto:</b> No se muestra en la vista normal del explorador.</li>
+                        <li><b>De Sistema:</b> Archivos esenciales del OS, protegidos.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Compresión de Archivos (Software) -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Software de Compresión: ¿Por qué y Cómo?</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    La compresión reduce el tamaño de los archivos para ahorrar espacio o facilitar su transferencia (ej. envío por email).
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-8 mt-5 w-full max-w-3xl">
+                    <div class="bg-yellow-100 p-4 rounded-lg shadow-md flex-1">
+                        <p class="font-bold text-yellow-800">Tipos Comunes</p>
+                        <ul class="list-disc list-inside mt-1 text-sm text-gray-700">
+                            <li><b>.ZIP:</b> Estándar integrado en Windows.</li>
+                            <li><b>.RAR:</b> Formato propietario de WinRAR.</li>
+                            <li><b>.7Z:</b> Formato de alta compresión de 7-Zip.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-green-100 p-4 rounded-lg shadow-md flex-1">
+                        <p class="font-bold text-green-800">Compresión sin pérdida (Lossless)</p>
+                        <p class="text-sm text-gray-700">Permite reconstruir el archivo original exactamente igual después de la descompresión. Es ideal para documentos y código.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: Montaje de Discos Virtuales (Daemon Tools) -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Montaje de Disco Virtual</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Consiste en hacer que un archivo de imagen (como un <b>.ISO</b> o <b>.MDS</b>) se comporte como una unidad de disco física (CD/DVD/Blu-ray) en el sistema.
+                </p>
+                <br>
+                <div class="image-placeholder mt-5">
+                  <img src="https://azghell.github.io/IMA-Informatica/II_BTP_A/Informatica_Aplicada_I/imagenes/deamostools.PNG" alt="Daemon Tools" class="w-full h-auto max-w-3xl">
+                </div>
+                <div class="mt-3 bg-blue-50 p-3 rounded-lg text-sm max-w-3xl">
+                    <b>Software Ejemplo:</b> Daemon Tools, Virtual CloneDrive o la función nativa de Windows 10/11 para ISOs.
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Respaldo de Información (Backups) -->
+            <div id="slide-7" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Gestión de Respaldo (Backup)</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    El respaldo es la copia de datos importantes para protegerlos contra pérdidas por fallas de hardware, errores humanos, o ataques cibernéticos (ej. ransomware).
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-8 mt-5 w-full max-w-3xl">
+                    <div class="bg-red-100 p-4 rounded-lg shadow-md flex-1">
+                        <p class="font-bold text-red-800">Respaldo Manual</p>
+                        <p class="text-sm text-gray-700">El usuario copia y pega archivos a un destino externo cuando lo recuerda.</p>
+                    </div>
+                    <div class="bg-indigo-100 p-4 rounded-lg shadow-md flex-1">
+                        <p class="font-bold text-indigo-800">Respaldo Automático</p>
+                        <p class="text-sm text-gray-700">El sistema o software programado realiza la copia periódicamente sin intervención del usuario (ej. Historial de Archivos de Windows).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Estrategia de Respaldo 3-2-1 -->
+            <div id="slide-8" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Estrategia 3-2-1 para Backups</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Una regla de oro en la gestión de datos para maximizar la seguridad.
+                </p>
+                <div class="bg-purple-100 p-4 sm:p-5 rounded-lg shadow-inner max-w-3xl w-full text-left mt-3">
+                    <p class="font-bold mb-2 text-base text-purple-700">Regla 3-2-1</p>
+                    <ul class="list-decimal list-inside ml-4 mt-2 text-sm space-y-1">
+                        <li><b>3 Copias:</b> Mantener al menos 3 copias de tus datos (el original y dos copias).</li>
+                        <li><b>2 Medios Diferentes:</b> Almacenar las copias en 2 tipos de medios diferentes (ej. disco duro interno y externo).</li>
+                        <li><b>1 Copia Fuera del Sitio:</b> Mantener 1 de esas copias fuera de la ubicación física (ej. en la nube o en una ubicación remota).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: El Archivo Batch (.BAT) y la Automatización (CONCEPTO Y EJEMPLO) -->
+            <div id="slide-9" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Archivos .BAT para Automatización</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Un archivo <b>.bat</b> (Batch) es un script simple para el sistema operativo que permite ejecutar una serie de comandos de manera secuencial, ideal para automatizar tareas repetitivas como el respaldo de archivos.
+                </p>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mt-3 font-semibold text-blue-700">
+                    Ejemplo de script para respaldo usando XCOPY:
+                </p>
+                <div class="bg-gray-800 text-green-400 p-3 rounded-lg mt-3 font-mono text-left max-w-3xl w-full text-xs sm:text-sm overflow-x-auto">
+                    <p>@echo off</p>
+                    <p>xcopy "C:\Ruta\Origen" "D:\Ruta\Destino" /s /e /i /y</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Explicación de Switches XCOPY (NUEVA) -->
+            <div id="slide-10" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Switches del Comando XCOPY (Modificadores)</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
+                    Estos parámetros indican a `xcopy` exactamente cómo debe realizar la copia de los directorios para asegurar que el respaldo sea completo y automático.
+                </p>
+                <div class="bg-yellow-100 p-4 sm:p-5 rounded-lg shadow-inner max-w-3xl w-full text-left">
+                    <ul class="list-disc list-inside ml-4 mt-2 text-sm space-y-2">
+                        <li><b>/s:</b> Copia directorios y subdirectorios, <strong>excepto</strong> los que están vacíos.</li>
+                        <li><b>/e:</b> Se utiliza junto a `/s`. Fuerza la copia de <strong>subdirectorios vacíos</strong>, replicando toda la estructura del origen.</li>
+                        <li><b>/i:</b> Indica que el destino es un <strong>directorio</strong>. Si el directorio de destino no existe, `xcopy` lo crea automáticamente. (¡Clave para evitar errores!)</li>
+                        <li><b>/y:</b> <strong>Suprime la confirmación</strong> de sobrescritura. Es fundamental para la automatización, ya que evita que el script se detenga esperando una respuesta.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 11: Programador de Tareas de Windows -->
+            <div id="slide-11" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Programador de Tareas de Windows</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Es la herramienta clave del sistema operativo para ejecutar programas o scripts (como un `.bat`) en momentos específicos o como respuesta a eventos definidos.
+                </p>
+                <div class="bg-blue-100 p-4 sm:p-5 rounded-lg shadow-inner max-w-3xl w-full text-left mt-3">
+                    <p class="font-bold mb-2 text-base text-blue-700">Funciones Clave para Backups</p>
+                    <ul class="list-disc list-inside ml-4 mt-2 text-sm">
+                        <li><b>Activadores (Triggers):</b> Define cuándo se ejecutará el script (ej. Diariamente a las 2:00 AM, al iniciar sesión).</li>
+                        <li><b>Acciones:</b> Especifica qué programa o script debe ejecutar (ej. `C:\Rutas\MiBackup.bat`).</li>
+                        <li><b>Condiciones:</b> Permite definir requisitos adicionales (ej. Solo ejecutar si la laptop está conectada a la corriente).</li>
+                    </ul>
+                </div>
+                <div class="image-placeholder mt-5">
+                  <img src="https://azghell.github.io/IMA-Informatica/II_BTP_A/Informatica_Aplicada_I/imagenes/programador_tareas.PNG" alt="Programador de Tareas de Windows" class="w-full h-auto max-w-3xl">
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Cuestionario -->
+            <div id="slide-12" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¡Cuestionario de Manejo de Archivos!</h3>
+                <div id="quiz-container" class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-md max-w-3xl w-full text-center">
+                    <div id="quiz-question" class="text-base sm:text-xl font-semibold mb-2 sm:mb-5 text-gray-800"></div>
+                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-3"></div>
+                    <div id="quiz-feedback" class="mt-3 sm:mt-5 text-sm sm:text-base font-bold"></div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 13: Tarea Asignada -->
+            <div id="slide-13" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Asignación: Automatización de Respaldo</h3>
+                <div class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-inner max-w-3xl text-left">
+                    <p class="text-sm sm:text-base text-gray-700 mb-2 font-bold text-red-700">Informe Detallado (Paso a Paso):</p>
+                    <p class="text-xs sm:text-sm text-gray-700 mb-4">
+                        Desarrolle un informe que detalle el proceso completo para la <b>creación de un archivo .bat</b> que ejecute un respaldo automático de la carpeta de "Documentos" del usuario hacia una unidad USB o disco duro externo (identificada con una letra de unidad específica, por ejemplo, <b>E:</b>).
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 mb-2 font-bold">Incluya:</p>
+                    <ul class="list-disc list-inside ml-4 mt-2 text-xs sm:text-sm">
+                        <li>El código del script <b>.bat</b> y su explicación.</li>
+                        <li>El uso de comandos como <b>XCOPY</b> o <b>ROBOCOPY</b>.</li>
+                        <li>El paso a paso para programar su ejecución con el <b>Programador de Tareas de Windows</b>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 14: Conclusión -->
+            <div id="slide-14" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Conclusión y Preguntas</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    El manejo eficiente del sistema de archivos, la comprensión de propiedades y la implementación de respaldos automáticos son pilares de la seguridad y productividad informática.
+                </p>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mt-5 font-bold text-blue-600">
+                    ¡Gracias por su atención! ¿Tienen alguna pregunta sobre la gestión de archivos?
+                </p>
+            </div>
+        </div>
+
+        <!-- Botones de navegación -->
+        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
+            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
+            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        </div>
+        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 14</div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
+            <img src="https://azghell.github.io/IMA-Informatica/imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts para la navegación y la lógica del cuestionario -->
+    <script>
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            event.preventDefault();
+        });
+
+        const slides = document.querySelectorAll('.slide');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const header = document.getElementById('page-header');
+        const footer = document.getElementById('page-footer');
+        // Total de diapositivas ahora es 14
+        let currentSlideIndex = 0;
+        let isTransitioning = false;
+
+        // 10 Preguntas sobre Manejo de Archivos, incluyendo deducción lógica
+        const quizQuestions = [
+            {
+                question: "1. ¿Cuál es el principal propósito de la compresión de archivos 'Lossless' (sin pérdida)?",
+                options: ["Reducir la calidad de imágenes y videos", "Reducir el tamaño sin perder información original", "Añadir metadatos de seguridad", "Aumentar la velocidad de acceso al archivo"],
+                correctAnswer: "Reducir el tamaño sin perder información original"
+            },
+            {
+                question: "2. Si un archivo tiene el atributo de 'Solo lectura', ¿qué acción no puede realizar directamente el Explorador de Archivos?",
+                options: ["Visualizar su contenido", "Copiar el archivo a otra carpeta", "Cambiar el nombre del archivo", "Abrir la ventana de Propiedades"],
+                correctAnswer: "Cambiar el nombre del archivo"
+            },
+            {
+                question: "3. ¿Qué acción realiza un software como Daemon Tools al 'montar' un archivo .ISO?",
+                options: ["Descomprime el archivo ISO en el disco duro", "Crea una copia de seguridad en la nube", "Emula una unidad de disco óptica virtual", "Borra el archivo ISO después de usarlo"],
+                correctAnswer: "Emula una unidad de disco óptica virtual"
+            },
+            {
+                question: "4. Según la Estrategia de Respaldo 3-2-1, ¿cuántas copias totales de tus datos (incluyendo el original) deberías tener?",
+                options: ["Una (el original)", "Dos", "Tres", "Seis"],
+                correctAnswer: "Tres"
+            },
+            {
+                question: "5. ¿Cuál es la principal ventaja de un respaldo <b>automático</b> sobre uno <b>manual</b>?",
+                options: ["Ahorra más espacio en el disco", "Asegura la ejecución constante y periódica sin depender de la memoria del usuario", "Es más fácil de configurar", "Permite respaldar solo archivos de imagen"],
+                correctAnswer: "Asegura la ejecución constante y periódica sin depender de la memoria del usuario"
+            },
+            {
+                question: "6. Deducción: Si guardas tus archivos en el disco C: y en una unidad USB, ¿qué parte de la regla 3-2-1 *no* estás cumpliendo?",
+                options: ["3 copias", "2 medios diferentes", "1 copia fuera del sitio", "Estás cumpliendo con todas las partes"],
+                correctAnswer: "1 copia fuera del sitio"
+            },
+            {
+                question: "7. ¿Qué switch de XCOPY o ROBOCOPY se utiliza para replicar subdirectorios incluso si están vacíos?",
+                options: ["/s", "/y", "/e", "/i"],
+                correctAnswer: "/e"
+            },
+            {
+                question: "8. ¿Qué tipo de información se considera un 'metadato' de un archivo?",
+                options: ["El contenido binario del archivo", "El nombre del archivo", "La fecha de última modificación", "El ícono que representa el archivo"],
+                correctAnswer: "La fecha de última modificación"
+            },
+            {
+                question: "9. Deducción: Si al hacer doble clic en una carpeta esta no abre, ¿qué elemento del Explorador de Archivos podrías usar para asegurarte de que la ruta existe y es correcta?",
+                options: ["La barra de herramientas de acceso rápido", "La barra de direcciones (ruta)", "El panel de navegación lateral", "El botón de minimizar"],
+                correctAnswer: "La barra de direcciones (ruta)"
+            },
+            {
+                question: "10. ¿Cuál de los siguientes no es un formato de archivo comúnmente asociado con la compresión?",
+                options: [".ZIP", ".RAR", ".PDF", ".7Z"],
+                correctAnswer: ".PDF"
+            }
+        ];
+        let currentQuizQuestionIndex = 0;
+
+        function updateQuizDisplay() {
+            const quizQuestionElement = document.getElementById('quiz-question');
+            const quizOptionsElement = document.getElementById('quiz-options');
+            const quizFeedbackElement = document.getElementById('quiz-feedback');
+
+            if (currentQuizQuestionIndex >= quizQuestions.length) {
+                quizQuestionElement.textContent = "¡Cuestionario completado! ¡Excelente trabajo!";
+                quizOptionsElement.innerHTML = '';
+                quizFeedbackElement.textContent = '';
+                return;
+            }
+
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            quizQuestionElement.textContent = currentQuestion.question;
+            quizOptionsElement.innerHTML = '';
+            quizFeedbackElement.textContent = '';
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = "quiz-option-button w-full px-5 py-2 rounded-xl border border-blue-400 bg-blue-50 text-blue-700 font-semibold transition-colors duration-200 hover:bg-blue-100 text-sm";
+                button.onclick = () => checkAnswer(option);
+                quizOptionsElement.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            const quizFeedback = document.getElementById('quiz-feedback');
+            const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
+            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+
+            buttons.forEach(button => {
+                button.disabled = true;
+                if (button.textContent === currentQuestion.correctAnswer) {
+                    button.classList.add('correct');
+                } else if (button.textContent === selectedOption) {
+                    button.classList.add('incorrect');
+                }
+            });
+
+            if (isCorrect) {
+                quizFeedback.textContent = '¡Correcto!';
+                quizFeedback.classList.remove('text-red-500');
+                quizFeedback.classList.add('text-green-500');
+            } else {
+                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.correctAnswer;
+                quizFeedback.classList.remove('text-green-500');
+                quizFeedback.classList.add('text-red-500');
+            }
+
+            setTimeout(() => {
+                currentQuizQuestionIndex++;
+                updateQuizDisplay();
+            }, 3000);
+        }
+
+        function updateSlideCounter() {
+            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+        }
+
+        function updateNavigationButtons() {
+            prevButton.disabled = currentSlideIndex === 0;
+            nextButton.disabled = currentSlideIndex === slides.length - 1;
+        }
+
+        function showSlide(index) {
+            if (isTransitioning || index < 0 || index >= slides.length) {
+                return;
+            }
+
+            isTransitioning = true;
+            slides.forEach((slide) => {
+                slide.classList.remove('active');
+                slide.style.display = 'none';
+            });
+
+            currentSlideIndex = index;
+
+            // Trigger quiz display when the quiz slide is shown (now slide 12)
+            if (currentSlideIndex === 11) {
+                currentQuizQuestionIndex = 0;
+                updateQuizDisplay();
+            }
+
+            const activeSlide = slides[currentSlideIndex];
+            activeSlide.style.display = 'flex';
+            setTimeout(() => {
+                activeSlide.classList.add('active');
+                updateSlideCounter();
+                updateNavigationButtons();
+                isTransitioning = false;
+            }, 10);
+        }
+
+        nextButton.addEventListener('click', () => {
+            showSlide(currentSlideIndex + 1);
+        });
+
+        prevButton.addEventListener('click', () => {
+            showSlide(currentSlideIndex - 1);
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                showSlide(currentSlideIndex + 1);
+            } else if (event.key === 'ArrowLeft') {
+                showSlide(currentSlideIndex - 1);
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'F11') {
+                if (!document.fullscreenElement) {
+                    header.style.display = 'none';
+                    footer.style.display = 'none';
+                }
+            }
+        });
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+        function handleFullscreenChange() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                header.style.display = 'flex';
+                footer.style.display = 'flex';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentYearSpan = document.getElementById('current-year');
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación: Fundamentos de JavaScript</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos generales del cuerpo y contenedor principal */
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px; /* Reducido para pantallas más pequeñas */
+            background-color: #3f68a3; /* Azul de fondo de XP */
+            background-image: linear-gradient(to bottom, #74a0d9, #3f68a3); /* Degradado sutil */
+            color: #333333;
+            overflow: hidden; /* Evita el scroll del body */
+            box-sizing: border-box; /* Incluir padding y border en el tamaño total */
+        }
+        .presentation-container {
+            width: 98%; /* Ligeramente más ancho para aprovechar espacio */
+            max-width: 1400px; /* Reducido ligeramente para mejor ajuste */
+            aspect-ratio: 16 / 9; /* Mantiene la proporción 16:9 */
+            background-color: #e0e7f2;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #a3b1c2;
+        }
+
+        /* Estilos para las diapositivas individuales */
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute; /* Posicionar absolutamente para que se superpongan */
+            top: 0;
+            left: 0;
+            display: flex; /* Siempre flex para mantener el layout, controlar visibilidad con opacity/visibility */
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 2.5rem 3rem; /* Padding uniforme, ligeramente reducido */
+            text-align: center;
+            opacity: 0; /* Inicialmente transparente */
+            visibility: hidden; /* Ocultar completamente del flujo y de la interacción */
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out; /* Transición para ambos */
+            z-index: 1; /* Z-index bajo para diapositivas inactivas */
+            box-sizing: border-box;
+            overflow-y: auto; /* Permitir scroll si el contenido es muy largo */
+            max-height: 100%;
+            color: #333333;
+        }
+        .slide.active {
+            opacity: 1; /* Hacerla visible */
+            visibility: visible; /* Mostrarla */
+            z-index: 10; /* Z-index alto para la diapositiva activa */
+        }
+        .slide-content {
+            background-color: #ffffff;
+            border-radius: 6px;
+            padding: 2rem; /* Reducido */
+            margin: 1rem; /* Reducido */
+            width: calc(100% - 2rem); /* Ajusta el ancho para dejar espacio al margen */
+            box-sizing: border-box;
+            border: 1px solid #cccccc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            flex-grow: 1; /* Permite que el contenido crezca */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .slide-content > * {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            word-break: break-word;
+        }
+        /* Retrasos de animación para los elementos dentro de la diapositiva activa */
+        .slide.active .slide-content > *:nth-child(1) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(2) { transition-delay: 0.2s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(3) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(4) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(5) { transition-delay: 0.5s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(6) { transition-delay: 0.6s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(7) { transition-delay: 0.7s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(8) { transition-delay: 0.8s; opacity: 1; transform: translateY(0); }
+
+        /* Estilos generales para el texto y las imágenes */
+        h2 {
+            font-size: 2.2rem; /* Reducido */
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 1rem; /* Reducido */
+            word-break: break-word;
+            max-width: 95vw;
+            overflow-wrap: break-word;
+            box-sizing: border-box;
+            padding-left: 8px;
+            padding-right: 8px;
+            text-shadow: none;
+        }
+        h3 {
+            font-size: 1.6rem; /* Reducido */
+            font-weight: 600;
+            color: #2563eb;
+            margin-bottom: 0.8rem; /* Reducido */
+            word-break: break-word;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            text-shadow: none;
+        }
+        p, ul, ol {
+            font-size: 1.05rem; /* Reducido */
+            color: #333333;
+            line-height: 1.5; /* Ligeramente reducido */
+            margin-bottom: 0.8rem; /* Reducido */
+            word-break: break-word;
+            text-shadow: none;
+        }
+        ul, ol {
+            text-align: left;
+            margin-left: 2rem; /* Reducido */
+            width: 100%;
+            max-width: 600px; /* Reducido */
+        }
+        ul li, ol li {
+            margin-bottom: 0.5rem; /* Reducido */
+            position: relative;
+            padding-left: 1.2em; /* Reducido */
+        }
+        ul li::before {
+            content: '•';
+            color: #2563eb;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            text-shadow: none;
+        }
+        ol li::marker {
+            color: #2563eb;
+            font-weight: bold;
+            text-shadow: none;
+        }
+        img {
+            max-width: 80%; /* Ligeramente reducido */
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 1.5rem; /* Reducido */
+            border: 1px solid #bbbbbb;
+            object-fit: contain;
+            background-color: #f0f0f0;
+        }
+        img:not([src]) {
+            background-color: #e6e6e6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666666;
+            font-size: 1rem; /* Reducido */
+            font-weight: 600;
+            min-height: 150px; /* Reducido */
+            border: 1px dashed #aaaaaa;
+            text-align: center;
+            padding: 10px; /* Reducido */
+            text-shadow: none;
+        }
+        img:not([src])::before {
+            content: 'IMAGEN NO DISPONIBLE: ' attr(alt);
+            white-space: pre-wrap;
+            text-align: center;
+        }
+        .logo-institucion {
+            margin: 0 auto 1.5rem auto; /* Reducido */
+            width: 250px; /* Reducido */
+        }
+        .logo-fixed {
+            position: fixed; /* Cambiado a fixed */
+            top: 15px; /* Reducido */
+            right: 20px; /* Reducido */
+            width: 140px; /* Reducido */
+            height: auto;
+            z-index: 9999;
+            opacity: 0.9;
+            pointer-events: none;
+            filter: drop-shadow(0 1px 5px rgba(0, 0, 0, 0.2));
+            border: none;
+        }
+        .img-slide {
+            margin: 1rem auto 0.8rem auto; /* Reducido */
+            width: 400px; /* Reducido */
+            height: 225px; /* Reducido */
+        }
+
+        /* Estilos para los paneles de código y salida */
+        .example-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem; /* Reducido */
+            width: 100%;
+            justify-content: center;
+            margin-top: 1rem; /* Reducido */
+            flex-grow: 1;
+        }
+        .code-panel, .output-panel {
+            flex: 1;
+            min-width: 280px; /* Reducido */
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 1rem; /* Reducido */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        .code-panel h3, .output-panel h3 {
+            color: #1e3a8a;
+            font-size: 1.2rem; /* Reducido */
+            margin-top: 0;
+            margin-bottom: 0.8rem; /* Reducido */
+            text-align: center;
+        }
+        .code-editable {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 0.8rem; /* Reducido */
+            border-radius: 6px;
+            font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+            font-size: 0.85em; /* Reducido */
+            line-height: 1.0; /* Ajustado para reducir el espacio entre líneas */
+            overflow-x: auto;
+            flex-grow: 1;
+            white-space: pre-wrap;
+            word-break: break-all;
+            height: 100%;
+            box-sizing: border-box;
+            outline: none;
+            border: none;
+            position: relative;
+            padding-left: 3.5em; /* Aumentado para dar espacio al número de línea y su margen */
+            text-align: left;
+            counter-reset: line;
+        }
+        .code-editable .line {
+            display: block;
+            position: relative;
+            margin: 0; /* Asegura que no haya márgenes adicionales */
+            padding: 0; /* Asegura que no haya rellenos adicionales */
+        }
+        .code-editable .line::before {
+            content: counter(line) ". "; /* Añadido el punto y espacio después del número */
+            counter-increment: line;
+            position: absolute;
+            left: -3em; /* Ajustado para posicionar el número más a la izquierda */
+            width: 2.5em; /* Ajustado para dar más espacio al número */
+            text-align: right;
+            margin-right: 0.5em; /* Espacio entre el número y el código */
+            color: #636f80;
+            user-select: none;
+        }
+        /* Colores de resaltado de sintaxis */
+        .code-editable .keyword { color: #c678dd; }
+        .code-editable .variable { color: #e06c75; }
+        .code-editable .string { color: #98c379; }
+        .code-editable .number { color: #d19a66; }
+        .code-editable .comment { color: #5c6370; font-style: italic; }
+        .code-editable .constant { color: #56b6c2; }
+        .code-editable .operator { color: #56b6c2; }
+        .code-editable .function-name { color: #61afef; }
+        .code-editable .parameter { color: #e06c75; }
+        .code-editable .builtin { color: #e5c07b; }
+        .code-editable .punctuation { color: #abb2bf; }
+        .code-editable .method { color: #61afef; }
+
+        .run-code-btn {
+            background-color: #2563eb;
+            color: #fff;
+            padding: 8px 12px; /* Reducido */
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8em; /* Reducido */
+            align-self: flex-end;
+            margin-top: 0.8rem; /* Reducido */
+        }
+        .run-code-btn:hover {
+            background-color: #1a4ed8;
+            transform: translateY(-1px);
+        }
+        .run-code-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .console-output {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 1rem; /* Reducido */
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85em; /* Reducido */
+            line-height: 1.4;
+            color: #333;
+            min-height: 120px; /* Reducido */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .output-line {
+            margin: 0;
+            padding: 2px 0;
+        }
+        .error-text {
+            color: #e06c75;
+            font-weight: bold;
+        }
+
+        /* Estilos para los botones de navegación */
+        .nav-buttons {
+            position: absolute;
+            bottom: 15px; /* Reducido */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            gap: 10px; /* Reducido */
+        }
+        .nav-button {
+            background-color: #4a77d1; /* Azul de XP */
+            color: white;
+            padding: 10px 20px; /* Reducido */
+            border: 2px solid #a8c8f5; /* Borde azul más claro */
+            border-radius: 8px;
+            font-size: 1rem; /* Reducido */
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            outline: none;
+        }
+        .nav-button:hover {
+            background-color: #3e62b3; /* Azul más oscuro al pasar el ratón */
+            border-color: #c0d9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .nav-button:disabled {
+            background-color: #a0a0a0;
+            border-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            text-shadow: none;
+        }
+
+        /* Ajustes responsivos */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            .presentation-container {
+                width: 100%;
+                height: 98vh;
+                max-width: 100%;
+                border-radius: 0;
+            }
+            .slide {
+                padding: 0.8rem 0.5rem; /* Más reducido */
+            }
+            h2 {
+                font-size: 1.6rem; /* Más reducido */
+            }
+            h3 {
+                font-size: 1.3rem; /* Más reducido */
+            }
+            p, ul, ol {
+                font-size: 0.9rem; /* Más reducido */
+                margin-left: 1rem;
+            }
+            ul li, ol li {
+                padding-left: 1em;
+            }
+            ul li::before {
+                left: -0.5em; /* Ajustado para pantallas pequeñas */
+            }
+            .slide-content {
+                margin: 0.3rem; /* Más reducido */
+                padding: 1rem; /* Más reducido */
+            }
+            .nav-button {
+                padding: 6px 12px; /* Más reducido */
+                font-size: 0.8rem; /* Más reducido */
+            }
+            .example-layout {
+                flex-direction: column;
+                height: auto;
+                gap: 0.8rem; /* Más reducido */
+            }
+            .code-panel, .output-panel {
+                min-width: unset;
+                width: 100%;
+                height: auto;
+                padding: 0.8rem; /* Más reducido */
+            }
+            .code-editable {
+                min-height: 100px; /* Ajustado para ser un poco más compacto */
+                font-size: 0.75em; /* Más reducido para caber más líneas */
+                line-height: 1.3; /* Ligeramente aumentado para legibilidad en móvil */
+                padding-left: 2em; /* Reducido para dar más espacio al código */
+            }
+            .code-editable .line::before {
+                left: -1.5em; /* Ajustado para posicionar el número más a la izquierda */
+                width: 1.5em; /* Ajustado para dar más espacio al número */
+                margin-right: 0.2em; /* Espacio entre el número y el código */
+            }
+            .console-output {
+                min-height: 80px; /* Más reducido */
+                font-size: 0.75em; /* Más reducido */
+                line-height: 1.3; /* Ajustado para legibilidad */
+            }
+            .logo-fixed {
+                width: 100px; /* Más pequeño en móvil */
+                top: 10px;
+                right: 10px;
+            }
+            .logo-institucion {
+                width: 200px; /* Más pequeño en móvil */
+                margin-bottom: 1rem;
+            }
+            .img-slide {
+                width: 95%;
+                height: auto;
+                min-height: 150px;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo fijo en la esquina superior derecha -->
+    <img src="imagenes/logo.png"
+         alt="Logo pequeño"
+         class="logo-fixed">
+
+    <div class="presentation-container">
+        <!-- Diapositiva 1: Título y Datos Generales -->
+        <div class="slide active" id="slide-1"> <!-- Añadimos 'active' por defecto a la primera diapositiva -->
+            <div class="slide-content">
+                <img src="imagenes/logo.png"
+                     alt="Logo Instituto Maria Auxiliadora"
+                     class="logo-institucion">
+                <p>Diseño Web II.</p>
+                <p>Duodécimo Grado (III BTP) Sección "A"</p>
+                <p>Docente: Pablo Antonio Peña.</p>
+                <p>Fecha: 13 de Julio de 2025.</p>
+                <h3 class="mt-4">Fundamentos de JavaScript</h3>
+            </div>
+        </div>
+
+        <!-- Diapositiva 2: ¿Qué es JavaScript? -->
+        <div class="slide" id="slide-2">
+            <div class="slide-content">
+                <h2>¿Qué es JavaScript?</h2>
+                <p>JavaScript (JS) es un <strong>lenguaje de programación ligero e interpretado</strong>, fundamental para el desarrollo web moderno.</p>
+                <ul class="mx-auto text-left">
+                    <li>Permite crear <strong>contenido dinámico e interactivo</strong> en sitios web.</li>
+                    <li>Se ejecuta principalmente en el <strong>lado del cliente</strong> (navegador del usuario).</li>
+                    <li>Es compatible con <strong>HTML y CSS</strong> para construir experiencias web completas.</li>
+                    <li>También se usa en el lado del servidor (Node.js), aplicaciones móviles y de escritorio.</li>
+                </ul>
+                <img src="imagenes/js_logo.svg" alt="Logo de JavaScript" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Diapositiva 3: Variables en JavaScript (Concepto) -->
+        <div class="slide" id="slide-3">
+            <div class="slide-content">
+                <h2>Variables en JavaScript</h2>
+                <p>Las variables son contenedores para almacenar datos. JS tiene tres palabras clave para declararlas:</p>
+                <ul class="mx-auto text-left">
+                    <li><strong><code>var</code></strong>: Declaración antigua. Alcance de función o global. Puede ser redeclarada y reasignada.</li>
+                    <li><strong><code>let</code></strong>: Introducido en ES6. Alcance de bloque. Puede ser reasignada, pero no redeclarada en el mismo alcance.</li>
+                    <li><strong><code>const</code></strong>: Introducido en ES6. Alcance de bloque. No puede ser reasignada ni redeclarada. Debe inicializarse.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 4: Ejemplo de Variables -->
+        <div class="slide" id="slide-4">
+            <div class="slide-content">
+                <h2>Ejemplo: Declaración de Variables</h2>
+                <div class="example-layout">
+                    <div class="code-panel">
+                        <h3>Sintaxis del Código:</h3>
+                        <div class="code-editable" contenteditable="true" data-slide-id="4">
+                            <span class="line"><span class="keyword">var</span> <span class="variable">nombre</span> <span class="operator">=</span> <span class="string">"Ana"</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="keyword">let</span> <span class="variable">edad</span> <span class="operator">=</span> <span class="number">30</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="keyword">const</span> <span class="constant">PI</span> <span class="operator">=</span> <span class="number">3.14159</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Nombre: "</span> <span class="operator">+</span> <span class="variable">nombre</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Edad inicial: "</span> <span class="operator">+</span> <span class="variable">edad</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="variable">edad</span> <span class="operator">=</span> <span class="number">31</span><span class="punctuation">;</span> <span class="comment">// Válido con let, reasigna el valor</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Nueva edad: "</span> <span class="operator">+</span> <span class="variable">edad</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="comment">// PI = 3.14; // Error: No se puede reasignar const</span></span>
+                        </div>
+                        <button class="run-code-btn" data-target-slide="4">▶️ Ejecutar Código</button>
+                    </div>
+                    <div class="output-panel">
+                        <h3>Salida de Consola:</h3>
+                        <div class="console-output" id="console-output-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 5: Tipos de Datos (Concepto) -->
+        <div class="slide" id="slide-5">
+            <div class="slide-content">
+                <h2>Tipos de Datos Fundamentales</h2>
+                <p>JavaScript maneja varios tipos de datos para representar información:</p>
+                <ul class="mx-auto text-left">
+                    <li><strong><code>String</code></strong>: Texto (ej. <code>"Hola mundo"</code>).</li>
+                    <li><strong><code>Number</code></strong>: Números enteros o decimales (ej. <code>10</code>, <code>3.14</code>).</li>
+                    <li><strong><code>Boolean</code></strong>: Valores lógicos <code>true</code> o <code>false</code>.</li>
+                    <li><strong><code>Array</code></strong>: Colección ordenada de elementos (ej. <code>[1, 2, 3]</code>).</li>
+                    <li><strong><code>Object</code></strong>: Colección de pares clave-valor (ej. <code>{nombre: "Juan", edad: 25}</code>).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 6: Ejemplo de Tipos de Datos -->
+        <div class="slide" id="slide-6">
+            <div class="slide-content">
+                <h2>Ejemplo: Tipos de Datos</h2>
+                <div class="example-layout">
+                    <div class="code-panel">
+                        <h3>Sintaxis del Código:</h3>
+                        <div class="code-editable" contenteditable="true" data-slide-id="6">
+                            <span class="line"><span class="keyword">let</span> <span class="variable">mensaje</span> <span class="operator">=</span> <span class="string">"Hola"</span><span class="punctuation">;</span> <span class="comment">// String</span></span>
+                            <span class="line"><span class="keyword">let</span> <span class="variable">cantidad</span> <span class="operator">=</span> <span class="number">100</span><span class="punctuation">;</span> <span class="comment">// Number</span></span>
+                            <span class="line"><span class="keyword">let</span> <span class="variable">activo</span> <span class="operator">=</span> <span class="keyword">true</span><span class="punctuation">;</span> <span class="comment">// Boolean</span></span>
+                            <span class="line"><span class="keyword">let</span> <span class="variable">colores</span> <span class="operator">=</span> <span class="punctuation">[</span><span class="string">"rojo"</span><span class="punctuation">,</span> <span class="string">"verde"</span><span class="punctuation">]</span><span class="punctuation">;</span> <span class="comment">// Array</span></span>
+                            <span class="line"><span class="keyword">let</span> <span class="variable">usuario</span> <span class="operator">=</span> <span class="punctuation">{</span><span class="property">id</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span> <span class="property">nombre</span><span class="punctuation">:</span> <span class="string">"Maria"</span><span class="punctuation">}</span><span class="punctuation">;</span> <span class="comment">// Object</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Tipo de mensaje: "</span> <span class="operator">+</span> <span class="keyword">typeof</span> <span class="variable">mensaje</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Tipo de cantidad: "</span> <span class="operator">+</span> <span class="keyword">typeof</span> <span class="variable">cantidad</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Tipo de activo: "</span> <span class="operator">+</span> <span class="keyword">typeof</span> <span class="variable">activo</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Tipo de colores: "</span> <span class="operator">+</span> <span class="keyword">typeof</span> <span class="variable">colores</span><span class="punctuation">)</span><span class="punctuation">;</span> <span class="comment">// Arrays son de tipo 'object'</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Tipo de usuario: "</span> <span class="operator">+</span> <span class="keyword">typeof</span> <span class="variable">usuario</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                        </div>
+                        <button class="run-code-btn" data-target-slide="6">▶️ Ejecutar Código</button>
+                    </div>
+                    <div class="output-panel">
+                        <h3>Salida de Consola:</h3>
+                        <div class="console-output" id="console-output-6"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7: Operadores (Concepto) -->
+        <div class="slide" id="slide-7">
+            <div class="slide-content">
+                <h2>Operadores en JavaScript</h2>
+                <p>Los operadores se usan para realizar operaciones sobre valores (operandos).</p>
+                <ul class="mx-auto text-left">
+                    <li><strong>Aritméticos</strong>: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code> (módulo).</li>
+                    <li><strong>Asignación</strong>: <code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>.</li>
+                    <li><strong>Comparación</strong>: <code>==</code> (igualdad de valor), <code>===</code> (igualdad estricta), <code>!=</code>, <code>!==</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>.</li>
+                    <li><strong>Lógicos</strong>: <code>&&</code> (AND), <code>||</code> (OR), <code>!</code> (NOT).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8: Ejemplo de Operadores -->
+        <div class="slide" id="slide-8">
+            <div class="slide-content">
+                <h2>Ejemplo: Operadores</h2>
+                <div class="example-layout">
+                    <div class="code-panel">
+                        <h3>Sintaxis del Código:</h3>
+                        <div class="code-editable" contenteditable="true" data-slide-id="8">
+                            <span class="line"><span class="keyword">let</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">5</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="keyword">let</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">3</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="keyword">let</span> <span class="variable">resultado</span> <span class="operator">=</span> <span class="variable">x</span> <span class="operator">+</span> <span class="variable">y</span><span class="punctuation">;</span> <span class="comment">// Cambia '+' por '-', '*', '/' o '%' para otras operaciones.</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Resultado de la operación: "</span> <span class="operator">+</span> <span class="variable">resultado</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="variable">x</span> <span class="operator">+=</span> <span class="number">2</span><span class="punctuation">;</span> <span class="comment">// x es ahora 7 (operador de asignación)</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Nuevo valor de x (después de x += 2): "</span> <span class="operator">+</span> <span class="variable">x</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="keyword">let</span> <span class="variable">esMayor</span> <span class="operator">=</span> <span class="variable">x</span> <span class="operator">></span> <span class="variable">y</span><span class="punctuation">;</span> <span class="comment">// operador de comparación</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"¿Es x mayor que y?: "</span> <span class="operator">+</span> <span class="variable">esMayor</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="keyword">let</span> <span class="variable">condicion</span> <span class="operator">=</span> <span class="punctuation">(</span><span class="variable">x</span> <span class="operator">></span> <span class="number">0</span> <span class="operator">&&</span> <span class="variable">y</span> <span class="operator"><</span> <span class="number">10</span><span class="punctuation">)</span><span class="punctuation">;</span> <span class="comment">// operador lógico</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Condición lógica (x > 0 && y < 10): "</span> <span class="operator">+</span> <span class="variable">condicion</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                        </div>
+                        <button class="run-code-btn" data-target-slide="8">▶️ Ejecutar Código</button>
+                    </div>
+                    <div class="output-panel">
+                        <h3>Salida de Consola:</h3>
+                        <div class="console-output" id="console-output-8"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 9: Estructuras de Control (Condicionales - Concepto) -->
+        <div class="slide" id="slide-9">
+            <div class="slide-content">
+                <h2>Estructuras de Control: Condicionales</h2>
+                <p>Permiten ejecutar código basado en ciertas condiciones.</p>
+                <ul class="mx-auto text-left">
+                    <li><strong><code>if / else if / else</code></strong>: Para ejecutar bloques de código condicionalmente.</li>
+                    <li><strong><code>switch</code></strong>: Para evaluar una expresión contra múltiples casos.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 10: Ejemplo if/else -->
+        <div class="slide" id="slide-10">
+            <div class="slide-content">
+                <h2>Ejemplo: Condicional <code>if/else</code></h2>
+                <div class="example-layout">
+                    <div class="code-panel">
+                        <h3>Sintaxis del Código:</h3>
+                        <div class="code-editable" contenteditable="true" data-slide-id="10">
+                            <span class="line"><span class="keyword">let</span> <span class="variable">hora</span> <span class="operator">=</span> <span class="number">14</span><span class="punctuation">;</span> <span class="comment">// Prueba con diferentes horas, ej. 9, 14, 20</span></span>
+                            <span class="line"><span class="keyword">if</span> <span class="punctuation">(</span><span class="variable">hora</span> <span class="operator"><</span> <span class="number">12</span><span class="punctuation">)</span> <span class="punctuation">{</span></span>
+                            <span class="line">  <span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Buenos días"</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="punctuation">}</span> <span class="keyword">else if</span> <span class="punctuation">(</span><span class="variable">hora</span> <span class="operator"><</span> <span class="number">18</span><span class="punctuation">)</span> <span class="punctuation">{</span></span>
+                            <span class="line">  <span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Buenas tardes"</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="punctuation">}</span> <span class="keyword">else</span> <span class="punctuation">{</span></span>
+                            <span class="line">  <span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Buenas noches"</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="punctuation">}</span></span>
+                        </div>
+                        <button class="run-code-btn" data-target-slide="10">▶️ Ejecutar Código</button>
+                    </div>
+                    <div class="output-panel">
+                        <h3>Salida de Consola:</h3>
+                        <div class="console-output" id="console-output-10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 11: Estructuras de Control (Bucles - Concepto) -->
+        <div class="slide" id="slide-11">
+            <div class="slide-content">
+                <h2>Estructuras de Control: Bucles</h2>
+                <p>Permiten repetir un bloque de código múltiples veces.</p>
+                <ul class="mx-auto text-left">
+                    <li><strong><code>for</code></strong>: Para bucles con un número conocido de iteraciones.</li>
+                    <li><strong><code>while</code></strong>: Para bucles que continúan mientras una condición sea verdadera.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 12: Ejemplo Bucle for -->
+        <div class="slide" id="slide-12">
+            <div class="slide-content">
+                <h2>Ejemplo: Bucle <code>for</code></h2>
+                <div class="example-layout">
+                    <div class="code-panel">
+                        <h3>Sintaxis del Código:</h3>
+                        <div class="code-editable" contenteditable="true" data-slide-id="12">
+                            <span class="line"><span class="keyword">for</span> <span class="punctuation">(</span><span class="keyword">let</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span><span class="punctuation">;</span> <span class="variable">i</span> <span class="operator"><</span> <span class="number">5</span><span class="punctuation">;</span> <span class="variable">i</span><span class="operator">++</span><span class="punctuation">)</span> <span class="punctuation">{</span></span>
+                            <span class="line">  <span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Iteración "</span> <span class="operator">+</span> <span class="variable">i</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="punctuation">}</span></span>
+                        </div>
+                        <button class="run-code-btn" data-target-slide="12">▶️ Ejecutar Código</button>
+                    </div>
+                    <div class="output-panel">
+                        <h3>Salida de Consola:</h3>
+                        <div class="console-output" id="console-output-12"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 13: Ejemplo Bucle while -->
+        <div class="slide" id="slide-13">
+            <div class="slide-content">
+                <h2>Ejemplo: Bucle <code>while</code></h2>
+                <div class="example-layout">
+                    <div class="code-panel">
+                        <h3>Sintaxis del Código:</h3>
+                        <div class="code-editable" contenteditable="true" data-slide-id="13">
+                            <span class="line"><span class="keyword">let</span> <span class="variable">contador</span> <span class="operator">=</span> <span class="number">0</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="keyword">while</span> <span class="punctuation">(</span><span class="variable">contador</span> <span class="operator"><</span> <span class="number">3</span><span class="punctuation">)</span> <span class="punctuation">{</span></span>
+                            <span class="line">  <span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Contador: "</span> <span class="operator">+</span> <span class="variable">contador</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line">  <span class="variable">contador</span><span class="operator">++</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="punctuation">}</span></span>
+                        </div>
+                        <button class="run-code-btn" data-target-slide="13">▶️ Ejecutar Código</button>
+                    </div>
+                    <div class="output-panel">
+                        <h3>Salida de Consola:</h3>
+                        <div class="console-output" id="console-output-13"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14: Funciones en JavaScript (Concepto) -->
+        <div class="slide" id="slide-14">
+            <div class="slide-content">
+                <h2>Funciones en JavaScript</h2>
+                <p>Las funciones son bloques de código reutilizables que realizan una tarea específica.</p>
+                <ul class="mx-auto text-left">
+                    <li><strong>Declaración de función</strong>: Definidas con la palabra clave <code>function</code>.</li>
+                    <li><strong>Expresión de función</strong>: Asignadas a una variable.</li>
+                    <li><strong>Funciones flecha (Arrow Functions)</strong>: Sintaxis más concisa (ES6).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 15: Ejemplo Declaración de Función -->
+        <div class="slide" id="slide-15">
+            <div class="slide-content">
+                <h2>Ejemplo: Declaración de Función</h2>
+                <div class="example-layout">
+                    <div class="code-panel">
+                        <h3>Sintaxis del Código:</h3>
+                        <div class="code-editable" contenteditable="true" data-slide-id="15">
+                            <span class="line"><span class="comment">// Declaración de función</span></span>
+                            <span class="line"><span class="keyword">function</span> <span class="function-name">saludar</span><span class="punctuation">(</span><span class="parameter">nombre</span><span class="punctuation">)</span> <span class="punctuation">{</span></span>
+                            <span class="line">  <span class="keyword">return</span> <span class="string">"Hola, "</span> <span class="operator">+</span> <span class="parameter">nombre</span> <span class="operator">+</span> <span class="string">"!"</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="punctuation">}</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="function-name">saludar</span><span class="punctuation">(</span><span class="string">"Pedro"</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span> <span class="comment">// Llama a la función</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="function-name">saludar</span><span class="punctuation">(</span><span class="string">"María"</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                        </div>
+                        <button class="run-code-btn" data-target-slide="15">▶️ Ejecutar Código</button>
+                    </div>
+                    <div class="output-panel">
+                        <h3>Salida de Consola:</h3>
+                        <div class="console-output" id="console-output-15"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 16: Ejemplo Expresión de Función -->
+        <div class="slide" id="slide-16">
+            <div class="slide-content">
+                <h2>Ejemplo: Expresión de Función</h2>
+                <div class="example-layout">
+                    <div class="code-panel">
+                        <h3>Sintaxis del Código:</h3>
+                        <div class="code-editable" contenteditable="true" data-slide-id="16">
+                            <span class="line"><span class="comment">// Expresión de función</span></span>
+                            <span class="line"><span class="keyword">const</span> <span class="variable">sumar</span> <span class="operator">=</span> <span class="keyword">function</span><span class="punctuation">(</span><span class="parameter">a</span><span class="punctuation">,</span> <span class="parameter">b</span><span class="punctuation">)</span> <span class="punctuation">{</span></span>
+                            <span class="line">  <span class="keyword">return</span> <span class="parameter">a</span> <span class="operator">+</span> <span class="parameter">b</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="punctuation">}</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"5 + 3 = "</span> <span class="operator">+</span> <span class="variable">sumar</span><span class="punctuation">(</span><span class="number">5</span><span class="punctuation">,</span> <span class="number">3</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"10 + 7 = "</span> <span class="operator">+</span> <span class="variable">sumar</span><span class="punctuation">(</span><span class="number">10</span><span class="punctuation">,</span> <span class="number">7</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                        </div>
+                        <button class="run-code-btn" data-target-slide="16">▶️ Ejecutar Código</button>
+                    </div>
+                    <div class="output-panel">
+                        <h3>Salida de Consola:</h3>
+                        <div class="console-output" id="console-output-16"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 17: Ejemplo Función Flecha -->
+        <div class="slide" id="slide-17">
+            <div class="slide-content">
+                <h2>Ejemplo: Función Flecha (Arrow Function)</h2>
+                <div class="example-layout">
+                    <div class="code-panel">
+                        <h3>Sintaxis del Código:</h3>
+                        <div class="code-editable" contenteditable="true" data-slide-id="17">
+                            <span class="line"><span class="comment">// Función flecha</span></span>
+                            <span class="line"><span class="keyword">const</span> <span class="variable">multiplicar</span> <span class="operator">=</span> <span class="punctuation">(</span><span class="parameter">a</span><span class="punctuation">,</span> <span class="parameter">b</span><span class="punctuation">)</span> <span class="operator">=></span> <span class="parameter">a</span> <span class="operator">*</span> <span class="parameter">b</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"4 * 2 = "</span> <span class="operator">+</span> <span class="variable">multiplicar</span><span class="punctuation">(</span><span class="number">4</span><span class="punctuation">,</span> <span class="number">2</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"6 * 3 = "</span> <span class="operator">+</span> <span class="variable">multiplicar</span><span class="punctuation">(</span><span class="number">6</span><span class="punctuation">,</span> <span class="number">3</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                        </div>
+                        <button class="run-code-btn" data-target-slide="17">▶️ Ejecutar Código</button>
+                    </div>
+                    <div class="output-panel">
+                        <h3>Salida de Consola:</h3>
+                        <div class="console-output" id="console-output-17"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 18: Cómo insertar JavaScript en HTML -->
+        <div class="slide" id="slide-18">
+            <div class="slide-content">
+                <h2>Cómo insertar JavaScript en HTML</h2>
+                <p>Hay tres formas principales de integrar JavaScript en tus páginas web:</p>
+
+                <h3>1. JavaScript Inline</h3>
+                <p>Directamente en las etiquetas HTML usando atributos de evento.</p>
+                <div class="code-panel" style="width: 100%; max-width: 500px;">
+                    <h3>Sintaxis del Código:</h3>
+                    <div class="code-editable" contenteditable="true" data-slide-id="18-inline">
+                        <span class="line"><span class="comment">&lt;!-- HTML --&gt;</span></span>
+                        <span class="line"><span class="html-tag">&lt;button</span> <span class="html-attribute">onclick</span><span class="operator">=</span><span class="string">"alert('¡Hola desde JS Inline!')"</span><span class="html-tag">&gt;</span>Haz clic<span class="html-tag">&lt;/button&gt;</span></span>
+                    </div>
+                    <button class="run-code-btn" data-target-slide="18-inline">▶️ Ejecutar Código (Alert)</button>
+                </div>
+                <p class="mt-4">
+                    <em>Nota: El botón de "Ejecutar Código" para este ejemplo usará `alert()`. En un entorno real, preferirías un mensaje en la consola o un modal personalizado.</em>
+                </p>
+
+                <h3 class="mt-8">2. JavaScript Interno</h3>
+                <p>Dentro de la etiqueta <code>&lt;script&gt;</code> en el mismo archivo HTML.</p>
+                <div class="code-panel" style="width: 100%; max-width: 500px;">
+                    <h3>Sintaxis del Código:</h3>
+                    <div class="code-editable" contenteditable="true" data-slide-id="18-internal">
+                        <span class="line"><span class="comment">&lt;!-- En la sección &lt;head&gt; o al final de &lt;body&gt; --&gt;</span></span>
+                        <span class="line"><span class="html-tag">&lt;script&gt;</span></span>
+                        <span class="line">  <span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"¡Hola desde JavaScript Interno!"</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                        <span class="line"><span class="html-tag">&lt;/script&gt;</span></span>
+                    </div>
+                    <button class="run-code-btn" data-target-slide="18-internal">▶️ Ejecutar Código</button>
+                </div>
+
+                <h3 class="mt-8">3. JavaScript Externo</h3>
+                <p>En un archivo <code>.js</code> separado, enlazado con la etiqueta <code>&lt;script src="..."&gt;</code>.</p>
+                <div class="code-panel" style="width: 100%; max-width: 500px;">
+                    <h3>Sintaxis del Código:</h3>
+                    <div class="code-editable" contenteditable="true" data-slide-id="18-external">
+                        <span class="line"><span class="comment">&lt;!-- En tu archivo HTML --&gt;</span></span>
+                        <span class="line"><span class="html-tag">&lt;script</span> <span class="html-attribute">src</span><span class="operator">=</span><span class="string">"mi_script.js"</span><span class="html-tag">&gt;&lt;/script&gt;</span></span>
+                        <span class="line"></span>
+                        <span class="line"><span class="comment">// Contenido de mi_script.js</span></span>
+                        <span class="line"><span class="comment">// console.log("¡Hola desde JavaScript Externo!");</span></span>
+                    </div>
+                    <!-- No hay botón de ejecutar para externo ya que requiere un archivo separado -->
+                </div>
+                 <div class="output-panel" style="width: 100%; max-width: 500px;">
+                    <h3>Salida de Consola (para Interno):</h3>
+                    <div class="console-output" id="console-output-18-internal"></div>
+                    <h3>Salida de Consola (para Inline):</h3>
+                    <div class="console-output" id="console-output-18-inline"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 19: Asignación de Tareas (Anteriormente slide-18) -->
+        <div class="slide" id="slide-19">
+            <div class="slide-content">
+                <h2>Asignación de Tareas</h2>
+                <p><strong>Tarea</strong>: Creación de un script JavaScript con variables y operadores básicos.</p>
+                <p class="text-sm text-left mx-auto max-w-xl">
+                    Desarrollar un archivo JavaScript (<code>.js</code>) que realice las siguientes operaciones:
+                </p>
+                <ol class="mx-auto text-left">
+                    <li>Declarar variables usando <code>var</code>, <code>let</code> y <code>const</code> para almacenar diferentes tipos de datos (número, cadena de texto, booleano).</li>
+                    <li>Realizar al menos tres operaciones aritméticas con números (suma, resta, multiplicación, división, módulo).</li>
+                    <li>Utilizar al menos dos operadores de asignación (ej. <code>+=</code>, <code>-=</code>).</li>
+                    <li>Implementar al menos dos comparaciones (ej. <code>&gt;</code>, <code>===</code>).</li>
+                    <li>Usar al menos un operador lógico (<code>&&</code> o <code>||</code>).</li>
+                    <li>Mostrar los resultados de todas las operaciones en la consola del navegador (usando <code>console.log()</code>).</li>
+                </ol>
+                <p class="mt-4"><strong>Fecha de Entrega</strong>: 20 de Julio de 2025.</p>
+                <p><strong>Ponderación</strong>: TC 5%.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 20: Cierre de la Clase (Anteriormente slide-19) -->
+        <div class="slide" id="slide-20">
+            <div class="slide-content">
+                <h2>Cierre de la Clase</h2>
+                <p>Hoy hemos cubierto los <strong>fundamentos esenciales de JavaScript</strong>, un pilar del desarrollo web.</p>
+                <p>Comprendimos variables, tipos de datos, operadores, y estructuras de control y funciones.</p>
+                <p class="mt-8 text-lg font-semibold text-gray-700">¡Gracias por su atención y participación!</p>
+            </div>
+        </div>
+
+        <!-- Botones de navegación -->
+        <div class="nav-buttons">
+            <button id="prevBtn" class="nav-button" disabled>Anterior</button>
+            <button id="nextBtn" class="nav-button">Siguiente</button>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const runCodeBtns = document.querySelectorAll('.run-code-btn');
+
+        let currentSlideIndex = 0; // Se inicializa en 0 para la primera diapositiva
+
+        // Función para mostrar la diapositiva en el índice dado
+        function showSlide(index) {
+            // Asegurarse de que el índice esté dentro de los límites
+            if (index < 0 || index >= slides.length) {
+                console.error("Índice de diapositiva fuera de rango:", index);
+                return;
+            }
+
+            // Ocultar la diapositiva actualmente activa (si la hay)
+            const currentActiveSlide = document.querySelector('.slide.active');
+            if (currentActiveSlide) {
+                currentActiveSlide.classList.remove('active');
+                // Resetear el estado de la animación del contenido de la diapositiva que se oculta
+                currentActiveSlide.querySelectorAll('.slide-content > *').forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(10px)';
+                    el.style.transition = 'none'; // Deshabilitar transición para el reset
+                });
+            }
+
+            // Mostrar la nueva diapositiva activa
+            const newActiveSlide = slides[index];
+            if (newActiveSlide) {
+                newActiveSlide.classList.add('active'); // Añadir clase 'active' para hacerla visible
+                // Aplicar las animaciones para el contenido de la nueva diapositiva activa
+                newActiveSlide.querySelectorAll('.slide-content > *').forEach((el, i) => {
+                    el.style.transition = `opacity 0.5s ease-out ${0.1 + i * 0.1}s, transform 0.5s ease-out ${0.1 + i * 0.1}s`;
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                });
+            }
+
+            // Actualizar el estado de los botones de navegación
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === slides.length - 1;
+        }
+
+        // Función para avanzar a la siguiente diapositiva
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                currentSlideIndex++;
+                showSlide(currentSlideIndex);
+            }
+        }
+
+        // Función para retroceder a la diapositiva anterior
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                showSlide(currentSlideIndex);
+            }
+        }
+
+        // Asignar event listeners a los botones de navegación
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                event.preventDefault(); // Prevenir el desplazamiento predeterminado
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                event.preventDefault(); // Prevenir el desplazamiento predeterminado
+                prevSlide();
+            }
+        });
+
+        // Función para ejecutar código y mostrar la salida en el panel de consola
+        function executeCode(slideId) {
+            const codeEditor = document.querySelector(`.code-editable[data-slide-id="${slideId}"]`);
+            const consoleOutput = document.getElementById(`console-output-${slideId}`);
+            if (!consoleOutput) {
+                // For external JS, there's no direct console output panel
+                if (slideId.includes('external')) {
+                    console.warn(`No console output panel for slide ID: ${slideId}. External JS is linked, not executed directly here.`);
+                    return;
+                }
+                console.error(`Console output element not found for ID: console-output-${slideId}`);
+                return;
+            }
+            consoleOutput.innerHTML = ''; // Limpiar la salida anterior
+
+            // Capturar la salida de console.log para redirigirla al panel
+            const originalConsoleLog = console.log;
+            console.log = (...args) => {
+                const outputLine = document.createElement('p');
+                outputLine.classList.add('output-line');
+                // Convertir todos los argumentos a cadena para mostrarlos
+                outputLine.textContent = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)).join(' ');
+                consoleOutput.appendChild(outputLine);
+                consoleOutput.scrollTop = consoleOutput.scrollHeight; // Desplazarse hacia abajo
+            };
+
+            try {
+                // Special handling for inline example to show alert (as requested in the comment)
+                if (slideId === '18-inline') { // Updated slide ID
+                    // Extract the JS code from the onclick attribute
+                    const buttonHtml = codeEditor.textContent;
+                    const match = buttonHtml.match(/onclick="([^"]*)"/);
+                    if (match && match[1]) {
+                        const inlineCode = match[1];
+                        // Temporarily override alert to log to console
+                        const originalAlert = window.alert;
+                        window.alert = (message) => {
+                            const alertLine = document.createElement('p');
+                            alertLine.classList.add('output-line');
+                            alertLine.textContent = `ALERT: ${message}`;
+                            consoleOutput.appendChild(alertLine);
+                            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+                        };
+                        // Execute the inline code
+                        new Function(inlineCode)();
+                        window.alert = originalAlert; // Restore original alert
+                    } else {
+                        throw new Error("No se encontró código inline en el atributo onclick.");
+                    }
+                } else {
+                    // Obtener el contenido de texto plano del div editable
+                    const codeToExecute = codeEditor.textContent;
+                    // Ejecutar el código dentro de un nuevo contexto de función
+                    new Function(codeToExecute)();
+                }
+            } catch (error) {
+                const errorLine = document.createElement('p');
+                errorLine.classList.add('output-line', 'error-text');
+                errorLine.textContent = `Error: ${error.message}`;
+                consoleOutput.appendChild(errorLine);
+                consoleOutput.scrollTop = consoleOutput.scrollHeight; // Desplazarse hacia abajo
+            } finally {
+                console.log = originalConsoleLog; // Restaurar el console.log original
+            }
+        }
+
+        // Asignar event listeners a los botones "Ejecutar Código"
+        runCodeBtns.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const slideId = event.target.dataset.targetSlide;
+                executeCode(slideId);
+            });
+        });
+
+        // Mostrar la primera diapositiva al cargar la ventana
+        // Aseguramos que la primera diapositiva tenga la clase 'active' desde el HTML,
+        // y esta función solo se encarga de aplicar las animaciones de contenido
+        // y actualizar el estado de los botones.
+        window.onload = function() {
+            showSlide(currentSlideIndex);
+        };
+    </script>
+</body>
+</html>

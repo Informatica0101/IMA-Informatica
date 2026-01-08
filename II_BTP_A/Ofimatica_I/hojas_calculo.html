@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación: Hojas de Cálculo</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reduce base font size for overall scaling */
+        html {
+            font-size: 80%; /* Reduces overall size by 20% */
+        }
+
+        /* Custom animations for transitions */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOutUp {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px); /* Changed for slide-in effect */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOutDown {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(20px); /* Changed for slide-out effect */
+            }
+        }
+
+        /* Specific styles for slides */
+        .slide {
+            display: none; /* Hidden by default */
+            animation-duration: 0.5s;
+            animation-fill-mode: forwards;
+            /* Ensure it fills the parent container fully */
+            position: absolute; /* Position absolutely within presentation-container */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%; /* Fill the height of the presentation-container */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            background-color: white; /* Ensure background is white during transition */
+        }
+
+        .slide.active {
+            display: flex; /* Show active slide */
+            animation-name: fadeInUp; /* Animation for entering slide */
+            position: relative; /* Make active slide take up space */
+            z-index: 1; /* Ensure it's above any lingering old slides */
+        }
+
+        .slide.leaving {
+            animation-name: fadeOutDown; /* Animation for leaving slide */
+            position: absolute; /* It needs to stay absolute to animate out */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20; /* Ensure it animates on top of the incoming slide */
+            display: flex; /* Keep it flex during animation */
+        }
+
+        /* Custom styles for navigation buttons */
+        .nav-button {
+            background-color: #4F46E5; /* Indigo 600 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .nav-button:hover {
+            background-color: #4338CA; /* Indigo 700 */
+            transform: translateY(-2px);
+        }
+
+        .nav-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Mobile navigation menu specific styles */
+        .mobile-menu {
+            transition: transform 0.3s ease-out;
+            transform: translateX(100%); /* Hidden by default */
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0); /* Visible when open */
+        }
+
+        /* Ensure content takes available space */
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        /* Responsive adjustments for text and images */
+        .slide h1 {
+            font-size: 2.5rem; /* Default for larger screens */
+        }
+        .slide h2 {
+            font-size: 2rem;
+        }
+        .slide p, .slide ul {
+            font-size: 1.1rem;
+            max-width: 800px; /* Limit text width for readability */
+            margin: 0 auto;
+        }
+        /* General image styling - removed border-radius and box-shadow */
+        .slide img {
+            max-width: 80%;
+            height: auto;
+        }
+
+        /* Specific style for content images (not cover logo) */
+        .content-image-style {
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 1.5rem;
+        }
+
+        /* Specific style for the cover logo to ensure no square shadow */
+        .cover-logo {
+            box-shadow: none !important; /* Override any potential inherited shadows */
+        }
+
+
+        @media (max-width: 768px) {
+            html {
+                font-size: 75%; /* Further reduce for smaller screens */
+            }
+            .slide h1 {
+                font-size: 2rem;
+            }
+            .slide h2 {
+                font-size: 1.75rem;
+            }
+            .slide p, .slide ul {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+            .slide {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            html {
+                font-size: 70%;
+            }
+            .slide h1 {
+                font-size: 1.75rem;
+            }
+            .slide h2 {
+                font-size: 1.5rem;
+            }
+            .slide p, .slide ul {
+                font-size: 0.9rem;
+            }
+            .slide img {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+<body class="font-['Inter'] bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Desktop Navigation -->
+    <header class="bg-white shadow-md py-4 px-6 sticky top-0 z-50 hidden md:block">
+        <div class="container mx-auto flex items-center justify-between">
+            <!-- Left Section: Logo -->
+            <a href="https://azghell.github.io/IMA-Informatica" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
+                <img src="imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
+            </a>
+
+            <!-- Center Section: Area de Informatica -->
+            <span class="font-extrabold text-2xl text-center flex-grow">Area de Informatica</span>
+
+            <!-- Right Section: Desktop Nav Links -->
+            <nav class="flex space-x-6">
+                <a href="https://azghell.github.io/IMA-Informatica" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Inicio</a>
+                <!-- Dropdown Menu for Asignaturas -->
+                <div class="relative group">
+                    <button class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300 focus:outline-none flex items-center">
+                        Asignaturas
+                        <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 invisible group-hover:visible group-focus-within:visible">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Informática I</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ofimática I</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseño Web II</a>
+                    </div>
+                </div>
+                <a href="/fundamentos_ii.pdf" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation (hidden by default, shown on small screens) -->
+    <header class="bg-white shadow-md py-4 px-4 flex justify-between items-center md:hidden">
+        <!-- Logo and Area de Informatica for mobile -->
+        <a href="https://azghell.github.io/IMA-Informatica" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
+            <img src="imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
+            <span class="font-extrabold text-xl">Area de Informatica</span>
+        </a>
+        <!-- Hamburger Icon -->
+        <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+        <!-- Mobile Menu Sidebar -->
+        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 p-6 flex flex-col">
+            <button id="close-mobile-menu" class="self-end text-gray-600 hover:text-indigo-600 focus:outline-none mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <nav class="flex flex-col space-y-4">
+                <a href="https://azghell.github.io/IMA-Informatica" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Inicio</a>
+                <!-- Mobile Dropdown for Asignaturas -->
+                <div class="relative">
+                    <button id="mobile-asignaturas-button" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300 focus:outline-none flex items-center justify-between w-full">
+                        Asignaturas
+                        <svg class="ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="mobile-asignaturas-dropdown" class="hidden mt-2 pl-4 flex flex-col space-y-2">
+                        <a href="#" class="block text-base text-gray-700 hover:text-indigo-600">Informática I</a>
+                        <a href="#" class="block text-base text-gray-700 hover:bg-gray-100">Ofimática I</a>
+                        <a href="#" class="block text-base text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
+                        <a href="#" class="block text-base text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
+                        <a href="#" class="block text-base text-gray-700 hover:bg-gray-100">Diseño Web II</a>
+                    </div>
+                </div>
+                <a href="/fundamentos_ii.pdf" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Contenido de clase</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8 flex flex-col items-center justify-center relative">
+        <!-- Presentation Slides Container -->
+        <div id="presentation-container" class="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden min-h-[60vh] flex flex-col justify-between">
+
+            <!-- Slide 1: Portada -->
+            <div id="slide-1" class="slide active">
+                <img src="imagenes/logo.png" alt="Logo de la Institución" style="width: 400px; height: auto;" class="mx-auto mb-8 cover-logo">
+                <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Hojas de Cálculo</h1>
+                <h3 class="text-2xl text-gray-700 mb-2">Ofimática I</h3>
+                <p class="text-xl text-gray-600 mb-2">Undécimo A</p>
+                <p class="text-xl text-gray-600 mb-2">Docente: Pablo Antonio Peña</p>
+                <p class="text-xl text-gray-600 mb-2">San Pedro Sula</p>
+                <p class="text-xl text-gray-600">20 de julio del 2025</p>
+            </div>
+
+            <!-- Slide 2: Introducción a las Hojas de Cálculo -->
+            <div id="slide-2" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">1. ¿Qué es una Hoja de Cálculo?</h2>
+                <p class="text-lg text-gray-700 mb-6">Una hoja de cálculo es una aplicación informática que permite organizar, analizar y presentar datos numéricos y alfanuméricos en tablas.</p>
+                <img src="imagenes/ejemplo-hoja-de-calculo.png" alt="Ejemplo de Hoja de Cálculo" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Se compone de <strong>celdas</strong> organizadas en <strong>filas</strong> y <strong>columnas</strong>.</li>
+                    <li>Ideal para contabilidad, presupuestos, análisis estadístico y más.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 3: Interfaz de una Hoja de Cálculo -->
+            <div id="slide-3" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">2. Interfaz Principal</h2>
+                <p class="text-lg text-gray-700 mb-6">Familiaricémonos con los componentes clave de una hoja de cálculo.</p>
+                <img src="imagenes/interfaz-hoja-de-calculo.png" alt="Interfaz de una Hoja de Cálculo" class="max-w-xl mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li><strong>Barra de Fórmulas:</strong> Para introducir y editar datos o fórmulas.</li>
+                    <li><strong>Celdas, Filas y Columnas:</strong> Unidades básicas de almacenamiento de datos.</li>
+                    <li><strong>Pestañas de Hoja:</strong> Para navegar entre diferentes hojas de trabajo.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 4: Entrada y Formato de Datos -->
+            <div id="slide-4" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">3. Entrada y Formato de Datos</h2>
+                <p class="text-lg text-gray-700 mb-6">Aprende a introducir diferentes tipos de datos y a darles el formato adecuado.</p>
+                <img src="imagenes/formato-de-datos.png" alt="Formato de Datos en Hoja de Cálculo" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li><strong>Tipos de Datos:</strong> Texto, Números, Fechas, Fórmulas.</li>
+                    <li><strong>Formato de Celdas:</strong> Moneda, Porcentaje, Alineación, Bordes, Colores.</li>
+                    <li><strong>Atajo:</strong> `Ctrl + 1` para abrir el cuadro de diálogo de formato de celdas.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 5: Fórmulas Básicas -->
+            <div id="slide-5" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">4. Fórmulas Básicas</h2>
+                <p class="text-lg text-gray-700 mb-6">Las fórmulas son expresiones que realizan cálculos en tus datos.</p>
+                <img src="imagenes/formulas-basicas.png" alt="Ejemplo de Fórmulas Básicas" class="max-w-md mx-auto content-image-style">
+                <div class="bg-gray-100 p-4 rounded-md mt-6 w-full max-w-xl text-left text-sm font-mono">
+                    <pre><code class="language-excel">=A1+B1        // Suma
+=C2-D2        // Resta
+=E3*F3        // Multiplicación
+=G4/H4        // División
+=SUMA(A1:A10) // Suma de un rango
+</code></pre>
+                </div>
+                <p class="text-base text-gray-500 mt-4">Todas las fórmulas comienzan con el signo `=`. </p>
+            </div>
+
+            <!-- Slide 6: Funciones Básicas -->
+            <div id="slide-6" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">5. Funciones Básicas</h2>
+                <p class="text-lg text-gray-700 mb-6">Las funciones son fórmulas predefinidas que realizan cálculos complejos.</p>
+                <img src="imagenes/funciones-basicas.png" alt="Ejemplo de Funciones Básicas" class="max-w-md mx-auto content-image-style">
+                <div class="bg-gray-100 p-4 rounded-md mt-6 w-full max-w-xl text-left text-sm font-mono">
+                    <pre><code class="language-excel">=SUMA(A1:A5)      // Suma el rango
+=PROMEDIO(B1:B5)   // Calcula el promedio
+=CONTAR(C1:C10)    // Cuenta celdas con números
+=MAX(D1:D7)        // Encuentra el valor máximo
+=MIN(E1:E7)        // Encuentra el valor mínimo
+</code></pre>
+                </div>
+                <p class="text-base text-gray-500 mt-4">Las funciones simplifican cálculos repetitivos.</p>
+            </div>
+
+            <!-- Slide 7: Ordenamiento y Filtrado de Datos -->
+            <div id="slide-7" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">6. Ordenamiento y Filtrado de Datos</h2>
+                <p class="text-lg text-gray-700 mb-6">Organiza y visualiza tus datos de manera eficiente.</p>
+                <img src="imagenes/ordenamiento-y-filtrado.png" alt="Ordenamiento y Filtrado de Datos" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li><strong>Ordenar:</strong> Reorganiza los datos en orden ascendente o descendente.</li>
+                    <li><strong>Filtrar:</strong> Muestra solo los datos que cumplen con criterios específicos.</li>
+                    <li>Herramientas esenciales para el análisis de grandes conjuntos de datos.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 8: Ejercicio Práctico 1: Presupuesto Simple -->
+            <div id="slide-8" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Ejercicio Práctico 1: Presupuesto Simple</h2>
+                <p class="text-lg text-gray-700 mb-6">Crea una hoja de cálculo para un presupuesto personal mensual.</p>
+                <img src="imagenes/presupuesto-simple.png" alt="Ejemplo de Presupuesto Simple" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Columnas: `Categoría`, `Ingresos`, `Gastos`.</li>
+                    <li>Usa fórmulas para calcular el `Total Ingresos`, `Total Gastos` y `Balance`.</li>
+                    <li>Aplica formato de moneda y bordes.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 9: Ejercicio Práctico 2: Control de Inventario -->
+            <div id="slide-9" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Ejercicio Práctico 2: Control de Inventario</h2>
+                <p class="text-lg text-gray-700 mb-6">Diseña una hoja de cálculo para gestionar un inventario básico de productos.</p>
+                <img src="imagenes/control-inventario.png" alt="Ejemplo de Control de Inventario" class="max-w-md mx-auto content-image-style">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                    <li>Columnas: `ID Producto`, `Nombre`, `Cantidad`, `Precio Unitario`, `Valor Total`.</li>
+                    <li>Calcula el `Valor Total` (`Cantidad * Precio Unitario`).</li>
+                    <li>Usa la función `SUMA` para el `Valor Total del Inventario`.</li>
+                    <li>Ordena los productos por `Cantidad` (ascendente/descendente).</li>
+                </ul>
+            </div>
+
+            <!-- Slide 10: Asignación de Tareas -->
+            <div id="slide-10" class="slide">
+                <h2 class="text-indigo-700 font-extrabold mb-4">Asignación de Tareas</h2>
+                <p class="text-xl text-gray-600 mb-6">Elaboración de un control de notas o inventario simple que incluya entrada, formato y uso de al menos 3 funciones básicas.</p>
+                <p class="text-lg text-gray-500">Fecha de entrega: 27/07/2025</p>
+                <p class="text-lg text-gray-500">Ponderación: 5%</p>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between w-full p-4 mt-auto">
+                <button id="prev-slide" class="nav-button flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Anterior
+                </button>
+                <span id="slide-counter" class="text-gray-600 font-medium text-lg flex items-center">1 / 10</span>
+                <button id="next-slide" class="nav-button flex items-center">
+                    Siguiente
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-6 px-6 mt-8">
+        <div class="container mx-auto text-center text-sm">
+            <p class="flex items-center justify-center">
+                &copy;&nbsp;<span id="current-year"></span>&nbsp;Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
+                <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" style="width: 50px; height: auto; margin-left: 0.5rem;">
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Mobile Menu Logic ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileAsignaturasButton = document.getElementById('mobile-asignaturas-button');
+        const mobileAsignaturasDropdown = document.getElementById('mobile-asignaturas-dropdown');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('open');
+            mobileMenuOverlay.classList.toggle('hidden');
+        }
+
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+        closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
+        mobileMenuOverlay.addEventListener('click', toggleMobileMenu); // Close when clicking outside
+
+        mobileAsignaturasButton.addEventListener('click', () => {
+            mobileAsignaturasDropdown.classList.toggle('hidden');
+            // Rotate arrow icon
+            mobileAsignaturasButton.querySelector('svg').classList.toggle('rotate-180');
+        });
+
+        // --- Presentation Logic ---
+        const slides = document.querySelectorAll('.slide');
+        const prevButton = document.getElementById('prev-slide');
+        const nextButton = document.getElementById('next-slide');
+        const slideCounter = document.getElementById('slide-counter');
+        let currentSlideIndex = 0;
+
+        function updateSlideCounter() {
+            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+        }
+
+        function showSlide(index, direction = 'next') {
+            // Ensure index is within bounds
+            if (index < 0 || index >= slides.length) {
+                return;
+            }
+
+            const currentActiveSlide = document.querySelector('.slide.active');
+            const newSlideElement = slides[index];
+
+            // If there's an active slide and it's not the same as the new one
+            if (currentActiveSlide && currentActiveSlide !== newSlideElement) {
+                // Animate out the current slide
+                currentActiveSlide.classList.add('leaving'); // Add leaving class for its animation
+                currentActiveSlide.style.animationName = (direction === 'next' ? 'fadeOutDown' : 'fadeOutUp');
+
+                // Listen for animation end to fully hide the leaving slide
+                currentActiveSlide.addEventListener('animationend', function handler() {
+                    currentActiveSlide.classList.remove('active', 'leaving'); // Remove both active and leaving
+                    currentActiveSlide.style.display = 'none'; // Hide it completely
+                    currentActiveSlide.style.animationName = ''; // Clear animation
+                    currentActiveSlide.removeEventListener('animationend', handler);
+                }, { once: true });
+
+                // Animate in the new slide
+                newSlideElement.classList.add('active'); // Make it active so it takes up space
+                newSlideElement.style.display = 'flex'; // Ensure it's displayed
+                newSlideElement.style.animationName = (direction === 'next' ? 'fadeInUp' : 'fadeInDown');
+
+            } else if (!currentActiveSlide && index === 0) {
+                // This block specifically handles the very first load if showSlide(0) is called
+                // and no slide is active yet. It ensures the first slide is shown without animation.
+                newSlideElement.classList.add('active');
+                newSlideElement.style.display = 'flex';
+                newSlideElement.style.animationName = ''; // No animation on initial display
+            }
+
+            currentSlideIndex = index;
+            updateSlideCounter();
+            updateNavigationButtons();
+        }
+
+
+        function updateNavigationButtons() {
+            prevButton.disabled = currentSlideIndex === 0;
+            nextButton.disabled = currentSlideIndex === slides.length - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                showSlide(currentSlideIndex + 1, 'next');
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                showSlide(currentSlideIndex - 1, 'prev');
+            }
+        }
+
+        // Event Listeners for Navigation Buttons
+        prevButton.addEventListener('click', prevSlide);
+        nextButton.addEventListener('click', nextSlide);
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Gallery functionality (if any, for future slides)
+        // This section is kept for consistency with the previous presentation structure
+        // but is not directly used in this specific presentation content.
+        const mainGalleryImage = document.getElementById('main-gallery-image');
+        const thumbnails = document.querySelectorAll('.thumbnail');
+
+        if (mainGalleryImage && thumbnails.length > 0) {
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function() {
+                    const fullSrc = this.getAttribute('data-full-src');
+                    mainGalleryImage.src = fullSrc;
+                    // Optional: add a class to highlight the active thumbnail
+                    thumbnails.forEach(t => t.classList.remove('border-indigo-500'));
+                    this.classList.add('border-indigo-500');
+                });
+            });
+        }
+
+
+        // --- Initialize on DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current year in footer
+            const currentYearSpan = document.getElementById('current-year');
+            if (currentYearSpan) { // Added a check to prevent TypeError if element is not found
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+
+            // Initialize the first slide directly without calling showSlide,
+            // to ensure it's immediately visible and not subject to initial animation issues.
+            slides[0].classList.add('active');
+            slides[0].style.display = 'flex';
+            slides[0].style.animationName = ''; // No animation on initial display
+
+            currentSlideIndex = 0; // Ensure index is correctly set for the first slide
+            updateSlideCounter(); // Update counter for initial display
+            updateNavigationButtons(); // Update buttons for initial display
+        });
+    </script>
+</body>
+</html>

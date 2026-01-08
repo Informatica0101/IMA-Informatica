@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redes Básicas y Configuración IP</title>
+    <!-- CDN de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Universal box-sizing para un diseño consistente */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Configuración base para asegurar el layout de la página */
+        html, body {
+            margin: 0; /* Elimina márgenes externos predeterminados */
+            padding: 0; /* Elimina padding externos predeterminados */
+            height: 100%; /* **ALTURA:** Ocupa el 100% de la altura del viewport */
+            width: 100%; /* **ANCHO:** Ocupa el 100% del ancho del viewport */
+            overflow: hidden; /* **BARRAS DE DESPLAZAMIENTO:** Evita barras de desplazamiento en la página principal (externas) */
+        }
+
+        body {
+            display: flex; /* Convierte el body en un contenedor flex */
+            flex-direction: column; /* Apila los elementos verticalmente */
+            font-family: 'Inter', sans-serif; /* Fuente principal */
+            background-color: #f9fafb; /* Color de fondo suave */
+            color: #374151; /* Color de texto principal */
+            overflow: hidden;
+        }
+
+        /* Contenedor principal para la presentación, ocupa el espacio restante y centra su contenido */
+        main {
+            flex-grow: 1; /* **ALTURA:** Permite que main ocupe todo el espacio vertical disponible */
+            display: flex; /* Convierte main en un contenedor flex */
+            justify-content: center; /* Centra horizontalmente el contenido (la presentación) */
+            align-items: center; /* Centra verticalmente el contenido (la presentación) */
+            overflow: hidden;
+        }
+
+        /* Contenedor de la presentación: dimensiones, centrado y estilos */
+        #presentation-container {
+            width: 98vw; /* **ANCHO:** Ancho casi completo del viewport (98%) */
+            height: 100vh; /* **ALTURA:** Altura casi completa del viewport (98vh), CLAVE para mantener la altura de la diapositiva */
+            max-width: none;
+            display: flex; /* Contenedor flex para diapositivas y botones de navegación */
+            flex-direction: column; /* Apila contenido verticalmente */
+            justify-content:center; /* Espacia las diapositivas y la navegación (botones abajo) */
+            align-items: center; /* Centra el contenido horizontalmente */
+            background-color: rgb(17, 102, 155);
+            overflow: hidden; /* **BARRAS DE DESPLAZAMIENTO:** Oculta cualquier desbordamiento dentro del contenedor de la presentación */
+        }
+
+        /* Escalado de fuente base para responsividad y zoom */
+        html {
+            /* **TAMAÑO DE TEXTO:** Tamaño de fuente adaptable: min 14px, preferido 1.5% del viewport, max 20px. */
+            font-size: clamp(14px, 1.5vw, 20px);
+        }
+
+        /* Animaciones para transiciones de diapositivas */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOutUp {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOutDown {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(20px); }
+        }
+
+        /* Estilos de las diapositivas individuales */
+        .slide {
+            display: none; /* Oculto por defecto */
+            animation-duration: 0.5s;
+            animation-fill-mode: forwards;
+            position: absolute; /* Posicionamiento absoluto para superponerlas dentro de #presentation-container */
+            top: 0;
+            left: 0;
+            width: 100%; /* **ANCHO:** Ocupa el 100% del ancho del contenedor padre (#presentation-container) */
+            height: 100%; /* **ALTURA:** Ocupa toda la altura del contenedor padre (#presentation-container) */
+            flex-direction: column; /* Organiza el contenido verticalmente */
+            justify-content: center; /* Centra el contenido verticalmente */
+            align-items: center; /* Centra horizontalmente */
+            text-align: center;
+            padding: 2rem; /* **MÁRGENES INTERNOS (PADDING):** Espaciado interno de la diapositiva */
+            background-color: white;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+            animation-name: fadeInUp;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .slide.leaving {
+            animation-name: fadeOutDown;
+            z-index: 20; /* Asegura que la diapositiva saliente esté por encima */
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Estilos de los botones de navegación */
+        .nav-button {
+            background-color: #4F46E5; /* Índigo 600 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .nav-button:hover {
+            background-color: #4338CA; /* Índigo 700 */
+            transform: translateY(-2px);
+        }
+
+        .nav-button:active {
+            transform: translateY(0);
+            box-shadow: 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Estilos del menú de navegación móvil */
+        .mobile-menu {
+            transition: transform 0.3s ease-out;
+            transform: translateX(100%); /* Oculto por defecto */
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0); /* Visible cuando está abierto */
+        }
+
+        /* Área de contenido dentro de cada diapositiva para gestionar su layout */
+        .slide-content-area {
+            flex-grow: 1; /* **ALTURA:** Permite que esta área ocupe el espacio disponible dentro de la diapositiva */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centra el contenido verticalmente */
+            align-items: center; /* Centra horizontalmente */
+            width: 100%; /* **ANCHO:** Ocupa todo el ancho de la diapositiva */
+            padding: 1rem; /* **MÁRGENES INTERNOS (PADDING):** Espaciado interno del área de contenido */
+            overflow-y: auto; /* Permite desplazamiento vertical si el contenido es demasiado largo para la altura disponible */
+        }
+
+        /* Asegura que los hijos del área de contenido puedan encogerse */
+        .slide-content-area > * {
+            flex-shrink: 1;
+            min-height: 0;
+        }
+
+        /* Ajustes de tamaño de texto para escalar con el font-size de html */
+        .slide h1 { font-size: 2.5em; } /* **TAMAÑO DE TEXTO:** 2.5 veces el tamaño base de html */
+        .slide h2 { font-size: 2em; }   /* **TAMAÑO DE TEXTO:** 2 veces el tamaño base de html */
+        .slide h3 { font-size: 1.5em; } /* **TAMAÑO DE TEXTO:** 1.5 veces el tamaño base de html */
+        .slide p, .slide ul, .slide ol {
+            font-size: 1em; /* **TAMAÑO DE TEXTO:** Escala directamente con el font-size de html */
+            max-width: 800px; /* **ANCHO:** Limita el ancho del texto para legibilidad */
+            margin: 0 auto; /* **MÁRGENES EXTERNOS (MARGIN):** Centra el bloque de texto horizontalmente */
+        }
+
+        /* Estilos para imágenes */
+        .slide img {
+            max-width: 50%; /* **ANCHO:** Asegura que las imágenes no desborden su contenedor */
+            height: auto; /* Mantiene la proporción de la imagen */
+            object-fit: contain; /* Ajusta la imagen dentro de su caja manteniendo su relación de aspecto */
+            margin-top: 1rem; /* **MÁRGENES EXTERNOS (MARGIN):** Margen superior */
+            margin-bottom: 1rem; /* **MÁRGENES EXTERNOS (MARGIN):** Margen inferior */
+            display: block; /* Asegura que la imagen sea un bloque y no se superponga */
+        }
+
+        /* Estilos específicos para imágenes de contenido (no el logo de la portada) */
+        .content-image-style {
+            border-radius: 0.75rem;
+            box-shadow: none;
+            margin-top: 1rem; /* **MÁRGENES EXTERNOS (MARGIN):** Margen superior específico */
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Estilo específico para el logo de la portada */
+        .cover-logo {
+            box-shadow: none !important;
+        }
+
+        /* Nuevo estilo para el diseño con imagen a un lado */
+        .slide-content-area.side-image-layout {
+            flex-direction: row; /* Coloca los elementos en fila */
+            align-items: center; /* Alinea verticalmente al centro */
+            justify-content: center; /* Espacia los elementos */
+            text-align: left; /* Alinea el texto a la izquierda dentro del contenedor */
+            flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+        }
+
+        .side-image-layout > div {
+            flex: 1; /* Distribuye el espacio disponible entre el texto y la imagen */
+            padding: 1rem;
+            min-width: 280px; /* Ancho mínimo para el contenido de texto */
+        }
+
+        .side-image-layout img {
+            max-width: 40%; /* Ajusta el ancho máximo de la imagen en este diseño */
+            height: auto;
+            margin: 0 0 0 2rem; /* Margen a la izquierda de la imagen para separarla del texto */
+            order: 2; /* Coloca la imagen a la derecha por defecto */
+        }
+
+        /* Asegurar que las listas y párrafos dentro del layout lateral no se centren */
+        .side-image-layout div p, .side-image-layout div ul, .side-image-layout div ol {
+            text-align: left;
+            margin-left: 0;
+            margin-right: auto; /* Para que no se extiendan demasiado */
+        }
+
+        /* Media queries para ajustes finos en pantallas más pequeñas */
+        @media (max-width: 768px) {
+            #presentation-container {
+                height: 95vh; /* **ALTURA:** Ajuste de altura en pantallas medianas (95% del viewport) */
+            }
+            .slide h1 { font-size: 2.2em; }
+            .slide h2 { font-size: 1.8em; }
+            .slide h3 { font-size: 1.3em; }
+            .slide p, .slide ul, .slide ol { font-size: 0.95em; }
+            .slide img { max-width: 90%; } /* **ANCHO:** Imágenes un poco más pequeñas */
+
+            /* Ajustes para el layout lateral en pantallas medianas */
+            .slide-content-area.side-image-layout {
+                flex-direction: column; /* Vuelve a apilar en pantallas pequeñas */
+                align-items: center;
+                text-align: center;
+            }
+            .side-image-layout > div {
+                padding: 0.5rem;
+                width: 100%; /* Ocupa todo el ancho disponible */
+                min-width: unset;
+            }
+            .side-image-layout img {
+                max-width: 70%; /* Imagen más grande cuando está apilada */
+                margin: 1rem 0; /* Margen arriba y abajo */
+                order: unset; /* Restablece el orden */
+            }
+            .side-image-layout div p, .side-image-layout div ul, .side-image-layout div ol {
+                text-align: center;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #presentation-container {
+                height: 90vh; /* **ALTURA:** Ajuste de altura en pantallas muy pequeñas (90% del viewport) */
+            }
+            .slide h1 { font-size: 1.8em; }
+            .slide h2 { font-size: 1.6em; }
+            .slide h3 { font-size: 1.1em; }
+            .slide p, .slide ul, .slide ol { font-size: 0.85em; }
+            .slide img { max-width: 95%; } /* **ANCHO:** Imágenes un poco más pequeñas */
+            .slide-content-area { padding: 0.5rem; } /* **MÁRGENES INTERNOS (PADDING):** Padding mínimo en pantallas muy pequeñas */
+
+            /* Ajustes para el layout lateral en pantallas muy pequeñas */
+            .slide-content-area.side-image-layout {
+                padding: 1rem;
+            }
+            .side-image-layout img {
+                max-width: 90%;
+            }
+        }
+
+        /* Estilos para el quiz */
+        .quiz-container {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        /* Contenedor de opciones del quiz para grid */
+        #quiz-options-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Dos columnas de igual ancho */
+            gap: 1rem; /* Espacio entre los botones */
+            margin-bottom: 1.5rem;
+            width: 100%; /* Asegura que ocupe el ancho completo del contenedor */
+        }
+
+        .quiz-button {
+            padding: 1rem; /* Aumentado el padding para que sea más cuadrado */
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 0.9em; /* Fuente más pequeña para el botón */
+            text-align: center; /* Centrar el texto en el botón */
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            display: flex; /* Para centrar contenido si el texto es corto */
+            justify-content: center;
+            align-items: center;
+            min-height: 3.5rem; /* Altura mínima para asegurar forma cuadrada */
+        }
+
+        .quiz-button:hover:not(:disabled) {
+            background-color: #e5e7eb;
+            transform: translateY(-1px);
+        }
+
+        .quiz-button.correct {
+            background-color: #d1fae5;
+            border-color: #34d399;
+        }
+
+        .quiz-button.incorrect {
+            background-color: #fee2e2;
+            border-color: #f87171;
+        }
+
+        /* Estilos para el botón de siguiente pregunta */
+        #next-question-button {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #next-question-button:hover {
+            background-color: #059669;
+        }
+
+        .quiz-feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+
+        /* Aumentar el tamaño de letra de las preguntas */
+        #question-text {
+            font-size: 1.8em; /* Tamaño de fuente más grande para la pregunta */
+            font-weight: 800; /* Más negrita para que resalte */
+            color: #1e3a8a; /* Un azul más oscuro para el texto de la pregunta */
+            margin-bottom: 1.5rem;
+            min-height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navegación de Escritorio -->
+    <header id="main-header" class="bg-white shadow-md py-4 px-6 sticky top-0 z-50 hidden md:block transition-all duration-300 ease-in-out transform">
+        <div class="container mx-auto flex items-center justify-between">
+            <!-- Sección Izquierda: Logo -->
+            <a href="https://azghell.github.io/IMA-Informatica" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
+                <img src="imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
+            </a>
+
+            <!-- Sección Central: Área de Informática -->
+            <span class="font-extrabold text-2xl text-center flex-grow">Informática Aplicada I</span>
+
+            <!-- Sección Derecha: Enlaces de Navegación de Escritorio -->
+            <nav class="flex space-x-6">
+                <a href="https://azghell.github.io/IMA-Informatica" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300"> Regresar a Inicio</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Navegación Móvil (oculta por defecto, mostrada en pantallas pequeñas) -->
+    <header id="mobile-header" class="bg-white shadow-md py-4 px-4 flex justify-between items-center md:hidden transition-all duration-300 ease-in-out transform">
+        <!-- Logo y Área de Informática para móvil -->
+        <a href="https://azghell.github.io/IMA-Informatica" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
+            <img src="imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
+            <span class="font-extrabold text-xl">Informática Aplicada I</span>
+        </a>
+        <!-- Icono de Hamburguesa -->
+        <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+        <!-- Superposición del Menú Móvil -->
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+        <!-- Barra Lateral del Menú Móvil -->
+        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 p-6 flex flex-col">
+            <button id="close-mobile-menu" class="self-end text-gray-600 hover:text-indigo-600 focus:outline-none mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <nav class="flex flex-col space-y-4">
+                <a href="https://azghell.github.io/IMA-Informatica" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Inicio</a>
+                <!-- Desplegable Móvil para Asignaturas -->
+                <div class="relative">
+                    <button id="mobile-asignaturas-button" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300 focus:outline-none flex items-center justify-between w-full">
+                        Asignaturas
+                        <svg class="ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="mobile-asignaturas-dropdown" class="hidden mt-2 pl-4 flex flex-col space-y-2">
+                        <a href="#" class="block text-base text-gray-700 hover:text-indigo-600">Informática I</a>
+                        <a href="#" class="block text-base text-gray-700 hover:bg-gray-100">Ofimática I</a>
+                        <a href="#" class="block text-base text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
+                        <a href="#" class="block text-base text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
+                        <a href="#" class="block text-base text-gray-700 hover:bg-gray-100">Diseño Web II</a>
+                    </div>
+                </div>
+                <a href="/fundamentos_ii.pdf" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Contenedor de Diapositivas de Presentación -->
+        <div id="presentation-container">
+
+            <!-- Diapositiva 1: Portada -->
+            <div id="slide-1" class="slide active">
+                <div class="slide-content-area">
+                    <img src="imagenes/logo.png" alt="Logo de la Institución" style="width: 300px; height: auto;" class="mx-auto mb-8 cover-logo">
+                    <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Redes Básicas y Configuración IP</h1>
+                    <h3 class="text-2xl text-gray-700 mb-2">Informática Aplicada I</h3>
+                    <p class="text-xl text-gray-600 mb-2">Décimo A</p>
+                    <p class="text-xl text-gray-600 mb-2">Docente: Pablo Antonio Peña</p>
+                    <p class="text-xl text-gray-600 mb-2">San Pedro Sula</p>
+                    <p class="text-xl text-gray-600">10 de agosto del 2025</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 2: ¿Qué es una Red de Computadoras? -->
+            <div id="slide-2" class="slide">
+                <div class="slide-content-area side-image-layout">
+                    <div>
+                        <h2 class="text-indigo-600 font-bold mb-4">¿Qué es una Red de Computadoras?</h2>
+                        <p class="text-lg text-gray-700 mb-6">Una red de computadoras es un sistema que interconecta dos o más dispositivos para permitirles compartir recursos e intercambiar información.</p>
+                        <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
+                            <li>Permite la comunicación y el intercambio de datos.</li>
+                            <li>Formada por hardware (equipos) y software (programas).</li>
+                        </ul>
+                    </div>
+                    <img src="imagenes/computacion.jpg" width="300px" height="auto" alt="Concepto de Red de Computadoras" class="content-image-style">
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: Tipos de Redes por Alcance -->
+            <div id="slide-3" class="slide">
+                <div class="slide-content-area">
+                    <h2 class="text-indigo-600 font-bold mb-4">Tipos de Redes (por Alcance)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl text-left mt-6">
+                        <div class="bg-blue-50 p-6 rounded-lg shadow-md">
+                            <h3 class="text-2xl font-semibold text-blue-700 mb-3">PAN (Red de Área Personal)</h3>
+                            <p class="text-base text-gray-700">Es la más pequeña, diseñada para un solo usuario y sus dispositivos cercanos.</p>
+                        </div>
+                        <div class="bg-green-50 p-6 rounded-lg shadow-md">
+                            <h3 class="text-2xl font-semibold text-green-700 mb-3">LAN (Red de Área Local)</h3>
+                            <p class="text-base text-gray-700">Conecta dispositivos dentro de un área limitada, como una casa, una oficina o un edificio escolar.</p>
+                        </div>
+                        <div class="bg-purple-50 p-6 rounded-lg shadow-md">
+                            <h3 class="text-2xl font-semibold text-purple-700 mb-3">MAN (Red de Área Metropolitana)</h3>
+                            <p class="text-base text-gray-700">Es más grande que una LAN, cubriendo una ciudad o un campus universitario.</p>
+                        </div>
+                        <div class="bg-red-50 p-6 rounded-lg shadow-md">
+                            <h3 class="text-2xl font-semibold text-red-700 mb-3">WAN (Red de Área Amplia)</h3>
+                            <p class="text-base text-gray-700">Conecta redes a través de grandes distancias geográficas, como regiones o países.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: Topologías de Red -->
+            <div id="slide-4" class="slide">
+                <div class="slide-content-area">
+                    <h2 class="text-indigo-600 font-bold mb-4">Topologías de Red</h2>
+                    <p class="text-lg text-gray-700 mb-6">La forma en que los dispositivos están conectados en una red.</p>
+                    <div class="flex flex-col md:flex-row items-center justify-around w-full max-w-4xl space-y-8 md:space-y-0 md:space-x-8 mt-6">
+                        <!-- Topología de Estrella -->
+                        <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-xl">
+                            <h3 class="text-2xl font-semibold text-indigo-700">Estrella</h3>
+                            <p class="text-center text-lg mt-2 text-gray-700">Cada dispositivo se conecta a un nodo central (switch).</p>
+                            <img src="imagenes/topologia_estrella.png" width="300" height="auto" alt="Topología de Estrella" class="content-image-style max-w-[200px] mx-auto">
+                        </div>
+
+                        <!-- Topología de Bus -->
+                        <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-xl">
+                            <h3 class="text-2xl font-semibold text-indigo-700">Bus</h3>
+                            <p class="text-center text-lg mt-2 text-gray-700">Todos comparten un cable principal.</p>
+                            <img src="imagenes/topologia_bus.png" width="300" height="auto" alt="Topología de Bus" class="content-image-style max-w-[200px] mx-auto">
+                        </div>
+
+                        <!-- Topología de Anillo (nueva sección para incluir la imagen) -->
+                        <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-xl">
+                            <h3 class="text-2xl font-semibold text-indigo-700">Anillo</h3>
+                            <p class="text-center text-lg mt-2 text-gray-700">Los dispositivos se conectan en un círculo cerrado.</p>
+                            <img src="imagenes/topologia_anillo.png" width="300" height="auto" alt="Topología de Anillo" class="content-image-style max-w-[200px] mx-auto">
+                        </div>
+                    </div>
+                    <p class="text-sm mt-4 text-gray-500">
+                        <small>Es la forma en que está diseñada la red, sea en el plano físico o lógico. El concepto de red puede definirse como ¨conjunto de nodos interconectados¨.</small>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Protocolos de Red -->
+            <div id="slide-5" class="slide">
+                <div class="slide-content-area side-image-layout">
+                    <div>
+                        <h2 class="text-indigo-600 font-bold mb-4">Protocolos de Red</h2>
+                        <p class="text-lg text-gray-700 mb-6">Los protocolos de red son conjuntos de <strong>reglas</strong> y <strong>estándares</strong> que los dispositivos deben seguir para comunicarse de manera efectiva.</p>
+                        <div class="flex items-center p-4 bg-gray-100 rounded-lg shadow-md w-full max-w-md mt-6">
+                            <strong class="text-xl text-indigo-600 mr-4">TCP/IP</strong>
+                            <p class="text-lg text-gray-700">El protocolo más importante y la base de Internet.</p>
+                        </div>
+                    </div>
+                    <img src="imagenes/tcp_ip_protocol.png" width="300px" height="auto" alt="Protocolo TCP/IP" class="content-image-style">
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: Direccionamiento IP -->
+            <div id="slide-6" class="slide">
+                <div class="slide-content-area">
+                    <h2 class="text-indigo-600 font-bold mb-4">Direccionamiento IP</h2>
+                    <p class="text-lg text-gray-700 mb-6">Una <strong>dirección IP</strong> es la identificación única de cada dispositivo en una red.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl text-left mt-6">
+                        <div class="p-6 bg-green-50 rounded-lg shadow-md border-2 border-green-200">
+                            <strong class="text-2xl text-green-700">IP Dinámica (DHCP)</strong>
+                            <p class="mt-2 text-lg text-gray-700">Asignada automáticamente por el router.</p>
+                        </div>
+                        <div class="p-6 bg-red-50 rounded-lg shadow-md border-2 border-red-200">
+                            <strong class="text-2xl text-red-700">IP Estática</strong>
+                            <p class="mt-2 text-lg text-gray-700">Asignada manualmente. Útil para servidores.</p>
+                        </div>
+                    </div>
+                    <img src="imagenes/ip_address.png" width="350px" height="auto" alt="Dirección IP" class="content-image-style">
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Componentes de Configuración IP -->
+            <div id="slide-7" class="slide">
+                <div class="slide-content-area">
+                    <h2 class="text-indigo-600 font-bold mb-4">Componentes de Configuración IP</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl text-left mt-6">
+                        <div class="p-4 bg-white rounded-lg shadow-md">
+                            <strong class="text-xl text-indigo-600">Dirección IP</strong>
+                            <p class="text-md text-gray-700">Identificación única del dispositivo.</p>
+                        </div>
+                        <div class="p-4 bg-white rounded-lg shadow-md">
+                            <strong class="text-xl text-indigo-600">Máscara de Subred</strong>
+                            <p class="text-md text-gray-700">Define la porción de red y de host.</p>
+                        </div>
+                        <div class="p-4 bg-white rounded-lg shadow-md">
+                            <strong class="text-xl text-indigo-600">Puerta de Enlace (Gateway)</strong>
+                            <p class="text-md text-gray-700">Dirección del router para salir de la red local.</p>
+                        </div>
+                        <div class="p-4 bg-white rounded-lg shadow-md">
+                            <strong class="text-xl text-indigo-600">Servidores DNS</strong>
+                            <p class="text-md text-gray-700">Traducen nombres de dominio a IPs.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Curiosidad Digital: El Ping -->
+            <div id="slide-8" class="slide">
+                <div class="slide-content-area">
+                    <h2 class="text-indigo-600 font-bold mb-4">Curiosidad Digital: El Ping</h2>
+                    <p class="text-lg text-gray-700 mb-6">Una herramienta para verificar la conectividad de red.</p>
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
+                        <p class="text-xl font-semibold text-gray-800 mb-4">El comando `ping` envía pequeños paquetes de datos a un destino y mide el tiempo que tardan en regresar, indicando si hay conexión y su velocidad.</p>
+                        <p class="text-sm text-gray-600">Ejemplo en terminal: `ping google.com`</p>
+                    </div>
+                    <img src="imagenes/ping_command.png" width="350px" height="auto" alt="Comando Ping" class="content-image-style">
+                </div>
+            </div>
+
+            <!-- NUEVA Diapositiva 9: Minijuego de Preguntas -->
+            <div id="slide-9" class="slide">
+                <div class="slide-content-area">
+                    <h2 class="text-indigo-600 font-bold mb-4">¡Pon a Prueba tus Conocimientos!</h2>
+                    <p class="text-lg text-gray-700 mb-6">Responde las siguientes preguntas sobre redes básicas.</p>
+
+                    <div id="quiz-container" class="bg-gray-100 p-6 rounded-lg shadow-md w-full max-w-lg flex flex-col items-center">
+                        <p id="question-text" class="text-2xl font-bold text-indigo-800 mb-6 min-h-[4rem] flex items-center justify-center text-center">Cargando pregunta...</p>
+                        <div id="quiz-options-container" class="flex flex-wrap justify-center gap-4 mb-6 w-full">
+                            <!-- Botones de opciones se generarán aquí dinámicamente -->
+                        </div>
+                        <p id="quiz-feedback" class="text-2xl font-bold mt-4 mb-4 min-h-[2rem] flex items-center justify-center"></p>
+                        <p class="text-lg text-gray-700">Aciertos: <span id="quiz-score" class="font-bold text-indigo-700">0</span> / <span id="quiz-total-questions" class="font-bold text-indigo-700">0</span></p>
+                        <button id="next-question-button" class="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg transition duration-200" style="display: none;">Siguiente Pregunta</button>
+                        <button id="restart-quiz-button" class="mt-3 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-lg transition duration-200" style="display: none;">Reiniciar Quiz</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Asignación de Tarea (anteriormente slide-9) -->
+            <div id="slide-10" class="slide">
+                <div class="slide-content-area">
+                    <h2 class="text-indigo-700 font-extrabold mb-4">Asignación de Tarea</h2>
+                    <div class="bg-yellow-50 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
+                        <p class="text-xl font-semibold text-yellow-800 mb-4">Para entregar el 10 de agosto de 2025:</p>
+                        <ol class="list-decimal list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-md">
+                            <li>Elaborar un <strong>diagrama de red para un aula</strong>, incluyendo al menos 5 dispositivos (computadoras, impresora, router, etc.) y las conexiones entre ellos.</li>
+                            <li>En tu propia computadora, <strong>investiga </strong> que es una dirección IP publica, ip privada, ip dinamica, ip estatica, máscara de subred, puerta de enlace predeterminada incluyendo cuales son sus funciones, elabora una tabla de definiciones.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de Navegación -->
+            <div class="flex justify-between w-full p-4 mt-auto">
+                <button id="prev-slide" class="nav-button flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Anterior
+                </button>
+                <span id="slide-counter" class="text-gray-600 font-medium text-lg flex items-center">1 / 10</span>
+                <button id="next-slide" class="nav-button flex items-center">
+                    Siguiente
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pie de Página -->
+    <footer id="main-footer" class="bg-gray-900 text-gray-300 py-6 px-6 mt-8 transition-all duration-300 ease-in-out transform">
+        <div class="container mx-auto text-center text-sm">
+            <p class="flex items-center justify-center">
+                &copy;&nbsp;<span id="current-year"></span>&nbsp;Instituto María Auxiliadora - Área de Informática ISEMED. Todos los derechos reservados.
+                <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" style="width: 50px; height: auto; margin-left: 0.5rem;">
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Lógica del Menú Móvil ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileAsignaturasButton = document.getElementById('mobile-asignaturas-button');
+        const mobileAsignaturasDropdown = document.getElementById('mobile-asignaturas-dropdown');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('open');
+            mobileMenuOverlay.classList.toggle('hidden');
+        }
+
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+        closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
+        mobileMenuOverlay.addEventListener('click', toggleMobileMenu); // Cierra al hacer clic fuera
+
+        mobileAsignaturasButton.addEventListener('click', () => {
+            mobileAsignaturasDropdown.classList.toggle('hidden');
+            // Gira el icono de la flecha
+            mobileAsignaturasButton.querySelector('svg').classList.toggle('rotate-180');
+        });
+
+        // --- Lógica de la Presentación ---
+        const slides = document.querySelectorAll('.slide');
+        const prevButton = document.getElementById('prev-slide');
+        const nextButton = document.getElementById('next-slide');
+        const slideCounter = document.getElementById('slide-counter');
+        let currentSlideIndex = 0;
+
+        function updateSlideCounter() {
+            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+        }
+
+        function showSlide(index, direction = 'next') {
+            // Asegura que el índice esté dentro de los límites
+            if (index < 0 || index >= slides.length) {
+                return;
+            }
+
+            const currentActiveSlide = document.querySelector('.slide.active');
+            const newSlideElement = slides[index];
+
+            if (currentActiveSlide === newSlideElement) {
+                // Si se intenta navegar a la misma diapositiva, no hace nada
+                return;
+            }
+
+            // Si hay una diapositiva activa, la anima para que salga
+            if (currentActiveSlide) {
+                currentActiveSlide.classList.add('leaving');
+                currentActiveSlide.style.animationName = (direction === 'next' ? 'fadeOutDown' : 'fadeOutUp');
+                // Asegura que la diapositiva que sale esté encima durante su animación de salida
+                currentActiveSlide.style.zIndex = '20';
+
+                // Espera a que la animación de salida se complete antes de ocultarla por completo
+                currentActiveSlide.addEventListener('animationend', function handler() {
+                    currentActiveSlide.classList.remove('active', 'leaving');
+                    currentActiveSlide.style.display = 'none';
+                    currentActiveSlide.style.animationName = '';
+                    currentActiveSlide.style.zIndex = '0'; // Restablece el z-index a su valor predeterminado para diapositivas inactivas
+                    currentActiveSlide.removeEventListener('animationend', handler);
+                }, { once: true });
+            }
+
+            // Anima la nueva diapositiva para que entre
+            // Establece la visualización en flex inmediatamente, pero la animación se encargará de la opacidad/transformación
+            newSlideElement.style.display = 'flex';
+            newSlideElement.classList.add('active');
+            newSlideElement.style.animationName = (direction === 'next' ? 'fadeInUp' : 'fadeInDown');
+            // Asegura que la diapositiva entrante esté debajo de la diapositiva que sale durante su animación de entrada
+            newSlideElement.style.zIndex = '1';
+
+            currentSlideIndex = index;
+            updateSlideCounter();
+            updateNavigationButtons();
+
+            // Manejo especial para la diapositiva del quiz para inicializarla cuando se muestra
+            if (newSlideElement.id === 'slide-9') { // ID de la diapositiva del quiz
+                initializeQuiz();
+            }
+        }
+
+
+        function updateNavigationButtons() {
+            prevButton.disabled = currentSlideIndex === 0;
+            nextButton.disabled = currentSlideIndex === slides.length - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                showSlide(currentSlideIndex + 1, 'next');
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                showSlide(currentSlideIndex - 1, 'prev');
+            }
+        }
+
+        // Oyentes de Eventos para Botones de Navegación
+        prevButton.addEventListener('click', prevSlide);
+        nextButton.addEventListener('click', nextSlide);
+
+        // Navegación con Teclado
+        document.addEventListener('keydown', (event) => {
+            // Tecla F11
+            if (event.key === 'F11') {
+                event.preventDefault(); // Evita el comportamiento predeterminado de alternar pantalla completa
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                } else {
+                    document.documentElement.requestFullscreen();
+                }
+                // La visibilidad se manejará mediante el oyente de eventos 'fullscreenchange'
+            } else if (event.key === 'ArrowRight') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                // No hace nada si está en pantalla completa, de lo contrario, alterna el encabezado/pie de página
+                if (!document.fullscreenElement) {
+                    toggleHeaderFooter(event.key === 'ArrowUp');
+                }
+            }
+        });
+
+        // --- Lógica de Visibilidad del Encabezado/Pie de Página ---
+        const mainHeader = document.getElementById('main-header');
+        const mobileHeader = document.getElementById('mobile-header');
+        const mainFooter = document.getElementById('main-footer');
+        let lastScrollY = window.scrollY;
+        let isHeaderFooterVisible = true;
+
+        function toggleHeaderFooter(show) {
+            if (show && !isHeaderFooterVisible) {
+                mainHeader.classList.remove('opacity-0', '-translate-y-full');
+                mobileHeader.classList.remove('opacity-0', '-translate-y-full');
+                mainFooter.classList.remove('opacity-0', 'translate-y-full');
+                isHeaderFooterVisible = true;
+            } else if (!show && isHeaderFooterVisible) {
+                mainHeader.classList.add('opacity-0', '-translate-y-full');
+                mobileHeader.classList.add('opacity-0', '-translate-y-full');
+                mainFooter.classList.add('opacity-0', 'translate-y-full');
+                isHeaderFooterVisible = false;
+            }
+        }
+
+        window.addEventListener('scroll', () => {
+            // Solo alterna el encabezado/pie de página al desplazarse si no está en pantalla completa
+            if (!document.fullscreenElement) {
+                const currentScrollY = window.scrollY;
+                const scrollThreshold = 10;
+
+                if (currentScrollY > lastScrollY && currentScrollY > scrollThreshold) { // Desplazándose hacia abajo y más allá de un umbral
+                    toggleHeaderFooter(false);
+                } else if (currentScrollY < lastScrollY) { // Desplazándose hacia arriba
+                    toggleHeaderFooter(true);
+                }
+                lastScrollY = currentScrollY;
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                // Entró en pantalla completa
+                toggleHeaderFooter(false);
+            } else {
+                // Salió de pantalla completa
+                toggleHeaderFooter(true);
+            }
+        });
+
+        // --- Lógica del Minijuego de Preguntas ---
+        const quizData = [
+            {
+                question: "¿Qué tipo de red cubre un área geográfica limitada como una casa u oficina?",
+                options: ["PAN", "LAN", "MAN", "WAN"],
+                correctAnswer: "LAN"
+            },
+            {
+                question: "¿Cuál es la topología de red más común donde todos los dispositivos se conectan a un punto central?",
+                options: ["Bus", "Anillo", "Estrella", "Malla"],
+                correctAnswer: "Estrella"
+            },
+            {
+                question: "¿Qué protocolo es la base de Internet y gestiona la comunicación en la mayoría de las redes modernas?",
+                options: ["HTTP", "FTP", "TCP/IP", "SMTP"],
+                correctAnswer: "TCP/IP"
+            },
+            {
+                question: "¿Qué componente de la configuración IP traduce nombres de dominio a direcciones IP numéricas?",
+                options: ["Máscara de Subred", "Puerta de Enlace", "Servidor DNS", "Dirección IP"],
+                correctAnswer: "Servidor DNS"
+            },
+            {
+                question: "Si tu dirección IP es asignada automáticamente por el router, ¿qué método de configuración se está utilizando?",
+                options: ["Estática", "Manual", "Dinámica (DHCP)", "Fija"],
+                correctAnswer: "Dinámica (DHCP)"
+            },
+            {
+                question: "¿Qué versión de IP fue creada para reemplazar a IPv4 debido al agotamiento de direcciones?",
+                options: ["IPv3", "IPv5", "IPv6", "IPv7"],
+                correctAnswer: "IPv6"
+            }
+        ];
+
+        let currentQuizQuestionIndex = 0;
+        let quizScore = 0;
+        let shuffledQuizQuestions = [];
+
+        const questionTextDisplay = document.getElementById('question-text');
+        const quizOptionsContainer = document.getElementById('quiz-options-container');
+        const quizFeedbackDisplay = document.getElementById('quiz-feedback');
+        const quizScoreDisplay = document.getElementById('quiz-score');
+        const quizTotalQuestionsDisplay = document.getElementById('quiz-total-questions');
+        const quizNextQuestionButton = document.getElementById('next-question-button'); // Renombrado para evitar conflicto
+        const quizRestartButton = document.getElementById('restart-quiz-button'); // Renombrado para evitar conflicto
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function initializeQuiz() {
+            shuffledQuizQuestions = shuffleArray([...quizData]);
+            currentQuizQuestionIndex = 0;
+            quizScore = 0;
+            quizTotalQuestionsDisplay.textContent = shuffledQuizQuestions.length;
+            updateQuizDisplay();
+            quizNextQuestionButton.style.display = 'none';
+            quizRestartButton.style.display = 'none';
+        }
+
+        function updateQuizDisplay() {
+            quizOptionsContainer.innerHTML = ''; // Limpiar opciones anteriores
+
+            if (currentQuizQuestionIndex < shuffledQuizQuestions.length) {
+                const currentQuestion = shuffledQuizQuestions[currentQuizQuestionIndex];
+                questionTextDisplay.textContent = currentQuestion.question;
+                quizFeedbackDisplay.textContent = "";
+                quizFeedbackDisplay.classList.remove('text-green-600', 'text-red-600', 'text-indigo-700');
+                quizScoreDisplay.textContent = quizScore;
+
+                const shuffledOptions = shuffleArray([...currentQuestion.options]);
+
+                shuffledOptions.forEach(option => {
+                    const button = document.createElement('button');
+                    button.classList.add('quiz-button', 'bg-blue-500', 'hover:bg-blue-600', 'text-white', 'font-semibold', 'py-3', 'px-6', 'rounded-lg', 'transition', 'duration-200');
+                    button.textContent = option;
+                    button.dataset.answer = option;
+                    button.addEventListener('click', handleQuizAnswer);
+                    quizOptionsContainer.appendChild(button);
+                });
+                enableQuizButtons();
+                quizNextQuestionButton.style.display = 'none';
+            } else {
+                questionTextDisplay.textContent = "¡Quiz Terminado!";
+                quizFeedbackDisplay.textContent = `Tu puntuación final es: ${quizScore} de ${shuffledQuizQuestions.length}`;
+                quizFeedbackDisplay.classList.remove('text-red-600', 'text-green-600');
+                quizFeedbackDisplay.classList.add('text-indigo-700');
+                disableQuizButtons();
+                quizNextQuestionButton.style.display = 'none';
+                quizRestartButton.style.display = 'block';
+            }
+        }
+
+        function handleQuizAnswer(event) {
+            const selectedAnswer = event.target.dataset.answer;
+            const correctAnswer = shuffledQuizQuestions[currentQuizQuestionIndex].correctAnswer;
+
+            if (selectedAnswer === correctAnswer) {
+                quizFeedbackDisplay.textContent = "¡Correcto!";
+                quizFeedbackDisplay.classList.remove('text-red-600');
+                quizFeedbackDisplay.classList.add('text-green-600');
+                quizScore++;
+            } else {
+                quizFeedbackDisplay.textContent = `Incorrecto. La respuesta correcta es: ${correctAnswer}.`;
+                quizFeedbackDisplay.classList.remove('text-green-600');
+                quizFeedbackDisplay.classList.add('text-red-600');
+            }
+            quizScoreDisplay.textContent = quizScore;
+            disableQuizButtons();
+
+            quizOptionsContainer.querySelectorAll('.quiz-button').forEach(button => {
+                if (button.dataset.answer === correctAnswer) {
+                    button.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                    button.classList.add('bg-green-700');
+                } else if (button.dataset.answer === selectedAnswer) {
+                    button.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                    button.classList.add('bg-red-700');
+                }
+            });
+
+            if (currentQuizQuestionIndex < shuffledQuizQuestions.length - 1) {
+                quizNextQuestionButton.style.display = 'block';
+            } else {
+                quizRestartButton.style.display = 'block';
+            }
+        }
+
+        function enableQuizButtons() {
+            quizOptionsContainer.querySelectorAll('.quiz-button').forEach(button => {
+                button.disabled = false;
+                button.classList.remove('opacity-50', 'cursor-not-allowed');
+                button.classList.remove('bg-green-700', 'bg-red-700');
+                button.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            });
+        }
+
+        function disableQuizButtons() {
+            quizOptionsContainer.querySelectorAll('.quiz-button').forEach(button => {
+                button.disabled = true;
+                button.classList.add('opacity-50', 'cursor-not-allowed');
+            });
+        }
+
+        quizNextQuestionButton.addEventListener('click', () => {
+            currentQuizQuestionIndex++;
+            updateQuizDisplay();
+        });
+
+        quizRestartButton.addEventListener('click', () => {
+            initializeQuiz();
+        });
+
+        // --- Inicialización en DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Establece el año actual en el pie de página
+            const currentYearSpan = document.getElementById('current-year');
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+
+            // Inicializa la primera diapositiva
+            slides[0].classList.add('active');
+            slides[0].style.display = 'flex';
+            slides[0].style.animationName = '';
+
+            currentSlideIndex = 0;
+            updateSlideCounter();
+            updateNavigationButtons();
+
+            // Verificación de visibilidad inicial de encabezado/pie de página
+            if (window.scrollY > 0 || document.fullscreenElement) {
+                toggleHeaderFooter(false);
+            }
+        });
+    </script>
+</body>
+</html>

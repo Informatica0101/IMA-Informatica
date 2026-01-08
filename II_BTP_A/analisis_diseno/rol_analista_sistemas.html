@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación: Rol del Analista de Sistemas (Estilo RPG Mejorado)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: #3f68a3; /* Azul de fondo de XP */
+            background-image: linear-gradient(to bottom, #74a0d9, #3f68a3); /* Degradado sutil */
+            color: #333333;
+            overflow: hidden; /* Evita el scroll del body */
+        }
+        .presentation-container {
+            width: 95%; /* Usa porcentaje para un ancho más fluido */
+            max-width: 1600px; /* Aumentado para un marco más grande */
+            aspect-ratio: 16 / 9;
+            background-color: #e0e7f2;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column; /* Changed to column to stack elements */
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #a3b1c2;
+        }
+
+        /* Estilos para las diapositivas normales */
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 3rem 3.5rem 3.5rem 3.5rem; /* Padding ligeramente aumentado */
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.98);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #e0e7f2;
+            box-sizing: border-box;
+            overflow-y: auto;
+            max-height: 100%;
+            color: #333333;
+        }
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+            position: relative;
+            z-index: 10;
+        }
+        .slide-content {
+            background-color: #ffffff;
+            border-radius: 6px;
+            padding: 2.5rem;
+            margin: 1.5rem;
+            width: calc(100% - 3rem);
+            box-sizing: border-box;
+            border: 1px solid #cccccc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .slide-content > * {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            word-break: break-word;
+        }
+        /* Animation delays for linear slides */
+        .slide.active .slide-content > *:nth-child(1) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(2) { transition-delay: 0.2s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(3) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(4) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(5) { transition-delay: 0.5s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(6) { transition-delay: 0.6s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(7) { transition-delay: 0.7s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(8) { transition-delay: 0.8s; opacity: 1; transform: translateY(0); }
+
+        /* Estilos para la diapositiva dinámica del analista */
+        .dynamic-analyst-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align content to top */
+            align-items: center;
+            background-color: #e0e7f2;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            opacity: 0;
+            transform: scale(0.98);
+            pointer-events: none;
+            z-index: 15; /* Above normal slides, below active overlay */
+            padding-top: 20px; /* Keep some padding from the top */
+            box-sizing: border-box;
+        }
+        .dynamic-analyst-slide.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+            z-index: 20;
+        }
+        .analyst-diagram-container {
+            position: relative;
+            width: 95%; /* Increased size */
+            max-width: 900px; /* Increased max-width for the diagram container */
+            aspect-ratio: 1 / 0.7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 0px; /* Adjusted to move image higher */
+            margin-bottom: 20px; /* Add margin to separate from dialog box */
+        }
+        .analyst-diagram-container img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+        .skill-hotspot {
+            position: absolute;
+            background-color: transparent; /* Transparent background */
+            border-radius: 50%; /* Still rounded for click area */
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            color: #000066; /* Very dark blue text for better contrast */
+            text-align: center;
+            padding: 0; /* No padding for the text area */
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, transform 0.2s ease, opacity 0.3s ease, color 0.3s ease;
+            font-size: 1.0em; /* Increased font size to 1.0em (approx 16px) */
+            border: none; /* No border */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            z-index: 25;
+            opacity: 1; /* Default to visible */
+        }
+        .skill-hotspot:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
+            transform: scale(1.05);
+        }
+        .skill-hotspot.inactive {
+            opacity: 0.3; /* Dim inactive hotspots */
+            color: #666; /* Grey out text */
+        }
+        /* Posiciones de los hotspots (ajustar según la imagen real) */
+        /* These positions are relative to the .analyst-diagram-container */
+        #hotspot-creatividad { top: 10%; left: 30%; width: 15%; height: 20%; }
+        #hotspot-programacion { top: 10%; right: 30%; width: 15%; height: 20%; }
+        #hotspot-estructuras-datos { top: 30%; right: 15%; width: 15%; height: 20%; }
+        /* Adjusted positions for "Resolución de problemas" and "Redes y Conectividad" */
+        #hotspot-estructura-red { bottom: 20%; right: 12%; width: 22%; height: 20%; } /* Moved further right, increased width */
+        #hotspot-resolucion-problemas { bottom: 20%; left: 12%; width: 22%; height: 20%; } /* Moved further left, increased width */
+        #hotspot-comunicacion { top: 30%; left: 15%; width: 15%; height: 20%; }
+
+        /* Estilo para el cuadro de diálogo inferior (RPG style) */
+        #rpg-dialog-box {
+            position: absolute;
+            bottom: 50px; /* Posición fija en la parte inferior */
+            left: 50%;
+            transform: translateX(-50%); /* Centrado horizontalmente */
+            background-color: rgba(255, 255, 255, 0.7); /* Semitransparente con 70% de opacidad */
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            width: 80%; /* Ancho del cuadro de diálogo */
+            max-width: 800px; /* Ancho máximo */
+            min-height: 120px; /* Altura mínima para el contenido */
+            box-sizing: border-box;
+            border: 2px solid #a3b1c2; /* Borde sutil */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
+            text-align: left;
+            opacity: 0; /* Inicialmente oculto */
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out; /* Animación de aparición */
+            z-index: 30; /* Asegura que esté por encima del diagrama */
+            pointer-events: none; /* No bloquea clics hasta que esté activo */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        #rpg-dialog-box.active {
+            opacity: 1;
+            transform: translateX(-50%) scale(1); /* Estado final: centrado y escala normal */
+            pointer-events: auto; /* Permite clics cuando está activo */
+        }
+        #rpg-dialog-box h3 {
+            font-size: 1.6rem;
+            color: #1e3a8a;
+            margin-bottom: 0.6rem;
+            text-align: left;
+            width: 100%;
+        }
+        #rpg-dialog-box p, #rpg-dialog-box ul {
+            font-size: 1.05rem;
+            line-height: 1.5;
+            color: #333333;
+            margin-bottom: 0.5rem;
+        }
+        #rpg-dialog-box ul {
+            margin-left: 1.5rem;
+            width: auto; /* Ajusta el ancho de la lista al contenido */
+        }
+        #rpg-dialog-box ul li {
+            margin-bottom: 0.2rem;
+            position: relative;
+            padding-left: 1.2em;
+        }
+        #rpg-dialog-box ul li::before {
+            content: '•';
+            color: #2563eb;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* General styles for all slides */
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 1.2rem;
+            word-break: break-word;
+            max-width: 95vw;
+            overflow-wrap: break-word;
+            box-sizing: border-box;
+            padding-left: 8px;
+            padding-right: 8px;
+            text-shadow: none;
+        }
+        h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2563eb;
+            margin-bottom: 1rem;
+            word-break: break-word;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            text-shadow: none;
+        }
+        p, ul, ol {
+            font-size: 1.15rem;
+            color: #333333;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            word-break: break-word;
+            text-shadow: none;
+        }
+        ul, ol {
+            text-align: left;
+            margin-left: 2.5rem;
+            width: 100%;
+            max-width: 650px;
+        }
+        ul li, ol li {
+            margin-bottom: 0.6rem;
+            position: relative;
+            padding-left: 1.5em;
+        }
+        ul li::before {
+            content: '•';
+            color: #2563eb;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            text-shadow: none;
+        }
+        ol li::marker {
+            color: #2563eb;
+            font-weight: bold;
+            text-shadow: none;
+        }
+        img {
+            max-width: 85%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 2rem;
+            border: 1px solid #bbbbbb;
+            object-fit: contain;
+            background-color: #f0f0f0;
+        }
+        img:not([src]) {
+            background-color: #e6e6e6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666666;
+            font-size: 1.1rem;
+            font-weight: 600;
+            min-height: 180px;
+            border: 1px dashed #aaaaaa;
+            text-align: center;
+            padding: 15px;
+            text-shadow: none;
+        }
+        img:not([src])::before {
+            content: 'IMAGEN NO DISPONIBLE: ' attr(alt);
+            white-space: pre-wrap;
+            text-align: center;
+        }
+        .logo-institucion {
+            display: block;
+            margin: 0 auto 2rem auto;
+            background: none;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+            max-width: 98%;
+            width: 280px;
+            box-shadow: none;
+            border: none;
+        }
+        .logo-fixed {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            width: 160px;
+            height: auto;
+            z-index: 9999;
+            opacity: 0.9;
+            pointer-events: none;
+            filter: drop-shadow(0 1px 5px rgba(0, 0, 0, 0.2));
+            border: none;
+        }
+        .img-slide {
+            display: block;
+            margin: 1.5rem auto 1rem auto;
+            width: 480px;
+            max-width: 90%;
+            height: 270px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        .flex .img-slide {
+            width: 180px !important;
+            height: 120px !important;
+            max-width: 45%;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            position: fixed; /* Cambiado a fixed */
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%); /* Centrado horizontalmente */
+            display: flex;
+            gap: 15px;
+            z-index: 100; /* Asegura que estén por encima de todo */
+            justify-content: center;
+            width: auto; /* Ancho automático basado en el contenido */
+        }
+        .nav-button {
+            background-color: #3f68a3;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid #2d558c;
+            font-family: 'Inter', sans-serif;
+            text-shadow: none;
+        }
+        .nav-button:hover {
+            background-color: #4a7abf;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+        .nav-button:disabled {
+            background-color: #cccccc;
+            color: #888888;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .presentation-container {
+                aspect-ratio: unset;
+                height: 95vh;
+                max-width: 95vw;
+            }
+            .slide, .dynamic-analyst-slide {
+                padding: 1rem 0.5rem;
+            }
+            h2, h3 {
+                font-size: 1.8rem;
+                max-width: 98vw;
+                padding-left: 4px;
+                padding-right: 4px;
+            }
+            p, ul, ol {
+                font-size: 0.95rem;
+                margin-left: 1.5rem;
+            }
+            .slide-content {
+                margin: 0.5rem;
+                padding: 1.5rem;
+            }
+            .nav-button {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            .analyst-diagram-container {
+                width: 95%; /* Adjusted for mobile */
+                max-width: 700px; /* Adjusted max-width for smaller screens */
+                aspect-ratio: 1 / 0.8;
+            }
+            .skill-hotspot {
+                font-size: 0.85em; /* Further adjusted font size for mobile */
+                padding: 2px;
+            }
+            /* Adjust hotspot positions for smaller screens */
+            #hotspot-creatividad { top: 8%; left: 28%; width: 18%; height: 18%; }
+            #hotspot-programacion { top: 8%; right: 28%; width: 18%; height: 18%; }
+            #hotspot-estructuras-datos { top: 25%; right: 10%; width: 18%; height: 18%; }
+            #hotspot-estructura-red { bottom: 15%; right: 13%; width: 22%; height: 18%; } /* Adjusted for mobile */
+            #hotspot-resolucion-problemas { bottom: 15%; left: 13%; width: 22%; height: 18%; } /* Adjusted for mobile */
+            #hotspot-comunicacion { top: 25%; left: 10%; width: 18%; height: 18%; }
+
+            #rpg-dialog-box {
+                width: 90%;
+                padding: 1rem;
+                min-height: 100px;
+                bottom: 60px; /* Ajusta para móviles */
+            }
+            #rpg-dialog-box h3 {
+                font-size: 1.4rem;
+            }
+            #rpg-dialog-box p, #rpg-dialog-box ul {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <img src="imagenes/logo.png"
+         alt="Logo pequeño"
+         class="logo-fixed">
+
+    <div class="presentation-container">
+        <!-- Slide 1: Título y Datos Generales (Rol del Analista de Sistemas) -->
+        <div class="slide active" id="slide-1">
+            <div class="slide-content">
+                <img src="imagenes/logo.png"
+                     alt="Logo Instituto Maria Auxiliadora"
+                     class="logo-institucion">
+                <p>Análisis y Diseño de Sistemas I.</p>
+                <p>Undécimo Grado (II BTP) Sección "A"</p>
+                <p>Docente: Pablo Antonio Peña.</p>
+                <p>Fecha: 13 de Julio de 2025.</p>
+                <h3 class="mt-4">Rol del Analista de Sistemas</h3>
+            </div>
+        </div>
+
+        <!-- Slide 2: Introducción al Rol del Analista -->
+        <div class="slide" id="slide-2">
+            <div class="slide-content">
+                <h2>El Rol del Analista de Sistemas</h2>
+                <p>El analista de sistemas es el <strong>puente esencial</strong> entre las necesidades del negocio y la implementación tecnológica.</p>
+                <ul class="mx-auto text-left">
+                    <li>Identifica y documenta requisitos.</li>
+                    <li>Analiza viabilidad técnica y económica.</li>
+                    <li>Diseña la arquitectura lógica del sistema.</li>
+                    <li>Facilita la comunicación entre partes interesadas.</li>
+                </ul>
+                <img src="imagenes/analista.jpg" alt="Ilustración del rol del analista de sistemas" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Slide 3: Habilidades del Analista (Generales) -->
+        <div class="slide" id="slide-3">
+            <div class="slide-content">
+                <h2>Habilidades Clave del Analista</h2>
+                <p>Un analista exitoso combina <strong>habilidades técnicas</strong> y <strong>habilidades blandas</strong>.</p>
+                <ul class="mx-auto text-left">
+                    <li><strong>Técnicas</strong>: Comprensión de programación, bases de datos, redes.</li>
+                    <li><strong>Blandas</strong>: Comunicación, resolución de problemas, creatividad, negociación.</li>
+                </ul>
+                <img src="imagenes/habilidades.jpg" alt="Ilustración de habilidades técnicas y blandas" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Slide 4: Rol del Analista de Sistemas (Dynamic) -->
+        <div class="dynamic-analyst-slide" id="slide-4-dynamic">
+            <h2>Habilidades Específicas del Analista</h2>
+            <div class="analyst-diagram-container">
+                <img src="imagenes/analista_intro.png" alt="Diagrama de Habilidades del Analista de Sistemas">
+                <!-- Hotspots interactivos sobre la imagen -->
+                <div class="skill-hotspot" id="hotspot-creatividad"></div>
+                <div class="skill-hotspot" id="hotspot-programacion"></div>
+                <div class="skill-hotspot" id="hotspot-estructuras-datos"></div>
+                <div class="skill-hotspot" id="hotspot-estructura-red"></div>
+                <div class="skill-hotspot" id="hotspot-resolucion-problemas"></div>
+                <div class="skill-hotspot" id="hotspot-comunicacion"></div>
+            </div>
+
+            <!-- Cuadro de diálogo inferior (RPG style) -->
+            <div id="rpg-dialog-box">
+                <!-- Initial content is empty, will be populated by JS -->
+            </div>
+        </div>
+
+        <!-- Slide 5: Desafíos Comunes del Analista -->
+        <div class="slide" id="slide-5">
+            <div class="slide-content">
+                <h2>Desafíos Comunes del Analista</h2>
+                <p>El analista de sistemas enfrenta diversos obstáculos en su día a día.</p>
+                <ul class="mx-auto text-left">
+                    <li>Requisitos ambiguos o cambiantes.</li>
+                    <li>Conflictos entre necesidades de departamentos.</li>
+                    <li>Limitaciones de presupuesto o tiempo.</li>
+                    <li>Resistencia al cambio por parte de los usuarios.</li>
+                    <li>Necesidad de mantenerse actualizado tecnológicamente.</li>
+                </ul>
+                <img src="https://placehold.co/480x270/e0e7f2/333333?text=Desafios+del+Analista" alt="Ilustración de desafíos en el rol de analista" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Slide 6: Asignación de Tareas -->
+        <div class="slide" id="slide-6">
+            <div class="slide-content">
+                <h2>Asignación de Tareas</h2>
+                <p><strong>Tarea</strong>: Análisis Comparativo de Perfiles Profesionales y Caso Práctico.</p>
+                <p class="text-sm text-left mx-auto max-w-xl">
+                    Realizar un análisis comparativo de dos perfiles profesionales de "Analista de Sistemas" encontrados en ofertas de empleo reales o descripciones de puestos. Identificar similitudes y diferencias en sus responsabilidades y habilidades requeridas. Adicionalmente, resolver un caso práctico corto (proporcionado por el docente o investigado) donde se planteen desafíos típicos del rol del analista, proponiendo soluciones. Presentar en formato digital (documento o presentación).
+                </p>
+                <p class="mt-4"><strong>Fecha de Entrega</strong>: 20 de Julio de 2025.</p>
+                <p><strong>Ponderación</strong>: TC 5%.</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Cierre de la Clase -->
+        <div class="slide" id="slide-7">
+            <div class="slide-content">
+                <h2>Cierre de la Clase</h2>
+                <p>El rol del analista de sistemas es <strong>esencial</strong> para el éxito de los proyectos de software.</p>
+                <p>Su combinación de habilidades técnicas y blandas es <strong>clave</strong> para traducir necesidades de negocio en soluciones tecnológicas.</p>
+                <p class="mt-8 text-lg font-semibold text-gray-700">¡Gracias por su atención y participación!</p>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+            <button id="prevBtn" class="nav-button" disabled>Anterior</button>
+            <button id="nextBtn" class="nav-button">Siguiente</button>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const dynamicAnalystSlide = document.getElementById('slide-4-dynamic');
+        const rpgDialogBox = document.getElementById('rpg-dialog-box');
+        const hotspots = document.querySelectorAll('.skill-hotspot');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        let currentSlideIndex = 0; // Index for main slides (0 to 6)
+        let dynamicSubSlideIndex = -1; // Start at -1 to indicate no content initially shown in RPG box
+
+        // Define the fixed hotspot elements and their general positions
+        const fixedHotspotElements = [
+            { id: 'hotspot-creatividad', element: null }, // Top-Left
+            { id: 'hotspot-programacion', element: null }, // Top-Right
+            { id: 'hotspot-estructuras-datos', element: null }, // Mid-Right
+            { id: 'hotspot-estructura-red', element: null }, // Bottom-Right
+            { id: 'hotspot-resolucion-problemas', element: null }, // Bottom-Left
+            { id: 'hotspot-comunicacion', element: null }  // Mid-Left
+        ];
+
+        // Define the content for the dynamic section (more concise and relevant)
+        const allDynamicContent = [
+            {
+                id: 'intro-habilidades-blandas',
+                title: 'Habilidades Blandas del Analista',
+                content: `<p>Capacidades interpersonales cruciales para colaborar, gestionar proyectos y pensar de forma creativa. Haz clic en las habilidades o usa Siguiente para explorar.</p>`,
+                category: 'soft_intro',
+                hotspotToHighlight: null // No specific hotspot for intro
+            },
+            {
+                id: 'creatividad',
+                title: 'Creatividad',
+                content: `<p>Proponer soluciones innovadoras y optimizar sistemas, pensando "fuera de la caja" ante los desafíos.</p><ul><li>Pensamiento lateral e innovación.</li><li>Adaptabilidad a nuevas situaciones.</li></ul>`,
+                category: 'soft',
+                hotspotToHighlight: 'hotspot-creatividad'
+            },
+            {
+                id: 'resolucion-problemas',
+                title: 'Resolución de Problemas',
+                content: `<p>Identificar obstáculos, desglosar problemas complejos y desarrollar estrategias efectivas para superarlos.</p><ul><li>Análisis lógico y estructurado.</li><li>Toma de decisiones.</li></ul>`,
+                category: 'soft',
+                hotspotToHighlight: 'hotspot-resolucion-problemas'
+            },
+            {
+                id: 'comunicacion',
+                title: 'Comunicación y Negociación',
+                content: `<p>Ser el enlace efectivo entre usuarios y técnicos, recopilando requisitos y presentando soluciones claras.</p><ul><li>Escucha activa y claridad (oral/escrita).</li><li>Negociación y gestión de expectativas.</li></ul>`,
+                category: 'soft',
+                hotspotToHighlight: 'hotspot-comunicacion'
+            },
+            {
+                id: 'intro-habilidades-tecnicas',
+                title: 'Habilidades Técnicas del Analista',
+                content: `<p>Conocimientos especializados esenciales para interactuar con sistemas y equipos de desarrollo. Haz clic en las habilidades o usa Siguiente para explorar.</p>`,
+                category: 'technical_intro',
+                hotspotToHighlight: null // No specific hotspot for intro
+            },
+            {
+                id: 'programacion',
+                title: 'Comprensión de Programación',
+                content: `<p>Entender principios de código permite diseñar soluciones factibles y comunicarse eficazmente con desarrolladores.</p><ul><li>Metodologías de desarrollo (SDLC, Ágil).</li><li>Herramientas de modelado (UML, DFD).</li></ul>`,
+                category: 'technical',
+                hotspotToHighlight: 'hotspot-programacion'
+            },
+            {
+                id: 'estructuras-datos',
+                title: 'Estructuras de Datos',
+                content: `<p>Es vital para diseñar bases de datos eficientes y sistemas que manejen la información de forma óptima.</p><ul><li>Diseño de bases de datos.</li><li>Integridad y rendimiento de datos.</li></ul>`,
+                category: 'technical',
+                hotspotToHighlight: 'hotspot-estructuras-datos'
+            },
+            {
+                id: 'estructura-red',
+                title: 'Redes y Conectividad',
+                content: `<p>Conocimiento básico de redes para diseñar sistemas distribuidos, seguros y con buena conectividad.</p><ul><li>Protocolos de red (TCP/IP).</li><li>Topologías y seguridad de red.</li></ul>`,
+                category: 'technical',
+                hotspotToHighlight: 'hotspot-estructura-red'
+            },
+            {
+                id: 'desafios-comunes',
+                title: 'Desafíos Comunes',
+                content: `<p>El analista enfrenta retos como requisitos ambiguos, conflictos de intereses, limitaciones de recursos y resistencia al cambio.</p><ul><li>Gestión de requisitos cambiantes.</li><li>Manejo de conflictos.</li></ul>`,
+                category: 'general',
+                hotspotToHighlight: null // No specific hotspot for general challenges
+            }
+        ];
+
+        // Map skill IDs to their full data for easy lookup
+        const skillDataMap = {};
+        allDynamicContent.forEach(skill => {
+            skillDataMap[skill.id] = skill;
+        });
+
+        // Define which skill name goes into which hotspot for each category
+        const hotspotLabels = {
+            'initial': { // State when first entering slide 4, or general view
+                'hotspot-creatividad': 'Creatividad',
+                'hotspot-programacion': 'Programación',
+                'hotspot-estructuras-datos': 'Estructuras de datos',
+                'hotspot-estructura-red': 'Redes y Conectividad',
+                'hotspot-resolucion-problemas': 'Resolución de problemas',
+                'hotspot-comunicacion': 'Comunicación'
+            },
+            'technical_intro': { // Show only technical labels for intro
+                'hotspot-creatividad': '',
+                'hotspot-programacion': 'Programación',
+                'hotspot-estructuras-datos': 'Estructuras de datos',
+                'hotspot-estructura-red': 'Redes y Conectividad',
+                'hotspot-resolucion-problemas': '',
+                'hotspot-comunicacion': ''
+            },
+            'technical': { // Show only technical labels
+                'hotspot-creatividad': '',
+                'hotspot-programacion': 'Programación',
+                'hotspot-estructuras-datos': 'Estructuras de datos',
+                'hotspot-estructura-red': 'Redes y Conectividad',
+                'hotspot-resolucion-problemas': '',
+                'hotspot-comunicacion': ''
+            },
+            'soft_intro': { // Show only soft labels for intro
+                'hotspot-creatividad': 'Creatividad',
+                'hotspot-programacion': '',
+                'hotspot-estructuras-datos': '',
+                'hotspot-estructura-red': '',
+                'hotspot-resolucion-problemas': 'Resolución de problemas',
+                'hotspot-comunicacion': 'Comunicación'
+            },
+            'soft': { // Show only soft labels
+                'hotspot-creatividad': 'Creatividad',
+                'hotspot-programacion': '',
+                'hotspot-estructuras-datos': '',
+                'hotspot-estructura-red': '',
+                'hotspot-resolucion-problemas': 'Resolución de problemas',
+                'hotspot-comunicacion': 'Comunicación'
+            },
+            'general': { // For challenges, etc., where no specific skill set is highlighted
+                'hotspot-creatividad': 'Creatividad',
+                'hotspot-programacion': 'Programación',
+                'hotspot-estructuras-datos': 'Estructuras de datos',
+                'hotspot-estructura-red': 'Redes y Conectividad',
+                'hotspot-resolucion-problemas': 'Resolución de problemas',
+                'hotspot-comunicacion': 'Comunicación'
+            }
+        };
+
+        let currentHotspotLabelSet = 'initial'; // 'technical_active', 'soft_active', 'general', or 'initial'
+
+        const ANALYST_SLIDE_MAIN_INDEX = 3; // Index of the "Rol del Analista de Sistemas" dynamic slide (0-indexed)
+
+        // Helper function to get the center coordinates of an element relative to its offsetParent
+        function getElementCenterRelativeToParent(element, parentElement) {
+            const elementRect = element.getBoundingClientRect();
+            const parentRect = parentElement.getBoundingClientRect();
+            return {
+                x: (elementRect.left + elementRect.width / 2) - parentRect.left,
+                y: (elementRect.top + elementRect.height / 2) - parentRect.top
+            };
+        }
+
+        function updateHotspotLabels(category, activeHotspotId = null) {
+            let labelsToApply = hotspotLabels[category] || hotspotLabels['initial']; // Default to 'initial'
+
+            fixedHotspotElements.forEach(hotspotObj => {
+                if (!hotspotObj.element) { // Initialize element reference if not already done
+                    hotspotObj.element = document.getElementById(hotspotObj.id);
+                }
+                if (hotspotObj.element) {
+                    hotspotObj.element.textContent = labelsToApply[hotspotObj.id] || ''; // Apply label or clear
+
+                    // Add/remove 'inactive' class based on whether it has a label in the current set
+                    if (labelsToApply[hotspotObj.id] === '') {
+                        hotspotObj.element.classList.add('inactive');
+                    } else {
+                        hotspotObj.element.classList.remove('inactive');
+                    }
+
+                    // Highlight the currently active hotspot
+                    if (hotspotObj.id === activeHotspotId) {
+                        hotspotObj.element.style.fontWeight = 'bold';
+                        hotspotObj.element.style.color = '#2563eb'; // Brighter blue for active
+                    } else if (labelsToApply[hotspotObj.id] !== '') {
+                        hotspotObj.element.style.fontWeight = '600';
+                        hotspotObj.element.style.color = '#000066'; // Normal very dark blue
+                    }
+                }
+            });
+        }
+
+        function showSlide(index) {
+            // Hide all normal slides and the dynamic slide
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+                slide.querySelectorAll('.slide-content > *').forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(20px)';
+                });
+            });
+            dynamicAnalystSlide.classList.remove('active');
+
+            // Always reset dialog box state when changing slides
+            rpgDialogBox.innerHTML = ''; // Clear content
+            rpgDialogBox.classList.remove('active'); // Remove active class
+            rpgDialogBox.style.transition = 'none'; // No transition when hiding/resetting
+            rpgDialogBox.style.opacity = '0';
+            rpgDialogBox.style.transform = `translateX(-50%) scale(0.8)`; // Reset default initial state for next animation
+            rpgDialogBox.style.left = '50%'; // Reset left
+            rpgDialogBox.style.top = 'auto'; // Reset top
+            rpgDialogBox.style.bottom = '50px'; // Reset bottom
+
+            if (index === ANALYST_SLIDE_MAIN_INDEX) {
+                dynamicAnalystSlide.classList.add('active');
+
+                // If entering the dynamic slide from another main slide, reset sub-slide index to -1
+                // and ensure dialog is hidden. The first 'next' click will reveal the first content.
+                if (currentSlideIndex !== ANALYST_SLIDE_MAIN_INDEX) {
+                    dynamicSubSlideIndex = -1; // Keep it at -1 for the very first display
+                    updateHotspotLabels('initial'); // Show all labels initially
+                    // Do NOT call updateDynamicContent here, dialog remains hidden
+                } else {
+                    // If already navigating within, updateDynamicContent will be called.
+                    // This handles cases where user goes back from a sub-slide to the dynamic slide itself
+                    // and then navigates forward again.
+                    if (dynamicSubSlideIndex !== -1) {
+                        updateDynamicContent();
+                    } else {
+                        // This case handles if we are already on the dynamic slide but dynamicSubSlideIndex is -1
+                        // (e.g., after a 'prev' from the very first dynamic content).
+                        // Just ensure labels are correct and dialog is hidden.
+                        updateHotspotLabels('initial');
+                    }
+                }
+
+            } else {
+                if (slides[index]) {
+                    slides[index].classList.add('active');
+                    // Animate content for normal slides
+                    setTimeout(() => {
+                        const activeSlideContent = slides[index].querySelectorAll('.slide-content > *');
+                        activeSlideContent.forEach((el, i) => {
+                            el.style.transitionDelay = `${0.1 + i * 0.1}s`;
+                            el.style.opacity = '1';
+                            el.style.transform = 'translateY(0)';
+                        });
+                    }, 50);
+                }
+                dynamicSubSlideIndex = -1; // Reset sub-slide index when leaving analyst slide
+            }
+
+            // Update navigation button states at the very end
+            prevBtn.disabled = (currentSlideIndex === 0 && dynamicSubSlideIndex <= 0);
+            nextBtn.disabled = (currentSlideIndex === slides.length - 1 && dynamicSubSlideIndex === allDynamicContent.length - 1);
+        }
+
+        function updateDynamicContent() {
+            if (dynamicSubSlideIndex >= 0 && allDynamicContent[dynamicSubSlideIndex]) {
+                const contentItem = allDynamicContent[dynamicSubSlideIndex];
+                rpgDialogBox.innerHTML = `<h3>${contentItem.title}</h3>${contentItem.content}`;
+                rpgDialogBox.classList.add('active'); // Ensure active class is added for animation
+
+                let hotspotElement = null;
+                if (contentItem.hotspotToHighlight) {
+                    hotspotElement = document.getElementById(contentItem.hotspotToHighlight);
+                }
+
+                const presentationContainer = document.querySelector('.presentation-container');
+
+                // Determine which set of hotspot labels to apply
+                currentHotspotLabelSet = contentItem.category; // Use the category directly for labels
+                updateHotspotLabels(currentHotspotLabelSet, contentItem.hotspotToHighlight);
+
+
+                // Temporarily set the dialog to its final size to get its dimensions
+                rpgDialogBox.style.transition = 'none'; // Disable transition for measurement
+                rpgDialogBox.style.opacity = '1';
+                rpgDialogBox.style.left = '50%';
+                rpgDialogBox.style.top = 'auto'; // Important to reset top
+                rpgDialogBox.style.bottom = '50px';
+                rpgDialogBox.style.transform = 'translateX(-50%) scale(1)';
+                void rpgDialogBox.offsetWidth; // Force reflow to get dimensions
+
+
+                if (hotspotElement) {
+                    const hotspotCenter = getElementCenterRelativeToParent(hotspotElement, presentationContainer);
+
+                    // Set initial state: at hotspot center, scaled down, transparent
+                    rpgDialogBox.style.left = `${hotspotCenter.x}px`;
+                    rpgDialogBox.style.top = `${hotspotCenter.y}px`;
+                    rpgDialogBox.style.transform = `translate(-50%, -50%) scale(0.1)`; // Center the dialog at hotspot, then scale
+                    rpgDialogBox.style.opacity = '0';
+
+                    void rpgDialogBox.offsetWidth; // Force reflow to apply initial state
+
+                    // Animate to final state
+                    rpgDialogBox.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, bottom 0.4s ease-out';
+                    rpgDialogBox.style.left = '50%';
+                    rpgDialogBox.style.top = 'auto'; // Let bottom control vertical position
+                    rpgDialogBox.style.bottom = '50px';
+                    rpgDialogBox.style.transform = `translateX(-50%) scale(1)`; // Final transform for horizontal centering
+                    rpgDialogBox.style.opacity = '1';
+
+                } else {
+                    // Default animation if no specific hotspot (e.g., intro/challenges)
+                    rpgDialogBox.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out';
+                    rpgDialogBox.style.left = '50%';
+                    rpgDialogBox.style.top = 'auto';
+                    rpgDialogBox.style.bottom = '50px';
+                    rpgDialogBox.style.transform = `translateX(-50%) scale(0.8)`; // Initial scale for default animation
+                    rpgDialogBox.style.opacity = '0';
+
+                    void rpgDialogBox.offsetWidth; // Force reflow
+
+                    rpgDialogBox.style.transform = `translateX(-50%) scale(1)`; // Final scale for default animation
+                    rpgDialogBox.style.opacity = '1';
+                }
+
+            } else {
+                // If no content (e.g., dynamicSubSlideIndex is -1), hide and reset
+                rpgDialogBox.innerHTML = '';
+                rpgDialogBox.classList.remove('active');
+                rpgDialogBox.style.transform = `translateX(-50%) scale(0.8)`;
+                rpgDialogBox.style.opacity = '0';
+                rpgDialogBox.style.transition = 'none';
+                updateHotspotLabels('initial'); // Reset hotspots to initial state
+            }
+            // Update navigation button states after content is set
+            prevBtn.disabled = (currentSlideIndex === 0 && dynamicSubSlideIndex <= 0);
+            nextBtn.disabled = (currentSlideIndex === slides.length - 1 && dynamicSubSlideIndex === allDynamicContent.length - 1);
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex === ANALYST_SLIDE_MAIN_INDEX) {
+                // Inside dynamic slide
+                if (dynamicSubSlideIndex === -1) { // If it's the very first click on this slide
+                    dynamicSubSlideIndex = 0; // Start with the first content item
+                    updateDynamicContent();
+                } else if (dynamicSubSlideIndex < allDynamicContent.length - 1) {
+                    dynamicSubSlideIndex++;
+                    updateDynamicContent();
+                } else {
+                    // Finished dynamic sub-slides, move to next main slide
+                    currentSlideIndex++;
+                    dynamicSubSlideIndex = -1; // Reset sub-slide index for next entry
+                    showSlide(currentSlideIndex);
+                }
+            } else if (currentSlideIndex < slides.length - 1) {
+                // Normal slide progression
+                currentSlideIndex++;
+                showSlide(currentSlideIndex);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex === ANALYST_SLIDE_MAIN_INDEX) {
+                // Inside dynamic slide
+                if (dynamicSubSlideIndex > 0) {
+                    dynamicSubSlideIndex--;
+                    updateDynamicContent();
+                } else {
+                    // At the beginning of dynamic slide content, go back to initial state of dynamic slide
+                    dynamicSubSlideIndex = -1; // Reset sub-slide index
+                    rpgDialogBox.innerHTML = '';
+                    rpgDialogBox.classList.remove('active');
+                    rpgDialogBox.style.opacity = '0';
+                    rpgDialogBox.style.transition = 'none'; // No transition when hiding
+                    updateHotspotLabels('initial'); // Show all labels
+                    // Do not call showSlide, stay on the dynamic slide but without content in dialog
+                }
+            } else if (currentSlideIndex > 0) {
+                // Normal slide regression
+                currentSlideIndex--;
+                showSlide(currentSlideIndex);
+            }
+        }
+
+        // Event listeners for navigation buttons
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Initial display
+        window.onload = function() {
+            // Initialize hotspot element references
+            fixedHotspotElements.forEach(hotspotObj => {
+                hotspotObj.element = document.getElementById(hotspotObj.id);
+            });
+            showSlide(currentSlideIndex);
+        };
+
+        // Hotspot click handling (optional, but good for direct jumps)
+        hotspots.forEach(hotspot => {
+            hotspot.addEventListener('click', () => {
+                // Ensure we are on the analyst slide first
+                if (currentSlideIndex !== ANALYST_SLIDE_MAIN_INDEX) {
+                    currentSlideIndex = ANALYST_SLIDE_MAIN_INDEX;
+                    showSlide(currentSlideIndex); // This will set dynamicSubSlideIndex to -1
+                }
+
+                // Find the content item that matches this hotspot's ID
+                const clickedHotspotId = hotspot.id;
+                const contentItem = allDynamicContent.find(item => item.hotspotToHighlight === clickedHotspotId);
+
+                if (contentItem) {
+                    dynamicSubSlideIndex = allDynamicContent.indexOf(contentItem);
+                    updateDynamicContent(); // Call updateDynamicContent directly to trigger animation
+                }
+            });
+        });
+    </script>
+</body>
+</html>

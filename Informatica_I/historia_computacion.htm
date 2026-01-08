@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Historia de la Computación - ISEMED</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reduce base font size for overall scaling */
+        html {
+            font-size: 80%; /* Reduces overall size by 20% */
+        }
+
+        /* Custom animations for transitions */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOutUp {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0px, 0px) scale(1);
+            }
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
+        }
+
+        .animate-fade-in-down {
+            animation: fadeInDown 0.5s ease-out forwards;
+        }
+
+        .animate-fade-out-up {
+            animation: fadeOutUp 0.3s ease-in forwards;
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .animate-blob {
+            animation: blob 7s infinite;
+        }
+
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+
+        .animation-delay-4000 {
+            animation-delay: 4s;
+        }
+
+        /* General body styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            color: #1a202c; /* gray-900 */
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* Mobile menu specific styles for height and visibility */
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh; /* Full viewport height */
+            background-color: white;
+            z-index: 40;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 2rem;
+            animation: fadeInDown 0.5s ease-out forwards;
+        }
+
+        .mobile-menu-item-container {
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+
+        .mobile-menu-item-container.hidden-height {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .mobile-menu-item-container.visible-height {
+            max-height: 1000px; /* Large enough to contain content */
+            opacity: 1;
+        }
+
+        /* Desktop dropdown specific styles */
+        .group .group-hover\:opacity-100 {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+            transform: scale(0.95);
+            transform-origin: top;
+        }
+
+        .group:hover .group-hover\:opacity-100 {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .group\/grade .group-hover\/grade\:opacity-100 {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+            transform: scale(0.95);
+            transform-origin: left;
+        }
+
+        .group\/grade:hover .group-hover\/grade\:opacity-100 {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .group\/subject .group-hover\/subject\:opacity-100 {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+            transform: scale(0.95);
+            transform-origin: left;
+        }
+
+        .group\/subject:hover .group-hover\/subject\:opacity-100 {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        /* Ensure header is at the very top */
+        header {
+            top: 0 !important;
+            transition: transform 0.3s ease-in-out; /* Smooth transition for hiding/showing */
+        }
+
+        /* Class to hide the header */
+        .header-hidden {
+            transform: translateY(-100%); /* Move header completely out of view */
+        }
+
+        /* Specific styles for presentation content */
+        /* Removed .background as requested */
+        main {
+            margin: 3rem auto;
+            max-width: 900px;
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 24px #000a;
+            min-height: 400px;
+            color: #f4f4f4; /* Ensure text is visible on dark background */
+        }
+        .presentation-container {
+            width: 100%;
+            min-height: 400px;
+            position: relative;
+        }
+        .slide, .diapositiva {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-height: 350px;
+            animation: fadein 0.5s;
+        }
+        .slide.active, .diapositiva.activa {
+            display: flex;
+        }
+        .slide-content {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .slide-content h2 {
+            color: #00eaff; /* Light blue for titles */
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        .slide-content h3 {
+            color: #fff;
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+        }
+        .slide-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .slide-content ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .slide-content ul li {
+            margin-bottom: 0.5rem;
+        }
+        .img-slide {
+            max-width: 350px;
+            margin: 1.5rem auto 1rem auto;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+            background: rgba(255,255,255,0.1);
+            display: block;
+        }
+        .logo-institucion {
+            width: 340px;
+            max-width: 98%;
+            margin-bottom: 2rem;
+            margin-top: 2.5rem;
+            background: transparent !important;
+            box-shadow: none;
+        }
+        .controles {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .controles button {
+            background: #00eaff;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 6px;
+            padding: 0.7rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .controles button:disabled {
+            background: rgba(68,68,68,0.6);
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        .indicador {
+            margin-top: 1rem;
+            color: #00eaff;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        /* Responsive adjustments for presentation content */
+        @media (max-width: 768px) {
+            main {
+                margin: 1rem auto;
+                padding: 1rem;
+            }
+            .slide-content h2 {
+                font-size: 1.5rem;
+            }
+            .slide-content h3 {
+                font-size: 1.2rem;
+            }
+            .img-slide {
+                max-width: 90%;
+            }
+            .controles button {
+                padding: 0.5rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* New styles for hiding footer */
+        footer {
+            transition: transform 0.3s ease-in-out; /* Smooth transition for hiding/showing */
+        }
+        .footer-hidden {
+            transform: translateY(100%); /* Move footer completely out of view */
+        }
+    </style>
+</head>
+<body class="font-inter antialiased text-gray-900">
+
+    <!-- Removed: <div class="background"></div> -->
+
+    <!-- Header -->
+    <header id="main-header" class="bg-white shadow-md py-0 px-1 md:px-3 fixed w-full z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="../index.html" class="flex items-center space-x-4">
+                <img src="../imagenes/logo.png" alt="Logo" width="120" height="auto">
+                <span class="text-2xl font-bold text-blue-800">Area de Informatica</span>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-6">
+                <a href="../index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Inicio</a>
+                <!-- Nested Dropdown for Grados (Cursos) -->
+                <div class="relative group">
+                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
+                        Cursos <span class="ml-1 text-xs">&#9662;</span>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
+                        <div id="desktop-grades-menu"></div>
+                    </div>
+                </div>
+                <!-- Nested Dropdown for Recursos Adicionales -->
+                <div class="relative group">
+                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
+                        Recursos Adicionales <span class="ml-1 text-xs">&#9662;</span>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
+                        <div id="desktop-additional-resources-menu"></div>
+                    </div>
+                </div>
+                <a href="../pseudocode.html" target="_blank" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Pseudocódigo</a>
+                <a href="https://wa.me/50488422786" target="_blank" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Contacto</a>
+            </nav>
+
+            <!-- Flag Image for Desktop -->
+            <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="120" height="auto" class="hidden md:block">
+
+            <!-- Mobile Hamburger Menu -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path id="mobile-menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" class="hidden">
+            <button id="mobile-menu-close-button" class="absolute top-4 right-6 text-gray-700 focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <nav class="flex flex-col space-y-5 mt-12 w-full px-5">
+                <a href="../index.html" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Inicio</a>
+                <!-- Mobile Grados Menu (Cursos) -->
+                <div class="w-full">
+                    <button id="mobile-courses-toggle" class="w-full text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 flex justify-between items-center transition-colors duration-200 border-b border-gray-200">
+                        Cursos
+                        <span id="mobile-courses-arrow" class="transform transition-transform duration-300">&#9656;</span>
+                    </button>
+                    <div id="mobile-grades-container" class="mobile-menu-item-container hidden-height">
+                        <div class="pl-3 pt-1 flex flex-col space-y-2" id="mobile-grades-menu">
+                            <!-- Grades will be injected here by JS -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Mobile Recursos Adicionales Menu -->
+                <div class="w-full">
+                    <button id="mobile-additional-resources-toggle" class="w-full text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 flex justify-between items-center transition-colors duration-200">
+                        Recursos Adicionales
+                        <span id="mobile-additional-resources-arrow" class="transform transition-transform duration-300">&#9656;</span>
+                    </button>
+                    <div id="mobile-additional-resources-container" class="mobile-menu-item-container hidden-height">
+                        <div class="pl-3 pt-1 flex flex-col space-y-2" id="mobile-additional-resources-menu">
+                            <!-- Additional Resources will be injected here by JS -->
+                        </div>
+                    </div>
+                </div>
+                <a href="../pseudocode.html" target="_blank" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Pseudocódigo</a>
+                <a href="https://wa.me/50488422786" target="_blank" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="mt-[5rem]">
+        <div class="presentation-container">
+            <div class="slide active" id="slide-1">
+                <div class="slide-content">
+                    <img src="../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="logo-institucion">
+                    <p>Informática I.</p>
+                    <p>Décimo Grado (I BTP) Sección "A"</p>
+                    <p>Docente: Pablo Antonio Peña.</p>
+                    <p>Fecha 6 de Agosto 2025.</p>
+                    <h3 class="mt-4">Historia de la Computación</h3>
+                </div>
+            </div>
+            <div class="slide" id="slide-2">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">¿Qué es la Computación?</h2>
+                    <p>La computación se refiere al estudio de los procesos que transforman datos en información a través de algoritmos, utilizando sistemas automáticos.</p>
+                    <ul class="mx-auto text-left">
+                        <li>Campo que abarca diseño, desarrollo y uso de computadoras.</li>
+                        <li>Nace de la necesidad humana de automatizar cálculos.</li>
+                        <li>Primeros 'computadores' eran personas realizando cálculos manuales.</li>
+                    </ul>
+                    <img src="./imagenes/computacion.jpg" alt="¿Qué es la computación?" class="img-slide">
+                </div>
+            </div>
+            <div class="slide" id="slide-3">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">El Ábaco (c. 2700-2300 a.C.)</h2>
+                    <p>Un dispositivo manual para realizar operaciones aritméticas, utilizado in diversas culturas antiguas.</p>
+                    <img src="./imagenes/abaco.jpg" alt="Ábaco" class="img-slide">
+                    <p class="mt-4">Fue la primera herramienta conocida para el cálculo mecánico, sentando las bases para la manipulación numérica.</p>
+                </div>
+            </div>
+            <div class="slide" id="slide-4">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">Máquinas Calculadoras Mecánicas (Siglo XVII)</h2>
+                    <ul class="mx-auto text-left">
+                        <li><strong>Blaise Pascal (Pascalina, 1642)</strong>: Primera calculadora mecánica real (sumas y restas).</li>
+                        <li><strong>Gottfried Leibniz (Calculadora de Leibniz, 1673)</strong>: Extendió la funcionalidad a multiplicaciones y divisiones.</li>
+                    </ul>
+                    <img src="./imagenes/pascalina.jpg" alt="Pascalina y Leibniz" class="img-slide">
+                    <p class="mt-4">Estos inventos demostraron la viabilidad de automatizar el cálculo, aunque de forma limitada.</p>
+                </div>
+            </div>
+            <div class="slide" id="slide-5">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">Máquina Analítica (S. XIX)</h2>
+                    <h3>Charles Babbage y Ada Lovelace</h3>
+                    <ul class="mx-auto text-left">
+                        <li><strong>Charles Babbage (1837)</strong>: Diseñó la Máquina Analítica, concepto de la primera computadora programable de propósito general.</li>
+                        <li><strong>Ada Lovelace</strong>: Reconocida como la primera programadora al crear algoritmos para esta máquina.</li>
+                    </ul>
+                    <img src="./imagenes/maquina_analitica.jpg" alt="Máquina Analítica Babbage" class="img-slide">
+                    <p class="mt-4">Sus diseños contenían elementos clave de computadoras modernas: procesamiento, memoria, entrada/salida.</p>
+                </div>
+            </div>
+            <div class="slide" id="slide-6">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">Generaciones de Computadoras (Siglo XX - Actualidad)</h2>
+                    <p>La evolución acelerada de la computación se clasifica en "generaciones", marcadas por cambios tecnológicos fundamentales.</p>
+                    <img src="./imagenes/generaciones.png" alt="Diagrama de generaciones de computadoras" class="img-slide">
+                    <p class="mt-4">Analicemos cómo cada avance redefinió el tamaño, costo, velocidad y capacidad de las máquinas.</p>
+                </div>
+            </div>
+            <div class="slide" id="slide-7">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">Primera Generación (1940s-1950s)</h2>
+                    <h3>Tecnología: Válvulas de Vacío</h3>
+                    <ul class="mx-auto text-left slide-content-small">
+                        <li><strong>Características</strong>: Máquinas enormes, muy costosas, generaban mucho calor, extremadamente lentas.</li>
+                        <li><strong>Ejemplo</strong>: <strong>ENIAC (1946)</strong>, ocupaba una sala completa.</li>
+                    </ul>
+                    <img src="./imagenes/eniac.jpg" alt="ENIAC" class="img-slide">
+                    <p class="mt-4 slide-content-small">Marcaron el inicio de la era electrónica, principalmente para fines militares y científicos.</p>
+                </div>
+            </div>
+            <div class="slide" id="slide-8">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">Segunda Generación (1950s-1960s)</h2>
+                    <h3>Tecnología: Transistores</h3>
+                    <ul class="mx-auto text-left slide-content-small">
+                        <li><strong>Características</strong>: Reemplazan válvulas, menor tamaño, más rápidas, menor consumo energético.</li>
+                        <li><strong>Ejemplo</strong>: <strong>UNIVAC (1951)</strong>.</li>
+                    </ul>
+                    <img src="./imagenes/univac.jpg" alt="UNIVAC" class="img-slide">
+                    <p class="mt-4 slide-content-small">Permitió un uso más comercial y una mayor fiabilidad.</p>
+                </div>
+            </div>
+            <div class="slide" id="slide-9">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">Tercera Generación (1960s-1970s)</h2>
+                    <h3>Tecnología: Circuitos Integrados (Chips)</h3>
+                    <ul class="mx-auto text-left slide-content-small">
+                        <li><strong>Características</strong>: Múltiples transistores en un chip, mayor miniaturización, velocidad y capacidad exponencial.</li>
+                        <li><strong>Ejemplo</strong>: Las primeras computadoras de <strong>IBM System/360</strong>.</li>
+                    </ul>
+                    <img src="./imagenes/ibm360.jpg" alt="IBM System/360" class="img-slide">
+                    <p class="mt-4 slide-content-small">Hizo posible la producción masiva y reducción de costos, llevando la computación a más industrias.</p>
+                </div>
+            </div>
+            <div class="slide" id="slide-10">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">Cuarta Generación (1970s-1980s)</h2>
+                    <h3>Tecnología: Microprocesadores</h3>
+                    <ul class="mx-auto text-left slide-content-small">
+                        <li><strong>Características</strong>: CPU en un solo chip. Surge la computadora personal (PC). Desarrollo de redes e Internet.</li>
+                        <li><strong>Ejemplo</strong>: <strong>Intel 4004</strong>, <strong>Apple II</strong>, <strong>IBM PC</strong>.</li>
+                    </ul>
+                    <div class="flex justify-center gap-4 mt-4">
+                        <img src="./imagenes/intel4004.jpg" alt="Intel 4004" class="img-slide" style="max-width: 180px;">
+                        <img src="./imagenes/apple2.jpg" alt="Apple II" class="img-slide" style="max-width: 180px;">
+                    </div>
+                    <p class="mt-4 slide-content-small">Democratizó la computación, llevándola a hogares y pequeñas empresas.</p>
+                </div>
+            </div>
+            <div class="slide" id="slide-11">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">Quinta Generación (1980s-Actualidad)</h2>
+                    <h3>Enfoque: Inteligencia Artificial y Procesamiento Paralelo</h3>
+                    <ul class="mx-auto text-left slide-content-small">
+                        <li><strong>Características</strong>: IA, redes neuronales, miniaturización extrema (móviles), computación cuántica.</li>
+                        <li><strong>Ejemplo</strong>: Smartphones, asistentes virtuales (Siri, Alexa), supercomputadoras.</li>
+                    </ul>
+                    <img src="./imagenes/smartphone_ai.jpg" alt="Smartphone AI" class="img-slide">
+                    <p class="mt-4 slide-content-small">Busca máquinas que razonen, aprendan y resuelvan problemas complejos.</p>
+                </div>
+            </div>
+            <div class="slide" id="slide-12">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">Impacto Social de la Evolución Tecnológica</h2>
+                    <h3>Transformación Profunda de la Sociedad</h3>
+                    <ul class="mx-auto text-left">
+                        <li><strong>Comunicación</strong>: Conexión global instantánea (Internet, redes sociales).</li>
+                        <li><strong>Trabajo y Economía</strong>: Automatización, nuevas profesiones, teletrabajo.</li>
+                        <li><strong>Educación</strong>: Acceso ilimitado a información, plataformas de e-learning.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="slide" id="slide-13">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">Impacto Social</h2>
+                    <ul class="mx-auto text-left">
+                        <li><strong>Salud y Ciencia</strong>: Avances en diagnósticos, investigación médica, modelado.</li>
+                        <li><strong>Entretenimiento</strong>: Videojuegos, streaming, realidad virtual.</li>
+                        <li><strong>Acceso a la Información</strong>: Disponibilidad masiva de datos y conocimientos.</li>
+                    </ul>
+                    <img src="./imagenes/imp_social.png" alt="Imagen de Impacto Tecnológico" width="600px" height="auto" class="mx-auto mt-4">
+                    <p class="mt-4">Estos avances han reconfigurado nuestra vida diaria en múltiples aspectos.</p>
+                </div>
+            </div>
+            <div class="slide" id="slide-14">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">Actividad Práctica y Consolidación</h2>
+                    <p>Para consolidar los conceptos, realizarán una actividad creativa en dos partes:</p>
+                    <ol class="list-decimal mx-auto text-left pl-8">
+                        <li><strong>Línea de Tiempo Ilustrada</strong>: Representación visual de hitos de la historia de la computación.</li>
+                        <li><strong>Breve Explicación Escrita</strong>: Texto conciso (100-150 palabras) sobre el impacto social de la evolución tecnológica en un ámbito de su elección.</li>
+                    </ol>
+                    <p class="mt-4">Pueden utilizar recursos en línea para su investigación.</p>
+                </div>
+            </div>
+            <div class="slide" id="slide-15">
+                <div class="slide-content">
+                    <h2 class="text-indigo-700">Cierre de la Clase</h2>
+                    <p>Hemos explorado los orígenes de la computación y su profunda transformación social.</p>
+                    <p>La asignación para la próxima semana es la creación de la línea de tiempo y la explicación escrita.</p>
+                    <p>Asegúrense de un orden y presentación adecuados para la evaluación.</p>
+                    <p class="mt-8 text-lg font-semibold text-gray-700">¡Gracias por su atención y participación!</p>
+                </div>
+            </div>
+        </div>
+        <div class="controles">
+            <button id="anterior">Anterior</button>
+            <button id="siguiente">Siguiente</button>
+        </div>
+        <div class="indicador" id="indicador"></div>
+    </main>
+
+    <!-- Footer (Copied from index.html) -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-5 text-center">
+            <p class="text-base mb-3">
+                &copy; <span id="current-year"></span> Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
+            </p>
+            <div class="flex justify-center space-x-5">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Privacidad</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Términos</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Soporte</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Data for presentations (HTML files for menus)
+        const presentationData = [
+            {
+                grade: "Décimo",
+                subjects: [
+                    {
+                        name: "Informática I",
+                        topics: [
+                            { title: "Historia de la Computación", file: "Historia_Computacion.htm" },
+                            { title: "Partes y Tipos de Computadora", file: "Partes_Computadora.html" },
+                            { title: "Periféricos Entrada/Salida", file: "perifericos_entrada_salida.html" } // Nueva entrada
+                        ]
+                    }
+                ]
+            },
+            {
+                grade: "Undécimo",
+                subjects: [
+                    {
+                        name: "Informática Aplicada I",
+                        topics: [
+                            { title: "Dispositivos de Almacenamiento", file: "../II_BTP_A/Informatica_Aplicada_I/dipositivos_almac.html" },
+                            { title: "Fundamentos de Sistemas Operativos", file: "../II_BTP_A/Informatica_Aplicada_I/sistemas_operativos.html" },
+                            { title: "Terminal de Comandos", file: "../II_BTP_A/Informatica_Aplicada_I/terminal_comando.html" }
+                        ]
+                    },
+                    {
+                        name: "Ofimática I",
+                        topics: [
+                            { title: "Procesadores de Texto", file: "../II_BTP_A/Ofimatica_I/procesadores_texto.html" },
+                            { title: "Hojas de Calculo", file: "../II_BTP_A/Ofimatica_I/hojas_calculo.html" }
+                        ]
+                    },
+                    {
+                        name: "Análisis y Diseño de Sistemas",
+                        topics: [
+                            { title: "Análisis y Diseño de Sistemas", file: "../II_BTP_A/analisis_diseno/analisis_y_diseno_s.html" },
+                            { title: "Rol del Analista de Sistemas", file: "../II_BTP_A/analisis_diseno/rol_analista_sistemas.html" },
+                            { title: "Ciclo de Vida del Desarrollo de Software", file: "../II_BTP_A/analisis_diseno/ciclo_desarrollo.html" },
+                            { title: "Gestión de Proyectos de Software", file: "../II_BTP_A/analisis_diseno/gestion_proyectos_software.html" } // Nueva entrada
+                        ]
+                    }
+                ]
+            },
+            {
+                grade: "Duodécimo",
+                subjects: [
+                    {
+                        name: "Diseño Web II",
+                        topics: [
+                            { title: "Backend y Frontend", file: "../III_BTP_A/dw_II/backend_frontend.html" },
+                            { title: "Fundamentos de JavaScript", file: "../III_BTP_A/dw_II/fundamentos_js.html" }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // Data for additional resources (HTML files, separate menu)
+        const additionalResourcesData = [
+            {
+                category: "Articulos",
+                items: [
+                    { title: "Destreza en el teclado", file: "../II_BTP_A/Ofimatica_I/articulo-destreza.html" },
+                    { title: "Línea de tiempo de la computación", file: "articulo_lineadetiempo.html" }
+                ]
+            },
+            {
+                category: "Actividades Practicas",
+                items: [
+                    { title: "Periféricos Entrada/Salida", action: "load-peripherals-game" }, // Action to load the game dynamically
+                    { title: "WebMaster Quiz", action: "load-webmaster-quiz" } // Nuevo juego
+                ]
+            }
+        ];
+
+        // Data for downloads (PDF files for download section)
+        const downloadContentData = [
+            {
+                grade: "Décimo",
+                subjects: [
+                    {
+                        name: "Informática I",
+                        topics: [
+                            { title: "Historia de la Computación", file: "historia_de_la_computacion.pdf" },
+                            { title: "Partes y Tipos de Computadora", file: "partes_y_tipos_de_computadora.pdf" },
+                            { title: "Periféricos Entrada/Salida", file: "perifericos_entrada_salida.pdf" } // Nueva entrada para descarga
+                        ]
+                    }
+                ]
+            },
+            {
+                grade: "Undécimo",
+                subjects: [
+                    {
+                        name: "Informática Aplicada I",
+                        topics: [
+                            { title: "Dispositivos de Almacenamiento", file: "../II_BTP_A/Informatica_Aplicada_I/dispositivos_de_almacenamiento.pdf" },
+                            { title: "Fundamentos de Sistemas Operativos", file: "../II_BTP_A/Informatica_Aplicada_I/fundamentos_de_sistemas_operativos.pdf" },
+                            { title: "Terminal de Comandos", file: "../II_BTP_A/Informatica_Aplicada_I/terminal_comando.pdf" } // PDF for download
+                        ]
+                    },
+                    {
+                        name: "Ofimática I",
+                        topics: [
+                            { title: "Procesadores de Texto", file: "../II_BTP_A/Ofimatica_I/procesadores_de_texto.pdf" },
+                            { title: "Hojas de Calculo", file: "../II_BTP_A/Ofimatica_I/hojas_calculo.pdf" } // Assuming PDF for download
+                        ]
+                    },
+                    {
+                        name: "Análisis y Diseño de Sistemas",
+                        topics: [
+                            { title: "Análisis y Diseño de Sistemas", file: "../II_BTP_A/analisis_diseno/analisis_y_diseno_de_sistemas.pdf" },
+                            { title: "Rol del Analista de Sistemas", file: "../II_BTP_A/analisis_diseno/rol_del_analista_de_sistemas.pdf" },
+                            { title: "Ciclo de Vida del Desarrollo de Software", file: "../II_BTP_A/analisis_diseno/ciclo_desarrollo.pdf" }, // PDF for download
+                            { title: "Gestión de Proyectos de Software", file: "../II_BTP_A/analisis_diseno/gestion_proyectos_software.pdf" } // Nueva entrada para descarga
+                        ]
+                    }
+                ]
+            },
+            {
+                grade: "Duodécimo",
+                subjects: [
+                    {
+                        name: "Diseño Web II",
+                        topics: [
+                            { title: "Backend y Frontend", file: "../III_BTP_A/dw_II/front_end_vs_back_end.pdf" },
+                            { title: "Fundamentos de JavaScript", file: "../III_BTP_A/dw_II/fundamentos_de_js.pdf" }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // --- Global State for Content Section (Not used in presentation pages, but kept for consistency) ---
+        let currentContentView = 'initial'; // 'initial', 'grades', 'subjects', 'topics'
+        let selectedGradeData = null;
+        let selectedSubjectData = null;
+
+        // --- Utility function to create a custom button (Not directly used in presentation pages, but kept for consistency) ---
+        function createCustomButton(text, onClickHandler, className = '') {
+            const button = document.createElement('button');
+            button.textContent = text;
+            button.onclick = onClickHandler;
+            button.className = `
+                px-5 py-2.5 rounded-xl font-semibold text-base
+                bg-blue-600 text-white hover:bg-blue-700
+                transition-all duration-300 ease-in-out
+                shadow-lg hover:shadow-xl transform hover:-translate-y-1
+                focus:outline-none focus:ring-4 focus:ring-blue-300
+                ${className}
+            `;
+            return button;
+        }
+
+        // --- Header (Mobile Menu) Logic ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+
+        const mobileCoursesToggle = document.getElementById('mobile-courses-toggle');
+        const mobileCoursesArrow = document.getElementById('mobile-courses-arrow');
+        const mobileGradesContainer = document.getElementById('mobile-grades-container');
+        const mobileGradesMenu = document.getElementById('mobile-grades-menu');
+
+        const mobileAdditionalResourcesToggle = document.getElementById('mobile-additional-resources-toggle');
+        const mobileAdditionalResourcesArrow = document.getElementById('mobile-additional-resources-arrow');
+        const mobileAdditionalResourcesContainer = document.getElementById('mobile-additional-resources-container');
+        const mobileAdditionalResourcesMenu = document.getElementById('mobile-additional-resources-menu');
+
+
+        let activeMobileGradeElement = null; // Stores the currently open grade container in mobile menu
+        let activeMobileSubjectElement = null; // Stores the currently open subject container in mobile menu
+
+        function toggleMobileMenu() {
+            mobileMenuOverlay.classList.toggle('hidden');
+            mobileMenuOverlay.classList.toggle('mobile-menu-overlay'); // Apply overlay styles
+            mobileMenuIcon.setAttribute('d', mobileMenuOverlay.classList.contains('hidden') ? 'M4 6h16M4 12h16M4 18h16' : 'M6 18L18 6M6 6l12 12');
+
+            // Reset mobile menu state when closing
+            if (mobileMenuOverlay.classList.contains('hidden')) {
+                mobileGradesContainer.classList.remove('visible-height');
+                mobileGradesContainer.classList.add('hidden-height');
+                mobileCoursesArrow.classList.remove('rotate-90');
+                mobileCoursesArrow.classList.add('rotate-0');
+
+                mobileAdditionalResourcesContainer.classList.remove('visible-height');
+                mobileAdditionalResourcesContainer.classList.add('hidden-height');
+                mobileAdditionalResourcesArrow.classList.remove('rotate-90');
+                mobileAdditionalResourcesArrow.classList.add('rotate-0');
+
+                // Close any open sub-menus
+                if (activeMobileGradeElement) {
+                    activeMobileGradeElement.classList.remove('visible-height');
+                    activeMobileGradeElement.classList.add('hidden-height');
+                    activeMobileGradeElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                    activeMobileGradeElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                    activeMobileGradeElement = null;
+                }
+                if (activeMobileSubjectElement) {
+                    activeMobileSubjectElement.classList.remove('visible-height');
+                    activeMobileSubjectElement.classList.add('hidden-height');
+                    activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                    activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                    activeMobileSubjectElement = null;
+                }
+            }
+        }
+
+        function closeMobileMenu() {
+            mobileMenuOverlay.classList.add('hidden');
+            mobileMenuOverlay.classList.remove('mobile-menu-overlay');
+            mobileMenuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+            // Reset mobile menu state
+            mobileGradesContainer.classList.remove('visible-height');
+            mobileGradesContainer.classList.add('hidden-height');
+            mobileCoursesArrow.classList.remove('rotate-90');
+            mobileCoursesArrow.classList.add('rotate-0');
+
+            mobileAdditionalResourcesContainer.classList.remove('visible-height');
+            mobileAdditionalResourcesContainer.classList.add('hidden-height');
+            mobileAdditionalResourcesArrow.classList.remove('rotate-90');
+            mobileAdditionalResourcesArrow.classList.add('rotate-0');
+
+            if (activeMobileGradeElement) {
+                activeMobileGradeElement.classList.remove('visible-height');
+                activeMobileGradeElement.classList.add('hidden-height');
+                activeMobileGradeElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                activeMobileGradeElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                activeMobileGradeElement = null;
+            }
+            if (activeMobileSubjectElement) {
+                activeMobileSubjectElement.classList.remove('visible-height');
+                activeMobileSubjectElement.classList.add('hidden-height');
+                activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                activeMobileSubjectElement = null;
+            }
+        }
+
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+        mobileMenuCloseButton.addEventListener('click', toggleMobileMenu);
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('mousedown', (event) => {
+            if (!mobileMenuOverlay.classList.contains('hidden') && !mobileMenuOverlay.contains(event.target) && !mobileMenuButton.contains(event.target)) {
+                closeMobileMenu();
+            }
+        });
+
+        mobileCoursesToggle.addEventListener('click', () => {
+            mobileGradesContainer.classList.toggle('hidden-height');
+            mobileGradesContainer.classList.toggle('visible-height');
+            mobileCoursesArrow.classList.toggle('rotate-90');
+            mobileCoursesArrow.classList.toggle('rotate-0');
+            // Close other top-level mobile menus
+            mobileAdditionalResourcesContainer.classList.remove('visible-height');
+            mobileAdditionalResourcesContainer.classList.add('hidden-height');
+            mobileAdditionalResourcesArrow.classList.remove('rotate-90');
+            mobileAdditionalResourcesArrow.classList.add('rotate-0');
+        });
+
+        mobileAdditionalResourcesToggle.addEventListener('click', () => {
+            mobileAdditionalResourcesContainer.classList.toggle('hidden-height');
+            mobileAdditionalResourcesContainer.classList.toggle('visible-height');
+            mobileAdditionalResourcesArrow.classList.toggle('rotate-90');
+            mobileAdditionalResourcesArrow.classList.toggle('rotate-0');
+            // Close other top-level mobile menus
+            mobileGradesContainer.classList.remove('visible-height');
+            mobileGradesContainer.classList.add('hidden-height');
+            mobileCoursesArrow.classList.remove('rotate-90');
+            mobileCoursesArrow.classList.add('rotate-0');
+        });
+
+
+        // Function to render desktop navigation menu (Presentations)
+        function renderDesktopNav() {
+            const desktopGradesMenu = document.getElementById('desktop-grades-menu');
+            desktopGradesMenu.innerHTML = ''; // Clear previous content
+
+            // Render 'Cursos' from presentationData
+            presentationData.forEach(gradeData => {
+                let gradeDiv = document.createElement('div');
+                gradeDiv.className = 'relative group/grade';
+                let gradeButton = document.createElement('button');
+                gradeButton.className = 'block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200 focus:outline-none';
+                gradeButton.innerHTML = `${gradeData.grade} <span class="float-right text-xs">&#9656;</span>`;
+                gradeDiv.appendChild(gradeButton);
+
+                let subjectDiv = document.createElement('div');
+                subjectDiv.className = 'absolute left-full top-0 mt-0 w-56 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/grade:scale-100 origin-left';
+
+                gradeData.subjects.forEach(subjectData => {
+                    let subjectSubDiv = document.createElement('div');
+                    subjectSubDiv.className = 'relative group/subject';
+                    let subjectButton = document.createElement('button');
+                    subjectButton.className = 'block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200 focus:outline-none';
+                    subjectButton.innerHTML = `${subjectData.name} <span class="float-right text-xs">&#9656;</span>`;
+                    subjectSubDiv.appendChild(subjectButton);
+
+                    let topicDiv = document.createElement('div');
+                    topicDiv.className = 'absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover/subject:opacity-100 group-hover/subject:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/subject:scale-100 origin-left';
+
+                    subjectData.topics.forEach(topic => {
+                        let topicLink = document.createElement('a');
+                        topicLink.href = topic.file; // Use topic.file (HTML) for presentations
+                        // topicLink.target = '_blank'; // REMOVED: No longer opens in new tab
+                        topicLink.className = 'block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200';
+                        topicLink.textContent = topic.title;
+                        topicDiv.appendChild(topicLink);
+                    });
+                    subjectSubDiv.appendChild(topicDiv);
+                    subjectDiv.appendChild(subjectSubDiv);
+                });
+                gradeDiv.appendChild(subjectDiv);
+                desktopGradesMenu.appendChild(gradeDiv);
+            });
+
+            // Render 'Recursos Adicionales'
+            const desktopAdditionalResourcesMenu = document.getElementById('desktop-additional-resources-menu');
+            desktopAdditionalResourcesMenu.innerHTML = ''; // Clear previous content
+            additionalResourcesData.forEach(resourceCategory => {
+                let categoryDiv = document.createElement('div');
+                categoryDiv.className = 'relative group/resource-cat';
+                let categoryButton = document.createElement('button');
+                categoryButton.className = 'block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200 focus:outline-none';
+                categoryButton.innerHTML = `${resourceCategory.category} <span class="float-right text-xs">&#9656;</span>`;
+                categoryDiv.appendChild(categoryButton);
+
+                let itemsDiv = document.createElement('div');
+                itemsDiv.className = 'absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover/resource-cat:opacity-100 group-hover/resource-cat:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/resource-cat:scale-100 origin-left';
+
+                resourceCategory.items.forEach(item => {
+                    let itemLink = document.createElement('a');
+                    if (item.action === 'load-peripherals-game') {
+                        itemLink.href = '#'; // Prevent default navigation
+                        itemLink.dataset.action = 'load-peripherals-game';
+                        itemLink.onclick = (e) => {
+                            e.preventDefault();
+                            // In a presentation page, we don't load games directly, so this will navigate back to index.html
+                            window.location.href = '../index.html?loadGame=peripherals';
+                            closeMobileMenu(); // Close menu after selection
+                        };
+                    } else if (item.action === 'load-webmaster-quiz') { // Nuevo juego
+                        itemLink.href = '#';
+                        itemLink.dataset.action = 'load-webmaster-quiz';
+                        itemLink.onclick = (e) => {
+                            e.preventDefault();
+                            // In a presentation page, we don't load games directly, so this will navigate back to index.html
+                            window.location.href = '../index.html?loadGame=webmaster';
+                            closeMobileMenu(); // Close menu after selection
+                        };
+                    }
+                    else {
+                        itemLink.href = item.file;
+                        itemLink.target = '_blank';
+                    }
+                    itemLink.className = 'block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200';
+                    itemLink.textContent = item.title;
+                    itemsDiv.appendChild(itemLink);
+                });
+                categoryDiv.appendChild(itemsDiv);
+                desktopAdditionalResourcesMenu.appendChild(categoryDiv);
+            });
+        }
+
+        // Function to render mobile navigation menu (Presentations)
+        function renderMobileNav() {
+            mobileGradesMenu.innerHTML = ''; // Clear previous content
+            mobileAdditionalResourcesMenu.innerHTML = ''; // Clear previous content
+
+            // Render 'Cursos' from presentationData
+            presentationData.forEach(gradeData => {
+                const gradeToggle = document.createElement('button');
+                gradeToggle.className = 'w-full text-gray-700 hover:text-blue-600 font-semibold text-lg text-left py-2 flex justify-between items-center transition-colors duration-200 border-b border-gray-200';
+                gradeToggle.innerHTML = `${gradeData.grade} <span class="transform transition-transform duration-300">&#9656;</span>`;
+                mobileGradesMenu.appendChild(gradeToggle);
+
+                const subjectsContainer = document.createElement('div');
+                subjectsContainer.className = 'mobile-menu-item-container hidden-height pl-4';
+                mobileGradesMenu.appendChild(subjectsContainer);
+
+                gradeToggle.addEventListener('click', () => {
+                    // Close currently active grade element if different
+                    if (activeMobileGradeElement && activeMobileGradeElement !== subjectsContainer) {
+                        activeMobileGradeElement.classList.remove('visible-height');
+                        activeMobileGradeElement.classList.add('hidden-height');
+                        activeMobileGradeElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                        activeMobileGradeElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                    }
+                    // Toggle current grade element
+                    subjectsContainer.classList.toggle('hidden-height');
+                    subjectsContainer.classList.toggle('visible-height');
+                    gradeToggle.querySelector('span').classList.toggle('rotate-90');
+                    gradeToggle.querySelector('span').classList.toggle('rotate-0');
+                    activeMobileGradeElement = subjectsContainer.classList.contains('visible-height') ? subjectsContainer : null;
+
+                    // Close other top-level mobile menus
+                    mobileAdditionalResourcesContainer.classList.remove('visible-height');
+                    mobileAdditionalResourcesContainer.classList.add('hidden-height');
+                    mobileAdditionalResourcesArrow.classList.remove('rotate-90');
+                    mobileAdditionalResourcesArrow.classList.add('rotate-0');
+
+                    // Close any open subject sub-menus when a grade is closed or a new grade is opened
+                    if (activeMobileSubjectElement) {
+                        activeMobileSubjectElement.classList.remove('visible-height');
+                        activeMobileSubjectElement.classList.add('hidden-height');
+                        activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                        activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                        activeMobileSubjectElement = null;
+                    }
+                });
+
+                gradeData.subjects.forEach(subjectData => {
+                    const subjectToggle = document.createElement('button');
+                    subjectToggle.className = 'w-full text-gray-600 hover:text-blue-500 font-medium text-base text-left py-2 flex justify-between items-center transition-colors duration-200 border-b border-gray-100';
+                    subjectToggle.innerHTML = `${subjectData.name} <span class="transform transition-transform duration-300">&#9656;</span>`;
+                    subjectsContainer.appendChild(subjectToggle);
+
+                    const topicsContainer = document.createElement('div');
+                    topicsContainer.className = 'mobile-menu-item-container hidden-height pl-4';
+                    subjectsContainer.appendChild(topicsContainer);
+
+                    subjectToggle.addEventListener('click', () => {
+                        // Close currently active subject element if different
+                        if (activeMobileSubjectElement && activeMobileSubjectElement !== topicsContainer) {
+                            activeMobileSubjectElement.classList.remove('visible-height');
+                            activeMobileSubjectElement.classList.add('hidden-height');
+                            activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                            activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                        }
+                        // Toggle current subject element
+                        topicsContainer.classList.toggle('hidden-height');
+                        topicsContainer.classList.toggle('visible-height');
+                        subjectToggle.querySelector('span').classList.toggle('rotate-90');
+                        subjectToggle.querySelector('span').classList.toggle('rotate-0');
+                        activeMobileSubjectElement = topicsContainer.classList.contains('visible-height') ? topicsContainer : null;
+                    });
+
+                    subjectData.topics.forEach(topic => {
+                        const topicLink = document.createElement('a');
+                        topicLink.href = topic.file; // Use topic.file (HTML) for presentations
+                        // topicLink.target = '_blank'; // REMOVED: No longer opens in new tab
+                        topicLink.className = 'block px-2 py-1 text-gray-500 hover:text-blue-400 text-sm transition-colors duration-200';
+                        topicLink.textContent = topic.title;
+                        topicLink.onclick = closeMobileMenu; // Close menu when a topic is clicked
+                        topicsContainer.appendChild(topicLink);
+                    });
+                });
+            });
+
+            // Render 'Recursos Adicionales' for mobile
+            additionalResourcesData.forEach(resourceCategory => {
+                const categoryToggle = document.createElement('button');
+                categoryToggle.className = 'w-full text-gray-700 hover:text-blue-600 font-semibold text-lg text-left py-2 flex justify-between items-center transition-colors duration-200 border-b border-gray-200';
+                categoryToggle.innerHTML = `${resourceCategory.category} <span class="transform transition-transform duration-300">&#9656;</span>`;
+                mobileAdditionalResourcesMenu.appendChild(categoryToggle);
+
+                const itemsContainer = document.createElement('div');
+                itemsContainer.className = 'mobile-menu-item-container hidden-height pl-4';
+                mobileAdditionalResourcesMenu.appendChild(itemsContainer);
+
+                categoryToggle.addEventListener('click', () => {
+                    // Close currently active category element if different
+                    if (activeMobileGradeElement && activeMobileGradeElement !== itemsContainer) {
+                        activeMobileGradeElement.classList.remove('visible-height');
+                        activeMobileGradeElement.classList.add('hidden-height');
+                        activeMobileGradeElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                        activeMobileGradeElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                    }
+                    // Toggle current category element
+                    itemsContainer.classList.toggle('hidden-height');
+                    itemsContainer.classList.toggle('visible-height');
+                    categoryToggle.querySelector('span').classList.toggle('rotate-90');
+                    categoryToggle.querySelector('span').classList.toggle('rotate-0');
+                    activeMobileGradeElement = itemsContainer.classList.contains('visible-height') ? itemsContainer : null;
+
+                    // Close other top-level mobile menus
+                    mobileGradesContainer.classList.remove('visible-height');
+                    mobileGradesContainer.classList.add('hidden-height');
+                    mobileCoursesArrow.classList.remove('rotate-90');
+                    mobileCoursesArrow.classList.add('rotate-0');
+
+                    // Close any open sub-menus
+                    if (activeMobileSubjectElement) {
+                        activeMobileSubjectElement.classList.remove('visible-height');
+                        activeMobileSubjectElement.classList.add('hidden-height');
+                        activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                        activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                        activeMobileSubjectElement = null;
+                    }
+                });
+
+                resourceCategory.items.forEach(item => {
+                    const itemLink = document.createElement('a');
+                    if (item.action === 'load-peripherals-game') {
+                        itemLink.href = '#';
+                        itemLink.dataset.action = 'load-peripherals-game';
+                        itemLink.onclick = (e) => {
+                            e.preventDefault();
+                            // In a presentation page, we don't load games directly, so this will navigate back to index.html
+                            window.location.href = '../index.html?loadGame=peripherals';
+                            closeMobileMenu();
+                        };
+                    } else if (item.action === 'load-webmaster-quiz') { // Nuevo juego
+                        itemLink.href = '#';
+                        itemLink.dataset.action = 'load-webmaster-quiz';
+                        itemLink.onclick = (e) => {
+                            e.preventDefault();
+                            // In a presentation page, we don't load games directly, so this will navigate back to index.html
+                            window.location.href = '../index.html?loadGame=webmaster';
+                            closeMobileMenu();
+                        };
+                    }
+                    else {
+                        itemLink.href = item.file;
+                        itemLink.target = '_blank';
+                    }
+                    itemLink.className = 'block px-2 py-1 text-gray-500 hover:text-blue-400 text-sm transition-colors duration-200';
+                    itemLink.textContent = item.title;
+                    itemLink.onclick = closeMobileMenu; // Close menu when a topic is clicked
+                    itemsContainer.appendChild(itemLink);
+                });
+            });
+        }
+
+        // --- Content Download Section Logic (Not directly used in presentation pages, but kept for consistency) ---
+        const contentDisplayArea = document.getElementById('content-display-area'); // This element might not exist in presentation pages
+        const contentBackButtonContainer = document.getElementById('content-back-button-container'); // This element might not exist in presentation pages
+        const contentBackButton = document.getElementById('content-back-button'); // This element might not exist in presentation pages
+        const downloadSection = document.getElementById('download-section'); // This element might not exist in presentation pages
+
+        function animateContentTransition(callback) {
+            // Placeholder for animation logic if these elements exist
+            if (contentDisplayArea) {
+                contentDisplayArea.classList.add('animate-fade-out-up');
+                contentDisplayArea.addEventListener('animationend', () => {
+                    contentDisplayArea.classList.remove('animate-fade-out-up');
+                    contentDisplayArea.innerHTML = ''; // Clear content after fade out
+                    callback();
+                    contentDisplayArea.classList.add('animate-fade-in-down');
+                    contentDisplayArea.addEventListener('animationend', () => {
+                        contentDisplayArea.classList.remove('animate-fade-in-down');
+                    }, { once: true });
+                }, { once: true });
+            } else {
+                callback(); // If elements don't exist, just call the callback
+            }
+        }
+
+        function renderInitialContentButton() {
+            if (contentBackButtonContainer) contentBackButtonContainer.classList.add('hidden');
+            if (contentDisplayArea) {
+                contentDisplayArea.innerHTML = '';
+                contentDisplayArea.appendChild(createCustomButton('Ver Contenido para Descargar', renderDownloadGrades));
+            }
+            currentContentView = 'initial';
+        }
+
+        function renderDownloadGrades() {
+            if (contentBackButtonContainer) contentBackButtonContainer.classList.add('hidden');
+            if (contentDisplayArea) {
+                contentDisplayArea.innerHTML = '';
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg';
+                downloadContentData.forEach(gradeData => {
+                    const button = createCustomButton(gradeData.grade, () => {
+                        selectedGradeData = gradeData;
+                        animateContentTransition(renderDownloadSubjects);
+                    }, 'w-full');
+                    gridDiv.appendChild(button);
+                });
+                contentDisplayArea.appendChild(gridDiv);
+            }
+            currentContentView = 'grades';
+        }
+
+        function renderDownloadSubjects() {
+            if (!selectedGradeData) {
+                renderDownloadGrades();
+                return;
+            }
+            if (contentBackButtonContainer) contentBackButtonContainer.classList.remove('hidden');
+            if (contentDisplayArea) {
+                contentDisplayArea.innerHTML = '';
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg';
+                selectedGradeData.subjects.forEach(subjectData => {
+                    const button = createCustomButton(subjectData.name, () => {
+                        selectedSubjectData = subjectData;
+                        animateContentTransition(renderDownloadTopics);
+                    }, 'w-full');
+                    gridDiv.appendChild(button);
+                });
+                contentDisplayArea.appendChild(gridDiv);
+            }
+            currentContentView = 'subjects';
+        }
+
+        function renderDownloadTopics() {
+            if (!selectedSubjectData) {
+                renderDownloadSubjects();
+                return;
+            }
+            if (contentBackButtonContainer) contentBackButtonContainer.classList.remove('hidden');
+            if (contentDisplayArea) {
+                contentDisplayArea.innerHTML = '';
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'grid grid-cols-1 gap-3 w-full max-w-lg';
+                selectedSubjectData.topics.forEach(topic => {
+                    const link = document.createElement('a');
+                    link.href = topic.file;
+                    link.target = '_blank';
+                    link.className = `
+                        flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl font-semibold text-base
+                        bg-green-600 text-white hover:bg-green-700
+                        transition-all duration-300 ease-in-out
+                        shadow-lg hover:shadow-xl transform hover:-translate-y-1
+                        focus:outline-none focus:ring-4 focus:ring-green-300
+                        w-full
+                    `;
+                    link.textContent = topic.title;
+                    link.innerHTML += `
+                        <svg class="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l3-3m-3 3l-3-3m0 6h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    `;
+                    gridDiv.appendChild(link);
+                });
+                contentDisplayArea.appendChild(gridDiv);
+            }
+            currentContentView = 'topics';
+        }
+
+        if (contentBackButton) {
+            contentBackButton.addEventListener('click', () => {
+                animateContentTransition(() => {
+                    if (currentContentView === 'subjects') {
+                        renderDownloadGrades();
+                        selectedGradeData = null;
+                    } else if (currentContentView === 'topics') {
+                        renderDownloadSubjects();
+                        selectedSubjectData = null;
+                    } else {
+                        renderInitialContentButton();
+                    }
+                });
+            });
+        }
+
+        // --- Game Data Storage Logic (Not used in presentation pages, but kept for consistency) ---
+        const gameDataStorage = {
+            localStorageKey: 'gameProgressData',
+
+            loadAllGameData() {
+                try {
+                    const data = localStorage.getItem(this.localStorageKey);
+                    return data ? JSON.parse(data) : {};
+                } catch (e) {
+                    console.error("Error loading game data from localStorage:", e);
+                    return {};
+                }
+            },
+
+            saveAllGameData(data) {
+                try {
+                    localStorage.setItem(this.localStorageKey, JSON.stringify(data));
+                } catch (e) {
+                    console.error("Error saving game data to localStorage:", e);
+                }
+            },
+
+            saveGameSession(gameId, sessionData) {
+                const allGameData = this.loadAllGameData();
+                if (!allGameData[gameId]) {
+                    allGameData[gameId] = [];
+                }
+                allGameData[gameId].push(sessionData);
+                this.saveAllGameData(allGameData);
+            },
+
+            getGameHistory(gameId) {
+                const allGameData = this.loadAllGameData();
+                return allGameData[gameId] || [];
+            },
+
+            getTotalAttempts(gameId) {
+                return this.getGameHistory(gameId).length;
+            },
+
+            getBestScore(gameId) {
+                const history = this.getGameHistory(gameId);
+                if (history.length === 0) {
+                    return 0;
+                }
+                return Math.max(...history.map(session => session.score));
+            }
+        };
+
+        // --- Functions for Activity Section Flow (Not used in presentation pages, but kept for consistency) ---
+        // These functions would typically navigate back to index.html to load games
+        function showMainContentSections() { /* No-op in presentation page */ }
+        async function loadPeripheralsGame() { /* No-op in presentation page */ }
+        async function loadWebMasterQuiz() { /* No-op in presentation page */ }
+        function loadPeripheralsGameFromHeader() { /* No-op in presentation page */ }
+        function loadWebMasterQuizFromHeader() { /* No-op in presentation page */ }
+        window.returnToMainContent = function() { /* No-op in presentation page */ };
+        function renderInitialActivityButton() { /* No-op in presentation page */ }
+        function renderActivityList() { /* No-op in presentation page */ }
+
+        // --- Header Hide/Show on Scroll Logic ---
+        const mainHeader = document.getElementById('main-header');
+        let lastScrollTop = 0;
+        const scrollThreshold = 50; // Pixels to scroll before header hides/shows
+
+        window.addEventListener('scroll', () => {
+            const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            if (currentScrollTop > lastScrollTop && currentScrollTop > mainHeader.offsetHeight + scrollThreshold) {
+                // Scrolling down
+                mainHeader.classList.add('header-hidden');
+            } else if (currentScrollTop < lastScrollTop) {
+                // Scrolling up
+                mainHeader.classList.remove('header-hidden');
+            }
+            lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // For Mobile or negative scrolling
+        });
+
+        // --- Fullscreen Toggle for Header and Footer ---
+        const mainFooter = document.querySelector('footer'); // Get reference to the footer
+
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                // Entered fullscreen mode
+                mainHeader.classList.add('header-hidden');
+                if (mainFooter) {
+                    mainFooter.classList.add('footer-hidden');
+                }
+            } else {
+                // Exited fullscreen mode
+                mainHeader.classList.remove('header-hidden');
+                if (mainFooter) {
+                    mainFooter.classList.remove('footer-hidden');
+                }
+            }
+        });
+
+
+        // --- Diapositivas (Presentation Slides) Logic ---
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const btnAnt = document.getElementById('anterior');
+        const btnSig = document.getElementById('siguiente');
+        const indicador = document.getElementById('indicador');
+        let actual = 0;
+
+        function mostrarSlide(idx) {
+            slides.forEach((d, i) => d.classList.toggle('active', i === idx));
+            btnAnt.disabled = idx === 0;
+            btnSig.disabled = idx === slides.length - 1;
+            indicador.textContent = `Diapositiva ${idx + 1} de ${slides.length}`;
+        }
+
+        btnAnt.onclick = () => {
+            if (actual > 0) {
+                actual--;
+                mostrarSlide(actual);
+            }
+        };
+        btnSig.onclick = () => {
+            if (actual < slides.length - 1) {
+                actual++;
+                mostrarSlide(actual);
+            }
+        };
+
+        // Teclas de flecha
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') btnSig.click();
+            if (e.key === 'ArrowLeft') btnAnt.click();
+        });
+
+
+        // --- Initialize on DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current year in footer
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+
+            // Render desktop and mobile navigation menus
+            renderDesktopNav();
+            renderMobileNav();
+
+            // Initialize presentation slides
+            mostrarSlide(actual);
+        });
+    </script>
+</body>
+</html>

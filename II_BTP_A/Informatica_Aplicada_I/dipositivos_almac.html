@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación: Dispositivos de Almacenamiento</title>
+    <!-- Preconnect para Google Fonts para mejor rendimiento -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: #3f68a3; /* Azul de fondo de XP */
+            background-image: linear-gradient(to bottom, #74a0d9, #3f68a3); /* Degradado sutil */
+            color: #333333;
+            text-shadow: none;
+        }
+        .presentation-container {
+            width: 100%;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            background-color: #e0e7f2; /* Azul muy claro para el contenedor */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 8px; /* Bordes ligeramente redondeados, como ventanas de XP */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 1px solid #a3b1c2;
+        }
+        .slide-content {
+            background-color: #ffffff; /* Blanco puro para el área de contenido */
+            border-radius: 6px; /* Bordes redondeados */
+            padding: 2.5rem;
+            margin: 1.5rem;
+            width: calc(100% - 3rem);
+            box-sizing: border-box;
+            border: 1px solid #cccccc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 2.5rem 2rem 2rem 2rem;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.98);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #e0e7f2;
+            box-sizing: border-box;
+            overflow-y: auto;
+            max-height: 100%;
+            color: #333333;
+        }
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+            position: relative;
+            z-index: 10;
+        }
+        .slide-content > * {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            word-break: break-word;
+        }
+        .slide.active .slide-content > *:nth-child(1) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(2) { transition-delay: 0.2s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(3) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(4) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(5) { transition-delay: 0.5s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(6) { transition-delay: 0.6s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(7) { transition-delay: 0.7s; opacity: 1; transform: translateY(0); }
+        .slide.active .slide-content > *:nth-child(8) { transition-delay: 0.8s; opacity: 1; transform: translateY(0); }
+        .nav-buttons {
+            position: static;
+            margin: 2rem auto 1rem auto;
+            display: flex;
+            gap: 15px;
+            z-index: 20;
+            justify-content: center;
+        }
+        .nav-button {
+            background-color: #3f68a3; /* Azul de XP */
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid #2d558c;
+            font-family: 'Inter', sans-serif;
+            text-shadow: none;
+        }
+        .nav-button:hover {
+            background-color: #4a7abf;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+        .nav-button:disabled {
+            background-color: #cccccc;
+            color: #888888;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        .slide h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e3a8a; /* Azul oscuro similar a títulos de XP */
+            margin-bottom: 1.2rem;
+            word-break: break-word;
+            max-width: 95vw;
+            overflow-wrap: break-word;
+            box-sizing: border-box;
+            padding-left: 8px;
+            padding-right: 8px;
+            text-shadow: none;
+        }
+        .slide h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2563eb; /* Azul intermedio */
+            margin-bottom: 1rem;
+            word-break: break-word;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            text-shadow: none;
+        }
+        .slide p, .slide ul, .slide ol {
+            font-size: 1.15rem;
+            color: #333333;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            word-break: break-word;
+            text-shadow: none;
+        }
+        .slide ul, .slide ol {
+            text-align: left;
+            margin-left: 2.5rem;
+            width: 100%;
+            max-width: 650px;
+        }
+        .slide ul li, .slide ol li {
+            margin-bottom: 0.6rem;
+            position: relative;
+            padding-left: 1.5em;
+        }
+        .slide ul li::before {
+            content: '•'; /* Viñeta redonda clásica */
+            color: #2563eb; /* Azul de acento */
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            text-shadow: none;
+        }
+        .slide ol li::marker {
+            color: #2563eb; /* Azul para los números */
+            font-weight: bold;
+            text-shadow: none;
+        }
+
+        .slide img {
+            max-width: 85%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 2rem;
+            border: 1px solid #bbbbbb;
+            object-fit: contain;
+            background-color: #f0f0f0;
+        }
+        .slide img:not([src]) {
+            background-color: #e6e6e6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666666;
+            font-size: 1.1rem;
+            font-weight: 600;
+            min-height: 180px;
+            border: 1px dashed #aaaaaa;
+            text-align: center;
+            padding: 15px;
+            text-shadow: none;
+        }
+        .slide img:not([src])::before {
+            content: 'IMAGEN NO DISPONIBLE: ' attr(alt);
+            white-space: pre-wrap;
+            text-align: center;
+        }
+
+        .slide-content-small p {
+            font-size: 1.05rem;
+        }
+        .slide-content-small ul {
+            font-size: 1.05rem;
+            margin-left: 1.5rem;
+        }
+        .flex {
+            display: flex;
+        }
+        .justify-center {
+            justify-content: center;
+        }
+        .gap-4 {
+            gap: 1.5rem;
+        }
+        .mt-4 {
+            margin-top: 1rem;
+        }
+        .mt-8 {
+            margin-top: 2rem;
+        }
+        .text-lg {
+            font-size: 1.25rem;
+        }
+        .font-semibold {
+            font-weight: 600;
+        }
+        .text-gray-700 {
+            color: #666666;
+            text-shadow: none;
+        }
+        @media (max-width: 600px) {
+            .presentation-container {
+                max-width: 100vw;
+                aspect-ratio: unset;
+                border-radius: 0;
+            }
+            .slide {
+                padding: 1rem 0.5rem;
+            }
+            .slide h2, .slide h3 {
+                font-size: 1.1rem;
+                max-width: 98vw;
+                padding-left: 4px;
+                padding-right: 4px;
+            }
+            .slide-content {
+                margin: 0.5rem;
+                padding: 1.5rem;
+            }
+            .nav-button {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+        .logo-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background: none;
+            box-shadow: none;
+            margin-bottom: -1.5rem;
+        }
+        .logo-institucion {
+            display: block;
+            margin: 0 auto 2rem auto;
+            background: none;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+            max-width: 98%;
+            width: 280px;
+            box-shadow: none;
+            border: none;
+        }
+        .logo-fixed {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            width: 160px;
+            height: auto;
+            z-index: 9999;
+            opacity: 0.9;
+            pointer-events: none;
+            filter: drop-shadow(0 1px 5px rgba(0, 0, 0, 0.2));
+            border: none;
+        }
+        .img-slide {
+            display: block;
+            margin: 1.5rem auto 1rem auto;
+            width: 480px;
+            max-width: 90%;
+            height: 270px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        .flex .img-slide {
+            width: 180px !important;
+            height: 120px !important;
+            max-width: 45%;
+        }
+    </style>
+</head>
+<body>
+    <img src="imagenes/logo.png"
+         alt="Logo pequeño"
+         class="logo-fixed">
+
+    <div class="presentation-container">
+        <!-- Slide 1: Título y Datos Generales -->
+        <div class="slide active" id="slide-1">
+            <div class="slide-content">
+                <img src="imagenes/logo.png"
+                     alt="Logo Instituto Maria Auxiliadora"
+                     class="logo-institucion">
+                <p>Informática I.</p>
+                <p>Décimo Grado (I BTP) Sección "A"</p>
+                <p>Docente: Pablo Antonio Peña.</p>
+                <p>Fecha: 20 de Julio de 2025.</p>
+                <h3 class="mt-4">Dispositivos de Almacenamiento</h3>
+            </div>
+        </div>
+
+        <!-- Slide 2: Introducción -->
+        <div class="slide" id="slide-2">
+            <div class="slide-content">
+                <h2>Introducción</h2>
+                <p>La capacidad de <strong>almacenar y recuperar información</strong> es crucial para las computadoras.</p>
+                <ul class="mx-auto text-left">
+                    <li>Guardar datos temporal o permanentemente.</li>
+                    <li>Asegurar que la información esté disponible cuando se necesite.</li>
+                </ul>
+                <img src="imagenes/almacenamiento_intro.png" alt="Ilustración de datos fluyendo hacia un almacenamiento" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Slide 3: Jerarquía de la Memoria -->
+        <div class="slide" id="slide-3">
+            <div class="slide-content">
+                <h2>Jerarquía de la Memoria</h2>
+                <p>Diferentes tipos de memoria y almacenamiento, organizados por <strong>velocidad, capacidad y costo</strong>.</p>
+                <ul class="mx-auto text-left">
+                    <li>Más rápidos y costosos: menor capacidad.</li>
+                    <li>Más lentos y económicos: mayor capacidad.</li>
+                </ul>
+                <img src="imagenes/jerarquia_memoria.jpg" alt="Diagrama de jerarquía de memoria" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Slide 4: Memoria RAM -->
+        <div class="slide" id="slide-4">
+            <div class="slide-content">
+                <h2>Memoria RAM (Random Access Memory)</h2>
+                <p>Memoria principal de la computadora, almacena datos y programas en uso.</p>
+                <ul class="mx-auto text-left">
+                    <li><strong>Volátil</strong>: Se borra al apagar.</li>
+                    <li><strong>Rápida</strong>: Acceso inmediato.</li>
+                    <li>Crucial para el rendimiento y la multitarea.</li>
+                </ul>
+                <img src="imagenes/ram.jpg" alt="Módulos de memoria RAM" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Slide 5: Memoria ROM -->
+        <div class="slide" id="slide-5">
+            <div class="slide-content">
+                <h2>Memoria ROM (Read Only Memory)</h2>
+                <p>Almacena instrucciones básicas y esenciales para el arranque del sistema.</p>
+                <ul class="mx-auto text-left">
+                    <li><strong>No volátil</strong>: No se borra al apagar.</li>
+                    <li>Contiene firmware (BIOS/UEFI).</li>
+                </ul>
+                <img src="imagenes/rom.jpg" alt="Chip de memoria ROM" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Slide 6: Discos Duros (HDD) -->
+        <div class="slide" id="slide-6">
+            <div class="slide-content">
+                <h2>Discos Duros (HDD)</h2>
+                <p>Almacenamiento magnético con platos giratorios.</p>
+                <ul class="mx-auto text-left">
+                    <li><strong>Mecánicos</strong>: Partes móviles.</li>
+                    <li><strong>Gran capacidad</strong> a bajo costo.</li>
+                    <li>Más lentos que los SSD.</li>
+                </ul>
+                <img src="imagenes/hdd.jpg" alt="Imagen de un Disco Duro (HDD)" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Slide 7: Unidades de Estado Sólido (SSD) -->
+        <div class="slide" id="slide-7">
+            <div class="slide-content">
+                <h2>Unidades de Estado Sólido (SSD)</h2>
+                <p>Almacenamiento basado en memoria flash, sin partes móviles.</p>
+                <ul class="mx-auto text-left">
+                    <li><strong>Electrónicos</strong>: Más rápidos y duraderos.</li>
+                    <li>Velocidades de lectura/escritura superiores.</li>
+                    <li>Más costosos que los HDD.</li>
+                </ul>
+                <img src="imagenes/ssd.jpg" alt="Imagen de una Unidad de Estado Sólido (SSD)" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Slide 8: Unidades Flash (USB, SD) -->
+        <div class="slide" id="slide-8">
+            <div class="slide-content">
+                <h2>Unidades Flash</h2>
+                <h3>Memorias USB, Tarjetas SD</h3>
+                <ul class="mx-auto text-left">
+                    <li><strong>Portátiles</strong> y versátiles.</li>
+                    <li>Capacidad variada.</li>
+                    <li>Usos: Transferencia de archivos, copias de seguridad.</li>
+                </ul>
+                <img src="imagenes/usb_sd_card.png" alt="Memoria USB y Tarjeta SD" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Slide 9: Discos Ópticos (CD, DVD, Blu-ray) -->
+        <div class="slide" id="slide-9">
+            <div class="slide-content">
+                <h2>Discos Ópticos</h2>
+                <h3>CD, DVD, Blu-ray</h3>
+                <ul class="mx-auto text-left">
+                    <li>Almacenan datos mediante láser.</li>
+                    <li>Menos comunes hoy en día.</li>
+                    <li>Capacidad limitada.</li>
+                </ul>
+                <img src="imagenes/cd_dvd_bluray.png" alt="Discos CD, DVD y Blu-ray" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Slide 10: Almacenamiento en la Nube -->
+        <div class="slide" id="slide-10">
+            <div class="slide-content">
+                <h2>Almacenamiento en la Nube</h2>
+                <p>Almacenamiento de datos en <strong>servidores remotos</strong> vía Internet.</p>
+                <ul class="mx-auto text-left">
+                    <li><strong>Accesibilidad</strong> desde cualquier dispositivo.</li>
+                    <li><strong>Escalabilidad</strong> y copias de seguridad.</li>
+                    <li>Ejemplos: Google Drive, Dropbox.</li>
+                </ul>
+                <img src="imagenes/cloud_storage.png" alt="Ilustración de almacenamiento en la nube" class="img-slide" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Slide 11: Asignación de Tareas -->
+        <div class="slide" id="slide-11">
+            <div class="slide-content">
+                <h2>Asignación de Tareas</h2>
+                <p><strong>Tarea</strong>: Tabla con Características de Memoria y Ejemplos Reales.</p>
+                <p class="text-sm text-left mx-auto max-w-xl">
+                    Elaborar una tabla que detalle las características principales (ej., capacidad, velocidad, volatilidad, durabilidad) de los distintos tipos de memoria (RAM, ROM) y dispositivos de almacenamiento (HDD, SSD, Unidades Flash, Discos Ópticos, Nube), incluyendo al menos dos ejemplos reales de uso para cada uno.
+                </p>
+                <p class="mt-4"><strong>Fecha de Entrega</strong>: 27 de Julio de 2025.</p>
+                <p><strong>Ponderación</strong>: TC 5%.</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Cierre de la Clase -->
+        <div class="slide" id="slide-12">
+            <div class="slide-content">
+                <h2>Cierre de la Clase</h2>
+                <p>Los dispositivos de almacenamiento son <strong>esenciales</strong> para guardar y gestionar información.</p>
+                <p>Comprender sus tipos nos ayuda a <strong>gestionar y proteger nuestros datos</strong>.</p>
+                <p class="mt-8 text-lg font-semibold text-gray-700">¡Gracias por su atención y participación!</p>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+            <button id="prevBtn" class="nav-button" disabled>Anterior</button>
+            <button id="nextBtn" class="nav-button">Siguiente</button>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide) => {
+                slide.classList.remove('active');
+                // Restablecer el estado inicial de los elementos de contenido para que se animen nuevamente
+                slide.querySelectorAll('.slide-content > *').forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(20px)';
+                });
+            });
+
+            if (slides[index]) {
+                slides[index].classList.add('active');
+            }
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === slides.length - 1;
+
+            // Animar la entrada de los elementos de contenido de la diapositiva activa
+            setTimeout(() => {
+                const activeSlideContent = slides[index].querySelectorAll('.slide-content > *');
+                activeSlideContent.forEach((el, i) => {
+                    // Aplicar retardo escalonado y animar a su estado final
+                    el.style.transitionDelay = `${0.1 + i * 0.08}s`;
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                });
+            }, 50); // Pequeño retraso para asegurar que la diapositiva esté activa
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+
+        window.onload = function() {
+            showSlide(currentSlide);
+        };
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+    </script>
+</body>
+</html>

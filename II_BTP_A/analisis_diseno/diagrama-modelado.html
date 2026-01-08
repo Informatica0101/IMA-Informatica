@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Diagrama de Flujo - Gestión de Pedidos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #1a1a1a;
+    }
+
+    .diagram-container {
+      margin-bottom: 80px;
+    }
+
+    .diagram {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+    }
+
+    .step {
+      padding: 12px 20px;
+      background: white;
+      border: 2px solid #444;
+      text-align: center;
+      width: 300px;
+      position: relative;
+    }
+
+    .start-end {
+      border-radius: 50px;
+      font-weight: bold;
+      background-color: #e8f5e9;
+    }
+
+    .decision {
+      width: 150px;
+      height: 90px;
+      transform: rotate(45deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border: 2px solid #444;
+    }
+
+    .decision span {
+      transform: rotate(-45deg);
+    }
+
+    .arrow-down::after {
+      content: "↓";
+      font-size: 24px;
+      color: #555;
+    }
+
+    .note {
+      font-style: italic;
+      color: #777;
+      max-width: 600px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      margin-top: 40px;
+      margin-bottom: 20px;
+      font-size: 20px;
+      text-align: center;
+      color: #2e3b4e;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AS-IS -->
+  <div class="diagram-container">
+    <h2>🟥 Modelo AS-IS (Actual)</h2>
+    <p class="note">Modelo actual con procesos manuales y alto riesgo de error.</p>
+    <div class="diagram">
+      <div class="step start-end">Inicio</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">Recibe pedido por correo</div>
+      <div class="note">📧 Requiere revisar el email manualmente. Si se pierde el correo, se pierde el pedido.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">Anota en cuaderno</div>
+      <div class="note">📝 Dato propenso a errores, ilegibilidad o extravío.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">Revisa stock manualmente</div>
+      <div class="note">📦 No hay sistema de inventario; esto consume tiempo y no es confiable.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step decision"><span>¿Hay stock?</span></div>
+      <div class="note">❓ Decisión basada en revisión visual o intuición. Riesgo de errores.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">Envía mensaje al proveedor</div>
+      <div class="note">📲 Comunicación no estructurada, sin trazabilidad ni registro automático.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">Espera confirmación</div>
+      <div class="note">⏳ Sin control del tiempo de espera ni forma clara de saber si fue recibido.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">Anota confirmación en el cuaderno</div>
+      <div class="note">🖋️ Repetición de pasos manuales: no garantiza consistencia.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">Notifica al cliente</div>
+      <div class="note">📤 Envío manual, sin plantilla ni control del estado del pedido.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step start-end">Fin</div>
+    </div>
+  </div>
+
+  <!-- TO-BE -->
+  <div class="diagram-container">
+    <h2>🟩 Modelo TO-BE (Propuesto)</h2>
+    <p class="note">Flujo automatizado, más ágil y con menor riesgo de error.</p>
+    <div class="diagram">
+      <div class="step start-end">Inicio</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">Pedido recibido automáticamente en sistema web</div>
+      <div class="note">✅ Sistema registra el pedido y lo guarda con ID único.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">Sistema revisa stock en tiempo real</div>
+      <div class="note">✅ El inventario se actualiza con cada venta. Menos errores.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step decision"><span>¿Hay stock?</span></div>
+      <div class="note">✅ Decisión programada. Si no hay stock, se bloquea la venta o se espera reposición.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">Sistema genera orden automática al proveedor</div>
+      <div class="note">✅ Ahorra tiempo. Se puede integrar vía API o email automático.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">Proveedor actualiza estado del pedido en sistema</div>
+      <div class="note">✅ Mayor trazabilidad. El cliente puede ver el estado actualizado.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">Sistema notifica al cliente automáticamente</div>
+      <div class="note">✅ Comunicación estandarizada con correo o mensaje automatizado.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step start-end">Fin</div>
+    </div>
+  </div>
+
+  <!-- TO-DO -->
+  <div class="diagram-container">
+    <h2>🟦 Modelo TO-DO (Acciones necesarias para implementar TO-BE)</h2>
+    <p class="note">Pasos técnicos y organizativos para la transformación digital.</p>
+    <div class="diagram">
+      <div class="step">✔️ Desarrollar sistema web para pedidos</div>
+      <div class="note">Incluye carrito, formulario y base de datos.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">✔️ Implementar inventario digital</div>
+      <div class="note">Stock sincronizado, con alertas y control automático.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">✔️ Automatizar orden al proveedor</div>
+      <div class="note">Via email automatizado o API según capacidad del proveedor.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">✔️ Panel de estado de pedidos para clientes</div>
+      <div class="note">Interfaz amigable para rastrear pedidos.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step">✔️ Capacitación y pruebas</div>
+      <div class="note">Dueño y personal deben aprender a usar el nuevo sistema.</div>
+      <div class="arrow-down"></div>
+
+      <div class="step start-end">🚀 Listo para producción</div>
+    </div>
+  </div>
+
+</body>
+</html>
