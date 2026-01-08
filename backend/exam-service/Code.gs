@@ -51,10 +51,12 @@ function doPost(e) {
       default:
         result = { status: "error", message: `Acción no reconocida en Exam-Service: ${action}` };
     }
-    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON).setHeaders(corsHeaders);
+    // Para evitar errores de CORS con Google Apps Script, la respuesta debe ser texto plano.
+    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.TEXT);
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message })).setMimeType(ContentService.MimeType.JSON).setHeaders(corsHeaders);
+    // También en caso de error, devolver texto plano.
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message })).setMimeType(ContentService.MimeType.TEXT);
   }
 }
 

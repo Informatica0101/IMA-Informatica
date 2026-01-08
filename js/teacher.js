@@ -2,24 +2,6 @@
 let submissionsTableBody; // Se asignará en DOMContentLoaded
 
 /**
- * Helper unificado para realizar llamadas a los microservicios.
- * @param {string} service - El nombre del servicio (ej. 'TASK', 'EXAM').
- * @param {string} action - La acción a ejecutar en el servicio.
- * @param {object} payload - Los datos para la acción.
- * @returns {Promise<object>} La respuesta del servicio.
- */
-async function fetchApi(service, action, payload) {
-    if (!SERVICE_URLS[service]) {
-        throw new Error(`URL para el servicio "${service}" no encontrada.`);
-    }
-    const response = await fetch(SERVICE_URLS[service], {
-        method: 'POST',
-        body: JSON.stringify({ action, payload }),
-    });
-    return await response.json();
-}
-
-/**
  * Obtiene la actividad de tareas y exámenes de sus respectivos microservicios,
  * las combina y las renderiza en el dashboard.
  */
@@ -199,5 +181,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Carga Inicial ---
     fetchTeacherActivity();
-    addQuestion();
 });

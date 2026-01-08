@@ -12,22 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Helper para la API
-    async function fetchApi(service, action, payload) {
-        if (!SERVICE_URLS[service]) {
-            throw new Error(`URL para el servicio "${service}" no encontrada.`);
-        }
-        const response = await fetch(SERVICE_URLS[service], {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'text/plain',
-            },
-            body: JSON.stringify({ action, payload }),
-        });
-        const resultText = await response.text();
-        return JSON.parse(resultText);
-    }
-
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();

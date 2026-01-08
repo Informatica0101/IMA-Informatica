@@ -9,15 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tasksList = document.getElementById('tasks-list');
     // ... (resto de elementos del DOM)
 
-    // Helper para la API
-    async function fetchApi(service, action, payload) {
-        if (!SERVICE_URLS[service]) throw new Error(`URL para el servicio "${service}" no encontrada.`);
-        const response = await fetch(SERVICE_URLS[service], {
-            method: 'POST', body: JSON.stringify({ action, payload })
-        });
-        return await response.json();
-    }
-
     // Función para obtener Tareas Y Exámenes
     async function fetchAllActivities() {
         tasksList.innerHTML = '<p class="text-gray-500">Cargando actividades...</p>';
