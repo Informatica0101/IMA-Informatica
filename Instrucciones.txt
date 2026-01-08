@@ -363,6 +363,13 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**Archivo: js/teacher.js**
+
+*   **Componente: Creación de Exámenes**
+    *   **Problema:** El botón "Añadir Pregunta" no tenía ninguna acción, impidiendo la creación de exámenes. Al intentar guardar, se producía un error `forEach` por un payload vacío.
+    *   **Descripción:** Se implementó la lógica para añadir, eliminar y gestionar preguntas dinámicamente. Se corrigió el formulario para recopilar y enviar correctamente todas las preguntas al backend.
+    *   **Referencia:** ChangesLogs.txt, Archivo: js/teacher.js, Línea(s): 180-290
+
 En este bloque se agregarán las tareas realizadas cuyo
 resultado aún no ha sido validado por el PM.
 

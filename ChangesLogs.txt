@@ -2,6 +2,17 @@ Registro de cambios de IMA - Area de Informática V 2.0
 
 En este archivo se regustrara el historial de cambios del proyecto. 
 
+08/01/2026
+- Archivo: js/teacher.js, Línea(s): 180-290
+  - Se implementó la funcionalidad para añadir y eliminar preguntas dinámicamente en el formulario de creación de exámenes.
+  - Se corrigió el error en el guardado del examen, implementando la lógica para recopilar los datos del formulario y las preguntas.
+- Archivo: js/api.js, Línea(s): 10-23
+  - Se añadió un mock temporal para simular el login de un profesor y poder realizar las pruebas.
+- Archivo: register.html, Línea(s): 44
+  - Se añadió la importación del script js/api.js que faltaba.
+- Archivo: backend.gs, Línea(s): 88-90
+  - Se modificó temporalmente la función de registro para asignar el rol de "Profesor" por defecto.
+
 07/01/2026 
 -Se creo los archicos README.md, Instrucciones.txt y Changeslogs.txt 
 - Archivos relacionados README.md, Instrucciones.txt y Changeslogs.txt. 
