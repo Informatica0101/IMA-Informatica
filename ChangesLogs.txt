@@ -1,4 +1,4 @@
-IMA - Area de Informática V 2.0 
+Registro de cambios de IMA - Area de Informática V 2.0 
 
 En este archivo se regustrara el historial de cambios del proyecto. 
 
