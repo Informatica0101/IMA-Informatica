@@ -157,9 +157,6 @@ C. PROCESO DE APROBACIÓN
     *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 74-75
 
 *   **Función: registerUser**
-    *   **Problema:** Hashing de contraseña sin "salt".
-    *   **Descripción:** Modificar el proceso de hashing para incluir un "salt" único por usuario, que se almacenará junto a la contraseña hasheada.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 81-83
     *   **Problema:** Generación de `userId` basada en `new Date().getTime()`.
     *   **Descripción:** Reemplazar la generación de IDs por un método que garantice mayor unicidad, como `Utilities.getUuid()`.
     *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 80

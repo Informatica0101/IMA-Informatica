@@ -11,9 +11,9 @@
 
 const SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios.
-  USER: 'https://script.google.com/macros/s/AKfycbw1v3n1anR_Phz14IgODQWzku3yBBHJ4bB_aqpTJxkDczIqVzs6uK-aVZeidSPXNHVc/exec',
+  USER: 'URL_DEL_NUEVO_SERVICIO_DE_AUTENTICACION_SIMPLIFICADO',
 
-  // Pega aquí la URL del despliegue del microservicio de tareas.
+  // Pega aquí la URL del desplieg-ue del microservicio de tareas.
   TASK: 'https://script.google.com/macros/s/AKfycbzqQDzogIwMMZxMSRGd-OKTUG16Um6xlFNz5S4yA2yrHitdra708Op5-_SyGs33TgmO/exec',
 
   // Pega aquí la URL del despliegue del microservicio de exámenes.

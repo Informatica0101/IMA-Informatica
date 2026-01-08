@@ -5,3 +5,10 @@ En este archivo se regustrara el historial de cambios del proyecto.
 07/01/2026 
 -Se creo los archicos README.md, Instrucciones.txt y Changeslogs.txt 
 - Archivos relacionados README.md, Instrucciones.txt y Changeslogs.txt. 
+
+07/01/2026
+- Archivos modificados: `backend/user-service-simple/Code.gs` (creado), `js/config.js`
+- Descripción: Se creó un nuevo microservicio de autenticación (`user-service-simple`) que maneja contraseñas en texto plano para simplificar la lógica y como una medida para solucionar errores persistentes de "Failed to fetch". El archivo de configuración del frontend fue actualizado para apuntar a una URL placeholder para este nuevo servicio.
+- Cambios Específicos:
+  - **`backend/user-service-simple/Code.gs` (Archivo Nuevo):** Se creó un nuevo archivo de Google Apps Script que contiene una implementación simplificada de `doPost`, `registerUser`, y `loginUser`. Esta versión omite por completo el hasheo de contraseñas.
+  - **`js/config.js` (Línea 12):** Se modificó la propiedad `USER` en el objeto `SERVICE_URLS` para apuntar a una URL placeholder. El usuario deberá reemplazar esta URL con el endpoint del nuevo servicio una vez que sea desplegado.
