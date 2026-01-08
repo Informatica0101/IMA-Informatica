@@ -11,33 +11,14 @@ async def main():
         page.on("console", lambda msg: print(f"CONSOLE: {msg.text}"))
 
         try:
-            # Create a unique email for the new user
-            import time
-            timestamp = int(time.time())
-            new_email = f"profesor{timestamp}@example.com"
-            new_password = "password123"
-
-            # Go to registration page
-            await page.goto("http://localhost:8000/register.html")
-
-            # Register a new professor
-            await page.fill('#nombre', "Test Professor")
-            await page.select_option('#grado', "Décimo")
-            await page.fill('#seccion', "A")
-            await page.fill('#email', new_email)
-            await page.fill('#password', new_password)
-
-            # The page automatically redirects to login after successful registration
-            await page.click('button[type="submit"]')
-            await page.wait_for_url("http://localhost:8000/login.html")
-
-            # Login with the new credentials
-            await page.fill('#email', new_email)
-            await page.fill('#password', new_password)
+            # Login
+            await page.goto("http://localhost:8000/login.html")
+            await page.fill('#email', "profesor@example.com")
+            await page.fill('#password', "password123")
             await page.click('button[type="submit"]')
             await page.wait_for_url("http://localhost:8000/teacher-dashboard.html")
 
-            # Now on the dashboard, navigate to exam creation
+            # Navigate to exam creation
             await page.click("#nav-crear-examen")
 
             # Fill out exam details

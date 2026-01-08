@@ -3,15 +3,14 @@ Registro de cambios de IMA - Area de Informática V 2.0
 En este archivo se regustrara el historial de cambios del proyecto. 
 
 08/01/2026
-- Archivo: js/teacher.js, Línea(s): 180-290
-  - Se implementó la funcionalidad para añadir y eliminar preguntas dinámicamente en el formulario de creación de exámenes.
-  - Se corrigió el error en el guardado del examen, implementando la lógica para recopilar los datos del formulario y las preguntas.
+- Archivo: js/teacher.js, Línea(s): 158-297
+  - Se implementó la funcionalidad completa para añadir, eliminar y gestionar preguntas dinámicamente en el formulario de creación de exámenes.
+  - Se corrigió el error `forEach` al guardar el examen, implementando la lógica para recopilar todos los datos del formulario, incluyendo las preguntas dinámicas, y construir un payload válido para la API.
+  - Se añadió validación para impedir el envío de un examen sin preguntas.
 - Archivo: js/api.js, Línea(s): 10-23
-  - Se añadió un mock temporal para simular el login de un profesor y poder realizar las pruebas.
+  - Se añadió un mock temporal a la función `fetchApi` para simular un login de "Profesor" y permitir las pruebas del frontend de forma aislada.
 - Archivo: register.html, Línea(s): 44
-  - Se añadió la importación del script js/api.js que faltaba.
-- Archivo: backend.gs, Línea(s): 88-90
-  - Se modificó temporalmente la función de registro para asignar el rol de "Profesor" por defecto.
+  - Se corrigió un error de `ReferenceError` al añadir la importación del script `js/api.js`, que era necesario para el funcionamiento del formulario de registro.
 
 07/01/2026 
 -Se creo los archicos README.md, Instrucciones.txt y Changeslogs.txt 
