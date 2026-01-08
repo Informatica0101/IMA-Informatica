@@ -1,6 +1,23 @@
 **Archivo: index.html**
 
-*   **Componente: Menú de Navegación Móvil**
+*   **Componente: Menú de Naveg-ación Móvil**
     *   **Problema:** Enlace a "Pseudocódigo" incorrecto.
     *   **Descripción:** El enlace en el menú de navegación móvil para la sección "Pseudocódigo" apunta a un archivo JavaScript (`pseudocode.js`) en lugar de al archivo HTML correcto (`pseudocode.html`), lo que provoca que no se pueda acceder a esa sección desde dispositivos móviles.
     *   **Línea(s):** 273
+
+**Archivo: backend/user-service/Code.gs**
+
+*   **Función: doPost**
+    *   **Problema:** Tipo de contenido de respuesta incorrecto para CORS.
+    *   **Descripción:** La función devuelve la respuesta con `ContentService.MimeType.JSON`. Para evitar problemas de CORS con Google Apps Script, las respuestas deben devolverse como texto plano usando `ContentService.MimeType.TEXT`.
+    *   **Línea(s):** 70, 76
+
+**Archivo: js/auth.js**
+
+*   **Función: fetchApi**
+    *   **Problema:** Falta el header 'Content-Type' en la petición.
+    *   **Descripción:** La petición `fetch` no incluye el header `'Content-Type': 'text/plain'`, que es necesario para que Google Apps Script procese la solicitud correctamente y evite errores de CORS. El comentario en el código que indica que no es necesario es incorrecto.
+    *   **Línea(s):** 22
+    *   **Problema:** Manejo incorrecto de la respuesta de la API.
+    *   **Descripción:** El código utiliza `response.json()` para procesar la respuesta. Dado que el backend debe devolver texto plano para cumplir con las políticas de CORS, el frontend debe leer la respuesta con `response.text()` y luego parsearla con `JSON.parse()`.
+    *   **Línea(s):** 25

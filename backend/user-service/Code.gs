@@ -65,13 +65,13 @@ function doPost(e) {
     }
 
     return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.JSON)
+      .setMimeType(ContentService.MimeType.TEXT)
       .setHeaders(corsHeaders);
 
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message }))
-      .setMimeType(ContentService.MimeType.JSON)
+      .setMimeType(ContentService.MimeType.TEXT)
       .setHeaders(corsHeaders);
   }
 }

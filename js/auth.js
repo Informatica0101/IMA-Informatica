@@ -19,10 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const response = await fetch(SERVICE_URLS[service], {
             method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain',
+            },
             body: JSON.stringify({ action, payload }),
-            // No es necesario 'Content-Type' aquí, Apps Script lo maneja.
         });
-        return await response.json();
+        const resultText = await response.text();
+        return JSON.parse(resultText);
     }
 
     if (loginForm) {
