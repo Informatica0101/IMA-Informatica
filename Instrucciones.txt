@@ -143,6 +143,21 @@ C. PROCESO DE APROBACIÓN
 
 
 
+------------------- TAREAS PENDIENTES DE DISEÑO -------------------
+*   **Diseño General:**
+    *   **Tarea:** Modernizar el aspecto de la plataforma manteniendo la paleta de colores de `index.html`.
+    *   **Tarea:** Renovar el estilo de todo el portal (botones, márgenes, espaciado, etc.), excepto las presentaciones de clases.
+    *   **Tarea:** Hacer el diseño adaptable a diferentes tamaños de pantalla, especialmente el dashboard del profesor, para evitar desbordamientos.
+
+*   **Componentes de UI:**
+    *   **Tarea:** Reducir los márgenes internos y externos (padding, gaps) de los botones en todo el sitio.
+    *   **Tarea:** Arreglar el orden y estilo de los botones en el menú desplegable móvil.
+    *   **Tarea:** Rediseñar la Hero Section de `index.html` para que sea adaptable y de tamaño moderado, no una franja de bloque.
+
+*   **Login:**
+    *   **Tarea:** Implementar el formulario de `login.html` como un modal transparente o semi-transparente sobre `index.html`.
+
+
 ------------------- TAREAS PENDIENTES -------------------
 **Archivo: backend.gs**
 
