@@ -94,7 +94,7 @@
             font-size: 1.125rem;
             line-height: 1.75rem;
         }
-        
+
         /* Animation for slide transitions */
         @keyframes fadeIn {
             from {
@@ -152,7 +152,7 @@
             transition: transform 0.2s;
             cursor: pointer;
         }
-        
+
         .quiz-option-button.correct {
             background-color: #d1fae5;
             color: #065f46;
@@ -312,7 +312,7 @@
                     </table>
                 </div>
             </div>
-            
+
             <!-- Slide 10: Interactive Quiz -->
             <div id="slide-10" class="slide">
                 <h3 class="text-4xl mb-6 text-blue-500">¡Quiz Interactivo!</h3>
@@ -357,7 +357,7 @@
             console.error('Unhandled promise rejection:', event.reason);
             event.preventDefault(); // Prevents the browser console from showing the error
         });
-        
+
         const slides = document.querySelectorAll('.slide');
         const nextButton = document.getElementById('next-btn');
         const prevButton = document.getElementById('prev-btn');
@@ -410,7 +410,7 @@
         prevButton.addEventListener('click', () => {
             showSlide(currentSlideIndex - 1);
         });
-        
+
         // Navigation with arrow keys
         document.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowRight') {
@@ -499,7 +499,7 @@
         const quizQuestionElement = document.getElementById('quiz-question');
         const quizOptionsContainer = document.getElementById('quiz-options-container');
         const quizFeedback = document.getElementById('quiz-feedback');
-        
+
         function initializeQuiz() {
             currentQuizQuestionIndex = 0;
             updateQuizDisplay();
@@ -555,7 +555,7 @@
                 quizFeedback.classList.remove('text-green-500');
                 quizFeedback.classList.add('text-red-500');
             }
-            
+
             setTimeout(() => {
                 currentQuizQuestionIndex++;
                 updateQuizDisplay();

@@ -227,7 +227,7 @@
             margin: 0 0 0 2rem; /* Margen a la izquierda de la imagen para separarla del texto */
             order: 2; /* Coloca la imagen a la derecha por defecto */
         }
-        
+
         /* Asegurar que las listas y párrafos dentro del layout lateral no se centren */
         .side-image-layout div p, .side-image-layout div ul, .side-image-layout div ol {
             text-align: left;
@@ -245,7 +245,7 @@
             .slide h3 { font-size: 1.3em; }
             .slide p, .slide ul, .slide ol { font-size: 0.95em; }
             .slide img { max-width: 90%; } /* **ANCHO:** Imágenes un poco más pequeñas */
-            
+
             /* Ajustes para el layout lateral en pantallas medianas */
             .slide-content-area.side-image-layout {
                 flex-direction: column; /* Vuelve a apilar en pantallas pequeñas */
@@ -279,7 +279,7 @@
             .slide p, .slide ul, .slide ol { font-size: 0.85em; }
             .slide img { max-width: 95%; } /* **ANCHO:** Imágenes un poco más pequeñas */
             .slide-content-area { padding: 0.5rem; } /* **MÁRGENES INTERNOS (PADDING):** Padding mínimo en pantallas muy pequeñas */
-            
+
             /* Ajustes para el layout lateral en pantallas muy pequeñas */
             .slide-content-area.side-image-layout {
                 padding: 1rem;
@@ -335,7 +335,7 @@
             background-color: #fee2e2;
             border-color: #f87171;
         }
-        
+
         /* Estilos para el botón de siguiente pregunta */
         #next-question-button {
             background-color: #10b981;
@@ -380,7 +380,7 @@
             <a href="https://azghell.github.io/IMA-Informatica" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
                 <img src="imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
             </a>
-            
+
             <!-- Sección Central: Área de Informática -->
             <span class="font-extrabold text-2xl text-center flex-grow">Informática Aplicada I</span>
 
@@ -499,7 +499,7 @@
                             <p class="text-center text-lg mt-2 text-gray-700">Cada dispositivo se conecta a un nodo central (switch).</p>
                             <img src="imagenes/topologia_estrella.png" width="300" height="auto" alt="Topología de Estrella" class="content-image-style max-w-[200px] mx-auto">
                         </div>
-                        
+
                         <!-- Topología de Bus -->
                         <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-xl">
                             <h3 class="text-2xl font-semibold text-indigo-700">Bus</h3>
@@ -534,7 +534,7 @@
                     <img src="imagenes/tcp_ip_protocol.png" width="300px" height="auto" alt="Protocolo TCP/IP" class="content-image-style">
                 </div>
             </div>
-            
+
             <!-- Diapositiva 6: Direccionamiento IP -->
             <div id="slide-6" class="slide">
                 <div class="slide-content-area">
@@ -597,7 +597,7 @@
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">¡Pon a Prueba tus Conocimientos!</h2>
                     <p class="text-lg text-gray-700 mb-6">Responde las siguientes preguntas sobre redes básicas.</p>
-                    
+
                     <div id="quiz-container" class="bg-gray-100 p-6 rounded-lg shadow-md w-full max-w-lg flex flex-col items-center">
                         <p id="question-text" class="text-2xl font-bold text-indigo-800 mb-6 min-h-[4rem] flex items-center justify-center text-center">Cargando pregunta...</p>
                         <div id="quiz-options-container" class="flex flex-wrap justify-center gap-4 mb-6 w-full">
@@ -677,7 +677,7 @@
         // --- Lógica de la Presentación ---
         const slides = document.querySelectorAll('.slide');
         const prevButton = document.getElementById('prev-slide');
-        const nextButton = document.getElementById('next-slide'); 
+        const nextButton = document.getElementById('next-slide');
         const slideCounter = document.getElementById('slide-counter');
         let currentSlideIndex = 0;
 
@@ -754,7 +754,7 @@
 
         // Oyentes de Eventos para Botones de Navegación
         prevButton.addEventListener('click', prevSlide);
-        nextButton.addEventListener('click', nextSlide); 
+        nextButton.addEventListener('click', nextSlide);
 
         // Navegación con Teclado
         document.addEventListener('keydown', (event) => {
@@ -804,7 +804,7 @@
             // Solo alterna el encabezado/pie de página al desplazarse si no está en pantalla completa
             if (!document.fullscreenElement) {
                 const currentScrollY = window.scrollY;
-                const scrollThreshold = 10; 
+                const scrollThreshold = 10;
 
                 if (currentScrollY > lastScrollY && currentScrollY > scrollThreshold) { // Desplazándose hacia abajo y más allá de un umbral
                     toggleHeaderFooter(false);
@@ -898,7 +898,7 @@
                 quizFeedbackDisplay.textContent = "";
                 quizFeedbackDisplay.classList.remove('text-green-600', 'text-red-600', 'text-indigo-700');
                 quizScoreDisplay.textContent = quizScore;
-                
+
                 const shuffledOptions = shuffleArray([...currentQuestion.options]);
 
                 shuffledOptions.forEach(option => {
@@ -993,7 +993,7 @@
             slides[0].classList.add('active');
             slides[0].style.display = 'flex';
             slides[0].style.animationName = '';
-            
+
             currentSlideIndex = 0;
             updateSlideCounter();
             updateNavigationButtons();

@@ -87,7 +87,12 @@
                             </div>
                             <div>
                                 <label for="gradoAsignado" class="block font-medium mb-2">Grado Asignado</label>
-                                <input type="text" id="gradoAsignado" name="gradoAsignado" class="w-full p-2 border rounded" required>
+                                <select id="gradoAsignado" name="gradoAsignado" class="w-full p-2 border rounded" required>
+                                    <option value="">Selecciona un Grado</option>
+                                    <option value="Décimo">Décimo</option>
+                                    <option value="Undécimo">Undécimo</option>
+                                    <option value="Duodécimo">Duodécimo</option>
+                                </select>
                             </div>
                              <div>
                                 <label for="seccionAsignada" class="block font-medium mb-2">Sección Asignada (Opcional)</label>
@@ -190,6 +195,7 @@
     </div>
 
     <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/teacher.js"></script>
 </body>
 </html>

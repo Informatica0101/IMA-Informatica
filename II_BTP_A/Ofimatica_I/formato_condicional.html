@@ -94,7 +94,7 @@
             font-size: 1.1875rem; /* ~19px, larger than 1.125rem (18px) */
             line-height: 1.875rem; /* Adjusted line-height to maintain readability */
         }
-        
+
         /* Animation for slide transitions */
         @keyframes fadeIn {
             from {
@@ -152,7 +152,7 @@
             transition: transform 0.2s;
             cursor: pointer;
         }
-        
+
         .quiz-option-button.correct {
             background-color: #d1fae5;
             color: #065f46;
@@ -171,7 +171,7 @@
         .quiz-option-button:disabled {
             cursor: not-allowed;
         }
-        
+
         #page-footer p {
             font-size: 1rem;
         }
@@ -384,7 +384,7 @@
                     El <strong>formato condicional</strong> es una herramienta esencial para el análisis de datos. Te ayuda a detectar tendencias, a identificar valores importantes y a tomar decisiones más informadas, simplemente aplicando estilos visuales a tus datos.
                 </p>
             </div>
-            
+
             <!-- Slide 13: Tarea -->
             <div id="slide-13" class="slide">
                 <h3 class="text-4xl mb-6 text-blue-500">Tarea</h3>
@@ -426,7 +426,7 @@
             console.error('Unhandled promise rejection:', event.reason);
             event.preventDefault();
         });
-        
+
         const slides = document.querySelectorAll('.slide');
         const nextButton = document.getElementById('next-btn');
         const prevButton = document.getElementById('prev-btn');
@@ -479,7 +479,7 @@
         prevButton.addEventListener('click', () => {
             showSlide(currentSlideIndex - 1);
         });
-        
+
         document.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowRight') {
                 showSlide(currentSlideIndex + 1);
@@ -538,7 +538,7 @@
         const quizQuestionElement = document.getElementById('quiz-question');
         const quizOptionsContainer = document.getElementById('quiz-options-container');
         const quizFeedback = document.getElementById('quiz-feedback');
-        
+
         function initializeQuiz() {
             currentQuizQuestionIndex = 0;
             updateQuizDisplay();
@@ -594,7 +594,7 @@
                 quizFeedback.classList.remove('text-green-500');
                 quizFeedback.classList.add('text-red-500');
             }
-            
+
             setTimeout(() => {
                 currentQuizQuestionIndex++;
                 updateQuizDisplay();

@@ -41,7 +41,7 @@
             justify-content: center; /* Centra horizontalmente el contenido (la presentación) */
             align-items: center; /* Centra verticalmente el contenido (la presentación) */
             overflow: hidden; /* Asegura que 'main' no tenga scrollbar */
-            margin: 0; 
+            margin: 0;
             padding: 0;
             width: 100%; /* Asegura que 'main' ocupe todo el ancho */
         }
@@ -182,24 +182,24 @@
         .slide p, .slide ul, .slide ol {
             font-size: 0.8em; /* 1em * 0.8 = 0.8em */
             max-width: 800px; /* Limita el ancho del texto para legibilidad */
-            margin: 0 auto; 
+            margin: 0 auto;
         }
 
         /* Estilos para imágenes */
         .slide img {
-            max-width: 50%; 
-            height: auto; 
-            object-fit: contain; 
-            margin-top: 1rem; 
-            margin-bottom: 1rem; 
-            display: block; 
+            max-width: 50%;
+            height: auto;
+            object-fit: contain;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            display: block;
         }
 
         /* Estilos específicos para imágenes de contenido (no el logo de la portada) */
         .content-image-style {
             border-radius: 0.75rem;
             box-shadow: none;
-            margin-top: 1rem; 
+            margin-top: 1rem;
             max-width: 100%;
             height: auto;
         }
@@ -211,31 +211,31 @@
 
         /* Nuevo estilo para el diseño con imagen a un lado */
         .slide-content-area.side-image-layout {
-            flex-direction: row; 
-            align-items: center; 
-            justify-content: center; 
-            text-align: left; 
-            flex-wrap: wrap; 
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            text-align: left;
+            flex-wrap: wrap;
         }
 
         .side-image-layout > div {
-            flex: 1; 
+            flex: 1;
             padding: 1rem;
-            min-width: 280px; 
+            min-width: 280px;
         }
 
         .side-image-layout img {
-            max-width: 40%; 
+            max-width: 40%;
             height: auto;
-            margin: 0 0 0 2rem; 
-            order: 2; 
+            margin: 0 0 0 2rem;
+            order: 2;
         }
-        
+
         /* Asegurar que las listas y párrafos dentro del layout lateral no se centren */
         .side-image-layout div p, .side-image-layout div ul, .side-image-layout div ol {
             text-align: left;
             margin-left: 0;
-            margin-right: auto; 
+            margin-right: auto;
         }
 
         /* Quiz styles (FUENTES REDUCIDAS 20%) */
@@ -283,7 +283,7 @@
             background-color: #fee2e2;
             border-color: #f87171;
         }
-        
+
         .quiz-next-button {
             background-color: #10b981;
             color: white;
@@ -435,23 +435,23 @@
             .slide h2 { font-size: 1.44em; }   /* 1.8em * 0.8 */
             .slide h3 { font-size: 1.04em; } /* 1.3em * 0.8 */
             .slide p, .slide ul, .slide ol { font-size: 0.76em; } /* 0.95em * 0.8 */
-            .slide img { max-width: 90%; } 
-            
+            .slide img { max-width: 90%; }
+
             /* Ajustes para el layout lateral en pantallas medianas */
             .slide-content-area.side-image-layout {
-                flex-direction: column; 
+                flex-direction: column;
                 align-items: center;
                 text-align: center;
             }
             .side-image-layout > div {
                 padding: 0.5rem;
-                width: 100%; 
+                width: 100%;
                 min-width: unset;
             }
             .side-image-layout img {
-                max-width: 70%; 
-                margin: 1rem 0; 
-                order: unset; 
+                max-width: 70%;
+                margin: 1rem 0;
+                order: unset;
             }
             .side-image-layout div p, .side-image-layout div ul, .side-image-layout div ol {
                 text-align: center;
@@ -476,9 +476,9 @@
             .slide h2 { font-size: 1.28em; }   /* 1.6em * 0.8 */
             .slide h3 { font-size: 0.88em; } /* 1.1em * 0.8 */
             .slide p, .slide ul, .slide ol { font-size: 0.68em; } /* 0.85em * 0.8 */
-            .slide img { max-width: 95%; } 
-            .slide-content-area { padding: 0.5rem; } 
-            
+            .slide img { max-width: 95%; }
+            .slide-content-area { padding: 0.5rem; }
+
             /* Ajustes para el layout lateral en pantallas muy pequeñas */
             .slide-content-area.side-image-layout {
                 padding: 1rem;
@@ -495,7 +495,7 @@
                 display: none;
             }
             .mobile-nav-buttons {
-                display: flex; 
+                display: flex;
             }
         }
     </style>
@@ -509,7 +509,7 @@
             <a href="https://azghell.github.io/IMA-Informatica" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
                 <img src="imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
             </a>
-            
+
             <!-- Sección Central: Área de Informática -->
             <span class="font-extrabold text-2xl text-center flex-grow">Manipulación del DOM</span>
 
@@ -1124,7 +1124,7 @@
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">¡Minijuego: Pon a Prueba tus Conocimientos del DOM!</h2>
                     <p class="text-lg text-gray-700 mb-6">Responde las siguientes preguntas.</p>
-                    
+
                     <div id="dom-quiz-container" class="bg-gray-100 p-6 rounded-lg shadow-md w-full max-w-lg flex flex-col items-center">
                         <p id="dom-question-text" class="quiz-question-text">Cargando pregunta...</p>
                         <div id="dom-quiz-options-container" class="quiz-options-container">
@@ -1289,7 +1289,7 @@
             renderCodeEditors(); // Re-render line numbers when a new slide is shown
 
             // Manejo especial para la diapositiva del quiz de DOM
-            if (newSlideElement.id === 'slide-25') { 
+            if (newSlideElement.id === 'slide-25') {
                 initializeDOMQuiz();
             }
         }
@@ -1318,16 +1318,16 @@
 
         // Oyentes de Eventos para Botones de Navegación (ahora separados para desktop/mobile)
         prevButtonDesktop.addEventListener('click', prevSlide);
-        nextButtonDesktop.addEventListener('click', nextSlide); 
+        nextButtonDesktop.addEventListener('click', nextSlide);
 
         // Ocultar encabezado y pie de página al navegar con botones móviles
         prevButtonMobile.addEventListener('click', () => {
             prevSlide();
-            toggleHeaderFooter(false); 
+            toggleHeaderFooter(false);
         });
         nextButtonMobile.addEventListener('click', () => {
             nextSlide();
-            toggleHeaderFooter(false); 
+            toggleHeaderFooter(false);
         });
 
         // Navegación con Teclado
@@ -1386,7 +1386,7 @@
              // ya que el layout principal se maneja con flexbox y height: 100vh.
              // Pero es buena práctica mantenerla si hay lógica de redimensionamiento futuro.
         });
-        
+
         document.addEventListener('fullscreenchange', () => {
             if (document.fullscreenElement) {
                 toggleHeaderFooter(false); // Oculta encabezado/pie de página
@@ -1503,7 +1503,7 @@
                 domQuizFeedbackDisplay.textContent = "";
                 domQuizFeedbackDisplay.classList.remove('text-green-600', 'text-red-600', 'text-indigo-700');
                 domQuizScoreDisplay.textContent = domQuizScore;
-                
+
                 const shuffledOptions = shuffleArray([...currentQuestion.options]);
 
                 shuffledOptions.forEach(option => {
@@ -1626,7 +1626,7 @@
             slides[0].classList.add('active');
             slides[0].style.display = 'flex';
             slides[0].style.animationName = '';
-            
+
             currentSlideIndex = 0;
             updateSlideCounter();
             updateNavigationButtons();

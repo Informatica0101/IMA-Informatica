@@ -88,7 +88,7 @@
             font-size: 1.125rem;
             line-height: 1.75rem;
         }
-        
+
         /* Animación para las transiciones de diapositivas */
         @keyframes fadeIn {
             from {
@@ -144,7 +144,7 @@
             background-color: #e5e7eb;
             transition: transform 0.2s;
         }
-        
+
         .quiz-option-button.correct {
             background-color: #d1fae5;
             color: #065f46;
@@ -307,7 +307,7 @@
                     Un documento bien estructurado incluye: título, encabezados, cuerpo de texto, listas y pies de página. Esto facilita la lectura y la organización del contenido.
                 </p>
             </div>
-            
+
             <!-- Diapositiva 10: Guardar y Exportar -->
             <div id="slide-10" class="slide">
                 <h3 class="text-4xl mb-6 text-blue-500">Guardar y Exportar</h3>
@@ -315,7 +315,7 @@
                     Una vez creado, el documento se puede guardar en diversos formatos como <strong>.docx</strong> (Microsoft Word) o <strong>.pdf</strong> (Portable Document Format), que aseguran que el archivo se vea igual en cualquier dispositivo.
                 </p>
             </div>
-            
+
             <!-- Diapositiva 11: Quiz -->
             <div id="slide-11" class="slide" id="quiz-slide">
                 <h3 class="text-4xl mb-6 text-blue-500">¡Hora del Quiz!</h3>
@@ -514,7 +514,7 @@
             quizQuestionElement.textContent = currentQuestion.question;
             quizOptionsContainer.innerHTML = '';
             quizFeedback.textContent = '';
-            
+
             currentQuestion.options.forEach(option => {
                 const button = document.createElement('button');
                 button.textContent = option;
@@ -573,7 +573,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Inicializa la primera diapositiva
             showSlide(0);
-            
+
             // Si la diapositiva del quiz es la primera en mostrarse, inicialízalo
             if (slides[currentSlideIndex].id === 'quiz-slide') {
                 initializeQuiz();

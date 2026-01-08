@@ -16,7 +16,7 @@
 
         /* Ajuste global para reducir el tamaño base en un 10%. (1rem = 0.9rem) */
         html {
-            font-size: 90%; 
+            font-size: 90%;
         }
 
         html, body {
@@ -38,11 +38,11 @@
 
         #presentation-container {
             width: 100%;
-            height: calc(100vh - 7rem); 
+            height: calc(100vh - 7rem);
             position: relative;
             background-color: #ffffff;
             border-radius: 1rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -106,7 +106,7 @@
             }
             /* Ajuste para que la ventana de validación sea más pequeña en móvil */
             .excel-window {
-                max-width: 95%; 
+                max-width: 95%;
                 transform: scale(0.9);
                 transform-origin: top center;
             }
@@ -126,8 +126,8 @@
         /* Estilos del Cuestionario */
         .quiz-option-button {
             transition: background-color 0.3s, transform 0.2s;
-            text-align: left; 
-            padding-left: 1.5rem; 
+            text-align: left;
+            padding-left: 1.5rem;
         }
 
         .quiz-option-button.correct {
@@ -141,7 +141,7 @@
             color: #991b1b;
             border-color: #ef4444;
         }
-        
+
         /* LÓGICA DE SIMULACIÓN DE VALIDACIÓN (Slide 5) */
         #validation-simulation {
             position: relative;
@@ -186,7 +186,7 @@
         #dropdown-list button:hover {
             background-color: #e0f7fa; /* Cian muy claro */
         }
-        
+
         /* ESTILOS DE LA VENTANA DE EXCEL (DIAPOSITIVA 4) */
         .excel-window {
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 0 15px 0 rgba(0, 0, 0, 0.08);
@@ -255,7 +255,7 @@
         .excel-button-sim:hover {
             background-color: #005a9e;
         }
-        
+
         /* ESTILOS DE LA TABLA DE EJEMPLO (DIAPOSITIVA 10) */
         .example-table {
             border-collapse: collapse;
@@ -348,7 +348,7 @@
                     <strong>Recuerde:</strong> Datos limpios equivalen a análisis confiables y mejores decisiones.
                 </div>
             </div>
-            
+
             <!-- Diapositiva 3: Integridad y Consistencia -->
             <div id="slide-3" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Fundamentos: <strong>Integridad y Consistencia</strong></h3>
@@ -373,7 +373,7 @@
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
                     La Validación de Datos es una función que permite <strong>restringir</strong> el tipo de información o los valores que los usuarios pueden introducir en una celda.
                 </p>
-                
+
                 <!-- VENTANA DE SIMULACIÓN DE VALIDACIÓN (Estilo Excel) -->
                 <div id="validation-simulation-container" class="w-full flex justify-center mt-2">
                     <div id="validation-window" class="excel-window w-full max-w-md bg-white">
@@ -397,7 +397,7 @@
                             <div id="slide4-content-configuracion" class="tab-content active bg-white p-4 border border-gray-300 rounded-b-md rounded-tr-md">
                                 <div class="space-y-4">
                                     <h3 class="text-sm font-semibold text-gray-700 mb-2">Criterios de validación</h3>
-                                    
+
                                     <!-- Permitir -->
                                     <div class="flex items-center space-x-4">
                                         <label for="slide4-allow-select" class="w-1/4 text-sm font-medium text-gray-600">Permitir:</label>
@@ -484,7 +484,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Pie de Página y Botones -->
                         <div class="bg-gray-100 p-3 border-t border-gray-300 flex justify-end space-x-2">
                             <button onclick="slide4SaveChanges()" class="excel-button-sim text-sm">Aceptar</button>
@@ -493,7 +493,7 @@
                     </div>
                 </div>
                 <!-- FIN DE VENTANA DE SIMULACIÓN DE VALIDACIÓN -->
-                
+
                 <div class="mt-4 text-sm sm:text-base bg-red-50 p-3 rounded-lg max-w-3xl">
                     <strong>Función Clave:</strong> Evitar errores de entrada de datos desde el origen.
                 </div>
@@ -511,7 +511,7 @@
                         <li><strong>Personalizada:</strong> Permite usar una fórmula para definir reglas complejas.</li>
                     </ul>
                 </div>
-                
+
                 <!-- SIMULACIÓN EN HTML/CSS/JS (Criterio: Lista Desplegable) -->
                 <div class="mt-5">
                     <p class="text-xs text-gray-500 mb-2">Ejemplo práctico de validación por <strong>Lista</strong>:</p>
@@ -582,7 +582,7 @@
                     <img src="imagenes/opciones-filtro.png" alt="Menú de opciones de filtrado en una columna" class="w-full h-48 object-contain rounded-md mx-auto" onerror="this.parentElement.textContent='ESPACIO PARA IMAGEN: Menú de Opciones de Filtro (opciones_filtrado.png)'; this.remove();">
                 </div>
             </div>
-            
+
             <!-- Diapositiva 9: Proceso de Aplicación (Validación) -->
             <div id="slide-9" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Proceso: Aplicación de <strong>Validación</strong></h3>
@@ -613,7 +613,7 @@
                         <li>El filtro <strong>oculta</strong> las filas que no cumplen el criterio.</li>
                     </ol>
                 </div>
-                
+
                 <div class="mt-5 w-full flex flex-col items-center">
                     <p class="text-xs text-gray-500 mb-2">Ejemplo práctico: Filtrar por <strong>Departamento</strong> = 'Ventas'</p>
                     <table id="filter-example-table" class="example-table">
@@ -681,7 +681,7 @@
                     <div id="quiz-feedback" class="mt-3 sm:mt-5 text-sm sm:text-base font-bold"></div>
                 </div>
             </div>
-            
+
             <!-- Diapositiva 12: Tarea Asignada -->
             <div id="slide-12" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Asignación: <strong>Ejercicios de Validación Práctica</strong></h3>
@@ -744,11 +744,11 @@
         const header = document.getElementById('page-header');
         const footer = document.getElementById('page-footer');
         // Total de diapositivas es 13
-        let currentSlideIndex = 0; 
+        let currentSlideIndex = 0;
         let isTransitioning = false;
 
         // LÓGICA DE LA VENTANA DE VALIDACIÓN (SLIDE 4)
-        
+
         function slide4SaveChanges() {
             const allowValue = document.getElementById('slide4-allow-select').value;
             const styleValue = document.getElementById('slide4-style-select').value;
@@ -792,7 +792,7 @@
         // LÓGICA DE FILTRADO DE DATOS (SLIDE 10)
         let isFiltered = false;
         const filterTargetDept = 'Ventas';
-        
+
         function toggleFilter() {
             isFiltered = !isFiltered;
             const rows = document.querySelectorAll('#filter-example-table tbody tr');
@@ -827,11 +827,11 @@
             const icon = document.getElementById('filter-icon');
             const button = document.getElementById('filter-toggle-button');
             const resetButton = document.getElementById('filter-reset-button');
-            
+
             rows.forEach(row => {
                 row.classList.remove('filtered');
             });
-            
+
             header.classList.remove('filtered-header');
             icon.classList.remove('filtered-icon');
             button.textContent = `Aplicar Filtro: Mostrar solo "Ventas"`;
@@ -953,7 +953,7 @@
                 updateQuizDisplay();
             }, 3000);
         }
-        
+
         // LÓGICA DE SIMULACIÓN DE VALIDACIÓN (Slide 5)
         function setupValidationSimulation() {
             const simulationDiv = document.getElementById('validation-simulation');
@@ -980,7 +980,7 @@
                 }
             });
         }
-        
+
         // Simulación de una caja de mensaje/alerta
         function alertBox(message, title) {
             console.log(`[${title}]: ${message}`);
@@ -1014,7 +1014,7 @@
                 currentQuizQuestionIndex = 0;
                 updateQuizDisplay();
             }
-            
+
             // Re-setup the Slide 4 tabs if needed
             if (currentSlideIndex === 3) {
                  setupSlide4Tabs();

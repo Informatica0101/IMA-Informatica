@@ -513,7 +513,7 @@
                 <div class="skill-hotspot" id="hotspot-resolucion-problemas"></div>
                 <div class="skill-hotspot" id="hotspot-comunicacion"></div>
             </div>
-            
+
             <!-- Cuadro de diálogo inferior (RPG style) -->
             <div id="rpg-dialog-box">
                 <!-- Initial content is empty, will be populated by JS -->
@@ -735,7 +735,7 @@
                 }
                 if (hotspotObj.element) {
                     hotspotObj.element.textContent = labelsToApply[hotspotObj.id] || ''; // Apply label or clear
-                    
+
                     // Add/remove 'inactive' class based on whether it has a label in the current set
                     if (labelsToApply[hotspotObj.id] === '') {
                         hotspotObj.element.classList.add('inactive');
@@ -765,7 +765,7 @@
                 });
             });
             dynamicAnalystSlide.classList.remove('active');
-            
+
             // Always reset dialog box state when changing slides
             rpgDialogBox.innerHTML = ''; // Clear content
             rpgDialogBox.classList.remove('active'); // Remove active class
@@ -778,7 +778,7 @@
 
             if (index === ANALYST_SLIDE_MAIN_INDEX) {
                 dynamicAnalystSlide.classList.add('active');
-                
+
                 // If entering the dynamic slide from another main slide, reset sub-slide index to -1
                 // and ensure dialog is hidden. The first 'next' click will reveal the first content.
                 if (currentSlideIndex !== ANALYST_SLIDE_MAIN_INDEX) {
@@ -856,7 +856,7 @@
                     rpgDialogBox.style.top = `${hotspotCenter.y}px`;
                     rpgDialogBox.style.transform = `translate(-50%, -50%) scale(0.1)`; // Center the dialog at hotspot, then scale
                     rpgDialogBox.style.opacity = '0';
-                    
+
                     void rpgDialogBox.offsetWidth; // Force reflow to apply initial state
 
                     // Animate to final state
@@ -975,7 +975,7 @@
                 // Find the content item that matches this hotspot's ID
                 const clickedHotspotId = hotspot.id;
                 const contentItem = allDynamicContent.find(item => item.hotspotToHighlight === clickedHotspotId);
-                
+
                 if (contentItem) {
                     dynamicSubSlideIndex = allDynamicContent.indexOf(contentItem);
                     updateDynamicContent(); // Call updateDynamicContent directly to trigger animation

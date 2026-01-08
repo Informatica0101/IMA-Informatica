@@ -889,7 +889,7 @@
 
                 let subjectDiv = document.createElement('div');
                 subjectDiv.className = 'absolute left-full top-0 mt-0 w-56 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/grade:scale-100 origin-left';
-                
+
                 gradeData.subjects.forEach(subjectData => {
                     let subjectSubDiv = document.createElement('div');
                     subjectSubDiv.className = 'relative group/subject';
@@ -900,7 +900,7 @@
 
                     let topicDiv = document.createElement('div');
                     topicDiv.className = 'absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover/subject:opacity-100 group-hover/subject:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/subject:scale-100 origin-left';
-                    
+
                     subjectData.topics.forEach(topic => {
                         let topicLink = document.createElement('a');
                         topicLink.href = topic.file; // Use topic.file (HTML) for presentations
@@ -929,7 +929,7 @@
 
                 let itemsDiv = document.createElement('div');
                 itemsDiv.className = 'absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover/resource-cat:opacity-100 group-hover/resource-cat:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/resource-cat:scale-100 origin-left';
-                
+
                 resourceCategory.items.forEach(item => {
                     let itemLink = document.createElement('a');
                     if (item.action === 'load-peripherals-game') {
@@ -938,7 +938,7 @@
                         itemLink.onclick = (e) => {
                             e.preventDefault();
                             // In a presentation page, we don't load games directly, so this will navigate back to index.html
-                            window.location.href = '../index.html?loadGame=peripherals'; 
+                            window.location.href = '../index.html?loadGame=peripherals';
                             closeMobileMenu(); // Close menu after selection
                         };
                     } else if (item.action === 'load-webmaster-quiz') { // Nuevo juego
@@ -1251,7 +1251,7 @@
         // --- Game Data Storage Logic (Not used in presentation pages, but kept for consistency) ---
         const gameDataStorage = {
             localStorageKey: 'gameProgressData',
-            
+
             loadAllGameData() {
                 try {
                     const data = localStorage.getItem(this.localStorageKey);

@@ -34,7 +34,7 @@
             margin: 0 auto;
             max-width: 100vw;
             /* Transición para evitar saltos bruscos al salir de fullscreen */
-            transition: all 0.3s ease; 
+            transition: all 0.3s ease;
         }
 
         .slide {
@@ -215,7 +215,7 @@
                             <td class="p-3"><code>.ClearContents</code> (Borrar contenido)</td>
                         </tr>
                     </tbody>
-                </table>                
+                </table>
             </div>
 
             <!-- Slide 5: Ejemplo Práctico de Objeto/Propiedad -->
@@ -278,10 +278,10 @@
                     <pre>
 <span class="code-keyword">Sub</span> <span class="code-object">Saludar</span>()
     <span class="code-comment">' Este código se ejecutará cuando corras la macro "Saludar"</span>
-    
+
     <span class="code-comment">' Escribe en la celda A1</span>
     <span class="code-object">Range</span>(<span class="code-string">"A1"</span>).<span class="code-property">Value</span> = <span class="code-string">"¡Hola desde VBA!"</span>
-    
+
     <span class="code-comment">' Muestra un mensaje de confirmación</span>
     <span class="code-object">MsgBox</span> <span class="code-string">"Macro ejecutada con éxito."</span>
 
@@ -420,7 +420,7 @@
             const quizOptionsElement = document.getElementById('quiz-options');
             const quizFeedbackElement = document.getElementById('quiz-feedback');
             const totalSlides = slides.length;
-            
+
             if (currentQuizQuestionIndex >= quizQuestions.length) {
                 quizQuestionElement.textContent = "¡Cuestionario completado! ¡Excelente trabajo!";
                 quizOptionsElement.innerHTML = '';

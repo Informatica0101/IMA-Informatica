@@ -12,19 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Helper para la API
-    async function fetchApi(service, action, payload) {
-        if (!SERVICE_URLS[service]) {
-            throw new Error(`URL para el servicio "${service}" no encontrada.`);
-        }
-        const response = await fetch(SERVICE_URLS[service], {
-            method: 'POST',
-            body: JSON.stringify({ action, payload }),
-            // No es necesario 'Content-Type' aquí, Apps Script lo maneja.
-        });
-        return await response.json();
-    }
-
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();

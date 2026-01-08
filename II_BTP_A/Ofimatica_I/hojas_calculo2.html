@@ -225,7 +225,7 @@
             margin: 0 0 0 2rem;
             order: 2;
         }
-        
+
         /* Asegurar que las listas y párrafos dentro del layout lateral no se centren */
         .side-image-layout div p, .side-image-layout div ul, .side-image-layout div ol {
             text-align: left;
@@ -288,7 +288,7 @@
             .slide h3 { font-size: 1.04em; }
             .slide p, .slide ul, .slide ol { font-size: 0.76em; }
             .slide img { max-width: 90%; }
-            
+
             .slide-content-area.side-image-layout {
                 flex-direction: column;
                 align-items: center;
@@ -318,7 +318,7 @@
             .slide p, .slide ul, .slide ol { font-size: 0.68em; }
             .slide img { max-width: 95%; }
             .slide-content-area { padding: 0.5rem; }
-            
+
             .slide-content-area.side-image-layout {
                 padding: 1rem;
             }
@@ -343,7 +343,7 @@
             <a href="https://azghell.github.io/IMA-Informatica" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
                 <img src="imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
             </a>
-            
+
             <!-- Sección Central: Área de Informática -->
             <span class="font-extrabold text-2xl text-center flex-grow">Excel: Gráficos y Tablas Dinámicas</span>
 
@@ -497,7 +497,7 @@
     <p class="text-lg text-gray-700 mb-2">
       La elección del tipo de gráfico depende del mensaje que se desea transmitir y del tipo de datos.
     </p>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-5xl text-left mt-2">    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-5xl text-left mt-2">
       <div class="bg-blue-50 p-2 rounded-lg shadow-md flex flex-col items-center">
         <h3 class="text-xl font-semibold text-blue-700 mb-1 text-center">
           <strong>Gráfico de Columnas/Barras</strong></h3>
@@ -818,16 +818,16 @@
 
         // Oyentes de Eventos para Botones de Navegación (ahora separados para desktop/mobile)
         prevButtonDesktop.addEventListener('click', prevSlide);
-        nextButtonDesktop.addEventListener('click', nextSlide); 
+        nextButtonDesktop.addEventListener('click', nextSlide);
 
         // Ocultar encabezado y pie de página al navegar con botones móviles
         prevButtonMobile.addEventListener('click', () => {
             prevSlide();
-            toggleHeaderFooter(false); 
+            toggleHeaderFooter(false);
         });
         nextButtonMobile.addEventListener('click', () => {
             nextSlide();
-            toggleHeaderFooter(false); 
+            toggleHeaderFooter(false);
         });
 
         // Navegación con Teclado
@@ -886,7 +886,7 @@
              // ya que el layout principal se maneja con flexbox y height: 100vh.
              // Pero es buena práctica mantenerla si hay lógica de redimensionamiento futuro.
         });
-        
+
         document.addEventListener('fullscreenchange', () => {
             if (document.fullscreenElement) {
                 toggleHeaderFooter(false); // Oculta encabezado/pie de página
@@ -918,7 +918,7 @@
             slides[0].classList.add('active');
             slides[0].style.display = 'flex';
             slides[0].style.animationName = '';
-            
+
             currentSlideIndex = 0;
             updateSlideCounter();
             updateNavigationButtons();
