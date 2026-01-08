@@ -39,15 +39,40 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         tasksList.innerHTML = activities.map(activity => {
-            let actionButtonHtml = `<button class="bg-blue-500 text-white px-4 py-2 rounded-lg open-submission-modal" data-task-id="${activity.tareaId}" data-task-title="${activity.titulo}">Entregar</button>`;
+            let feedbackHtml = '';
+            let actionButtonHtml = '';
+
+            // Comprobar si la tarea tiene una entrega
+            if (activity.entrega) {
+                // Si hay entrega, mostrar el estado y la calificación
+                const statusColor = activity.entrega.estado === 'Revisada' ? 'text-green-600' : (activity.entrega.estado === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                feedbackHtml = `
+                    <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                        <h4 class="font-bold text-md">Estado de tu Entrega:</h4>
+                        <p class="font-semibold ${statusColor}">${activity.entrega.estado}</p>
+                        ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
+                        ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
+                    </div>
+                `;
+            } else {
+                // Si no hay entrega, mostrar el botón para entregar
+                actionButtonHtml = `<button class="bg-blue-500 text-white px-4 py-2 rounded-lg open-submission-modal" data-task-id="${activity.tareaId}" data-task-title="${activity.titulo}">Entregar</button>`;
+            }
 
             return `
                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold">${activity.titulo}</h3>
-                    <p class="text-gray-600">${activity.descripcion || 'Sin descripción.'}</p>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-xl font-bold">${activity.titulo}</h3>
+                            <p class="text-sm text-gray-500 mb-2"><strong>Asignatura:</strong> ${activity.asignatura || 'No especificada'}</p>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-600">${activity.fechaLimite}</span>
+                    </div>
+                    <p class="text-gray-700 mt-2">${activity.descripcion || 'Sin descripción.'}</p>
                     <div class="mt-4">
                         ${actionButtonHtml}
                     </div>
+                    ${feedbackHtml}
                 </div>
             `;
         }).join('');
