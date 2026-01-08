@@ -142,24 +142,6 @@ C. PROCESO DE APROBACIÓN
    -> NUNCA como "COMPLETADA" directamente
 
 
-D. TAREA TÉCNICA ESPECÍFICA
---------------------------
-
-- Crear un único servicio o librería compartida para manejar
-  toda la lógica de autorización.
-- Refactorizar todos los servicios existentes para que utilicen
-  este nuevo componente centralizado.
-- NO incluye modificaciones en la lógica de frontend,
-  únicamente el consumo del nuevo servicio.
-
-
-NOTAS
------
-
-- Riesgo si no se ejecuta:
-  -> Posible brecha de seguridad si las políticas de permisos
-     no se actualizan de forma consistente en todos los servicios.
-
 
 ------------------- TAREAS PENDIENTES -------------------
 En este bloque se agregarán las tareas aún no realizadas.
