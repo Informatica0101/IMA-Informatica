@@ -1,0 +1,6 @@
+**Archivo: index.html**
+
+*   **Componente: Menú de Navegación Móvil**
+    *   **Problema:** Enlace a "Pseudocódigo" incorrecto.
+    *   **Descripción:** El enlace en el menú de navegación móvil para la sección "Pseudocódigo" apunta a un archivo JavaScript (`pseudocode.js`) en lugar de al archivo HTML correcto (`pseudocode.html`), lo que provoca que no se pueda acceder a esa sección desde dispositivos móviles.
+    *   **Línea(s):** 273

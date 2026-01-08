@@ -253,7 +253,7 @@
                             </div>
                     </div>
                 </div>
-                <a href="pseudocode.js" target="_blank" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Pseudocódigo</a>
+                <a href="pseudocode.html" target="_blank" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Pseudocódigo</a>
                 <a href="https://wa.me/50488422786" target="_blank" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Contacto</a>
             </nav>
         </div>
@@ -373,7 +373,7 @@
                     {
                         name: "Informática I",
                         topics: [
-                            //Descomentar para agregar estos temas del 3r parcial. 
+                            //Descomentar para agregar estos temas del 3r parcial.
 //                            { title: "Historia de la Computación", file: "Informatica_I/historia_computacion.htm" },
 //                            { title: "Partes y Tipos de Computadora", file: "Informatica_I/Partes_Computadora.html" },
 //                            { title: "Periféricos Entrada/Salida", file: "Informatica_I/perifericos_entrada_salida.html" },
@@ -395,7 +395,7 @@
                     {
                         name: "Informática Aplicada I",
                         topics: [
-                        //Descomenta para agregar estos temas del 3r parcial.  
+                        //Descomenta para agregar estos temas del 3r parcial.
                         //  { title: "Dispositivos de Almacenamiento", file: "II_BTP_A/Informatica_Aplicada_I/dipositivos_almac.html" },
                         //  { title: "Fundamentos de Sistemas Operativos", file: "II_BTP_A/Informatica_Aplicada_I/sistemas_operativos.html" },
                         //    { title: "Terminal de Comandos", file: "II_BTP_A/Informatica_Aplicada_I/terminal_comando.html" },
@@ -466,8 +466,7 @@
                     { title: "Destreza en el Teclado", action: "load-dexterity-game" },
                     { title: "Atajos", file: "interactivo.html" } // New game added here
                 ]
-            },
-            
+            }
         ];
 
         // Data for downloads (PDF files for download section)
@@ -725,7 +724,7 @@
 
                 let subjectDiv = document.createElement('div');
                 subjectDiv.className = 'absolute left-full top-0 mt-0 w-56 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/grade:scale-100 origin-left';
-                
+
                 gradeData.subjects.forEach(subjectData => {
                     let subjectSubDiv = document.createElement('div');
                     subjectSubDiv.className = 'relative group/subject';
@@ -736,7 +735,7 @@
 
                     let topicDiv = document.createElement('div');
                     topicDiv.className = 'absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover/subject:opacity-100 group-hover/subject:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/subject:scale-100 origin-left';
-                    
+
                     subjectData.topics.forEach(topic => {
                         let topicLink = document.createElement('a');
                         topicLink.href = topic.file; // Use topic.file (HTML) for presentations
@@ -765,7 +764,7 @@
 
                 let itemsDiv = document.createElement('div');
                 itemsDiv.className = 'absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover/resource-cat:opacity-100 group-hover/resource-cat:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/resource-cat:scale-100 origin-left';
-                
+
                 resourceCategory.items.forEach(item => {
                     let itemLink = document.createElement('a');
                     if (item.action === 'load-peripherals-game') {
@@ -1098,7 +1097,7 @@
         // --- Game Data Storage Logic ---
         const gameDataStorage = {
             localStorageKey: 'gameProgressData',
-            
+
             // Loads all game data from Local Storage
             loadAllGameData() {
                 try {
