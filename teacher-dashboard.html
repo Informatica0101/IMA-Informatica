@@ -5,13 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard del Profesor</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-gray-100 flex flex-col min-h-screen">
-
-    <div id="header-container"></div>
-
-    <main class="flex-grow container mx-auto p-6 mt-16">
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
         <header class="flex justify-between items-center mb-8">
             <div>
                 <h1 class="text-3xl font-bold text-gray-800">Panel de Profesor</h1>
@@ -26,113 +22,174 @@
             <a href="#" id="nav-crear-examen" class="px-4 py-2 text-gray-700 rounded-lg">Crear Examen</a>
         </nav>
 
-        <section id="section-dashboard">
-            <h2 class="text-2xl font-bold mb-4">Últimas Entregas</h2>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b">
-                            <th class="p-4 text-left">Alumno</th>
-                            <th class="p-4 text-left">Tarea</th>
-                            <th class="p-4 text-left">Fecha</th>
-                            <th class="p-4 text-left">Archivo</th>
-                            <th class="p-4 text-left">Calificación</th>
-                            <th class="p-4 text-left">Estado</th>
-                            <th class="p-4 text-left">Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="submissions-table-body">
-                    </tbody>
-                </table>
-            </div>
-        </section>
+        <main>
+            <!-- Sección de Dashboard (Entregas) -->
+            <section id="section-dashboard">
+                <h2 class="text-2xl font-bold mb-4">Últimas Entregas</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="p-4 text-left">Alumno</th>
+                                <th class="p-4 text-left">Tarea</th>
+                                <th class="p-4 text-left">Fecha</th>
+                                <th class="p-4 text-left">Archivo</th>
+                                <th class="p-4 text-left">Calificación</th>
+                                <th class="p-4 text-left">Estado</th>
+                                <th class="p-4 text-left">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submissions-table-body">
+                            <!-- Las entregas se cargarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-        <section id="section-crear" class="hidden">
-            <h2 class="text-2xl font-bold mb-4">Crear Nueva Tarea</h2>
-            <div class="bg-white p-8 rounded-lg shadow-md">
-                <form id="create-assignment-form">
+            <!-- Sección de Crear Tarea -->
+            <section id="section-crear" class="hidden">
+                <h2 class="text-2xl font-bold mb-4">Crear Nueva Tarea</h2>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <form id="create-assignment-form">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="assignment-title" class="block font-medium mb-2">Título</label>
-                                <input type="text" id="assignment-title" class="w-full p-3 border rounded-lg" required>
+                                <label for="titulo" class="block font-medium mb-2">Título</label>
+                                <input type="text" id="titulo" name="titulo" class="w-full p-2 border rounded" required>
                             </div>
                             <div>
-                                <label for="assignment-date" class="block font-medium mb-2">Fecha de Entrega</label>
-                                <input type="date" id="assignment-date" class="w-full p-3 border rounded-lg" required>
-                            </div>
-                            <div class="md:col-span-2">
-                                <label for="assignment-description" class="block font-medium mb-2">Descripción</label>
-                                <textarea id="assignment-description" rows="4" class="w-full p-3 border rounded-lg" required></textarea>
-                            </div>
-                            <div>
-                                <label for="assignment-grade" class="block font-medium mb-2">Grado</label>
-                                <select id="assignment-grade" class="w-full p-3 border rounded-lg" required>
-                                    <option value="Décimo">Décimo</option>
-                                    <option value="Undécimo">Undécimo</option>
-                                    <option value="Duodécimo">Duodécimo</option>
+                                <label for="tipo" class="block font-medium mb-2">Tipo</label>
+                                <select id="tipo" name="tipo" class="w-full p-2 border rounded">
+                                    <option value="Tarea">Tarea</option>
+                                    <option value="Examen">Examen</option>
+                                    <option value="Credito Extra">Crédito Extra</option>
                                 </select>
                             </div>
-                            <div>
-                                <label for="assignment-subject" class="block font-medium mb-2">Asignatura</label>
-                                <input type="text" id="assignment-subject" class="w-full p-3 border rounded-lg" required>
+                            <div id="credito-extra-fields" class="hidden md:col-span-2">
+                                <label for="tareaOriginalId" class="block font-medium mb-2">ID de Tarea Original Rechazada (Opcional)</label>
+                                <input type="text" id="tareaOriginalId" name="tareaOriginalId" placeholder="TSK-..." class="w-full p-2 border rounded">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="descripcion" class="block font-medium mb-2">Descripción</label>
+                                <textarea id="descripcion" name="descripcion" rows="4" class="w-full p-2 border rounded"></textarea>
                             </div>
                              <div>
-                                <label for="assignment-parcial" class="block font-medium mb-2">Parcial</label>
-                                <select id="assignment-parcial" class="w-full p-3 border rounded-lg" required>
+                                <label for="parcial" class="block font-medium mb-2">Parcial</label>
+                                <select id="parcial" name="parcial" class="w-full p-2 border rounded" required>
                                     <option value="Primer Parcial">Primer Parcial</option>
                                     <option value="Segundo Parcial">Segundo Parcial</option>
                                     <option value="Tercer Parcial">Tercer Parcial</option>
                                     <option value="Cuarto Parcial">Cuarto Parcial</option>
                                 </select>
                             </div>
-                        </div>
-                        <button type="submit" class="w-full mt-6 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">Crear Tarea</button>
-                    </form>
-            </div>
-        </section>
-
-        <section id="section-crear-examen" class="hidden">
-            <h2 class="text-2xl font-bold mb-4">Crear Nuevo Examen</h2>
-            <div class="bg-white p-8 rounded-lg shadow-md">
-                <form id="create-exam-form">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="exam-title" class="block font-medium mb-2">Título del Examen</label>
-                                <input type="text" id="exam-title" class="w-full p-3 border rounded-lg" required>
+                                <label for="asignatura" class="block font-medium mb-2">Asignatura</label>
+                                <input type="text" id="asignatura" name="asignatura" class="w-full p-2 border rounded" required>
+                            </div>
+                            <div>
+                                <label for="gradoAsignado" class="block font-medium mb-2">Grado Asignado</label>
+                                <input type="text" id="gradoAsignado" name="gradoAsignado" class="w-full p-2 border rounded" required>
                             </div>
                              <div>
-                                <label for="exam-grade" class="block font-medium mb-2">Grado</label>
-                                <select id="exam-grade" name="exam-grade" class="w-full p-3 border rounded-lg" required>
+                                <label for="seccionAsignada" class="block font-medium mb-2">Sección Asignada (Opcional)</label>
+                                <input type="text" id="seccionAsignada" name="seccionAsignada" class="w-full p-2 border rounded">
+                            </div>
+                            <div>
+                                <label for="fechaLimite" class="block font-medium mb-2">Fecha Límite</label>
+                                <input type="date" id="fechaLimite" name="fechaLimite" class="w-full p-2 border rounded" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="mt-6 bg-blue-600 text-white font-bold py-2 px-6 rounded-lg">Crear</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Sección de Crear Examen -->
+            <section id="section-crear-examen" class="hidden">
+                <h2 class="text-2xl font-bold mb-4">Crear Nuevo Examen</h2>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <form id="create-exam-form">
+                        <!-- Detalles Generales del Examen -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-b pb-6 mb-6">
+                            <div>
+                                <label for="exam-titulo" class="block font-medium mb-2">Título del Examen</label>
+                                <input type="text" id="exam-titulo" name="titulo" class="w-full p-2 border rounded" required>
+                            </div>
+                            <div>
+                                <label for="exam-asignatura" class="block font-medium mb-2">Asignatura</label>
+                                <input type="text" id="exam-asignatura" name="asignatura" class="w-full p-2 border rounded" required>
+                            </div>
+                            <div>
+                                <label for="exam-grado" class="block font-medium mb-2">Grado Asignado</label>
+                                <select id="exam-grado" name="gradoAsignado" class="w-full p-2 border rounded" required>
+                                    <option value="">Selecciona un Grado</option>
                                     <option value="Décimo">Décimo</option>
                                     <option value="Undécimo">Undécimo</option>
                                     <option value="Duodécimo">Duodécimo</option>
                                 </select>
                             </div>
                             <div>
-                                <label for="exam-seccion" class="block font-medium mb-2">Sección</label>
-                                <input type="text" id="exam-seccion" class="w-full p-3 border rounded-lg">
+                                <label for="exam-seccion" class="block font-medium mb-2">Sección (Opcional)</label>
+                                <input type="text" id="exam-seccion" name="seccionAsignada" class="w-full p-2 border rounded">
+                            </div>
+                            <div>
+                                <label for="exam-fechaLimite" class="block font-medium mb-2">Fecha Límite</label>
+                                <input type="date" id="exam-fechaLimite" name="fechaLimite" class="w-full p-2 border rounded" required>
+                            </div>
+                             <div>
+                                <label for="exam-tiempoLimite" class="block font-medium mb-2">Tiempo Límite (minutos)</label>
+                                <input type="number" id="exam-tiempoLimite" name="tiempoLimite" class="w-full p-2 border rounded" min="1">
                             </div>
                         </div>
 
-                        <div id="questions-container" class="mt-8 space-y-6">
-                            <!-- Las preguntas se agregarán dinámicamente aquí -->
+                        <!-- Contenedor para Preguntas Dinámicas -->
+                        <div id="questions-container" class="space-y-6">
+                            <!-- Las preguntas se añadirán aquí dinámicamente -->
                         </div>
 
-                        <div class="flex justify-between items-center mt-6">
-                            <button type="button" id="add-question-btn" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600">Agregar Pregunta</button>
-                            <button type="submit" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700">Crear Examen</button>
+                        <!-- Acciones -->
+                        <div class="flex items-center justify-between mt-8">
+                            <button type="button" id="add-question-btn" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg">Añadir Pregunta</button>
+                            <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg">Guardar Examen</button>
                         </div>
                     </form>
-            </div>
-        </section>
-    </main>
+                </div>
+            </section>
+        </main>
+    </div>
 
-    <div id="footer-container"></div>
+    <!-- Modal de Calificación -->
+    <div id="grade-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
+        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Calificar Entrega</h2>
+            <p><strong>Alumno:</strong> <span id="student-name-modal"></span></p>
+            <p class="mb-4"><strong>Archivo:</strong> <a id="file-link-modal" href="#" target="_blank" class="text-blue-500 hover:underline">Ver Entrega</a></p>
+
+            <div class="mb-4">
+                <label for="calificacion" class="block font-medium mb-2">Calificación</label>
+                <input type="number" id="calificacion" class="w-full p-2 border rounded">
+            </div>
+
+            <div class="mb-4">
+                <label for="estado" class="block font-medium mb-2">Estado</label>
+                <select id="estado" class="w-full p-2 border rounded">
+                    <option value="Revisada">Revisada</option>
+                    <option value="Rechazada">Rechazada</option>
+                </select>
+            </div>
+
+            <div class="mb-6">
+                <label for="comentario" class="block font-medium mb-2">Comentario (Opcional)</label>
+                <textarea id="comentario" rows="3" class="w-full p-2 border rounded"></textarea>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <button id="cancel-grade-btn" class="px-6 py-2 bg-gray-300 rounded-lg">Cancelar</button>
+                <button id="save-grade-btn" class="px-6 py-2 bg-blue-600 text-white rounded-lg">Guardar</button>
+            </div>
+        </div>
+    </div>
 
     <script src="js/config.js"></script>
-    <script src="js/menu-data.js"></script>
-    <script src="js/includes.js"></script>
-    <script src="js/api.js"></script>
     <script src="js/teacher.js"></script>
 </body>
 </html>

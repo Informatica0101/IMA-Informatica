@@ -2,41 +2,25 @@ document.addEventListener("DOMContentLoaded", function() {
     const headerContainer = document.getElementById('header-container');
     const footerContainer = document.getElementById('footer-container');
 
-    // Function to load a script dynamically
-    function loadScript(src, callback) {
-        const script = document.createElement('script');
-        script.src = src;
-        script.onload = () => {
-            if (callback) callback();
-        };
-        script.onerror = () => console.error(`Failed to load script: ${src}`);
-        document.body.appendChild(script);
-    }
+    const fetchHeader = fetch('_header.html').then(response => response.text());
+    const fetchFooter = fetch('_footer.html').then(response => response.text());
 
-    if (headerContainer) {
-        fetch('_header.html')
-            .then(response => {
-                if (!response.ok) throw new Error(`Failed to fetch _header.html: ${response.statusText}`);
-                return response.text();
-            })
-            .then(data => {
-                headerContainer.innerHTML = data;
-                // Now that the header is loaded, load the UI script that controls it
-                loadScript('js/main-ui.js');
-            })
-            .catch(error => console.error(error));
-    }
+    Promise.all([fetchHeader, fetchFooter])
+        .then(([headerHtml, footerHtml]) => {
+            if (headerContainer) {
+                headerContainer.innerHTML = headerHtml;
+            }
+            if (footerContainer) {
+                footerContainer.innerHTML = footerHtml;
+            }
 
-    if (footerContainer) {
-        fetch('_footer.html')
-            .then(response => {
-                if (!response.ok) throw new Error(`Failed to fetch _footer.html: ${response.statusText}`);
-                return response.text();
-            })
-            .then(data => {
-                footerContainer.innerHTML = data;
-                // The year is set by main-ui.js, so no need to do it here anymore.
-            })
-            .catch(error => console.error(error));
-    }
+            // Now that the header and footer are loaded, we can safely load the main script
+            // that depends on the elements within them.
+            const mainScript = document.createElement('script');
+            mainScript.src = 'js/main.js';
+            document.body.appendChild(mainScript);
+        })
+        .catch(error => {
+            console.error("Error loading components:", error);
+        });
 });

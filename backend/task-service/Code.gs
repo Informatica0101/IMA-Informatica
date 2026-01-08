@@ -28,7 +28,7 @@ function getSheetOrThrow(ss, name) {
 // --- PUNTOS DE ENTRADA (doGet, doPost, doOptions) ---
 function doGet() {
   return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Tareas funcionando." }))
-    .setMimeType(ContentService.MimeType.TEXT);
+    .setMimeType(ContentService.MimeType.JSON).setHeader("Access-Control-Allow-Origin", "*");
 }
 
 function doOptions() {
@@ -52,12 +52,10 @@ function doPost(e) {
       default:
         result = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
-    // Para evitar errores de CORS con Google Apps Script, la respuesta debe ser texto plano.
-    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.TEXT);
+    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON).setHeaders(corsHeaders);
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
-    // También en caso de error, devolver texto plano.
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message })).setMimeType(ContentService.MimeType.TEXT);
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message })).setMimeType(ContentService.MimeType.JSON).setHeaders(corsHeaders);
   }
 }
 

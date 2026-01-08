@@ -31,7 +31,8 @@ function getSheetOrThrow(ss, name) {
 // --- PUNTOS DE ENTRADA (doGet, doPost, doOptions) ---
 function doGet() {
   return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Usuarios funcionando." }))
-    .setMimeType(ContentService.MimeType.TEXT);
+    .setMimeType(ContentService.MimeType.JSON)
+    .setHeader("Access-Control-Allow-Origin", "*");
 }
 
 function doOptions() {
@@ -64,12 +65,14 @@ function doPost(e) {
     }
 
     return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.TEXT);
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeaders(corsHeaders);
 
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message }))
-      .setMimeType(ContentService.MimeType.TEXT);
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeaders(corsHeaders);
   }
 }
 

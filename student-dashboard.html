@@ -5,13 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard del Estudiante</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-gray-100 flex flex-col min-h-screen">
-
-    <div id="header-container"></div>
-
-    <main class="flex-grow container mx-auto p-6 mt-16">
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
         <header class="flex justify-between items-center mb-8">
             <div>
                 <h1 class="text-3xl font-bold text-gray-800">Hola, <span id="student-name"></span>!</h1>
@@ -20,10 +16,12 @@
             <button id="logout-button" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg">Cerrar Sesión</button>
         </header>
 
-        <div id="tasks-list" class="space-y-4">
-            <!-- Las tareas se cargarán aquí -->
-        </div>
-    </main>
+        <main>
+            <div id="tasks-list" class="space-y-4">
+                <!-- Las tareas se cargarán aquí -->
+            </div>
+        </main>
+    </div>
 
     <!-- Modal de Entrega -->
     <div id="submission-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
@@ -43,12 +41,7 @@
         </div>
     </div>
 
-    <div id="footer-container"></div>
-
     <script src="js/config.js"></script>
-    <script src="js/menu-data.js"></script>
-    <script src="js/includes.js"></script>
-    <script src="js/api.js"></script>
     <script src="js/student.js"></script>
 </body>
 </html>

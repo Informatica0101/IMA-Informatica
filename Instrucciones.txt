@@ -143,21 +143,6 @@ C. PROCESO DE APROBACIÓN
 
 
 
-------------------- TAREAS PENDIENTES DE DISEÑO -------------------
-*   **Diseño General:**
-    *   **Tarea:** Modernizar el aspecto de la plataforma manteniendo la paleta de colores de `index.html`.
-    *   **Tarea:** Renovar el estilo de todo el portal (botones, márgenes, espaciado, etc.), excepto las presentaciones de clases.
-    *   **Tarea:** Hacer el diseño adaptable a diferentes tamaños de pantalla, especialmente el dashboard del profesor, para evitar desbordamientos.
-
-*   **Componentes de UI:**
-    *   **Tarea:** Reducir los márgenes internos y externos (padding, gaps) de los botones en todo el sitio.
-    *   **Tarea:** Arreglar el orden y estilo de los botones en el menú desplegable móvil.
-    *   **Tarea:** Rediseñar la Hero Section de `index.html` para que sea adaptable y de tamaño moderado, no una franja de bloque.
-
-*   **Login:**
-    *   **Tarea:** Implementar el formulario de `login.html` como un modal transparente o semi-transparente sobre `index.html`.
-
-
 ------------------- TAREAS PENDIENTES -------------------
 **Archivo: backend.gs**
 
@@ -245,20 +230,8 @@ C. PROCESO DE APROBACIÓN
     *   **Problema:** Dependencia de CDN externas para Tailwind CSS y Google Fonts.
     *   **Descripción:** Investigar la posibilidad de alojar localmente estas dependencias o utilizar un proceso de build (como PostCSS) para generar un archivo CSS optimizado y eliminar dependencias externas en producción.
     *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 7, 8
-    *   **Problema:** Bloque de CSS personalizado dentro del HTML.
-    *   **Descripción:** Mover todo el CSS del bloque `<style>` a un archivo CSS externo (ej. `css/custom.css`) y enlazarlo en el `<head>`.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 9-195
-    *   **Problema:** Datos de contenido (`presentationData`, etc.) hardcodeados en el script.
-    *   **Descripción:** Mover los datos de los menús y descargas a archivos JSON dedicados (ej. `data/presentations.json`) y cargarlos con `fetch`.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 412, 494, 574
-    *   **Problema:** Todo el código JavaScript está en un solo bloque `<script>`.
-    *   **Descripción:** Modularizar el JavaScript. Mover la lógica principal a un archivo externo (ej. `js/main.js`) y considerar separar la lógica de los juegos también.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 412-1110
 
 *   **Componente: Menú de Navegación**
-    *   **Problema:** Enlace roto a "Pseudocódigo" en el menú móvil.
-    *   **Descripción:** Corregir el `href` del enlace "Pseudocódigo" en el menú móvil para que apunte a `pseudocode.html` en lugar de `pseudocode.js`.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 242, 273
     *   **Problema:** Lógica de renderizado de menús duplicada (`renderDesktopNav`, `renderMobileNav`).
     *   **Descripción:** Refactorizar la generación de menús para reutilizar la lógica de iteración sobre las estructuras de datos y solo diferenciar la salida de HTML.
     *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 768-963
@@ -387,3 +360,10 @@ En este bloque se listarán únicamente las tareas que fueron
 revisadas y aprobadas con resultado exitoso.
 
 NO TOCAR EL CÓDIGO DE ESTAS TAREAS SIN AUTORIZACIÓN EXPRESA DEL PM.
+
+**Archivo: index.html, teacher-dashboard.html, etc.**
+
+*   **Componente: Global**
+    *   **Problema:** El header y el footer están hardcodeados en cada archivo HTML.
+    *   **Descripción:** Extraer el HTML del header y el footer a componentes reutilizables (ej. `_header.html`, `_footer.html`) y cargarlos dinámicamente en todas las páginas para eliminar la duplicación de código.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html (Líneas 199-281, 399-410), teacher-dashboard.html
