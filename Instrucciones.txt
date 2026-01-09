@@ -363,6 +363,30 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**Archivo: js/student.js**
+
+*   **Componente: Botón de Cerrar Sesión**
+    *   **Problema:** El botón "Cerrar Sesión" en el dashboard del estudiante no tenía funcionalidad.
+    *   **Descripción:** Se añadió la lógica para obtener el `logout-button` del DOM y asignarle un `addEventListener` que elimina al usuario del `localStorage` y redirige a `login.html`.
+    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Hallazgo 1
+
+*   **Componente: Visibilidad de Exámenes**
+    *   **Problema:** Los estudiantes no podían ver los exámenes asignados en su dashboard.
+    *   **Descripción:** Se modificó la función `fetchStudentTasks` para que también solicite los exámenes del estudiante a la API (`EXAM`, `getStudentExams`). Se actualizó la función `renderActivities` para que pueda renderizar tanto tareas como exámenes.
+    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Hallazgo 2
+
+**Archivo: index.html**
+
+*   **Componente: Enlace al Portal de Login**
+    *   **Problema:** La página principal no tenía un enlace visible para acceder al portal de login.
+    *   **Descripción:** Se cambió el `href` del enlace que envuelve el logo y el título principal en la cabecera para que apunte a `login.html`.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html, Hallazgo 3
+
+En este bloque se agregarán las tareas realizadas cuyo
+resultado aún no ha sido validado por el PM.
+
+
+------------------- TAREAS EXITOSAS ---------------------
 **Archivo: js/teacher.js**
 
 *   **Componente: Creación de Exámenes**
@@ -375,11 +399,6 @@ C. PROCESO DE APROBACIÓN
     *   **Descripción:** Se modificó el `addEventListener` del evento `submit` del formulario `create-exam-form` para que recolecte todos los datos del examen y de las preguntas añadidas dinámicamente, construyendo el objeto `payload` correcto antes de enviarlo a la API.
     *   **Referencia:** ChangesLogs.txt, Archivo: js/teacher.js, Línea(s): 243-297
 
-En este bloque se agregarán las tareas realizadas cuyo
-resultado aún no ha sido validado por el PM.
-
-
-------------------- TAREAS EXITOSAS ---------------------
 En este bloque se listarán únicamente las tareas que fueron
 revisadas y aprobadas con resultado exitoso.
 

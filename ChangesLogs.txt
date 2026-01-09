@@ -12,6 +12,15 @@ En este archivo se regustrara el historial de cambios del proyecto.
 - Archivo: register.html, Línea(s): 44
   - Se corrigió un error de `ReferenceError` al añadir la importación del script `js/api.js`, que era necesario para el funcionamiento del formulario de registro.
 
+08/01/2026
+- Archivo: js/student.js, Línea(s): 12-17
+  - Se implementó el `addEventListener` para el botón de `logout-button`, solucionando el bug que impedía al estudiante cerrar sesión.
+- Archivo: js/student.js, Línea(s): 29-91
+  - Se modificó la lógica de obtención de actividades para incluir una llamada a `getStudentExams`.
+  - Se actualizó la función `renderActivities` para mostrar tanto tareas como exámenes, añadiendo un botón "Realizar Examen".
+- Archivo: index.html, Línea(s): 201
+  - Se actualizó el `href` del enlace principal para dirigir a `login.html`, conectando la página de inicio con el portal.
+
 07/01/2026 
 -Se creo los archicos README.md, Instrucciones.txt y Changeslogs.txt 
 - Archivos relacionados README.md, Instrucciones.txt y Changeslogs.txt. 

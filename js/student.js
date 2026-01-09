@@ -7,6 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('student-name').textContent = currentUser.nombre;
     const tasksList = document.getElementById('tasks-list');
+    const logoutButton = document.getElementById('logout-button');
+
+    logoutButton.addEventListener('click', () => {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
+    });
 
     // --- Elementos del Modal ---
     const submissionModal = document.getElementById('submission-modal');
@@ -16,20 +22,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelSubmissionBtn = document.getElementById('cancel-submission-btn');
     let currentTaskId = null;
 
-    // Función para obtener solo Tareas
-    async function fetchStudentTasks() {
-        tasksList.innerHTML = '<p class="text-gray-500">Cargando tareas...</p>';
+    // Función para obtener Tareas y Exámenes
+    async function fetchAllActivities() {
+        tasksList.innerHTML = '<p class="text-gray-500">Cargando actividades...</p>';
         try {
             const payload = { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion };
-            const tasksResult = await fetchApi('TASK', 'getStudentTasks', payload);
 
-            if (tasksResult.status === 'success') {
-                renderActivities(tasksResult.data);
-            } else {
-                throw new Error(tasksResult.message);
+            // Realizar ambas llamadas a la API en paralelo
+            const [tasksResult, examsResult] = await Promise.all([
+                fetchApi('TASK', 'getStudentTasks', payload),
+                fetchApi('EXAM', 'getStudentExams', payload) // Asumiendo que este endpoint existe
+            ]);
+
+            // Combinar y renderizar los resultados
+            const allActivities = [];
+            if (tasksResult.status === 'success' && tasksResult.data) {
+                allActivities.push(...tasksResult.data.map(task => ({ ...task, type: 'Tarea' })));
             }
+            if (examsResult.status === 'success' && examsResult.data) {
+                allActivities.push(...examsResult.data.map(exam => ({ ...exam, type: 'Examen' })));
+            }
+
+            // Ordenar por fecha límite, si existe
+            allActivities.sort((a, b) => new Date(a.fechaLimite) - new Date(b.fechaLimite));
+
+            renderActivities(allActivities);
+
         } catch (error) {
-            tasksList.innerHTML = `<p class="text-red-500">Error al cargar tareas: ${error.message}</p>`;
+            tasksList.innerHTML = `<p class="text-red-500">Error al cargar actividades: ${error.message}</p>`;
         }
     }
 
@@ -42,28 +62,38 @@ document.addEventListener('DOMContentLoaded', () => {
             let feedbackHtml = '';
             let actionButtonHtml = '';
 
-            // Comprobar si la tarea tiene una entrega
-            if (activity.entrega) {
-                // Si hay entrega, mostrar el estado y la calificación
-                const statusColor = activity.entrega.estado === 'Revisada' ? 'text-green-600' : (activity.entrega.estado === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
-                feedbackHtml = `
-                    <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                        <h4 class="font-bold text-md">Estado de tu Entrega:</h4>
-                        <p class="font-semibold ${statusColor}">${activity.entrega.estado}</p>
-                        ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
-                        ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
-                    </div>
-                `;
-            } else {
-                // Si no hay entrega, mostrar el botón para entregar
-                actionButtonHtml = `<button class="bg-blue-500 text-white px-4 py-2 rounded-lg open-submission-modal" data-task-id="${activity.tareaId}" data-task-title="${activity.titulo}">Entregar</button>`;
+            if (activity.type === 'Tarea') {
+                if (activity.entrega) {
+                    const statusColor = activity.entrega.estado === 'Revisada' ? 'text-green-600' : (activity.entrega.estado === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    feedbackHtml = `
+                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                            <h4 class="font-bold text-md">Estado de tu Entrega:</h4>
+                            <p class="font-semibold ${statusColor}">${activity.entrega.estado}</p>
+                            ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
+                            ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
+                        </div>`;
+                } else {
+                    actionButtonHtml = `<button class="bg-blue-500 text-white px-4 py-2 rounded-lg open-submission-modal" data-task-id="${activity.tareaId}" data-task-title="${activity.titulo}">Entregar Tarea</button>`;
+                }
+            } else if (activity.type === 'Examen') {
+                // Lógica para exámenes
+                 if (activity.entrega) {
+                    feedbackHtml = `
+                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                            <h4 class="font-bold text-md">Estado de tu Examen:</h4>
+                            <p class="font-semibold text-green-600">Completado</p>
+                            <p><strong>Calificación:</strong> ${activity.entrega.calificacionTotal}</p>
+                        </div>`;
+                } else {
+                    actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="bg-purple-500 text-white px-4 py-2 rounded-lg">Realizar Examen</a>`;
+                }
             }
 
             return `
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-xl font-bold">${activity.titulo}</h3>
+                            <h3 class="text-xl font-bold">${activity.titulo} <span class="text-sm font-normal text-gray-500">(${activity.type})</span></h3>
                             <p class="text-sm text-gray-500 mb-2"><strong>Asignatura:</strong> ${activity.asignatura || 'No especificada'}</p>
                         </div>
                         <span class="text-sm font-semibold text-gray-600">${activity.fechaLimite}</span>
@@ -137,5 +167,5 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(file);
     });
 
-    fetchStudentTasks(); // Carga inicial
+    fetchAllActivities(); // Carga inicial
 });

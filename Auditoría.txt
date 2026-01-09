@@ -1,16 +1,35 @@
-**Archivo: teacher-dashboard.html**
+**AUDITORÍA INICIAL - 08/01/2026**
 
-*   **Componente: Formulario de Creación de Examen (`#create-exam-form`)**
-    *   **Hallazgo:** El formulario y sus elementos principales están correctamente definidos.
-    *   **ID del Formulario:** `create-exam-form`
-    *   **Contenedor de Preguntas:** Existe un `div` con ID `questions-container`, destinado a albergar las preguntas dinámicas.
-    *   **Botón de Añadir Pregunta:** Existe un botón con ID `add-question-btn`, claramente identificado para añadir nuevas preguntas.
-    *   **Botón de Guardar:** Existe un botón `type="submit"` dentro del formulario para guardar el examen.
-    *   **Observación:** La estructura HTML está completa y es adecuada para la funcionalidad requerida. No se observan errores estructurales. La lógica faltante reside en el archivo JavaScript asociado.
+**1. Botones de Cerrar Sesión**
 
-**Archivo: js/teacher.js**
+*   **Archivo: `teacher-dashboard.html`**
+    *   **Hallazgo:** El botón de cerrar sesión existe y tiene el ID `logout-button`.
+    *   **Referencia:** `teacher-dashboard.html`, Línea 15.
 
-*   **Componente: Lógica de Creación de Examen**
-    *   **Hallazgo 1 (Botón sin acción):** No existe un `addEventListener` para el elemento `add-question-btn`. Esto confirma por qué el botón no realiza ninguna acción al ser presionado.
-    *   **Hallazgo 2 (Error al guardar):** El `addEventListener` para el evento `submit` del formulario `createExamForm` está presente, pero la lógica para recolectar los datos está incompleta. La variable `payload` se inicializa como un objeto vacío (`{}`) y se envía directamente a la API. Esto causa el error `forEach` en el backend, ya que el servicio espera un array de `preguntas` que no existe en el payload.
-    *   **Observación:** El archivo está en el estado original reportado en la tarea, con la funcionalidad de añadir preguntas y guardar el examen rota.
+*   **Archivo: `student-dashboard.html`**
+    *   **Hallazgo:** El botón de cerrar sesión existe y tiene el ID `logout-button`.
+    *   **Referencia:** `student-dashboard.html`, Línea 14.
+
+*   **Archivo: `js/teacher.js`**
+    *   **Hallazgo:** El `addEventListener` para `logout-button` **está presente y es correcto**. La funcionalidad parece estar implementada. El reporte del bug puede ser incorrecto para este archivo.
+    *   **Referencia:** `js/teacher.js`, Líneas 41-44.
+
+*   **Archivo: `js/student.js`**
+    *   **Hallazgo:** No se recupera el elemento `logout-button` del DOM y no existe ningún `addEventListener` para él. **Esto confirma el bug**.
+    *   **Referencia:** `js/student.js`, (ausente).
+
+**2. Visibilidad de Exámenes para Estudiantes**
+
+*   **Archivo: `js/student.js`**
+    *   **Hallazgo:** La función `fetchStudentTasks` solo realiza una llamada a la API para obtener tareas (`'TASK', 'getStudentTasks'`). No hay ninguna llamada para obtener exámenes.
+    *   **Hallazgo:** La función `renderActivities` está diseñada exclusivamente para renderizar tareas y no contiene lógica para manejar o mostrar exámenes.
+    *   **Observación:** **Esto confirma el bug**. El dashboard del estudiante no tiene la capacidad de solicitar ni mostrar exámenes.
+    *   **Referencia:** `js/student.js`, Líneas 30-43 (fetch) y 45-91 (render).
+
+**3. Conexión del `index.html` al Portal de Login**
+
+*   **Archivo: `index.html`**
+    *   **Hallazgo:** No existe un botón o enlace explícito de "Login" o "Portal". El enlace más apropiado para esta función es el logo y el título principal en la cabecera.
+    *   **Hallazgo:** Actualmente, el enlace del logo (`<a>`) apunta a `index.html`.
+    *   **Observación:** **Esto confirma la tarea**. Es necesario cambiar el `href` de este enlace para que apunte a `login.html`.
+    *   **Referencia:** `index.html`, Línea 201.
