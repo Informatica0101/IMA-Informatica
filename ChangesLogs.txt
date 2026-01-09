@@ -2,6 +2,11 @@ Registro de cambios de IMA - Area de Informática V 2.0
 
 En este archivo se regustrara el historial de cambios del proyecto. 
 
+09/01/2026
+- Archivo: index.html, Línea(s): 203, 250
+  - Se añadió un enlace "Portal" a la barra de navegación principal (vista de escritorio y móvil) para dirigir a los usuarios a `login.html`.
+  - Se revirtió el cambio anterior que enlazaba incorrectamente el logo principal a `login.html`.
+
 08/01/2026
 - Archivo: js/teacher.js, Línea(s): 158-297
   - Se implementó la funcionalidad completa para añadir, eliminar y gestionar preguntas dinámicamente en el formulario de creación de exámenes.

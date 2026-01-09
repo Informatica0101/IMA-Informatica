@@ -30,7 +30,7 @@
 
 *   **Archivo: `index.html`**
     *   **Hallazgo:** Tras la revisión del usuario, se ha determinado que la solución inicial de enlazar el logo no es la deseada.
-    *   **Requerimiento:** Se debe agregar un **nuevo botón dedicado** con el texto "Login" o "Portal" en la barra de navegación del encabezado.
-    *   **Ubicación (Desktop):** El nuevo botón debe situarse dentro de la etiqueta `<nav class="hidden md:flex space-x-6">`.
-    *   **Ubicación (Móvil):** Se debe añadir un enlace correspondiente en el menú de navegación móvil, dentro de `<nav class="flex flex-col space-y-5 mt-12 w-full px-5">`.
+    *   **Requerimiento:** Se debe agregar un **nuevo botón dedicado** con el texto "Portal" en la barra de navegación del encabezado, que enlace a `login.html`.
+    *   **Ubicación (Desktop):** El nuevo botón debe situarse en la línea 203, dentro de la etiqueta `<nav>`, después del enlace "Inicio".
+    *   **Ubicación (Móvil):** El nuevo enlace debe situarse en la línea 250, dentro de la etiqueta `<nav>` del menú móvil, después del enlace "Inicio".
     *   **Observación:** La tarea se confirma con este nuevo enfoque. La implementación anterior fue revertida.
