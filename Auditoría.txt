@@ -26,10 +26,11 @@
     *   **Observación:** **Esto confirma el bug**. El dashboard del estudiante no tiene la capacidad de solicitar ni mostrar exámenes.
     *   **Referencia:** `js/student.js`, Líneas 30-43 (fetch) y 45-91 (render).
 
-**3. Conexión del `index.html` al Portal de Login**
+**3. Conexión del `index.html` al Portal de Login (Corrección Post-Revisión)**
 
 *   **Archivo: `index.html`**
-    *   **Hallazgo:** No existe un botón o enlace explícito de "Login" o "Portal". El enlace más apropiado para esta función es el logo y el título principal en la cabecera.
-    *   **Hallazgo:** Actualmente, el enlace del logo (`<a>`) apunta a `index.html`.
-    *   **Observación:** **Esto confirma la tarea**. Es necesario cambiar el `href` de este enlace para que apunte a `login.html`.
-    *   **Referencia:** `index.html`, Línea 201.
+    *   **Hallazgo:** Tras la revisión del usuario, se ha determinado que la solución inicial de enlazar el logo no es la deseada.
+    *   **Requerimiento:** Se debe agregar un **nuevo botón dedicado** con el texto "Login" o "Portal" en la barra de navegación del encabezado.
+    *   **Ubicación (Desktop):** El nuevo botón debe situarse dentro de la etiqueta `<nav class="hidden md:flex space-x-6">`.
+    *   **Ubicación (Móvil):** Se debe añadir un enlace correspondiente en el menú de navegación móvil, dentro de `<nav class="flex flex-col space-y-5 mt-12 w-full px-5">`.
+    *   **Observación:** La tarea se confirma con este nuevo enfoque. La implementación anterior fue revertida.
