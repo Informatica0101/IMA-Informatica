@@ -214,6 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addQuestion() {
+        console.log('Add question button clicked');
         questionCounter++;
         const questionNode = document.createElement('div');
         questionNode.innerHTML = getQuestionHTML(questionCounter);
@@ -243,14 +244,9 @@ document.addEventListener('DOMContentLoaded', () => {
         createExamForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const examData = new FormData(createExamForm);
+            const mainData = Object.fromEntries(new FormData(e.target).entries());
             const payload = {
-                titulo: examData.get('titulo'),
-                asignatura: examData.get('asignatura'),
-                gradoAsignado: examData.get('gradoAsignado'),
-                seccionAsignada: examData.get('seccionAsignada'),
-                fechaLimite: examData.get('fechaLimite'),
-                tiempoLimite: examData.get('tiempoLimite'),
+                ...mainData,
                 preguntas: []
             };
 

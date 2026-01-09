@@ -47,7 +47,8 @@ function doPost(e) {
       case "getExamQuestions": result = getExamQuestions(payload); break;
       case "submitExam": result = submitExam(payload); break;
       case "reactivateExam": result = reactivateExam(payload); break;
-      case "getTeacherExamActivity": result = getTeacherExamActivity(); break; // Nuevo endpoint
+      case "getTeacherExamActivity": result = getTeacherExamActivity(); break;
+      case "getStudentExams": result = getStudentExams(payload); break; // Nuevo endpoint para estudiantes
       default:
         result = { status: "error", message: `Acción no reconocida en Exam-Service: ${action}` };
     }
@@ -62,7 +63,7 @@ function doPost(e) {
 
 // --- LÓGICA DEL SERVICIO ---
 function createExam(payload) {
-  const { titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tiempoLimite, preguntas } = payload;
+  const { titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tiempoLimite, preguntas = [] } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const examenesSheet = getSheetOrThrow(ss, "Examenes");
   const preguntasSheet = getSheetOrThrow(ss, "PreguntasExamen");
@@ -149,6 +150,41 @@ function getTeacherExamActivity() {
         };
     });
     return { status: "success", data: examSubmissions };
+}
+
+function getStudentExams(payload) {
+    const { userId, grado, seccion } = payload;
+    if (!userId || !grado || !seccion) {
+        throw new Error("Faltan parámetros requeridos (userId, grado, seccion).");
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const examenesSheet = getSheetOrThrow(ss, "Examenes");
+    const entregasSheet = getSheetOrThrow(ss, "EntregasExamen");
+
+    const todosLosExamenes = examenesSheet.getDataRange().getValues().slice(1);
+    const todasLasEntregas = entregasSheet.getDataRange().getValues().slice(1);
+
+    const examenesAsignados = todosLosExamenes.filter(examen => {
+        const gradoAsignado = examen[3];
+        const seccionAsignada = examen[4];
+        return gradoAsignado === grado && (seccionAsignada === seccion || seccionAsignada === '');
+    });
+
+    const examenesConEstado = examenesAsignados.map(examen => {
+        const examenId = examen[0];
+        const entrega = todasLasEntregas.find(e => e[1] === examenId && e[2] === userId);
+
+        return {
+            examenId: examenId,
+            titulo: examen[1],
+            asignatura: examen[2],
+            fechaLimite: examen[5],
+            estado: entrega ? entrega[6] : "Pendiente" // Si hay entrega, usa su estado, si no, "Pendiente"
+        };
+    });
+
+    return { status: "success", data: examenesConEstado };
 }
 
 
