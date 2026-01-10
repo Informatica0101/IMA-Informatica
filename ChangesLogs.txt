@@ -29,3 +29,7 @@ En este archivo se regustrara el historial de cambios del proyecto.
 07/01/2026 
 -Se creo los archicos README.md, Instrucciones.txt y Changeslogs.txt 
 - Archivos relacionados README.md, Instrucciones.txt y Changeslogs.txt. 
+
+09/01/2026
+- Archivo: js/exam.js, Línea(s): ~37
+  - Se realizó una investigación y diagnóstico del error "renderQuestion is not defined". Se determinó que la función `renderQuestion` es invocada en la función `loadExam` pero no se encuentra definida en el archivo, lo que interrumpe la carga de las preguntas del examen.

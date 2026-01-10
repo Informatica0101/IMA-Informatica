@@ -363,6 +363,13 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**Archivo: js/exam.js**
+
+*   **Componente: Carga de Examen (Diagnóstico)**
+    *   **Problema:** Error crítico "renderQuestion is not defined" impide la carga de exámenes para estudiantes.
+    *   **Descripción:** Se ha completado la investigación y diagnóstico del error. Se confirmó que la función `renderQuestion` es llamada pero no está definida en `js/exam.js`. Los hallazgos detallados se han registrado en `Auditoría.txt` y `ChangesLogs.txt`.
+    *   **Referencia:** Auditoría.txt, Archivo: js/exam.js, Línea(s): ~37
+
 **Archivo: index.html**
 
 *   **Componente: Enlace al Portal de Login (Corrección)**

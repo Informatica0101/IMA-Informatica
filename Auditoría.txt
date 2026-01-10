@@ -649,3 +649,12 @@
 - Descripción detallada del problema: Las funciones que interactúan con la hoja de cálculo "Examenes" utilizan índices de columna hardcodeados (ej. `getRange(i + 1, 8)` para actualizar el estado).
 - Impacto potencial: Si la estructura de la hoja de cálculo cambia en el futuro (se añade, elimina o reordena una columna), estas funciones fallarán o, peor aún, corromperán los datos al escribir en la columna equivocada.
 - Solución (Recomendación): Refactorizar estas funciones para que lean la fila de encabezados y accedan a las columnas por su nombre en lugar de por su índice numérico, lo que las haría más resistentes a los cambios estructurales.
+
+- Archivo: js/exam.js
+- Ruta completa: /js/exam.js
+- Función / método / bloque afectado: loadExam
+- Línea(s) involucrada(s): 37 (aproximadamente, donde se llama a .map(renderQuestion))
+- Tipo de problema: Error Crítico de Referencia (ReferenceError)
+- Descripción detallada del problema: La función `loadExam` intenta procesar el array de preguntas (`originalQuestions`) utilizando `originalQuestions.map(renderQuestion)`. Sin embargo, la función `renderQuestion` no está definida, declarada ni importada en ninguna parte del archivo `js/exam.js`. La ejecución del script se detiene en este punto debido a un `ReferenceError: renderQuestion is not defined`.
+- Impacto potencial: Crítico. Impide completamente la renderización de las preguntas del examen. El estudiante ve un mensaje de "Error al cargar el examen" en lugar del contenido del mismo, bloqueando por completo la capacidad de realizar cualquier examen.
+- Dependencias afectadas: exam.html, flujo de realización de exámenes para el rol de estudiante.
