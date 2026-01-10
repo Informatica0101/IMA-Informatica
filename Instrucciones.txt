@@ -363,6 +363,13 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**Configuración de Microservicios (Actualización de URLs)**
+
+*   **Componente: Configuración del Frontend**
+    *   **Problema:** Las URLs de los microservicios de backend (`TASK` y `EXAM`) cambiaron después de un redespliegue.
+    *   **Descripción:** Se ha actualizado el archivo `js/config.js` con las nuevas URLs proporcionadas para los servicios de tareas y exámenes para asegurar que el frontend se comunique con los endpoints correctos.
+    *   **Referencia:** ChangesLogs.txt (11/01/2026).
+
 **Dashboard de Profesor (Filtrado de Actividades)**
 
 *   **Componente: Interfaz de Usuario y Lógica de Cliente**
