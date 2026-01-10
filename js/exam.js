@@ -100,7 +100,104 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ... (El resto de las funciones: renderQuestion, startTimer, requestFullScreen, etc. no necesitan cambios)
+    function renderQuestion(pregunta, index) {
+        // Extrae los datos de la pregunta
+        const { preguntaId, preguntaTipo, textoPregunta, opciones } = pregunta;
+        let optionsHtml = '';
+
+        // Las opciones pueden venir como un string JSON, se parsean para usarlas.
+        let parsedOpciones = [];
+        if (typeof opciones === 'string' && opciones.trim().startsWith('{')) {
+            try {
+                parsedOpciones = JSON.parse(opciones);
+            } catch (e) {
+                console.error(`Error al parsear opciones para la pregunta ${preguntaId}:`, opciones);
+            }
+        } else if (typeof opciones === 'string' && opciones.trim().startsWith('[')) {
+             try {
+                parsedOpciones = JSON.parse(opciones);
+            } catch (e) {
+                console.error(`Error al parsear opciones para la pregunta ${preguntaId}:`, opciones);
+            }
+        }
+        else if (Array.isArray(opciones)) {
+            parsedOpciones = opciones;
+        }
+
+        // Construye el HTML para cada tipo de pregunta
+        switch (preguntaTipo) {
+            case 'opcion_multiple':
+                optionsHtml = parsedOpciones.map(op => `
+                    <label class="block p-2 rounded hover:bg-gray-100 cursor-pointer">
+                        <input type="radio" name="question_${preguntaId}" value="${op}" class="mr-3">
+                        ${op}
+                    </label>
+                `).join('');
+                break;
+
+            case 'verdadero_falso':
+                optionsHtml = `
+                    <label class="block p-2 rounded hover:bg-gray-100 cursor-pointer">
+                        <input type="radio" name="question_${preguntaId}" value="Verdadero" class="mr-3">
+                        Verdadero
+                    </label>
+                    <label class="block p-2 rounded hover:bg-gray-100 cursor-pointer">
+                        <input type="radio" name="question_${preguntaId}" value="Falso" class="mr-3">
+                        Falso
+                    </label>
+                `;
+                break;
+
+            case 'completacion':
+            case 'respuesta_breve':
+                optionsHtml = `<input type="text" name="question_${preguntaId}" class="w-full mt-2 p-2 border rounded-md" placeholder="Escribe tu respuesta aquí">`;
+                break;
+
+            case 'termino_pareado':
+                const colA = parsedOpciones.columnA || [];
+                const colB = parsedOpciones.columnB ? [...parsedOpciones.columnB].sort(() => Math.random() - 0.5) : []; // Mezclar columna B
+
+                optionsHtml = `
+                    <div class="flex flex-col md:flex-row gap-8 mt-2">
+                        <div class="flex-1">
+                            <h4 class="font-semibold mb-2 border-b pb-1">Columna A - Términos</h4>
+                            <ul class="list-decimal list-inside space-y-2 pl-2">
+                                ${colA.map(term => `<li>${term}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold mb-2 border-b pb-1">Columna B - Definiciones</h4>
+                            <div class="space-y-3">
+                                ${colB.map((definition, idx) => `
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" name="question_${preguntaId}_${idx}" class="w-12 border rounded p-1 text-center" placeholder="#">
+                                        <p>${definition}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-4"><b>Instrucción:</b> Escribe el número del término de la Columna A que corresponde a cada definición de la Columna B.</p>
+                `;
+                break;
+
+            default:
+                // Si el tipo de pregunta no es reconocido, muestra un mensaje de error.
+                return `<div class="question-block p-4 border rounded bg-red-100" data-question-id="${preguntaId}" data-question-type="${preguntaTipo}">
+                    <p class="font-bold">${index + 1}. Tipo de pregunta no soportado: ${preguntaTipo}</p>
+                </div>`;
+        }
+
+        // Devuelve el bloque de HTML completo para la pregunta
+        return `
+            <div class="question-block p-6 border-b" data-question-id="${preguntaId}" data-question-type="${preguntaTipo}">
+                <p class="font-semibold mb-4 text-gray-800">${index + 1}. ${textoPregunta}</p>
+                <div class="space-y-2 text-gray-700">
+                    ${optionsHtml}
+                </div>
+            </div>
+        `;
+    }
 
     examForm.addEventListener('submit', (e) => {
         e.preventDefault();

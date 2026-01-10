@@ -33,3 +33,15 @@ En este archivo se regustrara el historial de cambios del proyecto.
 09/01/2026
 - Archivo: js/exam.js, Línea(s): ~37
   - Se realizó una investigación y diagnóstico del error "renderQuestion is not defined". Se determinó que la función `renderQuestion` es invocada en la función `loadExam` pero no se encuentra definida en el archivo, lo que interrumpe la carga de las preguntas del examen.
+
+09/01/2026
+- Archivo: js/exam.js, Línea(s): 102-182
+  - Se implementó la función `renderQuestion(pregunta, index)` que faltaba. La función utiliza un `switch` para generar el HTML apropiado para los diferentes tipos de pregunta ('opcion_multiple', 'verdadero_falso', 'completacion', 'respuesta_breve', 'termino_pareado'), solucionando el error 'renderQuestion is not defined' que impedía la carga de los exámenes.
+
+09/01/2026
+- Archivo: js/exam.js, Línea(s): 194
+  - Se eliminó un carácter de barra invertida (`\`) que causaba un error de sintaxis en la definición de una plantilla de cadena en la función `renderQuestion`. Este cambio permite que el script se analice y ejecute correctamente.
+
+09/01/2026
+- Archivo: js/exam.js, Línea(s): 192-194
+  - Se eliminaron caracteres de escape (`\`) inválidos de una plantilla de cadena en el `case default` de la función `renderQuestion`, corrigiendo un bug menor introducido durante la implementación inicial.
