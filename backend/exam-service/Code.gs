@@ -51,6 +51,7 @@ function doPost(e) {
       case "updateExamStatus": result = updateExamStatus(payload); break;
       case "getAllExams": result = getAllExams(); break;
       case "getStudentExams": result = getStudentExams(payload); break;
+      case "getExamResult": result = getExamResult(payload); break;
       default:
         result = { status: "error", message: `Acción no reconocida en Exam-Service: ${action}` };
     }
@@ -230,6 +231,45 @@ function getStudentExams(payload) {
     return { status: "success", data: examenesConEstado };
 }
 
+
+function getExamResult(payload) {
+    const { entregaExamenId } = payload;
+    if (!entregaExamenId) {
+        throw new Error("Falta el ID de la entrega del examen.");
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const entregasSheet = getSheetOrThrow(ss, "EntregasExamen");
+    const examenesSheet = getSheetOrThrow(ss, "Examenes");
+
+    const entregasData = entregasSheet.getDataRange().getValues();
+    const examenesData = examenesSheet.getDataRange().getValues();
+
+    const entrega = entregasData.find(row => row[0] === entregaExamenId);
+
+    if (!entrega) {
+        throw new Error("No se encontraron los resultados para la entrega especificada.");
+    }
+
+    const examenId = entrega[1];
+    const examen = examenesData.find(row => row[0] === examenId);
+    const examenTitulo = examen ? examen[1] : "Título no encontrado";
+
+    const resultadosDetallados = JSON.parse(entrega[4] || '[]');
+
+    return {
+        status: "success",
+        data: {
+            entregaExamenId: entrega[0],
+            examenId: examenId,
+            examenTitulo: examenTitulo,
+            userId: entrega[2],
+            fecha: entrega[3],
+            resultadosDetallados: resultadosDetallados,
+            calificacionTotal: entrega[5]
+        }
+    };
+}
 
 // --- HELPERS ---
 function normalizeString(str) {
