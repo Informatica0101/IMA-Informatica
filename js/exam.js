@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const examenId = urlParams.get('examenId');
     let originalQuestions = [];
+    let blurCount = 0;
+    const BLUR_LIMIT = 3;
 
     // --- API Helper ---
     async function fetchApi(service, action, payload) {
@@ -19,6 +21,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         return await response.json();
     }
+
+    // --- Lógica Anti-Trampas ---
+    function requestFullScreen() {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(err => {
+                // Not a critical error if it fails, but good to know.
+                console.warn(`Error al intentar entrar en pantalla completa: ${err.message} (${err.name})`);
+            });
+        }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            blurCount++;
+            alert(`Has cambiado de pestaña/ventana. Advertencia ${blurCount} de ${BLUR_LIMIT}. Si lo haces de nuevo, el examen se bloqueará.`);
+            if (blurCount >= BLUR_LIMIT) {
+                submitExam(true); // Bloquear el examen
+            }
+        }
+    });
 
     // --- Lógica del Examen ---
     async function loadExam() {
@@ -34,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (tiempoLimite) {
                     // ... (lógica de timer sin cambios)
                 }
-                // ... (lógica de fullscreen sin cambios)
+                requestFullScreen();
             } else { throw new Error(result.message); }
         } catch (error) {
             questionsContainer.innerHTML = `<p class="text-red-500">Error al cargar el examen: ${error.message}</p>`;

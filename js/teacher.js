@@ -46,12 +46,30 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchTeacherActivity() {
         submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">Cargando actividad...</td></tr>';
         try {
-            const [tasksResult, examsResult] = await Promise.all([
+            const [taskSubmissions, examSubmissions, allExams] = await Promise.all([
                 fetchApi('TASK', 'getTeacherActivity', {}),
-                fetchApi('EXAM', 'getTeacherExamActivity', {})
+                fetchApi('EXAM', 'getTeacherExamActivity', {}),
+                fetchApi('EXAM', 'getAllExams', {}) // Endpoint para obtener todos los exámenes base
             ]);
-            const allActivity = [...(tasksResult.data || []), ...(examsResult.data || [])];
-            allActivity.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+            console.log("Task Submissions:", taskSubmissions);
+            console.log("Exam Submissions:", examSubmissions);
+            console.log("All Exams:", allExams);
+
+            const submissions = [...(taskSubmissions.data || []), ...(examSubmissions.data || [])];
+
+            // Mapear las entregas a sus IDs de examen para no mostrarlos duplicados
+            const submittedExamIds = new Set((examSubmissions.data || []).map(s => s.examenId));
+
+            // Filtrar los exámenes base para mostrar solo aquellos sin entregas
+            const examsWithoutSubmissions = (allExams.data || []).filter(exam => !submittedExamIds.has(exam.examenId));
+
+            // Combinar las entregas con los exámenes que aún no tienen entregas
+            const allActivity = [...submissions, ...examsWithoutSubmissions];
+
+            console.log("Final Activity List:", allActivity);
+
+            allActivity.sort((a, b) => new Date(b.fecha || b.fechaLimite) - new Date(a.fecha || a.fechaLimite));
             renderActivity(allActivity);
         } catch (error) {
             submissionsTableBody.innerHTML = `<tr><td colspan="7" class="text-center p-4 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
@@ -65,19 +83,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         submissionsTableBody.innerHTML = activity.map(item => {
             let actionHtml = '';
-            if (item.tipo === 'Tarea') {
-                actionHtml = `<button class="bg-blue-500 text-white px-2 py-1 rounded text-sm grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
-            } else if (item.tipo === 'Examen' && item.estado === 'Bloqueado') {
-                actionHtml = `<button class="bg-yellow-500 text-white px-2 py-1 rounded text-sm reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>`;
+            // Si el item tiene `alumnoNombre`, es una entrega. Si no, es un examen base.
+            if (item.alumnoNombre) {
+                if (item.tipo === 'Tarea') {
+                    actionHtml = `<button class="bg-blue-500 text-white px-2 py-1 rounded text-sm grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
+                } else if (item.tipo === 'Examen' && item.estado === 'Bloqueado') {
+                    actionHtml = `<button class="bg-yellow-500 text-white px-2 py-1 rounded text-sm reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>`;
+                }
+            } else if (item.tipo === 'Examen') {
+                // Es un examen sin entregas, mostrar botones de control
+                const isActivo = item.estado === 'Activo';
+                const isBloqueado = item.estado === 'Bloqueado';
+                actionHtml = `
+                    <div class="flex space-x-2">
+                        <button class="bg-green-500 text-white px-2 py-1 rounded text-sm activate-exam-btn" data-examen-id="${item.examenId}" ${isActivo ? 'disabled' : ''}>Activar</button>
+                        <button class="bg-red-500 text-white px-2 py-1 rounded text-sm lock-exam-btn" data-examen-id="${item.examenId}" ${isBloqueado ? 'disabled' : ''}>Bloquear</button>
+                    </div>
+                `;
             }
+
             return `
                 <tr class="border-b">
-                    <td class="p-4">${item.alumnoNombre}</td>
+                    <td class="p-4">${item.alumnoNombre || '<em>N/A</em>'}</td>
                     <td class="p-4">${item.titulo}</td>
-                    <td class="p-4">${item.fecha}</td>
-                    <td class="p-4">${item.archivoUrl ? `<a href="${item.archivoUrl}" target="_blank" class="text-blue-500">Ver Archivo</a>` : 'N/A'}</td>
-                    <td class="p-4">${item.calificacion || 'N/A'}</td>
-                    <td class="p-4">${item.estado || 'Pendiente'}</td>
+                    <td class="p-4">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
+                    <td class="p-4">${item.archivoUrl ? `<a href="${item.archivoUrl}" target="_blank" class="text-blue-500">Ver Archivo</a>` : '<em>N/A</em>'}</td>
+                    <td class="p-4">${item.calificacion || '<em>N/A</em>'}</td>
+                    <td class="p-4">${item.estado || '<em>Pendiente</em>'}</td>
                     <td class="p-4">${actionHtml}</td>
                 </tr>`;
         }).join('');
@@ -125,16 +157,48 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Delegación de Eventos para la Tabla ---
     submissionsTableBody.addEventListener('click', async (e) => {
         const target = e.target;
+
+        // Calificar Tarea
         if (target.classList.contains('grade-task-btn')) {
             openGradeModal(JSON.parse(target.dataset.item));
         }
+
+        // Reactivar Examen de una entrega específica
         if (target.classList.contains('reactivate-exam-btn')) {
             const entregaId = target.dataset.entregaId;
-            if (confirm("¿Reactivar este examen?")) {
+            if (confirm("¿Reactivar este examen para este alumno?")) {
                 try {
                     const result = await fetchApi('EXAM', 'reactivateExam', { entregaExamenId: entregaId });
                     if (result.status === 'success') {
                         alert('Examen reactivado.');
+                        fetchTeacherActivity();
+                    } else { throw new Error(result.message); }
+                } catch (error) { alert(`Error: ${error.message}`); }
+            }
+        }
+
+        // Activar un examen para todos
+        if (target.classList.contains('activate-exam-btn')) {
+            const examenId = target.dataset.examenId;
+            if (confirm("¿Activar este examen para todos los alumnos asignados?")) {
+                try {
+                    const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Activo' });
+                    if (result.status === 'success') {
+                        alert('Examen activado.');
+                        fetchTeacherActivity();
+                    } else { throw new Error(result.message); }
+                } catch (error) { alert(`Error: ${error.message}`); }
+            }
+        }
+
+        // Bloquear un examen para todos
+        if (target.classList.contains('lock-exam-btn')) {
+            const examenId = target.dataset.examenId;
+            if (confirm("¿Bloquear este examen para todos los alumnos?")) {
+                try {
+                    const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Bloqueado' });
+                    if (result.status === 'success') {
+                        alert('Examen bloqueado.');
                         fetchTeacherActivity();
                     } else { throw new Error(result.message); }
                 } catch (error) { alert(`Error: ${error.message}`); }

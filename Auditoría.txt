@@ -1,36 +1,651 @@
-**AUDITORÍA INICIAL - 08/01/2026**
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: Global
+- Línea(s) involucrada(s): 2-3
+- Tipo de problema: Arquitectura, Configuración
+- Descripción detallada del problema: Los IDs de la hoja de cálculo (SPREADSHEET_ID) y la carpeta de Drive (DRIVE_FOLDER_ID) están hardcodeados como constantes globales.
+- Impacto potencial: Si se necesita cambiar la hoja de cálculo o la carpeta de destino (por ejemplo, para un entorno de pruebas o una nueva versión), es necesario modificar el código fuente y volver a desplegar el script. Esto aumenta el riesgo de errores y dificulta la gestión de la configuración.
+- Dependencias afectadas: Todas las funciones que dependen de `ss` o `DRIVE_FOLDER_ID`.
 
-**1. Botones de Cerrar Sesión**
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: doPost
+- Línea(s) involucrada(s): 74-75
+- Tipo de problema: Seguridad, Manejo de Errores
+- Descripción detallada del problema: El bloque `catch` general captura cualquier error y devuelve su mensaje directamente al cliente a través de `error.toString()`.
+- Impacto potencial: Esto puede exponer detalles sensibles de la implementación interna, trazas de pila (stack traces) o mensajes de error del sistema (ej. "Límite de tiempo de ejecución de Apps Script excedido") que podrían ser utilizados por un atacante para entender mejor la arquitectura del backend.
+- Dependencias afectadas: Todas las llamadas de cliente desde el frontend.
 
-*   **Archivo: `teacher-dashboard.html`**
-    *   **Hallazgo:** El botón de cerrar sesión existe y tiene el ID `logout-button`.
-    *   **Referencia:** `teacher-dashboard.html`, Línea 15.
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: registerUser
+- Línea(s) involucrada(s): 81-83
+- Tipo de problema: Seguridad
+- Descripción detallada del problema: La contraseña se hashea usando SHA-256 pero sin la adición de un "salt" (una cadena aleatoria única para cada usuario).
+- Impacto potencial: Si la base de datos de usuarios se viera comprometida, un atacante podría usar tablas precalculadas (rainbow tables) para encontrar las contraseñas originales de forma mucho más eficiente.
+- Dependencias afectadas: Flujo de registro y autenticación.
 
-*   **Archivo: `student-dashboard.html`**
-    *   **Hallazgo:** El botón de cerrar sesión existe y tiene el ID `logout-button`.
-    *   **Referencia:** `student-dashboard.html`, Línea 14.
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: registerUser
+- Línea(s) involucrada(s): 80
+- Tipo de problema: Robustez
+- Descripción detallada del problema: El ID de usuario se genera usando `new Date().getTime()`.
+- Impacto potencial: Aunque es poco probable, si dos usuarios se registran en el mismo milisegundo, podrían obtener el mismo ID, causando colisiones de datos y comportamiento inesperado. No garantiza unicidad absoluta.
+- Dependencias afectadas: Cualquier lógica que dependa de la unicidad del `userId`.
 
-*   **Archivo: `js/teacher.js`**
-    *   **Hallazgo:** El `addEventListener` para `logout-button` **está presente y es correcto**. La funcionalidad parece estar implementada. El reporte del bug puede ser incorrecto para este archivo.
-    *   **Referencia:** `js/teacher.js`, Líneas 41-44.
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: registerUser
+- Línea(s) involucrada(s): 79
+- Tipo de problema: Validación
+- Descripción detallada del problema: La función no valida que los campos del `payload` (nombre, grado, seccion, email, password) no estén vacíos, nulos o que tengan un formato adecuado (ej. email válido).
+- Impacto potencial: Se pueden insertar en la base de datos (Google Sheet) registros incompletos o con datos malformados, lo que podría causar errores en otras partes de la aplicación (ej. en el login, al crear carpetas en Drive, etc.).
+- Dependencias afectadas: Hoja `Usuarios`, funciones `loginUser`, `submitAssignment`.
 
-*   **Archivo: `js/student.js`**
-    *   **Hallazgo:** No se recupera el elemento `logout-button` del DOM y no existe ningún `addEventListener` para él. **Esto confirma el bug**.
-    *   **Referencia:** `js/student.js`, (ausente).
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: registerUser
+- Línea(s) involucrada(s): 85
+- Tipo de problema: Lógico, Validación
+- Descripción detallada del problema: No se verifica si ya existe un usuario registrado con el mismo `email` antes de insertar la nueva fila.
+- Impacto potencial: Permite la creación de múltiples cuentas con el mismo correo electrónico, lo que puede causar confusión en el login, ya que la función `loginUser` devolverá la primera cuenta que encuentre.
+- Dependencias afectadas: Hoja `Usuarios`, función `loginUser`.
 
-**2. Visibilidad de Exámenes para Estudiantes**
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: loginUser
+- Línea(s) involucrada(s): 92-93
+- Tipo de problema: Rendimiento
+- Descripción detallada del problema: La función carga la hoja completa de `Usuarios` en memoria (`getDataRange().getValues()`) y luego itera sobre todas las filas para encontrar una coincidencia.
+- Impacto potencial: A medida que el número de usuarios crezca, esta operación se volverá cada vez más lenta, pudiendo exceder los límites de tiempo de ejecución de Google Apps Script y haciendo que el login falle o sea muy lento para todos.
+- Dependencias afectadas: Flujo de login.
 
-*   **Archivo: `js/student.js`**
-    *   **Hallazgo:** La función `fetchStudentTasks` solo realiza una llamada a la API para obtener tareas (`'TASK', 'getStudentTasks'`). No hay ninguna llamada para obtener exámenes.
-    *   **Hallazgo:** La función `renderActivities` está diseñada exclusivamente para renderizar tareas y no contiene lógica para manejar o mostrar exámenes.
-    *   **Observación:** **Esto confirma el bug**. El dashboard del estudiante no tiene la capacidad de solicitar ni mostrar exámenes.
-    *   **Referencia:** `js/student.js`, Líneas 30-43 (fetch) y 45-91 (render).
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: createTask
+- Línea(s) involucrada(s): 112
+- Tipo de problema: Validación
+- Descripción detallada del problema: La función no realiza ninguna validación sobre los datos del `payload` antes de crear la tarea.
+- Impacto potencial: Se pueden crear tareas con campos vacíos (título, descripción, etc.) o con formatos de fecha incorrectos, afectando la visualización y funcionalidad en el dashboard del estudiante.
+- Dependencias afectadas: Hoja `Tareas`, función `getStudentTasks`.
 
-**3. Conexión del `index.html` al Portal de Login (Corrección Post-Revisión)**
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: getStudentTasks
+- Línea(s) involucrada(s): 119-120
+- Tipo de problema: Rendimiento
+- Descripción detallada del problema: La función carga la totalidad de las hojas `Tareas` y `Entregas` en memoria para luego filtrarlas en el script.
+- Impacto potencial: Con un gran número de tareas y entregas, la función se volverá muy lenta, pudiendo causar timeouts y una mala experiencia de usuario en el dashboard del estudiante.
+- Dependencias afectadas: Dashboard del estudiante.
 
-*   **Archivo: `index.html`**
-    *   **Hallazgo:** Tras la revisión del usuario, se ha determinado que la solución inicial de enlazar el logo no es la deseada.
-    *   **Requerimiento:** Se debe agregar un **nuevo botón dedicado** con el texto "Portal" en la barra de navegación del encabezado, que enlace a `login.html`.
-    *   **Ubicación (Desktop):** El nuevo botón debe situarse en la línea 203, dentro de la etiqueta `<nav>`, después del enlace "Inicio".
-    *   **Ubicación (Móvil):** El nuevo enlace debe situarse en la línea 250, dentro de la etiqueta `<nav>` del menú móvil, después del enlace "Inicio".
-    *   **Observación:** La tarea se confirma con este nuevo enfoque. La implementación anterior fue revertida.
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: submitAssignment
+- Línea(s) involucrada(s): 161, 166
+- Tipo de problema: Rendimiento
+- Descripción detallada del problema: Para encontrar el usuario y la tarea, la función carga las hojas completas (`Usuarios`, `Tareas`) y utiliza el método `.find()`.
+- Impacto potencial: Esta operación es ineficiente y contribuirá a la ralentización del proceso de entrega de tareas a medida que los datos crezcan.
+- Dependencias afectadas: Proceso de entrega de tareas.
+
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: submitAssignment
+- Línea(s) involucrada(s): 180
+- Tipo de problema: Robustez
+- Descripción detallada del problema: La extracción del tipo MIME del archivo se basa en una expresión regular (`match(/:(.*?);/)`) que asume un formato específico para la cadena base64.
+- Impacto potencial: Si el frontend envía la cadena con un formato ligeramente diferente (ej. sin punto y coma), la expresión fallará con un error de "cannot read properties of null", rompiendo la subida de archivos.
+- Dependencias afectadas: Proceso de entrega de tareas.
+
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: getTeacherActivity
+- Línea(s) involucrada(s): 193-197, 212
+- Tipo de problema: Rendimiento
+- Descripción detallada del problema: La función carga 5 hojas de cálculo completas en memoria (`Usuarios`, `Tareas`, `Examenes`, `Entregas`, `EntregasExamen`) para realizar operaciones de "join" y agregación de datos.
+- Impacto potencial: Es la función con el peor rendimiento del script. Con una cantidad moderada de datos, es casi seguro que excederá los límites de tiempo de ejecución de Apps Script, haciendo que el dashboard del profesor no cargue.
+- Dependencias afectadas: Dashboard del profesor.
+
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: getTeacherActivity
+- Línea(s) involucrada(s): 230
+- Tipo de problema: Lógica, Localización
+- Descripción detallada del problema: La fecha de la actividad se formatea usando `item.fecha.toLocaleString()`.
+- Impacto potencial: Esto utiliza la configuración regional (locale) del servidor de Google para formatear la fecha y hora, que puede no coincidir con la del usuario final, mostrando fechas en un formato inesperado o incorrecto para el profesor.
+- Dependencias afectadas: Dashboard del profesor.
+
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: reactivateExam
+- Línea(s) involucrada(s): 238
+- Tipo de problema: Mantenibilidad
+- Descripción detallada del problema: El estado del examen se actualiza usando un índice de columna hardcodeado (`getRange(i + 1, 7)`). El número `7` es un "número mágico".
+- Impacto potencial: Si un desarrollador añade, elimina o reordena una columna en la hoja `EntregasExamen`, esta función fallará silenciosamente o, peor aún, modificará la columna incorrecta, corrompiendo los datos.
+- Dependencias afectadas: Hoja `EntregasExamen`.
+
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: gradeSubmission
+- Línea(s) involucrada(s): 248-250
+- Tipo de problema: Mantenibilidad
+- Descripción detallada del problema: Las columnas para calificación, estado y comentario se actualizan usando índices hardcodeados (`6`, `7`, `8`).
+- Impacto potencial: Similar al problema en `reactivateExam`, cualquier cambio en la estructura de la hoja `Entregas` romperá esta funcionalidad, llevando a una posible corrupción de datos.
+- Dependencias afectadas: Hoja `Entregas`.
+
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: createExam
+- Línea(s) involucrada(s): 369
+- Tipo de problema: Robustez
+- Descripción detallada del problema: El ID de la pregunta se genera con `new Date().getTime() + Math.random()`.
+- Impacto potencial: Aunque la probabilidad de colisión es extremadamente baja, no es criptográficamente imposible generar el mismo ID dos veces, especialmente si la función se ejecuta muy rápidamente en sucesión. No garantiza unicidad.
+- Dependencias afectadas: Creación y entrega de exámenes.
+
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: submitExam
+- Línea(s) involucrada(s): 353
+- Tipo de problema: Lógica, Funcionalidad Incompleta
+- Descripción detallada del problema: Un comentario en el código (`// Tipos 'termino_pareado' y 'respuesta_breve' se omiten de la calificación automática por simplicidad.`) indica explícitamente que ciertos tipos de preguntas no se califican.
+- Impacto potencial: La calificación final del examen será incorrecta si incluye estos tipos de preguntas, ya que no se contarán para la nota. La funcionalidad no cumple con lo que un usuario esperaría.
+- Dependencias afectadas: Proceso de entrega de exámenes.
+
+- Archivo: backend.gs
+- Ruta completa: /backend.gs
+- Función / método / bloque afectado: submitExam
+- Línea(s) involucrada(s): 362
+- Tipo de problema: Robustez, Manejo de Errores
+- Descripción detallada del problema: La calificación se calcula con `(correctas / preguntasDelExamen.length) * 100`. Si un examen no tuviera preguntas (`preguntasDelExamen.length` es 0), esto resultaría en una división por cero.
+- Impacto potencial: Una división por cero en JavaScript produce `Infinity` o `NaN`, lo cual podría causar un error al intentar guardar este valor en la hoja de cálculo o al procesarlo en el frontend, rompiendo el flujo de entrega del examen.
+- Dependencias afectadas: Proceso de entrega de exámenes.
+- Archivo: index.html
+- Ruta completa: /index.html
+- Función / método / bloque afectado: Global <head>
+- Línea(s) involucrada(s): 7
+- Tipo de problema: Dependencia Externa, Rendimiento
+- Descripción detallada del problema: El archivo carga Tailwind CSS desde una CDN (`https://cdn.tailwindcss.com`).
+- Impacto potencial: Esto crea una dependencia en un servicio externo. Si la CDN está lenta o no disponible, el sitio no se renderizará correctamente. Además, carga la librería completa de Tailwind, que puede ser muy grande y contener muchos estilos no utilizados, afectando negativamente el tiempo de carga de la página (Page Load Time).
+- Dependencias afectadas: Renderizado visual de toda la página.
+
+- Archivo: index.html
+- Ruta completa: /index.html
+- Función / método / bloque afectado: Global <head>
+- Línea(s) involucrada(s): 8
+- Tipo de problema: Dependencia Externa, Rendimiento
+- Descripción detallada del problema: El archivo carga Google Fonts desde su CDN (`https://fonts.googleapis.com`).
+- Impacto potencial: Similar a la CDN de Tailwind, crea una dependencia externa. Si el servicio de Google Fonts falla o es bloqueado, la tipografía del sitio no se cargará, afectando el diseño. Representa una solicitud de red adicional que puede ralentizar la carga inicial.
+- Dependencias afectadas: Tipografía de toda la página.
+
+- Archivo: index.html
+- Ruta completa: /index.html
+- Función / método / bloque afectado: <style> block
+- Línea(s) involucrada(s): 9-195
+- Tipo de problema: Mantenibilidad, Organización
+- Descripción detallada del problema: Hay un bloque grande de CSS personalizado (`<style>`) directamente en el archivo HTML.
+- Impacto potencial: Mezclar CSS con HTML dificulta el mantenimiento. Estos estilos no pueden ser cacheados por el navegador de forma independiente al archivo HTML, lo que significa que se vuelven a descargar con cada visita a la página. dificulta la reutilización de estos estilos en otras páginas.
+- Dependencias afectadas: Estilos de la página principal.
+
+- Archivo: index.html
+- Ruta completa: /index.html
+- Función / método / bloque afectado: <a> tags para pseudocódigo y contacto
+- Línea(s) involucrada(s): 242, 273
+- Tipo de problema: Funcionalidad, Enlace Roto
+- Descripción detallada del problema: El enlace para "Pseudocódigo" en el menú móvil apunta a `pseudocode.js` (`href="pseudocode.js"`) en lugar de `pseudocode.html`. El enlace en el menú de escritorio sí apunta correctamente a `pseudocode.html`.
+- Impacto potencial: Los usuarios que intenten acceder a la sección de pseudocódigo desde el menú móvil no podrán hacerlo, ya que el navegador intentará navegar a un archivo JavaScript en lugar de a la página HTML correspondiente.
+- Dependencias afectadas: Navegación del sitio en dispositivos móviles.
+
+- Archivo: index.html
+- Ruta completa: /index.html
+- Función / método / bloque afectado: Global <script>
+- Línea(s) involucrada(s): 412, 494, 574
+- Tipo de problema: Mantenibilidad, Arquitectura
+- Descripción detallada del problema: Los datos que definen la estructura de los menús y el contenido descargable (`presentationData`, `additionalResourcesData`, `downloadContentData`) están hardcodeados como objetos JavaScript directamente en el archivo HTML.
+- Impacto potencial: Para agregar, eliminar o modificar cualquier curso, tema o recurso, es necesario editar el archivo `index.html`. Esto es propenso a errores (ej. un error de sintaxis en el JSON podría romper la página) y mezcla la capa de datos con la de presentación, dificultando la gestión del contenido.
+- Dependencias afectadas: Toda la generación de menús de navegación y listas de descargas.
+
+- Archivo: index.html
+- Ruta completa: /index.html
+- Función / método / bloque afectado: Global <script>
+- Línea(s) involucrada(s): 412-1110
+- Tipo de problema: Mantenibilidad, Rendimiento
+- Descripción detallada del problema: Todo el código JavaScript de la página (lógica de menús, transiciones, carga de contenido, etc.) se encuentra en un único y gran bloque `<script>` al final del `<body>`.
+- Impacto potencial: Esto hace que el código sea difícil de leer, depurar y mantener. No puede ser cacheado por el navegador de forma independiente, por lo que se vuelve a descargar y a parsear en cada visita. Impide la reutilización de funciones en otras páginas.
+- Dependencias afectadas: Toda la interactividad de la página.
+
+- Archivo: index.html
+- Ruta completa: /index.html
+- Función / método / bloque afectado: renderDesktopNav, renderMobileNav
+- Línea(s) involucrada(s): 768-963
+- Tipo de problema: Duplicación de código
+- Descripción detallada del problema: Existen dos funciones separadas (`renderDesktopNav` y `renderMobileNav`) que iteran sobre las mismas estructuras de datos (`presentationData`, `additionalResourcesData`) para construir el HTML de los menús. Aunque el HTML resultante es diferente, la lógica de iteración y la estructura son muy similares.
+- Impacto potencial: Si se necesita cambiar la lógica de cómo se procesan los datos (ej. agregar un nuevo tipo de recurso), el cambio debe realizarse en dos lugares diferentes, lo que aumenta la probabilidad de introducir inconsistencias.
+- Dependencias afectadas: Menús de navegación de escritorio y móvil.
+
+- Archivo: index.html
+- Ruta completa: /index.html
+- Función / método / bloque afectado: loadPeripheralsGame, loadWebMasterQuiz, loadDexterityGame
+- Línea(s) involucrada(s): 1205-1296
+- Tipo de problema: Duplicación de código
+- Descripción detallada del problema: Las tres funciones que cargan juegos (`loadPeripheralsGame`, `loadWebMasterQuiz`, `loadDexterityGame`) son casi idénticas. Comparten la misma lógica para: ocultar el header, ocultar las secciones de contenido principal, mostrar el contenedor del juego, actualizar el título, y manejar errores. La única diferencia real son las URLs de los archivos `.html` y `.js` y la función de inicialización que se llama.
+- Impacto potencial: Dificulta el mantenimiento. Si se necesita cambiar la forma en que se cargan los juegos (por ejemplo, para agregar una pantalla de carga), el cambio debe replicarse en tres funciones distintas.
+- Dependencias afectadas: Funcionalidad de carga de juegos interactivos.
+
+- Archivo: index.html
+- Ruta completa: /index.html
+- Función / método / bloque afectado: gameDataStorage
+- Línea(s) involucrada(s): 1162-1202
+- Tipo de problema: Seguridad, Privacidad
+- Descripción detallada del problema: El progreso de los juegos se guarda en `localStorage`.
+- Impacto potencial: `localStorage` es específico del navegador y del dispositivo, por lo que el progreso de un usuario no persistirá si cambia de navegador o de computadora. Además, los datos en `localStorage` pueden ser leídos y modificados fácilmente por el usuario o por cualquier otro script en la página (riesgo de XSS), por lo que no es un lugar seguro para almacenar datos si en el futuro se quisiera dar puntos o calificaciones.
+- Dependencias afectadas: Persistencia de datos de los juegos.
+- Archivo: login.html
+- Ruta completa: /login.html
+- Función / método / bloque afectado: Global <head>
+- Línea(s) involucrada(s): 6
+- Tipo de problema: Dependencia Externa, Rendimiento
+- Descripción detallada del problema: El archivo carga Tailwind CSS desde una CDN (`https://cdn.tailwindcss.com`), al igual que `index.html`.
+- Impacto potencial: Crea una dependencia externa que puede fallar y ralentiza el tiempo de carga al incluir estilos no utilizados. No se aprovecha el cache del navegador entre páginas si el recurso es el mismo.
+- Dependencias afectadas: Renderizado visual de la página de login.
+
+- Archivo: login.html
+- Ruta completa: /login.html
+- Función / método / bloque afectado: <body>
+- Línea(s) involucrada(s): 8
+- Tipo de problema: Accesibilidad, Estructura
+- Descripción detallada del problema: El contenido principal de la página no está envuelto en una etiqueta semántica como `<main>`.
+- Impacto potencial: Puede dificultar la navegación para tecnologías de asistencia (como lectores de pantalla) que utilizan estas etiquetas para identificar el contenido principal de una página, ignorando encabezados o pies de página.
+- Dependencias afectadas: Accesibilidad de la página.
+
+- Archivo: login.html
+- Ruta completa: /login.html
+- Función / método / bloque afectado: <form>
+- Línea(s) involucrada(s): 10-21
+- Tipo de problema: Experiencia de Usuario, Manejo de Errores
+- Descripción detallada del problema: El formulario de login no tiene un área designada para mostrar mensajes de error al usuario (ej. "Credenciales incorrectas", "El servidor no responde"). La retroalimentación se maneja a través de `alert()`, que es disruptivo.
+- Impacto potencial: Una mala experiencia de usuario. `alert()` bloquea la interacción con la página y es visualmente inconsistente con el diseño. Si el script `auth.js` fallara, el usuario no recibiría ninguna indicación de lo que salió mal.
+- Dependencias afectadas: `js/auth.js`.
+
+- Archivo: login.html
+- Ruta completa: /login.html
+- Función / método / bloque afectado: <script> tags
+- Línea(s) involucrada(s): 26-27
+- Tipo de problema: Rendimiento, Mantenibilidad
+- Descripción detallada del problema: Los scripts `config.js` y `auth.js` se cargan al final del `<body>`.
+- Impacto potencial: Aunque cargar scripts al final del body es una práctica común para no bloquear el renderizado, estos scripts no tienen el atributo `defer` o `async`. Si los scripts fueran grandes, podrían retrasar el evento `DOMContentLoaded`. Además, si el número de scripts crece, su gestión dentro del HTML se vuelve más compleja.
+- Dependencias afectadas: Ejecución del login.
+- Archivo: register.html
+- Ruta completa: /register.html
+- Función / método / bloque afectado: Global <head>
+- Línea(s) involucrada(s): 6
+- Tipo de problema: Dependencia Externa, Rendimiento
+- Descripción detallada del problema: El archivo carga Tailwind CSS desde una CDN (`https://cdn.tailwindcss.com`), replicando el mismo problema que `index.html` y `login.html`.
+- Impacto potencial: Dependencia de un servicio externo propenso a fallos y carga de estilos innecesarios que afectan el rendimiento.
+- Dependencias afectadas: Renderizado visual de la página de registro.
+
+- Archivo: register.html
+- Ruta completa: /register.html
+- Función / método / bloque afectado: <select id="grado">
+- Línea(s) involucrada(s): 24-28
+- Tipo de problema: Mantenibilidad, Duplicación de Lógica
+- Descripción detallada del problema: Las opciones para el campo "Grado" (`Décimo`, `Undécimo`, `Duodécimo`) están hardcodeadas directamente en el HTML.
+- Impacto potencial: Si se necesita agregar o cambiar un grado, este cambio debe hacerse no solo aquí, sino en cualquier otra parte de la aplicación donde se utilice esta lógica (por ejemplo, en los formularios del profesor), lo que puede llevar a inconsistencias.
+- Dependencias afectadas: Formulario de registro, consistencia de datos de grado en la aplicación.
+
+- Archivo: register.html
+- Ruta completa: /register.html
+- Función / método / bloque afectado: <input type="text" id="seccion">
+- Línea(s) involucrada(s): 32
+- Tipo de problema: Usabilidad, Integridad de Datos
+- Descripción detallada del problema: El campo "Sección" es un campo de texto libre (`<input type="text">`).
+- Impacto potencial: Los usuarios pueden introducir la sección de múltiples maneras (ej. "A", "a", "Sección A", "seccion a"), lo que lleva a inconsistencias en la base de datos. Esto puede causar problemas al filtrar tareas o exámenes por sección. No es un campo requerido, lo cual podría ser un problema si la sección es obligatoria.
+- Dependencias afectadas: Hoja `Usuarios`, lógica de filtrado de tareas/exámenes por sección.
+
+- Archivo: register.html
+- Ruta completa: /register.html
+- Función / método / bloque afectado: <form>
+- Línea(s) involucrada(s): 12-42
+- Tipo de problema: Experiencia de Usuario, Manejo de Errores
+- Descripción detallada del problema: Al igual que `login.html`, el formulario no tiene un área dedicada para mostrar mensajes de error o de éxito (ej. "Este correo ya está en uso", "Registro exitoso").
+- Impacto potencial: El usuario no recibe una retroalimentación clara y contextual sobre el resultado del proceso de registro, dependiendo únicamente de `alert()s` disruptivos.
+- Dependencias afectadas: `js/auth.js`.
+
+- Archivo: register.html
+- Ruta completa: /register.html
+- Función / método / bloque afectado: <script> tags
+- Línea(s) involucrada(s): 47-48
+- Tipo de problema: Rendimiento, Mantenibilidad
+- Descripción detallada del problema: Los scripts se cargan al final del `<body>` sin los atributos `defer` o `async`.
+- Impacto potencial: Potencial retraso en la interactividad de la página y gestión de scripts más compleja a medida que la aplicación crezca.
+- Dependencias afectadas: Ejecución del registro.
+- Archivo: student-dashboard.html
+- Ruta completa: /student-dashboard.html
+- Función / método / bloque afectado: Global <head>
+- Línea(s) involucrada(s): 6
+- Tipo de problema: Dependencia Externa, Rendimiento
+- Descripción detallada del problema: El archivo carga Tailwind CSS desde una CDN, replicando el problema de los otros archivos HTML.
+- Impacto potencial: Dependencia de un servicio externo y carga de estilos innecesarios.
+- Dependencias afectadas: Renderizado visual del dashboard del estudiante.
+
+- Archivo: student-dashboard.html
+- Ruta completa: /student-dashboard.html
+- Función / método / bloque afectado: <div> id="tasks-list"
+- Línea(s) involucrada(s): 17
+- Tipo de problema: Experiencia de Usuario
+- Descripción detallada del problema: La lista de tareas está inicialmente vacía. No hay un indicador de carga (spinner) o un mensaje de "Cargando tareas..." mientras se realiza la petición al backend.
+- Impacto potencial: Si la petición al backend es lenta, el usuario verá una página vacía sin ninguna indicación de que el contenido se está cargando, lo que puede llevar a la percepción de que la página está rota o no funciona.
+- Dependencias afectadas: `js/student.js`.
+
+- Archivo: student-dashboard.html
+- Ruta completa: /student-dashboard.html
+- Función / método / bloque afectado: <div> id="tasks-list"
+- Línea(s) involucrada(s): 17
+- Tipo de problema: Experiencia de Usuario
+- Descripción detallada del problema: No hay un estado definido en el HTML para cuando el estudiante no tiene tareas pendientes.
+- Impacto potencial: Si no hay tareas, la lista simplemente permanecerá vacía, lo cual puede ser ambiguo para el usuario. Un mensaje claro como "No tienes tareas pendientes en este momento" mejoraría la experiencia.
+- Dependencias afectadas: `js/student.js`.
+
+- Archivo: student-dashboard.html
+- Ruta completa: /student-dashboard.html
+- Función / método / bloque afectado: <div id="submission-modal">
+- Línea(s) involucrada(s): 22-38
+- Tipo de problema: Experiencia de Usuario, Manejo de Errores
+- Descripción detallada del problema: El modal de entrega de tareas no tiene un área para mostrar mensajes de error (ej. "El archivo es demasiado grande", "Formato de archivo no permitido", "Error al subir el archivo"). Tampoco muestra un indicador de carga mientras el archivo se está subiendo.
+- Impacto potencial: Si la subida del archivo falla, el usuario no sabrá por qué. Durante la subida de un archivo grande, el usuario no tendrá retroalimentación visual de que la operación está en progreso, pudiendo pensar que la página se ha colgado.
+- Dependencias afectadas: `js/student.js`.
+
+- Archivo: student-dashboard.html
+- Ruta completa: /student-dashboard.html
+- Función / método / bloque afectado: <script> tags
+- Línea(s) involucrada(s): 41-42
+- Tipo de problema: Rendimiento, Mantenibilidad
+- Descripción detallada del problema: Los scripts se cargan al final del `<body>` sin los atributos `defer` o `async`.
+- Impacto potencial: Potencial retraso en la interactividad y complejidad en la gestión de scripts.
+- Dependencias afectadas: Funcionalidad del dashboard.
+- Archivo: teacher-dashboard.html
+- Ruta completa: /teacher-dashboard.html
+- Función / método / bloque afectado: Global <head>
+- Línea(s) involucrada(s): 6
+- Tipo de problema: Dependencia Externa, Rendimiento
+- Descripción detallada del problema: El archivo carga Tailwind CSS desde una CDN.
+- Impacto potencial: Dependencia de un servicio externo y carga de estilos no utilizados, afectando el rendimiento.
+- Dependencias afectadas: Renderizado visual del dashboard del profesor.
+
+- Archivo: teacher-dashboard.html
+- Ruta completa: /teacher-dashboard.html
+- Función / método / bloque afectado: <tbody id="submissions-table-body">
+- Línea(s) involucrada(s): 45
+- Tipo de problema: Experiencia de Usuario
+- Descripción detallada del problema: La tabla de entregas está vacía por defecto. No hay un estado de carga (spinner) visible mientras se esperan los datos del backend.
+- Impacto potencial: Si la API `getTeacherActivity` es lenta, el profesor verá una tabla vacía y podría pensar que no hay entregas o que la página está rota.
+- Dependencias afectadas: `js/teacher.js`.
+
+- Archivo: teacher-dashboard.html
+- Ruta completa: /teacher-dashboard.html
+- Función / método / bloque afectado: <tbody id="submissions-table-body">
+- Línea(s) involucrada(s): 45
+- Tipo de problema: Experiencia de Usuario
+- Descripción detallada del problema: No existe una fila o mensaje predefinido en la tabla para indicar que "No hay entregas para mostrar".
+- Impacto potencial: Una tabla completamente vacía puede ser confusa. Un mensaje claro mejoraría la usabilidad.
+- Dependencias afectadas: `js/teacher.js`.
+
+- Archivo: teacher-dashboard.html
+- Ruta completa: /teacher-dashboard.html
+- Función / método / bloque afectado: Formularios de "Crear Tarea" y "Crear Examen"
+- Línea(s) involucrada(s): 52-127, 131-190
+- Tipo de problema: Experiencia de Usuario, Manejo de Errores
+- Descripción detallada del problema: Ninguno de los formularios tiene un área designada para mostrar mensajes de éxito o error al profesor después de enviar los datos.
+- Impacto potencial: La única retroalimentación es a través de `alert()`, que es una mala práctica de UX. No hay una forma clara de comunicar errores de validación o problemas de conexión con el backend.
+- Dependencias afectadas: `js/teacher.js`.
+
+- Archivo: teacher-dashboard.html
+- Ruta completa: /teacher-dashboard.html
+- Función / método / bloque afectado: <input id="gradoAsignado">, <input id="exam-grado">
+- Línea(s) involucrada(s): 101, 150-155
+- Tipo de problema: Usabilidad, Integridad de Datos
+- Descripción detallada del problema: En el formulario de "Crear Tarea", el campo "Grado Asignado" es un `<input type="text">`, mientras que en el de "Crear Examen" es un `<select>`.
+- Impacto potencial: El campo de texto libre para el grado en las tareas permite inconsistencias de datos (ej. "Decimo", "décimo", "10mo"), lo que complicará el filtrado de tareas para los estudiantes. El uso de un `<select>` en el formulario de exámenes es una mejor práctica que no se aplica consistentemente.
+- Dependencias afectadas: Lógica de `getStudentTasks` en el backend.
+
+- Archivo: teacher-dashboard.html
+- Ruta completa: /teacher-dashboard.html
+- Función / método / bloque afectado: <input id="seccionAsignada">, <input id="exam-seccion">
+- Línea(s) involucrada(s): 105, 159
+- Tipo de problema: Usabilidad, Integridad de Datos
+- Descripción detallada del problema: Ambos campos de "Sección" son de texto libre.
+- Impacto potencial: Similar al campo de grado, esto permite la entrada de datos inconsistentes para la sección, afectando la correcta asignación y visualización de actividades a los estudiantes.
+- Dependencias afectadas: Lógica de `getStudentTasks` en el backend.
+
+- Archivo: teacher-dashboard.html
+- Ruta completa: /teacher-dashboard.html
+- Función / método / bloque afectado: <div id="questions-container">
+- Línea(s) involucrada(s): 173
+- Tipo de problema: Lógica, Arquitectura Frontend
+- Descripción detallada del problema: El contenedor de preguntas para el examen está vacío. Las preguntas se generan dinámicamente con JavaScript.
+- Impacto potencial: Aunque esto es necesario para la funcionalidad, no hay una plantilla HTML (`<template>`) definida para la estructura de una pregunta. Esto significa que todo el HTML de las preguntas está hardcodeado en el archivo JavaScript (`teacher.js`), mezclando la estructura (HTML) con la lógica (JS) y haciendo más difícil modificar el diseño de una pregunta.
+- Dependencias afectadas: `js/teacher.js`.
+
+- Archivo: teacher-dashboard.html
+- Ruta completa: /teacher-dashboard.html
+- Función / método / bloque afectado: <script> tags
+- Línea(s) involucrada(s): 229-230
+- Tipo de problema: Rendimiento, Mantenibilidad
+- Descripción detallada del problema: Los scripts se cargan al final del `<body>` sin `defer` o `async`.
+- Impacto potencial: Potencial retraso en la interactividad y complejidad en la gestión de scripts.
+- Dependencias afectadas: Funcionalidad del dashboard.
+- Archivo: js/config.js
+- Ruta completa: /js/config.js
+- Función / método / bloque afectado: Global
+- Línea(s) involucrada(s): 1-24
+- Tipo de problema: Configuración, Seguridad, Mantenibilidad
+- Descripción detallada del problema: Las URLs de los microservicios de backend están hardcodeadas en un archivo JavaScript que se sube al repositorio de control de versiones y es servido públicamente.
+- Impacto potencial:
+    1.  **Exposición de Endpoints**: Cualquiera puede inspeccionar el archivo y conocer las URLs exactas de los servicios de backend, facilitando posibles ataques directos a las APIs.
+    2.  **Gestión de Entornos**: No existe una manera fácil de cambiar las URLs para diferentes entornos (ej. desarrollo, pruebas, producción). Cada cambio requiere una modificación manual del archivo y un nuevo commit.
+    3.  **Seguridad**: Aunque los scripts de Google Apps son relativamente seguros, exponer las URLs directamente es una mala práctica de seguridad. Si se descubriera una vulnerabilidad, los atacantes ya tendrían el punto de entrada.
+- Dependencias afectadas: Todos los demás archivos JavaScript (`auth.js`, `student.js`, `teacher.js`) que dependen de `SERVICE_URLS` para hacer llamadas al backend.
+- Archivo: js/auth.js
+- Ruta completa: /js/auth.js
+- Función / método / bloque afectado: Global
+- Línea(s) involucrada(s): 5
+- Tipo de problema: Seguridad
+- Descripción detallada del problema: Los datos de la sesión del usuario (`currentUser`), incluyendo nombre, rol, grado y sección, se almacenan en `localStorage`.
+- Impacto potencial: `localStorage` es accesible por cualquier script que se ejecute en la misma página (vulnerabilidad a XSS). Un atacante podría robar los datos del usuario o incluso modificarlos. Por ejemplo, podría cambiar el `rol` de "Estudiante" a "Profesor" en el objeto almacenado, lo que podría darle acceso no autorizado a la Módulo del profesor si la validación del lado del servidor es insuficiente.
+- Dependencias afectadas: Seguridad de la sesión en toda la aplicación.
+
+- Archivo: js/auth.js
+- Ruta completa: /js/auth.js
+- Función / método / bloque afectado: Global
+- Línea(s) involucrada(s): 7-12
+- Tipo de problema: Lógica de Negocio
+- Descripción detallada del problema: La redirección del usuario después del login se basa únicamente en el rol almacenado en `localStorage`.
+- Impacto potencial: Si un usuario malintencionado modifica el valor de `rol` en `localStorage` (de "Estudiante" a "Profesor"), podría ser redirigido al dashboard del profesor. Aunque el backend debería prevenir que realice acciones de profesor, esto le permitiría acceder y ver la interfaz de profesor, lo cual es un fallo de seguridad y de lógica.
+- Dependencias afectadas: `teacher-dashboard.html`, `student-dashboard.html`.
+
+- Archivo: js/auth.js
+- Ruta completa: /js/auth.js
+- Función / método / bloque afectado: fetchApi
+- Línea(s) involucrada(s): 15-25
+- Tipo de problema: Mantenibilidad, Duplicación de Código
+- Descripción detallada del problema: La función `fetchApi` es una función de ayuda para realizar llamadas a la API. Esta misma lógica (o una muy similar) será necesaria en otros archivos JavaScript como `student.js` y `teacher.js`.
+- Impacto potencial: Si no se centraliza, cada archivo tendrá su propia implementación para llamar al backend. Si se necesita un cambio en la forma en que se realizan las llamadas (por ejemplo, para agregar un encabezado de autorización o mejorar el manejo de errores), el cambio tendría que ser replicado en múltiples archivos, lo que es propenso a errores.
+- Dependencias afectadas: `student.js`, `teacher.js`.
+
+- Archivo: js/auth.js
+- Ruta completa: /js/auth.js
+- Función / método / bloque afectado: fetchApi
+- Línea(s) involucrada(s): 22
+- Tipo de problema: Manejo de Errores, Red
+- Descripción detallada del problema: El comentario `// No es necesario 'Content-Type' aquí, Apps Script lo maneja.` es incorrecto. Google Apps Script es sensible a la falta del `Content-Type` correcto para `POST` requests, especialmente cuando se manejan CORS. La práctica recomendada es a menudo usar `text/plain` para evitar `preflight requests` de CORS. La ausencia de este encabezado puede causar fallos de red inesperados o difíciles de depurar en ciertos navegadores o condiciones de red.
+- Impacto potencial: Las peticiones pueden fallar de forma intermitente o ser bloqueadas por políticas de CORS en algunos entornos, haciendo la aplicación poco fiable.
+- Dependencias afectadas: Todas las llamadas al backend.
+
+- Archivo: js/auth.js
+- Ruta completa: /js/auth.js
+- Función / método / bloque afectado: Event listeners de login y registro
+- Línea(s) involucrada(s): 48, 52, 79, 83
+- Tipo de problema: Experiencia de Usuario
+- Descripción detallada del problema: Se utiliza `alert()` para comunicar errores y mensajes de éxito al usuario.
+- Impacto potencial: Es una mala práctica de UX que interrumpe el flujo del usuario, bloquea la interfaz y es visualmente inconsistente. Impide mostrar errores o mensajes de forma integrada en el diseño de los formularios.
+- Dependencias afectadas: `login.html`, `register.html`.
+
+- Archivo: js/auth.js
+- Ruta completa: /js/auth.js
+- Función / método / bloque afectado: Event listener de registro
+- Línea(s) involucrada(s): 63-69
+- Tipo de problema: Validación
+- Descripción detallada del problema: No existe validación de datos en el lado del cliente antes de enviar la petición de registro. Por ejemplo, no se comprueba si la contraseña tiene una longitud mínima o si los campos obligatorios están realmente llenos (aunque el HTML tenga `required`, una validación en JS es más robusta).
+- Impacto potencial: Se envían peticiones al backend que se sabe que fallarán, consumiendo recursos innecesariamente. La experiencia del usuario es pobre porque la retroalimentación sobre datos inválidos no es instantánea.
+- Dependencias afectadas: `register.html`, backend.
+- Archivo: js/student.js
+- Ruta completa: /js/student.js
+- Función / método / bloque afectado: Global
+- Línea(s) involucrada(s): 3
+- Tipo de problema: Seguridad, Lógica de Negocio
+- Descripción detallada del problema: El script comprueba si el `rol` del usuario en `localStorage` es "Estudiante" o "Alumno". Si no lo es, redirige a `login.html`.
+- Impacto potencial: Esta es una comprobación del lado del cliente únicamente. Un usuario autenticado como profesor podría evadir esta redirección (por ejemplo, desactivando JavaScript) e intentar interactuar con la página. Más importante aún, el uso de dos valores diferentes ("Estudiante", "Alumno") para el mismo rol es una inconsistencia de datos que puede causar problemas. El backend solo usa "Estudiante".
+- Dependencias afectadas: Consistencia de datos de roles, seguridad de acceso a la página.
+
+- Archivo: js/student.js
+- Ruta completa: /js/student.js
+- Función / método / bloque afectado: fetchApi
+- Línea(s) involucrada(s): 13-19
+- Tipo de problema: Duplicación de Código
+- Descripción detallada del problema: La función `fetchApi` está duplicada. Es casi idéntica a la que se encuentra en `js/auth.js`.
+- Impacto potencial: Dificulta el mantenimiento. Cualquier cambio en la lógica de comunicación con el backend debe replicarse en todos los archivos que contengan esta función.
+- Dependencias afectadas: Mantenibilidad del código de frontend.
+
+- Archivo: js/student.js
+- Ruta completa: /js/student.js
+- Función / método / bloque afectado: fetchAllActivities
+- Línea(s) involucrada(s): 28-29
+- Tipo de problema: Lógica de Negocio, Funcionalidad Inexistente
+- Descripción detallada del problema: El código intenta obtener exámenes para el estudiante llamando a una acción `getExamQuestions` en el servicio de exámenes. Sin embargo, según el `README.md` y el código de `backend.gs`, `getExamQuestions` está diseñada para obtener las preguntas de un *único* examen (`examenId`) y no para listar todos los exámenes de un estudiante. El comentario `// Asumiendo un endpoint así` confirma que esta funcionalidad no existe en el backend.
+- Impacto potencial: La llamada a la API de exámenes fallará, y la aplicación no podrá mostrar los exámenes asignados al estudiante. El dashboard del estudiante está funcionalmente incompleto.
+- Dependencias afectadas: Backend (`exam-service`), visualización de actividades del estudiante.
+
+- Archivo: js/student.js
+- Ruta completa: /js/student.js
+- Función / método / bloque afectado: fetchAllActivities
+- Línea(s) involucrada(s): 35
+- Tipo de problema: Lógica de Negocio, Manejo de Datos
+- Descripción detallada del problema: El código intenta combinar los resultados de tareas y exámenes con `[...tasksResult.data, ...examsResult.data]`.
+- Impacto potencial: Incluso si la llamada a la API de exámenes funcionara, los objetos de "tarea" y "examen" tienen estructuras diferentes (según el `README.md`). Combinarlos y renderizarlos con una única función (`renderActivities`) sin una transformación o mapeo previo causará errores de renderizado. El comentario `// Simplificado, necesita adaptación` indica que esto no está implementado.
+- Dependencias afectadas: `renderActivities`.
+
+- Archivo: js/student.js
+- Ruta completa: /js/student.js
+- Función / método / bloque afectado: renderActivities
+- Línea(s) involucrada(s): 45-53
+- Tipo de problema: Funcionalidad Incompleta
+- Descripción detallada del problema: El comentario `// Por simplicidad, se mantiene la lógica de renderizado de tareas por ahora.` y la ausencia de código para manejar los exámenes confirman que la función solo sabe cómo renderizar tareas.
+- Impacto potencial: Los exámenes no se mostrarán en el dashboard del estudiante, incluso si la API los devolviera.
+- Dependencias afectadas: Visualización de actividades del estudiante.
+
+- Archivo: js/student.js
+- Ruta completa: /js/student.js
+- Función / método / bloque afectado: submissionForm.addEventListener
+- Línea(s) involucrada(s): 57
+- Tipo de problema: N/A (Observación)
+- Descripción detallada del problema: El código para manejar el envío de tareas (`submitAssignment`) existe, pero no hay una lógica equivalente para manejar la entrega de exámenes, que requeriría redirigir a una página de examen diferente (`exam.html`).
+- Impacto potencial: La funcionalidad para que un estudiante inicie un examen desde el dashboard no está presente.
+- Dependencias afectadas: Flujo de realización de exámenes.
+- Archivo: js/teacher.js
+- Ruta completa: /js/teacher.js
+- Función / método / bloque afectado: Global
+- Línea(s) involucrada(s): 112
+- Tipo de problema: Seguridad
+- Descripción detallada del problema: La validación de la sesión del profesor se realiza únicamente en el lado del cliente, comprobando un valor en `localStorage`.
+- Impacto potencial: Un usuario no autorizado podría manipular el `localStorage` para acceder a la interfaz del dashboard del profesor. Aunque las llamadas a la API deberían fallar si el backend está bien implementado, esto expone la interfaz administrativa.
+- Dependencias afectadas: Seguridad de la sección de profesor.
+
+- Archivo: js/teacher.js
+- Ruta completa: /js/teacher.js
+- Función / método / bloque afectado: fetchApi
+- Línea(s) involucrada(s): 10-19
+- Tipo de problema: Duplicación de Código
+- Descripción detallada del problema: La función `fetchApi` está duplicada y es casi idéntica a las encontradas en `js/auth.js` y `js/student.js`.
+- Impacto potencial: Alto costo de mantenimiento. Un cambio en la lógica de API requiere modificaciones en múltiples archivos.
+- Dependencias afectadas: Mantenibilidad del código de frontend.
+
+- Archivo: js/teacher.js
+- Ruta completa: /js/teacher.js
+- Función / método / bloque afectado: fetchTeacherActivity
+- Línea(s) involucrada(s): 26
+- Tipo de problema: Lógica de Negocio
+- Descripción detallada del problema: El código asume que el backend tiene dos endpoints separados, `getTeacherActivity` para tareas y `getTeacherExamActivity` para exámenes.
+- Impacto potencial: Aunque esto funciona, es ineficiente. Requiere dos llamadas de red paralelas para poblar una única vista. El `backend.gs` actual tiene una sola función `getTeacherActivity` que ya combina ambas fuentes de datos, por lo que este enfoque del frontend es inconsistente con la implementación optimizada del backend y realiza una llamada (`getTeacherExamActivity`) a una acción que no existe en el `switch` principal del backend.
+- Dependencias afectadas: Backend.
+
+- Archivo: js/teacher.js
+- Ruta completa: /js/teacher.js
+- Función / método / bloque afectado: renderActivity
+- Línea(s) involucrada(s): 80
+- Tipo de problema: Seguridad, Vulnerabilidad XSS
+- Descripción detallada del problema: La función `renderActivity` construye el HTML de la tabla inyectando directamente los datos de la API en la cadena HTML, y luego asigna esto al `innerHTML` de la tabla. El `item` completo se pasa a `openGradeModal` usando `JSON.stringify`.
+- Impacto potencial: Si alguno de los campos devueltos por la API (como `alumnoNombre`, `titulo`, etc.) contuviera código HTML o script malicioso (ej. `<script>alert(1)</script>`), se ejecutaría en el navegador del profesor. Esto es una vulnerabilidad de Cross-Site Scripting (XSS).
+- Dependencias afectadas: Seguridad del dashboard del profesor.
+
+- Archivo: js/teacher.js
+- Ruta completa: /js/teacher.js
+- Función / método / bloque afectado: createAssignmentForm.addEventListener, reactivateExam, saveGradeBtn.addEventListener, createExamForm.addEventListener
+- Línea(s) involucrada(s): 140, 154, 168, 178, 189
+- Tipo de problema: Experiencia de Usuario
+- Descripción detallada del problema: Todas las interacciones con el backend (crear tarea, reactivar examen, guardar calificación, crear examen) usan `alert()` para mostrar mensajes de éxito y error.
+- Impacto potencial: Mala experiencia de usuario, interrumpiendo el flujo de trabajo del profesor con pop-ups modales del navegador.
+- Dependencias afectadas: `teacher-dashboard.html`.
+
+- Archivo: js/teacher.js
+- Ruta completa: /js/teacher.js
+- Función / método / bloque afectado: Global (scope de `window`)
+- Línea(s) involucrada(s): 161, 171
+- Tipo de problema: Arquitectura, Contaminación del Scope Global
+- Descripción detallada del problema: Las funciones `reactivateExam` y `openGradeModal` se adjuntan directamente al objeto `window`.
+- Impacto potencial: Esto contamina el namespace global, lo que puede llevar a colisiones de nombres si se añaden otras librerías o scripts que usen los mismos nombres de función. Es una práctica considerada poco segura y difícil de mantener. La forma moderna es usar `addEventListener` para adjuntar eventos a los elementos.
+- Dependencias afectadas: Mantenibilidad y robustez del script.
+
+- Archivo: js/teacher.js
+- Ruta completa: /js/teacher.js
+- Función / método / bloque afectado: Lógica de "Crear Examen"
+- Línea(s) involucrada(s): 194-221 (no visible en el extracto, pero inferido de la estructura)
+- Tipo de problema: Mantenibilidad, Mezcla de incumbencias
+- Descripción detallada del problema: El código para generar el HTML de las preguntas del examen (campos de texto, opciones, etc.) está hardcodeado dentro del archivo JavaScript.
+- Impacto potencial: Al igual que el problema identificado en `teacher-dashboard.html`, esto mezcla la lógica de la aplicación con la estructura de la presentación. Si un diseñador necesita cambiar el layout de una pregunta, tiene que editar un archivo JavaScript, lo cual es ineficiente y propenso a errores. Usar una etiqueta `<template>` en el HTML sería una solución mucho más limpia.
+- Dependencias afectadas: Mantenibilidad del formulario de creación de exámenes.
+
+--- AUDITORÍA POST-IMPLEMENTACIÓN (MÓDULO DE EXÁMENES) ---
+
+- Archivo: backend/exam-service/Code.gs
+- Función / método / bloque afectado: doPost
+- Tipo de problema: Lógica de Negocio (Crítico)
+- Descripción detallada del problema: La función `doPost` en el microservicio de exámenes carecía de un `case` para la acción `getStudentExams`.
+- Impacto potencial: Esto rompía una funcionalidad principal de la aplicación, ya que cualquier llamada desde el frontend del estudiante para obtener la lista de sus exámenes asignados fallaba con un error de "Acción no reconocida". Los estudiantes no podían ver ni realizar ningún examen.
+- Solución: Se añadió la línea `case "getStudentExams": result = getStudentExams(payload); break;` al `switch` en la función `doPost`.
+
+- Archivo: backend/exam-service/Code.gs
+- Función / método / bloque afectado: doPost
+- Tipo de problema: Configuración de Red (Crítico)
+- Descripción detallada del problema: Las respuestas enviadas desde la función `doPost` (tanto en casos de éxito como de error) no incluían las cabeceras CORS necesarias (`Access-Control-Allow-Origin`).
+- Impacto potencial: Esto causaba errores intermitentes de `TypeError: Failed to fetch` en el frontend, ya que los navegadores bloqueaban las respuestas que no cumplían con la política de CORS. Hacía que la aplicación fuera inestable y poco fiable.
+- Solución: Se añadió `.setHeaders(corsHeaders)` a todas las declaraciones `ContentService.createTextOutput(...)` dentro del `try/catch` de `doPost`.
+
+- Archivo: backend/exam-service/Code.gs
+- Función / método / bloque afectado: getStudentExams
+- Tipo de problema: Lógica de Negocio
+- Descripción detallada del problema: La función devolvía todos los exámenes asignados a un grado y sección, sin filtrar por el estado "Activo" del examen.
+- Impacto potencial: Los estudiantes habrían visto en su dashboard exámenes que los profesores habían creado pero aún no habían activado, lo que podría causar confusión y permitir el acceso a exámenes antes de tiempo.
+- Solución: Se agregó un filtro adicional en la función para incluir solo los exámenes donde `estadoExamen === 'Activo'`.
+
+- Archivo: js/teacher.js
+- Función / método / bloque afectado: renderActivity
+- Tipo de problema: Bug Visual (Menor)
+- Descripción detallada del problema: La función de renderizado de la tabla de actividades del profesor solo comprobaba la propiedad `item.fecha` para mostrar la fecha. Los exámenes base (sin entregas) usan `item.fechaLimite`.
+- Impacto potencial: Los exámenes recién creados que aún no tenían entregas mostraban "N/A" en la columna de fecha en lugar de la fecha límite correcta.
+- Solución: Se modificó la plantilla de renderizado para usar `(item.fecha || item.fechaLimite)` al formatear la fecha, asegurando que siempre se muestre la fecha correcta.
+
+- Archivo: backend/exam-service/Code.gs
+- Función / método / bloque afectado: updateExamStatus, getAllExams
+- Tipo de problema: Mantenibilidad (Deuda Técnica)
+- Descripción detallada del problema: Las funciones que interactúan con la hoja de cálculo "Examenes" utilizan índices de columna hardcodeados (ej. `getRange(i + 1, 8)` para actualizar el estado).
+- Impacto potencial: Si la estructura de la hoja de cálculo cambia en el futuro (se añade, elimina o reordena una columna), estas funciones fallarán o, peor aún, corromperán los datos al escribir en la columna equivocada.
+- Solución (Recomendación): Refactorizar estas funciones para que lean la fila de encabezados y accedan a las columnas por su nombre en lugar de por su índice numérico, lo que las haría más resistentes a los cambios estructurales.

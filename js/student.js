@@ -76,16 +76,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     actionButtonHtml = `<button class="bg-blue-500 text-white px-4 py-2 rounded-lg open-submission-modal" data-task-id="${activity.tareaId}" data-task-title="${activity.titulo}">Entregar Tarea</button>`;
                 }
             } else if (activity.type === 'Examen') {
-                // Lógica para exámenes
-                 if (activity.entrega) {
-                    feedbackHtml = `
+                const estado = activity.estado || 'Pendiente'; // Estado del examen base o de la entrega
+                const calificacion = activity.calificacionTotal;
+
+                if (estado === 'Activo') {
+                    actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="bg-purple-500 text-white px-4 py-2 rounded-lg">Realizar Examen</a>`;
+                } else {
+                    actionButtonHtml = `<button class="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed" disabled>${estado}</button>`;
+                }
+
+                if (calificacion) {
+                     feedbackHtml = `
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                             <h4 class="font-bold text-md">Estado de tu Examen:</h4>
                             <p class="font-semibold text-green-600">Completado</p>
-                            <p><strong>Calificación:</strong> ${activity.entrega.calificacionTotal}</p>
+                            <p><strong>Calificación:</strong> ${calificacion}</p>
                         </div>`;
-                } else {
-                    actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="bg-purple-500 text-white px-4 py-2 rounded-lg">Realizar Examen</a>`;
                 }
             }
 

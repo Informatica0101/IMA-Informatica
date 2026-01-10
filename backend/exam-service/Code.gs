@@ -48,7 +48,9 @@ function doPost(e) {
       case "submitExam": result = submitExam(payload); break;
       case "reactivateExam": result = reactivateExam(payload); break;
       case "getTeacherExamActivity": result = getTeacherExamActivity(); break;
-      case "getStudentExams": result = getStudentExams(payload); break; // Nuevo endpoint para estudiantes
+      case "updateExamStatus": result = updateExamStatus(payload); break;
+      case "getAllExams": result = getAllExams(); break;
+      case "getStudentExams": result = getStudentExams(payload); break;
       default:
         result = { status: "error", message: `Acción no reconocida en Exam-Service: ${action}` };
     }
@@ -68,12 +70,52 @@ function createExam(payload) {
   const examenesSheet = getSheetOrThrow(ss, "Examenes");
   const preguntasSheet = getSheetOrThrow(ss, "PreguntasExamen");
   const examenId = "EXM-" + new Date().getTime();
-  examenesSheet.appendRow([examenId, titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tiempoLimite || '']);
+  // Añadir una fila inicial en Examenes con estado "Inactivo"
+  examenesSheet.appendRow([examenId, titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tiempoLimite || '', 'Inactivo']);
+
   preguntas.forEach((p, index) => {
     const preguntaId = `PRE-${examenId}-${index}`;
     preguntasSheet.appendRow([preguntaId, examenId, p.preguntaTipo, p.textoPregunta, JSON.stringify(p.opciones || {}), p.respuestaCorrecta]);
   });
   return { status: "success", message: "Examen creado." };
+}
+
+function updateExamStatus(payload) {
+    const { examenId, estado } = payload;
+    if (!examenId || !estado) {
+        throw new Error("Faltan parámetros requeridos (examenId, estado).");
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const examenesSheet = getSheetOrThrow(ss, "Examenes");
+    const data = examenesSheet.getDataRange().getValues();
+
+    for (let i = 1; i < data.length; i++) {
+        if (data[i][0] === examenId) {
+            examenesSheet.getRange(i + 1, 8).setValue(estado); // Columna H (estado)
+            return { status: "success", message: `Examen ${examenId} actualizado a ${estado}.` };
+        }
+    }
+    throw new Error(`Examen con ID ${examenId} no encontrado.`);
+}
+
+function getAllExams() {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const examenesSheet = getSheetOrThrow(ss, "Examenes");
+    const data = examenesSheet.getDataRange().getValues().slice(1);
+
+    const exams = data.map(row => ({
+        tipo: 'Examen',
+        examenId: row[0],
+        titulo: row[1],
+        asignatura: row[2],
+        gradoAsignado: row[3],
+        seccionAsignada: row[4],
+        fechaLimite: new Date(row[5]),
+        estado: row[7] || 'Inactivo' // Columna H es el estado
+    }));
+
+    return { status: "success", data: exams };
 }
 
 function getExamQuestions(payload) {
