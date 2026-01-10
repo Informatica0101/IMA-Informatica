@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/exam-manager.css">
+</head>
+<body class="bg-gray-100">
+    <div id="exam-manager-container" class="container mx-auto p-6">
+
+        <!-- Vista para que el estudiante realice el examen -->
+        <div id="student-exam-view" class="hidden">
+            <header class="flex justify-between items-center mb-8">
+                <h1 id="exam-title" class="text-3xl font-bold text-gray-800">Cargando Examen...</h1>
+                <div id="timer" class="text-2xl font-bold text-red-600"></div>
+            </header>
+            <main>
+                <form id="exam-form" class="bg-white p-8 rounded-lg shadow-md space-y-8">
+                    <div id="questions-container" class="space-y-6">
+                        <!-- Las preguntas del examen se renderizarán aquí -->
+                    </div>
+                    <button type="submit" id="submit-exam-btn" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg">Entregar Examen</button>
+                </form>
+            </main>
+        </div>
+
+        <!-- Vista de confirmación de entrega para el estudiante -->
+        <div id="submission-success-view" class="hidden">
+            <main class="bg-white p-12 rounded-lg shadow-md text-center">
+                <h1 class="text-3xl font-bold text-green-600 mb-4">¡Examen Entregado con Éxito!</h1>
+                <p class="text-gray-700 mb-6">Tu examen ha sido enviado para su revisión. Podrás ver tus resultados una vez que el profesor los haya calificado.</p>
+                <a href="student-dashboard.html" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
+                    Volver al Dashboard
+                </a>
+            </main>
+        </div>
+
+        <!-- Vista para que el profesor vea las entregas de un examen -->
+        <div id="teacher-submissions-view" class="hidden">
+            <header class="mb-8">
+                <h1 id="teacher-exam-title" class="text-3xl font-bold text-gray-800">Entregas de Examen</h1>
+                <a href="teacher-dashboard.html" class="text-blue-600 hover:underline">&larr; Volver al Panel de Profesor</a>
+            </header>
+            <main class="bg-white p-8 rounded-lg shadow-md">
+                <div id="submissions-list-container">
+                    <!-- La lista de entregas de estudiantes se cargará aquí -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Vista para que el profesor califique una entrega específica -->
+        <div id="teacher-grading-view" class="hidden">
+            <header class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">Calificar Entrega</h1>
+                <button id="back-to-submissions-btn" class="text-blue-600 hover:underline">&larr; Volver a la lista de entregas</button>
+            </header>
+            <main class="bg-white p-8 rounded-lg shadow-md">
+                <div id="grading-details-container">
+                    <!-- El detalle de las respuestas del estudiante se cargará aquí -->
+                </div>
+                <div id="grading-form-container" class="mt-8 border-t pt-6">
+                    <!-- El formulario para asignar nota y comentario irá aquí -->
+                </div>
+            </main>
+        </div>
+
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/exam-manager.js"></script>
+</body>
+</html>

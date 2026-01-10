@@ -52,6 +52,10 @@ function doPost(e) {
       case "getAllExams": result = getAllExams(); break;
       case "getStudentExams": result = getStudentExams(payload); break;
       case "getExamResult": result = getExamResult(payload); break;
+      // --- Acciones para Calificación del Profesor ---
+      case "getExamSubmissions": result = getExamSubmissions(payload); break;
+      case "getSubmissionDetails": result = getSubmissionDetails(payload); break;
+      case "gradeSubmission": result = gradeSubmission(payload); break;
       default:
         result = { status: "error", message: `Acción no reconocida en Exam-Service: ${action}` };
     }
@@ -187,9 +191,14 @@ function getTeacherExamActivity() {
         const usuario = usuariosData.find(u => u[0] === entrega[2]);
         const examen = examenesData.find(ex => ex[0] === entrega[1]);
         return {
-            tipo: 'Examen', entregaId: entrega[0], titulo: examen ? examen[1] : "Examen Desconocido",
-            alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido", fecha: new Date(entrega[3]),
-            calificacion: entrega[5], estado: entrega[6]
+            tipo: 'Examen',
+            entregaId: entrega[0],
+            examenId: entrega[1], // Añadir examenId para el frontend
+            titulo: examen ? examen[1] : "Examen Desconocido",
+            alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
+            fecha: new Date(entrega[3]),
+            calificacion: entrega[5],
+            estado: entrega[6]
         };
     });
     return { status: "success", data: examSubmissions };
@@ -270,6 +279,117 @@ function getExamResult(payload) {
         }
     };
 }
+
+// --- NUEVAS FUNCIONES PARA CALIFICACIÓN ---
+
+function getExamSubmissions(payload) {
+  const { examenId } = payload;
+  if (!examenId) throw new Error("Falta el ID del examen.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const entregasSheet = getSheetOrThrow(ss, "EntregasExamen");
+  const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
+
+  const entregasData = entregasSheet.getDataRange().getValues().slice(1);
+  const usuariosData = usuariosSheet.getDataRange().getValues().slice(1);
+  const usuariosMap = new Map(usuariosData.map(u => [u[0], u[1]])); // Map de email a nombre
+
+  const submissions = entregasData
+    .filter(row => row[1] === examenId)
+    .map(row => ({
+      entregaExamenId: row[0],
+      userId: row[2],
+      studentName: usuariosMap.get(row[2]) || 'Nombre no encontrado',
+      submissionDate: new Date(row[3]).toLocaleString(),
+      grade: row[5],
+      status: row[6]
+    }));
+
+  return { status: 'success', data: submissions };
+}
+
+function getSubmissionDetails(payload) {
+  const { entregaExamenId } = payload;
+  if (!entregaExamenId) throw new Error("Falta el ID de la entrega.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const entregasSheet = getSheetOrThrow(ss, "EntregasExamen");
+  const preguntasSheet = getSheetOrThrow(ss, "PreguntasExamen");
+  const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
+
+  const entregaRow = entregasSheet.getDataRange().getValues().find(r => r[0] === entregaExamenId);
+  if (!entregaRow) throw new Error("Entrega no encontrada.");
+
+  const examenId = entregaRow[1];
+  const userId = entregaRow[2];
+  const studentAnswers = JSON.parse(entregaRow[4] || '[]');
+
+  const allQuestions = preguntasSheet.getDataRange().getValues().slice(1);
+  const examQuestions = allQuestions.filter(q => q[1] === examenId);
+
+  const studentData = usuariosSheet.getDataRange().getValues().find(u => u[0] === userId);
+  const studentName = studentData ? studentData[1] : "Desconocido";
+
+  const details = examQuestions.map(q => {
+    const preguntaId = q[0];
+    const studentAns = studentAnswers.find(a => a.preguntaId === preguntaId);
+    return {
+      preguntaId: preguntaId,
+      textoPregunta: q[3],
+      preguntaTipo: q[2],
+      respuestaCorrecta: q[5],
+      respuestaEstudiante: studentAns ? studentAns.respuestaEstudiante : 'No respondida',
+      esCorrecta: studentAns ? studentAns.esCorrecta : false
+    };
+  });
+
+  return {
+    status: 'success',
+    data: {
+      details,
+      studentName,
+      currentGrade: entregaRow[5],
+      currentStatus: entregaRow[6],
+      currentComment: entregaRow[7] || '' // Suponiendo que la columna H es para comentarios
+    }
+  };
+}
+
+function gradeSubmission(payload) {
+  const { entregaExamenId, calificacion, estado, comentario } = payload;
+  if (!entregaExamenId) throw new Error("Falta el ID de la entrega.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "EntregasExamen");
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+
+  // Evitar "números mágicos" buscando el índice de cada columna
+  const idColIdx = headers.indexOf('entregaExamenId');
+  const gradeColIdx = headers.indexOf('calificacion');
+  const statusColIdx = headers.indexOf('estado');
+  const commentColIdx = headers.indexOf('comentario');
+
+  if ([idColIdx, gradeColIdx, statusColIdx].some(idx => idx === -1)) {
+    throw new Error("Una o más columnas requeridas no se encontraron en la hoja 'EntregasExamen'.");
+  }
+
+  const rowIndex = data.findIndex(row => row[idColIdx] === entregaExamenId);
+
+  if (rowIndex === -1) {
+    throw new Error("No se encontró la fila de la entrega.");
+  }
+
+  // Actualizar las celdas correspondientes. Se suma 1 porque los índices de rango son base 1.
+  sheet.getRange(rowIndex + 1, gradeColIdx + 1).setValue(calificacion);
+  sheet.getRange(rowIndex + 1, statusColIdx + 1).setValue(estado);
+  if (commentColIdx !== -1) { // La columna de comentario es opcional
+    sheet.getRange(rowIndex + 1, commentColIdx + 1).setValue(comentario);
+  }
+
+  return { status: 'success', message: 'Calificación guardada exitosamente.' };
+}
+
 
 // --- HELPERS ---
 function normalizeString(str) {

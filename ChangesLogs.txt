@@ -51,3 +51,18 @@ En este archivo se regustrara el historial de cambios del proyecto.
   - Se modificó la función `submitExam` para corregir la recolección de respuestas de preguntas de 'termino_pareado', ajustando el selector de DOM. Además, se cambió la redirección final de `results.html` a `exam-submitted.html` para cumplir con el flujo de usuario correcto para estudiantes.
 - Archivo: exam-submitted.html, Línea(s): 1-22
   - Se creó un nuevo archivo HTML para servir como página de confirmación después de que un estudiante entrega un examen.
+
+10/01/2026
+- Archivo: Múltiples (Refactorización)
+  - Se consolidó la funcionalidad de `exam.html`, `results.html`, y `exam-submitted.html` en un único archivo `exam-manager.html`.
+  - Se unificó la lógica de `js/exam.js` y `js/results.js` en un nuevo script `js/exam-manager.js`.
+  - Se creó `css/exam-manager.css` para centralizar los estilos del nuevo módulo.
+  - Se eliminaron los archivos HTML y JS obsoletos para reducir la fragmentación del código.
+- Archivo: backend/exam-service/Code.gs, Línea(s): 55-60, 287-415
+  - Se implementaron tres nuevas acciones en el backend para la calificación: `getExamSubmissions`, `getSubmissionDetails`, y `gradeSubmission`.
+  - Se añadió lógica para evitar el uso de índices de columna hardcodeados en la función de calificación.
+- Archivo: js/teacher.js, Línea(s): 81-119
+  - Se modificó la vista del dashboard del profesor para agrupar las entregas por examen.
+  - Se añadió un botón "Ver Entregas" que redirige al nuevo `exam-manager.html` para iniciar el flujo de calificación.
+- Archivo: js/exam-manager.js, Línea(s): 90-220
+  - Se implementó la lógica del frontend para el profesor, incluyendo la visualización de listas de entregas, la revisión detallada de respuestas y el formulario de calificación.

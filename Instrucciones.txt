@@ -363,19 +363,12 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
-**Archivo: js/exam.js, exam-submitted.html**
+**Módulo de Exámenes (Refactorización y Calificación)**
 
-*   **Componente: Flujo de Entrega de Examen (Corrección General)**
-    *   **Problema:** Múltiples errores impedían la correcta entrega y confirmación de los exámenes por parte de los estudiantes.
-    *   **Descripción:** Se implementaron varias correcciones: 1) Se ajustaron los selectores de DOM en `js/exam.js` para recopilar correctamente las respuestas de los tipos de pregunta 'completacion' y 'termino_pareado'. 2) Se cambió la redirección después del envío a una nueva página de confirmación (`exam-submitted.html`) para evitar errores de permisos. 3) Se creó la página `exam-submitted.html`. El flujo completo ha sido verificado.
-    *   **Referencia:** Auditoría.txt, Archivo: js/exam.js; ChangesLogs.txt, 09/01/2026.
-
-**Archivo: index.html**
-
-*   **Componente: Enlace al Portal de Login (Corrección)**
-    *   **Problema:** La página principal no tenía un enlace visible y dedicado para acceder al portal de login.
-    *   **Descripción:** Se añadió un nuevo botón con el texto "Portal" en la barra de navegación (escritorio y móvil) que dirige a `login.html`, reemplazando una implementación anterior incorrecta.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Hallazgo 3 (Corregido)
+*   **Componente: Arquitectura y Funcionalidad del Profesor**
+    *   **Problema:** La gestión de exámenes estaba fragmentada y faltaba la funcionalidad de calificación.
+    *   **Descripción:** Se ha refactorizado todo el módulo de exámenes. Se consolidaron `exam.html`, `results.html` y `exam-submitted.html` en un único `exam-manager.html`. La lógica de `js/exam.js` y `js/results.js` se migró a `js/exam-manager.js`. Se implementó el backend y frontend necesarios para que el profesor pueda ver una lista de entregas por examen, revisar las respuestas de cada estudiante y asignar una calificación y comentario. Los archivos obsoletos fueron eliminados.
+    *   **Referencia:** Auditoría.txt (sección de refactorización), ChangesLogs.txt (10/01/2026).
 
 En este bloque se agregarán las tareas realizadas cuyo
 resultado aún no ha sido validado por el PM.
@@ -404,7 +397,19 @@ resultado aún no ha sido validado por el PM.
     *   **Problema:** La función de guardar el examen enviaba un payload vacío, causando un error `forEach` en el backend.
     *   **Descripción:** Se modificó el `addEventListener` del evento `submit` del formulario `create-exam-form` para que recolecte todos los datos del examen y de las preguntas añadidas dinámicamente, construyendo el objeto `payload` correcto antes de enviarlo a la API.
     *   **Referencia:** ChangesLogs.txt, Archivo: js/teacher.js, Línea(s): 243-297
+**Archivo: js/exam.js, exam-submitted.html**
 
+*   **Componente: Flujo de Entrega de Examen (Corrección General)**
+    *   **Problema:** Múltiples errores impedían la correcta entrega y confirmación de los exámenes por parte de los estudiantes.
+    *   **Descripción:** Se implementaron varias correcciones: 1) Se ajustaron los selectores de DOM en `js/exam.js` para recopilar correctamente las respuestas de los tipos de pregunta 'completacion' y 'termino_pareado'. 2) Se cambió la redirección después del envío a una nueva página de confirmación (`exam-submitted.html`) para evitar errores de permisos. 3) Se creó la página `exam-submitted.html`. El flujo completo ha sido verificado.
+    *   **Referencia:** Auditoría.txt, Archivo: js/exam.js; ChangesLogs.txt, 09/01/2026.
+
+**Archivo: index.html**
+
+*   **Componente: Enlace al Portal de Login (Corrección)**
+    *   **Problema:** La página principal no tenía un enlace visible y dedicado para acceder al portal de login.
+    *   **Descripción:** Se añadió un nuevo botón con el texto "Portal" en la barra de navegación (escritorio y móvil) que dirige a `login.html`, reemplazando una implementación anterior incorrecta.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html, Hallazgo 3 (Corregido)
 En este bloque se listarán únicamente las tareas que fueron
 revisadas y aprobadas con resultado exitoso.
 

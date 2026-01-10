@@ -676,3 +676,37 @@
 - Descripción detallada del problema: La lógica para recopilar las respuestas de las preguntas de tipo `completacion`, `respuesta_breve` y `termino_pareado` utiliza selectores de DOM que no coinciden con el HTML generado por la función `renderQuestion`. Específicamente, para `termino_pareado`, busca `input[name^="question_\${preguntaId}"]`, pero `renderQuestion` genera inputs con un sufijo de índice (ej. `question_\${preguntaId}_\${idx}`). Para los otros tipos, el selector es correcto pero la falta de un manejo adecuado para múltiples campos del mismo tipo puede ser un problema.
 - Impacto potencial: Las respuestas para estos tipos de pregunta no se recopilan correctamente y se envían como valores vacíos al backend. El examen del estudiante se califica como incorrecto para estas preguntas, aunque las haya respondido bien.
 - Dependencias afectadas: Calificación de exámenes.
+
+--- AUDITORÍA (Refactorización y Módulo de Calificación de Exámenes) ---
+
+- Archivo: Varios (teacher-dashboard.html, exam.html, results.html, backend/exam-service.gs)
+- Ruta completa: N/A
+- Función / método / bloque afectado: Global
+- Tipo de problema: Funcionalidad Inexistente, Arquitectura
+- Descripción detallada del problema: No existe una interfaz de usuario ni una lógica de backend para que el profesor pueda ver la lista de exámenes entregados por los estudiantes, revisar sus respuestas y asignarles una calificación. La funcionalidad de calificación está completamente ausente.
+- Impacto potencial: Crítico. Los profesores pueden crear exámenes, pero no pueden evaluarlos, lo que rompe el ciclo educativo completo. Es una funcionalidad principal faltante.
+- Dependencias afectadas: teacher-dashboard.html, backend/exam-service.gs.
+
+- Archivo: Varios (exam.html, results.html, exam-submitted.html, js/exam.js, js/results.js)
+- Ruta completa: N/A
+- Función / método / bloque afectado: Arquitectura de archivos
+- Tipo de problema: Mantenibilidad, Fragmentación
+- Descripción detallada del problema: La funcionalidad completa del ciclo de vida de un examen (realización por el estudiante, visualización de resultados, confirmación de entrega) está fragmentada en múltiples archivos HTML y JavaScript.
+- Impacto potencial: Esto aumenta la complejidad del mantenimiento. Un cambio en la lógica o en el diseño requiere la modificación de varios archivos, lo que incrementa el riesgo de introducir inconsistencias. Dificulta la reutilización de componentes y la comprensión del flujo completo.
+- Dependencias afectadas: Todo el módulo de exámenes.
+
+- Archivo: js/exam.js, js/results.js
+- Ruta completa: /js/exam.js, /js/results.js
+- Función / método / bloque afectado: renderQuestion, renderResults
+- Tipo de problema: N/A (Observación de Arquitectura)
+- Descripción detallada del problema: Los archivos `js/exam.js` y `js/results.js` contienen lógica de renderizado (`renderQuestion` y `renderResults`) que es altamente reutilizable. `renderQuestion` puede usarse para mostrar el examen tanto al estudiante como al profesor. `renderResults` contiene la base para la vista de calificación del profesor.
+- Impacto potencial: Positivo. Durante la refactorización, estas funciones pueden ser migradas y adaptadas al nuevo archivo consolidado `js/exam-manager.js`, acelerando el desarrollo y asegurando la consistencia visual.
+- Dependencias afectadas: El nuevo módulo consolidado de exámenes.
+
+- Archivo: Varios HTML (exam.html, results.html, etc.)
+- Ruta completa: N/A
+- Función / método / bloque afectado: Estilos
+- Tipo de problema: Mantenibilidad (Menor)
+- Descripción detallada del problema: Los estilos se aplican principalmente a través de clases de utilidad de Tailwind CSS directamente en el HTML. No hay una hoja de estilos dedicada para el módulo de exámenes.
+- Impacto potencial: Si se requieren estilos más complejos o personalizados para el nuevo módulo de calificación, añadirlos directamente al HTML consolidado lo haría difícil de leer. Centralizar los estilos personalizados en un archivo `css/exam-manager.css` mejorará la organización.
+- Dependencias afectadas: El nuevo `exam-manager.html`.

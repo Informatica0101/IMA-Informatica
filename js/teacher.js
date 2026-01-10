@@ -81,35 +81,40 @@ document.addEventListener('DOMContentLoaded', () => {
             submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">No hay actividad reciente.</td></tr>';
             return;
         }
-        submissionsTableBody.innerHTML = activity.map(item => {
+        // Agrupar todas las actividades por su título de tarea o examen
+        const groupedActivity = activity.reduce((acc, item) => {
+            if (!acc[item.titulo]) {
+                acc[item.titulo] = {
+                    ...item,
+                    submissions: []
+                };
+            }
+            if (item.alumnoNombre) { // Si tiene nombre de alumno, es una entrega
+                acc[item.titulo].submissions.push(item);
+            }
+            return acc;
+        }, {});
+
+        submissionsTableBody.innerHTML = Object.values(groupedActivity).map(item => {
             let actionHtml = '';
-            // Si el item tiene `alumnoNombre`, es una entrega. Si no, es un examen base.
-            if (item.alumnoNombre) {
-                if (item.tipo === 'Tarea') {
-                    actionHtml = `<button class="bg-blue-500 text-white px-2 py-1 rounded text-sm grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
-                } else if (item.tipo === 'Examen' && item.estado === 'Bloqueado') {
-                    actionHtml = `<button class="bg-yellow-500 text-white px-2 py-1 rounded text-sm reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>`;
-                }
+            const submissionCount = item.submissions.length;
+
+            if (item.tipo === 'Tarea') {
+                actionHtml = submissionCount > 0
+                    ? `<button class="bg-blue-500 text-white px-2 py-1 rounded text-sm view-task-submissions-btn" data-task-id="${item.tareaId}">Ver Entregas (${submissionCount})</button>`
+                    : '<span>Sin entregas</span>';
             } else if (item.tipo === 'Examen') {
-                // Es un examen sin entregas, mostrar botones de control
-                const isActivo = item.estado === 'Activo';
-                const isBloqueado = item.estado === 'Bloqueado';
-                actionHtml = `
-                    <div class="flex space-x-2">
-                        <button class="bg-green-500 text-white px-2 py-1 rounded text-sm activate-exam-btn" data-examen-id="${item.examenId}" ${isActivo ? 'disabled' : ''}>Activar</button>
-                        <button class="bg-red-500 text-white px-2 py-1 rounded text-sm lock-exam-btn" data-examen-id="${item.examenId}" ${isBloqueado ? 'disabled' : ''}>Bloquear</button>
-                    </div>
-                `;
+                 actionHtml = `<a href="exam-manager.html?examenId=${item.examenId}&view=submissions" class="bg-purple-500 text-white px-2 py-1 rounded text-sm">Ver Entregas (${submissionCount})</a>`;
             }
 
             return `
                 <tr class="border-b">
-                    <td class="p-4">${item.alumnoNombre || '<em>N/A</em>'}</td>
-                    <td class="p-4">${item.titulo}</td>
-                    <td class="p-4">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
-                    <td class="p-4">${item.archivoUrl ? `<a href="${item.archivoUrl}" target="_blank" class="text-blue-500">Ver Archivo</a>` : '<em>N/A</em>'}</td>
-                    <td class="p-4">${item.calificacion || '<em>N/A</em>'}</td>
-                    <td class="p-4">${item.estado || '<em>Pendiente</em>'}</td>
+                    <td class="p-4 font-bold">${item.titulo}</td>
+                    <td class="p-4">${item.tipo}</td>
+                    <td class="p-4">${new Date(item.fechaLimite || item.fecha).toLocaleDateString()}</td>
+                    <td class="p-4">${item.asignatura}</td>
+                    <td class="p-4">${item.gradoAsignado}</td>
+                    <td class="p-4">${item.estado}</td>
                     <td class="p-4">${actionHtml}</td>
                 </tr>`;
         }).join('');
