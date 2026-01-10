@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (result.status === 'success') {
                     alert('¡Tarea entregada exitosamente!');
                     closeSubmissionModal();
-                    fetchStudentTasks();
+                    fetchAllActivities();
                 } else {
                     throw new Error(result.message);
                 }

@@ -16,10 +16,13 @@ Traceback (most recent call last):
   File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/socketserver.py", line 478, in server_bind
     self.socket.bind(self.server_address)
 OSError: [Errno 98] Address already in use
-127.0.0.1 - - [10/Jan/2026 02:07:02] "GET /teacher-dashboard.html HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 02:07:02] "GET /js/config.js HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 02:07:02] "GET /js/teacher.js HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 02:07:02] "GET /js/api.js HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 02:07:02] "GET /login.html HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 02:07:02] "GET /js/auth.js HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 02:07:02] "GET /login.html HTTP/1.1" 304 -
+127.0.0.1 - - [10/Jan/2026 04:51:40] "GET /teacher-dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 04:51:41] "GET /js/config.js HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 04:51:41] "GET /js/teacher.js HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 04:51:41] "GET /js/api.js HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 04:51:41] "GET /login.html HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 04:51:41] "GET /js/auth.js HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 04:51:41] "GET /login.html HTTP/1.1" 304 -
+127.0.0.1 - - [10/Jan/2026 04:51:43] "GET /student-dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 04:51:43] "GET /js/student.js HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 04:51:44] "GET /teacher-dashboard.html HTTP/1.1" 304 -

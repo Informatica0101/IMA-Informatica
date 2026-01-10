@@ -222,7 +222,8 @@ function getStudentExams(payload) {
             titulo: examen[1],
             asignatura: examen[2],
             fechaLimite: examen[5],
-            estado: entrega ? entrega[6] : "Pendiente" // Si hay entrega, usa su estado, si no, "Pendiente"
+            // Si hay una entrega, se usa su estado. Si no, se usa el estado del examen base (columna H).
+            estado: entrega ? entrega[6] : (examen[7] || 'Inactivo')
         };
     });
 
