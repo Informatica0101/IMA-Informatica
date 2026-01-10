@@ -193,9 +193,12 @@ function getTeacherExamActivity() {
         return {
             tipo: 'Examen',
             entregaId: entrega[0],
-            examenId: entrega[1], // Añadir examenId para el frontend
+            examenId: entrega[1],
             titulo: examen ? examen[1] : "Examen Desconocido",
+            asignatura: examen ? examen[2] : "N/A",
             alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
+            grado: usuario ? usuario[4] : "N/A",
+            seccion: usuario ? usuario[5] : "N/A",
             fecha: new Date(entrega[3]),
             calificacion: entrega[5],
             estado: entrega[6]

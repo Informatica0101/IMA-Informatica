@@ -69,6 +69,23 @@ En este archivo se regustrara el historial de cambios del proyecto.
 
 10/01/2026
 - Archivo: js/student.js, Línea(s): 82
+- Archivo: js/student.js, Línea(s): 82
   - Se actualizó el `href` del botón "Realizar Examen" para que apunte a `exam-manager.html`, corrigiendo un enlace roto producto de la refactorización.
 - Archivo: README.md, Línea(s): 30-50, 206-218
   - Se actualizó la documentación de la arquitectura y estructura de archivos del proyecto para reflejar la consolidación del módulo de exámenes en los nuevos archivos `exam-manager`.
+
+11/01/2026
+- Archivo: backend/exam-service/Code.gs, Línea(s): 190-204
+  - Se modificó la función `getTeacherExamActivity` para incluir los campos `grado`, `seccion` y `asignatura` en los datos de las entregas de exámenes, proporcionando la información necesaria para el nuevo sistema de filtrado en el frontend.
+- Archivo: teacher-dashboard.html, Línea(s): 29-57
+  - Se añadieron nuevos controles de interfaz de usuario (dropdown y inputs de texto) al dashboard del profesor para permitir el filtrado de actividades por grado, sección y asignatura.
+- Archivo: js/teacher.js, Línea(s): 3, 20-25, 120-151
+  - Se implementó la lógica de filtrado en el lado del cliente. Se añadió un manejador de eventos al nuevo botón "Filtrar" que aplica los filtros seleccionados sobre una lista completa de actividades almacenada localmente.
+  - Se añadió un botón "Limpiar" para resetear los filtros y mostrar todas las actividades.
+
+11/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 123-127, 163-174
+  - Se corrigió un bug crítico en el dashboard del profesor que causaba que el enlace "Ver Archivo" para las entregas de tareas apareciera como `undefined`.
+  - Se modificó la función `submitAssignment` para almacenar únicamente el ID del archivo de Google Drive en la hoja de cálculo, en lugar de una URL volátil.
+  - Se actualizó la función `getTeacherActivity` para construir una URL de archivo estable y permanente usando el ID almacenado.
+  - Adicionalmente, se corrigió un bug en la misma función que asignaba incorrectamente los datos de `grado` y `seccion` del estudiante, lo que rompía la funcionalidad de filtrado.

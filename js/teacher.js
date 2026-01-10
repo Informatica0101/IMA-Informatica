@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     let submissionsTableBody = document.getElementById('submissions-table-body');
+    let allActivities = []; // --- Almacenar todas las actividades para filtrar ---
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
     if (!currentUser || currentUser.rol !== 'Profesor') {
@@ -18,6 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const createAssignmentForm = document.getElementById('create-assignment-form');
     const createExamForm = document.getElementById('create-exam-form');
     const logoutButton = document.getElementById('logout-button');
+    const filterGrado = document.getElementById('filter-grado');
+    const filterSeccion = document.getElementById('filter-seccion');
+    const filterAsignatura = document.getElementById('filter-asignatura');
+    const filterBtn = document.getElementById('filter-btn');
+    const clearFilterBtn = document.getElementById('clear-filter-btn');
 
     const allSections = [sectionDashboard, sectionCrear, sectionCrearExamen];
     const allNavLinks = [navDashboard, navCrear, navCrearExamen];
@@ -49,28 +55,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const [taskSubmissions, examSubmissions, allExams] = await Promise.all([
                 fetchApi('TASK', 'getTeacherActivity', {}),
                 fetchApi('EXAM', 'getTeacherExamActivity', {}),
-                fetchApi('EXAM', 'getAllExams', {}) // Endpoint para obtener todos los exámenes base
+                fetchApi('EXAM', 'getAllExams', {})
             ]);
 
-            console.log("Task Submissions:", taskSubmissions);
-            console.log("Exam Submissions:", examSubmissions);
-            console.log("All Exams:", allExams);
-
             const submissions = [...(taskSubmissions.data || []), ...(examSubmissions.data || [])];
-
-            // Mapear las entregas a sus IDs de examen para no mostrarlos duplicados
             const submittedExamIds = new Set((examSubmissions.data || []).map(s => s.examenId));
-
-            // Filtrar los exámenes base para mostrar solo aquellos sin entregas
             const examsWithoutSubmissions = (allExams.data || []).filter(exam => !submittedExamIds.has(exam.examenId));
+            const combinedActivity = [...submissions, ...examsWithoutSubmissions];
 
-            // Combinar las entregas con los exámenes que aún no tienen entregas
-            const allActivity = [...submissions, ...examsWithoutSubmissions];
+            combinedActivity.sort((a, b) => new Date(b.fecha || b.fechaLimite) - new Date(a.fecha || a.fechaLimite));
 
-            console.log("Final Activity List:", allActivity);
+            allActivities = combinedActivity; // Guardar la lista completa
+            renderActivity(allActivities); // Renderizar la lista completa inicialmente
 
-            allActivity.sort((a, b) => new Date(b.fecha || b.fechaLimite) - new Date(a.fecha || a.fechaLimite));
-            renderActivity(allActivity);
         } catch (error) {
             submissionsTableBody.innerHTML = `<tr><td colspan="7" class="text-center p-4 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
         }
@@ -78,47 +75,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderActivity(activity) {
         if (!activity || activity.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">No hay actividad reciente.</td></tr>';
+            submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">No se encontraron actividades con los filtros actuales.</td></tr>';
             return;
         }
-        // Agrupar todas las actividades por su título de tarea o examen
-        const groupedActivity = activity.reduce((acc, item) => {
-            if (!acc[item.titulo]) {
-                acc[item.titulo] = {
-                    ...item,
-                    submissions: []
-                };
-            }
-            if (item.alumnoNombre) { // Si tiene nombre de alumno, es una entrega
-                acc[item.titulo].submissions.push(item);
-            }
-            return acc;
-        }, {});
 
-        submissionsTableBody.innerHTML = Object.values(groupedActivity).map(item => {
+        submissionsTableBody.innerHTML = activity.map(item => {
             let actionHtml = '';
-            const submissionCount = item.submissions.length;
 
             if (item.tipo === 'Tarea') {
-                actionHtml = submissionCount > 0
-                    ? `<button class="bg-blue-500 text-white px-2 py-1 rounded text-sm view-task-submissions-btn" data-task-id="${item.tareaId}">Ver Entregas (${submissionCount})</button>`
-                    : '<span>Sin entregas</span>';
-            } else if (item.tipo === 'Examen') {
-                 actionHtml = `<a href="exam-manager.html?examenId=${item.examenId}&view=submissions" class="bg-purple-500 text-white px-2 py-1 rounded text-sm">Ver Entregas (${submissionCount})</a>`;
+                actionHtml = `<button class="bg-blue-500 text-white px-2 py-1 rounded text-sm grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
+            }
+            else if (item.tipo === 'Examen') {
+                 if (item.alumnoNombre) {
+                     if (item.estado === 'Bloqueado') {
+                         actionHtml = `<button class="bg-yellow-500 text-white px-2 py-1 rounded text-sm reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>`;
+                     }
+                 } else {
+                     actionHtml = `<a href="exam-manager.html?examenId=${item.examenId}&view=submissions" class="bg-purple-500 text-white px-2 py-1 rounded text-sm">Ver Entregas</a>`;
+                 }
             }
 
             return `
                 <tr class="border-b">
-                    <td class="p-4 font-bold">${item.titulo}</td>
-                    <td class="p-4">${item.tipo}</td>
-                    <td class="p-4">${new Date(item.fechaLimite || item.fecha).toLocaleDateString()}</td>
-                    <td class="p-4">${item.asignatura}</td>
-                    <td class="p-4">${item.gradoAsignado}</td>
-                    <td class="p-4">${item.estado}</td>
-                    <td class="p-4">${actionHtml}</td>
+                    <td class="p-4">${item.alumnoNombre || '<em>N/A</em>'}</td>
+                    <td class="p-4">${item.titulo}</td>
+                    <td class="p-4">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
+                    <td class="p-4">${item.archivoUrl ? `<a href="${item.archivoUrl}" target="_blank" class="text-blue-500">Ver Archivo</a>` : '<em>N/A</em>'}</td>
+                    <td class="p-4">${item.calificacion || '<em>N/A</em>'}</td>
+                    <td class="p-4">${item.estado || '<em>Pendiente</em>'}</td>
+                    <td class="p-4">${actionHtml || 'N/A'}</td>
                 </tr>`;
         }).join('');
     }
+
+    // --- Lógica de Filtrado ---
+    function applyFilters() {
+        const grado = filterGrado.value;
+        const seccion = filterSeccion.value.trim().toLowerCase();
+        const asignatura = filterAsignatura.value.trim().toLowerCase();
+
+        const filteredActivity = allActivities.filter(item => {
+            // Normalizar los datos del item para la comparación
+            const itemGrado = item.grado || item.gradoAsignado || '';
+            const itemSeccion = item.seccion || item.seccionAsignada || '';
+            const itemAsignatura = item.asignatura || '';
+
+            const gradoMatch = !grado || itemGrado === grado;
+            const seccionMatch = !seccion || itemSeccion.toLowerCase().includes(seccion);
+            const asignaturaMatch = !asignatura || itemAsignatura.toLowerCase().includes(asignatura);
+
+            return gradoMatch && seccionMatch && asignaturaMatch;
+        });
+        renderActivity(filteredActivity);
+    }
+
+    function clearFilters() {
+        filterGrado.value = '';
+        filterSeccion.value = '';
+        filterAsignatura.value = '';
+        renderActivity(allActivities);
+    }
+
+    filterBtn.addEventListener('click', applyFilters);
+    clearFilterBtn.addEventListener('click', clearFilters);
 
     // --- Lógica del Modal de Calificación ---
     const gradeModal = document.getElementById('grade-modal');

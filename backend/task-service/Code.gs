@@ -48,7 +48,7 @@ function doPost(e) {
       case "getStudentTasks": result = getStudentTasks(payload); break;
       case "submitAssignment": result = submitAssignment(payload); break;
       case "gradeSubmission": result = gradeSubmission(payload); break;
-      case "getTeacherActivity": result = getTeacherActivity(); break;
+      case "getTeacherActivity": result = getTeacherActivity(payload); break;
       default:
         result = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
@@ -125,10 +125,11 @@ function submitAssignment(payload) {
   const fileInfo = fileData.split(',');
   const mimeType = fileInfo[0].match(/:(.*?);/)[1];
   const blob = Utilities.newBlob(Utilities.base64Decode(fileInfo[1]), mimeType, fileName).setName(tituloTarea);
-  const fileUrl = asignaturaFolder.createFile(blob).getUrl();
+  const fileId = asignaturaFolder.createFile(blob).getId(); // --- Guardar solo el ID
 
   const entregaId = "ENT-" + new Date().getTime();
-  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileUrl, '', 'Pendiente', '']);
+  // --- Almacenar fileId en lugar de la URL completa ---
+  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente', '']);
   return { status: "success", message: "Tarea entregada." };
 }
 
@@ -146,7 +147,8 @@ function gradeSubmission(payload) {
   throw new Error("Entrega no encontrada.");
 }
 
-function getTeacherActivity() {
+function getTeacherActivity(payload = {}) {
+  const { grado, seccion, asignatura } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
@@ -156,20 +158,34 @@ function getTeacherActivity() {
   const tareasData = tareasSheet.getDataRange().getValues();
   const entregasData = entregasSheet.getDataRange().getValues().slice(1);
 
-  const submissions = entregasData.map(entrega => {
+  let submissions = entregasData.map(entrega => {
     const usuario = usuariosData.find(u => u[0] === entrega[2]);
     const tarea = tareasData.find(t => t[0] === entrega[1]);
+    if (!tarea || !usuario) return null;
+    const fileId = entrega[4];
+    const archivoUrl = fileId ? `https://drive.google.com/file/d/${fileId}/view` : null;
     return {
-      tipo: 'Tarea', entregaId: entrega[0], titulo: tarea ? tarea[2] : "Tarea Desconocida",
-      alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido", fecha: new Date(entrega[3]),
-      archivoUrl: entrega[4], calificacion: entrega[5], estado: entrega[6], comentario: entrega[7]
+      tipo: 'Tarea', entregaId: entrega[0], titulo: tarea[2],
+      alumnoNombre: usuario[1], fecha: new Date(entrega[3]),
+      archivoUrl: archivoUrl, // --- Construir la URL completa y visible
+      calificacion: entrega[5], estado: entrega[6], comentario: entrega[7],
+      // --- Corregir índices para grado y sección ---
+      grado: usuario[4],
+      seccion: usuario[5],
+      asignatura: tarea[5]
     };
-  });
+  }).filter(Boolean); // Eliminar nulos
+
+  // Aplicar filtros si se proporcionan
+  if (grado) submissions = submissions.filter(s => s.grado === grado);
+  if (seccion) submissions = submissions.filter(s => s.seccion === seccion);
+  if (asignatura) submissions = submissions.filter(s => s.asignatura === asignatura);
 
   // En un futuro, este servicio podría llamar al Exam-Service para obtener las entregas de exámenes.
   // Por ahora, solo devuelve las de tareas.
   submissions.sort((a, b) => b.fecha - a.fecha);
-  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toLocaleString() }));
+  // Devolver fechas en formato ISO para que el frontend las maneje de forma consistente
+  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
   return { status: "success", data: formattedActivity };
 }
 

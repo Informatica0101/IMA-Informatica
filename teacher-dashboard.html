@@ -26,6 +26,34 @@
             <!-- Sección de Dashboard (Entregas) -->
             <section id="section-dashboard">
                 <h2 class="text-2xl font-bold mb-4">Últimas Entregas</h2>
+
+                <!-- Controles de Filtro -->
+                <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label for="filter-grado" class="block text-sm font-medium text-gray-700">Grado</label>
+                            <select id="filter-grado" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                <option value="">Todos</option>
+                                <option value="Décimo">Décimo</option>
+                                <option value="Undécimo">Undécimo</option>
+                                <option value="Duodécimo">Duodécimo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="filter-seccion" class="block text-sm font-medium text-gray-700">Sección</label>
+                            <input type="text" id="filter-seccion" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label for="filter-asignatura" class="block text-sm font-medium text-gray-700">Asignatura</label>
+                            <input type="text" id="filter-asignatura" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div class="flex items-end">
+                            <button id="filter-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg mr-2">Filtrar</button>
+                            <button id="clear-filter-btn" class="bg-gray-400 text-white px-4 py-2 rounded-lg">Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <table class="w-full">
                         <thead>

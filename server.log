@@ -1,0 +1,6 @@
+127.0.0.1 - - [10/Jan/2026 22:48:28] "GET /login.html HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 22:48:28] "GET /js/config.js HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 22:48:28] "GET /js/auth.js HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 22:48:28] "GET /js/api.js HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 22:48:29] "GET /teacher-dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2026 22:48:29] "GET /js/teacher.js HTTP/1.1" 200 -

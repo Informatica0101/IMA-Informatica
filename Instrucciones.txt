@@ -363,6 +363,13 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**Dashboard de Profesor (Filtrado de Actividades)**
+
+*   **Componente: Interfaz de Usuario y Lógica de Cliente**
+    *   **Problema:** El profesor no podía filtrar la lista de actividades y las entregas de tareas mostraban enlaces de archivo rotos.
+    *   **Descripción:** Se ha implementado una nueva sección de filtros en el dashboard del profesor. Se añadieron controles para filtrar por grado, sección y asignatura. La lógica del frontend se actualizó para realizar el filtrado en el lado del cliente. Adicionalmente, se corrigió un bug crítico en el `task-service` que causaba enlaces de archivo `undefined` y errores en los datos de filtrado.
+    *   **Referencia:** ChangesLogs.txt (11/01/2026).
+
 **Módulo de Exámenes (Refactorización y Calificación)**
 
 *   **Componente: Arquitectura y Funcionalidad del Profesor**
