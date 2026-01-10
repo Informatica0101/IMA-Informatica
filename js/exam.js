@@ -66,12 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     break;
                 case 'termino_pareado':
-                    // Para términos pareados, la respuesta puede ser un objeto o un string JSON
-                    const pairInputs = block.querySelectorAll(`input[name^="question_${preguntaId}"]`);
+                    // Selector específico para los inputs de respuesta de término pareado.
+                    const pairContainers = block.querySelectorAll(`input[name^="question_${preguntaId}_"]`);
                     const pairs = {};
-                    pairInputs.forEach(input => {
-                        const conceptIndex = input.name.split('_').pop();
+                    pairContainers.forEach(input => {
+                    // El nombre del input es `question_{preguntaId}_{idx}`
+                    const nameParts = input.name.split('_');
+                    if (nameParts.length === 3) {
+                        const conceptIndex = nameParts[2];
                         pairs[conceptIndex] = input.value.trim();
+                    }
                     });
                     respuestaEstudiante = JSON.stringify(pairs); // Convertir a string para enviar
                     break;
@@ -89,9 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const payload = { examenId, userId: currentUser.userId, respuestas, estado: isBlocked ? 'Bloqueado' : 'Entregado' };
             const result = await fetchApi('EXAM', 'submitExam', payload);
 
-            if (result.status === 'success' && result.data) {
-                // Redirigir a una página de resultados con la calificación
-                window.location.href = `results.html?entregaExamenId=${result.data.entregaExamenId}`;
+        if (result.status === 'success') {
+            // Redirigir a la página de confirmación, sin pasar ningún ID.
+            window.location.href = `exam-submitted.html`;
             } else {
                 throw new Error(result.message || "Error al enviar el examen.");
             }

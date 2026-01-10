@@ -658,3 +658,21 @@
 - Descripción detallada del problema: La función `loadExam` intenta procesar el array de preguntas (`originalQuestions`) utilizando `originalQuestions.map(renderQuestion)`. Sin embargo, la función `renderQuestion` no está definida, declarada ni importada en ninguna parte del archivo `js/exam.js`. La ejecución del script se detiene en este punto debido a un `ReferenceError: renderQuestion is not defined`.
 - Impacto potencial: Crítico. Impide completamente la renderización de las preguntas del examen. El estudiante ve un mensaje de "Error al cargar el examen" en lugar del contenido del mismo, bloqueando por completo la capacidad de realizar cualquier examen.
 - Dependencias afectadas: exam.html, flujo de realización de exámenes para el rol de estudiante.
+
+- Archivo: js/exam.js
+- Ruta completa: /js/exam.js
+- Función / método / bloque afectado: submitExam
+- Línea(s) involucrada(s): ~116
+- Tipo de problema: Lógica de Negocio, Flujo de Usuario Incorrecto
+- Descripción detallada del problema: Después de enviar un examen, el estudiante es redirigido a `results.html`. Esta página está diseñada para mostrar resultados detallados, pero el estudiante no tiene permisos para verlos inmediatamente después de la entrega. El backend deniega la solicitud de `getExamResult`, causando el error "No se encontraron los resultados para la entrega especificada".
+- Impacto potencial: El estudiante se encuentra con un mensaje de error confuso en lugar de una confirmación de que su examen fue entregado, rompiendo la experiencia de usuario.
+- Dependencias afectadas: results.html, js/results.js, flujo de entrega de exámenes.
+
+- Archivo: js/exam.js
+- Ruta completa: /js/exam.js
+- Función / método / bloque afectado: submitExam
+- Línea(s) involucrada(s): ~81, ~88
+- Tipo de problema: Bug, Selector de DOM Incorrecto
+- Descripción detallada del problema: La lógica para recopilar las respuestas de las preguntas de tipo `completacion`, `respuesta_breve` y `termino_pareado` utiliza selectores de DOM que no coinciden con el HTML generado por la función `renderQuestion`. Específicamente, para `termino_pareado`, busca `input[name^="question_\${preguntaId}"]`, pero `renderQuestion` genera inputs con un sufijo de índice (ej. `question_\${preguntaId}_\${idx}`). Para los otros tipos, el selector es correcto pero la falta de un manejo adecuado para múltiples campos del mismo tipo puede ser un problema.
+- Impacto potencial: Las respuestas para estos tipos de pregunta no se recopilan correctamente y se envían como valores vacíos al backend. El examen del estudiante se califica como incorrecto para estas preguntas, aunque las haya respondido bien.
+- Dependencias afectadas: Calificación de exámenes.
