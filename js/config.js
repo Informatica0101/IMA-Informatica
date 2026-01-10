@@ -17,7 +17,7 @@ const SERVICE_URLS = {
   TASK: 'https://script.google.com/macros/s/AKfycbyDWQvQnD4APVf0T62NeZHGC3wyiH2fRoW5x9kiGgJtBD0HINHC5dIIDkNnW1AaJ8A/exec',
 
   // Pega aquí la URL del despliegue del microservicio de exámenes.
-  EXAM: 'https://script.google.com/macros/s/AKfycbwA5nn-XHXIzSCirC1sj3NZ5pGPNZjEapHFi6Em72emOqkHx3aPu3OtPwJRtX3RpnvA/exec'
+  EXAM: 'https://script.google.com/macros/s/AKfycby2Klxjm_qZzhc2_RGCgNmCGxfWSZ6OTR9bG6JbkHWmdqTWyg3_XG2XkJ-QLqhcUCny/exec'
 };
 
 // --- URL del sitio para CORS (si es necesario ajustarlo en el backend) ---
