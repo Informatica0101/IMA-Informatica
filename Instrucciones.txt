@@ -370,6 +370,13 @@ C. PROCESO DE APROBACIÓN
     *   **Descripción:** Se ha refactorizado todo el módulo de exámenes. Se consolidaron `exam.html`, `results.html` y `exam-submitted.html` en un único `exam-manager.html`. La lógica de `js/exam.js` y `js/results.js` se migró a `js/exam-manager.js`. Se implementó el backend y frontend necesarios para que el profesor pueda ver una lista de entregas por examen, revisar las respuestas de cada estudiante y asignar una calificación y comentario. Los archivos obsoletos fueron eliminados.
     *   **Referencia:** Auditoría.txt (sección de refactorización), ChangesLogs.txt (10/01/2026).
 
+**Aplicación General (Post-Refactorización)**
+
+*   **Componente: Navegación y Coherencia de la Arquitectura**
+    *   **Problema:** La refactorización del módulo de exámenes dejó enlaces rotos y documentación desactualizada.
+    *   **Descripción:** Se ha corregido el enlace "Realizar Examen" en el panel del estudiante para que apunte al nuevo `exam-manager.html`. Se ha actualizado el `README.md` para reflejar con precisión la nueva estructura de archivos consolidada, eliminando las referencias a los archivos obsoletos y añadiendo los nuevos.
+    *   **Referencia:** ChangesLogs.txt (10/01/2026).
+
 En este bloque se agregarán las tareas realizadas cuyo
 resultado aún no ha sido validado por el PM.
 

@@ -66,3 +66,9 @@ En este archivo se regustrara el historial de cambios del proyecto.
   - Se añadió un botón "Ver Entregas" que redirige al nuevo `exam-manager.html` para iniciar el flujo de calificación.
 - Archivo: js/exam-manager.js, Línea(s): 90-220
   - Se implementó la lógica del frontend para el profesor, incluyendo la visualización de listas de entregas, la revisión detallada de respuestas y el formulario de calificación.
+
+10/01/2026
+- Archivo: js/student.js, Línea(s): 82
+  - Se actualizó el `href` del botón "Realizar Examen" para que apunte a `exam-manager.html`, corrigiendo un enlace roto producto de la refactorización.
+- Archivo: README.md, Línea(s): 30-50, 206-218
+  - Se actualizó la documentación de la arquitectura y estructura de archivos del proyecto para reflejar la consolidación del módulo de exámenes en los nuevos archivos `exam-manager`.

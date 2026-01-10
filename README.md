@@ -32,25 +32,27 @@ El repositorio está organizado de la siguiente manera para separar claramente l
 │       └── Code.gs         # Microservicio de Exámenes
 │
 ├── css/
-│   └── styles.css          # Estilos CSS personalizados (si los hubiera)
+│   ├── styles.css          # Estilos CSS generales
+│   └── exam-manager.css    # Estilos específicos para el módulo de exámenes
 │
 ├── js/
 │   ├── config.js           # Configuración de URLs de microservicios
 │   ├── auth.js             # Lógica de login y registro
 │   ├── student.js          # Lógica para el dashboard del estudiante
 │   ├── teacher.js          # Lógica para el dashboard del profesor
-│   └── exam.js             # Lógica para la toma de exámenes
+│   └── exam-manager.js     # Lógica consolidada para todo el ciclo de vida de los exámenes
 │
-├── *.html                  # Archivos HTML para las diferentes vistas (index, login, etc.)
+├── exam-manager.html       # Vista única para tomar, ver y calificar exámenes
+├── ... (otros archivos .html)
 │
 └── README.md               # Este documento
 ```
 
 - **`backend/`**: Contiene los microservicios. Cada subcarpeta es un proyecto de Google Apps Script independiente y autocontenido.
-- **`css/`**: Almacena hojas de estilo.
-- **`js/`**: Contiene la lógica del frontend.
+- **`css/`**: Almacena hojas de estilo. `exam-manager.css` contiene estilos exclusivos del módulo de exámenes.
+- **`js/`**: Contiene la lógica del frontend. `exam-manager.js` es el nuevo controlador para todo lo relacionado con exámenes.
   - `config.js` es crítico, ya que define los puntos de entrada para cada microservicio.
-- **Archivos `.html`**: Definen la estructura de la interfaz de usuario.
+- **Archivos `.html`**: Definen la estructura de la interfaz de usuario. `exam-manager.html` es el nuevo punto de entrada para todas las vistas de exámenes.
 
 ---
 
@@ -204,10 +206,12 @@ El frontend es una aplicación cliente que consume los microservicios.
 - **`auth.js`**: Maneja los formularios de `login.html` y `register.html`. Se comunica exclusivamente con el **microservicio de usuarios**. Tras un login exitoso, guarda los datos del usuario en `localStorage` y redirige al dashboard correspondiente.
 - **`teacher.js`**: Controla el `teacher-dashboard.html`.
   - **Creación**: Llama al servicio de `TASK` para crear tareas y al de `EXAM` para crear exámenes.
-  - **Visualización**: Para mostrar la lista de actividades, llama en paralelo a `getTeacherActivity` del servicio de tareas y a `getTeacherExamActivity` del servicio de exámenes. Luego, **combina y ordena los resultados en el lado del cliente** antes de renderizarlos.
-  - **Calificación**: Llama a `gradeSubmission` (servicio de tareas) o `reactivateExam` (servicio de exámenes) según la acción.
-- **`student.js`**: Controla el `student-dashboard.html`. De forma similar al dashboard del profesor, llama a los servicios `TASK` y `EXAM` para obtener la lista de actividades pendientes del estudiante y las muestra combinadas.
-- **`exam.js`**: Gestiona la página `exam.html`. Se comunica exclusivamente con el **microservicio de exámenes** para obtener las preguntas (`getExamQuestions`) y para enviar las respuestas (`submitExam`).
+  - **Visualización**: Para mostrar la lista de actividades, llama a los servicios de `TASK` y `EXAM` para obtener todas las entregas y actividades base.
+  - **Enlace a Calificación**: Renderiza los enlaces para que el profesor pueda acceder al nuevo módulo de calificación de exámenes en `exam-manager.html`.
+- **`student.js`**: Controla el `student-dashboard.html`. Llama a los servicios `TASK` y `EXAM` para obtener las actividades del estudiante y renderiza un enlace a `exam-manager.html` para realizar un examen.
+- **`exam-manager.js`**: Es el nuevo controlador central para todo el ciclo de vida de un examen. Gestiona `exam-manager.html` y se comunica exclusivamente con el **microservicio de exámenes**.
+  - **Para Estudiantes**: Maneja la obtención de preguntas (`getExamQuestions`) y el envío de respuestas (`submitExam`).
+  - **Para Profesores**: Maneja la obtención de la lista de entregas (`getExamSubmissions`), la visualización de los detalles de una entrega (`getSubmissionDetails`) y el envío de la calificación (`gradeSubmission`).
 
 ---
 

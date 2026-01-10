@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const calificacion = activity.calificacionTotal;
 
                 if (estado === 'Activo') {
-                    actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="bg-purple-500 text-white px-4 py-2 rounded-lg">Realizar Examen</a>`;
+                    actionButtonHtml = `<a href="exam-manager.html?examenId=${activity.examenId}" class="bg-purple-500 text-white px-4 py-2 rounded-lg">Realizar Examen</a>`;
                 } else {
                     actionButtonHtml = `<button class="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed" disabled>${estado}</button>`;
                 }
