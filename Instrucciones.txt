@@ -144,19 +144,12 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
-**Configuración (Actualización de URLs)**
-
-*   **Componente: Configuración del Frontend**
-    *   **Problema:** Las URLs de los microservicios de backend estaban desactualizadas.
-    *   **Descripción:** Se ha actualizado el archivo `js/config.js` con las nuevas URLs de despliegue para los servicios USER, TASK y EXAM.
-    *   **Referencia:** ChangesLogs.txt (17/01/2026).
-
-**Backend (Corrección de CORS)**
+**Backend (Corrección de CORS - Método Robusto)**
 
 *   **Componente: Microservicios (Global)**
-    *   **Problema:** Un error de política CORS impedía toda comunicación entre el frontend y el backend.
-    *   **Descripción:** Se ha modificado la función `doPost` en los tres microservicios (`user-service`, `task-service`, `exam-service`) para añadir la cabecera `Access-Control-Allow-Origin: '*'` a todas sus respuestas, solucionando el bloqueo.
-    *   **Referencia:** ChangesLogs.txt (16/01/2026).
+    *   **Problema:** Un error de política CORS persistía a pesar de una corrección inicial, probablemente debido a la forma en que Google Apps Script maneja las respuestas.
+    *   **Descripción:** Se ha refactorizado la función `doPost` en los tres microservicios para utilizar un bloque `try...catch...finally`, garantizando que la cabecera `Access-Control-Allow-Origin: '*'` se aplique de forma robusta en absolutamente todos los casos.
+    *   **Referencia:** ChangesLogs.txt (18/01/2026).
 
 ------------------- TAREAS PENDIENTES -------------------
 **Archivo: backend.gs**

@@ -38,10 +38,9 @@ function doOptions() {
 }
 
 function doPost(e) {
-  const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' };
+  let result;
   try {
     const { action, payload } = JSON.parse(e.postData.contents);
-    let result;
     switch (action) {
       case "createExam": result = createExam(payload); break;
       case "getExamQuestions": result = getExamQuestions(payload); break;
@@ -55,18 +54,14 @@ function doPost(e) {
       default:
         result = { status: "error", message: `Acción no reconocida en Exam-Service: ${action}` };
     }
-    // Para evitar errores de CORS con Google Apps Script, la respuesta debe ser texto plano.
-    const response = ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.TEXT);
-    response.withHeaders({'Access-Control-Allow-Origin': '*'});
-    return response;
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
-    // También en caso de error, devolver texto plano.
-    const errorResponse = ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message }))
-      .setMimeType(ContentService.MimeType.TEXT);
-    errorResponse.withHeaders({'Access-Control-Allow-Origin': '*'});
-    return errorResponse;
+    result = { status: "error", message: `Error interno del servidor: ${error.message}` };
+  } finally {
+    // Asegurar que la cabecera CORS se aplique en todas las respuestas.
+    return ContentService.createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.TEXT)
+      .withHeaders({'Access-Control-Allow-Origin': '*'});
   }
 }
 

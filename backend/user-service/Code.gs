@@ -45,35 +45,30 @@ function doOptions() {
 }
 
 function doPost(e) {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json'
-  };
-
+  let result;
   try {
     logDebug("Solicitud POST recibida.");
     const requestData = JSON.parse(e.postData.contents);
     const { action, payload } = requestData;
-    let result;
 
     switch (action) {
-      case "registerUser": result = registerUser(payload); break;
-      case "loginUser": result = loginUser(payload); break;
+      case "registerUser":
+        result = registerUser(payload);
+        break;
+      case "loginUser":
+        result = loginUser(payload);
+        break;
       default:
         result = { status: "error", message: `Acción no reconocida en User-Service: ${action}` };
     }
-
-    const response = ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.TEXT);
-    response.withHeaders({'Access-Control-Allow-Origin': '*'});
-    return response;
-
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
-    const errorResponse = ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message }))
-      .setMimeType(ContentService.MimeType.TEXT);
-    errorResponse.withHeaders({'Access-Control-Allow-Origin': '*'});
-    return errorResponse;
+    result = { status: "error", message: `Error interno del servidor: ${error.message}` };
+  } finally {
+    // Asegurar que la cabecera CORS se aplique en todas las respuestas.
+    return ContentService.createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.TEXT)
+      .withHeaders({'Access-Control-Allow-Origin': '*'});
   }
 }
 

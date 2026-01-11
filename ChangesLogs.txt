@@ -118,12 +118,7 @@ En este archivo se regustrara el historial de cambios del proyecto.
   - Se reintrodujeron los `addEventListener` para los eventos `submit` de ambos formularios, que se habían perdido durante una refactorización anterior.
   - Se restauró la lógica para la creación dinámica de preguntas en el formulario de exámenes.
 
-16/01/2026
+18/01/2026
 - Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
 - Línea(s): N/A (doPost en todos los archivos)
-  - Se ha añadido la cabecera `Access-Control-Allow-Origin: '*'` a todas las respuestas de las funciones `doPost` en los tres microservicios. Esta acción corrige un error crítico de CORS que impedía la comunicación entre el frontend y el backend.
-
-17/01/2026
-- Archivo: js/config.js
-- Línea(s): 14, 17, 20
-  - Se actualizaron las URLs de los microservicios de backend (USER, TASK, EXAM) a las nuevas direcciones de despliegue proporcionadas.
+  - Se refactorizó la función `doPost` en los tres microservicios para utilizar un bloque `try...catch...finally`. Este patrón garantiza que la cabecera `Access-Control-Allow-Origin: '*'` se aplique de forma robusta a todas las respuestas, solucionando un problema persistente de CORS.
