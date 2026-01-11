@@ -125,8 +125,8 @@ En este archivo se regustrara el historial de cambios del proyecto.
 
 18/01/2026
 - Archivo: js/config.js, Línea(s): 17, 20, 23
-  - Se actualizaron las URLs de los microservicios `USER`, `TASK`, y `EXAM` a las nuevas direcciones proporcionadas después de un redespliegue. (NOTA: Esta entrada corresponde a un cambio que utilizó URLs incorrectas y fue rechazado en la revisión de código).
+  - Se aplicó una corrección para actualizar las URLs de los microservicios `USER`, `TASK`, y `EXAM` con el conjunto de direcciones correcto proporcionado después de una revisión de código fallida.
 
 18/01/2026
 - Archivo: js/config.js, Línea(s): 17, 20, 23
-  - Se aplicó una corrección para actualizar las URLs de los microservicios `USER`, `TASK`, y `EXAM` con el conjunto de direcciones correcto proporcionado después de una revisión de código fallida.
+  - Se actualizaron las URLs de los microservicios `USER`, `TASK`, y `EXAM` a un nuevo conjunto de direcciones proporcionado por el PM.

@@ -144,6 +144,13 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**Configuración (Actualización de URLs de Servicios)**
+
+*   **Componente: `js/config.js`**
+    *   **Problema:** Las URLs de los microservicios (`USER`, `TASK`, `EXAM`) necesitaban ser actualizadas al último conjunto de endpoints proporcionado.
+    *   **Descripción:** Se han actualizado las constantes en el objeto `SERVICE_URLS` para que apunten a los nuevos endpoints desplegados.
+    *   **Referencia:** ChangesLogs.txt (18/01/2026).
+
 **Configuración y Backend (Corrección de URLs y CORS)**
 
 *   **Componente: `js/config.js` y Microservicios (Global)**
