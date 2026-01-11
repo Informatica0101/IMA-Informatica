@@ -110,3 +110,8 @@ En este archivo se regustrara el historial de cambios del proyecto.
 - Línea(s): ~68 (user-service), ~55 (task-service), ~62 (exam-service)
   - Se corrigió un error crítico de CORS que bloqueaba todas las peticiones al backend.
   - Se modificaron las funciones `doPost` en los tres microservicios para incluir la cabecera 'Access-Control-Allow-Origin: '*' en todas las respuestas, permitiendo la comunicación desde el frontend.
+
+15/01/2026
+- Archivo: js/config.js
+- Línea(s): 14, 17, 20
+  - Se actualizaron las URLs de los microservicios de backend (USER, TASK, EXAM) a las nuevas direcciones de despliegue proporcionadas.

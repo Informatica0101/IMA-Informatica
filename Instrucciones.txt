@@ -361,6 +361,13 @@ C. PROCESO DE APROBACIÓN
     *   **Descripción:** Refactorizar la asignación de eventos para usar `addEventListener` en un bucle después de renderizar la tabla, adjuntando los listeners a los botones de acción correspondientes.
     *   **Referencia:** Auditoría.txt, Archivo: js/teacher.js, Línea(s): 161, 171
 ------------------- TAREAS POR REVISAR ------------------
+**Configuración (Actualización de URLs)**
+
+*   **Componente: Configuración del Frontend**
+    *   **Problema:** Las URLs de los microservicios de backend estaban desactualizadas.
+    *   **Descripción:** Se ha actualizado el archivo `js/config.js` con las nuevas URLs de despliegue para los servicios USER, TASK y EXAM, restaurando la comunicación con el backend.
+    *   **Referencia:** ChangesLogs.txt (15/01/2026).
+
 **Backend (Corrección de CORS)**
 
 *   **Componente: Microservicios (Global)**
