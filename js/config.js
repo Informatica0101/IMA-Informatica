@@ -11,13 +11,13 @@
 
 const SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios.
-  USER: 'https://script.google.com/macros/s/AKfycbyYUEi9gEalJhqtbsyUtM1pvSmO9in-faeAuLUhUYYhS5ZQzk-HA2qk7MFJXyxiwZM/exec',
+  USER: 'https://script.google.com/macros/s/AKfycbz5uTnYBEO2jsaH4bO79RcRXIc9_e8iOJvd1lSlgZvqe2FoV19UlrpNfOerqS0iKfVE/exec',
 
   // Pega aquí la URL del despliegue del microservicio de tareas.
-  TASK: 'https://script.google.com/macros/s/AKfycbxUhjsWebIx_TcUj_tgpv0uGoH4pfB5eEI2PjxIiS2nsmtq5iUpaxS5Dopp1JriHio/exec',
+  TASK: 'https://script.google.com/macros/s/AKfycbyDWQvQnD4APVf0T62NeZHGC3wyiH2fRoW5x9kiGgJtBD0HINHC5dIIDkNnW1AaJ8A/exec',
 
   // Pega aquí la URL del despliegue del microservicio de exámenes.
-  EXAM: 'https://script.google.com/macros/s/AKfycbzUkQhWDkunzV4Cf-mbot7uZxPCY5br0Rrm2clEKMT3_5pbbJ_BNqcL_V4wKVkWY1jy/exec'
+  EXAM: 'https://script.google.com/macros/s/AKfycbyax1Zf9GWyaJYZU2zUMZCCerqVFRbDV4mMn26-LnHtdXB2sOirIZ4BzOgck3cuhgTq/exec'
 };
 
 // --- URL del sitio para CORS (si es necesario ajustarlo en el backend) ---

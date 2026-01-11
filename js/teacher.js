@@ -1,10 +1,7 @@
-
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Referencias al DOM ---
-    const submissionsTableBody = document.getElementById('submissions-table-body');
+    let submissionsTableBody = document.getElementById('submissions-table-body');
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-    // --- Autenticación ---
     if (!currentUser || currentUser.rol !== 'Profesor') {
         window.location.href = 'login.html';
         return;
@@ -21,42 +18,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const createAssignmentForm = document.getElementById('create-assignment-form');
     const createExamForm = document.getElementById('create-exam-form');
     const logoutButton = document.getElementById('logout-button');
+
     const allSections = [sectionDashboard, sectionCrear, sectionCrearExamen];
     const allNavLinks = [navDashboard, navCrear, navCrearExamen];
 
-    // --- Elementos del Filtro Jerárquico ---
-    const backBtn = document.getElementById('back-btn');
-    const filterStepGrado = document.getElementById('filter-step-grado');
-    const filterStepSeccion = document.getElementById('filter-step-seccion');
-    const filterStepAlumno = document.getElementById('filter-step-alumno');
-    const selectGrado = document.getElementById('filter-grado');
-    const selectSeccion = document.getElementById('filter-seccion');
-    const selectAlumno = document.getElementById('filter-alumno');
-    const breadcrumbs = document.getElementById('filter-breadcrumbs');
-
-    // --- Elementos del Lightbox ---
-    const lightboxModal = document.getElementById('lightbox-modal');
-    const closeLightboxBtn = document.getElementById('close-lightbox-btn');
-    const lightboxImage = document.getElementById('lightbox-image');
-
-    // --- Estado de la Aplicación ---
-    let allActivities = [];
-    let filterState = {
-        step: 'grado', // 'grado', 'seccion', 'alumno', 'asignaciones'
-        grado: '',
-        seccion: '',
-        alumnoId: ''
-    };
-
-    // --- Lógica de Navegación Principal ---
+    // --- Lógica de Navegación ---
     function navigateTo(targetSection, navElement) {
         allSections.forEach(section => section.classList.add('hidden'));
         targetSection.classList.remove('hidden');
-        allNavLinks.forEach(link => link.classList.remove('bg-gray-700', 'text-white'));
+        allNavLinks.forEach(link => {
+            link.classList.remove('bg-gray-700', 'text-white');
+            link.classList.add('text-gray-700');
+        });
         navElement.classList.add('bg-gray-700', 'text-white');
+        navElement.classList.remove('text-gray-700');
     }
 
-    navDashboard.addEventListener('click', () => navigateTo(sectionDashboard, navDashboard));
+    navDashboard.addEventListener('click', () => { navigateTo(sectionDashboard, navDashboard); fetchTeacherActivity(); });
     navCrear.addEventListener('click', () => navigateTo(sectionCrear, navCrear));
     navCrearExamen.addEventListener('click', () => navigateTo(sectionCrearExamen, navCrearExamen));
     logoutButton.addEventListener('click', () => {
@@ -64,194 +42,64 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
     });
 
-    // --- Lógica de Carga de Datos ---
-    async function fetchAllActivities() {
+    // --- Carga de Actividad del Profesor ---
+    async function fetchTeacherActivity() {
         submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">Cargando actividad...</td></tr>';
         try {
             const [taskSubmissions, examSubmissions, allExams] = await Promise.all([
                 fetchApi('TASK', 'getTeacherActivity', {}),
                 fetchApi('EXAM', 'getTeacherExamActivity', {}),
-                fetchApi('EXAM', 'getAllExams', {})
+                fetchApi('EXAM', 'getAllExams', {}) // Endpoint para obtener todos los exámenes base
             ]);
 
+            console.log("Task Submissions:", taskSubmissions);
+            console.log("Exam Submissions:", examSubmissions);
+            console.log("All Exams:", allExams);
+
             const submissions = [...(taskSubmissions.data || []), ...(examSubmissions.data || [])];
+
+            // Mapear las entregas a sus IDs de examen para no mostrarlos duplicados
             const submittedExamIds = new Set((examSubmissions.data || []).map(s => s.examenId));
+
+            // Filtrar los exámenes base para mostrar solo aquellos sin entregas
             const examsWithoutSubmissions = (allExams.data || []).filter(exam => !submittedExamIds.has(exam.examenId));
 
-            allActivities = [...submissions, ...examsWithoutSubmissions];
-            allActivities.sort((a, b) => new Date(b.fecha || b.fechaLimite) - new Date(a.fecha || a.fechaLimite));
+            // Combinar las entregas con los exámenes que aún no tienen entregas
+            const allActivity = [...submissions, ...examsWithoutSubmissions];
 
-            renderFilteredActivity();
+            console.log("Final Activity List:", allActivity);
+
+            allActivity.sort((a, b) => new Date(b.fecha || b.fechaLimite) - new Date(a.fecha || a.fechaLimite));
+            renderActivity(allActivity);
         } catch (error) {
             submissionsTableBody.innerHTML = `<tr><td colspan="7" class="text-center p-4 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
         }
     }
 
-    // --- Lógica del Filtro Jerárquico ---
-
-    function updateFilterUI() {
-        // Ocultar todos los pasos
-        [filterStepGrado, filterStepSeccion, filterStepAlumno].forEach(step => step.classList.add('hidden'));
-
-        // Mostrar el paso actual
-        if (filterState.step === 'grado') {
-            filterStepGrado.classList.remove('hidden');
-            backBtn.classList.add('hidden');
-            breadcrumbs.textContent = 'Mostrando todas las entregas.';
-        } else {
-            backBtn.classList.remove('hidden');
-            if (filterState.step === 'seccion') {
-                filterStepGrado.classList.remove('hidden');
-                filterStepSeccion.classList.remove('hidden');
-                breadcrumbs.textContent = `Grado: ${filterState.grado}`;
-            } else if (filterState.step === 'alumno' || filterState.step === 'asignaciones') {
-                filterStepGrado.classList.remove('hidden');
-                filterStepSeccion.classList.remove('hidden');
-                filterStepAlumno.classList.remove('hidden');
-                breadcrumbs.textContent = `Grado: ${filterState.grado} > Sección: ${filterState.seccion}`;
-            }
-        }
-    }
-
-    function renderFilteredActivity() {
-        let activityToRender = allActivities;
-        if (filterState.grado) {
-            activityToRender = activityToRender.filter(item => (item.grado || item.gradoAsignado) === filterState.grado);
-        }
-        if (filterState.seccion) {
-            activityToRender = activityToRender.filter(item => (item.seccion || item.seccionAsignada) === filterState.seccion);
-        }
-        if (filterState.alumnoId) {
-            activityToRender = activityToRender.filter(item => item.userId === filterState.alumnoId);
-        }
-        renderActivity(activityToRender);
-    }
-
-    function populateSecciones() {
-        const secciones = [...new Set(allActivities
-            .filter(item => (item.grado || item.gradoAsignado) === filterState.grado)
-            .map(item => item.seccion || item.seccionAsignada)
-            .filter(Boolean)
-        )];
-        selectSeccion.innerHTML = '<option value="">-- Sección --</option>' + secciones.map(s => `<option value="${s}">${s}</option>`).join('');
-    }
-
-    async function populateAlumnos() {
-        try {
-            const result = await fetchApi('USER', 'getStudentsByGroup', { grado: filterState.grado, seccion: filterState.seccion });
-            if (result.status === 'success') {
-                selectAlumno.innerHTML = '<option value="">-- Alumno --</option>' + result.data.map(a => `<option value="${a.userId}">${a.nombre}</option>`).join('');
-            } else {
-                throw new Error(result.message);
-            }
-        } catch (error) {
-            console.error('Error al cargar alumnos:', error);
-            breadcrumbs.textContent = `Error al cargar alumnos: ${error.message}`;
-        }
-    }
-
-    selectGrado.addEventListener('change', () => {
-        filterState.grado = selectGrado.value;
-        filterState.seccion = '';
-        filterState.alumnoId = '';
-        selectSeccion.innerHTML = '<option value="">-- Sección --</option>';
-        selectAlumno.innerHTML = '<option value="">-- Alumno --</option>';
-
-        if (filterState.grado) {
-            filterState.step = 'seccion';
-            populateSecciones();
-        } else {
-            filterState.step = 'grado';
-        }
-        updateFilterUI();
-        renderFilteredActivity();
-    });
-
-    selectSeccion.addEventListener('change', () => {
-        filterState.seccion = selectSeccion.value;
-        filterState.alumnoId = '';
-        selectAlumno.innerHTML = '<option value="">-- Alumno --</option>';
-
-        if (filterState.seccion) {
-            filterState.step = 'alumno';
-            populateAlumnos();
-        } else {
-            filterState.step = 'seccion';
-        }
-        updateFilterUI();
-        renderFilteredActivity();
-    });
-
-    selectAlumno.addEventListener('change', () => {
-        filterState.alumnoId = selectAlumno.value;
-        filterState.step = filterState.alumnoId ? 'asignaciones' : 'alumno';
-        updateFilterUI();
-        renderFilteredActivity();
-    });
-
-    backBtn.addEventListener('click', () => {
-        if (filterState.step === 'asignaciones' || filterState.step === 'alumno') {
-            filterState.step = 'seccion';
-            filterState.alumnoId = '';
-            filterState.seccion = '';
-            selectAlumno.value = '';
-            selectSeccion.value = '';
-        } else if (filterState.step === 'seccion') {
-            filterState.step = 'grado';
-            filterState.grado = '';
-             selectGrado.value = '';
-        }
-        updateFilterUI();
-        renderFilteredActivity();
-    });
-
-    // --- Lógica de Renderizado de la Tabla ---
     function renderActivity(activity) {
         if (!activity || activity.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">No se encontraron actividades.</td></tr>';
+            submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">No hay actividad reciente.</td></tr>';
             return;
         }
-
         submissionsTableBody.innerHTML = activity.map(item => {
-            // Lógica para el enlace del archivo
-            let fileHtml = '<em>N/A</em>';
-            if (item.archivoUrl) {
-                if (item.mimeType && item.mimeType.startsWith('image/')) {
-                    fileHtml = `<button class="text-blue-500 hover:underline view-file-btn" data-url="${item.archivoUrl}">Ver Imagen</button>`;
-                } else {
-                    fileHtml = `<a href="${item.archivoUrl}" target="_blank" download class="text-blue-500 hover:underline">Descargar</a>`;
-                }
-            }
-
-            // Lógica para el botón de acción
             let actionHtml = '';
-            if (item.tipo === 'Tarea' && item.entregaId) {
-                actionHtml = `<button class="bg-blue-500 text-white px-2 py-1 rounded text-sm grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
+            // Si el item tiene `alumnoNombre`, es una entrega. Si no, es un examen base.
+            if (item.alumnoNombre) {
+                if (item.tipo === 'Tarea') {
+                    actionHtml = `<button class="bg-blue-500 text-white px-2 py-1 rounded text-sm grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
+                } else if (item.tipo === 'Examen' && item.estado === 'Bloqueado') {
+                    actionHtml = `<button class="bg-yellow-500 text-white px-2 py-1 rounded text-sm reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>`;
+                }
             } else if (item.tipo === 'Examen') {
-                 if (item.alumnoNombre) { // Es una entrega de examen
-                     if (item.estado === 'Bloqueado') {
-                         actionHtml = `<button class="bg-yellow-500 text-white px-2 py-1 rounded text-sm reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>`;
-                     }
-                 } else { // Es un examen base sin entregas
-                    // Lógica para el botón de activar/bloquear examen
-                    const isActivo = item.estado === 'Activo';
-                    const nuevoEstado = isActivo ? 'Bloqueado' : 'Activo';
-                    const textoBoton = isActivo ? 'Bloquear' : 'Activar';
-                    const colorBoton = isActivo ? 'bg-red-500' : 'bg-green-500';
-
-                    const botonCambiarEstado = `
-                        <button
-                            class="${colorBoton} text-white px-2 py-1 rounded text-sm ml-2 change-status-btn"
-                            data-examen-id="${item.examenId}"
-                            data-nuevo-estado="${nuevoEstado}">
-                            ${textoBoton}
-                        </button>`;
-
-                    actionHtml = `
-                        <a href="exam-manager.html?examenId=${item.examenId}&view=submissions" class="bg-purple-500 text-white px-2 py-1 rounded text-sm">Ver Entregas</a>
-                        ${botonCambiarEstado}
-                    `;
-                 }
+                // Es un examen sin entregas, mostrar botones de control
+                const isActivo = item.estado === 'Activo';
+                const isBloqueado = item.estado === 'Bloqueado';
+                actionHtml = `
+                    <div class="flex space-x-2">
+                        <button class="bg-green-500 text-white px-2 py-1 rounded text-sm activate-exam-btn" data-examen-id="${item.examenId}" ${isActivo ? 'disabled' : ''}>Activar</button>
+                        <button class="bg-red-500 text-white px-2 py-1 rounded text-sm lock-exam-btn" data-examen-id="${item.examenId}" ${isBloqueado ? 'disabled' : ''}>Bloquear</button>
+                    </div>
+                `;
             }
 
             return `
@@ -259,68 +107,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="p-4">${item.alumnoNombre || '<em>N/A</em>'}</td>
                     <td class="p-4">${item.titulo}</td>
                     <td class="p-4">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
-                    <td class="p-4">${fileHtml}</td>
+                    <td class="p-4">${item.archivoUrl ? `<a href="${item.archivoUrl}" target="_blank" class="text-blue-500">Ver Archivo</a>` : '<em>N/A</em>'}</td>
                     <td class="p-4">${item.calificacion || '<em>N/A</em>'}</td>
                     <td class="p-4">${item.estado || '<em>Pendiente</em>'}</td>
-                    <td class="p-4">${actionHtml || 'N/A'}</td>
+                    <td class="p-4">${actionHtml}</td>
                 </tr>`;
         }).join('');
     }
 
-    // --- Lógica de Lightbox y Modales ---
-    function openLightbox(url) {
-        lightboxImage.src = url;
-        lightboxModal.classList.remove('hidden');
-    }
-
-    function closeLightbox() {
-        lightboxImage.src = '';
-        lightboxModal.classList.add('hidden');
-    }
-
-    closeLightboxBtn.addEventListener('click', closeLightbox);
-    lightboxModal.addEventListener('click', (e) => {
-        if (e.target === lightboxModal) {
-            closeLightbox();
-        }
-    });
-
-    // Delegación de eventos para la tabla (incluye lightbox y calificación)
-    submissionsTableBody.addEventListener('click', async (e) => {
-        const target = e.target;
-        if (target.classList.contains('view-file-btn')) {
-            e.preventDefault();
-            openLightbox(target.dataset.url);
-        }
-        if (target.classList.contains('grade-task-btn')) {
-             openGradeModal(JSON.parse(target.dataset.item));
-        }
-
-        if (target.classList.contains('change-status-btn')) {
-            const examenId = target.dataset.examenId;
-            const nuevoEstado = target.dataset.nuevoEstado;
-
-            if (confirm(`¿Está seguro de que desea ${nuevoEstado === 'Activo' ? 'activar' : 'bloquear'} este examen?`)) {
-                try {
-                    const payload = { examenId, estado: nuevoEstado };
-                    const result = await fetchApi('EXAM', 'updateExamStatus', payload);
-
-                    if (result.status === 'success') {
-                        alert('El estado del examen ha sido actualizado.');
-                        fetchAllActivities(); // Recargar la tabla para mostrar el cambio
-                    } else {
-                        throw new Error(result.message);
-                    }
-                } catch (error) {
-                    alert(`Error al actualizar el estado del examen: ${error.message}`);
-                }
-            }
-        }
-    });
-
-    // ... (El resto de la lógica de la página como el modal de calificación y la creación de tareas/exámenes se mantiene igual)
-
-     // --- Lógica del Modal de Calificación ---
+    // --- Lógica del Modal de Calificación ---
     const gradeModal = document.getElementById('grade-modal');
     const saveGradeBtn = document.getElementById('save-grade-btn');
     const cancelGradeBtn = document.getElementById('cancel-grade-btn');
@@ -354,15 +149,62 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result.status === 'success') {
                 alert('Calificación guardada.');
                 closeGradeModal();
-                fetchAllActivities(); // Recargar todo
+                fetchTeacherActivity();
             } else { throw new Error(result.message); }
         } catch (error) { alert(`Error al guardar calificación: ${error.message}`); }
     });
 
+    // --- Delegación de Eventos para la Tabla ---
+    submissionsTableBody.addEventListener('click', async (e) => {
+        const target = e.target;
 
-    // --- Inicialización ---
-    fetchAllActivities();
-    updateFilterUI();
+        // Calificar Tarea
+        if (target.classList.contains('grade-task-btn')) {
+            openGradeModal(JSON.parse(target.dataset.item));
+        }
+
+        // Reactivar Examen de una entrega específica
+        if (target.classList.contains('reactivate-exam-btn')) {
+            const entregaId = target.dataset.entregaId;
+            if (confirm("¿Reactivar este examen para este alumno?")) {
+                try {
+                    const result = await fetchApi('EXAM', 'reactivateExam', { entregaExamenId: entregaId });
+                    if (result.status === 'success') {
+                        alert('Examen reactivado.');
+                        fetchTeacherActivity();
+                    } else { throw new Error(result.message); }
+                } catch (error) { alert(`Error: ${error.message}`); }
+            }
+        }
+
+        // Activar un examen para todos
+        if (target.classList.contains('activate-exam-btn')) {
+            const examenId = target.dataset.examenId;
+            if (confirm("¿Activar este examen para todos los alumnos asignados?")) {
+                try {
+                    const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Activo' });
+                    if (result.status === 'success') {
+                        alert('Examen activado.');
+                        fetchTeacherActivity();
+                    } else { throw new Error(result.message); }
+                } catch (error) { alert(`Error: ${error.message}`); }
+            }
+        }
+
+        // Bloquear un examen para todos
+        if (target.classList.contains('lock-exam-btn')) {
+            const examenId = target.dataset.examenId;
+            if (confirm("¿Bloquear este examen para todos los alumnos?")) {
+                try {
+                    const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Bloqueado' });
+                    if (result.status === 'success') {
+                        alert('Examen bloqueado.');
+                        fetchTeacherActivity();
+                    } else { throw new Error(result.message); }
+                } catch (error) { alert(`Error: ${error.message}`); }
+            }
+        }
+    });
 
     // --- Lógica de Formularios de Creación ---
     createAssignmentForm.addEventListener('submit', async (e) => {
@@ -388,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="question-block border p-4 rounded-lg" data-question-id="${id}">
                 <div class="flex justify-between items-center mb-4">
                     <h4 class="font-bold">Pregunta ${id}</h4>
-                    <button type="button" class="text-red-500 remove-question-btn">Eliminar</button>
+                    <button type-="button" class="text-red-500 remove-question-btn">Eliminar</button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -436,6 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addQuestion() {
+        console.log('Add question button clicked');
         questionCounter++;
         const questionNode = document.createElement('div');
         questionNode.innerHTML = getQuestionHTML(questionCounter);
@@ -460,21 +303,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Add logic for createExamForm if it exists
     if(createExamForm) {
         createExamForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const mainData = Object.fromEntries(new FormData(e.target).entries());
-            const payload = { ...mainData, preguntas: [] };
 
-            questionsContainer.querySelectorAll('.question-block').forEach(block => {
+            const mainData = Object.fromEntries(new FormData(e.target).entries());
+            const payload = {
+                ...mainData,
+                preguntas: []
+            };
+
+            const questionBlocks = questionsContainer.querySelectorAll('.question-block');
+            questionBlocks.forEach(block => {
                 const pregunta = {
                     preguntaTipo: block.querySelector('.question-type-select').value,
                     textoPregunta: block.querySelector('.question-text').value,
                     respuestaCorrecta: block.querySelector('.correct-answer').value,
                     opciones: ''
                 };
+
                 const optionsInput = block.querySelector('.question-options');
-                if (optionsInput) pregunta.opciones = optionsInput.value;
+                if (optionsInput) {
+                    pregunta.opciones = optionsInput.value;
+                }
+
                 payload.preguntas.push(pregunta);
             });
 
@@ -490,12 +343,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.target.reset();
                     questionsContainer.innerHTML = '';
                     questionCounter = 0;
-                    navDashboard.click();
-                } else { throw new Error(result.message || 'Error desconocido del servidor.'); }
+                    navDashboard.click(); // This handles navigation and data refresh
+                } else {
+                    throw new Error(result.message || 'Error desconocido del servidor.');
+                }
             } catch (error) {
                 console.error('Error al crear el examen:', error);
                 alert(`Error al crear el examen: ${error.message}`);
             }
         });
     }
+
+    // Carga Inicial
+    fetchTeacherActivity();
 });

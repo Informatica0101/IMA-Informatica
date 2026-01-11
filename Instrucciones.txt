@@ -143,6 +143,14 @@ C. PROCESO DE APROBACIÓN
 
 
 
+------------------- TAREAS POR REVISAR ------------------
+**Backend (Corrección de CORS)**
+
+*   **Componente: Microservicios (Global)**
+    *   **Problema:** Un error de política CORS impedía toda comunicación entre el frontend y el backend.
+    *   **Descripción:** Se ha modificado la función `doPost` en los tres microservicios (`user-service`, `task-service`, `exam-service`) para añadir la cabecera `Access-Control-Allow-Origin: '*'` a todas sus respuestas, solucionando el bloqueo.
+    *   **Referencia:** ChangesLogs.txt (16/01/2026).
+
 ------------------- TAREAS PENDIENTES -------------------
 **Archivo: backend.gs**
 
@@ -360,55 +368,15 @@ C. PROCESO DE APROBACIÓN
     *   **Problema:** Contaminación del scope global con `window.reactivateExam` y `window.openGradeModal`.
     *   **Descripción:** Refactorizar la asignación de eventos para usar `addEventListener` en un bucle después de renderizar la tabla, adjuntando los listeners a los botones de acción correspondientes.
     *   **Referencia:** Auditoría.txt, Archivo: js/teacher.js, Línea(s): 161, 171
+
+
 ------------------- TAREAS POR REVISAR ------------------
-**Configuración (Actualización de URLs)**
+**Archivo: index.html**
 
-*   **Componente: Configuración del Frontend**
-    *   **Problema:** Las URLs de los microservicios de backend estaban desactualizadas.
-    *   **Descripción:** Se ha actualizado el archivo `js/config.js` con las nuevas URLs de despliegue para los servicios USER, TASK y EXAM, restaurando la comunicación con el backend.
-    *   **Referencia:** ChangesLogs.txt (15/01/2026).
-
-**Backend (Corrección de CORS)**
-
-*   **Componente: Microservicios (Global)**
-    *   **Problema:** Un error de política CORS impedía toda comunicación entre el frontend y el backend.
-    *   **Descripción:** Se ha modificado la función `doPost` en los tres microservicios (`user-service`, `task-service`, `exam-service`) para añadir la cabecera `Access-Control-Allow-Origin: '*'` a todas sus respuestas, solucionando el bloqueo.
-    *   **Referencia:** Auditoría.txt (14/01/2026), ChangesLogs.txt (14/01/2026).
-
-**Dashboard de Profesor (Activar/Bloquear Examen)**
-
-*   **Componente: UI/UX, Lógica de Negocio**
-    *   **Problema:** El profesor no podía activar o desactivar exámenes desde el dashboard.
-    *   **Descripción:** Se ha añadido un botón dinámico en la tabla de actividades que permite al profesor cambiar el estado de un examen (de 'Inactivo'/'Bloqueado' a 'Activo' y viceversa) con un solo clic. La lógica se ha implementado en `js/teacher.js` para llamar a la acción `updateExamStatus` existente en el backend.
-    *   **Referencia:** Auditoría.txt (13/01/2026), ChangesLogs.txt (13/01/2026).
-
-**Configuración de Microservicios (Actualización de URLs)**
-
-*   **Componente: Configuración del Frontend**
-    *   **Problema:** Las URLs de los microservicios de backend (`USER` y `TASK`) cambiaron después de un redespliegue.
-    *   **Descripción:** Se ha actualizado el archivo `js/config.js` con las nuevas URLs proporcionadas para asegurar que el frontend se comunique con los endpoints correctos.
-    *   **Referencia:** ChangesLogs.txt (12/01/2026).
-
-**Dashboard de Profesor (Filtro Avanzado y Corrección de Formularios)**
-
-*   **Componente: UI/UX, Formularios y Lógica de Visualización**
-    *   **Problema:** El sistema de filtrado era básico, los formularios de creación no funcionaban y la visualización de archivos era deficiente.
-    *   **Descripción:** Se ha implementado una refactorización completa del dashboard. Se introdujo un sistema de **filtrado jerárquico** (Grado > Sección > Alumno). Se corrigió un **bug crítico** que impedía el funcionamiento de los formularios "Crear Tarea" y "Crear Examen", reintroduciendo sus manejadores de eventos. Además, se mejoró la experiencia de usuario con un **modal lightbox** para imágenes y **descarga directa** para otros archivos.
-    *   **Referencia:** ChangesLogs.txt (12/01/2026).
-
-**Módulo de Exámenes (Refactorización y Calificación)**
-
-*   **Componente: Arquitectura y Funcionalidad del Profesor**
-    *   **Problema:** La gestión de exámenes estaba fragmentada y faltaba la funcionalidad de calificación.
-    *   **Descripción:** Se ha refactorizado todo el módulo de exámenes. Se consolidaron `exam.html`, `results.html` y `exam-submitted.html` en un único `exam-manager.html`. La lógica de `js/exam.js` y `js/results.js` se migró a `js/exam-manager.js`. Se implementó el backend y frontend necesarios para que el profesor pueda ver una lista de entregas por examen, revisar las respuestas de cada estudiante y asignar una calificación y comentario. Los archivos obsoletos fueron eliminados.
-    *   **Referencia:** Auditoría.txt (sección de refactorización), ChangesLogs.txt (10/01/2026).
-
-**Aplicación General (Post-Refactorización)**
-
-*   **Componente: Navegación y Coherencia de la Arquitectura**
-    *   **Problema:** La refactorización del módulo de exámenes dejó enlaces rotos y documentación desactualizada.
-    *   **Descripción:** Se ha corregido el enlace "Realizar Examen" en el panel del estudiante para que apunte al nuevo `exam-manager.html`. Se ha actualizado el `README.md` para reflejar con precisión la nueva estructura de archivos consolidada, eliminando las referencias a los archivos obsoletos y añadiendo los nuevos.
-    *   **Referencia:** ChangesLogs.txt (10/01/2026).
+*   **Componente: Enlace al Portal de Login (Corrección)**
+    *   **Problema:** La página principal no tenía un enlace visible y dedicado para acceder al portal de login.
+    *   **Descripción:** Se añadió un nuevo botón con el texto "Portal" en la barra de navegación (escritorio y móvil) que dirige a `login.html`, reemplazando una implementación anterior incorrecta.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html, Hallazgo 3 (Corregido)
 
 En este bloque se agregarán las tareas realizadas cuyo
 resultado aún no ha sido validado por el PM.

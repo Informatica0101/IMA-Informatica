@@ -48,20 +48,22 @@ function doPost(e) {
       case "getStudentTasks": result = getStudentTasks(payload); break;
       case "submitAssignment": result = submitAssignment(payload); break;
       case "gradeSubmission": result = gradeSubmission(payload); break;
-      case "getTeacherActivity": result = getTeacherActivity(payload); break;
+      case "getTeacherActivity": result = getTeacherActivity(); break;
       default:
         result = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
     // Para evitar errores de CORS con Google Apps Script, la respuesta debe ser texto plano.
-    return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.TEXT)
-      .withHeaders({'Access-Control-Allow-Origin': '*'});
+    const response = ContentService.createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.TEXT);
+    response.withHeaders({'Access-Control-Allow-Origin': '*'});
+    return response;
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
     // También en caso de error, devolver texto plano.
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message }))
-      .setMimeType(ContentService.MimeType.TEXT)
-      .withHeaders({'Access-Control-Allow-Origin': '*'});
+    const errorResponse = ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message }))
+      .setMimeType(ContentService.MimeType.TEXT);
+    errorResponse.withHeaders({'Access-Control-Allow-Origin': '*'});
+    return errorResponse;
   }
 }
 
@@ -129,11 +131,10 @@ function submitAssignment(payload) {
   const fileInfo = fileData.split(',');
   const mimeType = fileInfo[0].match(/:(.*?);/)[1];
   const blob = Utilities.newBlob(Utilities.base64Decode(fileInfo[1]), mimeType, fileName).setName(tituloTarea);
-  const fileId = asignaturaFolder.createFile(blob).getId(); // --- Guardar solo el ID
+  const fileUrl = asignaturaFolder.createFile(blob).getUrl();
 
   const entregaId = "ENT-" + new Date().getTime();
-  // --- Almacenar fileId y mimeType ---
-  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente', '', mimeType]);
+  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileUrl, '', 'Pendiente', '']);
   return { status: "success", message: "Tarea entregada." };
 }
 
@@ -151,8 +152,7 @@ function gradeSubmission(payload) {
   throw new Error("Entrega no encontrada.");
 }
 
-function getTeacherActivity(payload = {}) {
-  const { grado, seccion, asignatura } = payload;
+function getTeacherActivity() {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
@@ -162,49 +162,20 @@ function getTeacherActivity(payload = {}) {
   const tareasData = tareasSheet.getDataRange().getValues();
   const entregasData = entregasSheet.getDataRange().getValues().slice(1);
 
-  let submissions = entregasData.map(entrega => {
+  const submissions = entregasData.map(entrega => {
     const usuario = usuariosData.find(u => u[0] === entrega[2]);
     const tarea = tareasData.find(t => t[0] === entrega[1]);
-    if (!tarea || !usuario) return null;
-
-    // --- Lógica robusta para manejar IDs de archivo y URLs antiguas ---
-    const storedValue = entrega[4];
-    let archivoUrl = null;
-    if (storedValue) {
-      let fileId = storedValue;
-      // Si el valor almacenado es una URL completa, intentar extraer el ID
-      if (storedValue.includes('http')) {
-        const match = storedValue.match(/d\/([a-zA-Z0-9_-]{25,})|id=([a-zA-Z0-9_-]{25,})/);
-        if (match) {
-          fileId = match[1] || match[2]; // Extraer el ID del grupo de captura
-        }
-      }
-      // Construir la URL canónica y limpia a partir del ID
-      archivoUrl = `https://drive.google.com/file/d/${fileId}/view`;
-    }
-
     return {
-      tipo: 'Tarea', entregaId: entrega[0], titulo: tarea[2],
-      alumnoNombre: usuario[1], fecha: new Date(entrega[3]),
-      archivoUrl: archivoUrl,
-      mimeType: entrega[8], // --- Devolver el tipo MIME ---
-      calificacion: entrega[5], estado: entrega[6], comentario: entrega[7],
-      grado: usuario[4],
-      seccion: usuario[5],
-      asignatura: tarea[5]
+      tipo: 'Tarea', entregaId: entrega[0], titulo: tarea ? tarea[2] : "Tarea Desconocida",
+      alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido", fecha: new Date(entrega[3]),
+      archivoUrl: entrega[4], calificacion: entrega[5], estado: entrega[6], comentario: entrega[7]
     };
-  }).filter(Boolean); // Eliminar nulos
-
-  // Aplicar filtros si se proporcionan
-  if (grado) submissions = submissions.filter(s => s.grado === grado);
-  if (seccion) submissions = submissions.filter(s => s.seccion === seccion);
-  if (asignatura) submissions = submissions.filter(s => s.asignatura === asignatura);
+  });
 
   // En un futuro, este servicio podría llamar al Exam-Service para obtener las entregas de exámenes.
   // Por ahora, solo devuelve las de tareas.
   submissions.sort((a, b) => b.fecha - a.fecha);
-  // Devolver fechas en formato ISO para que el frontend las maneje de forma consistente
-  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
+  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toLocaleString() }));
   return { status: "success", data: formattedActivity };
 }
 

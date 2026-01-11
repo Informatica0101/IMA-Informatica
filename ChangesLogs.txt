@@ -95,23 +95,30 @@ En este archivo se regustrara el historial de cambios del proyecto.
 
 12/01/2026
 - Archivo: Múltiples (Funcionalidad de Filtro Avanzado y Visualización de Archivos)
-  - Se rediseñó completamente el sistema de filtrado del dashboard del profesor para implementar una navegación jerárqu- Archivo: js/teacher.js, Línea(s): 21, 329-466
+  - Se rediseñó completamente el sistema de filtrado del dashboard del profesor para implementar una navegación jerárquica (Grado > Sección > Alumno).
+  - Se añadió un botón "Regresar" para facilitar la navegación entre los niveles del filtro.
+  - Se implementó una nueva funcionalidad de visualización de archivos: las imágenes se abren en un modal "lightbox" y otros tipos de archivo se descargan directamente.
+- Archivo: backend/task-service/Code.gs, Línea(s): 163-178, 185
+  - Se corrigió un bug crítico que generaba URLs de archivo dañadas. La nueva lógica maneja de forma robusta tanto IDs de archivo como URLs antiguas para garantizar enlaces válidos.
+  - Se añadió el almacenamiento y la devolución del `mimeType` del archivo en las entregas para dar soporte a la nueva funcionalidad de visualización.
+- Archivo: backend/user-service/Code.gs, Línea(s): 61, 124-142
+  - Se añadió una nueva acción `getStudentsByGroup` para obtener la lista de alumnos por grado y sección, alimentando el nuevo filtro jerárquico.
+- Archivo: teacher-dashboard.html, Línea(s): 29-79, 194-201
+  - Se reestructuró el HTML para reemplazar los filtros antiguos por la nueva interfaz de navegación por pasos y se añadió el modal para el lightbox.
+- Archivo: js/teacher.js, (Completo)
+  - Se reescribió por completo el script para manejar la nueva lógica de estado del filtro jerárquico, las llamadas a la API para poblar los selectores dinámicamente y la implementación del lightbox y la descarga de archivos.
+
+12/01/2026
+- Archivo: js/config.js, Línea(s): 12, 15
+  - Se actualizaron las URLs de los microservicios `USER` y `TASK` a las nuevas direcciones proporcionadas después de un redespliegue.
+
+12/01/2026
+- Archivo: js/teacher.js, Línea(s): 21, 329-466
   - Se corrigió un bug que impedía el funcionamiento de los formularios "Crear Tarea" y "Crear Examen".
   - Se reintrodujeron los `addEventListener` para los eventos `submit` de ambos formularios, que se habían perdido durante una refactorización anterior.
   - Se restauró la lógica para la creación dinámica de preguntas en el formulario de exámenes.
 
-13/01/2026
-- Archivo: js/teacher.js, Línea(s): 235-252, 298-319
-  - Se añadió un nuevo botón a la interfaz del dashboard del profesor para permitir la activación o bloqueo de exámenes directamente desde la tabla de actividades.
-  - Se implementó la lógica en el manejador de eventos para llamar a la acción 'updateExamStatus' del backend y actualizar el estado del examen.
-
-14/01/2026
+16/01/2026
 - Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
-- Línea(s): ~68 (user-service), ~55 (task-service), ~62 (exam-service)
-  - Se corrigió un error crítico de CORS que bloqueaba todas las peticiones al backend.
-  - Se modificaron las funciones `doPost` en los tres microservicios para incluir la cabecera 'Access-Control-Allow-Origin: '*' en todas las respuestas, permitiendo la comunicación desde el frontend.
-
-15/01/2026
-- Archivo: js/config.js
-- Línea(s): 14, 17, 20
-  - Se actualizaron las URLs de los microservicios de backend (USER, TASK, EXAM) a las nuevas direcciones de despliegue proporcionadas.
+- Línea(s): N/A (doPost en todos los archivos)
+  - Se ha añadido la cabecera `Access-Control-Allow-Origin: '*'` a todas las respuestas de las funciones `doPost` en los tres microservicios. Esta acción corrige un error crítico de CORS que impedía la comunicación entre el frontend y el backend.
