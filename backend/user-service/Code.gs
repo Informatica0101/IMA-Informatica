@@ -65,12 +65,14 @@ function doPost(e) {
     }
 
     return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.TEXT);
+      .setMimeType(ContentService.MimeType.TEXT)
+      .withHeaders({'Access-Control-Allow-Origin': '*'});
 
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message }))
-      .setMimeType(ContentService.MimeType.TEXT);
+      .setMimeType(ContentService.MimeType.TEXT)
+      .withHeaders({'Access-Control-Allow-Origin': '*'});
   }
 }
 

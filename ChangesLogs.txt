@@ -104,3 +104,9 @@ En este archivo se regustrara el historial de cambios del proyecto.
 - Archivo: js/teacher.js, Línea(s): 235-252, 298-319
   - Se añadió un nuevo botón a la interfaz del dashboard del profesor para permitir la activación o bloqueo de exámenes directamente desde la tabla de actividades.
   - Se implementó la lógica en el manejador de eventos para llamar a la acción 'updateExamStatus' del backend y actualizar el estado del examen.
+
+14/01/2026
+- Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+- Línea(s): ~68 (user-service), ~55 (task-service), ~62 (exam-service)
+  - Se corrigió un error crítico de CORS que bloqueaba todas las peticiones al backend.
+  - Se modificaron las funciones `doPost` en los tres microservicios para incluir la cabecera 'Access-Control-Allow-Origin: '*' en todas las respuestas, permitiendo la comunicación desde el frontend.

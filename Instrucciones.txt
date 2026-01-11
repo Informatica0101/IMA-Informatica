@@ -361,6 +361,13 @@ C. PROCESO DE APROBACIÓN
     *   **Descripción:** Refactorizar la asignación de eventos para usar `addEventListener` en un bucle después de renderizar la tabla, adjuntando los listeners a los botones de acción correspondientes.
     *   **Referencia:** Auditoría.txt, Archivo: js/teacher.js, Línea(s): 161, 171
 ------------------- TAREAS POR REVISAR ------------------
+**Backend (Corrección de CORS)**
+
+*   **Componente: Microservicios (Global)**
+    *   **Problema:** Un error de política CORS impedía toda comunicación entre el frontend y el backend.
+    *   **Descripción:** Se ha modificado la función `doPost` en los tres microservicios (`user-service`, `task-service`, `exam-service`) para añadir la cabecera `Access-Control-Allow-Origin: '*'` a todas sus respuestas, solucionando el bloqueo.
+    *   **Referencia:** Auditoría.txt (14/01/2026), ChangesLogs.txt (14/01/2026).
+
 **Dashboard de Profesor (Activar/Bloquear Examen)**
 
 *   **Componente: UI/UX, Lógica de Negocio**
