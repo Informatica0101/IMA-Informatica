@@ -94,7 +94,7 @@
 - Línea(s) involucrada(s): 180
 - Tipo de problema: Robustez
 - Descripción detallada del problema: La extracción del tipo MIME del archivo se basa en una expresión regular (`match(/:(.*?);/)`) que asume un formato específico para la cadena base64.
-- Impacto potencial: Si el frontend envía la cadena con un formato ligeramente diferente (ej. sin punto y coma), la expresión fallará con un error de "cannot read properties of null", rompiendo la subida de archivos.
+- Impacto potencial: Si el frontend envía la cadena con un formato ligeramente diferente (ej. sin punto y coma), la expresión fallará con un error de "cannot read properties of null", romping la subida de archivos.
 - Dependencias afectadas: Proceso de entrega de tareas.
 
 - Archivo: backend.gs
@@ -649,3 +649,22 @@
 - Descripción detallada del problema: Las funciones que interactúan con la hoja de cálculo "Examenes" utilizan índices de columna hardcodeados (ej. `getRange(i + 1, 8)` para actualizar el estado).
 - Impacto potencial: Si la estructura de la hoja de cálculo cambia en el futuro (se añade, elimina o reordena una columna), estas funciones fallarán o, peor aún, corromperán los datos al escribir en la columna equivocada.
 - Solución (Recomendación): Refactorizar estas funciones para que lean la fila de encabezados y accedan a las columnas por su nombre en lugar de por su índice numérico, lo que las haría más resistentes a los cambios estructurales.
+
+- Archivo: js/config.js
+- Ruta completa: /js/config.js
+- Función / método / bloque afectado: SERVICE_URLS
+- Línea(s) involucrada(s): 17, 20, 23
+- Tipo de problema: Configuración
+- Descripción detallada del problema: Las URLs de los servicios de backend están definidas como constantes en el código. La tarea actual consiste en la actualización de estas URLs a sus nuevos valores de despliegue.
+- Impacto potencial: Cualquier cambio en las URLs de los servicios desplegados requiere una modificación directa en el código fuente y un nuevo commit, lo cual es una práctica estándar para este proyecto pero se documenta como una operación de configuración.
+- Dependencias afectadas: Todas las funciones en `auth.js`, `student.js` y `teacher.js` que realizan llamadas a la API.
+
+--- AUDITORÍA POST-REVISIÓN (CODE REVIEW) ---
+- Archivo: js/config.js
+- Ruta completa: /js/config.js
+- Función / método / bloque afectado: SERVICE_URLS
+- Línea(s) involucrada(s): 17, 20, 23
+- Tipo de problema: Configuración (Crítico, Bloqueante)
+- Descripción detallada del problema: La revisión de código identificó que las URLs de los servicios `USER`, `TASK` y `EXAM` fueron actualizadas con valores incorrectos, que no correspondían con el último set de URLs proporcionado por el PM.
+- Impacto potencial: La aplicación se vuelve completamente no funcional, ya que todas las llamadas a la API fallarían al apuntar a endpoints incorrectos. Este error bloquea la fusión del cambio.
+- Dependencias afectadas: Toda la aplicación.

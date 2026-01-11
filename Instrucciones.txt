@@ -144,12 +144,12 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
-**Backend (Corrección de CORS - Método Robusto)**
+**Configuración y Backend (Corrección de URLs y CORS)**
 
-*   **Componente: Microservicios (Global)**
-    *   **Problema:** Un error de política CORS persistía a pesar de una corrección inicial, probablemente debido a la forma en que Google Apps Script maneja las respuestas.
-    *   **Descripción:** Se ha refactorizado la función `doPost` en los tres microservicios para utilizar un bloque `try...catch...finally`, garantizando que la cabecera `Access-Control-Allow-Origin: '*'` se aplique de forma robusta en absolutamente todos los casos.
-    *   **Referencia:** ChangesLogs.txt (18/01/2026).
+*   **Componente: `js/config.js` y Microservicios (Global)**
+    *   **Problema:** Una revisión de código anterior fue rechazada porque las URLs de los servicios de backend eran incorrectas. Adicionalmente, existía un problema persistente de CORS.
+    *   **Descripción:** Se ha aplicado una corrección para actualizar las URLs en `js/config.js` a los valores correctos y definitivos. Esta corrección se combina con la refactorización `try...catch...finally` en los tres microservicios para garantizar que las cabeceras CORS se apliquen de forma robusta.
+    *   **Referencia:** ChangesLogs.txt (18/01/2026), Auditoría.txt (Entrada de Auditoría Post-Revisión).
 
 ------------------- TAREAS PENDIENTES -------------------
 **Archivo: backend.gs**

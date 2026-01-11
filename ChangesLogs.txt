@@ -122,3 +122,11 @@ En este archivo se regustrara el historial de cambios del proyecto.
 - Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
 - Línea(s): N/A (doPost en todos los archivos)
   - Se refactorizó la función `doPost` en los tres microservicios para utilizar un bloque `try...catch...finally`. Este patrón garantiza que la cabecera `Access-Control-Allow-Origin: '*'` se aplique de forma robusta a todas las respuestas, solucionando un problema persistente de CORS.
+
+18/01/2026
+- Archivo: js/config.js, Línea(s): 17, 20, 23
+  - Se actualizaron las URLs de los microservicios `USER`, `TASK`, y `EXAM` a las nuevas direcciones proporcionadas después de un redespliegue. (NOTA: Esta entrada corresponde a un cambio que utilizó URLs incorrectas y fue rechazado en la revisión de código).
+
+18/01/2026
+- Archivo: js/config.js, Línea(s): 17, 20, 23
+  - Se aplicó una corrección para actualizar las URLs de los microservicios `USER`, `TASK`, y `EXAM` con el conjunto de direcciones correcto proporcionado después de una revisión de código fallida.
