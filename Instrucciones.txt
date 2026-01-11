@@ -144,6 +144,13 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**Configuración (Actualización de URLs)**
+
+*   **Componente: Configuración del Frontend**
+    *   **Problema:** Las URLs de los microservicios de backend estaban desactualizadas.
+    *   **Descripción:** Se ha actualizado el archivo `js/config.js` con las nuevas URLs de despliegue para los servicios USER, TASK y EXAM.
+    *   **Referencia:** ChangesLogs.txt (17/01/2026).
+
 **Backend (Corrección de CORS)**
 
 *   **Componente: Microservicios (Global)**

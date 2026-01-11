@@ -649,3 +649,6 @@
 - Descripción detallada del problema: Las funciones que interactúan con la hoja de cálculo "Examenes" utilizan índices de columna hardcodeados (ej. `getRange(i + 1, 8)` para actualizar el estado).
 - Impacto potencial: Si la estructura de la hoja de cálculo cambia en el futuro (se añade, elimina o reordena una columna), estas funciones fallarán o, peor aún, corromperán los datos al escribir en la columna equivocada.
 - Solución (Recomendación): Refactorizar estas funciones para que lean la fila de encabezados y accedan a las columnas por su nombre en lugar de por su índice numérico, lo que las haría más resistentes a los cambios estructurales.
+
+**Archivo: js/config.js (Auditoría Pre-Edición 17/01/2026)**
+- **Hallazgo:** El archivo contiene el objeto `SERVICE_URLS` que centraliza las URLs de los tres microservicios del backend. Las URLs actuales están desactualizadas y necesitan ser reemplazadas por las nuevas proporcionadas.
