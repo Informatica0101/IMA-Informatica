@@ -128,8 +128,8 @@ function submitAssignment(payload) {
   const fileId = asignaturaFolder.createFile(blob).getId(); // --- Guardar solo el ID
 
   const entregaId = "ENT-" + new Date().getTime();
-  // --- Almacenar fileId en lugar de la URL completa ---
-  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente', '']);
+  // --- Almacenar fileId y mimeType ---
+  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente', '', mimeType]);
   return { status: "success", message: "Tarea entregada." };
 }
 
@@ -162,14 +162,29 @@ function getTeacherActivity(payload = {}) {
     const usuario = usuariosData.find(u => u[0] === entrega[2]);
     const tarea = tareasData.find(t => t[0] === entrega[1]);
     if (!tarea || !usuario) return null;
-    const fileId = entrega[4];
-    const archivoUrl = fileId ? `https://drive.google.com/file/d/${fileId}/view` : null;
+
+    // --- Lógica robusta para manejar IDs de archivo y URLs antiguas ---
+    const storedValue = entrega[4];
+    let archivoUrl = null;
+    if (storedValue) {
+      let fileId = storedValue;
+      // Si el valor almacenado es una URL completa, intentar extraer el ID
+      if (storedValue.includes('http')) {
+        const match = storedValue.match(/d\/([a-zA-Z0-9_-]{25,})|id=([a-zA-Z0-9_-]{25,})/);
+        if (match) {
+          fileId = match[1] || match[2]; // Extraer el ID del grupo de captura
+        }
+      }
+      // Construir la URL canónica y limpia a partir del ID
+      archivoUrl = `https://drive.google.com/file/d/${fileId}/view`;
+    }
+
     return {
       tipo: 'Tarea', entregaId: entrega[0], titulo: tarea[2],
       alumnoNombre: usuario[1], fecha: new Date(entrega[3]),
-      archivoUrl: archivoUrl, // --- Construir la URL completa y visible
+      archivoUrl: archivoUrl,
+      mimeType: entrega[8], // --- Devolver el tipo MIME ---
       calificacion: entrega[5], estado: entrega[6], comentario: entrega[7],
-      // --- Corregir índices para grado y sección ---
       grado: usuario[4],
       seccion: usuario[5],
       asignatura: tarea[5]

@@ -59,6 +59,7 @@ function doPost(e) {
     switch (action) {
       case "registerUser": result = registerUser(payload); break;
       case "loginUser": result = loginUser(payload); break;
+      case "getStudentsByGroup": result = getStudentsByGroup(payload); break;
       default:
         result = { status: "error", message: `Acción no reconocida en User-Service: ${action}` };
     }
@@ -120,4 +121,25 @@ function loginUser(payload) {
   }
 
   return { status: "error", message: "Credenciales incorrectas." };
+}
+
+function getStudentsByGroup(payload) {
+  logDebug("Iniciando getStudentsByGroup", payload);
+  const { grado, seccion } = payload;
+
+  if (!grado || !seccion) throw new Error("Grado y sección son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
+  const data = usuariosSheet.getDataRange().getValues();
+
+  const students = data
+    .slice(1) // Omitir encabezados
+    .filter(row => row[2] === grado && row[3] === seccion && row[6] === 'Estudiante')
+    .map(row => ({
+      userId: row[0],
+      nombre: row[1]
+    }));
+
+  return { status: "success", data: students };
 }

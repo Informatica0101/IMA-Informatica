@@ -363,19 +363,12 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
-**Configuración de Microservicios (Actualización de URLs)**
+**Dashboard de Profesor (Filtro Avanzado y Experiencia de Usuario)**
 
-*   **Componente: Configuración del Frontend**
-    *   **Problema:** Las URLs de los microservicios de backend (`TASK` y `EXAM`) cambiaron después de un redespliegue.
-    *   **Descripción:** Se ha actualizado el archivo `js/config.js` con las nuevas URLs proporcionadas para los servicios de tareas y exámenes para asegurar que el frontend se comunique con los endpoints correctos.
-    *   **Referencia:** ChangesLogs.txt (11/01/2026).
-
-**Dashboard de Profesor (Filtrado de Actividades)**
-
-*   **Componente: Interfaz de Usuario y Lógica de Cliente**
-    *   **Problema:** El profesor no podía filtrar la lista de actividades y las entregas de tareas mostraban enlaces de archivo rotos.
-    *   **Descripción:** Se ha implementado una nueva sección de filtros en el dashboard del profesor. Se añadieron controles para filtrar por grado, sección y asignatura. La lógica del frontend se actualizó para realizar el filtrado en el lado del cliente. Adicionalmente, se corrigió un bug crítico en el `task-service` que causaba enlaces de archivo `undefined` y errores en los datos de filtrado.
-    *   **Referencia:** ChangesLogs.txt (11/01/2026).
+*   **Componente: UI/UX y Lógica de Visualización de Archivos**
+    *   **Problema:** El sistema de filtrado era básico, y existía un bug crítico con las URLs de los archivos, además de una experiencia de usuario deficiente para ver las entregas.
+    *   **Descripción:** Se ha implementado una refactorización completa del dashboard del profesor. Se introdujo un sistema de **filtrado jerárquico** (Grado > Sección > Alumno) con un botón de "Regresar" para mejorar la navegación. Se corrigió un **bug crítico** que generaba URLs de archivo dañadas mediante una lógica de backend robusta. Además, se mejoró la experiencia de usuario implementando un **modal lightbox** para la visualización de imágenes y la **descarga directa** para otros tipos de archivos.
+    *   **Referencia:** ChangesLogs.txt (12/01/2026).
 
 **Módulo de Exámenes (Refactorización y Calificación)**
 
