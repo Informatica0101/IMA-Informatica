@@ -112,3 +112,9 @@ En este archivo se regustrara el historial de cambios del proyecto.
 12/01/2026
 - Archivo: js/config.js, Línea(s): 12, 15
   - Se actualizaron las URLs de los microservicios `USER` y `TASK` a las nuevas direcciones proporcionadas después de un redespliegue.
+
+12/01/2026
+- Archivo: js/teacher.js, Línea(s): 21, 329-466
+  - Se corrigió un bug que impedía el funcionamiento de los formularios "Crear Tarea" y "Crear Examen".
+  - Se reintrodujeron los `addEventListener` para los eventos `submit` de ambos formularios, que se habían perdido durante una refactorización anterior.
+  - Se restauró la lógica para la creación dinámica de preguntas en el formulario de exámenes.

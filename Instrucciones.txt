@@ -370,11 +370,11 @@ C. PROCESO DE APROBACIÓN
     *   **Descripción:** Se ha actualizado el archivo `js/config.js` con las nuevas URLs proporcionadas para asegurar que el frontend se comunique con los endpoints correctos.
     *   **Referencia:** ChangesLogs.txt (12/01/2026).
 
-**Dashboard de Profesor (Filtro Avanzado y Experiencia de Usuario)**
+**Dashboard de Profesor (Filtro Avanzado y Corrección de Formularios)**
 
-*   **Componente: UI/UX y Lógica de Visualización de Archivos**
-    *   **Problema:** El sistema de filtrado era básico, y existía un bug crítico con las URLs de los archivos, además de una experiencia de usuario deficiente para ver las entregas.
-    *   **Descripción:** Se ha implementado una refactorización completa del dashboard del profesor. Se introdujo un sistema de **filtrado jerárquico** (Grado > Sección > Alumno) con un botón de "Regresar" para mejorar la navegación. Se corrigió un **bug crítico** que generaba URLs de archivo dañadas mediante una lógica de backend robusta. Además, se mejoró la experiencia de usuario implementando un **modal lightbox** para la visualización de imágenes y la **descarga directa** para otros tipos de archivos.
+*   **Componente: UI/UX, Formularios y Lógica de Visualización**
+    *   **Problema:** El sistema de filtrado era básico, los formularios de creación no funcionaban y la visualización de archivos era deficiente.
+    *   **Descripción:** Se ha implementado una refactorización completa del dashboard. Se introdujo un sistema de **filtrado jerárquico** (Grado > Sección > Alumno). Se corrigió un **bug crítico** que impedía el funcionamiento de los formularios "Crear Tarea" y "Crear Examen", reintroduciendo sus manejadores de eventos. Además, se mejoró la experiencia de usuario con un **modal lightbox** para imágenes y **descarga directa** para otros archivos.
     *   **Referencia:** ChangesLogs.txt (12/01/2026).
 
 **Módulo de Exámenes (Refactorización y Calificación)**

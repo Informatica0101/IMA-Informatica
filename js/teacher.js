@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionCrear = document.getElementById('section-crear');
     const sectionCrearExamen = document.getElementById('section-crear-examen');
     const createAssignmentForm = document.getElementById('create-assignment-form');
+    const createExamForm = document.getElementById('create-exam-form');
     const logoutButton = document.getElementById('logout-button');
     const allSections = [sectionDashboard, sectionCrear, sectionCrearExamen];
     const allNavLinks = [navDashboard, navCrear, navCrearExamen];
@@ -325,4 +326,139 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Inicialización ---
     fetchAllActivities();
     updateFilterUI();
+
+    // --- Lógica de Formularios de Creación ---
+    createAssignmentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = Object.fromEntries(new FormData(e.target).entries());
+        try {
+            const result = await fetchApi('TASK', 'createTask', payload);
+            if (result.status === 'success') {
+                alert('Tarea creada.');
+                e.target.reset();
+                navDashboard.click();
+            } else { throw new Error(result.message); }
+        } catch (error) { alert(`Error: ${error.message}`); }
+    });
+
+    // --- Lógica de Creación de Exámenes ---
+    const addQuestionBtn = document.getElementById('add-question-btn');
+    const questionsContainer = document.getElementById('questions-container');
+    let questionCounter = 0;
+
+    function getQuestionHTML(id) {
+        return `
+            <div class="question-block border p-4 rounded-lg" data-question-id="${id}">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="font-bold">Pregunta ${id}</h4>
+                    <button type="button" class="text-red-500 remove-question-btn">Eliminar</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-medium mb-1">Tipo de Pregunta</label>
+                        <select class="w-full p-2 border rounded question-type-select">
+                            <option value="opcion_multiple">Opción Múltiple</option>
+                            <option value="completacion">Completación</option>
+                            <option value="termino_pareado">Término Pareado</option>
+                            <option value="verdadero_falso">Verdadero/Falso</option>
+                            <option value="respuesta_breve">Respuesta Breve</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block font-medium mb-1">Texto de la Pregunta</label>
+                        <input type="text" class="w-full p-2 border rounded question-text" placeholder="Ej: ¿Capital de Honduras?">
+                    </div>
+                    <div class="md:col-span-2 options-container">
+                        <!-- Opciones dinámicas aquí -->
+                    </div>
+                    <div>
+                        <label class="block font-medium mb-1">Respuesta Correcta</label>
+                        <input type="text" class="w-full p-2 border rounded correct-answer" placeholder="Ej: Tegucigalpa">
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    function getOptionsHTML(type) {
+        switch (type) {
+            case 'opcion_multiple':
+                return `
+                    <label class="block font-medium mb-1">Opciones (separadas por coma)</label>
+                    <input type="text" class="w-full p-2 border rounded question-options" placeholder="Opción A, Opción B, Opción C">`;
+            case 'verdadero_falso':
+                return `
+                    <label class="block font-medium mb-1">Opciones</label>
+                    <input type="text" value="Verdadero,Falso" disabled class="w-full p-2 border rounded bg-gray-200 question-options">`;
+            case 'termino_pareado':
+                 return `
+                    <label class="block font-medium mb-1">Pares (concepto:definición,otro:definición)</label>
+                    <textarea class="w-full p-2 border rounded question-options" rows="3" placeholder="Tegucigalpa:Capital de Honduras,París:Capital de Francia"></textarea>`;
+            default:
+                return '';
+        }
+    }
+
+    function addQuestion() {
+        questionCounter++;
+        const questionNode = document.createElement('div');
+        questionNode.innerHTML = getQuestionHTML(questionCounter);
+        questionsContainer.appendChild(questionNode);
+
+        const typeSelect = questionNode.querySelector('.question-type-select');
+        const optionsContainer = questionNode.querySelector('.options-container');
+        optionsContainer.innerHTML = getOptionsHTML(typeSelect.value);
+
+        typeSelect.addEventListener('change', (e) => {
+            optionsContainer.innerHTML = getOptionsHTML(e.target.value);
+        });
+    }
+
+    if (addQuestionBtn) {
+        addQuestionBtn.addEventListener('click', addQuestion);
+    }
+
+    questionsContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-question-btn')) {
+            e.target.closest('.question-block').remove();
+        }
+    });
+
+    if(createExamForm) {
+        createExamForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const mainData = Object.fromEntries(new FormData(e.target).entries());
+            const payload = { ...mainData, preguntas: [] };
+
+            questionsContainer.querySelectorAll('.question-block').forEach(block => {
+                const pregunta = {
+                    preguntaTipo: block.querySelector('.question-type-select').value,
+                    textoPregunta: block.querySelector('.question-text').value,
+                    respuestaCorrecta: block.querySelector('.correct-answer').value,
+                    opciones: ''
+                };
+                const optionsInput = block.querySelector('.question-options');
+                if (optionsInput) pregunta.opciones = optionsInput.value;
+                payload.preguntas.push(pregunta);
+            });
+
+            if (payload.preguntas.length === 0) {
+                alert('Un examen no puede estar vacío. Por favor, añada al menos una pregunta.');
+                return;
+            }
+
+            try {
+                const result = await fetchApi('EXAM', 'createExam', payload);
+                if (result.status === 'success') {
+                    alert('Examen creado exitosamente.');
+                    e.target.reset();
+                    questionsContainer.innerHTML = '';
+                    questionCounter = 0;
+                    navDashboard.click();
+                } else { throw new Error(result.message || 'Error desconocido del servidor.'); }
+            } catch (error) {
+                console.error('Error al crear el examen:', error);
+                alert(`Error al crear el examen: ${error.message}`);
+            }
+        });
+    }
 });
