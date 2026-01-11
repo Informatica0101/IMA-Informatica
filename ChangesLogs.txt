@@ -108,3 +108,7 @@ En este archivo se regustrara el historial de cambios del proyecto.
   - Se reestructuró el HTML para reemplazar los filtros antiguos por la nueva interfaz de navegación por pasos y se añadió el modal para el lightbox.
 - Archivo: js/teacher.js, (Completo)
   - Se reescribió por completo el script para manejar la nueva lógica de estado del filtro jerárquico, las llamadas a la API para poblar los selectores dinámicamente y la implementación del lightbox y la descarga de archivos.
+
+12/01/2026
+- Archivo: js/config.js, Línea(s): 12, 15
+  - Se actualizaron las URLs de los microservicios `USER` y `TASK` a las nuevas direcciones proporcionadas después de un redespliegue.
