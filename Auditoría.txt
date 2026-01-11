@@ -710,3 +710,7 @@
 - Descripción detallada del problema: Los estilos se aplican principalmente a través de clases de utilidad de Tailwind CSS directamente en el HTML. No hay una hoja de estilos dedicada para el módulo de exámenes.
 - Impacto potencial: Si se requieren estilos más complejos o personalizados para el nuevo módulo de calificación, añadirlos directamente al HTML consolidado lo haría difícil de leer. Centralizar los estilos personalizados en un archivo `css/exam-manager.css` mejorará la organización.
 - Dependencias afectadas: El nuevo `exam-manager.html`.
+
+**Archivo: js/teacher.js y backend/exam-service/Code.gs (Auditoría Pre-Edición 13/01/2026)**
+- **Hallazgo 1 (Frontend):** La función `renderActivity` en `js/teacher.js` muestra las actividades del profesor. Para los exámenes que no son entregas de alumnos, solo se muestra un botón para "Ver Entregas". No existe ningún componente de interfaz de usuario que permita al profesor activar o bloquear el examen directamente desde esta vista.
+- **Hallazgo 2 (Backend):** El archivo `backend/exam-service/Code.gs` ya contiene una acción `updateExamStatus` que acepta un `examenId` y un `estado`. Esta función es adecuada para la nueva funcionalidad y no requiere modificaciones. El trabajo se centrará únicamente en el frontend.

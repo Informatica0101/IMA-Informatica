@@ -26,42 +26,12 @@
             <!-- Sección de Dashboard (Entregas) -->
             <section id="section-dashboard">
                 <h2 class="text-2xl font-bold mb-4">Últimas Entregas</h2>
-
-                <!-- Controles de Filtro Jerárquico -->
-                <div id="filter-container" class="bg-white p-4 rounded-lg shadow-md mb-6">
-                    <div class="flex items-center space-x-4">
-                        <button id="back-btn" class="hidden bg-gray-400 text-white px-4 py-2 rounded-lg">← Regresar</button>
-                        <div id="filter-step-grado" class="filter-step">
-                            <label for="filter-grado" class="block text-sm font-medium text-gray-700">Paso 1: Selecciona un Grado</label>
-                            <select id="filter-grado" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                <option value="">-- Grado --</option>
-                                <option value="Décimo">Décimo</option>
-                                <option value="Undécimo">Undécimo</option>
-                                <option value="Duodécimo">Duodécimo</option>
-                            </select>
-                        </div>
-                        <div id="filter-step-seccion" class="filter-step hidden">
-                            <label for="filter-seccion" class="block text-sm font-medium text-gray-700">Paso 2: Selecciona una Sección</label>
-                            <select id="filter-seccion" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                <!-- Opciones de sección se añadirán dinámicamente -->
-                            </select>
-                        </div>
-                        <div id="filter-step-alumno" class="filter-step hidden">
-                             <label for="filter-alumno" class="block text-sm font-medium text-gray-700">Paso 3: Selecciona un Alumno</label>
-                            <select id="filter-alumno" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                                <!-- Opciones de alumno se añadirán dinámicamente -->
-                            </select>
-                        </div>
-                    </div>
-                     <p id="filter-breadcrumbs" class="text-sm text-gray-500 mt-2"></p>
-                </div>
-
-                <div id="activity-table-container" class="bg-white p-6 rounded-lg shadow-md">
+                <div class="bg-white p-6 rounded-lg shadow-md">
                     <table class="w-full">
                         <thead>
                             <tr class="border-b">
                                 <th class="p-4 text-left">Alumno</th>
-                                <th class="p-4 text-left">Asignación</th>
+                                <th class="p-4 text-left">Tarea</th>
                                 <th class="p-4 text-left">Fecha</th>
                                 <th class="p-4 text-left">Archivo</th>
                                 <th class="p-4 text-left">Calificación</th>
@@ -190,14 +160,6 @@
                 </div>
             </section>
         </main>
-    </div>
-
-    <!-- Modal Lightbox para Imágenes -->
-    <div id="lightbox-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden p-4">
-        <div class="relative">
-            <button id="close-lightbox-btn" class="absolute -top-10 right-0 text-white text-3xl font-bold">&times;</button>
-            <img id="lightbox-image" src="" alt="Vista previa de la entrega" class="max-w-full max-h-[90vh] rounded-lg">
-        </div>
     </div>
 
     <!-- Modal de Calificación -->

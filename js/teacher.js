@@ -233,7 +233,24 @@ document.addEventListener('DOMContentLoaded', () => {
                          actionHtml = `<button class="bg-yellow-500 text-white px-2 py-1 rounded text-sm reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>`;
                      }
                  } else { // Es un examen base sin entregas
-                     actionHtml = `<a href="exam-manager.html?examenId=${item.examenId}&view=submissions" class="bg-purple-500 text-white px-2 py-1 rounded text-sm">Ver Entregas</a>`;
+                    // Lógica para el botón de activar/bloquear examen
+                    const isActivo = item.estado === 'Activo';
+                    const nuevoEstado = isActivo ? 'Bloqueado' : 'Activo';
+                    const textoBoton = isActivo ? 'Bloquear' : 'Activar';
+                    const colorBoton = isActivo ? 'bg-red-500' : 'bg-green-500';
+
+                    const botonCambiarEstado = `
+                        <button
+                            class="${colorBoton} text-white px-2 py-1 rounded text-sm ml-2 change-status-btn"
+                            data-examen-id="${item.examenId}"
+                            data-nuevo-estado="${nuevoEstado}">
+                            ${textoBoton}
+                        </button>`;
+
+                    actionHtml = `
+                        <a href="exam-manager.html?examenId=${item.examenId}&view=submissions" class="bg-purple-500 text-white px-2 py-1 rounded text-sm">Ver Entregas</a>
+                        ${botonCambiarEstado}
+                    `;
                  }
             }
 
@@ -278,7 +295,27 @@ document.addEventListener('DOMContentLoaded', () => {
         if (target.classList.contains('grade-task-btn')) {
              openGradeModal(JSON.parse(target.dataset.item));
         }
-        // ... (otros manejadores de eventos como reactivar examen, etc.)
+
+        if (target.classList.contains('change-status-btn')) {
+            const examenId = target.dataset.examenId;
+            const nuevoEstado = target.dataset.nuevoEstado;
+
+            if (confirm(`¿Está seguro de que desea ${nuevoEstado === 'Activo' ? 'activar' : 'bloquear'} este examen?`)) {
+                try {
+                    const payload = { examenId, estado: nuevoEstado };
+                    const result = await fetchApi('EXAM', 'updateExamStatus', payload);
+
+                    if (result.status === 'success') {
+                        alert('El estado del examen ha sido actualizado.');
+                        fetchAllActivities(); // Recargar la tabla para mostrar el cambio
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (error) {
+                    alert(`Error al actualizar el estado del examen: ${error.message}`);
+                }
+            }
+        }
     });
 
     // ... (El resto de la lógica de la página como el modal de calificación y la creación de tareas/exámenes se mantiene igual)
