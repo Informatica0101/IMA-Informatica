@@ -668,3 +668,13 @@
 - Descripción detallada del problema: La revisión de código identificó que las URLs de los servicios `USER`, `TASK` y `EXAM` fueron actualizadas con valores incorrectos, que no correspondían con el último set de URLs proporcionado por el PM.
 - Impacto potencial: La aplicación se vuelve completamente no funcional, ya que todas las llamadas a la API fallarían al apuntar a endpoints incorrectos. Este error bloquea la fusión del cambio.
 - Dependencias afectadas: Toda la aplicación.
+
+--- AUDITORÍA DE ERRORES REPORTADOS ---
+- Archivo: Múltiples (ej. `login.html`, `index.html`)
+- Ruta completa: N/A
+- Función / método / bloque afectado: Global
+- Línea(s) involucrada(s): N/A
+- Tipo de problema: Arquitectura, Lógica de Script
+- Descripción detallada del problema: La función `closeMobileMenu()` es definida y llamada inline en el `<body>` de `index.html` y otras páginas de contenido, pero no está disponible globalmente. Páginas de la aplicación como `login.html` no la definen, lo que provoca un `ReferenceError` si algún componente de navegación (potencialmente cargado dinámicamente o compartido) intenta llamarla.
+- Impacto potencial: Funcionalidad rota en la navegación móvil, errores de consola que pueden detener la ejecución de otros scripts.
+- Dependencias afectadas: `login.html`, `register.html`, y cualquier otra página que no defina localmente esta función.

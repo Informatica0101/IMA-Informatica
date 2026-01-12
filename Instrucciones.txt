@@ -144,19 +144,12 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
-**Configuración (Actualización de URLs de Servicios)**
+**Corrección de Errores Críticos (Frontend y Backend)**
 
-*   **Componente: `js/config.js`**
-    *   **Problema:** Las URLs de los microservicios (`USER`, `TASK`, `EXAM`) necesitaban ser actualizadas al último conjunto de endpoints proporcionado.
-    *   **Descripción:** Se han actualizado las constantes en el objeto `SERVICE_URLS` para que apunten a los nuevos endpoints desplegados.
-    *   **Referencia:** ChangesLogs.txt (18/01/2026).
-
-**Configuración y Backend (Corrección de URLs y CORS)**
-
-*   **Componente: `js/config.js` y Microservicios (Global)**
-    *   **Problema:** Una revisión de código anterior fue rechazada porque las URLs de los servicios de backend eran incorrectas. Adicionalmente, existía un problema persistente de CORS.
-    *   **Descripción:** Se ha aplicado una corrección para actualizar las URLs en `js/config.js` a los valores correctos y definitivos. Esta corrección se combina con la refactorización `try...catch...finally` en los tres microservicios para garantizar que las cabeceras CORS se apliquen de forma robusta.
-    *   **Referencia:** ChangesLogs.txt (18/01/2026), Auditoría.txt (Entrada de Auditoría Post-Revisión).
+*   **Componentes: `js/main.js` (nuevo), `*.html`, Microservicios de Backend**
+    *   **Problema:** Se reportaron dos errores críticos: `Uncaught ReferenceError: closeMobileMenu is not defined` que rompía la navegación, y `TypeError: Failed to fetch` que impedía la comunicación con el backend.
+    *   **Descripción:** Se ha implementado una solución integral. Para el `ReferenceError`, se centralizó la lógica del menú móvil en un nuevo archivo `js/main.js`, que ahora se importa en todas las páginas. Para el `Failed to fetch`, se corrigió un error de sintaxis (`.withHeaders` por `.setHeaders`) en la función `doPost` de los tres microservicios de backend.
+    *   **Referencia:** ChangesLogs.txt (18/01/2026), Auditoría.txt (Entrada de Auditoría de Errores Reportados).
 
 ------------------- TAREAS PENDIENTES -------------------
 **Archivo: backend.gs**

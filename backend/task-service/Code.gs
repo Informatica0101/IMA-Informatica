@@ -56,9 +56,10 @@ function doPost(e) {
     result = { status: "error", message: `Error interno del servidor: ${error.message}` };
   } finally {
     // Asegurar que la cabecera CORS se aplique en todas las respuestas.
-    return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.TEXT)
-      .withHeaders({'Access-Control-Allow-Origin': '*'});
+    const output = ContentService.createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.JSON);
+    output.setHeaders({'Access-Control-Allow-Origin': '*'});
+    return output;
   }
 }
 
