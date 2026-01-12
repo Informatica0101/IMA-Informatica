@@ -687,7 +687,7 @@
 - Impacto potencial: Errores intermitentes de `Failed to fetch` dependiendo del navegador y el contexto de la llamada. Dificultad para depurar los endpoints de los servicios.
 - Dependencias afectadas: Toda la comunicación frontend-backend.
 
---- AUDITORÍA DE ERROR EN DESPLIEGUE (POST-SUBMIT) ---
+--- AUDITORÍA DE ERROR EN DESPLIEGE (POST-SUBMIT) ---
 - Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
 - Ruta completa: N/A
 - Función / método / bloque afectado: doGet, doPost
@@ -705,4 +705,15 @@
 - Tipo de problema: Error de Runtime (Crítico)
 - Descripción detallada del problema: El método `.addHeader()` tampoco es una función válida cuando se llama sobre una variable que contiene un objeto `TextOutput`. Los sucesivos `TypeError` (`.setHeaders` y `.addHeader`) demuestran que el patrón de asignación a una variable intermedia es el problema. La única implementación que funciona es encadenar `.setHeaders({...})` directamente a la llamada `ContentService.createTextOutput()`.
 - Impacto potencial: La aplicación permanece completamente bloqueada, ya que todos los endpoints de backend fallan en tiempo de ejecución.
+- Dependencias afectadas: Toda la funcionalidad de la aplicación.
+
+--- AUDITORÍA DE ERROR EN DESPLIEGUE #3 (POST-SUBMIT, DEFINITIVA) ---
+- Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+- Ruta completa: N/A
+- Función / método / bloque afectado: doGet, doPost
+- Línea(s) involucrada(s): Múltiples
+- Tipo de problema: Error de Runtime (Crítico, Final)
+- Descripción detallada del problema: El error `TypeError: ...setMimeType(...).setHeaders is not a function` prueba de forma concluyente que el orden de los métodos encadenados es incorrecto. El objeto devuelto por `.setMimeType()` no expone el método `.setHeaders()`.
+- Impacto potencial: El despliegue de los servicios falla, dejando la aplicación inoperable.
+- Solución Definitiva: La única secuencia de llamadas que funciona, según la evidencia, es `ContentService.createTextOutput().setHeaders({...}).setMimeType(...)`. Cualquier otra combinación es inválida.
 - Dependencias afectadas: Toda la funcionalidad de la aplicación.

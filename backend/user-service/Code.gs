@@ -31,8 +31,8 @@ function getSheetOrThrow(ss, name) {
 // --- PUNTOS DE ENTRADA (doGet, doPost, doOptions) ---
 function doGet() {
   return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Usuarios funcionando." }))
-    .setMimeType(ContentService.MimeType.TEXT)
-    .setHeaders({'Access-Control-Allow-Origin': '*'});
+    .setHeaders({'Access-Control-Allow-Origin': '*'})
+    .setMimeType(ContentService.MimeType.TEXT);
 }
 
 function doOptions() {
@@ -67,8 +67,8 @@ function doPost(e) {
   } finally {
     // Asegurar que la cabecera CORS se aplique en todas las respuestas.
     return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.TEXT)
-      .setHeaders({'Access-Control-Allow-Origin': '*'});
+      .setHeaders({'Access-Control-Allow-Origin': '*'})
+      .setMimeType(ContentService.MimeType.TEXT);
   }
 }
 

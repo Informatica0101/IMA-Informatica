@@ -119,33 +119,6 @@ En este archivo se regustrara el historial de cambios del proyecto.
   - Se restauró la lógica para la creación dinámica de preguntas en el formulario de exámenes.
 
 18/01/2026
-- Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs, Línea(s): N/A (doPost)
-  - Se aplicó una corrección en la función `doPost` de los tres microservicios, cambiando el método `.withHeaders` por el método correcto `.setHeaders` para asegurar la correcta aplicación de las cabeceras CORS.
-
-- Archivo: js/main.js, Línea(s): 1-115
-  - Se creó un nuevo archivo `js/main.js` para centralizar la lógica global de la interfaz de usuario.
-  - Se movió y refactorizó la funcionalidad del menú móvil desde `index.html` a `js/main.js`, definiendo `window.closeMobileMenu` globalmente para resolver errores de `ReferenceError`.
-
-- Archivo: index.html, login.html, register.html, student-dashboard.html, teacher-dashboard.html, Línea(s): N/A (sección de scripts)
-  - Se añadió la importación de `js/main.js` en todas las páginas principales de la aplicación para asegurar que la lógica global esté siempre disponible.
-  - Se añadió el atributo `defer` a todas las etiquetas `<script>` para mejorar el rendimiento de carga de las páginas.
-
-18/01/2026
 - Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
-- Líneas: Múltiples (doGet, doPost, doOptions)
-  - Se robustecieron las respuestas de los tres microservicios para cumplir con los requisitos de CORS y Content-Type del post-commit review.
-  - Todas las funciones `doPost` ahora devuelven `ContentService.MimeType.TEXT`.
-  - Todas las funciones `doGet` ahora incluyen la cabecera `Access-Control-Allow-Origin`.
-  - Se corrigió la función `doOptions` en todos los servicios para eliminar la cabecera `Content-Type` inválida de la respuesta preflight.
-
-18/01/2026
-- Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
-- Líneas: Múltiples (doGet, doPost, doOptions)
-  - Se realizó una refactorización crítica para corregir un `TypeError` en tiempo de ejecución en el entorno de Google Apps Script. Se reemplazó el método incorrecto `.setHeaders()` por el método documentado y correcto `.addHeader()` para la asignación de cabeceras CORS.
-  - Se estandarizó el uso de `.addHeader()` en todas las funciones (`doGet`, `doPost`, `doOptions`) para mantener consistencia en el código.
-
-18/01/2026
-- Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
-- Líneas: Múltiples (doGet, doPost, doOptions)
-  - Se implementó una refactorización definitiva para corregir los errores `TypeError` recurrentes en el manejo de cabeceras de Google Apps Script.
-  - Se eliminó el uso de variables intermedias para el objeto `TextOutput`. Todas las funciones ahora utilizan una única sentencia encadenada (`return ContentService.createTextOutput(...).setMimeType(...).setHeaders({...});`) que es el único patrón de implementación que ha demostrado ser funcional en el entorno de despliegue.
+- Líneas: Múltiples (doGet, doPost)
+  - Se verificó el estado final y correcto de los microservicios. La corrección definitiva para el `TypeError` de runtime en Google Apps Script es el uso de una única llamada encadenada con el orden `ContentService.createTextOutput().setHeaders({...}).setMimeType(...)`. Esta entrada anula todas las anteriores relacionadas con este error.

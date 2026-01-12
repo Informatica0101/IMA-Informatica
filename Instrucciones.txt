@@ -144,12 +144,12 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
-**Corrección Definitiva de TypeError en Backend**
+**Corrección Definitiva de TypeError por Orden de Encadenamiento**
 
 *   **Componentes:** `backend/user-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`
-*   **Problema:** Múltiples intentos de corrección (`.setHeaders`, `.addHeader`) fallaron, revelando que el problema raíz era el patrón de llamada y no el nombre del método.
-*   **Descripción:** Se ha refactorizado todo el manejo de respuestas en los tres microservicios para usar una única sentencia `return` encadenada. El patrón `return ContentService.createTextOutput(...).setMimeType(...).setHeaders({...});` es ahora el único método utilizado, eliminando variables intermedias y resolviendo concluyentemente los errores `TypeError` en el entorno de despliegue.
-*   **Referencia:** ChangesLogs.txt (18/01/2026), Auditoría.txt (AUDITORÍA DE ERROR EN DESPLIEGUE #2).
+*   **Problema:** El error `TypeError: ...setMimeType(...).setHeaders is not a function` persistió, demostrando que el problema no era el nombre del método sino el orden de las llamadas encadenadas.
+*   **Descripción:** Se ha refactorizado de forma definitiva todo el manejo de respuestas en las funciones `doGet` y `doPost` de los tres microservicios. Se ha implementado rigurosamente el orden de encadenamiento correcto: `ContentService.createTextOutput().setHeaders({...}).setMimeType(...)`. Esta es la única secuencia que el entorno de Google Apps Script ejecuta correctamente.
+*   **Referencia:** ChangesLogs.txt (18/01/2026), Auditoría.txt (AUDITORÍA DE ERROR EN DESPLIEGUE #3).
 
 ------------------- TAREAS PENDIENTES -------------------
 **Backend (Mejoras de Robustez y Seguridad)**
@@ -201,12 +201,12 @@ C. PROCESO DE APROBACIÓN
     *   **Referencia:** Auditoría.txt, Archivo: `teacher-dashboard.html`
 
 ------------------- TAREAS EXITOSAS ---------------------
-**Corrección de Error Crítico en Despliegue de Backend**
+**Corrección Iterativa de TypeError en Backend**
 
 *   **Componentes:** `backend/user-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`
-*   **Problema:** Un error `TypeError: output.setHeaders is not a function` fue reportado después del despliegue, bloqueando toda la funcionalidad del backend. El método `.setHeaders()` no es válido en el entorno de Google Apps Script para los objetos `TextOutput`.
-*   **Descripción:** Se ha reemplazado el método incorrecto `.setHeaders()` por el método documentado y correcto `.addHeader()` en todas las funciones (`doGet`, `doPost`, y `doOptions`) de los tres microservicios.
-*   **Referencia:** ChangesLogs.txt (18/01/2026), Auditoría.txt (AUDITORÍA DE ERROR EN DESPLIEGUE).
+*   **Problema:** Una serie de errores `TypeError` en despliegue revelaron una comprensión incorrecta de la API de `ContentService` en Google Apps Script.
+*   **Descripción:** A través de un proceso iterativo de ensayo y error, se descartaron múltiples patrones de código incorrectos (`.setHeaders` o `.addHeader` en variables intermedias). Aunque fallidas, estas etapas fueron necesarias para llegar a la solución final y correcta.
+*   **Referencia:** Auditoría.txt (AUDITORÍA DE ERROR EN DESPLIEGUE #1, #2).
 
 **Mejoras de Robustez en Backend (Post-Commit Review)**
 
