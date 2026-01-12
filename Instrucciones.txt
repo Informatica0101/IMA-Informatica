@@ -57,7 +57,7 @@ B. CALIDAD DEL CÓDIGO
    - Todo código nuevo o modificado DEBE incluir un comentario
      explicando claramente su propósito.
 
-2. PROTECCIÓN DELAS REGLAS
+2. PROTECCIÓN DE LAS REGLAS
    - PROHIBIDO eliminar o modificar el bloque que contiene
      reglas adicionales dentro de Instrucciones.txt
 
@@ -143,85 +143,238 @@ C. PROCESO DE APROBACIÓN
 
 
 
-------------------- TAREAS POR REVISAR ------------------
-**Corrección Definitiva de TypeError por Orden de Encadenamiento**
-
-*   **Componentes:** `backend/user-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`
-*   **Problema:** El error `TypeError: ...setMimeType(...).setHeaders is not a function` persistió, demostrando que el problema no era el nombre del método sino el orden de las llamadas encadenadas.
-*   **Descripción:** Se ha refactorizado de forma definitiva todo el manejo de respuestas en las funciones `doGet` y `doPost` de los tres microservicios. Se ha implementado rigurosamente el orden de encadenamiento correcto: `ContentService.createTextOutput().setHeaders({...}).setMimeType(...)`. Esta es la única secuencia que el entorno de Google Apps Script ejecuta correctamente.
-*   **Referencia:** ChangesLogs.txt (18/01/2026), Auditoría.txt (AUDITORÍA DE ERROR EN DESPLIEGUE #3).
-
 ------------------- TAREAS PENDIENTES -------------------
-**Backend (Mejoras de Robustez y Seguridad)**
+**Archivo: backend.gs**
 
-*   **Componente: Microservicios (Global)**
-    *   **Problema:** Falta de validación en la subida de archivos.
-    *   **Descripción:** Añadir validaciones en `submitAssignment` para proteger contra `fileData` inválido, MIME types falsificados, archivos de gran tamaño y base64 malformado.
-    *   **Referencia:** Auditoría.txt (Post-Commit Review)
-    *   **Problema:** Ausencia de un sistema de autorización.
-    *   **Descripción:** Implementar un mecanismo de validación de roles en cada acción del backend para asegurar que solo los usuarios autorizados (ej. "Profesor") puedan ejecutar acciones administrativas como crear tareas o calificar.
-    *   **Referencia:** Auditoría.txt (Post-Commit Review)
-    *   **Problema:** Uso extensivo de índices de columna hardcodeados.
-    *   **Descripción:** Refactorizar todas las interacciones con Google Sheets para que los datos se lean y escriban buscando las columnas por su nombre en la cabecera, en lugar de por su posición fija.
-    *   **Referencia:** Auditoría.txt (Post-Commit Review)
+*   **Función: Global**
+    *   **Problema:** IDs de configuración (SPREADSHEET_ID, DRIVE_FOLDER_ID) están hardcodeados.
+    *   **Descripción:** Externalizar la configuración para no tener que modificar el código fuente al cambiar de entorno.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 2-3
 
-**Archivo: backend.gs (Legado)**
+*   **Función: doPost**
+    *   **Problema:** El bloque `catch` expone mensajes de error detallados al cliente.
+    *   **Descripción:** Implementar un manejo de errores que registre los detalles en el servidor (Logger.log) y devuelva un mensaje genérico al cliente.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 74-75
+
+*   **Función: registerUser**
+    *   **Problema:** Hashing de contraseña sin "salt".
+    *   **Descripción:** Modificar el proceso de hashing para incluir un "salt" único por usuario, que se almacenará junto a la contraseña hasheada.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 81-83
+    *   **Problema:** Generación de `userId` basada en `new Date().getTime()`.
+    *   **Descripción:** Reemplazar la generación de IDs por un método que garantice mayor unicidad, como `Utilities.getUuid()`.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 80
+    *   **Problema:** Falta de validación de datos en el payload de entrada.
+    *   **Descripción:** Añadir validaciones para asegurar que los campos `nombre`, `email` y `password` no estén vacíos y que el email tenga un formato válido.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 79
+    *   **Problema:** No se verifica la existencia previa de un email.
+    *   **Descripción:** Antes de insertar un nuevo usuario, realizar una búsqueda en la hoja `Usuarios` para comprobar que el email no esté ya registrado.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 85
+
+*   **Función: loginUser**
+    *   **Problema:** Carga completa de la hoja de usuarios para buscar coincidencias.
+    *   **Descripción:** Optimizar la búsqueda de usuarios, posiblemente utilizando filtros o una estrategia que no requiera cargar toda la base de datos en memoria.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 92-93
+
+*   **Función: createTask**
+    *   **Problema:** Falta de validación de datos en el payload de entrada.
+    *   **Descripción:** Implementar validaciones para los campos clave de una tarea, como `titulo`, `parcial`, `asignatura` y `fechaLimite`.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 112
+
+*   **Función: getStudentTasks**
+    *   **Problema:** Carga completa de las hojas `Tareas` y `Entregas`.
+    *   **Descripción:** Refactorizar la función para filtrar los datos de manera más eficiente, minimizando la cantidad de datos traídos a memoria.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 119-120
+
+*   **Función: submitAssignment**
+    *   **Problema:** Búsqueda ineficiente de usuario y tarea cargando hojas completas.
+    *   **Descripción:** Optimizar la obtención de datos del usuario y la tarea para evitar cargar las hojas completas.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 161, 166
+    *   **Problema:** Extracción de tipo MIME frágil con expresión regular.
+    *   **Descripción:** Hacer más robusta la lógica de extracción del tipo MIME para manejar diferentes formatos de data URL.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 180
+
+*   **Función: getTeacherActivity**
+    *   **Problema:** Carga de 5 hojas de cálculo completas en memoria.
+    *   **Descripción:** Optimizar drásticamente la función, posiblemente creando índices manuales (objetos JS) o pre-procesando los datos para evitar "joins" en tiempo de ejecución.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 193-197, 212
+    *   **Problema:** Uso de `toLocaleString()` dependiente del servidor.
+    *   **Descripción:** Devolver las fechas en un formato estándar (ISO 8601) y dejar que el frontend se encargue de formatearlas según la zona horaria del usuario.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 230
+
+*   **Función: reactivateExam**
+    *   **Problema:** Uso de índice de columna hardcodeado (número mágico).
+    *   **Descripción:** Reemplazar el `getRange(i + 1, 7)` por un método que obtenga el índice de la columna "Estado" por su nombre, haciéndolo resistente a cambios en la estructura de la hoja.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 238
+
+*   **Función: gradeSubmission**
+    *   **Problema:** Uso de índices de columna hardcodeados.
+    *   **Descripción:** Refactorizar para obtener los índices de las columnas "Calificación", "Estado" y "Comentario" por sus nombres.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 248-250
+
+*   **Función: createExam**
+    *   **Problema:** Generación de `preguntaId` no garantiza unicidad.
+    *   **Descripción:** Utilizar `Utilities.getUuid()` para generar los IDs de las preguntas.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 369
+
+*   **Función: submitExam**
+    *   **Problema:** No se califican preguntas de tipo 'termino_pareado' y 'respuesta_breve'.
+    *   **Descripción:** Implementar la lógica de calificación para los tipos de pregunta que actualmente se omiten.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 353
+    *   **Problema:** Potencial división por cero si un examen no tiene preguntas.
+    *   **Descripción:** Añadir una comprobación para evitar la división por cero si `preguntasDelExamen.length` es 0.
+    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 362
+
+**Archivo: index.html**
 
 *   **Componente: Global**
-    *   **Problema:** El archivo `backend.gs` en la raíz es un artefacto legado y no debe usarse, pero contiene una gran cantidad de lógica que podría causar confusión. Las tareas listadas a continuación pertenecen a este archivo y deben ser re-evaluadas en el contexto de la nueva arquitectura de microservicios.
-    *   **Descripción:** Se necesita una auditoría para determinar qué funcionalidades de `backend.gs` son todavía relevantes y deben ser migradas o implementadas correctamente en los microservicios correspondientes.
-    *   **Sub-Tareas (Ejemplos de `backend.gs` a re-evaluar):**
-        *   Externalizar configuración (SPREADSHEET_ID, DRIVE_FOLDER_ID).
-        *   Manejo de errores seguro en `doPost`.
-        *   Uso de "salt" en hashing de contraseñas.
-        *   Garantizar unicidad de `userId`.
-        *   Validación de datos en `registerUser`.
-        *   Verificación de email duplicado.
-        *   Optimización de queries en `loginUser` y `getStudentTasks`.
+    *   **Problema:** Dependencia de CDN externas para Tailwind CSS y Google Fonts.
+    *   **Descripción:** Investigar la posibilidad de alojar localmente estas dependencias o utilizar un proceso de build (como PostCSS) para generar un archivo CSS optimizado y eliminar dependencias externas en producción.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 7, 8
+    *   **Problema:** Bloque de CSS personalizado dentro del HTML.
+    *   **Descripción:** Mover todo el CSS del bloque `<style>` a un archivo CSS externo (ej. `css/custom.css`) y enlazarlo en el `<head>`.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 9-195
+    *   **Problema:** Datos de contenido (`presentationData`, etc.) hardcodeados en el script.
+    *   **Descripción:** Mover los datos de los menús y descargas a archivos JSON dedicados (ej. `data/presentations.json`) y cargarlos con `fetch`.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 412, 494, 574
+    *   **Problema:** Todo el código JavaScript está en un solo bloque `<script>`.
+    *   **Descripción:** Modularizar el JavaScript. Mover la lógica principal a un archivo externo (ej. `js/main.js`) y considerar separar la lógica de los juegos también.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 412-1110
 
-**Frontend (Mejoras de Arquitectura y UX)**
+*   **Componente: Menú de Navegación**
+    *   **Problema:** Enlace roto a "Pseudocódigo" en el menú móvil.
+    *   **Descripción:** Corregir el `href` del enlace "Pseudocódigo" en el menú móvil para que apunte a `pseudocode.html` en lugar de `pseudocode.js`.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 242, 273
+    *   **Problema:** Lógica de renderizado de menús duplicada (`renderDesktopNav`, `renderMobileNav`).
+    *   **Descripción:** Refactorizar la generación de menús para reutilizar la lógica de iteración sobre las estructuras de datos y solo diferenciar la salida de HTML.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 768-963
+
+*   **Componente: Carga de Juegos**
+    *   **Problema:** Funciones para cargar juegos (`loadPeripheralsGame`, etc.) son casi idénticas.
+    *   **Descripción:** Crear una única función `loadGame(gameInfo)` que acepte un objeto con los detalles del juego (nombre de archivo html/js, función de inicialización) para eliminar la duplicación de código.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 1205-1296
+    *   **Problema:** El progreso de los juegos se guarda en `localStorage`.
+    *   **Descripción:** Evaluar si el almacenamiento de progreso debe moverse al lado del servidor para persistencia entre dispositivos, o si `localStorage` es suficiente, documentando sus limitaciones.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 1162-1202
+
+**Archivos: login.html, register.html, student-dashboard.html, teacher-dashboard.html**
 
 *   **Componente: Global**
-    *   **Problema:** Dependencia de CDNs y CSS/JS inline.
-    *   **Descripción:** Mover todo el CSS y JS a archivos externos, y considerar alojar localmente las dependencias para mejorar el rendimiento y la mantenibilidad.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html
-    *   **Problema:** Duplicación de código en la lógica de renderizado y carga de juegos.
-    *   **Descripción:** Refactorizar las funciones `renderDesktopNav`/`renderMobileNav` y `load...Game` para eliminar la duplicación de código.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html
-    *   **Problema:** Datos de contenido hardcodeados en `index.html`.
-    *   **Descripción:** Migrar `presentationData`, `additionalResourcesData`, etc., a archivos JSON dedicados.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html
+    *   **Problema:** Dependencia de CDN de Tailwind CSS en todas las páginas.
+    *   **Descripción:** Centralizar la estrategia de CSS, aplicando la misma solución que para `index.html`.
+    *   **Referencia:** Auditoría.txt, Archivo: login.html (Línea 6), register.html (Línea 6), student-dashboard.html (Línea 6), teacher-dashboard.html (Línea 6)
+    *   **Problema:** Scripts cargados sin `defer` o `async`.
+    *   **Descripción:** Añadir el atributo `defer` a todas las etiquetas `<script>` para mejorar el rendimiento de carga de las páginas.
+    *   **Referencia:** Auditoría.txt, Archivo: login.html (Líneas 26-27), etc.
 
-*   **Componente: Formularios y Dashboards**
-    *   **Problema:** Falta de retroalimentación de UX.
-    *   **Descripción:** Reemplazar todos los `alert()` por mensajes de error/éxito integrados en la UI. Añadir indicadores de carga (`spinners`) en los dashboards mientras se obtienen los datos.
-    *   **Referencia:** Auditoría.txt, Archivos: `login.html`, `student-dashboard.html`, etc.
-    *   **Problema:** Inconsistencia y riesgo en la entrada de datos.
-    *   **Descripción:** Estandarizar los campos de formulario (ej. usar `<select>` para "Grado" y "Sección" en todos los formularios) para garantizar la integridad de los datos.
-    *   **Referencia:** Auditoría.txt, Archivo: `teacher-dashboard.html`
+*   **Componente: Formularios (Login/Registro)**
+    *   **Problema:** Falta de etiquetas semánticas `<main>`.
+    *   **Descripción:** Envolver el contenido principal de `login.html` y `register.html` en una etiqueta `<main>` para mejorar la accesibilidad.
+    *   **Referencia:** Auditoría.txt, Archivo: login.html, Línea(s): 8
+    *   **Problema:** No hay elementos para mostrar mensajes de error/éxito.
+    *   **Descripción:** Añadir un `div` dedicado en los formularios de login, registro y otros para mostrar retroalimentación al usuario, y modificar el JavaScript para usar estos divs en lugar de `alert()`.
+    *   **Referencia:** Auditoría.txt, Archivo: login.html (Líneas 10-21), register.html (Líneas 12-42), etc.
+
+*   **Componente: Formulario de Registro (register.html)**
+    *   **Problema:** Opciones de "Grado" hardcodeadas.
+    *   **Descripción:** Generar dinámicamente las opciones del `<select>` de grado desde una fuente de datos central en JavaScript para facilitar el mantenimiento.
+    *   **Referencia:** Auditoría.txt, Archivo: register.html, Línea(s): 24-28
+    *   **Problema:** Campo "Sección" es de texto libre.
+    *   **Descripción:** Cambiar el campo "Sección" a un `<select>` con opciones predefinidas (ej. A, B, C) para garantizar la consistencia de los datos.
+    *   **Referencia:** Auditoría.txt, Archivo: register.html, Línea(s): 32
+
+*   **Componente: Dashboard de Estudiante (student-dashboard.html)**
+    *   **Problema:** Falta de indicadores de carga y estado vacío.
+    *   **Descripción:** Añadir un mensaje de "Cargando..." a la lista de tareas y un mensaje de "No tienes tareas" cuando la lista esté vacía.
+    *   **Referencia:** Auditoría.txt, Archivo: student-dashboard.html, Línea(s): 17
+    *   **Problema:** Modal de entrega sin indicadores de carga/error.
+    *   **Descripción:** Mejorar el modal para que muestre un spinner durante la subida del archivo y un área para mensajes de error.
+    *   **Referencia:** Auditoría.txt, Archivo: student-dashboard.html, Línea(s): 22-38
+
+*   **Componente: Dashboard de Profesor (teacher-dashboard.html)**
+    *   **Problema:** Falta de indicador de carga y estado vacío en la tabla de entregas.
+    *   **Descripción:** Añadir una fila en la tabla que indique "Cargando..." y otra para "No hay entregas".
+    *   **Referencia:** Auditoría.txt, Archivo: teacher-dashboard.html, Línea(s): 45
+    *   **Problema:** Inconsistencia en el campo "Grado" (texto vs. select).
+    *   **Descripción:** Cambiar el campo "Grado Asignado" en el formulario de crear tarea a un `<select>` para que sea consistente con el formulario de crear examen.
+    *   **Referencia:** Auditoría.txt, Archivo: teacher-dashboard.html, Línea(s): 101, 150-155
+    *   **Problema:** Campo "Sección" es de texto libre.
+    *   **Descripción:** Cambiar los campos de "Sección" a `<select>` en ambos formularios.
+    *   **Referencia:** Auditoría.txt, Archivo: teacher-dashboard.html, Línea(s): 105, 159
+    *   **Problema:** HTML de preguntas de examen generado en JS.
+    *   **Descripción:** Crear una etiqueta `<template>` en `teacher-dashboard.html` con la estructura de una pregunta y usarla en `teacher.js` para clonar y añadir nuevas preguntas.
+    *   **Referencia:** Auditoría.txt, Archivo: teacher-dashboard.html, Línea(s): 173
+
+**Archivos: js/config.js, js/auth.js, js/student.js, js/teacher.js**
+
+*   **Servicio: Configuración (js/config.js)**
+    *   **Problema:** URLs de servicios hardcodeadas y expuestas.
+    *   **Descripción:** Investigar un método para manejar la configuración de forma más segura, como un sistema de variables de entorno si la plataforma de despliegue lo permite.
+    *   **Referencia:** Auditoría.txt, Archivo: js/config.js, Línea(s): 1-24
+
+*   **Servicio: Autenticación (js/auth.js)**
+    *   **Problema:** Datos de sesión del usuario en `localStorage`.
+    *   **Descripción:** Migrar la gestión de sesión de `localStorage` a `sessionStorage` o a una cookie HttpOnly (si es posible) para mejorar la seguridad.
+    *   **Referencia:** Auditoría.txt, Archivo: js/auth.js, Línea(s): 5
+    *   **Problema:** Redirección basada únicamente en el `rol` del lado del cliente.
+    *   **Descripción:** Asegurarse de que cada página protegida por rol (dashboards) verifique el rol del usuario no solo al cargar, sino que el backend valide el rol en cada petición.
+    *   **Referencia:** Auditoría.txt, Archivo: js/auth.js, Línea(s): 7-12
+    *   **Problema:** Falta de validación de cliente en el formulario de registro.
+    *   **Descripción:** Añadir validaciones en JavaScript para los campos del formulario de registro antes de enviar la petición a la API.
+    *   **Referencia:** Auditoría.txt, Archivo: js/auth.js, Línea(s): 63-69
+
+*   **Servicio: Lógica General (Todos los JS)**
+    *   **Problema:** Función `fetchApi` duplicada en múltiples archivos.
+    *   **Descripción:** Crear un archivo `js/api.js` o `js/utils.js` que contenga la función `fetchApi` y cualquier otra utilidad compartida, e importarlo en los archivos que lo necesiten.
+    *   **Referencia:** Auditoría.txt, Archivo: js/auth.js (Líneas 15-25), etc.
+    *   **Problema:** Uso de `alert()` para retroalimentación.
+    *   **Descripción:** Reemplazar todas las llamadas a `alert()` por la lógica que muestre los mensajes en los nuevos elementos de UI creados para este fin.
+    *   **Referencia:** Auditoría.txt, Archivo: js/auth.js (Líneas 48, 52, 79, 83), etc.
+    *   **Problema:** Comentario incorrecto sobre `Content-Type` en `fetchApi`.
+    *   **Descripción:** Añadir el encabezado `'Content-Type': 'text/plain'` a todas las peticiones `fetch` para evitar problemas de CORS.
+    *   **Referencia:** Auditoría.txt, Archivo: js/auth.js, Línea(s): 22
+
+*   **Servicio: Dashboard de Estudiante (js/student.js)**
+    *   **Problema:** Inconsistencia de rol ("Estudiante" vs "Alumno").
+    *   **Descripción:** Eliminar la comprobación de "Alumno" y estandarizar el uso de "Estudiante" en todo el frontend.
+    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Línea(s): 3
+    *   **Problema:** Lógica para obtener exámenes es incorrecta y apunta a un endpoint inexistente.
+    *   **Descripción:** Crear una nueva acción en el backend (`getStudentExams`) que devuelva la lista de exámenes para un estudiante, y actualizar el frontend para que la utilice.
+    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Línea(s): 28-29
+    *   **Problema:** No se manejan las diferentes estructuras de datos de tareas y exámenes.
+    *   **Descripción:** Implementar una capa de transformación en `fetchAllActivities` para mapear los datos de tareas y exámenes a un formato común antes de pasarlos a la función de renderizado.
+    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Línea(s): 35
+    *   **Problema:** La función `renderActivities` no renderiza exámenes.
+    *   **Descripción:** Actualizar la función para que pueda mostrar tanto tareas como exámenes, incluyendo un botón para "Realizar Examen" que redirija a `exam.html`.
+    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Línea(s): 45-53
+    *   **Problema:** Falta la lógica para iniciar un examen desde el dashboard.
+    *   **Descripción:** Implementar el flujo para que al hacer clic en un examen, el usuario sea redirigido a la página del examen con el ID correspondiente.
+    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Línea(s): 57
+
+*   **Servicio: Dashboard de Profesor (js/teacher.js)**
+    *   **Problema:** Peticiones ineficientes para obtener actividad.
+    *   **Descripción:** Modificar `fetchTeacherActivity` para que haga una sola llamada a la acción `getTeacherActivity` del backend, que ya devuelve los datos combinados.
+    *   **Referencia:** Auditoría.txt, Archivo: js/teacher.js, Línea(s): 26
+    *   **Problema:** Vulnerabilidad XSS en `renderActivity`.
+    *   **Descripción:** Refactorizar la función `renderActivity` para que cree los elementos del DOM de forma segura (usando `document.createElement` y `textContent`) en lugar de construir una cadena de HTML y usar `innerHTML`.
+    *   **Referencia:** Auditoría.txt, Archivo: js/teacher.js, Línea(s): 80
+    *   **Problema:** Contaminación del scope global con `window.reactivateExam` y `window.openGradeModal`.
+    *   **Descripción:** Refactorizar la asignación de eventos para usar `addEventListener` en un bucle después de renderizar la tabla, adjuntando los listeners a los botones de acción correspondientes.
+    *   **Referencia:** Auditoría.txt, Archivo: js/teacher.js, Línea(s): 161, 171
+
+
+------------------- TAREAS POR REVISAR ------------------
+**Archivo: index.html**
+
+*   **Componente: Enlace al Portal de Login (Corrección)**
+    *   **Problema:** La página principal no tenía un enlace visible y dedicado para acceder al portal de login.
+    *   **Descripción:** Se añadió un nuevo botón con el texto "Portal" en la barra de navegación (escritorio y móvil) que dirige a `login.html`, reemplazando una implementación anterior incorrecta.
+    *   **Referencia:** Auditoría.txt, Archivo: index.html, Hallazgo 3 (Corregido)
+
+En este bloque se agregarán las tareas realizadas cuyo
+resultado aún no ha sido validado por el PM.
+
 
 ------------------- TAREAS EXITOSAS ---------------------
-**Corrección Iterativa de TypeError en Backend**
-
-*   **Componentes:** `backend/user-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`
-*   **Problema:** Una serie de errores `TypeError` en despliegue revelaron una comprensión incorrecta de la API de `ContentService` en Google Apps Script.
-*   **Descripción:** A través de un proceso iterativo de ensayo y error, se descartaron múltiples patrones de código incorrectos (`.setHeaders` o `.addHeader` en variables intermedias). Aunque fallidas, estas etapas fueron necesarias para llegar a la solución final y correcta.
-*   **Referencia:** Auditoría.txt (AUDITORÍA DE ERROR EN DESPLIEGUE #1, #2).
-
-**Mejoras de Robustez en Backend (Post-Commit Review)**
-
-*   **Componentes:** `backend/user-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`
-*   **Problema:** Los servicios de backend no cumplían con los requisitos obligatorios de la revisión post-commit para las cabeceras CORS y Content-Type, lo que provocaba fallos críticos de comunicación con el frontend.
-*   **Descripción:** Se han actualizado las funciones `doPost`, `doGet` y `doOptions` en los tres microservicios. `doPost` ahora devuelve `ContentService.MimeType.TEXT`. `doGet` ahora incluye la cabecera `Access-Control-Allow-Origin`. Se ha corregido `doOptions` para eliminar la cabecera inválida `Content-Type` de la respuesta preflight.
-*   **Referencia:** ChangesLogs.txt (18/01/2026), Auditoría.txt (Post-Commit Review).
-
-**Corrección de Errores Críticos (Frontend y Backend)**
-
-*   **Componentes: `js/main.js` (nuevo), `*.html`, Microservicios de Backend**
-    *   **Problema:** Se reportaron dos errores críticos: `Uncaught ReferenceError: closeMobileMenu is not defined` que rompía la navegación, y `TypeError: Failed to fetch` que impedía la comunicación con el backend.
-    *   **Descripción:** Se ha implementado una solución integral. Para el `ReferenceError`, se centralizó la lógica del menú móvil en un nuevo archivo `js/main.js`, que ahora se importa en todas las páginas. Para el `Failed to fetch`, se corrigió un error de sintaxis (`.withHeaders` por `.setHeaders`) en la función `doPost` de los tres microservicios de backend.
-    *   **Referencia:** ChangesLogs.txt (18/01/2026), Auditoría.txt (Entrada de Auditoría de Errores Reportados).
-
 **Archivo: js/student.js**
 
 *   **Componente: Botón de Cerrar Sesión**
@@ -233,7 +386,6 @@ C. PROCESO DE APROBACIÓN
     *   **Problema:** Los estudiantes no podían ver los exámenes asignados en su dashboard.
     *   **Descripción:** Se modificó la función `fetchStudentTasks` para que también solicite los exámenes del estudiante a la API (`EXAM`, `getStudentExams`). Se actualizó la función `renderActivities` para que pueda renderizar tanto tareas como exámenes.
     *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Hallazgo 2
-
 **Archivo: js/teacher.js**
 
 *   **Componente: Creación de Exámenes**

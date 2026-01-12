@@ -366,7 +366,6 @@
         </div>
     </footer>
 
-    <script src="js/main.js" defer></script>
     <script>
         // Data for presentations (HTML files for menus)
         const presentationData = [
@@ -592,7 +591,124 @@
 
         // --- Initialize on DOMContentLoaded ---
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Header (Mobile Menu) Logic is now in js/main.js ---
+            // --- Header (Mobile Menu) Logic ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+            const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+
+            const mobileCoursesToggle = document.getElementById('mobile-courses-toggle');
+            const mobileCoursesArrow = document.getElementById('mobile-courses-arrow');
+            const mobileGradesContainer = document.getElementById('mobile-grades-container');
+            const mobileGradesMenu = document.getElementById('mobile-grades-menu');
+
+            const mobileAdditionalResourcesToggle = document.getElementById('mobile-additional-resources-toggle');
+            const mobileAdditionalResourcesArrow = document.getElementById('mobile-additional-resources-arrow');
+            const mobileAdditionalResourcesContainer = document.getElementById('mobile-additional-resources-container');
+            const mobileAdditionalResourcesMenu = document.getElementById('mobile-additional-resources-menu');
+
+            let activeMobileGradeElement = null; // Stores the currently open grade container in mobile menu
+            let activeMobileSubjectElement = null; // Stores the currently open subject container in mobile menu
+
+            function toggleMobileMenu() {
+                mobileMenuOverlay.classList.toggle('hidden');
+                mobileMenuOverlay.classList.toggle('mobile-menu-overlay'); // Apply overlay styles
+                mobileMenuIcon.setAttribute('d', mobileMenuOverlay.classList.contains('hidden') ? 'M4 6h16M4 12h16M4 18h16' : 'M6 18L18 6M6 6l12 12');
+
+                // Reset mobile menu state when closing
+                if (mobileMenuOverlay.classList.contains('hidden')) {
+                    mobileGradesContainer.classList.remove('visible-height');
+                    mobileGradesContainer.classList.add('hidden-height');
+                    mobileCoursesArrow.classList.remove('rotate-90');
+                    mobileCoursesArrow.classList.add('rotate-0');
+
+                    mobileAdditionalResourcesContainer.classList.remove('visible-height');
+                    mobileAdditionalResourcesContainer.classList.add('hidden-height');
+                    mobileAdditionalResourcesArrow.classList.remove('rotate-90');
+                    mobileAdditionalResourcesArrow.classList.add('rotate-0');
+
+                    // Close any open sub-menus
+                    if (activeMobileGradeElement) {
+                        activeMobileGradeElement.classList.remove('visible-height');
+                        activeMobileGradeElement.classList.add('hidden-height');
+                        activeMobileGradeElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                        activeMobileGradeElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                        activeMobileGradeElement = null;
+                    }
+                    if (activeMobileSubjectElement) {
+                        activeMobileSubjectElement.classList.remove('visible-height');
+                        activeMobileSubjectElement.classList.add('hidden-height');
+                        activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                        activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                        activeMobileSubjectElement = null;
+                    }
+                }
+            }
+
+            function closeMobileMenu() {
+                mobileMenuOverlay.classList.add('hidden');
+                mobileMenuOverlay.classList.remove('mobile-menu-overlay');
+                mobileMenuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+                // Reset mobile menu state
+                mobileGradesContainer.classList.remove('visible-height');
+                mobileGradesContainer.classList.add('hidden-height');
+                mobileCoursesArrow.classList.remove('rotate-90');
+                mobileCoursesArrow.classList.add('rotate-0');
+
+                mobileAdditionalResourcesContainer.classList.remove('visible-height');
+                mobileAdditionalResourcesContainer.classList.add('hidden-height');
+                mobileAdditionalResourcesArrow.classList.remove('rotate-90');
+                mobileAdditionalResourcesArrow.classList.add('rotate-0');
+
+                if (activeMobileGradeElement) {
+                    activeMobileGradeElement.classList.remove('visible-height');
+                    activeMobileGradeElement.classList.add('hidden-height');
+                    activeMobileGradeElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                    activeMobileGradeElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                    activeMobileGradeElement = null;
+                }
+                if (activeMobileSubjectElement) {
+                    activeMobileSubjectElement.classList.remove('visible-height');
+                    activeMobileSubjectElement.classList.add('hidden-height');
+                    activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                    activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                    activeMobileSubjectElement = null;
+                }
+            }
+
+            mobileMenuButton.addEventListener('click', toggleMobileMenu);
+            mobileMenuCloseButton.addEventListener('click', toggleMobileMenu);
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('mousedown', (event) => {
+                if (!mobileMenuOverlay.classList.contains('hidden') && !mobileMenuOverlay.contains(event.target) && !mobileMenuButton.contains(event.target)) {
+                    closeMobileMenu();
+                }
+            });
+
+            mobileCoursesToggle.addEventListener('click', () => {
+                mobileGradesContainer.classList.toggle('hidden-height');
+                mobileGradesContainer.classList.toggle('visible-height');
+                mobileCoursesArrow.classList.toggle('rotate-90');
+                mobileCoursesArrow.classList.toggle('rotate-0');
+                // Close other top-level mobile menus
+                mobileAdditionalResourcesContainer.classList.remove('visible-height');
+                mobileAdditionalResourcesContainer.classList.add('hidden-height');
+                mobileAdditionalResourcesArrow.classList.remove('rotate-90');
+                mobileAdditionalResourcesArrow.classList.add('rotate-0');
+            });
+
+            mobileAdditionalResourcesToggle.addEventListener('click', () => {
+                mobileAdditionalResourcesContainer.classList.toggle('hidden-height');
+                mobileAdditionalResourcesContainer.classList.toggle('visible-height');
+                mobileAdditionalResourcesArrow.classList.toggle('rotate-90');
+                mobileAdditionalResourcesArrow.classList.toggle('rotate-0');
+                // Close other top-level mobile menus
+                mobileGradesContainer.classList.remove('visible-height');
+                mobileGradesContainer.classList.add('hidden-height');
+                mobileCoursesArrow.classList.remove('rotate-90');
+                mobileCoursesArrow.classList.add('rotate-0');
+            });
 
             // Function to render desktop navigation menu (Presentations)
             function renderDesktopNav() {
@@ -693,9 +809,6 @@
 
             // Function to render mobile navigation menu (Presentations)
             function renderMobileNav() {
-                const mobileGradesMenu = document.getElementById('mobile-grades-menu');
-                const mobileAdditionalResourcesMenu = document.getElementById('mobile-additional-resources-menu');
-
                 mobileGradesMenu.innerHTML = ''; // Clear previous content
                 mobileAdditionalResourcesMenu.innerHTML = ''; // Clear previous content
 
@@ -711,9 +824,34 @@
                     mobileGradesMenu.appendChild(subjectsContainer);
 
                     gradeToggle.addEventListener('click', () => {
+                        // Close currently active grade element if different
+                        if (activeMobileGradeElement && activeMobileGradeElement !== subjectsContainer) {
+                            activeMobileGradeElement.classList.remove('visible-height');
+                            activeMobileGradeElement.classList.add('hidden-height');
+                            activeMobileGradeElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                            activeMobileGradeElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                        }
+                        // Toggle current grade element
                         subjectsContainer.classList.toggle('hidden-height');
                         subjectsContainer.classList.toggle('visible-height');
                         gradeToggle.querySelector('span').classList.toggle('rotate-90');
+                        gradeToggle.querySelector('span').classList.toggle('rotate-0');
+                        activeMobileGradeElement = subjectsContainer.classList.contains('visible-height') ? subjectsContainer : null;
+
+                        // Close other top-level mobile menus
+                        mobileAdditionalResourcesContainer.classList.remove('visible-height');
+                        mobileAdditionalResourcesContainer.classList.add('hidden-height');
+                        mobileAdditionalResourcesArrow.classList.remove('rotate-90');
+                        mobileAdditionalResourcesArrow.classList.add('rotate-0');
+
+                        // Close any open subject sub-menus when a grade is closed or a new grade is opened
+                        if (activeMobileSubjectElement) {
+                            activeMobileSubjectElement.classList.remove('visible-height');
+                            activeMobileSubjectElement.classList.add('hidden-height');
+                            activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                            activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                            activeMobileSubjectElement = null;
+                        }
                     });
 
                     gradeData.subjects.forEach(subjectData => {
@@ -727,17 +865,28 @@
                         subjectsContainer.appendChild(topicsContainer);
 
                         subjectToggle.addEventListener('click', () => {
+                            // Close currently active subject element if different
+                            if (activeMobileSubjectElement && activeMobileSubjectElement !== topicsContainer) {
+                                activeMobileSubjectElement.classList.remove('visible-height');
+                                activeMobileSubjectElement.classList.add('hidden-height');
+                                activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                                activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                            }
+                            // Toggle current subject element
                             topicsContainer.classList.toggle('hidden-height');
                             topicsContainer.classList.toggle('visible-height');
                             subjectToggle.querySelector('span').classList.toggle('rotate-90');
+                            subjectToggle.querySelector('span').classList.toggle('rotate-0');
+                            activeMobileSubjectElement = topicsContainer.classList.contains('visible-height') ? topicsContainer : null;
                         });
 
                         subjectData.topics.forEach(topic => {
                             const topicLink = document.createElement('a');
-                            topicLink.href = topic.file;
+                            topicLink.href = topic.file; // Use topic.file (HTML) for presentations
+                            // topicLink.target = '_blank'; // REMOVED: No longer opens in new tab
                             topicLink.className = 'block px-2 py-1 text-gray-500 hover:text-blue-400 text-sm transition-colors duration-200';
                             topicLink.textContent = topic.title;
-                            topicLink.onclick = window.closeMobileMenu;
+                            topicLink.onclick = closeMobileMenu; // Close menu when a topic is clicked
                             topicsContainer.appendChild(topicLink);
                         });
                     });
@@ -755,31 +904,74 @@
                     mobileAdditionalResourcesMenu.appendChild(itemsContainer);
 
                     categoryToggle.addEventListener('click', () => {
+                        // Close currently active category element if different
+                        if (activeMobileGradeElement && activeMobileGradeElement !== itemsContainer) {
+                            activeMobileGradeElement.classList.remove('visible-height');
+                            activeMobileGradeElement.classList.add('hidden-height');
+                            activeMobileGradeElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                            activeMobileGradeElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                        }
+                        // Toggle current category element
                         itemsContainer.classList.toggle('hidden-height');
                         itemsContainer.classList.toggle('visible-height');
                         categoryToggle.querySelector('span').classList.toggle('rotate-90');
+                        categoryToggle.querySelector('span').classList.toggle('rotate-0');
+                        activeMobileGradeElement = itemsContainer.classList.contains('visible-height') ? itemsContainer : null;
+
+                        // Close other top-level mobile menus
+                        mobileGradesContainer.classList.remove('visible-height');
+                        mobileGradesContainer.classList.add('hidden-height');
+                        mobileCoursesArrow.classList.remove('rotate-90');
+                        mobileCoursesArrow.classList.add('rotate-0');
+
+                        // Close any open sub-menus
+                        if (activeMobileSubjectElement) {
+                            activeMobileSubjectElement.classList.remove('visible-height');
+                            activeMobileSubjectElement.classList.add('hidden-height');
+                            activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                            activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                            activeMobileSubjectElement = null;
+                        }
                     });
 
                     resourceCategory.items.forEach(item => {
                         const itemLink = document.createElement('a');
-                        if (item.action) {
+                        if (item.action === 'load-peripherals-game') {
                             itemLink.href = '#';
+                            itemLink.dataset.action = 'load-peripherals-game';
                             itemLink.onclick = (e) => {
                                 e.preventDefault();
-                                window[item.action.replace(/-/g, '_') + 'FromHeader'](); // Simplified dynamic call
-                                window.closeMobileMenu();
+                                loadPeripheralsGameFromHeader();
+                                closeMobileMenu();
                             };
-                        } else {
+                        } else if (item.action === 'load-webmaster-quiz') { // Nuevo juego
+                            itemLink.href = '#';
+                            itemLink.dataset.action = 'load-webmaster-quiz';
+                            itemLink.onclick = (e) => {
+                                e.preventDefault();
+                                loadWebMasterQuizFromHeader();
+                                closeMobileMenu();
+                            };
+                        } else if (item.action === 'load-dexterity-game') { // New game
+                            itemLink.href = '#';
+                            itemLink.dataset.action = 'load-dexterity-game';
+                            itemLink.onclick = (e) => {
+                                e.preventDefault();
+                                loadDexterityGameFromHeader();
+                                closeMobileMenu();
+                            };
+                        }
+                        else {
                             itemLink.href = item.file;
                             itemLink.target = '_blank';
                         }
                         itemLink.className = 'block px-2 py-1 text-gray-500 hover:text-blue-400 text-sm transition-colors duration-200';
                         itemLink.textContent = item.title;
+                        itemLink.onclick = closeMobileMenu; // Close menu when a topic is clicked
                         itemsContainer.appendChild(itemLink);
                     });
                 });
             }
-
 
             // --- Content Download Section Logic ---
             const contentDisplayArea = document.getElementById('content-display-area');
@@ -1172,6 +1364,7 @@
             renderInitialActivityButton(); // This will also ensure main content sections are visible
         });
     </script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>

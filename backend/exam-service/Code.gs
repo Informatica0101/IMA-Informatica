@@ -26,13 +26,19 @@ function getSheetOrThrow(ss, name) {
 
 // --- PUNTOS DE ENTRADA (doGet, doPost, doOptions) ---
 function doGet() {
-  return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Exámenes funcionando." }))
-    .setHeaders({'Access-Control-Allow-Origin': '*'})
+  const output = ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Exámenes funcionando." }))
     .setMimeType(ContentService.MimeType.TEXT);
+  output.setHeaders({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  });
+  return output;
 }
 
-function doOptions() {
+function doOptions(e) {
   return ContentService.createTextOutput()
+    .setMimeType(ContentService.MimeType.TEXT)
     .setHeaders({
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
@@ -41,31 +47,34 @@ function doOptions() {
 }
 
 function doPost(e) {
-  let result;
+  let response;
   try {
     const { action, payload } = JSON.parse(e.postData.contents);
     switch (action) {
-      case "createExam": result = createExam(payload); break;
-      case "getExamQuestions": result = getExamQuestions(payload); break;
-      case "submitExam": result = submitExam(payload); break;
-      case "reactivateExam": result = reactivateExam(payload); break;
-      case "getTeacherExamActivity": result = getTeacherExamActivity(); break;
-      case "updateExamStatus": result = updateExamStatus(payload); break;
-      case "getAllExams": result = getAllExams(); break;
-      case "getStudentExams": result = getStudentExams(payload); break;
-      case "getExamResult": result = getExamResult(payload); break;
+      case "createExam": response = createExam(payload); break;
+      case "getExamQuestions": response = getExamQuestions(payload); break;
+      case "submitExam": response = submitExam(payload); break;
+      case "reactivateExam": response = reactivateExam(payload); break;
+      case "getTeacherExamActivity": response = getTeacherExamActivity(); break;
+      case "updateExamStatus": response = updateExamStatus(payload); break;
+      case "getAllExams": response = getAllExams(); break;
+      case "getStudentExams": response = getStudentExams(payload); break;
+      case "getExamResult": response = getExamResult(payload); break;
       default:
-        result = { status: "error", message: `Acción no reconocida en Exam-Service: ${action}` };
+        response = { status: "error", message: `Acción no reconocida en Exam-Service: ${action}` };
     }
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
-    result = { status: "error", message: `Error interno del servidor: ${error.message}` };
-  } finally {
-    // Asegurar que la cabecera CORS se aplique en todas las respuestas.
-    return ContentService.createTextOutput(JSON.stringify(result))
-      .setHeaders({'Access-Control-Allow-Origin': '*'})
-      .setMimeType(ContentService.MimeType.TEXT);
+    response = { status: "error", message: "Error interno del servidor: " + error.message };
   }
+
+  return ContentService.createTextOutput(JSON.stringify(response))
+    .setMimeType(ContentService.MimeType.TEXT)
+    .setHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    });
 }
 
 // --- LÓGICA DEL SERVICIO ---

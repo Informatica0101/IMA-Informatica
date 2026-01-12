@@ -30,13 +30,19 @@ function getSheetOrThrow(ss, name) {
 
 // --- PUNTOS DE ENTRADA (doGet, doPost, doOptions) ---
 function doGet() {
-  return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Usuarios funcionando." }))
-    .setHeaders({'Access-Control-Allow-Origin': '*'})
+  const output = ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Usuarios funcionando." }))
     .setMimeType(ContentService.MimeType.TEXT);
+  output.setHeaders({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  });
+  return output;
 }
 
-function doOptions() {
+function doOptions(e) {
   return ContentService.createTextOutput()
+    .setMimeType(ContentService.MimeType.TEXT)
     .setHeaders({
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
@@ -45,31 +51,30 @@ function doOptions() {
 }
 
 function doPost(e) {
-  let result;
+  let response;
   try {
     logDebug("Solicitud POST recibida.");
     const requestData = JSON.parse(e.postData.contents);
     const { action, payload } = requestData;
 
     switch (action) {
-      case "registerUser":
-        result = registerUser(payload);
-        break;
-      case "loginUser":
-        result = loginUser(payload);
-        break;
+      case "registerUser": response = registerUser(payload); break;
+      case "loginUser": response = loginUser(payload); break;
       default:
-        result = { status: "error", message: `Acción no reconocida en User-Service: ${action}` };
+        response = { status: "error", message: `Acción no reconocida en User-Service: ${action}` };
     }
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
-    result = { status: "error", message: `Error interno del servidor: ${error.message}` };
-  } finally {
-    // Asegurar que la cabecera CORS se aplique en todas las respuestas.
-    return ContentService.createTextOutput(JSON.stringify(result))
-      .setHeaders({'Access-Control-Allow-Origin': '*'})
-      .setMimeType(ContentService.MimeType.TEXT);
+    response = { status: "error", message: "Error interno del servidor: " + error.message };
   }
+
+  return ContentService.createTextOutput(JSON.stringify(response))
+    .setMimeType(ContentService.MimeType.TEXT)
+    .setHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    });
 }
 
 // --- LÓGICA DEL SERVICIO ---

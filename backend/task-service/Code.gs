@@ -27,13 +27,19 @@ function getSheetOrThrow(ss, name) {
 
 // --- PUNTOS DE ENTRADA (doGet, doPost, doOptions) ---
 function doGet() {
-  return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Tareas funcionando." }))
-    .setHeaders({'Access-Control-Allow-Origin': '*'})
+  const output = ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Tareas funcionando." }))
     .setMimeType(ContentService.MimeType.TEXT);
+  output.setHeaders({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  });
+  return output;
 }
 
-function doOptions() {
+function doOptions(e) {
   return ContentService.createTextOutput()
+    .setMimeType(ContentService.MimeType.TEXT)
     .setHeaders({
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
@@ -42,27 +48,30 @@ function doOptions() {
 }
 
 function doPost(e) {
-  let result;
+  let response;
   try {
     const { action, payload } = JSON.parse(e.postData.contents);
     switch (action) {
-      case "createTask": result = createTask(payload); break;
-      case "getStudentTasks": result = getStudentTasks(payload); break;
-      case "submitAssignment": result = submitAssignment(payload); break;
-      case "gradeSubmission": result = gradeSubmission(payload); break;
-      case "getTeacherActivity": result = getTeacherActivity(); break;
+      case "createTask": response = createTask(payload); break;
+      case "getStudentTasks": response = getStudentTasks(payload); break;
+      case "submitAssignment": response = submitAssignment(payload); break;
+      case "gradeSubmission": response = gradeSubmission(payload); break;
+      case "getTeacherActivity": response = getTeacherActivity(); break;
       default:
-        result = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
+        response = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
-    result = { status: "error", message: `Error interno del servidor: ${error.message}` };
-  } finally {
-    // Asegurar que la cabecera CORS se aplique en todas las respuestas.
-    return ContentService.createTextOutput(JSON.stringify(result))
-      .setHeaders({'Access-Control-Allow-Origin': '*'})
-      .setMimeType(ContentService.MimeType.TEXT);
+    response = { status: "error", message: "Error interno del servidor: " + error.message };
   }
+
+  return ContentService.createTextOutput(JSON.stringify(response))
+    .setMimeType(ContentService.MimeType.TEXT)
+    .setHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    });
 }
 
 // --- LÓGICA DEL SERVICIO ---
