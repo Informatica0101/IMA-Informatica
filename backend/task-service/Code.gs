@@ -27,14 +27,16 @@ function getSheetOrThrow(ss, name) {
 
 // --- PUNTOS DE ENTRADA (doGet, doPost, doOptions) ---
 function doGet() {
-  return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Tareas funcionando." }))
+  const output = ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Tareas funcionando." }))
     .setMimeType(ContentService.MimeType.TEXT);
+  output.setHeaders({'Access-Control-Allow-Origin': '*'});
+  return output;
 }
 
 function doOptions() {
   return ContentService.createTextOutput().setHeaders({
     'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type', 'Content-Type': 'application/json'
+    'Access-Control-Allow-Headers': 'Content-Type'
   });
 }
 
@@ -57,7 +59,7 @@ function doPost(e) {
   } finally {
     // Asegurar que la cabecera CORS se aplique en todas las respuestas.
     const output = ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.JSON);
+      .setMimeType(ContentService.MimeType.TEXT);
     output.setHeaders({'Access-Control-Allow-Origin': '*'});
     return output;
   }

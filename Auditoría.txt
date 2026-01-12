@@ -678,3 +678,11 @@
 - Descripción detallada del problema: La función `closeMobileMenu()` es definida y llamada inline en el `<body>` de `index.html` y otras páginas de contenido, pero no está disponible globalmente. Páginas de la aplicación como `login.html` no la definen, lo que provoca un `ReferenceError` si algún componente de navegación (potencialmente cargado dinámicamente o compartido) intenta llamarla.
 - Impacto potencial: Funcionalidad rota en la navegación móvil, errores de consola que pueden detener la ejecución de otros scripts.
 - Dependencias afectadas: `login.html`, `register.html`, y cualquier otra página que no defina localmente esta función.
+- Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+- Ruta completa: N/A
+- Función / método / bloque afectado: doPost, doGet
+- Línea(s) involucrada(s): Aprox. 68 (doPost), 40 (doGet)
+- Tipo de problema: Robustez, Inconsistencia de CORS
+- Descripción detallada del problema: Una revisión de código post-commit identificó dos problemas: 1) El `MimeType` en `doPost` fue establecido en `JSON`, lo cual es un patrón inestable en Apps Script y puede causar errores de CORS. El patrón robusto es usar `TEXT`. 2) La función `doGet` no incluía ninguna cabecera CORS, lo que impediría pruebas directas o `health-checks` desde un navegador.
+- Impacto potencial: Errores intermitentes de `Failed to fetch` dependiendo del navegador y el contexto de la llamada. Dificultad para depurar los endpoints de los servicios.
+- Dependencias afectadas: Toda la comunicación frontend-backend.

@@ -129,3 +129,11 @@ En este archivo se regustrara el historial de cambios del proyecto.
 - Archivo: index.html, login.html, register.html, student-dashboard.html, teacher-dashboard.html, Línea(s): N/A (sección de scripts)
   - Se añadió la importación de `js/main.js` en todas las páginas principales de la aplicación para asegurar que la lógica global esté siempre disponible.
   - Se añadió el atributo `defer` a todas las etiquetas `<script>` para mejorar el rendimiento de carga de las páginas.
+
+18/01/2026
+- Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+- Líneas: Múltiples (doGet, doPost, doOptions)
+  - Se robustecieron las respuestas de los tres microservicios para cumplir con los requisitos de CORS y Content-Type del post-commit review.
+  - Todas las funciones `doPost` ahora devuelven `ContentService.MimeType.TEXT`.
+  - Todas las funciones `doGet` ahora incluyen la cabecera `Access-Control-Allow-Origin`.
+  - Se corrigió la función `doOptions` en todos los servicios para eliminar la cabecera `Content-Type` inválida de la respuesta preflight.
