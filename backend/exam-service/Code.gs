@@ -26,17 +26,18 @@ function getSheetOrThrow(ss, name) {
 
 // --- PUNTOS DE ENTRADA (doGet, doPost, doOptions) ---
 function doGet() {
-  const output = ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Exámenes funcionando." }))
+  var output = ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Exámenes funcionando." }))
     .setMimeType(ContentService.MimeType.TEXT);
-  output.setHeaders({'Access-Control-Allow-Origin': '*'});
+  output.addHeader('Access-Control-Allow-Origin', '*');
   return output;
 }
 
 function doOptions() {
-  return ContentService.createTextOutput().setHeaders({
-    'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type'
-  });
+  var output = ContentService.createTextOutput();
+  output.addHeader('Access-Control-Allow-Origin', '*');
+  output.addHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+  output.addHeader('Access-Control-Allow-Headers', 'Content-Type');
+  return output;
 }
 
 function doPost(e) {
@@ -61,9 +62,9 @@ function doPost(e) {
     result = { status: "error", message: `Error interno del servidor: ${error.message}` };
   } finally {
     // Asegurar que la cabecera CORS se aplique en todas las respuestas.
-    const output = ContentService.createTextOutput(JSON.stringify(result))
+    var output = ContentService.createTextOutput(JSON.stringify(result))
       .setMimeType(ContentService.MimeType.TEXT);
-    output.setHeaders({'Access-Control-Allow-Origin': '*'});
+    output.addHeader('Access-Control-Allow-Origin', '*');
     return output;
   }
 }

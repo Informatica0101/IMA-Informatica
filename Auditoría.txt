@@ -686,3 +686,13 @@
 - Descripción detallada del problema: Una revisión de código post-commit identificó dos problemas: 1) El `MimeType` en `doPost` fue establecido en `JSON`, lo cual es un patrón inestable en Apps Script y puede causar errores de CORS. El patrón robusto es usar `TEXT`. 2) La función `doGet` no incluía ninguna cabecera CORS, lo que impediría pruebas directas o `health-checks` desde un navegador.
 - Impacto potencial: Errores intermitentes de `Failed to fetch` dependiendo del navegador y el contexto de la llamada. Dificultad para depurar los endpoints de los servicios.
 - Dependencias afectadas: Toda la comunicación frontend-backend.
+
+--- AUDITORÍA DE ERROR EN DESPLIEGUE (POST-SUBMIT) ---
+- Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+- Ruta completa: N/A
+- Función / método / bloque afectado: doGet, doPost
+- Línea(s) involucrada(s): Múltiples
+- Tipo de problema: Error de Runtime (Crítico)
+- Descripción detallada del problema: El método `.setHeaders()` utilizado para aplicar las cabeceras CORS a los objetos `TextOutput` en las funciones `doGet` y `doPost` es incorrecto y no existe en el entorno de Google Apps Script. Esto causa un `TypeError: output.setHeaders is not a function` cuando el código se ejecuta en el servidor.
+- Impacto potencial: Todas las funciones de los microservicios fallan al ejecutarse, devolviendo un error de servidor y bloqueando completamente la aplicación.
+- Dependencias afectadas: Toda la funcionalidad de la aplicación que depende de los microservicios de backend.

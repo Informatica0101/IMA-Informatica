@@ -144,12 +144,12 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
-**Mejoras de Robustez en Backend (Post-Commit Review)**
+**Corrección de Error Crítico en Despliegue de Backend**
 
 *   **Componentes:** `backend/user-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`
-*   **Problema:** Los servicios de backend no cumplían con los requisitos obligatorios de la revisión post-commit para las cabeceras CORS y Content-Type, lo que provocaba fallos críticos de comunicación con el frontend.
-*   **Descripción:** Se han actualizado las funciones `doPost`, `doGet` y `doOptions` en los tres microservicios. `doPost` ahora devuelve `ContentService.MimeType.TEXT`. `doGet` ahora incluye la cabecera `Access-Control-Allow-Origin`. Se ha corregido `doOptions` para eliminar la cabecera inválida `Content-Type` de la respuesta preflight.
-*   **Referencia:** ChangesLogs.txt (18/01/2026), Auditoría.txt (Post-Commit Review).
+*   **Problema:** Un error `TypeError: output.setHeaders is not a function` fue reportado después del despliegue, bloqueando toda la funcionalidad del backend. El método `.setHeaders()` no es válido en el entorno de Google Apps Script para los objetos `TextOutput`.
+*   **Descripción:** Se ha reemplazado el método incorrecto `.setHeaders()` por el método documentado y correcto `.addHeader()` en todas las funciones (`doGet`, `doPost`, y `doOptions`) de los tres microservicios.
+*   **Referencia:** ChangesLogs.txt (18/01/2026), Auditoría.txt (AUDITORÍA DE ERROR EN DESPLIEGUE).
 
 ------------------- TAREAS PENDIENTES -------------------
 **Backend (Mejoras de Robustez y Seguridad)**
@@ -201,6 +201,13 @@ C. PROCESO DE APROBACIÓN
     *   **Referencia:** Auditoría.txt, Archivo: `teacher-dashboard.html`
 
 ------------------- TAREAS EXITOSAS ---------------------
+**Mejoras de Robustez en Backend (Post-Commit Review)**
+
+*   **Componentes:** `backend/user-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`
+*   **Problema:** Los servicios de backend no cumplían con los requisitos obligatorios de la revisión post-commit para las cabeceras CORS y Content-Type, lo que provocaba fallos críticos de comunicación con el frontend.
+*   **Descripción:** Se han actualizado las funciones `doPost`, `doGet` y `doOptions` en los tres microservicios. `doPost` ahora devuelve `ContentService.MimeType.TEXT`. `doGet` ahora incluye la cabecera `Access-Control-Allow-Origin`. Se ha corregido `doOptions` para eliminar la cabecera inválida `Content-Type` de la respuesta preflight.
+*   **Referencia:** ChangesLogs.txt (18/01/2026), Auditoría.txt (Post-Commit Review).
+
 **Corrección de Errores Críticos (Frontend y Backend)**
 
 *   **Componentes: `js/main.js` (nuevo), `*.html`, Microservicios de Backend**

@@ -137,3 +137,9 @@ En este archivo se regustrara el historial de cambios del proyecto.
   - Todas las funciones `doPost` ahora devuelven `ContentService.MimeType.TEXT`.
   - Todas las funciones `doGet` ahora incluyen la cabecera `Access-Control-Allow-Origin`.
   - Se corrigió la función `doOptions` en todos los servicios para eliminar la cabecera `Content-Type` inválida de la respuesta preflight.
+
+18/01/2026
+- Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+- Líneas: Múltiples (doGet, doPost, doOptions)
+  - Se realizó una refactorización crítica para corregir un `TypeError` en tiempo de ejecución en el entorno de Google Apps Script. Se reemplazó el método incorrecto `.setHeaders()` por el método documentado y correcto `.addHeader()` para la asignación de cabeceras CORS.
+  - Se estandarizó el uso de `.addHeader()` en todas las funciones (`doGet`, `doPost`, `doOptions`) para mantener consistencia en el código.
