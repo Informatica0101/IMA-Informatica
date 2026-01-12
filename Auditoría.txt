@@ -696,3 +696,13 @@
 - Descripción detallada del problema: El método `.setHeaders()` utilizado para aplicar las cabeceras CORS a los objetos `TextOutput` en las funciones `doGet` y `doPost` es incorrecto y no existe en el entorno de Google Apps Script. Esto causa un `TypeError: output.setHeaders is not a function` cuando el código se ejecuta en el servidor.
 - Impacto potencial: Todas las funciones de los microservicios fallan al ejecutarse, devolviendo un error de servidor y bloqueando completamente la aplicación.
 - Dependencias afectadas: Toda la funcionalidad de la aplicación que depende de los microservicios de backend.
+
+--- AUDITORÍA DE ERROR EN DESPLIEGUE #2 (POST-SUBMIT) ---
+- Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+- Ruta completa: N/A
+- Función / método / bloque afectado: doGet, doPost, doOptions
+- Línea(s) involucrada(s): Múltiples
+- Tipo de problema: Error de Runtime (Crítico)
+- Descripción detallada del problema: El método `.addHeader()` tampoco es una función válida cuando se llama sobre una variable que contiene un objeto `TextOutput`. Los sucesivos `TypeError` (`.setHeaders` y `.addHeader`) demuestran que el patrón de asignación a una variable intermedia es el problema. La única implementación que funciona es encadenar `.setHeaders({...})` directamente a la llamada `ContentService.createTextOutput()`.
+- Impacto potencial: La aplicación permanece completamente bloqueada, ya que todos los endpoints de backend fallan en tiempo de ejecución.
+- Dependencias afectadas: Toda la funcionalidad de la aplicación.
