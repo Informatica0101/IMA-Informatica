@@ -42,3 +42,9 @@ En este archivo se regustrara el historial de cambios del proyecto.
   - Se modificó el bloque `catch` de la función `doPost` para devolver un mensaje de error genérico.
   - Se añadió una validación en `submitAssignment` para asegurar que el tipo MIME se extraiga correctamente del `fileData`.
   - Se refactorizó la función `gradeSubmission` para utilizar los nombres de los encabezados de la hoja de cálculo al buscar las columnas, eliminando los índices codificados.
+
+12/01/2026
+- Archivo: backend/user-service/Code.gs, Línea(s): 31-33
+  - Se reestructuró la función `doGet` para separar la llamada `setMimeType` de la creación inicial del objeto `TextOutput`, alineando el código con la documentación oficial de Google Apps Script y resolviendo un `TypeError`.
+- Archivo: backend/task-service/Code.gs, Línea(s): 28-30
+  - Se aplicó la misma reestructuración a la función `doGet` para resolver el `TypeError` idéntico.

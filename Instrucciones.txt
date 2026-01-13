@@ -354,16 +354,6 @@ C. PROCESO DE APROBACIÓN
     *   **Descripción:** Se añadió un nuevo botón con el texto "Portal" en la barra de navegación (escritorio y móvil) que dirige a `login.html`, reemplazando una implementación anterior incorrecta.
     *   **Referencia:** Auditoría.txt, Archivo: index.html, Hallazgo 3 (Corregido)
 
-**ASIGNACIÓN DE TAREA**
-*   **TÍTULO:**
-    *   Auditoría y alineación del flujo de funciones críticas en servicios de examen, users y task
-*   **TIPO:**
-    *   Prevención de error / Alineación de dependencias / Estabilidad de ejecución
-*   **DESCRIPCIÓN DEL CONTEXTO:**
-    *   En el servicio de examen del estudiante se detectó un error de referencia a función no definida ("renderQuestion is not defined") causado por problemas de definición, alcance (scope) u orden de carga. Esta tarea busca aplicar el MISMO CRITERIO DE ANÁLISIS Y SOLUCIÓN en los servicios users y task para prevenir errores equivalentes, sin asumir que el fallo ya exista.
-*   **ESTADO DE LA TAREA:**
-    *   PENDIENTE DE REVISIÓN POR EL PM
-
 **TÍTULO: Auditoría y Corrección de Servicios Backend**
 *   **TIPO:** Seguridad / Robustez / Mantenibilidad
 *   **DESCRIPCIÓN:** Se implementaron correcciones en `user-service` y `task-service` basadas en hallazgos de auditoría. Los cambios incluyen la ofuscación de mensajes de error, la generación de IDs de usuario con UUID, la extracción robusta de tipos MIME y la eliminación de índices de columna codificados.

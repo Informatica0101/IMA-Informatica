@@ -27,8 +27,8 @@ function getSheetOrThrow(ss, name) {
 
 // --- PUNTOS DE ENTRADA (doGet, doPost, doOptions) ---
 function doGet() {
-  const output = ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Tareas funcionando." }))
-    .setMimeType(ContentService.MimeType.TEXT);
+  const output = ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Tareas funcionando." }));
+  output.setMimeType(ContentService.MimeType.TEXT);
   output.setHeaders({
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
