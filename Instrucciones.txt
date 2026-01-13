@@ -151,18 +151,10 @@ C. PROCESO DE APROBACIÓN
     *   **Descripción:** Externalizar la configuración para no tener que modificar el código fuente al cambiar de entorno.
     *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 2-3
 
-*   **Función: doPost**
-    *   **Problema:** El bloque `catch` expone mensajes de error detallados al cliente.
-    *   **Descripción:** Implementar un manejo de errores que registre los detalles en el servidor (Logger.log) y devuelva un mensaje genérico al cliente.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 74-75
-
 *   **Función: registerUser**
     *   **Problema:** Hashing de contraseña sin "salt".
     *   **Descripción:** Modificar el proceso de hashing para incluir un "salt" único por usuario, que se almacenará junto a la contraseña hasheada.
     *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 81-83
-    *   **Problema:** Generación de `userId` basada en `new Date().getTime()`.
-    *   **Descripción:** Reemplazar la generación de IDs por un método que garantice mayor unicidad, como `Utilities.getUuid()`.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 80
     *   **Problema:** Falta de validación de datos en el payload de entrada.
     *   **Descripción:** Añadir validaciones para asegurar que los campos `nombre`, `email` y `password` no estén vacíos y que el email tenga un formato válido.
     *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 79
@@ -189,9 +181,6 @@ C. PROCESO DE APROBACIÓN
     *   **Problema:** Búsqueda ineficiente de usuario y tarea cargando hojas completas.
     *   **Descripción:** Optimizar la obtención de datos del usuario y la tarea para evitar cargar las hojas completas.
     *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 161, 166
-    *   **Problema:** Extracción de tipo MIME frágil con expresión regular.
-    *   **Descripción:** Hacer más robusta la lógica de extracción del tipo MIME para manejar diferentes formatos de data URL.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 180
 
 *   **Función: getTeacherActivity**
     *   **Problema:** Carga de 5 hojas de cálculo completas en memoria.
@@ -205,11 +194,6 @@ C. PROCESO DE APROBACIÓN
     *   **Problema:** Uso de índice de columna hardcodeado (número mágico).
     *   **Descripción:** Reemplazar el `getRange(i + 1, 7)` por un método que obtenga el índice de la columna "Estado" por su nombre, haciéndolo resistente a cambios en la estructura de la hoja.
     *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 238
-
-*   **Función: gradeSubmission**
-    *   **Problema:** Uso de índices de columna hardcodeados.
-    *   **Descripción:** Refactorizar para obtener los índices de las columnas "Calificación", "Estado" y "Comentario" por sus nombres.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 248-250
 
 *   **Función: createExam**
     *   **Problema:** Generación de `preguntaId` no garantiza unicidad.
@@ -363,12 +347,22 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**TÍTULO: Actualización de URLs de Microservicios**
+*   **TIPO:** Configuración
+*   **DESCRIPCIÓN:** Se han actualizado las URLs de los microservicios de `USER`, `TASK` y `EXAM` en el archivo `js/config.js` para apuntar a los nuevos endpoints de producción.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
 **Archivo: index.html**
 
 *   **Componente: Enlace al Portal de Login (Corrección)**
     *   **Problema:** La página principal no tenía un enlace visible y dedicado para acceder al portal de login.
     *   **Descripción:** Se añadió un nuevo botón con el texto "Portal" en la barra de navegación (escritorio y móvil) que dirige a `login.html`, reemplazando una implementación anterior incorrecta.
     *   **Referencia:** Auditoría.txt, Archivo: index.html, Hallazgo 3 (Corregido)
+
+**TÍTULO: Auditoría y Corrección de Servicios Backend**
+*   **TIPO:** Seguridad / Robustez / Mantenibilidad
+*   **DESCRIPCIÓN:** Se implementaron correcciones en `user-service` y `task-service` basadas en hallazgos de auditoría. Los cambios incluyen la ofuscación de mensajes de error, la generación de IDs de usuario con UUID, la extracción robusta de tipos MIME y la eliminación de índices de columna codificados.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
 
 En este bloque se agregarán las tareas realizadas cuyo
 resultado aún no ha sido validado por el PM.

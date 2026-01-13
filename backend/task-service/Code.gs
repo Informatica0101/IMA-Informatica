@@ -1,6 +1,5 @@
 // --- MICROSERVICIO DE TAREAS ---
 
-// --- SECCIÓN DE CONFIGURACIÓN Y DEPENDENCIAS COMUNES ---
 const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
 const DRIVE_FOLDER_ID = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB";
 const DEBUG_MODE = true;
@@ -25,26 +24,15 @@ function getSheetOrThrow(ss, name) {
   return sheet;
 }
 
-// --- PUNTOS DE ENTRADA (doGet, doPost, doOptions) ---
-function doGet() {
-  const output = ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Tareas funcionando." }))
-    .setMimeType(ContentService.MimeType.TEXT);
-  output.setHeaders({
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type'
-  });
-  return output;
+// --- PUNTOS DE ENTRADA ---
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Tareas funcionando." }))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 function doOptions(e) {
-  return ContentService.createTextOutput()
-    .setMimeType(ContentService.MimeType.TEXT)
-    .setHeaders({
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    });
+  // Apps Script no permite setHeaders directamente, se ignora para CORS básico
+  return ContentService.createTextOutput("");
 }
 
 function doPost(e) {
@@ -62,16 +50,11 @@ function doPost(e) {
     }
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
-    response = { status: "error", message: "Error interno del servidor: " + error.message };
+    response = { status: "error", message: "Error interno del servidor." };
   }
 
   return ContentService.createTextOutput(JSON.stringify(response))
-    .setMimeType(ContentService.MimeType.TEXT)
-    .setHeaders({
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    });
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 // --- LÓGICA DEL SERVICIO ---
@@ -136,8 +119,10 @@ function submitAssignment(payload) {
   const asignaturaFolder = getOrCreateFolder(parcialFolder, asignatura);
 
   const fileInfo = fileData.split(',');
-  const mimeType = fileInfo[0].match(/:(.*?);/)[1];
-  const blob = Utilities.newBlob(Utilities.base64Decode(fileInfo[1]), mimeType, fileName).setName(tituloTarea);
+  const mimeMatch = fileInfo[0].match(/:(.*?);/);
+  if (!mimeMatch || !mimeMatch[1]) throw new Error("No se pudo extraer el tipo MIME del archivo.");
+  const mimeType = mimeMatch[1];
+  const blob = Utilities.newBlob(Utilities.base64Decode(fileInfo[1]), mimeType, fileName);
   const fileUrl = asignaturaFolder.createFile(blob).getUrl();
 
   const entregaId = "ENT-" + new Date().getTime();
@@ -149,13 +134,28 @@ function gradeSubmission(payload) {
   const { entregaId, calificacion, estado, comentario } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const entregasSheet = getSheetOrThrow(ss, "Entregas");
-  const entregasData = entregasSheet.getDataRange().getValues();
-  for (let i = 1; i < entregasData.length; i++) {
-    if (entregasData[i][0] === entregaId) {
-      entregasSheet.getRange(i + 1, 6, 1, 3).setValues([[calificacion, estado, comentario]]);
-      return { status: "success", message: "Calificación actualizada." };
-    }
+
+  const data = entregasSheet.getDataRange().getValues();
+  const headers = data[0];
+
+  const calificacionCol = headers.indexOf("Calificación");
+  const estadoCol = headers.indexOf("Estado");
+  const comentarioCol = headers.indexOf("Comentario");
+
+  if (calificacionCol === -1 || estadoCol === -1 || comentarioCol === -1) {
+    throw new Error("No se encontraron las columnas necesarias en la hoja de Entregas.");
   }
+
+  const entregaRow = data.findIndex(row => row[0] === entregaId);
+
+  if (entregaRow !== -1) {
+    const rowIndex = entregaRow + 1; // Range es 1-based
+    entregasSheet.getRange(rowIndex + 1, calificacionCol + 1).setValue(calificacion);
+    entregasSheet.getRange(rowIndex + 1, estadoCol + 1).setValue(estado);
+    entregasSheet.getRange(rowIndex + 1, comentarioCol + 1).setValue(comentario);
+    return { status: "success", message: "Calificación actualizada." };
+  }
+
   throw new Error("Entrega no encontrada.");
 }
 
@@ -179,8 +179,6 @@ function getTeacherActivity() {
     };
   });
 
-  // En un futuro, este servicio podría llamar al Exam-Service para obtener las entregas de exámenes.
-  // Por ahora, solo devuelve las de tareas.
   submissions.sort((a, b) => b.fecha - a.fecha);
   const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toLocaleString() }));
   return { status: "success", data: formattedActivity };
