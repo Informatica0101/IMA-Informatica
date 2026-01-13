@@ -347,6 +347,11 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**TÍTULO: Actualización de URLs de Microservicios**
+*   **TIPO:** Configuración
+*   **DESCRIPCIÓN:** Se han actualizado las URLs de los microservicios de `USER`, `TASK` y `EXAM` en el archivo `js/config.js` para apuntar a los nuevos endpoints de producción.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
 **Archivo: index.html**
 
 *   **Componente: Enlace al Portal de Login (Corrección)**

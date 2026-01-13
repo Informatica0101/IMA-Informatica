@@ -48,3 +48,7 @@ En este archivo se regustrara el historial de cambios del proyecto.
   - Se reestructuró la función `doGet` para separar la llamada `setMimeType` de la creación inicial del objeto `TextOutput`, alineando el código con la documentación oficial de Google Apps Script y resolviendo un `TypeError`.
 - Archivo: backend/task-service/Code.gs, Línea(s): 28-30
   - Se aplicó la misma reestructuración a la función `doGet` para resolver el `TypeError` idéntico.
+
+13/01/2026
+- Archivo: js/config.js, Línea(s): 13, 16, 19
+  - Se actualizaron las variables `USER`, `TASK` y `EXAM` con las nuevas URLs de despliegue de los microservicios de backend.
