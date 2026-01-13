@@ -85,19 +85,16 @@ document.addEventListener('DOMContentLoaded', () => {
             let actionHtml = '';
             let fileLinkHtml = '<em>N/A</em>';
 
-            // Genera el enlace para ver el archivo de la entrega.
-            if (item.fileId && item.mimeType) {
-                if (item.mimeType.startsWith('image/')) {
-                    // Si es una imagen, se crea un enlace para abrir el lightbox.
+            // Corrección definitiva: Se genera un enlace siempre que fileId exista.
+            if (item.fileId) {
+                // Si mimeType es una cadena de texto y empieza con "image/", se muestra el enlace para el lightbox.
+                if (typeof item.mimeType === 'string' && item.mimeType.startsWith('image/')) {
                     fileLinkHtml = `<a href="#" class="text-blue-500 view-file-link" data-file-id="${item.fileId}" data-title="${item.titulo}">Ver Imagen</a>`;
                 } else {
-                    // Para otros tipos de archivo, se genera un enlace de descarga directa.
+                    // En cualquier otro caso (mimeType es null, no es imagen, etc.), se genera un enlace de descarga directa.
                     const downloadUrl = `https://drive.google.com/uc?export=download&id=${item.fileId}`;
                     fileLinkHtml = `<a href="${downloadUrl}" target="_blank" class="text-blue-500" download>Descargar Archivo</a>`;
                 }
-            } else {
-                // Interfaz de diagnóstico: Muestra el objeto de datos completo si los campos esperados no están presentes.
-                fileLinkHtml = `<pre class="text-xs whitespace-pre-wrap">${JSON.stringify(item, null, 2)}</pre>`;
             }
 
             // Si el item tiene `alumnoNombre`, es una entrega. Si no, es un examen base.

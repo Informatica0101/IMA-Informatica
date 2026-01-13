@@ -1,4 +1,10 @@
 13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 175-179
+  - Se implementó una corrección en `getTeacherActivity` para asegurar que el `fileId` se recupere correctamente, incluso si el nombre de la columna en la hoja de cálculo no es "fileUrl", utilizando un índice de columna fijo como respaldo.
+- Archivo: js/teacher.js, Línea(s): 87-96
+  - Se implementó una corrección definitiva en `renderActivity` para que el frontend sea resiliente. Ahora genera un enlace de archivo siempre que `fileId` esté presente. El enlace activa el lightbox solo si `mimeType` es una imagen; de lo contrario, crea un enlace de descarga directa. Esto soluciona el error "N/A" de forma permanente.
+
+13/01/2026
 - Archivo: js/teacher.js, Línea(s): 99-102
   - Se implementó una interfaz de diagnóstico temporal en el frontend. Si los datos de archivo esperados (`fileId`, `mimeType`) no se reciben, la celda "Archivo" mostrará el objeto JSON completo de la API para facilitar la depuración.
 

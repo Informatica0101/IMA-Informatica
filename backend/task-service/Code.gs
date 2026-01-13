@@ -174,7 +174,11 @@ function getTeacherActivity() {
   const tareasData = tareasSheet.getDataRange().getValues();
   const entregasValues = entregasSheet.getDataRange().getValues();
   const entregasHeaders = entregasValues.shift(); // Saca los encabezados
-  const fileIdIndex = entregasHeaders.indexOf("fileUrl");
+  let fileIdIndex = entregasHeaders.indexOf("fileUrl");
+  // Corrección: Si "fileUrl" no se encuentra, se asume que el ID está en la columna E (índice 4).
+  if (fileIdIndex === -1) {
+      fileIdIndex = 4;
+  }
   const mimeTypeIndex = entregasHeaders.indexOf("mimeType");
 
   const submissions = entregasValues.map(entrega => {
