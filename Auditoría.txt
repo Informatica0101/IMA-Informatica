@@ -649,3 +649,25 @@
 - Descripción detallada del problema: Las funciones que interactúan con la hoja de cálculo "Examenes" utilizan índices de columna hardcodeados (ej. `getRange(i + 1, 8)` para actualizar el estado).
 - Impacto potencial: Si la estructura de la hoja de cálculo cambia en el futuro (se añade, elimina o reordena una columna), estas funciones fallarán o, peor aún, corromperán los datos al escribir en la columna equivocada.
 - Solución (Recomendación): Refactorizar estas funciones para que lean la fila de encabezados y accedan a las columnas por su nombre en lugar de por su índice numérico, lo que las haría más resistentes a los cambios estructurales.
+
+--- AUDITORÍA PREVENTIVA (ALINEACIÓN DE FLUJO) ---
+
+- Archivo: backend/user-service/Code.gs
+- Ruta completa: /backend/user-service/Code.gs
+- Función / método / bloque afectado: Global
+- Línea(s) involucrada(s): 1-147
+- Tipo de problema: Verificación de Arquitectura
+- Descripción detallada del problema: Se realizó una auditoría línea por línea del microservicio de usuarios para identificar potenciales errores de referencia a funciones no definidas, problemas de alcance (scope) o de orden de carga, en alineación con un problema previamente detectado en otro servicio.
+- Hallazgo: El archivo `Code.gs` del servicio de usuarios constituye un único script autocontenido. Todas las funciones (`logDebug`, `getSheetOrThrow`, `doGet`, `doPost`, `registerUser`, `loginUser`, etc.) son definidas en el scope global de Google Apps Script. Debido al mecanismo de 'hoisting' de Apps Script, que hace que todas las declaraciones de funciones estén disponibles globalmente antes de la ejecución, no existe riesgo de que una función sea llamada antes de ser definida.
+- Impacto potencial: Nulo. La arquitectura actual del archivo es monolítica y previene este tipo de error de referencia.
+- Dependencias afectadas: Ninguna.
+
+- Archivo: backend/task-service/Code.gs
+- Ruta completa: /backend/task-service/Code.gs
+- Función / método / bloque afectado: Global
+- Línea(s) involucrada(s): 1-220
+- Tipo de problema: Verificación de Arquitectura
+- Descripción detallada del problema: Se realizó una auditoría línea por línea del microservicio de tareas bajo el mismo criterio de la auditoría del servicio de usuarios, buscando prevenir errores de referencia a funciones no definidas.
+- Hallazgo: Al igual que el servicio de usuarios, el servicio de tareas está implementado como un único script `Code.gs`. Todas sus funciones son declaradas en el scope global y están disponibles durante todo el ciclo de vida de la ejecución del script gracias al 'hoisting' de Apps Script. No se encontraron dependencias implícitas frágiles ni llamadas a funciones que pudieran no estar definidas en el momento de su invocación.
+- Impacto potencial: Nulo. La arquitectura actual del archivo previene este tipo de error de referencia.
+- Dependencias afectadas: Ninguna.

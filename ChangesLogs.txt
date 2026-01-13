@@ -28,4 +28,8 @@ En este archivo se regustrara el historial de cambios del proyecto.
 
 07/01/2026 
 -Se creo los archicos README.md, Instrucciones.txt y Changeslogs.txt 
-- Archivos relacionados README.md, Instrucciones.txt y Changeslogs.txt. 
+- Archivos relacionados README.md, Instrucciones.txt y Changeslogs.txt.
+
+10/01/2026
+- Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, Línea(s): Todas
+  - Se realizó una auditoría completa de los archivos para verificar la definición, alcance y orden de ejecución de las funciones. Se determinó que la estructura actual previene errores de referencia de funciones no definidas.
