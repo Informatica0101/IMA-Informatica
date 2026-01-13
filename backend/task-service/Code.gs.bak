@@ -123,12 +123,10 @@ function submitAssignment(payload) {
   if (!mimeMatch || !mimeMatch[1]) throw new Error("No se pudo extraer el tipo MIME del archivo.");
   const mimeType = mimeMatch[1];
   const blob = Utilities.newBlob(Utilities.base64Decode(fileInfo[1]), mimeType, fileName);
-  const file = asignaturaFolder.createFile(blob);
-  const fileId = file.getId();
+  const fileUrl = asignaturaFolder.createFile(blob).getUrl();
 
   const entregaId = "ENT-" + new Date().getTime();
-  // Se guarda el ID del archivo y su tipo MIME para uso en el frontend.
-  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente', '', mimeType]);
+  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileUrl, '', 'Pendiente', '']);
   return { status: "success", message: "Tarea entregada." };
 }
 
@@ -169,25 +167,15 @@ function getTeacherActivity() {
 
   const usuariosData = usuariosSheet.getDataRange().getValues();
   const tareasData = tareasSheet.getDataRange().getValues();
-  const entregasValues = entregasSheet.getDataRange().getValues();
-  const entregasHeaders = entregasValues.shift(); // Saca los encabezados
-  const fileIdIndex = entregasHeaders.indexOf("fileUrl");
-  const mimeTypeIndex = entregasHeaders.indexOf("mimeType");
+  const entregasData = entregasSheet.getDataRange().getValues().slice(1);
 
-  const submissions = entregasValues.map(entrega => {
+  const submissions = entregasData.map(entrega => {
     const usuario = usuariosData.find(u => u[0] === entrega[2]);
     const tarea = tareasData.find(t => t[0] === entrega[1]);
     return {
-      tipo: 'Tarea',
-      entregaId: entrega[0],
-      titulo: tarea ? tarea[2] : "Tarea Desconocida",
-      alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
-      fecha: new Date(entrega[3]),
-      fileId: entrega[fileIdIndex],
-      mimeType: mimeTypeIndex > -1 ? entrega[mimeTypeIndex] : null, // Manejo por si la columna no existe
-      calificacion: entrega[5],
-      estado: entrega[6],
-      comentario: entrega[7]
+      tipo: 'Tarea', entregaId: entrega[0], titulo: tarea ? tarea[2] : "Tarea Desconocida",
+      alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido", fecha: new Date(entrega[3]),
+      archivoUrl: entrega[4], calificacion: entrega[5], estado: entrega[6], comentario: entrega[7]
     };
   });
 

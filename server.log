@@ -1,20 +1,7 @@
-127.0.0.1 - - [10/Jan/2026 14:26:01] "GET /results.html?entregaExamenId=mock-123 HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 14:26:01] code 404, message File not found
-127.0.0.1 - - [10/Jan/2026 14:26:01] "GET /css/styles.css HTTP/1.1" 404 -
-127.0.0.1 - - [10/Jan/2026 14:26:01] "GET /js/results.js HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 14:26:01] "GET /js/config.js HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 14:26:01] "GET /login.html HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 14:26:01] "GET /js/auth.js HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 14:26:01] "GET /js/api.js HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 14:26:01] code 404, message File not found
-127.0.0.1 - - [10/Jan/2026 14:26:01] "GET /css/styles.css HTTP/1.1" 404 -
-127.0.0.1 - - [10/Jan/2026 14:28:00] "GET /results.html?entregaExamenId=mock-123 HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 14:28:00] "GET /js/results.js HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 14:28:00] "GET /js/config.js HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 14:28:00] code 404, message File not found
-127.0.0.1 - - [10/Jan/2026 14:28:00] "GET /css/styles.css HTTP/1.1" 404 -
-127.0.0.1 - - [10/Jan/2026 14:28:00] "GET /login.html HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 14:28:00] "GET /js/api.js HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 14:28:00] "GET /js/auth.js HTTP/1.1" 200 -
-127.0.0.1 - - [10/Jan/2026 14:28:00] code 404, message File not found
-127.0.0.1 - - [10/Jan/2026 14:28:00] "GET /css/styles.css HTTP/1.1" 404 -
+127.0.0.1 - - [13/Jan/2026 12:40:42] "GET /teacher-dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2026 12:40:42] "GET /js/api.js HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2026 12:40:42] "GET /js/teacher.js HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2026 12:40:42] "GET /js/config.js HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2026 12:40:43] "GET /login.html HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2026 12:40:43] "GET /js/auth.js HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2026 12:40:43] "GET /login.html HTTP/1.1" 304 -

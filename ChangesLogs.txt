@@ -1,3 +1,16 @@
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 125-131, 175-194
+  - Se modificó `submitAssignment` para almacenar el ID del archivo y su MIME type en la hoja `Entregas`.
+  - Se actualizó `getTeacherActivity` para recuperar el `fileId` y el `mimeType`, eliminando la `archivoUrl` obsoleta.
+- Archivo: README.md, Línea(s): 150
+  - Se añadió la columna `mimeType` a la documentación de la hoja `Entregas`.
+- Archivo: teacher-dashboard.html, Línea(s): 165-175
+  - Se añadió la estructura HTML para un modal de lightbox para la previsualización de imágenes.
+- Archivo: js/teacher.js, Línea(s): 87-101, 131-150, 198-202
+  - Se actualizó `renderActivity` para generar enlaces condicionales: descarga directa para documentos y un activador de lightbox para imágenes.
+  - Se implementó la lógica para controlar la apertura y cierre del lightbox.
+  - Se añadió un event listener para gestionar los clics en los enlaces de visualización de archivos.
+
 Registro de cambios de IMA - Area de Informática V 2.0 
 
 En este archivo se regustrara el historial de cambios del proyecto. 

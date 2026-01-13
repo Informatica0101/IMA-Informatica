@@ -83,20 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         submissionsTableBody.innerHTML = activity.map(item => {
             let actionHtml = '';
-            let fileLinkHtml = '<em>N/A</em>';
-
-            // Genera el enlace para ver el archivo de la entrega.
-            if (item.fileId && item.mimeType) {
-                if (item.mimeType.startsWith('image/')) {
-                    // Si es una imagen, se crea un enlace para abrir el lightbox.
-                    fileLinkHtml = `<a href="#" class="text-blue-500 view-file-link" data-file-id="${item.fileId}" data-title="${item.titulo}">Ver Imagen</a>`;
-                } else {
-                    // Para otros tipos de archivo, se genera un enlace de descarga directa.
-                    const downloadUrl = `https://drive.google.com/uc?export=download&id=${item.fileId}`;
-                    fileLinkHtml = `<a href="${downloadUrl}" target="_blank" class="text-blue-500" download>Descargar Archivo</a>`;
-                }
-            }
-
             // Si el item tiene `alumnoNombre`, es una entrega. Si no, es un examen base.
             if (item.alumnoNombre) {
                 if (item.tipo === 'Tarea') {
@@ -121,34 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="p-4">${item.alumnoNombre || '<em>N/A</em>'}</td>
                     <td class="p-4">${item.titulo}</td>
                     <td class="p-4">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
-                    <td class="p-4">${fileLinkHtml}</td>
+                    <td class="p-4">${item.archivoUrl ? `<a href="${item.archivoUrl}" target="_blank" class="text-blue-500">Ver Archivo</a>` : '<em>N/A</em>'}</td>
                     <td class="p-4">${item.calificacion || '<em>N/A</em>'}</td>
                     <td class="p-4">${item.estado || '<em>Pendiente</em>'}</td>
                     <td class="p-4">${actionHtml}</td>
                 </tr>`;
         }).join('');
     }
-
-    // --- Lógica del Lightbox de Imágenes ---
-    const lightboxModal = document.getElementById('image-lightbox-modal');
-    const lightboxImage = document.getElementById('lightbox-image');
-    const lightboxTitle = document.getElementById('lightbox-title');
-    const closeLightboxBtn = document.getElementById('close-lightbox-btn');
-
-    function openLightbox(fileId, title) {
-        // Construye la URL de la miniatura para la imagen en Google Drive, que es más fiable para <img src>.
-        const imageUrl = `https://drive.google.com/thumbnail?id=${fileId}`;
-        lightboxImage.src = imageUrl;
-        lightboxTitle.textContent = title;
-        lightboxModal.classList.remove('hidden');
-    }
-
-    function closeLightbox() {
-        lightboxModal.classList.add('hidden');
-        lightboxImage.src = ''; // Limpia el src para evitar flashes de contenido anterior
-    }
-
-    closeLightboxBtn.addEventListener('click', closeLightbox);
 
     // --- Lógica del Modal de Calificación ---
     const gradeModal = document.getElementById('grade-modal');
@@ -159,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function openGradeModal(entrega) {
         currentEditingEntregaId = entrega.entregaId;
         document.getElementById('student-name-modal').textContent = entrega.alumnoNombre;
-        document.getElementById('file-link-modal').href = `https://drive.google.com/uc?export=download&id=${entrega.fileId}`;
+        document.getElementById('file-link-modal').href = entrega.archivoUrl;
         document.getElementById('calificacion').value = entrega.calificacion || '';
         document.getElementById('estado').value = entrega.estado || 'Revisada';
         document.getElementById('comentario').value = entrega.comentario || '';
@@ -192,12 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Delegación de Eventos para la Tabla ---
     submissionsTableBody.addEventListener('click', async (e) => {
         const target = e.target;
-
-        // Previene la acción por defecto si es un enlace para el lightbox.
-        if (target.classList.contains('view-file-link')) {
-            e.preventDefault();
-            openLightbox(target.dataset.fileId, target.dataset.title);
-        }
 
         // Calificar Tarea
         if (target.classList.contains('grade-task-btn')) {
