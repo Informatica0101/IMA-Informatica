@@ -148,13 +148,16 @@ function gradeSubmission(payload) {
     throw new Error("No se encontraron las columnas necesarias en la hoja de Entregas.");
   }
 
-  const entregaRow = data.findIndex(row => row[0] === entregaId);
+  // Se busca el índice de la fila que coincide con el entregaId.
+  // Se suma 1 porque findIndex es 0-based y las filas en la hoja son 1-based.
+  const rowIndex = data.findIndex(row => row[0] === entregaId) + 1;
 
-  if (entregaRow !== -1) {
-    const rowIndex = entregaRow + 1; // Range es 1-based
-    entregasSheet.getRange(rowIndex + 1, calificacionCol + 1).setValue(calificacion);
-    entregasSheet.getRange(rowIndex + 1, estadoCol + 1).setValue(estado);
-    entregasSheet.getRange(rowIndex + 1, comentarioCol + 1).setValue(comentario);
+  if (rowIndex > 0) {
+    // Se corrige el cálculo del rango para apuntar a la fila correcta.
+    // El +1 adicional en getRange no era necesario y causaba el error de off-by-one.
+    entregasSheet.getRange(rowIndex, calificacionCol + 1).setValue(calificacion);
+    entregasSheet.getRange(rowIndex, estadoCol + 1).setValue(estado);
+    entregasSheet.getRange(rowIndex, comentarioCol + 1).setValue(comentario);
     return { status: "success", message: "Calificación actualizada." };
   }
 

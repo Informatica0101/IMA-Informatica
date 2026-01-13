@@ -1,4 +1,10 @@
 13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 154-158
+  - Se corrigió un error de "off-by-one" en la función `gradeSubmission` que provocaba que se intentara actualizar la fila incorrecta en la hoja de cálculo.
+- Archivo: js/teacher.js, Línea(s): 87-101
+  - Se eliminó la lógica de retrocompatibilidad por instrucción del usuario. El frontend ahora depende exclusivamente de los campos `fileId` y `mimeType` proporcionados por el backend.
+
+13/01/2026
 - Archivo: js/teacher.js, Línea(s): 87-101
   - Se implementó una lógica retrocompatible en `renderActivity` para manejar tanto la estructura de datos nueva (`fileId`, `mimeType`) como la antigua (`archivoUrl`). Esto asegura que siempre se muestre un enlace de archivo funcional y se evite el error "N/A", independientemente de la versión del backend desplegado.
 
