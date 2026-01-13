@@ -62,7 +62,7 @@ function doPost(e) {
     }
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
-    response = { status: "error", message: "Error interno del servidor: " + error.message };
+    response = { status: "error", message: "Error interno del servidor." };
   }
 
   return ContentService.createTextOutput(JSON.stringify(response))
@@ -136,7 +136,9 @@ function submitAssignment(payload) {
   const asignaturaFolder = getOrCreateFolder(parcialFolder, asignatura);
 
   const fileInfo = fileData.split(',');
-  const mimeType = fileInfo[0].match(/:(.*?);/)[1];
+  const mimeMatch = fileInfo[0].match(/:(.*?);/);
+  if (!mimeMatch || !mimeMatch[1]) throw new Error("No se pudo extraer el tipo MIME del archivo.");
+  const mimeType = mimeMatch[1];
   const blob = Utilities.newBlob(Utilities.base64Decode(fileInfo[1]), mimeType, fileName).setName(tituloTarea);
   const fileUrl = asignaturaFolder.createFile(blob).getUrl();
 
@@ -149,13 +151,28 @@ function gradeSubmission(payload) {
   const { entregaId, calificacion, estado, comentario } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const entregasSheet = getSheetOrThrow(ss, "Entregas");
-  const entregasData = entregasSheet.getDataRange().getValues();
-  for (let i = 1; i < entregasData.length; i++) {
-    if (entregasData[i][0] === entregaId) {
-      entregasSheet.getRange(i + 1, 6, 1, 3).setValues([[calificacion, estado, comentario]]);
-      return { status: "success", message: "Calificación actualizada." };
-    }
+
+  const data = entregasSheet.getDataRange().getValues();
+  const headers = data.shift(); // Saca la fila de encabezados
+
+  const calificacionCol = headers.indexOf("Calificación") + 1;
+  const estadoCol = headers.indexOf("Estado") + 1;
+  const comentarioCol = headers.indexOf("Comentario") + 1;
+
+  if (calificacionCol === 0 || estadoCol === 0 || comentarioCol === 0) {
+    throw new Error("No se encontraron las columnas necesarias en la hoja de Entregas.");
   }
+
+  const entregaRow = data.findIndex(row => row[0] === entregaId);
+
+  if (entregaRow !== -1) {
+    const rowIndex = entregaRow + 2; // +1 porque findIndex es 0-based, +1 porque quitamos los encabezados
+    entregasSheet.getRange(rowIndex, calificacionCol).setValue(calificacion);
+    entregasSheet.getRange(rowIndex, estadoCol).setValue(estado);
+    entregasSheet.getRange(rowIndex, comentarioCol).setValue(comentario);
+    return { status: "success", message: "Calificación actualizada." };
+  }
+
   throw new Error("Entrega no encontrada.");
 }
 

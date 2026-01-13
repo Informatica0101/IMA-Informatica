@@ -33,3 +33,12 @@ En este archivo se regustrara el historial de cambios del proyecto.
 10/01/2026
 - Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, Línea(s): Todas
   - Se realizó una auditoría completa de los archivos para verificar la definición, alcance y orden de ejecución de las funciones. Se determinó que la estructura actual previene errores de referencia de funciones no definidas.
+
+11/01/2026
+- Archivo: backend/user-service/Code.gs, Línea(s): 67, 91
+  - Se modificó el bloque `catch` de la función `doPost` para registrar los errores internamente y devolver un mensaje genérico al cliente, mejorando la seguridad.
+  - Se actualizó la función `registerUser` para utilizar `Utilities.getUuid()` en la generación de `userId`, garantizando identificadores únicos.
+- Archivo: backend/task-service/Code.gs, Línea(s): 64, 137-139, 151-171
+  - Se modificó el bloque `catch` de la función `doPost` para devolver un mensaje de error genérico.
+  - Se añadió una validación en `submitAssignment` para asegurar que el tipo MIME se extraiga correctamente del `fileData`.
+  - Se refactorizó la función `gradeSubmission` para utilizar los nombres de los encabezados de la hoja de cálculo al buscar las columnas, eliminando los índices codificados.

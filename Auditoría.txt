@@ -671,3 +671,13 @@
 - Hallazgo: Al igual que el servicio de usuarios, el servicio de tareas está implementado como un único script `Code.gs`. Todas sus funciones son declaradas en el scope global y están disponibles durante todo el ciclo de vida de la ejecución del script gracias al 'hoisting' de Apps Script. No se encontraron dependencias implícitas frágiles ni llamadas a funciones que pudieran no estar definidas en el momento de su invocación.
 - Impacto potencial: Nulo. La arquitectura actual del archivo previene este tipo de error de referencia.
 - Dependencias afectadas: Ninguna.
+
+--- AUDITORÍA DE IMPLEMENTACIÓN DE ARREGLOS (MICROSERVICIOS) ---
+
+- Archivos: backend/user-service/Code.gs, backend/task-service/Code.gs
+- Descripción: Esta tarea aborda hallazgos clave de auditorías previas para mejorar la seguridad, robustez y mantenibilidad de los servicios.
+- Alcance de los Cambios:
+  1.  **Manejo de Errores (Ambos Servicios):** Se modificará el bloque `catch` en las funciones `doPost` para registrar el error completo en el servidor usando `logDebug` y devolver un mensaje genérico ("Error interno del servidor.") al cliente, previniendo la exposición de detalles de implementación.
+  2.  **Generación de ID de Usuario (`user-service`):** Se reemplazará la generación de `userId` basada en `new Date().getTime()` por `Utilities.getUuid()` en la función `registerUser` para garantizar la unicidad de los identificadores.
+  3.  **Extracción de Tipo MIME (`task-service`):** Se hará más robusta la lógica de extracción del tipo MIME en `submitAssignment` para manejar correctamente casos donde la expresión regular podría fallar.
+  4.  **Índices de Columna (`task-service`):** Se refactorizará la función `gradeSubmission` para que obtenga los índices de las columnas de la hoja de cálculo por su nombre de encabezado en lugar de usar índices numéricos codificados, aumentando la resiliencia ante cambios en la estructura de la hoja.

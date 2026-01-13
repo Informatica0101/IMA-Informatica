@@ -65,7 +65,7 @@ function doPost(e) {
     }
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
-    response = { status: "error", message: "Error interno del servidor: " + error.message };
+    response = { status: "error", message: "Error interno del servidor." };
   }
 
   return ContentService.createTextOutput(JSON.stringify(response))
@@ -87,7 +87,7 @@ function registerUser(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
 
-  const userId = "USR-" + new Date().getTime();
+  const userId = Utilities.getUuid();
   const hashedPassword = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password)
                                   .map(byte => ('0' + (byte & 0xFF).toString(16)).slice(-2))
                                   .join('');
