@@ -95,6 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const downloadUrl = `https://drive.google.com/uc?export=download&id=${item.fileId}`;
                     fileLinkHtml = `<a href="${downloadUrl}" target="_blank" class="text-blue-500" download>Descargar Archivo</a>`;
                 }
+            } else {
+                // Interfaz de diagnóstico: Muestra el objeto de datos completo si los campos esperados no están presentes.
+                fileLinkHtml = `<pre class="text-xs whitespace-pre-wrap">${JSON.stringify(item, null, 2)}</pre>`;
             }
 
             // Si el item tiene `alumnoNombre`, es una entrega. Si no, es un examen base.
