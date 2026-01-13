@@ -85,16 +85,20 @@ document.addEventListener('DOMContentLoaded', () => {
             let actionHtml = '';
             let fileLinkHtml = '<em>N/A</em>';
 
-            // Genera el enlace para ver el archivo de la entrega.
+            // Se implementa lógica retrocompatible para manejar tanto la nueva como la antigua estructura de datos.
             if (item.fileId && item.mimeType) {
+                // Lógica nueva: usa fileId y mimeType para lightbox o descarga directa.
                 if (item.mimeType.startsWith('image/')) {
-                    // Si es una imagen, se crea un enlace para abrir el lightbox.
                     fileLinkHtml = `<a href="#" class="text-blue-500 view-file-link" data-file-id="${item.fileId}" data-title="${item.titulo}">Ver Imagen</a>`;
                 } else {
-                    // Para otros tipos de archivo, se genera un enlace de descarga directa.
                     const downloadUrl = `https://drive.google.com/uc?export=download&id=${item.fileId}`;
                     fileLinkHtml = `<a href="${downloadUrl}" target="_blank" class="text-blue-500" download>Descargar Archivo</a>`;
                 }
+            } else if (item.archivoUrl) {
+                // Lógica antigua: si solo existe archivoUrl, se genera un enlace genérico.
+                // Esto previene el error "N/A" si el backend desplegado no está actualizado.
+                const genericViewUrl = `https://drive.google.com/file/d/${item.archivoUrl}/view`;
+                fileLinkHtml = `<a href="${genericViewUrl}" target="_blank" class="text-blue-500">Ver Archivo</a>`;
             }
 
             // Si el item tiene `alumnoNombre`, es una entrega. Si no, es un examen base.
