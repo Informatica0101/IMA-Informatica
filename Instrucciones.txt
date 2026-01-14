@@ -347,6 +347,11 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**TÍTULO: Verificación de Lógica de Renderizado de Botones de Examen**
+*   **TIPO:** Verificación / Frontend
+*   **DESCRIPCIÓN:** Se auditó y verificó la lógica en `js/teacher.js` responsable de mostrar los botones "Activar" y "Bloquear" para los exámenes en el dashboard del profesor. Se confirmó a través de logs y análisis de código que el mecanismo existente, que añade la propiedad `tipo: 'Examen'` a los exámenes que no tienen entregas, funciona correctamente y soluciona el problema reportado de los botones faltantes. No se requirieron cambios en el código.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
 **TÍTULO: Corrección de Errores Críticos y Nueva Funcionalidad Backend**
 *   **TIPO:** Bug Fix / Feature / Múltiple
 *   **DESCRIPCIÓN:** Se realizaron dos correcciones críticas y se implementó una nueva función de backend:

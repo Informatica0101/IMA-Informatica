@@ -92,7 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const submittedExamIds = new Set((examSubmissions.data || []).map(s => s.examenId));
 
             // Filtrar los exámenes base para mostrar solo aquellos sin entregas
-            const examsWithoutSubmissions = (allExams.data || []).filter(exam => !submittedExamIds.has(exam.examenId));
+            const examsWithoutSubmissions = (allExams.data || [])
+                .filter(exam => !submittedExamIds.has(exam.examenId))
+                .map(exam => ({ ...exam, tipo: 'Examen' })); // <-- Corrección: Añadir el tipo explícitamente
 
             // Combinar las entregas con los exámenes que aún no tienen entregas
             const allActivity = [...submissions, ...examsWithoutSubmissions];
@@ -145,10 +147,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Es un examen sin entregas, mostrar botones de control
                 const isActivo = item.estado === 'Activo';
                 const isBloqueado = item.estado === 'Bloqueado';
+
+                // Determinar las clases y el estado 'disabled' de forma explícita para mayor claridad.
+                const activarBtnClass = isActivo ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500';
+                const activarBtnDisabled = isActivo ? 'disabled' : '';
+                const bloquearBtnClass = isBloqueado ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500';
+                const bloquearBtnDisabled = isBloqueado ? 'disabled' : '';
+
                 actionHtml = `
                     <div class="flex space-x-2">
-                        <button class="bg-green-500 text-white px-2 py-1 rounded text-sm activate-exam-btn" data-examen-id="${item.examenId}" ${isActivo ? 'disabled' : ''}>Activar</button>
-                        <button class="bg-red-500 text-white px-2 py-1 rounded text-sm lock-exam-btn" data-examen-id="${item.examenId}" ${isBloqueado ? 'disabled' : ''}>Bloquear</button>
+                        <button class="${activarBtnClass} text-white px-2 py-1 rounded text-sm activate-exam-btn" data-examen-id="${item.examenId}" ${activarBtnDisabled}>Activar</button>
+                        <button class="${bloquearBtnClass} text-white px-2 py-1 rounded text-sm lock-exam-btn" data-examen-id="${item.examenId}" ${bloquearBtnDisabled}>Bloquear</button>
                     </div>
                 `;
             }

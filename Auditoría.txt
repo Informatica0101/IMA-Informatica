@@ -733,3 +733,38 @@ AUDITORÍA DE SERVICIOS (13/01/2026)
 - Hallazgo 1 (Servicio EXAM): El frontend ('js/teacher.js') llama a la acción 'getTeacherExamActivity'. Sin embargo, esta acción no está definida en el backend ('backend/exam-service/Code.gs'), lo que causa el error "Acción no válida". La documentación en README.md menciona la acción, pero la implementación no la incluye.
 
 - Hallazgo 2 (Servicio TASK): El error "interno del servidor" al calificar persiste porque la función 'gradeSubmission' en 'backend/task-service/Code.gs' busca los nombres de columna "Calificación", "Estado" y "Comentario" (con mayúsculas y tildes). Sin embargo, la documentación oficial en README.md especifica que los nombres de columna son en minúsculas: "calificacion", "estado" y "comentario". Esta discrepancia hace que 'indexOf' falle y la función lance un error.
+
+**AUDITORÍA PRE-EDICIÓN**
+- **FECHA:** 2026-01-14
+- **ARCHIVOS REVISADOS:**
+  - js/teacher.js
+  - teacher-dashboard.html
+- **HALLAZGOS:**
+  1. **Archivo:** js/teacher.js
+     - **Línea:** 129 (condicional )
+     - **Observación:** La renderización de los botones de control de examen ('Activar'/'Bloquear') depende de que el objeto de actividad tenga una propiedad  igual a . Esta condición es el punto central del problema.
+  2. **Archivo:** js/teacher.js
+     - **Línea:** 90 (función )
+     - **Observación:** Se detecta un intento explícito de añadir la propiedad  a los exámenes base (aquellos sin entregas) después de ser recuperados de la API.
+     - **Hipótesis:** La causa probable del problema es que los objetos de examen que llegan a la función  carecen de la propiedad . Esto puede deberse a que la llamada a  no devuelve los datos esperados, o a un problema en la lógica de transformación de datos previa a la renderización.
+  3. **Archivo:** teacher-dashboard.html
+     - **Observación:** La estructura HTML es correcta y está preparada para recibir el contenido dinámico. No se identifican anomalías en este archivo.
+- **CONCLUSIÓN:** El problema se origina en el flujo de datos de . Se debe verificar la respuesta de la API  y el estado de los objetos de examen antes de la llamada a  para asegurar que la propiedad  esté presente.
+
+
+**AUDITORÍA PRE-EDICIÓN**
+- **FECHA:** 2026-01-14
+- **ARCHIVOS REVISADOS:**
+  - js/teacher.js
+  - teacher-dashboard.html
+- **HALLAZGGOS:**
+  1. **Archivo:** js/teacher.js
+     - **Línea:** 129 (condicional `else if (item.tipo === 'Examen')`)
+     - **Observación:** La renderización de los botones de control de examen ('Activar'/'Bloquear') depende de que el objeto de actividad tenga una propiedad `tipo` igual a `'Examen'`. Esta condición es el punto central del problema.
+  2. **Archivo:** js/teacher.js
+     - **Línea:** 90 (función `.map(...)`)
+     - **Observación:** Se detecta un intento explícito de añadir la propiedad `tipo: 'Examen'` a los exámenes base (aquellos sin entregas) después de ser recuperados de la API.
+     - **Hipótesis:** La causa probable del problema es que los objetos de examen que llegan a la función `renderActivity` carecen de la propiedad `tipo`. Esto puede deberse a que la llamada a `getAllExams` no devuelve los datos esperados, o a un problema en la lógica de transformación de datos previa a la renderización.
+  3. **Archivo:** teacher-dashboard.html
+     - **Observación:** La estructura HTML es correcta y está preparada para recibir el contenido dinámico. No se identifican anomalías en este archivo.
+- **CONCLUSIÓN:** El problema se origina en el flujo de datos de `js/teacher.js`. Se debe verificar la respuesta de la API `getAllExams` y el estado de los objetos de examen antes de la llamada a `renderActivity` para asegurar que la propiedad `tipo` esté presente.
