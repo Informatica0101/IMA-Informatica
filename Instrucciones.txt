@@ -85,7 +85,7 @@ B. CALIDAD DEL CÓDIGO
      b) Registrar todos los hallazgos en Auditoria.txt
      c) NO corregir durante la auditoría
      d) Convertir cada hallazgo en una nueva tarea
-        dentro de Instrucciones.txt
+        dent de Instrucciones.txt
 
 7. DUPLICACIÓN DE CÓDIGO
    - PROHIBIDO duplicar bloques de código.
@@ -347,11 +347,11 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
-**TÍTULO: Corrección de Errores Críticos en Dashboard del Profesor**
-*   **TIPO:** Bug Fix / Múltiple
-*   **DESCRIPCIÓN:** Se realizaron dos correcciones críticas:
+**TÍTULO: Corrección de Errores Críticos y Nueva Funcionalidad Backend**
+*   **TIPO:** Bug Fix / Feature / Múltiple
+*   **DESCRIPCIÓN:** Se realizaron dos correcciones críticas y se implementó una nueva función de backend:
     1.  **Error al Calificar:** Se solucionó un "error interno del servidor" persistente en el `task-service` al corregir los nombres de las columnas (`calificacion`, `estado`, `comentario`) en la función `gradeSubmission` para que coincidan con la especificación de la base de datos (minúsculas y sin acentos).
-    2.  **Error al Cargar Exámenes:** Se solucionó un error que impedía la carga de entregas de exámenes en el dashboard. El problema se debía a una llamada a una acción de API inexistente (`getTeacherExamActivity`) en `js/teacher.js`, la cual fue reemplazada por la acción correcta (`getExamSubmissions`).
+    2.  **Nueva Funcionalidad Backend:** Se implementó la acción `getTeacherExamActivity` que faltaba en el `exam-service`. Esta función agrega datos de múltiples hojas para proporcionar una lista completa de las entregas de exámenes, solucionando el error "Acción no válida" que impedía su carga en el dashboard.
 *   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
 
 **TÍTULO: Actualización de Endpoint del Servicio de Tareas (TASK)**

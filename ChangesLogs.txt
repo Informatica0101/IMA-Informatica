@@ -133,3 +133,7 @@ En este archivo se regustrara el historial de cambios del proyecto.
   - Se modificaron los nombres de las columnas en `gradeSubmission` para que coincidan con la especificación de la base de datos (minúsculas, sin acentos), solucionando el error persistente de "error interno del servidor".
 - Archivo: backend/exam-service/Code.gs, Línea(s): 65, 268-299
   - Se implementó la acción `getTeacherExamActivity` que faltaba en el backend. Esta función agrega datos de múltiples hojas para proporcionar una lista completa de las entregas de exámenes para el dashboard del profesor, solucionando el error "Acción no válida".
+
+14/01/2026
+- Archivo: js/config.js, Línea(s): 17, 20
+  - Se actualizaron las URLs de los microservicios `TASK` y `EXAM` para apuntar a los nuevos endpoints de producción desplegados.
