@@ -127,3 +127,9 @@ En este archivo se regustrara el historial de cambios del proyecto.
 13/01/2026
 - Archivo: js/config.js, Línea(s): 17
   - Se actualizó la URL del microservicio 'TASK' al nuevo endpoint proporcionado. Se realizaron pruebas de conectividad con 'curl' para verificar el nuevo endpoint y los existentes antes de aplicar el cambio.
+
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 143-145
+  - Se modificaron los nombres de las columnas en `gradeSubmission` para que coincidan con la especificación de la base de datos (minúsculas, sin acentos), solucionando el error persistente de "error interno del servidor".
+- Archivo: backend/exam-service/Code.gs, Línea(s): 65, 268-299
+  - Se implementó la acción `getTeacherExamActivity` que faltaba en el backend. Esta función agrega datos de múltiples hojas para proporcionar una lista completa de las entregas de exámenes para el dashboard del profesor, solucionando el error "Acción no válida".

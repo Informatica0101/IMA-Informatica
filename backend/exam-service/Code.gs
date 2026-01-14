@@ -63,6 +63,7 @@ function doPost(e) {
       case "submitExam": result = submitExam(payload); break;
       case "updateExamStatus": result = updateExamStatus(payload); break;
       case "getAllExams": result = getAllExams(); break;
+      case "getTeacherExamActivity": result = getTeacherExamActivity(); break;
       case "getStudentExams": result = getStudentExams(payload); break;
       case "getExamResult": result = getExamResult(payload); break;
       default:
@@ -234,4 +235,34 @@ function getExamResult({ entregaExamenId }) {
       calificacion: row[5]
     }
   };
+}
+
+function getTeacherExamActivity() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
+  const examenesSheet = getSheetOrThrow(ss, "Examenes");
+  const entregasSheet = getSheetOrThrow(ss, "EntregasExamen");
+
+  const usuariosData = usuariosSheet.getDataRange().getValues();
+  const examenesData = examenesSheet.getDataRange().getValues();
+  const entregasValues = entregasSheet.getDataRange().getValues();
+
+  const submissions = entregasValues.slice(1).map(entrega => {
+    const usuario = usuariosData.find(u => u[0] === entrega[2]);
+    const examen = examenesData.find(t => t[0] === entrega[1]);
+    return {
+      tipo: 'Examen',
+      entregaId: entrega[0],
+      examenId: entrega[1],
+      titulo: examen ? examen[1] : "Examen Desconocido",
+      alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
+      fecha: new Date(entrega[3]),
+      calificacion: entrega[5],
+      estado: entrega[6],
+    };
+  });
+
+  submissions.sort((a, b) => b.fecha - a.fecha);
+  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toLocaleString() }));
+  return { status: "success", data: formattedActivity };
 }

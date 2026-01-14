@@ -140,9 +140,9 @@ function gradeSubmission(payload) {
   const data = entregasSheet.getDataRange().getValues();
   const headers = data[0];
 
-  const calificacionCol = headers.indexOf("Calificación");
-  const estadoCol = headers.indexOf("Estado");
-  const comentarioCol = headers.indexOf("Comentario");
+  const calificacionCol = headers.indexOf("calificacion");
+  const estadoCol = headers.indexOf("estado");
+  const comentarioCol = headers.indexOf("comentario");
 
   if (calificacionCol === -1 || estadoCol === -1 || comentarioCol === -1) {
     throw new Error("No se encontraron las columnas necesarias en la hoja de Entregas.");

@@ -724,3 +724,12 @@ AUDITORÍA DE ENDPOINTS (13/01/2026)
 ----------------------------------
 - Tarea: Actualización de la URL del servicio TASK.
 - Hallazgo: Inicio del proceso de verificación de endpoints. Se confirmó la conectividad externa y la operatividad de los servicios USER y EXAM como línea de base antes de probar la nueva URL de TASK.
+
+
+AUDITORÍA DE SERVICIOS (13/01/2026)
+----------------------------------
+- Archivos: backend/exam-service/Code.gs, js/teacher.js, backend/task-service/Code.gs, README.md
+
+- Hallazgo 1 (Servicio EXAM): El frontend ('js/teacher.js') llama a la acción 'getTeacherExamActivity'. Sin embargo, esta acción no está definida en el backend ('backend/exam-service/Code.gs'), lo que causa el error "Acción no válida". La documentación en README.md menciona la acción, pero la implementación no la incluye.
+
+- Hallazgo 2 (Servicio TASK): El error "interno del servidor" al calificar persiste porque la función 'gradeSubmission' en 'backend/task-service/Code.gs' busca los nombres de columna "Calificación", "Estado" y "Comentario" (con mayúsculas y tildes). Sin embargo, la documentación oficial en README.md especifica que los nombres de columna son en minúsculas: "calificacion", "estado" y "comentario". Esta discrepancia hace que 'indexOf' falle y la función lance un error.

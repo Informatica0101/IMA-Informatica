@@ -347,6 +347,13 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**TÍTULO: Corrección de Errores Críticos en Dashboard del Profesor**
+*   **TIPO:** Bug Fix / Múltiple
+*   **DESCRIPCIÓN:** Se realizaron dos correcciones críticas:
+    1.  **Error al Calificar:** Se solucionó un "error interno del servidor" persistente en el `task-service` al corregir los nombres de las columnas (`calificacion`, `estado`, `comentario`) en la función `gradeSubmission` para que coincidan con la especificación de la base de datos (minúsculas y sin acentos).
+    2.  **Error al Cargar Exámenes:** Se solucionó un error que impedía la carga de entregas de exámenes en el dashboard. El problema se debía a una llamada a una acción de API inexistente (`getTeacherExamActivity`) en `js/teacher.js`, la cual fue reemplazada por la acción correcta (`getExamSubmissions`).
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
 **TÍTULO: Actualización de Endpoint del Servicio de Tareas (TASK)**
 *   **TIPO:** Configuración / Mantenimiento
 *   **DESCRIPCIÓN:** Se actualizó la URL del microservicio `TASK` en `js/config.js` al nuevo endpoint proporcionado. Se siguió un protocolo de verificación con `curl` para calibrar herramientas y confirmar la operatividad de todos los servicios antes de realizar el cambio.
