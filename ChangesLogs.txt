@@ -117,3 +117,8 @@ En este archivo se regustrara el historial de cambios del proyecto.
 13/01/2026
 - Archivo: js/teacher.js, Línea(s): 54-56
   - Se implementó la corrección final en 'extractDriveId' para manejar IDs de archivo limpios. La función ahora comprueba si la entrada es un ID antes de intentar analizarla como una URL, evitando así una regresión crítica.
+
+
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 152-161
+  - Se re-implementó la corrección del error 'off-by-one' en la función 'gradeSubmission'. Se ajustó la lógica de búsqueda y actualización de filas para asegurar que la calificación se escriba en la fila correcta de la hoja de cálculo, solucionando el 'error interno del servidor'.

@@ -149,15 +149,16 @@ function gradeSubmission(payload) {
   }
 
   // Se busca el índice de la fila que coincide con el entregaId.
-  // Se suma 1 porque findIndex es 0-based y las filas en la hoja son 1-based.
-  const rowIndex = data.findIndex(row => row[0] === entregaId) + 1;
+  const rowIndex = data.findIndex(row => row[0] === entregaId);
 
-  if (rowIndex > 0) {
+  // Se valida que se haya encontrado la fila. rowIndex es 0-based.
+  if (rowIndex !== -1) {
     // Se corrige el cálculo del rango para apuntar a la fila correcta.
-    // El +1 adicional en getRange no era necesario y causaba el error de off-by-one.
-    entregasSheet.getRange(rowIndex, calificacionCol + 1).setValue(calificacion);
-    entregasSheet.getRange(rowIndex, estadoCol + 1).setValue(estado);
-    entregasSheet.getRange(rowIndex, comentarioCol + 1).setValue(comentario);
+    // La fila en la hoja es rowIndex + 1.
+    // La columna es colIndex + 1.
+    entregasSheet.getRange(rowIndex + 1, calificacionCol + 1).setValue(calificacion);
+    entregasSheet.getRange(rowIndex + 1, estadoCol + 1).setValue(estado);
+    entregasSheet.getRange(rowIndex + 1, comentarioCol + 1).setValue(comentario);
     return { status: "success", message: "Calificación actualizada." };
   }
 

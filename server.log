@@ -58,3 +58,15 @@
 127.0.0.1 - - [14/Jan/2026 02:54:14] "GET /js/teacher.js HTTP/1.1" 200 -
 127.0.0.1 - - [14/Jan/2026 02:54:14] "GET /js/config.js HTTP/1.1" 200 -
 127.0.0.1 - - [14/Jan/2026 02:54:14] "GET /js/api.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 10:47:36] "GET /teacher-dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 10:47:36] "GET /js/config.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 10:47:36] "GET /js/api.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 10:47:36] "GET /js/teacher.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 10:47:37] "GET /login.html HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 10:47:37] "GET /js/config.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 10:47:37] "GET /js/api.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 10:47:37] "GET /js/auth.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 10:47:37] "GET /teacher-dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 10:47:37] "GET /js/config.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 10:47:37] "GET /js/api.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 10:47:37] "GET /js/teacher.js HTTP/1.1" 200 -

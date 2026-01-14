@@ -347,6 +347,11 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**TÍTULO: Corrección del Error de Calificación de Tareas**
+*   **TIPO:** Bug Fix / Backend
+*   **DESCRIPCIÓN:** Se corrigió un 'error interno del servidor' que ocurría al intentar calificar una tarea. El problema se debía a un error 'off-by-one' en la función `gradeSubmission` del `task-service` que intentaba escribir la calificación en una fila incorrecta.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
 **TÍTULO: Corrección en la Generación de Enlaces de Archivos del Profesor**
 *   **TIPO:** Bug Fix / Frontend
 *   **DESCRIPCIÓN:** Se corrigió la lógica en `js/teacher.js` que generaba enlaces de archivo incorrectos. El problema era que se utilizaba la URL completa de Google Drive en lugar de extraer primero el ID del archivo. La nueva implementación analiza la URL, extrae el ID y construye correctamente los enlaces de descarga y visualización.

@@ -714,3 +714,8 @@ AUDITORÍA FINAL (POST-CODE-REVIEW) (13/01/2026)
 - Archivo: js/teacher.js
 - Línea(s): 45-68
 - Hallazgo (crítico, originado en Code Review): Se ha detectado una regresión funcional en la lógica de 'extractDriveId'. La función está diseñada para extraer un ID a partir de una URL, pero no contempla el escenario en que el dato de entrada ya es un ID de archivo limpio. Dado que el backend fue mejorado para proveer IDs limpios, esta función fallará para todas las nuevas entregas, retornando 'null' y rompiendo la generación de enlaces.
+
+AUDITORÍA DE CALIFICACIÓN (13/01/2026)
+-------------------------------------
+- Archivos: backend/task-service/Code.gs, js/teacher.js
+- Hallazgo: El payload de calificación enviado desde el frontend es correcto. El código del backend en el repositorio para 'gradeSubmission' también es correcto. La causa probable del 'error interno del servidor' es que la versión desplegada del script de Google Apps no contiene la corrección del error 'off-by-one' que se implementó anteriormente.
