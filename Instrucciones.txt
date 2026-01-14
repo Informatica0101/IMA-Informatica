@@ -347,6 +347,11 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**TÍTULO: Actualización de Endpoint del Servicio de Tareas (TASK)**
+*   **TIPO:** Configuración / Mantenimiento
+*   **DESCRIPCIÓN:** Se actualizó la URL del microservicio `TASK` en `js/config.js` al nuevo endpoint proporcionado. Se siguió un protocolo de verificación con `curl` para calibrar herramientas y confirmar la operatividad de todos los servicios antes de realizar el cambio.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
 **TÍTULO: Corrección del Error de Calificación de Tareas**
 *   **TIPO:** Bug Fix / Backend
 *   **DESCRIPCIÓN:** Se corrigió un 'error interno del servidor' que ocurría al intentar calificar una tarea. El problema se debía a un error 'off-by-one' en la función `gradeSubmission` del `task-service` que intentaba escribir la calificación en una fila incorrecta.

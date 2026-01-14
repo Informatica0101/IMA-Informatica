@@ -719,3 +719,8 @@ AUDITORÍA DE CALIFICACIÓN (13/01/2026)
 -------------------------------------
 - Archivos: backend/task-service/Code.gs, js/teacher.js
 - Hallazgo: El payload de calificación enviado desde el frontend es correcto. El código del backend en el repositorio para 'gradeSubmission' también es correcto. La causa probable del 'error interno del servidor' es que la versión desplegada del script de Google Apps no contiene la corrección del error 'off-by-one' que se implementó anteriormente.
+
+AUDITORÍA DE ENDPOINTS (13/01/2026)
+----------------------------------
+- Tarea: Actualización de la URL del servicio TASK.
+- Hallazgo: Inicio del proceso de verificación de endpoints. Se confirmó la conectividad externa y la operatividad de los servicios USER y EXAM como línea de base antes de probar la nueva URL de TASK.

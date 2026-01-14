@@ -122,3 +122,8 @@ En este archivo se regustrara el historial de cambios del proyecto.
 13/01/2026
 - Archivo: backend/task-service/Code.gs, Línea(s): 152-161
   - Se re-implementó la corrección del error 'off-by-one' en la función 'gradeSubmission'. Se ajustó la lógica de búsqueda y actualización de filas para asegurar que la calificación se escriba en la fila correcta de la hoja de cálculo, solucionando el 'error interno del servidor'.
+
+
+13/01/2026
+- Archivo: js/config.js, Línea(s): 17
+  - Se actualizó la URL del microservicio 'TASK' al nuevo endpoint proporcionado. Se realizaron pruebas de conectividad con 'curl' para verificar el nuevo endpoint y los existentes antes de aplicar el cambio.
