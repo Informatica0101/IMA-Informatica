@@ -85,15 +85,27 @@ document.addEventListener('DOMContentLoaded', () => {
             let actionHtml = '';
             let fileLinkHtml = '<em>N/A</em>';
 
-            // Corrección definitiva: Se genera un enlace siempre que fileId exista.
+            // Corrección para extraer el ID del archivo de la URL completa.
             if (item.fileId) {
-                // Si mimeType es una cadena de texto y empieza con "image/", se muestra el enlace para el lightbox.
-                if (typeof item.mimeType === 'string' && item.mimeType.startsWith('image/')) {
-                    fileLinkHtml = `<a href="#" class="text-blue-500 view-file-link" data-file-id="${item.fileId}" data-title="${item.titulo}">Ver Imagen</a>`;
+                let fileId = null;
+                // Expresión regular para extraer el ID de una URL de Google Drive.
+                const match = item.fileId.match(/\/d\/([a-zA-Z0-9-_]+)/);
+                if (match && match[1]) {
+                    fileId = match[1];
+                }
+
+                if (fileId) {
+                    // Si el tipo MIME es una imagen, se crea el enlace para el lightbox.
+                    if (typeof item.mimeType === 'string' && item.mimeType.startsWith('image/')) {
+                        fileLinkHtml = `<a href="#" class="text-blue-500 view-file-link" data-file-id="${fileId}" data-title="${item.titulo}">Ver Imagen</a>`;
+                    } else {
+                        // Para cualquier otro tipo de archivo, se genera un enlace de descarga directa.
+                        const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+                        fileLinkHtml = `<a href="${downloadUrl}" target="_blank" class="text-blue-500" download>Descargar Archivo</a>`;
+                    }
                 } else {
-                    // En cualquier otro caso (mimeType es null, no es imagen, etc.), se genera un enlace de descarga directa.
-                    const downloadUrl = `https://drive.google.com/uc?export=download&id=${item.fileId}`;
-                    fileLinkHtml = `<a href="${downloadUrl}" target="_blank" class="text-blue-500" download>Descargar Archivo</a>`;
+                    // Si no se puede extraer el ID, se muestra un enlace directo a la URL recibida.
+                    fileLinkHtml = `<a href="${item.fileId}" target="_blank" class="text-red-500">Enlace (formato no estándar)</a>`;
                 }
             }
 
@@ -159,7 +171,27 @@ document.addEventListener('DOMContentLoaded', () => {
     function openGradeModal(entrega) {
         currentEditingEntregaId = entrega.entregaId;
         document.getElementById('student-name-modal').textContent = entrega.alumnoNombre;
-        document.getElementById('file-link-modal').href = `https://drive.google.com/uc?export=download&id=${entrega.fileId}`;
+
+        // Extraer el ID del archivo de la URL para construir un enlace de descarga válido.
+        let fileId = null;
+        if (entrega.fileId) {
+            const match = entrega.fileId.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            if (match && match[1]) {
+                fileId = match[1];
+            }
+        }
+
+        const fileLinkModal = document.getElementById('file-link-modal');
+        if (fileId) {
+            fileLinkModal.href = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            fileLinkModal.textContent = "Descargar Archivo";
+            fileLinkModal.classList.remove('text-red-500');
+        } else {
+            fileLinkModal.href = '#';
+            fileLinkModal.textContent = "Enlace no disponible";
+            fileLinkModal.classList.add('text-red-500');
+        }
+
         document.getElementById('calificacion').value = entrega.calificacion || '';
         document.getElementById('estado').value = entrega.estado || 'Revisada';
         document.getElementById('comentario').value = entrega.comentario || '';

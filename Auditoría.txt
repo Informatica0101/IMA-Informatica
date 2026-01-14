@@ -681,3 +681,16 @@
   2.  **Generación de ID de Usuario (`user-service`):** Se reemplazará la generación de `userId` basada en `new Date().getTime()` por `Utilities.getUuid()` en la función `registerUser` para garantizar la unicidad de los identificadores.
   3.  **Extracción de Tipo MIME (`task-service`):** Se hará más robusta la lógica de extracción del tipo MIME en `submitAssignment` para manejar correctamente casos donde la expresión regular podría fallar.
   4.  **Índices de Columna (`task-service`):** Se refactorizará la función `gradeSubmission` para que obtenga los índices de las columnas de la hoja de cálculo por su nombre de encabezado en lugar de usar índices numéricos codificados, aumentando la resiliencia ante cambios en la estructura de la hoja.
+
+AUDITORÍA PRE-EDICIÓN (13/01/2026)
+------------------------------------
+- Archivo: js/teacher.js
+- Línea(s): 91-95
+- Hallazgo: La lógica de renderizado de enlaces de archivos utiliza directamente el valor de 'item.fileId'. El problema es que este campo contiene la URL completa de Google Drive en lugar del ID del archivo, lo que provoca la generación de URLs de descarga y visualización incorrectas. Se requiere añadir un paso para extraer el ID desde la URL.
+
+
+AUDITORÍA POST-CODE-REVIEW (13/01/2026)
+---------------------------------------
+- Archivo: js/teacher.js
+- Línea(s): 226
+- Hallazgo (originado en Code Review): La función 'openGradeModal' genera el enlace de descarga del archivo para el modal de calificación. Se ha detectado que esta función utiliza directamente 'entrega.fileId', que es una URL completa, en lugar de extraer primero el ID del archivo. Esto reproduce el mismo error que se corrigió en la tabla principal.

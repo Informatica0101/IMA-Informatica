@@ -97,3 +97,12 @@ En este archivo se regustrara el historial de cambios del proyecto.
 13/01/2026
 - Archivo: js/config.js, Línea(s): 13, 16, 19
   - Se actualizaron las variables `USER`, `TASK` y `EXAM` con las nuevas URLs de despliegue de los microservicios de backend.
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 88-109
+  - Se implementó una lógica para extraer el ID del archivo de la URL completa de Google Drive. Esto corrige la generación de enlaces de descarga y visualización que estaban rotos debido a que se trataba la URL completa como si fuera el ID.
+
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 176-193
+  - Se corrigió un bug en el modal de calificación. El enlace 'Descargar Archivo' dentro del modal ahora extrae correctamente el ID del archivo de la URL completa de Google Drive, solucionando un problema identificado durante la revisión de código.

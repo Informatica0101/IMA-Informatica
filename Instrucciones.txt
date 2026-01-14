@@ -347,6 +347,12 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**TÍTULO: Corrección en la Generación de Enlaces de Archivos del Profesor**
+*   **TIPO:** Bug Fix / Frontend
+*   **DESCRIPCIÓN:** Se corrigió la lógica en `js/teacher.js` que generaba enlaces de archivo incorrectos. El problema era que se utilizaba la URL completa de Google Drive en lugar de extraer primero el ID del archivo. La nueva implementación analiza la URL, extrae el ID y construye correctamente los enlaces de descarga y visualización.
+*   **NOTA (POST-CODE-REVIEW):** Se aplicó una corrección adicional para solucionar el mismo problema de extracción de ID en el enlace de descarga dentro del modal de calificación.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
 **TÍTULO: Actualización de URLs de Microservicios**
 *   **TIPO:** Configuración
 *   **DESCRIPCIÓN:** Se han actualizado las URLs de los microservicios de `USER`, `TASK` y `EXAM` en el archivo `js/config.js` para apuntar a los nuevos endpoints de producción.
