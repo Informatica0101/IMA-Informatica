@@ -694,3 +694,23 @@ AUDITORÍA POST-CODE-REVIEW (13/01/2026)
 - Archivo: js/teacher.js
 - Línea(s): 226
 - Hallazgo (originado en Code Review): La función 'openGradeModal' genera el enlace de descarga del archivo para el modal de calificación. Se ha detectado que esta función utiliza directamente 'entrega.fileId', que es una URL completa, en lugar de extraer primero el ID del archivo. Esto reproduce el mismo error que se corrigió en la tabla principal.
+
+
+AUDITORÍA POST-IMPLEMENTACIÓN (13/01/2026)
+------------------------------------------
+- Archivo: js/teacher.js
+- Línea(s): 98, 183
+- Hallazgo: Se ha identificado un nuevo formato de URL de archivo no estándar () que la lógica de extracción de ID actual no es capaz de procesar. La expresión regular existente solo maneja el formato estándar de Google Drive. Es necesario implementar una solución más robusta que pueda manejar múltiples patrones de URL.
+
+
+AUDITORÍA POST-IMPLEMENTACIÓN (13/01/2026)
+------------------------------------------
+- Archivo: js/teacher.js
+- Línea(s): 98, 183
+- Hallazgo: Se ha identificado un nuevo formato de URL de archivo no estándar ('.../IMA-Informatica/ID_DEL_ARCHIVO') que la lógica de extracción de ID actual no es capaz de procesar. La expresión regular existente solo maneja el formato estándar de Google Drive. Es necesario implementar una solución más robusta que pueda manejar múltiples patrones de URL.
+
+AUDITORÍA FINAL (POST-CODE-REVIEW) (13/01/2026)
+-----------------------------------------------
+- Archivo: js/teacher.js
+- Línea(s): 45-68
+- Hallazgo (crítico, originado en Code Review): Se ha detectado una regresión funcional en la lógica de 'extractDriveId'. La función está diseñada para extraer un ID a partir de una URL, pero no contempla el escenario en que el dato de entrada ya es un ID de archivo limpio. Dado que el backend fue mejorado para proveer IDs limpios, esta función fallará para todas las nuevas entregas, retornando 'null' y rompiendo la generación de enlaces.

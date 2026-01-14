@@ -42,6 +42,36 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
     });
 
+    /**
+     * Extrae el ID de un archivo de Google Drive desde varios formatos de URL o devuelve el ID si ya está limpio.
+     * @param {string} urlOrId La URL del archivo de Google Drive o un ID de archivo.
+     * @returns {string|null} El ID del archivo extraído o null si no se encuentra.
+     */
+    function extractDriveId(urlOrId) {
+        if (!urlOrId) return null;
+
+        // Si la cadena no contiene '/', asumimos que ya es un ID.
+        // Esto maneja los casos en que el backend ya proporciona un ID limpio.
+        if (!urlOrId.includes('/')) {
+            return urlOrId;
+        }
+
+        // Patrón para URL estándar de Google Drive (e.g., /d/ID/view)
+        let match = urlOrId.match(/\/d\/([a-zA-Z0-9-_]+)/);
+        if (match && match[1]) {
+            return match[1];
+        }
+
+        // Patrón para formatos donde el ID es el último segmento de la ruta (e.g., /.../ID)
+        // Se busca una cadena con longitud típica de un ID de Drive para evitar falsos positivos.
+        match = urlOrId.match(/\/([a-zA-Z0-9-_]{28,})(?=\/?$|\?)/);
+        if (match && match[1]) {
+            return match[1];
+        }
+
+        return null; // Si no se encuentra un ID válido, devuelve null.
+    }
+
     // --- Carga de Actividad del Profesor ---
     async function fetchTeacherActivity() {
         submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">Cargando actividad...</td></tr>';
@@ -85,14 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
             let actionHtml = '';
             let fileLinkHtml = '<em>N/A</em>';
 
-            // Corrección para extraer el ID del archivo de la URL completa.
+            // Lógica centralizada para extraer el ID del archivo de la URL.
             if (item.fileId) {
-                let fileId = null;
-                // Expresión regular para extraer el ID de una URL de Google Drive.
-                const match = item.fileId.match(/\/d\/([a-zA-Z0-9-_]+)/);
-                if (match && match[1]) {
-                    fileId = match[1];
-                }
+                const fileId = extractDriveId(item.fileId);
 
                 if (fileId) {
                     // Si el tipo MIME es una imagen, se crea el enlace para el lightbox.
@@ -172,14 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentEditingEntregaId = entrega.entregaId;
         document.getElementById('student-name-modal').textContent = entrega.alumnoNombre;
 
-        // Extraer el ID del archivo de la URL para construir un enlace de descarga válido.
-        let fileId = null;
-        if (entrega.fileId) {
-            const match = entrega.fileId.match(/\/d\/([a-zA-Z0-9-_]+)/);
-            if (match && match[1]) {
-                fileId = match[1];
-            }
-        }
+        // Lógica centralizada para extraer el ID del archivo de la URL.
+        const fileId = extractDriveId(entrega.fileId);
 
         const fileLinkModal = document.getElementById('file-link-modal');
         if (fileId) {

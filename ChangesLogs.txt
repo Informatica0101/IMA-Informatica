@@ -106,3 +106,14 @@ En este archivo se regustrara el historial de cambios del proyecto.
 13/01/2026
 - Archivo: js/teacher.js, Línea(s): 176-193
   - Se corrigió un bug en el modal de calificación. El enlace 'Descargar Archivo' dentro del modal ahora extrae correctamente el ID del archivo de la URL completa de Google Drive, solucionando un problema identificado durante la revisión de código.
+
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 45-68, 114, 195
+  - Se implementó una función auxiliar 'extractDriveId' para manejar múltiples formatos de URL de Google Drive, incluyendo el formato no estándar reportado.
+  - Se refactorizó la lógica en 'renderActivity' y 'openGradeModal' para usar esta función centralizada, haciendo la extracción de IDs más robusta.
+
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 54-56
+  - Se implementó la corrección final en 'extractDriveId' para manejar IDs de archivo limpios. La función ahora comprueba si la entrada es un ID antes de intentar analizarla como una URL, evitando así una regresión crítica.

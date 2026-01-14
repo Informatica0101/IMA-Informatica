@@ -351,6 +351,8 @@ C. PROCESO DE APROBACIÓN
 *   **TIPO:** Bug Fix / Frontend
 *   **DESCRIPCIÓN:** Se corrigió la lógica en `js/teacher.js` que generaba enlaces de archivo incorrectos. El problema era que se utilizaba la URL completa de Google Drive en lugar de extraer primero el ID del archivo. La nueva implementación analiza la URL, extrae el ID y construye correctamente los enlaces de descarga y visualización.
 *   **NOTA (POST-CODE-REVIEW):** Se aplicó una corrección adicional para solucionar el mismo problema de extracción de ID en el enlace de descarga dentro del modal de calificación.
+*   **NOTA 2 (POST-IMPLEMENTACIÓN):** Se robusteció la lógica de extracción de ID para soportar un formato de URL no estándar (`.../IMA-Informatica/ID`), centralizando la solución en una nueva función `extractDriveId`.
+*   **NOTA 3 (CICLO FINAL):** Se corrigió una regresión crítica en `extractDriveId` para que maneje correctamente tanto URLs como IDs de archivo limpios, asegurando la compatibilidad con datos antiguos y nuevos.
 *   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
 
 **TÍTULO: Actualización de URLs de Microservicios**
