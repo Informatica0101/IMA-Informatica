@@ -86,13 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Exam Submissions:", examSubmissions);
             console.log("All Exams:", allExams);
 
-            const submissions = [...(((taskSubmissions || {}).data || [])), ...(((examSubmissions || {}).data || []))];
+            const submissions = [...(taskSubmissions.data || []), ...(examSubmissions.data || [])];
 
             // Mapear las entregas a sus IDs de examen para no mostrarlos duplicados
-            const submittedExamIds = new Set((((examSubmissions || {}).data || [])).map(s => s.examenId));
+            const submittedExamIds = new Set((examSubmissions.data || []).map(s => s.examenId));
 
             // Filtrar los exámenes base para mostrar solo aquellos sin entregas
-            const examsWithoutSubmissions = (((allExams || {}).data || []))
+            const examsWithoutSubmissions = (allExams.data || [])
                 .filter(exam => !submittedExamIds.has(exam.examenId))
                 .map(exam => ({ ...exam, tipo: 'Examen' })); // <-- Corrección: Añadir el tipo explícitamente
 

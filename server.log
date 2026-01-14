@@ -42,3 +42,11 @@
 127.0.0.1 - - [14/Jan/2026 18:56:52] "GET /js/config.js HTTP/1.1" 200 -
 127.0.0.1 - - [14/Jan/2026 18:56:52] "GET /js/api.js HTTP/1.1" 200 -
 127.0.0.1 - - [14/Jan/2026 18:56:52] "GET /js/teacher.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 22:27:44] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 22:27:44] "GET /imagenes/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 22:27:44] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 22:27:44] "GET /js/main.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 22:27:46] "GET /teacher-dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 22:27:46] "GET /js/config.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 22:27:46] "GET /js/api.js HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 22:27:46] "GET /js/teacher.js HTTP/1.1" 200 -

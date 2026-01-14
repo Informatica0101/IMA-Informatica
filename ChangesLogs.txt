@@ -1,5 +1,10 @@
 
 14/01/2026
+- Archivo: js/teacher.js, Línea(s): 88-95
+  - Se implementó código defensivo en la función `fetchTeacherActivity` para prevenir un error crítico de tipo 'TypeError: Cannot read properties of undefined (reading 'map')'. La modificación asegura que si alguna de las llamadas a la API devuelve `undefined`, el código manejará el valor de forma segura en lugar de fallar, mejorando la robustez general del dashboard del profesor.
+
+
+14/01/2026
 - Archivo: js/teacher.js, Línea(s): 90, 129
   - Se verificó que la lógica para asignar la propiedad `tipo: 'Examen'` a los exámenes base (sin entregas) es correcta y funciona como se esperaba. Esta verificación confirma que el código renderizará los botones de control de examen ('Activar'/'Bloquear') cuando los datos de la API no incluyan explícitamente el tipo de actividad.
 
