@@ -50,3 +50,9 @@
 127.0.0.1 - - [14/Jan/2026 22:27:46] "GET /js/config.js HTTP/1.1" 200 -
 127.0.0.1 - - [14/Jan/2026 22:27:46] "GET /js/api.js HTTP/1.1" 200 -
 127.0.0.1 - - [14/Jan/2026 22:27:46] "GET /js/teacher.js HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 00:17:34] "GET /login.html HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 00:17:34] "GET /js/config.js HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 00:17:34] "GET /js/api.js HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 00:17:34] "GET /js/auth.js HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 00:17:35] "GET /exam.html?examenId=no-questions-exam HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 00:17:35] "GET /js/exam.js HTTP/1.1" 200 -

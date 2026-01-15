@@ -768,3 +768,17 @@ AUDITORÍA DE SERVICIOS (13/01/2026)
   3. **Archivo:** teacher-dashboard.html
      - **Observación:** La estructura HTML es correcta y está preparada para recibir el contenido dinámico. No se identifican anomalías en este archivo.
 - **CONCLUSIÓN:** El problema se origina en el flujo de datos de `js/teacher.js`. Se debe verificar la respuesta de la API `getAllExams` y el estado de los objetos de examen antes de la llamada a `renderActivity` para asegurar que la propiedad `tipo` esté presente.
+
+AUDITORÍA DE CARGA DE EXAMEN (14/01/2026)
+-----------------------------------------
+- Archivo: js/exam.js
+- Línea(s): 41-43
+- Hallazgo (Crítico): En la función `loadExam`, el código desestructura la propiedad `preguntas` de la respuesta de la API y luego intenta usar `.map()` en la variable resultante (`originalQuestions`) sin verificar si es `undefined`. Si la API devuelve un examen sin la propiedad `preguntas`, esto causa un `TypeError: Cannot read properties of undefined (reading 'map')`, bloqueando completamente la carga del examen para el estudiante.
+
+- Archivo: js/exam.js
+- Línea(s): 15-22
+- Hallazgo (Mantenibilidad): El archivo contiene una función `fetchApi` duplicada, que ya existe en otros scripts como `js/api.js`. Esto viola el principio DRY y aumenta la carga de mantenimiento, ya que cualquier cambio en la lógica de la API debe replicarse en múltiples lugares.
+
+- Archivo: js/exam.js
+- Línea(s): 43
+- Hallazgo (UX): Si un examen se carga correctamente pero no contiene preguntas (`preguntas` es un array vacío), la interfaz de usuario no muestra ningún mensaje. El contenedor `questions-container` simplemente permanece vacío, lo que puede confundir al estudiante, haciéndole pensar que la página está rota o no ha cargado completamente.

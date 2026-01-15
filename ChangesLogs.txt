@@ -8,6 +8,16 @@
 - Archivo: js/teacher.js, Línea(s): 90, 129
   - Se verificó que la lógica para asignar la propiedad `tipo: 'Examen'` a los exámenes base (sin entregas) es correcta y funciona como se esperaba. Esta verificación confirma que el código renderizará los botones de control de examen ('Activar'/'Bloquear') cuando los datos de la API no incluyan explícitamente el tipo de actividad.
 
+14/01/2026
+- Archivo: js/exam.js, Línea(s): 35-45
+  - Se implementó una corrección en la función `loadExam` para manejar de forma segura los casos en que la respuesta de la API de un examen no contiene la propiedad `preguntas`. Se asigna un array vacío por defecto para prevenir un `TypeError` fatal.
+- Archivo: js/exam.js, Línea(s): 43-45
+  - Se mejoró la experiencia del usuario mostrando el mensaje "Este examen no tiene preguntas actualmente" y ocultando el botón de envío si un examen se carga sin preguntas.
+- Archivo: exam.html, Línea(s): 29
+  - Se añadió la importación del script `js/api.js` para permitir la refactorización y eliminación de código duplicado en `js/exam.js`.
+- Archivo: js/exam.js, Línea(s): 15-22
+  - Se eliminó una función `fetchApi` duplicada, centralizando las llamadas a la API a través del script `js/api.js`.
+
 13/01/2026
 - Archivo: js/config.js, Línea(s): 17
   - Se actualizó la URL del microservicio `TASK` con el endpoint de producción final y definitivo.

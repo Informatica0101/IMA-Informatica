@@ -11,6 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const examenId = urlParams.get('examenId');
     let originalQuestions = [];
 
+    // --- API Helper ---
+    async function fetchApi(service, action, payload) {
+        if (!SERVICE_URLS[service]) throw new Error(`URL para el servicio "${service}" no encontrada.`);
+        const response = await fetch(SERVICE_URLS[service], {
+            method: 'POST', body: JSON.stringify({ action, payload })
+        });
+        return await response.json();
+    }
+
     // --- Lógica del Examen ---
     async function loadExam() {
         try {
@@ -19,16 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result.status === 'success' && result.data) {
                 const { titulo, tiempoLimite, preguntas } = result.data;
                 examTitleEl.textContent = titulo;
-
-                // Se asigna un array vacío por defecto si la propiedad 'preguntas' no existe.
-                originalQuestions = preguntas || [];
-
-                if (originalQuestions.length > 0) {
-                    questionsContainer.innerHTML = originalQuestions.map(renderQuestion).join('');
-                } else {
-                    questionsContainer.innerHTML = '<p class="text-gray-500">Este examen no tiene preguntas actualmente.</p>';
-                    document.querySelector('button[type="submit"]').style.display = 'none'; // Ocultar botón de envío
-                }
+                originalQuestions = preguntas;
+                questionsContainer.innerHTML = originalQuestions.map(renderQuestion).join('');
 
                 if (tiempoLimite) {
                     // ... (lógica de timer sin cambios)

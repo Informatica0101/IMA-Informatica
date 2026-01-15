@@ -347,6 +347,11 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**TÍTULO: Corrección de Robustez en Carga de Exámenes del Estudiante**
+*   **TIPO:** Bug Fix / Frontend
+*   **DESCRIPCIÓN:** Se corrigió un error `TypeError` fatal en la página de examen del estudiante que ocurría si la API devolvía un examen sin preguntas. Se implementó código defensivo en `js/exam.js` para manejar este caso, mostrando un mensaje informativo al usuario. También se refactorizó el código para eliminar una función `fetchApi` duplicada.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
 **TÍTULO: Corrección de Robustez en Carga de Actividades**
 *   **TIPO:** Bug Fix / Frontend
 *   **DESCRIPCIÓN:** Se implementó código defensivo en `js/teacher.js` para prevenir un `TypeError` fatal que ocurría si alguna de las llamadas a la API de actividades devolvía `undefined`. La aplicación ahora maneja estos casos sin fallar, mejorando la estabilidad del dashboard del profesor.
