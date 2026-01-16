@@ -94,16 +94,6 @@ FLUJO PRINCIPAL DE TRABAJO
     - El commit DEBE reflejar EXACTAMENTE
       lo auditado y documentado.
 
-
----
-1. **TÍTULO: Ajuste Fino Extremo de Header y Búsqueda (v4.9.7)**
-   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-   - **TIPO:** Refinamiento UI / UX / Estabilidad
-   - **ALCANCE:** Animaciones fluidas, fijación de overflow y suavizado de logo.
-   - **DESCRIPCIÓN DETALLADA:**
-     - **Animaciones:** Sincronización de opacity/visibility y suavizado de max-height.
-     - **Layout:** Bloqueo estricto de overflow-x mediante max-width: 100vw.
-     - **Logo:** Interpolación suave mediante cubic-bezier para eliminar saltos.
 -----------------------------------------------
 EXTENSIÓN OBLIGATORIA POR CODE REVIEW
 --------------------------------------------------
@@ -194,110 +184,15 @@ SI NO SE REGISTRA, NO EXISTE.
 El incumplimiento de CUALQUIER paso
 INVALIDA el proceso completo.
 
----
-**TAREAS PENDIENTES DE REVISIÓN**
----
-1. **TÍTULO: Ajuste Fino Extremo de Header y Búsqueda (v4.9.7)**
-   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-   - **TIPO:** Refinamiento UI / UX / Estabilidad
-   - **ALCANCE:** Animaciones fluidas, fijación de overflow y suavizado de logo.
-   - **DESCRIPCIÓN DETALLADA:**
-     - **Animaciones:** Sincronización de opacity/visibility y suavizado de max-height.
-     - **Layout:** Bloqueo estricto de overflow-x mediante max-width: 100vw.
-     - **Logo:** Interpolación suave mediante cubic-bezier para eliminar saltos.
+==================================================
+TAREAS
+=================================================
 
-1. **TÍTULO: Reparación de Precisión de Layout y Logo (v4.9.6)**
-   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-   - **TIPO:** Refinamiento UI / Bugfix Layout / Unificación CSS
-   - **ALCANCE:** Corrección milimétrica de centrado de logo y desbordamiento horizontal.
-   - **DESCRIPCIÓN DETALLADA:**
-     - **Unificación:** Consolidación de reglas CSS dispersas bajo `body.search-active` en un solo bloque coherente.
-     - **Centrado Logo:** Implementación de centrado vertical dinámico (`top: 50%`, `transform: translateY(-50%)`) y escala del 95%.
-     - **Layout:** Eliminación de `gap` en header activo para colapso total de espacio superior.
-     - **Overflow:** Bloqueo estricto de desbordamiento horizontal en el encabezado fijo.
+Despues de esta linea se deben de registrar las nuevas tareas, por realizar o completadas
 
-2. **TÍTULO: Corrección de Regresiones del Header (v4.9.5)**
-   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-   - **TIPO:** Bugfix / UX / Regresión
-   - **ALCANCE:** Restauración completa de funcionalidades perdidas tras el refactor estructural.
-   - **DESCRIPCIÓN DETALLADA:**
-     - **Hamburger:** Restaurada visibilidad e interactividad mediante ajuste de z-index y capas.
-     - **Búsqueda:** Se implementó el botón "X" para limpiar términos y su lógica visual (`.has-text`).
-     - **Logo:** Corregida animación y visibilidad en modo búsqueda (ya no desaparece).
-     - **Pull-to-refresh:** Re-implementado mediante listeners de touch para permitir recarga manual en móviles.
-     - **Versión:** Sincronización global a v4.9.5.
-
-2. **TÍTULO: Restauración de Animaciones y Botón Hamburguesa**
-   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-   - **TIPO:** Fix UX / UI Regression / Animaciones
-   - **ALCANCE:** Restauración de la fluidez visual y componentes esenciales del header tras el refactor estructural.
-   - **DESCRIPCIÓN DETALLADA:**
-     - **Animaciones:** Se reemplazó `display: none` por transiciones de `opacity` y `max-height` para restaurar la suavidad entre estados de búsqueda.
-     - **Hamburger:** Se restauró la visibilidad y interactividad del botón de menú lateral.
-     - **Logo:** Se re-activó la animación de reducción y reposicionamiento del logo.
-     - **Estabilidad:** El fix de "espacio fantasma" se mantiene intacto mediante colapso de altura animado.
-
-2. **TÍTULO: Reconstrucción Extrema del Header y Fix de Espacio Fantasma**
-   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-   - **TIPO:** Refactor Estructural / Layout Móvil / UX
-   - **ALCANCE:** Reconstrucción integral del sistema de encabezado y búsqueda para eliminar redundancias y fallos de visualización en móviles.
-   - **DESCRIPCIÓN DETALLADA:**
-     - **HTML:** Implementación de `.main-header` como contenedor maestro unificado.
-     - **CSS:** Centralización de estilos y uso de `display: none !important` para colapsar espacio en modo búsqueda. Sincronización milimétrica del padding de resultados (70px).
-     - **JS:** Ajuste de `ui.js` para compatibilidad con la nueva jerarquía (mensaje de bienvenida).
-     - **Visual:** Eliminación total del hueco entre barra y resultados manteniendo la estética original.
-
-2. **TÍTULO: Corrección de Causa Raíz de Fallos en Búsqueda y Modal**
-   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-   - **TIPO:** Corrección de Causa Raíz / Bug de Datos / Bug Visual de CSS
-   - **ALCANCE:** Se implementaron correcciones definitivas en el backend (`services/catalog/catalog.js`), frontend (`ui.js`) y CSS (`style.css`) basadas en una auditoría consolidada.
-   - **DESCRIPCIÓN DETALLADA:**
-     - **Problema Video (Causa Raíz: Contrato de Datos Roto):** Se corrigió la discrepancia de nombres de propiedad entre el backend y el frontend. El servicio `catalog.js` ahora renombra `videoGuiaDesarmeUrl` a `Video` antes de enviar la respuesta. El `ui.js` fue ajustado para consumir esta propiedad (`Video`), solucionando la causa raíz de que el video no se visualizara.
-     - **Problema Espaciado (Causa Raíz: Especificidad CSS):** Se añadió `!important` a la regla de CSS que anula el `margin-bottom` del `div#search-wrapper` en `style.css`. Esto asegura que el estilo en línea del `index.html` sea sobrescrito y el espacio extra se elimine correctamente.
+________________________________________________________________________________________________
 
 
----
-**DERIVADO DE AUDITORÍA — NO EJECUTAR AÚN**
----
-*No hay tareas pendientes en esta sección.*
 
----
-**TAREAS COMPLETADAS (Validadas por el PM)**
----
-1. MEJORA Y REFINAMIENTO DE ANIMACIÓN DE BÚSQUEDA
-Estado: COMPLETADO
-Origen: Refinamiento UX
-Prioridad: Normal
-Área: Frontend | UI | CSS | JS
-Archivos involucrados: style.css, main.js
 
-Descripción:
-Se completó un ciclo de mejoras en la animación de la barra de búsqueda. Las implementaciones incluyen:
-- La adición de la animación de expansión/contracción de la barra al hacer foco, replicando el comportamiento de la v1.5.
-- La ocultación del menú de hamburguesa y la reducción del espacio superior para optimizar la vista de búsqueda.
-- La corrección final y definitiva del espaciado vertical entre la barra y los resultados, asegurando una alineación perfecta.
-
-2. INVESTIGAR CIERRE DE SESIÓN INESPERADO TRAS REFRESH
-Estado: COMPLETADO
-Origen: Reporte de Bug
-Prioridad: CRÍTICA
-Área: Frontend | Autenticación | Estado
-Archivos involucrados: auth.js
-
-Descripción:
-Se ha implementado una corrección para prevenir una condición de carrera (`race condition`) durante la validación de la sesión. Se añadió un mecanismo de bloqueo (`lock`) en `localStorage` para asegurar que solo una pestaña o proceso de validación se comunique con el backend a la vez, evitando que validaciones concurrentes se invaliden entre sí.
-
-3. CORRECCIÓN DEL SISTEMA DE BÚSQUEDA Y NAVEGACIÓN
-Estado: COMPLETADO
-Origen: Múltiples reportes de bugs y regresiones.
-Prioridad: CRÍTICA
-Área: Frontend | Navegación | Búsqueda | UX
-Archivos involucrados: ui.js, navigation.js
-
-Descripción:
-Se completó un ciclo de correcciones que abordaron múltiples fallos en el sistema de búsqueda y su navegación subsecuente. Las correcciones incluyen:
-- Asegurar que la búsqueda por modelo muestre tarjetas de modelo en lugar de logos de marca.
-- Corregir el flujo de navegación para que, después de una búsqueda, se avance correctamente en la jerarquía de selección (Año, etc.).
-- Eliminar una regresión que causaba la de-duplicación incorrecta de resultados.
-- Corregir un `SyntaxError` fatal que impedía la carga de la aplicación.
-- Implementar la corrección definitiva para el botón "Regresar", asegurando que devuelva al usuario a los resultados de la búsqueda de manera consistente, mediante el manejo correcto del estado de navegación anidado.
+tarea 1. 
