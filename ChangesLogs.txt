@@ -18,6 +18,12 @@
 - Archivo: js/exam.js, Línea(s): 15-22
   - Se eliminó una función `fetchApi` duplicada, centralizando las llamadas a la API a través del script `js/api.js`.
 
+14/01/2026
+- Archivo: backend/exam-service/Code.gs, Línea(s): 191-224
+  - Se refactorizó la función `getExamQuestions` para que devuelva la estructura de datos correcta que el frontend espera. La función ahora busca los detalles del examen (título, tiempo) y los combina con el array de preguntas en un único objeto, solucionando el bug que causaba que todos los exámenes se mostraran sin preguntas.
+- Archivo: js/exam.js, Línea(s): 41-112
+  - Se reintrodujo la función `renderQuestion` que había sido eliminada accidentalmente. Esta función es crucial para renderizar el HTML de cada pregunta del examen, y su ausencia provocaba un error silencioso que impedía mostrar las preguntas.
+
 13/01/2026
 - Archivo: js/config.js, Línea(s): 17
   - Se actualizó la URL del microservicio `TASK` con el endpoint de producción final y definitivo.

@@ -40,6 +40,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function renderQuestion(question, index) {
+        const questionId = question.preguntaId || `q_${index}`;
+        const questionType = question.tipo;
+        const questionText = question.texto;
+        const options = question.opciones || {};
+
+        let optionsHtml = '';
+
+        switch (questionType) {
+            case 'opcion_multiple':
+            case 'verdadero_falso':
+                optionsHtml = Object.entries(options).map(([key, value]) => `
+                    <label class="block p-2 rounded hover:bg-gray-100">
+                        <input type="radio" name="question_${questionId}" value="${key}" class="mr-2">
+                        ${value}
+                    </label>
+                `).join('');
+                break;
+            case 'completacion':
+            case 'respuesta_breve':
+                optionsHtml = `<input type="text" name="question_${questionId}" class="w-full p-2 border rounded" placeholder="Escribe tu respuesta aquí">`;
+                break;
+            case 'termino_pareado':
+                if (options.concepts && options.definitions) {
+                    // Randomize definitions for the student
+                    const shuffledDefinitions = [...options.definitions].sort(() => Math.random() - 0.5);
+                    optionsHtml = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-bold mb-2">Conceptos</h4>
+                                <ul class="list-decimal list-inside space-y-2">
+                                    ${options.concepts.map(concept => `<li class="p-2 bg-gray-100 rounded">${concept}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-2">Definiciones</h4>
+                                <div class="space-y-2">
+                                    ${shuffledDefinitions.map((def, i) => `
+                                        <div class="flex items-center">
+                                            <input type="text" name="question_${questionId}_${i}" data-original-definition="${def}" class="w-12 p-1 border rounded mr-3 text-center" placeholder="#">
+                                            <span>${def}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                break;
+        }
+
+        return `
+            <div class="p-6 border-b question-block" data-question-id="${questionId}" data-question-type="${questionType}">
+                <p class="font-semibold text-lg mb-4">${index + 1}. ${questionText}</p>
+                <div class="space-y-3">
+                    ${optionsHtml}
+                </div>
+            </div>
+        `;
+    }
+
     async function submitExam(isBlocked) {
         const respuestas = [];
         const questionBlocks = document.querySelectorAll('.question-block');

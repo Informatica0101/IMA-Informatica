@@ -782,3 +782,9 @@ AUDITORÍA DE CARGA DE EXAMEN (14/01/2026)
 - Archivo: js/exam.js
 - Línea(s): 43
 - Hallazgo (UX): Si un examen se carga correctamente pero no contiene preguntas (`preguntas` es un array vacío), la interfaz de usuario no muestra ningún mensaje. El contenedor `questions-container` simplemente permanece vacío, lo que puede confundir al estudiante, haciéndole pensar que la página está rota o no ha cargado completamente.
+
+AUDITORÍA DE RECUPERACIÓN DE PREGUNTAS (14/01/2026)
+-------------------------------------------------
+- Archivo: backend/exam-service/Code.gs
+- Línea(s): 190-202
+- Hallazgo (Crítico): La función `getExamQuestions` devuelve una estructura de datos incorrecta que no coincide con la esperada por el frontend. El backend envía directamente un array de preguntas en la propiedad `data`, mientras que el frontend (`js/exam.js`) espera un objeto que contenga los detalles del examen (título, etc.) junto con el array de preguntas. Esta discrepancia es la causa raíz de que los exámenes se muestren como si no tuvieran preguntas.

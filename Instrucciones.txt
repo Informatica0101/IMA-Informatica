@@ -347,6 +347,11 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**TÍTULO: Corrección de Flujo de Datos para Carga de Exámenes**
+*   **TIPO:** Bug Fix / Full Stack
+*   **DESCRIPCIÓN:** Se solucionó un error crítico que impedía a los estudiantes ver las preguntas de los exámenes. La causa era una discrepancia en la estructura de datos entre el frontend y el backend. Se modificó la función `getExamQuestions` en el `exam-service` para que devuelva el objeto completo que espera el frontend. Adicionalmente, se reintrodujo la función `renderQuestion` en `js/exam.js`, que había sido eliminada accidentalmente.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
 **TÍTULO: Corrección de Robustez en Carga de Exámenes del Estudiante**
 *   **TIPO:** Bug Fix / Frontend
 *   **DESCRIPCIÓN:** Se corrigió un error `TypeError` fatal en la página de examen del estudiante que ocurría si la API devolvía un examen sin preguntas. Se implementó código defensivo en `js/exam.js` para manejar este caso, mostrando un mensaje informativo al usuario. También se refactorizó el código para eliminar una función `fetchApi` duplicada.
