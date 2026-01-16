@@ -42,6 +42,36 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
     });
 
+    /**
+     * Extrae el ID de un archivo de Google Drive desde varios formatos de URL o devuelve el ID si ya está limpio.
+     * @param {string} urlOrId La URL del archivo de Google Drive o un ID de archivo.
+     * @returns {string|null} El ID del archivo extraído o null si no se encuentra.
+     */
+    function extractDriveId(urlOrId) {
+        if (!urlOrId) return null;
+
+        // Si la cadena no contiene '/', asumimos que ya es un ID.
+        // Esto maneja los casos en que el backend ya proporciona un ID limpio.
+        if (!urlOrId.includes('/')) {
+            return urlOrId;
+        }
+
+        // Patrón para URL estándar de Google Drive (e.g., /d/ID/view)
+        let match = urlOrId.match(/\/d\/([a-zA-Z0-9-_]+)/);
+        if (match && match[1]) {
+            return match[1];
+        }
+
+        // Patrón para formatos donde el ID es el último segmento de la ruta (e.g., /.../ID)
+        // Se busca una cadena con longitud típica de un ID de Drive para evitar falsos positivos.
+        match = urlOrId.match(/\/([a-zA-Z0-9-_]{28,})(?=\/?$|\?)/);
+        if (match && match[1]) {
+            return match[1];
+        }
+
+        return null; // Si no se encuentra un ID válido, devuelve null.
+    }
+
     // --- Carga de Actividad del Profesor ---
     async function fetchTeacherActivity() {
         submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">Cargando actividad...</td></tr>';
@@ -56,13 +86,15 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Exam Submissions:", examSubmissions);
             console.log("All Exams:", allExams);
 
-            const submissions = [...(taskSubmissions.data || []), ...(examSubmissions.data || [])];
+            const submissions = [...(((taskSubmissions || {}).data || [])), ...(((examSubmissions || {}).data || []))];
 
             // Mapear las entregas a sus IDs de examen para no mostrarlos duplicados
-            const submittedExamIds = new Set((examSubmissions.data || []).map(s => s.examenId));
+            const submittedExamIds = new Set((((examSubmissions || {}).data || [])).map(s => s.examenId));
 
             // Filtrar los exámenes base para mostrar solo aquellos sin entregas
-            const examsWithoutSubmissions = (allExams.data || []).filter(exam => !submittedExamIds.has(exam.examenId));
+            const examsWithoutSubmissions = (((allExams || {}).data || []))
+                .filter(exam => !submittedExamIds.has(exam.examenId))
+                .map(exam => ({ ...exam, tipo: 'Examen' })); // <-- Corrección: Añadir el tipo explícitamente
 
             // Combinar las entregas con los exámenes que aún no tienen entregas
             const allActivity = [...submissions, ...examsWithoutSubmissions];
@@ -83,6 +115,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         submissionsTableBody.innerHTML = activity.map(item => {
             let actionHtml = '';
+            let fileLinkHtml = '<em>N/A</em>';
+
+            // Lógica centralizada para extraer el ID del archivo de la URL.
+            if (item.fileId) {
+                const fileId = extractDriveId(item.fileId);
+
+                if (fileId) {
+                    // Si el tipo MIME es una imagen, se crea el enlace para el lightbox.
+                    if (typeof item.mimeType === 'string' && item.mimeType.startsWith('image/')) {
+                        fileLinkHtml = `<a href="#" class="text-blue-500 view-file-link" data-file-id="${fileId}" data-title="${item.titulo}">Ver Imagen</a>`;
+                    } else {
+                        // Para cualquier otro tipo de archivo, se genera un enlace de descarga directa.
+                        const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+                        fileLinkHtml = `<a href="${downloadUrl}" target="_blank" class="text-blue-500" download>Descargar Archivo</a>`;
+                    }
+                } else {
+                    // Si no se puede extraer el ID, se muestra un enlace directo a la URL recibida.
+                    fileLinkHtml = `<a href="${item.fileId}" target="_blank" class="text-red-500">Enlace (formato no estándar)</a>`;
+                }
+            }
+
             // Si el item tiene `alumnoNombre`, es una entrega. Si no, es un examen base.
             if (item.alumnoNombre) {
                 if (item.tipo === 'Tarea') {
@@ -94,10 +147,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Es un examen sin entregas, mostrar botones de control
                 const isActivo = item.estado === 'Activo';
                 const isBloqueado = item.estado === 'Bloqueado';
+
+                // Determinar las clases y el estado 'disabled' de forma explícita para mayor claridad.
+                const activarBtnClass = isActivo ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500';
+                const activarBtnDisabled = isActivo ? 'disabled' : '';
+                const bloquearBtnClass = isBloqueado ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500';
+                const bloquearBtnDisabled = isBloqueado ? 'disabled' : '';
+
                 actionHtml = `
                     <div class="flex space-x-2">
-                        <button class="bg-green-500 text-white px-2 py-1 rounded text-sm activate-exam-btn" data-examen-id="${item.examenId}" ${isActivo ? 'disabled' : ''}>Activar</button>
-                        <button class="bg-red-500 text-white px-2 py-1 rounded text-sm lock-exam-btn" data-examen-id="${item.examenId}" ${isBloqueado ? 'disabled' : ''}>Bloquear</button>
+                        <button class="${activarBtnClass} text-white px-2 py-1 rounded text-sm activate-exam-btn" data-examen-id="${item.examenId}" ${activarBtnDisabled}>Activar</button>
+                        <button class="${bloquearBtnClass} text-white px-2 py-1 rounded text-sm lock-exam-btn" data-examen-id="${item.examenId}" ${bloquearBtnDisabled}>Bloquear</button>
                     </div>
                 `;
             }
@@ -107,13 +167,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="p-4">${item.alumnoNombre || '<em>N/A</em>'}</td>
                     <td class="p-4">${item.titulo}</td>
                     <td class="p-4">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
-                    <td class="p-4">${item.archivoUrl ? `<a href="${item.archivoUrl}" target="_blank" class="text-blue-500">Ver Archivo</a>` : '<em>N/A</em>'}</td>
+                    <td class="p-4">${fileLinkHtml}</td>
                     <td class="p-4">${item.calificacion || '<em>N/A</em>'}</td>
                     <td class="p-4">${item.estado || '<em>Pendiente</em>'}</td>
                     <td class="p-4">${actionHtml}</td>
                 </tr>`;
         }).join('');
     }
+
+    // --- Lógica del Lightbox de Imágenes ---
+    const lightboxModal = document.getElementById('image-lightbox-modal');
+    const lightboxImage = document.getElementById('lightbox-image');
+    const lightboxTitle = document.getElementById('lightbox-title');
+    const closeLightboxBtn = document.getElementById('close-lightbox-btn');
+
+    function openLightbox(fileId, title) {
+        // Construye la URL de la miniatura para la imagen en Google Drive, que es más fiable para <img src>.
+        const imageUrl = `https://drive.google.com/thumbnail?id=${fileId}`;
+        lightboxImage.src = imageUrl;
+        lightboxTitle.textContent = title;
+        lightboxModal.classList.remove('hidden');
+    }
+
+    function closeLightbox() {
+        lightboxModal.classList.add('hidden');
+        lightboxImage.src = ''; // Limpia el src para evitar flashes de contenido anterior
+    }
+
+    closeLightboxBtn.addEventListener('click', closeLightbox);
 
     // --- Lógica del Modal de Calificación ---
     const gradeModal = document.getElementById('grade-modal');
@@ -124,7 +205,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function openGradeModal(entrega) {
         currentEditingEntregaId = entrega.entregaId;
         document.getElementById('student-name-modal').textContent = entrega.alumnoNombre;
-        document.getElementById('file-link-modal').href = entrega.archivoUrl;
+
+        // Lógica centralizada para extraer el ID del archivo de la URL.
+        const fileId = extractDriveId(entrega.fileId);
+
+        const fileLinkModal = document.getElementById('file-link-modal');
+        if (fileId) {
+            fileLinkModal.href = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            fileLinkModal.textContent = "Descargar Archivo";
+            fileLinkModal.classList.remove('text-red-500');
+        } else {
+            fileLinkModal.href = '#';
+            fileLinkModal.textContent = "Enlace no disponible";
+            fileLinkModal.classList.add('text-red-500');
+        }
+
         document.getElementById('calificacion').value = entrega.calificacion || '';
         document.getElementById('estado').value = entrega.estado || 'Revisada';
         document.getElementById('comentario').value = entrega.comentario || '';
@@ -157,6 +252,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Delegación de Eventos para la Tabla ---
     submissionsTableBody.addEventListener('click', async (e) => {
         const target = e.target;
+
+        // Previene la acción por defecto si es un enlace para el lightbox.
+        if (target.classList.contains('view-file-link')) {
+            e.preventDefault();
+            openLightbox(target.dataset.fileId, target.dataset.title);
+        }
 
         // Calificar Tarea
         if (target.classList.contains('grade-task-btn')) {

@@ -1,3 +1,74 @@
+
+14/01/2026
+- Archivo: js/teacher.js, Línea(s): 88-95
+  - Se implementó código defensivo en la función `fetchTeacherActivity` para prevenir un error crítico de tipo 'TypeError: Cannot read properties of undefined (reading 'map')'. La modificación asegura que si alguna de las llamadas a la API devuelve `undefined`, el código manejará el valor de forma segura en lugar de fallar, mejorando la robustez general del dashboard del profesor.
+
+
+14/01/2026
+- Archivo: js/teacher.js, Línea(s): 90, 129
+  - Se verificó que la lógica para asignar la propiedad `tipo: 'Examen'` a los exámenes base (sin entregas) es correcta y funciona como se esperaba. Esta verificación confirma que el código renderizará los botones de control de examen ('Activar'/'Bloquear') cuando los datos de la API no incluyan explícitamente el tipo de actividad.
+
+14/01/2026
+- Archivo: js/exam.js, Línea(s): 35-45
+  - Se implementó una corrección en la función `loadExam` para manejar de forma segura los casos en que la respuesta de la API de un examen no contiene la propiedad `preguntas`. Se asigna un array vacío por defecto para prevenir un `TypeError` fatal.
+- Archivo: js/exam.js, Línea(s): 43-45
+  - Se mejoró la experiencia del usuario mostrando el mensaje "Este examen no tiene preguntas actualmente" y ocultando el botón de envío si un examen se carga sin preguntas.
+- Archivo: exam.html, Línea(s): 29
+  - Se añadió la importación del script `js/api.js` para permitir la refactorización y eliminación de código duplicado en `js/exam.js`.
+- Archivo: js/exam.js, Línea(s): 15-22
+  - Se eliminó una función `fetchApi` duplicada, centralizando las llamadas a la API a través del script `js/api.js`.
+
+14/01/2026
+- Archivo: backend/exam-service/Code.gs, Línea(s): 191-224
+  - Se refactorizó la función `getExamQuestions` para que devuelva la estructura de datos correcta que el frontend espera. La función ahora busca los detalles del examen (título, tiempo) y los combina con el array de preguntas en un único objeto, solucionando el bug que causaba que todos los exámenes se mostraran sin preguntas.
+- Archivo: js/exam.js, Línea(s): 41-112
+  - Se reintrodujo la función `renderQuestion` que había sido eliminada accidentalmente. Esta función es crucial para renderizar el HTML de cada pregunta del examen, y su ausencia provocaba un error silencioso que impedía mostrar las preguntas.
+
+13/01/2026
+- Archivo: js/config.js, Línea(s): 17
+  - Se actualizó la URL del microservicio `TASK` con el endpoint de producción final y definitivo.
+
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 175-179
+  - Se implementó una corrección en `getTeacherActivity` para asegurar que el `fileId` se recupere correctamente, incluso si el nombre de la columna en la hoja de cálculo no es "fileUrl", utilizando un índice de columna fijo como respaldo.
+- Archivo: js/teacher.js, Línea(s): 87-96
+  - Se implementó una corrección definitiva en `renderActivity` para que el frontend sea resiliente. Ahora genera un enlace de archivo siempre que `fileId` esté presente. El enlace activa el lightbox solo si `mimeType` es una imagen; de lo contrario, crea un enlace de descarga directa. Esto soluciona el error "N/A" de forma permanente.
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 99-102
+  - Se implementó una interfaz de diagnóstico temporal en el frontend. Si los datos de archivo esperados (`fileId`, `mimeType`) no se reciben, la celda "Archivo" mostrará el objeto JSON completo de la API para facilitar la depuración.
+
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 154-158
+  - Se corrigió un error de "off-by-one" en la función `gradeSubmission` que provocaba que se intentara actualizar la fila incorrecta en la hoja de cálculo.
+- Archivo: js/teacher.js, Línea(s): 87-101
+  - Se eliminó la lógica de retrocompatibilidad por instrucción del usuario. El frontend ahora depende exclusivamente de los campos `fileId` y `mimeType` proporcionados por el backend.
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 87-101
+  - Se implementó una lógica retrocompatible en `renderActivity` para manejar tanto la estructura de datos nueva (`fileId`, `mimeType`) como la antigua (`archivoUrl`). Esto asegura que siempre se muestre un enlace de archivo funcional y se evite el error "N/A", independientemente de la versión del backend desplegado.
+
+13/01/2026
+- Archivo: js/config.js, Línea(s): 17
+  - Se revirtió la URL del microservicio `TASK` a la versión anterior para restaurar la funcionalidad del dashboard después de determinar que la nueva URL proporcionada era incorrecta.
+
+13/01/2026
+- Archivo: js/config.js, Línea(s): 17
+  - Se actualizó la URL del microservicio `TASK` al nuevo endpoint de producción.
+
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 125-131, 175-194
+  - Se modificó `submitAssignment` para almacenar el ID del archivo y su MIME type en la hoja `Entregas`.
+  - Se actualizó `getTeacherActivity` para recuperar el `fileId` y el `mimeType`, eliminando la `archivoUrl` obsoleta.
+- Archivo: README.md, Línea(s): 150
+  - Se añadió la columna `mimeType` a la documentación de la hoja `Entregas`.
+- Archivo: teacher-dashboard.html, Línea(s): 165-175
+  - Se añadió la estructura HTML para un modal de lightbox para la previsualización de imágenes.
+- Archivo: js/teacher.js, Línea(s): 87-101, 131-150, 198-202
+  - Se actualizó `renderActivity` para generar enlaces condicionales: descarga directa para documentos y un activador de lightbox para imágenes.
+  - Se implementó la lógica para controlar la apertura y cierre del lightbox.
+  - Se añadió un event listener para gestionar los clics en los enlaces de visualización de archivos.
+
 Registro de cambios de IMA - Area de Informática V 2.0 
 
 En este archivo se regustrara el historial de cambios del proyecto. 
@@ -52,3 +123,43 @@ En este archivo se regustrara el historial de cambios del proyecto.
 13/01/2026
 - Archivo: js/config.js, Línea(s): 13, 16, 19
   - Se actualizaron las variables `USER`, `TASK` y `EXAM` con las nuevas URLs de despliegue de los microservicios de backend.
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 88-109
+  - Se implementó una lógica para extraer el ID del archivo de la URL completa de Google Drive. Esto corrige la generación de enlaces de descarga y visualización que estaban rotos debido a que se trataba la URL completa como si fuera el ID.
+
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 176-193
+  - Se corrigió un bug en el modal de calificación. El enlace 'Descargar Archivo' dentro del modal ahora extrae correctamente el ID del archivo de la URL completa de Google Drive, solucionando un problema identificado durante la revisión de código.
+
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 45-68, 114, 195
+  - Se implementó una función auxiliar 'extractDriveId' para manejar múltiples formatos de URL de Google Drive, incluyendo el formato no estándar reportado.
+  - Se refactorizó la lógica en 'renderActivity' y 'openGradeModal' para usar esta función centralizada, haciendo la extracción de IDs más robusta.
+
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 54-56
+  - Se implementó la corrección final en 'extractDriveId' para manejar IDs de archivo limpios. La función ahora comprueba si la entrada es un ID antes de intentar analizarla como una URL, evitando así una regresión crítica.
+
+
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 152-161
+  - Se re-implementó la corrección del error 'off-by-one' en la función 'gradeSubmission'. Se ajustó la lógica de búsqueda y actualización de filas para asegurar que la calificación se escriba en la fila correcta de la hoja de cálculo, solucionando el 'error interno del servidor'.
+
+
+13/01/2026
+- Archivo: js/config.js, Línea(s): 17
+  - Se actualizó la URL del microservicio 'TASK' al nuevo endpoint proporcionado. Se realizaron pruebas de conectividad con 'curl' para verificar el nuevo endpoint y los existentes antes de aplicar el cambio.
+
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 143-145
+  - Se modificaron los nombres de las columnas en `gradeSubmission` para que coincidan con la especificación de la base de datos (minúsculas, sin acentos), solucionando el error persistente de "error interno del servidor".
+- Archivo: backend/exam-service/Code.gs, Línea(s): 65, 268-299
+  - Se implementó la acción `getTeacherExamActivity` que faltaba en el backend. Esta función agrega datos de múltiples hojas para proporcionar una lista completa de las entregas de exámenes para el dashboard del profesor, solucionando el error "Acción no válida".
+
+14/01/2026
+- Archivo: js/config.js, Línea(s): 17, 20
+  - Se actualizaron las URLs de los microservicios `TASK` y `EXAM` para apuntar a los nuevos endpoints de producción desplegados.

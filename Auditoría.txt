@@ -681,3 +681,110 @@
   2.  **Generación de ID de Usuario (`user-service`):** Se reemplazará la generación de `userId` basada en `new Date().getTime()` por `Utilities.getUuid()` en la función `registerUser` para garantizar la unicidad de los identificadores.
   3.  **Extracción de Tipo MIME (`task-service`):** Se hará más robusta la lógica de extracción del tipo MIME en `submitAssignment` para manejar correctamente casos donde la expresión regular podría fallar.
   4.  **Índices de Columna (`task-service`):** Se refactorizará la función `gradeSubmission` para que obtenga los índices de las columnas de la hoja de cálculo por su nombre de encabezado en lugar de usar índices numéricos codificados, aumentando la resiliencia ante cambios en la estructura de la hoja.
+
+AUDITORÍA PRE-EDICIÓN (13/01/2026)
+------------------------------------
+- Archivo: js/teacher.js
+- Línea(s): 91-95
+- Hallazgo: La lógica de renderizado de enlaces de archivos utiliza directamente el valor de 'item.fileId'. El problema es que este campo contiene la URL completa de Google Drive en lugar del ID del archivo, lo que provoca la generación de URLs de descarga y visualización incorrectas. Se requiere añadir un paso para extraer el ID desde la URL.
+
+
+AUDITORÍA POST-CODE-REVIEW (13/01/2026)
+---------------------------------------
+- Archivo: js/teacher.js
+- Línea(s): 226
+- Hallazgo (originado en Code Review): La función 'openGradeModal' genera el enlace de descarga del archivo para el modal de calificación. Se ha detectado que esta función utiliza directamente 'entrega.fileId', que es una URL completa, en lugar de extraer primero el ID del archivo. Esto reproduce el mismo error que se corrigió en la tabla principal.
+
+
+AUDITORÍA POST-IMPLEMENTACIÓN (13/01/2026)
+------------------------------------------
+- Archivo: js/teacher.js
+- Línea(s): 98, 183
+- Hallazgo: Se ha identificado un nuevo formato de URL de archivo no estándar () que la lógica de extracción de ID actual no es capaz de procesar. La expresión regular existente solo maneja el formato estándar de Google Drive. Es necesario implementar una solución más robusta que pueda manejar múltiples patrones de URL.
+
+
+AUDITORÍA POST-IMPLEMENTACIÓN (13/01/2026)
+------------------------------------------
+- Archivo: js/teacher.js
+- Línea(s): 98, 183
+- Hallazgo: Se ha identificado un nuevo formato de URL de archivo no estándar ('.../IMA-Informatica/ID_DEL_ARCHIVO') que la lógica de extracción de ID actual no es capaz de procesar. La expresión regular existente solo maneja el formato estándar de Google Drive. Es necesario implementar una solución más robusta que pueda manejar múltiples patrones de URL.
+
+AUDITORÍA FINAL (POST-CODE-REVIEW) (13/01/2026)
+-----------------------------------------------
+- Archivo: js/teacher.js
+- Línea(s): 45-68
+- Hallazgo (crítico, originado en Code Review): Se ha detectado una regresión funcional en la lógica de 'extractDriveId'. La función está diseñada para extraer un ID a partir de una URL, pero no contempla el escenario en que el dato de entrada ya es un ID de archivo limpio. Dado que el backend fue mejorado para proveer IDs limpios, esta función fallará para todas las nuevas entregas, retornando 'null' y rompiendo la generación de enlaces.
+
+AUDITORÍA DE CALIFICACIÓN (13/01/2026)
+-------------------------------------
+- Archivos: backend/task-service/Code.gs, js/teacher.js
+- Hallazgo: El payload de calificación enviado desde el frontend es correcto. El código del backend en el repositorio para 'gradeSubmission' también es correcto. La causa probable del 'error interno del servidor' es que la versión desplegada del script de Google Apps no contiene la corrección del error 'off-by-one' que se implementó anteriormente.
+
+AUDITORÍA DE ENDPOINTS (13/01/2026)
+----------------------------------
+- Tarea: Actualización de la URL del servicio TASK.
+- Hallazgo: Inicio del proceso de verificación de endpoints. Se confirmó la conectividad externa y la operatividad de los servicios USER y EXAM como línea de base antes de probar la nueva URL de TASK.
+
+
+AUDITORÍA DE SERVICIOS (13/01/2026)
+----------------------------------
+- Archivos: backend/exam-service/Code.gs, js/teacher.js, backend/task-service/Code.gs, README.md
+
+- Hallazgo 1 (Servicio EXAM): El frontend ('js/teacher.js') llama a la acción 'getTeacherExamActivity'. Sin embargo, esta acción no está definida en el backend ('backend/exam-service/Code.gs'), lo que causa el error "Acción no válida". La documentación en README.md menciona la acción, pero la implementación no la incluye.
+
+- Hallazgo 2 (Servicio TASK): El error "interno del servidor" al calificar persiste porque la función 'gradeSubmission' en 'backend/task-service/Code.gs' busca los nombres de columna "Calificación", "Estado" y "Comentario" (con mayúsculas y tildes). Sin embargo, la documentación oficial en README.md especifica que los nombres de columna son en minúsculas: "calificacion", "estado" y "comentario". Esta discrepancia hace que 'indexOf' falle y la función lance un error.
+
+**AUDITORÍA PRE-EDICIÓN**
+- **FECHA:** 2026-01-14
+- **ARCHIVOS REVISADOS:**
+  - js/teacher.js
+  - teacher-dashboard.html
+- **HALLAZGOS:**
+  1. **Archivo:** js/teacher.js
+     - **Línea:** 129 (condicional )
+     - **Observación:** La renderización de los botones de control de examen ('Activar'/'Bloquear') depende de que el objeto de actividad tenga una propiedad  igual a . Esta condición es el punto central del problema.
+  2. **Archivo:** js/teacher.js
+     - **Línea:** 90 (función )
+     - **Observación:** Se detecta un intento explícito de añadir la propiedad  a los exámenes base (aquellos sin entregas) después de ser recuperados de la API.
+     - **Hipótesis:** La causa probable del problema es que los objetos de examen que llegan a la función  carecen de la propiedad . Esto puede deberse a que la llamada a  no devuelve los datos esperados, o a un problema en la lógica de transformación de datos previa a la renderización.
+  3. **Archivo:** teacher-dashboard.html
+     - **Observación:** La estructura HTML es correcta y está preparada para recibir el contenido dinámico. No se identifican anomalías en este archivo.
+- **CONCLUSIÓN:** El problema se origina en el flujo de datos de . Se debe verificar la respuesta de la API  y el estado de los objetos de examen antes de la llamada a  para asegurar que la propiedad  esté presente.
+
+
+**AUDITORÍA PRE-EDICIÓN**
+- **FECHA:** 2026-01-14
+- **ARCHIVOS REVISADOS:**
+  - js/teacher.js
+  - teacher-dashboard.html
+- **HALLAZGGOS:**
+  1. **Archivo:** js/teacher.js
+     - **Línea:** 129 (condicional `else if (item.tipo === 'Examen')`)
+     - **Observación:** La renderización de los botones de control de examen ('Activar'/'Bloquear') depende de que el objeto de actividad tenga una propiedad `tipo` igual a `'Examen'`. Esta condición es el punto central del problema.
+  2. **Archivo:** js/teacher.js
+     - **Línea:** 90 (función `.map(...)`)
+     - **Observación:** Se detecta un intento explícito de añadir la propiedad `tipo: 'Examen'` a los exámenes base (aquellos sin entregas) después de ser recuperados de la API.
+     - **Hipótesis:** La causa probable del problema es que los objetos de examen que llegan a la función `renderActivity` carecen de la propiedad `tipo`. Esto puede deberse a que la llamada a `getAllExams` no devuelve los datos esperados, o a un problema en la lógica de transformación de datos previa a la renderización.
+  3. **Archivo:** teacher-dashboard.html
+     - **Observación:** La estructura HTML es correcta y está preparada para recibir el contenido dinámico. No se identifican anomalías en este archivo.
+- **CONCLUSIÓN:** El problema se origina en el flujo de datos de `js/teacher.js`. Se debe verificar la respuesta de la API `getAllExams` y el estado de los objetos de examen antes de la llamada a `renderActivity` para asegurar que la propiedad `tipo` esté presente.
+
+AUDITORÍA DE CARGA DE EXAMEN (14/01/2026)
+-----------------------------------------
+- Archivo: js/exam.js
+- Línea(s): 41-43
+- Hallazgo (Crítico): En la función `loadExam`, el código desestructura la propiedad `preguntas` de la respuesta de la API y luego intenta usar `.map()` en la variable resultante (`originalQuestions`) sin verificar si es `undefined`. Si la API devuelve un examen sin la propiedad `preguntas`, esto causa un `TypeError: Cannot read properties of undefined (reading 'map')`, bloqueando completamente la carga del examen para el estudiante.
+
+- Archivo: js/exam.js
+- Línea(s): 15-22
+- Hallazgo (Mantenibilidad): El archivo contiene una función `fetchApi` duplicada, que ya existe en otros scripts como `js/api.js`. Esto viola el principio DRY y aumenta la carga de mantenimiento, ya que cualquier cambio en la lógica de la API debe replicarse en múltiples lugares.
+
+- Archivo: js/exam.js
+- Línea(s): 43
+- Hallazgo (UX): Si un examen se carga correctamente pero no contiene preguntas (`preguntas` es un array vacío), la interfaz de usuario no muestra ningún mensaje. El contenedor `questions-container` simplemente permanece vacío, lo que puede confundir al estudiante, haciéndole pensar que la página está rota o no ha cargado completamente.
+
+AUDITORÍA DE RECUPERACIÓN DE PREGUNTAS (14/01/2026)
+-------------------------------------------------
+- Archivo: backend/exam-service/Code.gs
+- Línea(s): 190-202
+- Hallazgo (Crítico): La función `getExamQuestions` devuelve una estructura de datos incorrecta que no coincide con la esperada por el frontend. El backend envía directamente un array de preguntas en la propiedad `data`, mientras que el frontend (`js/exam.js`) espera un objeto que contenga los detalles del examen (título, etc.) junto con el array de preguntas. Esta discrepancia es la causa raíz de que los exámenes se muestren como si no tuvieran preguntas.

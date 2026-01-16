@@ -123,10 +123,12 @@ function submitAssignment(payload) {
   if (!mimeMatch || !mimeMatch[1]) throw new Error("No se pudo extraer el tipo MIME del archivo.");
   const mimeType = mimeMatch[1];
   const blob = Utilities.newBlob(Utilities.base64Decode(fileInfo[1]), mimeType, fileName);
-  const fileUrl = asignaturaFolder.createFile(blob).getUrl();
+  const file = asignaturaFolder.createFile(blob);
+  const fileId = file.getId();
 
   const entregaId = "ENT-" + new Date().getTime();
-  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileUrl, '', 'Pendiente', '']);
+  // Se guarda el ID del archivo y su tipo MIME para uso en el frontend.
+  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente', '', mimeType]);
   return { status: "success", message: "Tarea entregada." };
 }
 
@@ -138,18 +140,22 @@ function gradeSubmission(payload) {
   const data = entregasSheet.getDataRange().getValues();
   const headers = data[0];
 
-  const calificacionCol = headers.indexOf("Calificación");
-  const estadoCol = headers.indexOf("Estado");
-  const comentarioCol = headers.indexOf("Comentario");
+  const calificacionCol = headers.indexOf("calificacion");
+  const estadoCol = headers.indexOf("estado");
+  const comentarioCol = headers.indexOf("comentario");
 
   if (calificacionCol === -1 || estadoCol === -1 || comentarioCol === -1) {
     throw new Error("No se encontraron las columnas necesarias en la hoja de Entregas.");
   }
 
-  const entregaRow = data.findIndex(row => row[0] === entregaId);
+  // Se busca el índice de la fila que coincide con el entregaId.
+  const rowIndex = data.findIndex(row => row[0] === entregaId);
 
-  if (entregaRow !== -1) {
-    const rowIndex = entregaRow + 1; // Range es 1-based
+  // Se valida que se haya encontrado la fila. rowIndex es 0-based.
+  if (rowIndex !== -1) {
+    // Se corrige el cálculo del rango para apuntar a la fila correcta.
+    // La fila en la hoja es rowIndex + 1.
+    // La columna es colIndex + 1.
     entregasSheet.getRange(rowIndex + 1, calificacionCol + 1).setValue(calificacion);
     entregasSheet.getRange(rowIndex + 1, estadoCol + 1).setValue(estado);
     entregasSheet.getRange(rowIndex + 1, comentarioCol + 1).setValue(comentario);
@@ -167,15 +173,29 @@ function getTeacherActivity() {
 
   const usuariosData = usuariosSheet.getDataRange().getValues();
   const tareasData = tareasSheet.getDataRange().getValues();
-  const entregasData = entregasSheet.getDataRange().getValues().slice(1);
+  const entregasValues = entregasSheet.getDataRange().getValues();
+  const entregasHeaders = entregasValues.shift(); // Saca los encabezados
+  let fileIdIndex = entregasHeaders.indexOf("fileUrl");
+  // Corrección: Si "fileUrl" no se encuentra, se asume que el ID está en la columna E (índice 4).
+  if (fileIdIndex === -1) {
+      fileIdIndex = 4;
+  }
+  const mimeTypeIndex = entregasHeaders.indexOf("mimeType");
 
-  const submissions = entregasData.map(entrega => {
+  const submissions = entregasValues.map(entrega => {
     const usuario = usuariosData.find(u => u[0] === entrega[2]);
     const tarea = tareasData.find(t => t[0] === entrega[1]);
     return {
-      tipo: 'Tarea', entregaId: entrega[0], titulo: tarea ? tarea[2] : "Tarea Desconocida",
-      alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido", fecha: new Date(entrega[3]),
-      archivoUrl: entrega[4], calificacion: entrega[5], estado: entrega[6], comentario: entrega[7]
+      tipo: 'Tarea',
+      entregaId: entrega[0],
+      titulo: tarea ? tarea[2] : "Tarea Desconocida",
+      alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
+      fecha: new Date(entrega[3]),
+      fileId: entrega[fileIdIndex],
+      mimeType: mimeTypeIndex > -1 ? entrega[mimeTypeIndex] : null, // Manejo por si la columna no existe
+      calificacion: entrega[5],
+      estado: entrega[6],
+      comentario: entrega[7]
     };
   });
 

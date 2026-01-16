@@ -85,7 +85,7 @@ B. CALIDAD DEL CÓDIGO
      b) Registrar todos los hallazgos en Auditoria.txt
      c) NO corregir durante la auditoría
      d) Convertir cada hallazgo en una nueva tarea
-        dentro de Instrucciones.txt
+        dent de Instrucciones.txt
 
 7. DUPLICACIÓN DE CÓDIGO
    - PROHIBIDO duplicar bloques de código.
@@ -347,6 +347,51 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**TÍTULO: Corrección de Flujo de Datos para Carga de Exámenes**
+*   **TIPO:** Bug Fix / Full Stack
+*   **DESCRIPCIÓN:** Se solucionó un error crítico que impedía a los estudiantes ver las preguntas de los exámenes. La causa era una discrepancia en la estructura de datos entre el frontend y el backend. Se modificó la función `getExamQuestions` en el `exam-service` para que devuelva el objeto completo que espera el frontend. Adicionalmente, se reintrodujo la función `renderQuestion` en `js/exam.js`, que había sido eliminada accidentalmente.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
+**TÍTULO: Corrección de Robustez en Carga de Exámenes del Estudiante**
+*   **TIPO:** Bug Fix / Frontend
+*   **DESCRIPCIÓN:** Se corrigió un error `TypeError` fatal en la página de examen del estudiante que ocurría si la API devolvía un examen sin preguntas. Se implementó código defensivo en `js/exam.js` para manejar este caso, mostrando un mensaje informativo al usuario. También se refactorizó el código para eliminar una función `fetchApi` duplicada.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
+**TÍTULO: Corrección de Robustez en Carga de Actividades**
+*   **TIPO:** Bug Fix / Frontend
+*   **DESCRIPCIÓN:** Se implementó código defensivo en `js/teacher.js` para prevenir un `TypeError` fatal que ocurría si alguna de las llamadas a la API de actividades devolvía `undefined`. La aplicación ahora maneja estos casos sin fallar, mejorando la estabilidad del dashboard del profesor.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
+**TÍTULO: Verificación de Lógica de Renderizado de Botones de Examen**
+*   **TIPO:** Verificación / Frontend
+*   **DESCRIPCIÓN:** Se auditó y verificó la lógica en `js/teacher.js` responsable de mostrar los botones "Activar" y "Bloquear" para los exámenes en el dashboard del profesor. Se confirmó a través de logs y análisis de código que el mecanismo existente, que añade la propiedad `tipo: 'Examen'` a los exámenes que no tienen entregas, funciona correctamente y soluciona el problema reportado de los botones faltantes. No se requirieron cambios en el código.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
+**TÍTULO: Corrección de Errores Críticos y Nueva Funcionalidad Backend**
+*   **TIPO:** Bug Fix / Feature / Múltiple
+*   **DESCRIPCIÓN:** Se realizaron dos correcciones críticas y se implementó una nueva función de backend:
+    1.  **Error al Calificar:** Se solucionó un "error interno del servidor" persistente en el `task-service` al corregir los nombres de las columnas (`calificacion`, `estado`, `comentario`) en la función `gradeSubmission` para que coincidan con la especificación de la base de datos (minúsculas y sin acentos).
+    2.  **Nueva Funcionalidad Backend:** Se implementó la acción `getTeacherExamActivity` que faltaba en el `exam-service`. Esta función agrega datos de múltiples hojas para proporcionar una lista completa de las entregas de exámenes, solucionando el error "Acción no válida" que impedía su carga en el dashboard.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
+**TÍTULO: Actualización de Endpoint del Servicio de Tareas (TASK)**
+*   **TIPO:** Configuración / Mantenimiento
+*   **DESCRIPCIÓN:** Se actualizó la URL del microservicio `TASK` en `js/config.js` al nuevo endpoint proporcionado. Se siguió un protocolo de verificación con `curl` para calibrar herramientas y confirmar la operatividad de todos los servicios antes de realizar el cambio.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
+**TÍTULO: Corrección del Error de Calificación de Tareas**
+*   **TIPO:** Bug Fix / Backend
+*   **DESCRIPCIÓN:** Se corrigió un 'error interno del servidor' que ocurría al intentar calificar una tarea. El problema se debía a un error 'off-by-one' en la función `gradeSubmission` del `task-service` que intentaba escribir la calificación en una fila incorrecta.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
+**TÍTULO: Corrección en la Generación de Enlaces de Archivos del Profesor**
+*   **TIPO:** Bug Fix / Frontend
+*   **DESCRIPCIÓN:** Se corrigió la lógica en `js/teacher.js` que generaba enlaces de archivo incorrectos. El problema era que se utilizaba la URL completa de Google Drive en lugar de extraer primero el ID del archivo. La nueva implementación analiza la URL, extrae el ID y construye correctamente los enlaces de descarga y visualización.
+*   **NOTA (POST-CODE-REVIEW):** Se aplicó una corrección adicional para solucionar el mismo problema de extracción de ID en el enlace de descarga dentro del modal de calificación.
+*   **NOTA 2 (POST-IMPLEMENTACIÓN):** Se robusteció la lógica de extracción de ID para soportar un formato de URL no estándar (`.../IMA-Informatica/ID`), centralizando la solución en una nueva función `extractDriveId`.
+*   **NOTA 3 (CICLO FINAL):** Se corrigió una regresión crítica en `extractDriveId` para que maneje correctamente tanto URLs como IDs de archivo limpios, asegurando la compatibilidad con datos antiguos y nuevos.
+*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+
 **TÍTULO: Actualización de URLs de Microservicios**
 *   **TIPO:** Configuración
 *   **DESCRIPCIÓN:** Se han actualizado las URLs de los microservicios de `USER`, `TASK` y `EXAM` en el archivo `js/config.js` para apuntar a los nuevos endpoints de producción.

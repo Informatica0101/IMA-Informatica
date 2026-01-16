@@ -162,6 +162,19 @@
         </main>
     </div>
 
+    <!-- Lightbox Modal para Imágenes -->
+    <div id="image-lightbox-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-4 rounded-lg shadow-2xl w-full max-w-3xl relative">
+            <div class="flex justify-between items-center border-b pb-3 mb-3">
+                <h2 id="lightbox-title" class="text-xl font-bold">Vista Previa</h2>
+                <button id="close-lightbox-btn" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div class="text-center">
+                <img id="lightbox-image" src="" alt="Vista previa de la entrega" class="max-w-full max-h-[80vh] mx-auto">
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de Calificación -->
     <div id="grade-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
         <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">

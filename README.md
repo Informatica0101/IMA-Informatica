@@ -149,6 +149,7 @@ La hoja de cálculo con ID `1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww` es la 
 | F | `calificacion`| `Number` | Nota asignada. |
 | G | `estado` | `String` | "Pendiente", "Revisada", "Rechazada". |
 | H | `comentario` | `String` | Feedback del profesor. |
+| I | `mimeType` | `String` | Tipo MIME del archivo entregado (ej. "image/png"). |
 
 **Hoja: `Examenes`**
 | Columna | Nombre | Tipo | Descripción |
