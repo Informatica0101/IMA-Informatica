@@ -1,443 +1,303 @@
-NORMAS OBLIGATORIAS DE DESARROLLO
-================================
-
-REGLA N.º 1 — REGLA MÁXIMA (NO NEGOCIABLE, INVIOLABLE)
-----------------------------------------------------
-ESTÁ TERMINANTEMENTE PROHIBIDO editar, borrar, sobrescribir
-o modificar este bloque de texto que contiene las normas y
-reglas obligatorias de desarrollo.
-
-CUALQUIER VIOLACIÓN A ESTAS REGLAS CONSTITUYE UN CASO GRAVE.
-
-
-A. CONTROL DE VERSIONES Y DOCUMENTACIÓN
---------------------------------------
-
-1. ACTUALIZACIÓN DE VERSIÓN
-   - Todo cambio realizado DEBE reflejarse en:
-     a) El número de versión visible en index.html
-     b) Los servicios correspondientes de Apps Script
-
-2. CONSULTA Y ACTUALIZACIÓN DE DOCUMENTACIÓN
-   - Antes y después de cualquier desarrollo se DEBEN:
-     - Consultar
-     - Validar
-     - Actualizar
-   los siguientes archivos:
-     - README.md
-     - Instrucciones.txt
-     - ChangesLogs.txt
-
-3. REGISTRO DETALLADO EN CHANGESLOGS.TXT
-   - Cada entrada DEBE especificar:
-     - Archivo modificado
-     - Número(s) de línea afectado(s)
-
-4. FLUJO DE ESTADOS DE TAREAS
-   - Tarea procesada y completada:
-     -> Mover al bloque "TAREAS POR REVISAR"
-
-   - Tarea revisada con resultado exitoso:
-     -> Mover al bloque "TAREAS EXITOSAS"
-
-   - Tarea revisada sin éxito:
-     -> Regresar al bloque "TAREAS PENDIENTES"
-     -> Agregar una nota explicando el problema
-     -> NO SE REVERTIRÁ EL CÓDIGO
-
-   - Bug o detalle no contemplado en la tarea original:
-     -> Regresar la tarea a "TAREAS PENDIENTES"
-     -> Registrar el problema como SUB-TAREA PENDIENTE
-
-
-B. CALIDAD DEL CÓDIGO
---------------------
-
-1. COMENTARIOS OBLIGATORIOS
-   - Todo código nuevo o modificado DEBE incluir un comentario
-     explicando claramente su propósito.
-
-2. PROTECCIÓN DE LAS REGLAS
-   - PROHIBIDO eliminar o modificar el bloque que contiene
-     reglas adicionales dentro de Instrucciones.txt
-
-3. PROHIBICIÓN DE RESÚMENES
-   - PROHIBIDO utilizar:
-     - "(Sin cambios)"
-     - Resúmenes
-     - Simplificaciones
-   en CUALQUIER archivo de código, documentación o reglamento.
-
-4. GESTIÓN DE COMMITS
-   - PROHIBIDO revertir commits sin solicitud expresa del PM.
-
-5. REVISIÓN MANUAL OBLIGATORIA
-   - PROHIBIDO usar herramientas de:
-     - Búsqueda automática
-     - Edición rápida
-   - Toda revisión DEBE realizarse:
-     - Archivo por archivo
-     - Línea por línea
-
-6. AUDITORÍA PREVIA OBLIGATORIA
-   - Antes de cualquier modificación, por mínima que sea:
-     a) Auditar completamente el archivo
-     b) Registrar todos los hallazgos en Auditoria.txt
-     c) NO corregir durante la auditoría
-     d) Convertir cada hallazgo en una nueva tarea
-        dent de Instrucciones.txt
-
-7. DUPLICACIÓN DE CÓDIGO
-   - PROHIBIDO duplicar bloques de código.
-   - La auditoría inicial es obligatoria para prevenir duplicación.
-
-8. FECHAS EN CHANGESLOGS.TXT
-   - PROHIBIDO inventar fechas.
-   - Usar como referencia la fecha de la última entrada registrada.
-
-9. VALIDACIÓN DE FIXES
-   - NO asumir que un fix fue exitoso.
-   - NO registrar fixes como EXITO.
-   - Evitar expresiones como:
-     - "Se corrigió"
-     - "Se arregló"
-     - "Se solucionó"
-
-10. ARCHIVOS DE DOCUMENTACIÓN
-    - PROHIBIDO crear archivos duplicados de:
-      - README.md
-      - Instrucciones.txt
-      - ChangesLogs.txt
-      - Auditoria.txt
-
-11. CONTENIDO DE DOCUMENTACIÓN
-    - PROHIBIDO borrar contenido existente.
-    - Solo se permite editar para reflejar la realidad del código,
-      evitando resumir o utilizar "(Sin cambios)".
-
-12. ACTUALIZACIÓN DE README.MD (NUEVAS IMPLEMENTACIONES)
-    - Toda nueva implementación solicitada por el PM y no documentada
-      DEBE agregarse como una nueva entrada en README.md.
-
-13. ACTUALIZACIÓN DE README.MD (CAMBIOS EXISTENTES)
-    - Si el PM solicita cambios a una función o implementación existente,
-      se DEBE editar la entrada correspondiente en README.md para reflejar
-      los nuevos objetivos del proyecto.
-
-
-C. PROCESO DE APROBACIÓN
------------------------
-
-1. PROHIBIDO marcar tareas como "COMPLETADAS" sin revisión del PM.
-2. PROHIBIDO asumir que un cambio resolvió un problema.
-3. SOLO describir:
-   - Qué se cambió
-   - Qué se debe cambiar
-4. Si una tarea introduce nuevos errores:
-   -> Marcar como "EN REVISIÓN"
-5. Si la tarea no funciona o no cumple:
-   -> Marcar como "REQUIERE NUEVA REVISIÓN"
-6. Toda tarea realizada DEBE marcarse como:
-   -> "PENDIENTE DE REVISIÓN POR EL PM"
-   -> NUNCA como "COMPLETADA" directamente
-
-
-
-------------------- TAREAS PENDIENTES -------------------
-**Archivo: backend.gs**
-
-*   **Función: Global**
-    *   **Problema:** IDs de configuración (SPREADSHEET_ID, DRIVE_FOLDER_ID) están hardcodeados.
-    *   **Descripción:** Externalizar la configuración para no tener que modificar el código fuente al cambiar de entorno.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 2-3
-
-*   **Función: registerUser**
-    *   **Problema:** Hashing de contraseña sin "salt".
-    *   **Descripción:** Modificar el proceso de hashing para incluir un "salt" único por usuario, que se almacenará junto a la contraseña hasheada.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 81-83
-    *   **Problema:** Falta de validación de datos en el payload de entrada.
-    *   **Descripción:** Añadir validaciones para asegurar que los campos `nombre`, `email` y `password` no estén vacíos y que el email tenga un formato válido.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 79
-    *   **Problema:** No se verifica la existencia previa de un email.
-    *   **Descripción:** Antes de insertar un nuevo usuario, realizar una búsqueda en la hoja `Usuarios` para comprobar que el email no esté ya registrado.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 85
-
-*   **Función: loginUser**
-    *   **Problema:** Carga completa de la hoja de usuarios para buscar coincidencias.
-    *   **Descripción:** Optimizar la búsqueda de usuarios, posiblemente utilizando filtros o una estrategia que no requiera cargar toda la base de datos en memoria.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 92-93
-
-*   **Función: createTask**
-    *   **Problema:** Falta de validación de datos en el payload de entrada.
-    *   **Descripción:** Implementar validaciones para los campos clave de una tarea, como `titulo`, `parcial`, `asignatura` y `fechaLimite`.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 112
-
-*   **Función: getStudentTasks**
-    *   **Problema:** Carga completa de las hojas `Tareas` y `Entregas`.
-    *   **Descripción:** Refactorizar la función para filtrar los datos de manera más eficiente, minimizando la cantidad de datos traídos a memoria.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 119-120
-
-*   **Función: submitAssignment**
-    *   **Problema:** Búsqueda ineficiente de usuario y tarea cargando hojas completas.
-    *   **Descripción:** Optimizar la obtención de datos del usuario y la tarea para evitar cargar las hojas completas.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 161, 166
-
-*   **Función: getTeacherActivity**
-    *   **Problema:** Carga de 5 hojas de cálculo completas en memoria.
-    *   **Descripción:** Optimizar drásticamente la función, posiblemente creando índices manuales (objetos JS) o pre-procesando los datos para evitar "joins" en tiempo de ejecución.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 193-197, 212
-    *   **Problema:** Uso de `toLocaleString()` dependiente del servidor.
-    *   **Descripción:** Devolver las fechas en un formato estándar (ISO 8601) y dejar que el frontend se encargue de formatearlas según la zona horaria del usuario.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 230
-
-*   **Función: reactivateExam**
-    *   **Problema:** Uso de índice de columna hardcodeado (número mágico).
-    *   **Descripción:** Reemplazar el `getRange(i + 1, 7)` por un método que obtenga el índice de la columna "Estado" por su nombre, haciéndolo resistente a cambios en la estructura de la hoja.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 238
-
-*   **Función: createExam**
-    *   **Problema:** Generación de `preguntaId` no garantiza unicidad.
-    *   **Descripción:** Utilizar `Utilities.getUuid()` para generar los IDs de las preguntas.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 369
-
-*   **Función: submitExam**
-    *   **Problema:** No se califican preguntas de tipo 'termino_pareado' y 'respuesta_breve'.
-    *   **Descripción:** Implementar la lógica de calificación para los tipos de pregunta que actualmente se omiten.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 353
-    *   **Problema:** Potencial división por cero si un examen no tiene preguntas.
-    *   **Descripción:** Añadir una comprobación para evitar la división por cero si `preguntasDelExamen.length` es 0.
-    *   **Referencia:** Auditoría.txt, Archivo: backend.gs, Línea(s): 362
-
-**Archivo: index.html**
-
-*   **Componente: Global**
-    *   **Problema:** Dependencia de CDN externas para Tailwind CSS y Google Fonts.
-    *   **Descripción:** Investigar la posibilidad de alojar localmente estas dependencias o utilizar un proceso de build (como PostCSS) para generar un archivo CSS optimizado y eliminar dependencias externas en producción.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 7, 8
-    *   **Problema:** Bloque de CSS personalizado dentro del HTML.
-    *   **Descripción:** Mover todo el CSS del bloque `<style>` a un archivo CSS externo (ej. `css/custom.css`) y enlazarlo en el `<head>`.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 9-195
-    *   **Problema:** Datos de contenido (`presentationData`, etc.) hardcodeados en el script.
-    *   **Descripción:** Mover los datos de los menús y descargas a archivos JSON dedicados (ej. `data/presentations.json`) y cargarlos con `fetch`.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 412, 494, 574
-    *   **Problema:** Todo el código JavaScript está en un solo bloque `<script>`.
-    *   **Descripción:** Modularizar el JavaScript. Mover la lógica principal a un archivo externo (ej. `js/main.js`) y considerar separar la lógica de los juegos también.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 412-1110
-
-*   **Componente: Menú de Navegación**
-    *   **Problema:** Enlace roto a "Pseudocódigo" en el menú móvil.
-    *   **Descripción:** Corregir el `href` del enlace "Pseudocódigo" en el menú móvil para que apunte a `pseudocode.html` en lugar de `pseudocode.js`.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 242, 273
-    *   **Problema:** Lógica de renderizado de menús duplicada (`renderDesktopNav`, `renderMobileNav`).
-    *   **Descripción:** Refactorizar la generación de menús para reutilizar la lógica de iteración sobre las estructuras de datos y solo diferenciar la salida de HTML.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 768-963
-
-*   **Componente: Carga de Juegos**
-    *   **Problema:** Funciones para cargar juegos (`loadPeripheralsGame`, etc.) son casi idénticas.
-    *   **Descripción:** Crear una única función `loadGame(gameInfo)` que acepte un objeto con los detalles del juego (nombre de archivo html/js, función de inicialización) para eliminar la duplicación de código.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 1205-1296
-    *   **Problema:** El progreso de los juegos se guarda en `localStorage`.
-    *   **Descripción:** Evaluar si el almacenamiento de progreso debe moverse al lado del servidor para persistencia entre dispositivos, o si `localStorage` es suficiente, documentando sus limitaciones.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Línea(s): 1162-1202
-
-**Archivos: login.html, register.html, student-dashboard.html, teacher-dashboard.html**
-
-*   **Componente: Global**
-    *   **Problema:** Dependencia de CDN de Tailwind CSS en todas las páginas.
-    *   **Descripción:** Centralizar la estrategia de CSS, aplicando la misma solución que para `index.html`.
-    *   **Referencia:** Auditoría.txt, Archivo: login.html (Línea 6), register.html (Línea 6), student-dashboard.html (Línea 6), teacher-dashboard.html (Línea 6)
-    *   **Problema:** Scripts cargados sin `defer` o `async`.
-    *   **Descripción:** Añadir el atributo `defer` a todas las etiquetas `<script>` para mejorar el rendimiento de carga de las páginas.
-    *   **Referencia:** Auditoría.txt, Archivo: login.html (Líneas 26-27), etc.
-
-*   **Componente: Formularios (Login/Registro)**
-    *   **Problema:** Falta de etiquetas semánticas `<main>`.
-    *   **Descripción:** Envolver el contenido principal de `login.html` y `register.html` en una etiqueta `<main>` para mejorar la accesibilidad.
-    *   **Referencia:** Auditoría.txt, Archivo: login.html, Línea(s): 8
-    *   **Problema:** No hay elementos para mostrar mensajes de error/éxito.
-    *   **Descripción:** Añadir un `div` dedicado en los formularios de login, registro y otros para mostrar retroalimentación al usuario, y modificar el JavaScript para usar estos divs en lugar de `alert()`.
-    *   **Referencia:** Auditoría.txt, Archivo: login.html (Líneas 10-21), register.html (Líneas 12-42), etc.
-
-*   **Componente: Formulario de Registro (register.html)**
-    *   **Problema:** Opciones de "Grado" hardcodeadas.
-    *   **Descripción:** Generar dinámicamente las opciones del `<select>` de grado desde una fuente de datos central en JavaScript para facilitar el mantenimiento.
-    *   **Referencia:** Auditoría.txt, Archivo: register.html, Línea(s): 24-28
-    *   **Problema:** Campo "Sección" es de texto libre.
-    *   **Descripción:** Cambiar el campo "Sección" a un `<select>` con opciones predefinidas (ej. A, B, C) para garantizar la consistencia de los datos.
-    *   **Referencia:** Auditoría.txt, Archivo: register.html, Línea(s): 32
-
-*   **Componente: Dashboard de Estudiante (student-dashboard.html)**
-    *   **Problema:** Falta de indicadores de carga y estado vacío.
-    *   **Descripción:** Añadir un mensaje de "Cargando..." a la lista de tareas y un mensaje de "No tienes tareas" cuando la lista esté vacía.
-    *   **Referencia:** Auditoría.txt, Archivo: student-dashboard.html, Línea(s): 17
-    *   **Problema:** Modal de entrega sin indicadores de carga/error.
-    *   **Descripción:** Mejorar el modal para que muestre un spinner durante la subida del archivo y un área para mensajes de error.
-    *   **Referencia:** Auditoría.txt, Archivo: student-dashboard.html, Línea(s): 22-38
-
-*   **Componente: Dashboard de Profesor (teacher-dashboard.html)**
-    *   **Problema:** Falta de indicador de carga y estado vacío en la tabla de entregas.
-    *   **Descripción:** Añadir una fila en la tabla que indique "Cargando..." y otra para "No hay entregas".
-    *   **Referencia:** Auditoría.txt, Archivo: teacher-dashboard.html, Línea(s): 45
-    *   **Problema:** Inconsistencia en el campo "Grado" (texto vs. select).
-    *   **Descripción:** Cambiar el campo "Grado Asignado" en el formulario de crear tarea a un `<select>` para que sea consistente con el formulario de crear examen.
-    *   **Referencia:** Auditoría.txt, Archivo: teacher-dashboard.html, Línea(s): 101, 150-155
-    *   **Problema:** Campo "Sección" es de texto libre.
-    *   **Descripción:** Cambiar los campos de "Sección" a `<select>` en ambos formularios.
-    *   **Referencia:** Auditoría.txt, Archivo: teacher-dashboard.html, Línea(s): 105, 159
-    *   **Problema:** HTML de preguntas de examen generado en JS.
-    *   **Descripción:** Crear una etiqueta `<template>` en `teacher-dashboard.html` con la estructura de una pregunta y usarla en `teacher.js` para clonar y añadir nuevas preguntas.
-    *   **Referencia:** Auditoría.txt, Archivo: teacher-dashboard.html, Línea(s): 173
-
-**Archivos: js/config.js, js/auth.js, js/student.js, js/teacher.js**
-
-*   **Servicio: Configuración (js/config.js)**
-    *   **Problema:** URLs de servicios hardcodeadas y expuestas.
-    *   **Descripción:** Investigar un método para manejar la configuración de forma más segura, como un sistema de variables de entorno si la plataforma de despliegue lo permite.
-    *   **Referencia:** Auditoría.txt, Archivo: js/config.js, Línea(s): 1-24
-
-*   **Servicio: Autenticación (js/auth.js)**
-    *   **Problema:** Datos de sesión del usuario en `localStorage`.
-    *   **Descripción:** Migrar la gestión de sesión de `localStorage` a `sessionStorage` o a una cookie HttpOnly (si es posible) para mejorar la seguridad.
-    *   **Referencia:** Auditoría.txt, Archivo: js/auth.js, Línea(s): 5
-    *   **Problema:** Redirección basada únicamente en el `rol` del lado del cliente.
-    *   **Descripción:** Asegurarse de que cada página protegida por rol (dashboards) verifique el rol del usuario no solo al cargar, sino que el backend valide el rol en cada petición.
-    *   **Referencia:** Auditoría.txt, Archivo: js/auth.js, Línea(s): 7-12
-    *   **Problema:** Falta de validación de cliente en el formulario de registro.
-    *   **Descripción:** Añadir validaciones en JavaScript para los campos del formulario de registro antes de enviar la petición a la API.
-    *   **Referencia:** Auditoría.txt, Archivo: js/auth.js, Línea(s): 63-69
-
-*   **Servicio: Lógica General (Todos los JS)**
-    *   **Problema:** Función `fetchApi` duplicada en múltiples archivos.
-    *   **Descripción:** Crear un archivo `js/api.js` o `js/utils.js` que contenga la función `fetchApi` y cualquier otra utilidad compartida, e importarlo en los archivos que lo necesiten.
-    *   **Referencia:** Auditoría.txt, Archivo: js/auth.js (Líneas 15-25), etc.
-    *   **Problema:** Uso de `alert()` para retroalimentación.
-    *   **Descripción:** Reemplazar todas las llamadas a `alert()` por la lógica que muestre los mensajes en los nuevos elementos de UI creados para este fin.
-    *   **Referencia:** Auditoría.txt, Archivo: js/auth.js (Líneas 48, 52, 79, 83), etc.
-    *   **Problema:** Comentario incorrecto sobre `Content-Type` en `fetchApi`.
-    *   **Descripción:** Añadir el encabezado `'Content-Type': 'text/plain'` a todas las peticiones `fetch` para evitar problemas de CORS.
-    *   **Referencia:** Auditoría.txt, Archivo: js/auth.js, Línea(s): 22
-
-*   **Servicio: Dashboard de Estudiante (js/student.js)**
-    *   **Problema:** Inconsistencia de rol ("Estudiante" vs "Alumno").
-    *   **Descripción:** Eliminar la comprobación de "Alumno" y estandarizar el uso de "Estudiante" en todo el frontend.
-    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Línea(s): 3
-    *   **Problema:** Lógica para obtener exámenes es incorrecta y apunta a un endpoint inexistente.
-    *   **Descripción:** Crear una nueva acción en el backend (`getStudentExams`) que devuelva la lista de exámenes para un estudiante, y actualizar el frontend para que la utilice.
-    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Línea(s): 28-29
-    *   **Problema:** No se manejan las diferentes estructuras de datos de tareas y exámenes.
-    *   **Descripción:** Implementar una capa de transformación en `fetchAllActivities` para mapear los datos de tareas y exámenes a un formato común antes de pasarlos a la función de renderizado.
-    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Línea(s): 35
-    *   **Problema:** La función `renderActivities` no renderiza exámenes.
-    *   **Descripción:** Actualizar la función para que pueda mostrar tanto tareas como exámenes, incluyendo un botón para "Realizar Examen" que redirija a `exam.html`.
-    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Línea(s): 45-53
-    *   **Problema:** Falta la lógica para iniciar un examen desde el dashboard.
-    *   **Descripción:** Implementar el flujo para que al hacer clic en un examen, el usuario sea redirigido a la página del examen con el ID correspondiente.
-    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Línea(s): 57
-
-*   **Servicio: Dashboard de Profesor (js/teacher.js)**
-    *   **Problema:** Peticiones ineficientes para obtener actividad.
-    *   **Descripción:** Modificar `fetchTeacherActivity` para que haga una sola llamada a la acción `getTeacherActivity` del backend, que ya devuelve los datos combinados.
-    *   **Referencia:** Auditoría.txt, Archivo: js/teacher.js, Línea(s): 26
-    *   **Problema:** Vulnerabilidad XSS en `renderActivity`.
-    *   **Descripción:** Refactorizar la función `renderActivity` para que cree los elementos del DOM de forma segura (usando `document.createElement` y `textContent`) en lugar de construir una cadena de HTML y usar `innerHTML`.
-    *   **Referencia:** Auditoría.txt, Archivo: js/teacher.js, Línea(s): 80
-    *   **Problema:** Contaminación del scope global con `window.reactivateExam` y `window.openGradeModal`.
-    *   **Descripción:** Refactorizar la asignación de eventos para usar `addEventListener` en un bucle después de renderizar la tabla, adjuntando los listeners a los botones de acción correspondientes.
-    *   **Referencia:** Auditoría.txt, Archivo: js/teacher.js, Línea(s): 161, 171
-
-
-------------------- TAREAS POR REVISAR ------------------
-**TÍTULO: Corrección de Flujo de Datos para Carga de Exámenes**
-*   **TIPO:** Bug Fix / Full Stack
-*   **DESCRIPCIÓN:** Se solucionó un error crítico que impedía a los estudiantes ver las preguntas de los exámenes. La causa era una discrepancia en la estructura de datos entre el frontend y el backend. Se modificó la función `getExamQuestions` en el `exam-service` para que devuelva el objeto completo que espera el frontend. Adicionalmente, se reintrodujo la función `renderQuestion` en `js/exam.js`, que había sido eliminada accidentalmente.
-*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-
-**TÍTULO: Corrección de Robustez en Carga de Exámenes del Estudiante**
-*   **TIPO:** Bug Fix / Frontend
-*   **DESCRIPCIÓN:** Se corrigió un error `TypeError` fatal en la página de examen del estudiante que ocurría si la API devolvía un examen sin preguntas. Se implementó código defensivo en `js/exam.js` para manejar este caso, mostrando un mensaje informativo al usuario. También se refactorizó el código para eliminar una función `fetchApi` duplicada.
-*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-
-**TÍTULO: Corrección de Robustez en Carga de Actividades**
-*   **TIPO:** Bug Fix / Frontend
-*   **DESCRIPCIÓN:** Se implementó código defensivo en `js/teacher.js` para prevenir un `TypeError` fatal que ocurría si alguna de las llamadas a la API de actividades devolvía `undefined`. La aplicación ahora maneja estos casos sin fallar, mejorando la estabilidad del dashboard del profesor.
-*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-
-**TÍTULO: Verificación de Lógica de Renderizado de Botones de Examen**
-*   **TIPO:** Verificación / Frontend
-*   **DESCRIPCIÓN:** Se auditó y verificó la lógica en `js/teacher.js` responsable de mostrar los botones "Activar" y "Bloquear" para los exámenes en el dashboard del profesor. Se confirmó a través de logs y análisis de código que el mecanismo existente, que añade la propiedad `tipo: 'Examen'` a los exámenes que no tienen entregas, funciona correctamente y soluciona el problema reportado de los botones faltantes. No se requirieron cambios en el código.
-*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-
-**TÍTULO: Corrección de Errores Críticos y Nueva Funcionalidad Backend**
-*   **TIPO:** Bug Fix / Feature / Múltiple
-*   **DESCRIPCIÓN:** Se realizaron dos correcciones críticas y se implementó una nueva función de backend:
-    1.  **Error al Calificar:** Se solucionó un "error interno del servidor" persistente en el `task-service` al corregir los nombres de las columnas (`calificacion`, `estado`, `comentario`) en la función `gradeSubmission` para que coincidan con la especificación de la base de datos (minúsculas y sin acentos).
-    2.  **Nueva Funcionalidad Backend:** Se implementó la acción `getTeacherExamActivity` que faltaba en el `exam-service`. Esta función agrega datos de múltiples hojas para proporcionar una lista completa de las entregas de exámenes, solucionando el error "Acción no válida" que impedía su carga en el dashboard.
-*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-
-**TÍTULO: Actualización de Endpoint del Servicio de Tareas (TASK)**
-*   **TIPO:** Configuración / Mantenimiento
-*   **DESCRIPCIÓN:** Se actualizó la URL del microservicio `TASK` en `js/config.js` al nuevo endpoint proporcionado. Se siguió un protocolo de verificación con `curl` para calibrar herramientas y confirmar la operatividad de todos los servicios antes de realizar el cambio.
-*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-
-**TÍTULO: Corrección del Error de Calificación de Tareas**
-*   **TIPO:** Bug Fix / Backend
-*   **DESCRIPCIÓN:** Se corrigió un 'error interno del servidor' que ocurría al intentar calificar una tarea. El problema se debía a un error 'off-by-one' en la función `gradeSubmission` del `task-service` que intentaba escribir la calificación en una fila incorrecta.
-*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-
-**TÍTULO: Corrección en la Generación de Enlaces de Archivos del Profesor**
-*   **TIPO:** Bug Fix / Frontend
-*   **DESCRIPCIÓN:** Se corrigió la lógica en `js/teacher.js` que generaba enlaces de archivo incorrectos. El problema era que se utilizaba la URL completa de Google Drive en lugar de extraer primero el ID del archivo. La nueva implementación analiza la URL, extrae el ID y construye correctamente los enlaces de descarga y visualización.
-*   **NOTA (POST-CODE-REVIEW):** Se aplicó una corrección adicional para solucionar el mismo problema de extracción de ID en el enlace de descarga dentro del modal de calificación.
-*   **NOTA 2 (POST-IMPLEMENTACIÓN):** Se robusteció la lógica de extracción de ID para soportar un formato de URL no estándar (`.../IMA-Informatica/ID`), centralizando la solución en una nueva función `extractDriveId`.
-*   **NOTA 3 (CICLO FINAL):** Se corrigió una regresión crítica en `extractDriveId` para que maneje correctamente tanto URLs como IDs de archivo limpios, asegurando la compatibilidad con datos antiguos y nuevos.
-*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-
-**TÍTULO: Actualización de URLs de Microservicios**
-*   **TIPO:** Configuración
-*   **DESCRIPCIÓN:** Se han actualizado las URLs de los microservicios de `USER`, `TASK` y `EXAM` en el archivo `js/config.js` para apuntar a los nuevos endpoints de producción.
-*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-
-**Archivo: index.html**
-
-*   **Componente: Enlace al Portal de Login (Corrección)**
-    *   **Problema:** La página principal no tenía un enlace visible y dedicado para acceder al portal de login.
-    *   **Descripción:** Se añadió un nuevo botón con el texto "Portal" en la barra de navegación (escritorio y móvil) que dirige a `login.html`, reemplazando una implementación anterior incorrecta.
-    *   **Referencia:** Auditoría.txt, Archivo: index.html, Hallazgo 3 (Corregido)
-
-**TÍTULO: Auditoría y Corrección de Servicios Backend**
-*   **TIPO:** Seguridad / Robustez / Mantenibilidad
-*   **DESCRIPCIÓN:** Se implementaron correcciones en `user-service` y `task-service` basadas en hallazgos de auditoría. Los cambios incluyen la ofuscación de mensajes de error, la generación de IDs de usuario con UUID, la extracción robusta de tipos MIME y la eliminación de índices de columna codificados.
-*   **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
-
-En este bloque se agregarán las tareas realizadas cuyo
-resultado aún no ha sido validado por el PM.
-
-
-------------------- TAREAS EXITOSAS ---------------------
-**Archivo: js/student.js**
-
-*   **Componente: Botón de Cerrar Sesión**
-    *   **Problema:** El botón "Cerrar Sesión" en el dashboard del estudiante no tenía funcionalidad.
-    *   **Descripción:** Se añadió la lógica para obtener el `logout-button` del DOM y asignarle un `addEventListener` que elimina al usuario del `localStorage` y redirige a `login.html`.
-    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Hallazgo 1
-
-*   **Componente: Visibilidad de Exámenes**
-    *   **Problema:** Los estudiantes no podían ver los exámenes asignados en su dashboard.
-    *   **Descripción:** Se modificó la función `fetchStudentTasks` para que también solicite los exámenes del estudiante a la API (`EXAM`, `getStudentExams`). Se actualizó la función `renderActivities` para que pueda renderizar tanto tareas como exámenes.
-    *   **Referencia:** Auditoría.txt, Archivo: js/student.js, Hallazgo 2
-**Archivo: js/teacher.js**
-
-*   **Componente: Creación de Exámenes**
-    *   **Problema:** El botón "Añadir Pregunta" no tenía ninguna acción asignada.
-    *   **Descripción:** Se implementó un `addEventListener` para el botón `add-question-btn` que genera y añade dinámicamente el HTML para una nueva pregunta en el `questions-container`.
-    *   **Referencia:** ChangesLogs.txt, Archivo: js/teacher.js, Línea(s): 158-241
-
-*   **Componente: Creación de Exámenes**
-    *   **Problema:** La función de guardar el examen enviaba un payload vacío, causando un error `forEach` en el backend.
-    *   **Descripción:** Se modificó el `addEventListener` del evento `submit` del formulario `create-exam-form` para que recolecte todos los datos del examen y de las preguntas añadidas dinámicamente, construyendo el objeto `payload` correcto antes de enviarlo a la API.
-    *   **Referencia:** ChangesLogs.txt, Archivo: js/teacher.js, Línea(s): 243-297
-
-En este bloque se listarán únicamente las tareas que fueron
-revisadas y aprobadas con resultado exitoso.
-
-NO TOCAR EL CÓDIGO DE ESTAS TAREAS SIN AUTORIZACIÓN EXPRESA DEL PM.
+Importante: 
+PROHIBIDO AGREGAR CONTENIDO ANTES DEL SIGUIENTE BLOQUE DE TEXTO. 
+
+— PROCEDIMIENTO OBLIGATORIO DE TRABAJO.
+===================================================================
+
+Este procedimiento es de CUMPLIMIENTO OBLIGATORIO en TODOS los proyectos.
+No se permite omitir, alterar ni reordenar pasos.
+
+--------------------------------------------------
+FLUJO PRINCIPAL DE TRABAJO
+--------------------------------------------------
+
+1. AUDITORÍA INICIAL DEL ARCHIVO
+   - Auditar el/los archivo(s) involucrados.
+   - Revisión archivo por archivo.
+   - Revisión línea por línea.
+   - Identificar estado actual, riesgos, dependencias y efectos colaterales.
+   - PROHIBIDO modificar código en esta etapa.
+
+2. REGISTRO DE HALLAZGOS
+   - Registrar TODOS los hallazgos en Auditoría.txt.
+   - Crear nueva entrada o actualizar la existente.
+   - PROHIBIDO eliminar información previa.
+   - NO realizar correcciones durante la auditoría.
+
+3. MANEJO DE HALLAZGOS FUERA DE ALCANCE
+   - Si se detectan problemas fuera de la tarea actual:
+     a) Resolverlos en el MISMO commit SOLO si es seguro.
+     b) Si no es posible:
+        -> Registrar nueva tarea en Instrucciones.txt
+        -> Referenciarla en Auditoría.txt
+
+4. RESPALDO OBLIGATORIO ANTES DE EDICIÓN
+   - Crear copia exacta del/los archivo(s) a modificar.
+   - El respaldo DEBE conservar:
+     · Nombre original
+     · Contenido íntegro
+   - El respaldo se usa EXCLUSIVAMENTE para comparación posterior.
+
+5. EJECUCIÓN DE LA TAREA
+   - Implementar ÚNICAMENTE lo solicitado.
+   - PROHIBIDO:
+     · Cambiar estilos no relacionados
+     · Alterar flujos existentes
+     · Introducir optimizaciones no solicitadas
+   - Todo cambio debe estar justificado por la tarea.
+
+6. VERIFICACIÓN FUNCIONAL
+   - Confirmar que la tarea cumple su objetivo.
+   - Verificar que no se rompan funciones existentes.
+   - Probar flujos relacionados directa e indirectamente.
+
+7. COMPARACIÓN POST-EDICIÓN (OBLIGATORIA)
+   - Comparar archivo editado contra el respaldo previo.
+   - Identificar:
+     · Líneas eliminadas
+     · Líneas modificadas
+     · Bloques sobreescritos
+   - Verificar que:
+     -> TODO cambio esté directamente relacionado con la tarea.
+   - Si se detectan cambios ajenos:
+     -> REVERTIRLOS inmediatamente
+     -> Repetir la comparación
+-Los archivos de Respaldo se debe eliminar DESPUES de la revision de codigo de Code Review. 
+-Todo archivo, captura generado para la verificación visual o ejecutable debe de ser eliminado en el pre-commit. 
+
+8. VERIFICACIÓN DE INTEGRIDAD Y EFECTOS COLATERALES
+   - Revisar dependencias internas y externas.
+   - Detectar efectos colaterales visuales o lógicos.
+   - Confirmar que no existen regresiones.
+
+9. REVISIÓN FINAL DE CÓDIGO
+   - Revisión completa nuevamente.
+   - Línea por línea.
+   - Función por función.
+   - Evaluar consistencia, claridad y impacto.
+
+10. REGISTRO EN CHANGESLOGS.TXT
+    - Registrar TODOS los cambios realizados.
+    - Indicar:
+      · Archivo modificado
+      · Líneas afectadas
+      · Descripción objetiva
+    - PROHIBIDO asumir éxito o usar frases de cierre.
+
+11. ACTUALIZACIÓN DE INSTRUCCIONES.TXT
+    - Mover la tarea ejecutada a:
+      -> "TAREAS PENDIENTES DE REVISIÓN"
+    - NO eliminar tareas sin aprobación del PM.
+
+12. COMMIT
+    - Realizar UN SOLO commit por ciclo completo.
+    - El commit DEBE reflejar EXACTAMENTE
+      lo auditado y documentado.
+
+
+---
+1. **TÍTULO: Ajuste Fino Extremo de Header y Búsqueda (v4.9.7)**
+   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+   - **TIPO:** Refinamiento UI / UX / Estabilidad
+   - **ALCANCE:** Animaciones fluidas, fijación de overflow y suavizado de logo.
+   - **DESCRIPCIÓN DETALLADA:**
+     - **Animaciones:** Sincronización de opacity/visibility y suavizado de max-height.
+     - **Layout:** Bloqueo estricto de overflow-x mediante max-width: 100vw.
+     - **Logo:** Interpolación suave mediante cubic-bezier para eliminar saltos.
+-----------------------------------------------
+EXTENSIÓN OBLIGATORIA POR CODE REVIEW
+--------------------------------------------------
+
+Si el Code Review detecta:
+- Fallas
+- Bloqueantes
+- Riesgos
+- Cambios requeridos
+
+ENTONCES:
+-> Este MISMO procedimiento DEBE aplicarse nuevamente
+-> Incluso si implica modificar archivos ya editados
+-> NO se permiten correcciones parciales
+
+
+==================================================
+PROTOCOLO DE RESULTADO DE CODE REVIEW
+==================================================
+
+--------------------------------------------------
+FLUJO DE ANÁLISIS
+--------------------------------------------------
+
+1. LECTURA COMPLETA DEL CODE REVIEW
+   - Leer TODO el informe.
+   - No omitir secciones.
+
+2. SAFETY & SIDE EFFECTS
+   - Se considera FUENTE DE VERDAD PRINCIPAL.
+   - SOLO se ignora si el Code Review solicita
+     explícitamente revertir cambios.
+
+--------------------------------------------------
+TRATAMIENTO DE REVERSIÓN
+--------------------------------------------------
+
+3. EVALUACIÓN OBLIGATORIA
+
+   a) CAMBIOS "OUT OF SCOPE"
+      - Verificar si pertenecen a:
+        · Tareas anteriores
+        · Commits previos aprobados
+
+      - Si pertenecen a tareas anteriores:
+        -> IGNORAR solicitud de reversión
+        -> CONTINUAR con el commit actual
+
+   b) CAMBIOS DE LA TAREA ACTUAL
+      - Si los cambios NO solicitados
+        fueron introducidos durante la tarea actual:
+        -> REALIZAR reversión
+        -> REGISTRAR el motivo
+
+--------------------------------------------------
+IMPACTO EN EL FLUJO
+--------------------------------------------------
+
+4. REINICIO DEL CICLO
+   - Toda observación que implique cambios:
+     -> REINICIA el ciclo completo
+        desde la AUDITORÍA INICIAL
+
+   - El reinicio NO afecta:
+     · Commits anteriores
+     · Tareas aprobadas
+     · Cambios fuera de alcance
+
+
+--------------------------------------------------
+DOCUMENTACIÓN OBLIGATORIA
+--------------------------------------------------
+
+Toda acción derivada del Code Review
+DEBE quedar registrada en:
+- Auditoría.txt
+- ChangesLogs.txt
+- Instrucciones.txt (si aplica)
+
+
+--------------------------------------------------
+REGLA FINAL ABSOLUTA
+--------------------------------------------------
+
+SI NO SE AUDITA, NO SE CAMBIA.
+SI NO SE REGISTRA, NO EXISTE.
+
+El incumplimiento de CUALQUIER paso
+INVALIDA el proceso completo.
+
+---
+**TAREAS PENDIENTES DE REVISIÓN**
+---
+1. **TÍTULO: Ajuste Fino Extremo de Header y Búsqueda (v4.9.7)**
+   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+   - **TIPO:** Refinamiento UI / UX / Estabilidad
+   - **ALCANCE:** Animaciones fluidas, fijación de overflow y suavizado de logo.
+   - **DESCRIPCIÓN DETALLADA:**
+     - **Animaciones:** Sincronización de opacity/visibility y suavizado de max-height.
+     - **Layout:** Bloqueo estricto de overflow-x mediante max-width: 100vw.
+     - **Logo:** Interpolación suave mediante cubic-bezier para eliminar saltos.
+
+1. **TÍTULO: Reparación de Precisión de Layout y Logo (v4.9.6)**
+   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+   - **TIPO:** Refinamiento UI / Bugfix Layout / Unificación CSS
+   - **ALCANCE:** Corrección milimétrica de centrado de logo y desbordamiento horizontal.
+   - **DESCRIPCIÓN DETALLADA:**
+     - **Unificación:** Consolidación de reglas CSS dispersas bajo `body.search-active` en un solo bloque coherente.
+     - **Centrado Logo:** Implementación de centrado vertical dinámico (`top: 50%`, `transform: translateY(-50%)`) y escala del 95%.
+     - **Layout:** Eliminación de `gap` en header activo para colapso total de espacio superior.
+     - **Overflow:** Bloqueo estricto de desbordamiento horizontal en el encabezado fijo.
+
+2. **TÍTULO: Corrección de Regresiones del Header (v4.9.5)**
+   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+   - **TIPO:** Bugfix / UX / Regresión
+   - **ALCANCE:** Restauración completa de funcionalidades perdidas tras el refactor estructural.
+   - **DESCRIPCIÓN DETALLADA:**
+     - **Hamburger:** Restaurada visibilidad e interactividad mediante ajuste de z-index y capas.
+     - **Búsqueda:** Se implementó el botón "X" para limpiar términos y su lógica visual (`.has-text`).
+     - **Logo:** Corregida animación y visibilidad en modo búsqueda (ya no desaparece).
+     - **Pull-to-refresh:** Re-implementado mediante listeners de touch para permitir recarga manual en móviles.
+     - **Versión:** Sincronización global a v4.9.5.
+
+2. **TÍTULO: Restauración de Animaciones y Botón Hamburguesa**
+   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+   - **TIPO:** Fix UX / UI Regression / Animaciones
+   - **ALCANCE:** Restauración de la fluidez visual y componentes esenciales del header tras el refactor estructural.
+   - **DESCRIPCIÓN DETALLADA:**
+     - **Animaciones:** Se reemplazó `display: none` por transiciones de `opacity` y `max-height` para restaurar la suavidad entre estados de búsqueda.
+     - **Hamburger:** Se restauró la visibilidad y interactividad del botón de menú lateral.
+     - **Logo:** Se re-activó la animación de reducción y reposicionamiento del logo.
+     - **Estabilidad:** El fix de "espacio fantasma" se mantiene intacto mediante colapso de altura animado.
+
+2. **TÍTULO: Reconstrucción Extrema del Header y Fix de Espacio Fantasma**
+   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+   - **TIPO:** Refactor Estructural / Layout Móvil / UX
+   - **ALCANCE:** Reconstrucción integral del sistema de encabezado y búsqueda para eliminar redundancias y fallos de visualización en móviles.
+   - **DESCRIPCIÓN DETALLADA:**
+     - **HTML:** Implementación de `.main-header` como contenedor maestro unificado.
+     - **CSS:** Centralización de estilos y uso de `display: none !important` para colapsar espacio en modo búsqueda. Sincronización milimétrica del padding de resultados (70px).
+     - **JS:** Ajuste de `ui.js` para compatibilidad con la nueva jerarquía (mensaje de bienvenida).
+     - **Visual:** Eliminación total del hueco entre barra y resultados manteniendo la estética original.
+
+2. **TÍTULO: Corrección de Causa Raíz de Fallos en Búsqueda y Modal**
+   - **ESTADO:** PENDIENTE DE REVISIÓN POR EL PM
+   - **TIPO:** Corrección de Causa Raíz / Bug de Datos / Bug Visual de CSS
+   - **ALCANCE:** Se implementaron correcciones definitivas en el backend (`services/catalog/catalog.js`), frontend (`ui.js`) y CSS (`style.css`) basadas en una auditoría consolidada.
+   - **DESCRIPCIÓN DETALLADA:**
+     - **Problema Video (Causa Raíz: Contrato de Datos Roto):** Se corrigió la discrepancia de nombres de propiedad entre el backend y el frontend. El servicio `catalog.js` ahora renombra `videoGuiaDesarmeUrl` a `Video` antes de enviar la respuesta. El `ui.js` fue ajustado para consumir esta propiedad (`Video`), solucionando la causa raíz de que el video no se visualizara.
+     - **Problema Espaciado (Causa Raíz: Especificidad CSS):** Se añadió `!important` a la regla de CSS que anula el `margin-bottom` del `div#search-wrapper` en `style.css`. Esto asegura que el estilo en línea del `index.html` sea sobrescrito y el espacio extra se elimine correctamente.
+
+
+---
+**DERIVADO DE AUDITORÍA — NO EJECUTAR AÚN**
+---
+*No hay tareas pendientes en esta sección.*
+
+---
+**TAREAS COMPLETADAS (Validadas por el PM)**
+---
+1. MEJORA Y REFINAMIENTO DE ANIMACIÓN DE BÚSQUEDA
+Estado: COMPLETADO
+Origen: Refinamiento UX
+Prioridad: Normal
+Área: Frontend | UI | CSS | JS
+Archivos involucrados: style.css, main.js
+
+Descripción:
+Se completó un ciclo de mejoras en la animación de la barra de búsqueda. Las implementaciones incluyen:
+- La adición de la animación de expansión/contracción de la barra al hacer foco, replicando el comportamiento de la v1.5.
+- La ocultación del menú de hamburguesa y la reducción del espacio superior para optimizar la vista de búsqueda.
+- La corrección final y definitiva del espaciado vertical entre la barra y los resultados, asegurando una alineación perfecta.
+
+2. INVESTIGAR CIERRE DE SESIÓN INESPERADO TRAS REFRESH
+Estado: COMPLETADO
+Origen: Reporte de Bug
+Prioridad: CRÍTICA
+Área: Frontend | Autenticación | Estado
+Archivos involucrados: auth.js
+
+Descripción:
+Se ha implementado una corrección para prevenir una condición de carrera (`race condition`) durante la validación de la sesión. Se añadió un mecanismo de bloqueo (`lock`) en `localStorage` para asegurar que solo una pestaña o proceso de validación se comunique con el backend a la vez, evitando que validaciones concurrentes se invaliden entre sí.
+
+3. CORRECCIÓN DEL SISTEMA DE BÚSQUEDA Y NAVEGACIÓN
+Estado: COMPLETADO
+Origen: Múltiples reportes de bugs y regresiones.
+Prioridad: CRÍTICA
+Área: Frontend | Navegación | Búsqueda | UX
+Archivos involucrados: ui.js, navigation.js
+
+Descripción:
+Se completó un ciclo de correcciones que abordaron múltiples fallos en el sistema de búsqueda y su navegación subsecuente. Las correcciones incluyen:
+- Asegurar que la búsqueda por modelo muestre tarjetas de modelo en lugar de logos de marca.
+- Corregir el flujo de navegación para que, después de una búsqueda, se avance correctamente en la jerarquía de selección (Año, etc.).
+- Eliminar una regresión que causaba la de-duplicación incorrecta de resultados.
+- Corregir un `SyntaxError` fatal que impedía la carga de la aplicación.
+- Implementar la corrección definitiva para el botón "Regresar", asegurando que devuelva al usuario a los resultados de la búsqueda de manera consistente, mediante el manejo correcto del estado de navegación anidado.
