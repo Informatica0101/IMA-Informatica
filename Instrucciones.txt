@@ -192,7 +192,39 @@ Despues de esta linea se deben de registrar las nuevas tareas, por realizar o co
 
 ________________________________________________________________________________________________
 
+# INSTRUCCIONES TÉCNICAS - BACKLOG DE MEJORAS FRONTEND
 
+Este bloque contiene las tareas derivadas de la Auditoría Absoluta del Frontend realizada el 15/01/2026.
+REGLA DE ORO: No modificar lo que ya funciona, solo corregir los hallazgos técnicos.
 
+---
 
-tarea 1. 
+## 1. Arquitectura y Consistencia
+- [ ] **Centralizar `fetchApi`**: Eliminar la re-definición de `fetchApi` en `js/results.js` y asegurar que todos los archivos usen la versión de `js/api.js`.
+- [ ] **Eliminar Duplicación en `closeMobileMenu`**: Eliminar la versión conflictiva de `closeMobileMenu` en `js/main.js` y dejar una única implementación robusta y compartida en `index.html` o un script común.
+- [ ] **Extraer Utilidades**: Mover la función `extractDriveId` de `js/teacher.js` a un archivo de utilidades compartido.
+
+## 2. JavaScript - Lógica y Robustez
+- [ ] **Mejorar `Promise.all`**: En `js/student.js`, reemplazar `Promise.all` por un manejo que permita cargar tareas aunque fallen los exámenes (ej. `Promise.allSettled`).
+- [ ] **Validación de Datos**: En `js/teacher.js`, evitar el uso de `JSON.stringify` dentro de atributos HTML (`data-item`).
+- [ ] **Confirmación de Envío**: Agregar un modal de confirmación en `js/exam.js` antes de enviar un examen.
+- [ ] **Validación de `currentUser`**: Implementar una función de validación de sesión centralizada que verifique la integridad de los datos en `localStorage`.
+
+## 3. CSS y Paleta de Colores
+- [ ] **Unificar Paleta**: Reemplazar todos los colores hexadecimales hardcodeados (ej. `#1a202c`) por clases de Tailwind equivalentes.
+- [ ] **Revisar Escalamiento Global**: Evaluar el impacto de `html { font-size: 80%; }` en la accesibilidad.
+- [ ] **Eliminar CSS Hardcodeado**: Migrar estilos del bloque `<style>` en `interactivo.html` y `index.html` a clases de Tailwind.
+
+## 4. Accesibilidad (Prioridad Alta)
+- [ ] **Corregir Foco**: Buscar todas las instancias de `focus:outline-none` y asegurar que tengan un estilo de anillo de enfoque visible.
+- [ ] **Agregar `aria-label`**: Auditar todos los botones y enlaces para asegurar que tengan descripciones accesibles.
+- [ ] **Etiquetas de Formulario**: Asegurar que todos los inputs dinámicos en `js/exam.js` y `js/teacher.js` tengan elementos `<label>` asociados.
+
+## 5. Condiciones de Carrera y Rendimiento
+- [ ] **Orquestación de Carga**: En `index.html`, implementar un sistema de promesas para la carga dinámica de juegos.
+- [ ] **Lazy Loading de Datos**: Mover los grandes arreglos de datos en `index.html` a archivos JSON externos cargados bajo demanda.
+
+---
+
+### TAREAS PENDIENTES DE REVISIÓN
+- [ ] **Auditoría Absoluta del Frontend**: Realizar una auditoría completa de todos los archivos del frontend y generar un backlog de tareas. (Ejecutada el 15/01/2026)

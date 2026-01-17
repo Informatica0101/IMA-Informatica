@@ -788,3 +788,63 @@ AUDITORÍA DE RECUPERACIÓN DE PREGUNTAS (14/01/2026)
 - Archivo: backend/exam-service/Code.gs
 - Línea(s): 190-202
 - Hallazgo (Crítico): La función `getExamQuestions` devuelve una estructura de datos incorrecta que no coincide con la esperada por el frontend. El backend envía directamente un array de preguntas en la propiedad `data`, mientras que el frontend (`js/exam.js`) espera un objeto que contenga los detalles del examen (título, etc.) junto con el array de preguntas. Esta discrepancia es la causa raíz de que los exámenes se muestren como si no tuvieran preguntas.
+
+--- AUDITORÍA COMPLETA DEL FRONTEND (15/01/2026) ---
+Auditor: Jules
+
+1. index.html
+----------------------------------------
+- [CSS] Línea 11: "html { font-size: 80%; }" - Escalamiento global hardcodeado. Afecta accesibilidad.
+- [JS] Línea 440: Función "closeMobileMenu()" duplicada y en conflicto con "js/main.js". El ID usado ("mobile-menu-overlay") difiere del de "js/main.js".
+- [JS] Líneas 492-756: Grandes arreglos de datos ("presentationData", "additionalResourcesData", "downloadContentData") hardcodeados. Dificulta mantenimiento.
+- [JS] Líneas 816, 831, 846, 856: Condiciones de carrera potenciales en carga dinámica de juegos ("await fetch" seguido de creación de "<script>").
+- [Accesibilidad] Línea 150: Botón de menú móvil tiene "focus:outline-none" sin estilos de enfoque alternativos.
+- [Accesibilidad] Varios botones y enlaces carecen de "aria-label".
+- [Estilos] Uso inconsistente de colores: Se mezcla Tailwind con colores hardcodeados en CSS (ej. Línea 85: "#1a202c").
+- [Lógica] Enlaces de pie de página (Privacidad, Términos, Soporte) apuntan a "#" y no tienen acción asociada.
+
+2. js/main.js
+----------------------------------------
+- [Lógica] Función "closeMobileMenu()" duplicada. Intenta acceder a un ID ("mobile-menu") que no existe en "index.html".
+
+3. js/api.js
+----------------------------------------
+- [Lógica] Manejo de errores básico. Si la respuesta no es JSON válido, "JSON.parse(textResponse)" fallará sin un mensaje claro.
+
+4. student-dashboard.html / js/student.js
+----------------------------------------
+- [Seguridad/Lógica] "js/student.js": No hay validación de integridad para el objeto "currentUser" recuperado de localStorage.
+- [Lógica] "js/student.js" Línea 41: Llamadas paralelas a API ("Promise.all") son correctas, pero un fallo en una cancela ambas. Se sugiere "Promise.allSettled".
+- [Accesibilidad] Botones del modal de entrega carecen de estados de enfoque claros.
+
+5. teacher-dashboard.html / js/teacher.js
+----------------------------------------
+- [Lógica] "js/teacher.js" Línea 144: "JSON.stringify(item)" dentro de un atributo HTML ("data-item") puede romper el DOM si los datos contienen comillas simples o caracteres especiales.
+- [Lógica] Formularios de creación ("createExamForm", "createAssignmentForm") carecen de validación del lado del cliente antes de enviar (ej. fechas pasadas, campos vacíos no marcados como "required").
+- [Lógica] "extractDriveId" está definido localmente. Debería ser una utilidad compartida.
+
+6. exam.html / js/exam.js
+----------------------------------------
+- [UX/Lógica] "js/exam.js": No hay confirmación antes de enviar el examen si faltan preguntas por responder.
+- [Accesibilidad] Los inputs de radio y texto en el examen carecen de etiquetas "label" vinculadas correctamente por "for/id" en algunos casos dinámicos.
+
+7. results.html / js/results.js
+----------------------------------------
+- [Arquitectura] "js/results.js" Línea 11: Función "fetchApi" RE-DEFINIDA. Violación de DRY (Don't Repeat Yourself). Debe usar la de "js/api.js".
+
+8. interactivo.html
+----------------------------------------
+- [CSS] Gran cantidad de estilos hardcodeados en bloque "<style>".
+- [Lógica] Lógica de teclado compleja con múltiples listeners que podrían causar fugas de memoria o colisiones.
+
+9. pseudocode.html
+----------------------------------------
+- [Arquitectura] Lógica de simulación mezclada con UI en el mismo archivo.
+- [CSS] Estilos "responsive" definidos con "max-width" hardcodeado que podría entrar en conflicto con Tailwind si se añadiera.
+
+10. Hallazgos Generales
+----------------------------------------
+- Inconsistencia en la paleta de colores respecto a la definición central en "index.html".
+- Uso extendido de "focus:outline-none" en todo el sitio, rompiendo la navegación por teclado.
+- Falta de centralización de constantes y utilidades.
+- Condiciones de carrera en casi todas las cargas asíncronas de datos que disparan renderizado.
