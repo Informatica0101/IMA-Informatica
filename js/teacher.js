@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionCrearExamen = document.getElementById('section-crear-examen');
     const createAssignmentForm = document.getElementById('create-assignment-form');
     const createExamForm = document.getElementById('create-exam-form');
-    const logoutButton = document.getElementById('global-logout-btn');
+    const logoutButton = document.getElementById('logout-button');
 
     const allSections = [sectionDashboard, sectionCrear, sectionCrearExamen];
     const allNavLinks = [navDashboard, navCrear, navCrearExamen];

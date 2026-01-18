@@ -168,3 +168,8 @@ En este archivo se regustrara el historial de cambios del proyecto.
 18/01/2026 - Portal: Implementación de controlador js/portal.js para manejo de vistas dinámicas y estado de sesión.
 18/01/2026 - UI: Logo actualizado con drop-shadow directo y eliminación de contenedores distorsionantes.
 18/01/2026 - Mobile: Optimización completa de dashboards en móviles, eliminando desbordamientos y mejorando la disposición de tablas y botones.
+18/01/2026 - Corrección: Se eliminó el espacio entre el encabezado y el top del navegador mediante 'top: 0 !important'.
+18/01/2026 - UI: Se redujo el tamaño del texto en el encabezado y pie de página para mejorar la proporción y legibilidad.
+18/01/2026 - Mobile: Se restauró la funcionalidad completa del menú hamburguesa, asegurando que todos los botones de navegación sean visibles.
+18/01/2026 - Dashboards: Se corrigieron los problemas de visualización en móviles mediante contenedores de scroll horizontal para las tablas y disposición flexible.
+18/01/2026 - Arquitectura: Se restauraron los archivos HTML individuales para mantener la funcionalidad original mientras se comparten activos globales (css/style.css, js/main.js).

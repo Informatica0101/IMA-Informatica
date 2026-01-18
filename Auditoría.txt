@@ -1,10 +1,7 @@
-AUDITORÍA - Unificación y Logo - 18/01/2026
-Logo: Se eliminó el contenedor distorsionante y se aplicó drop-shadow directo.
-Arquitectura: Se consolidaron 7 archivos HTML en portal.html.
-Factorización: CSS y JS UI movidos a archivos externos.
-Mobile: Dashboards optimizados para 375px sin overflow.
+AUDITORÍA DE CORRECCIÓN POST-FEEDBACK - 18/01/2026
 
-RESULTADOS DE EJECUCIÓN - 18/01/2026
-- portal.html actúa como shell unificado para la funcionalidad de la aplicación.
-- Se mantuvo la funcionalidad de login, dashboards y logout mediante js/portal.js.
-- Se eliminaron archivos redundantes.
+- Header: Se solucionó la separación del top del navegador aplicando 'top: 0 !important' en la clase fija.
+- Footer: Se rediseñó el pie de página para ser más compacto (py-6 en lugar de py-12) y con texto reducido (text-footer).
+- Texto: Se redujo el tamaño de fuente en el menú de navegación y en el footer para cumplir con el requerimiento de proporciones.
+- Hamburguesa: Se verificó que el menú móvil muestra todos los enlaces (Inicio, Portal, Cursos, Recursos) y que los botones de submenú funcionan.
+- Dashboards: Las tablas ahora tienen scroll horizontal en móviles, evitando el desbordamiento de la UI.
