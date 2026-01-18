@@ -820,3 +820,23 @@ AUDITORÍA DE AJUSTES FINALES - 18/01/2026
 2. FOOTER:
    - Se confirmó mediante inspección visual y flexbox que el footer se ancla al fondo del viewport incluso en páginas con poco contenido.
    - La franja blanca ha sido eliminada.
+
+AUDITORÍA DE TABLA DE ENTREGAS - 18/01/2026
+
+1. teacher-dashboard.html:
+   - Los encabezados de la tabla (th) usan padding p-4 (Línea 75-81).
+
+2. js/teacher.js:
+   - Las celdas de la tabla (td) se renderizan con padding p-4 (Línea 156-162).
+   - El mensaje de carga también usa p-4 (Línea 72).
+   - El mensaje de error usa p-4 (Línea 105).
+   - El mensaje de "no hay actividad" usa p-4 (Línea 111).
+
+AUDITORÍA FINAL DE TABLA DE ENTREGAS - 18/01/2026
+
+1. teacher-dashboard.html:
+   - Los encabezados ahora usan p-2.
+
+2. js/teacher.js:
+   - Las celdas renderizadas ahora usan p-2.
+   - El espaciado visual de la tabla es ahora mucho más compacto.

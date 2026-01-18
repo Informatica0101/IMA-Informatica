@@ -201,3 +201,27 @@ Archivos: student-dashboard.html, teacher-dashboard.html, index.html
 - Reducción extrema de gaps (gap-2) y padding interno (0.75rem) para lograr un diseño de cuadrícula minimalista y profesional.
 - Asegurado que todos los archivos usen bg-gray-900 en el footer para uniformidad total.
 - Implementación de mt-auto en todos los footers y flex-grow en los contenedores main para eliminar la franja blanca inferior.
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivo: teacher-dashboard.html
+- Reducido padding de los encabezados de la tabla (th) de p-4 a p-2.
+
+Archivo: js/teacher.js
+- Reducido padding de las celdas de la tabla (td) de p-4 a p-2 en la función renderActivity.
+- Ajustado padding de los mensajes de estado (carga, error, vacío) de p-4 a p-2.
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivo: css/style.css
+- Implementado drop-shadow en .logo-img conforme a la solicitud del usuario.
+
+Archivo: js/ui-common.js
+- Creado para centralizar la lógica de scroll, menú móvil y logout, permitiendo su reutilización en dashboards.
+
+Archivo: student-dashboard.html, teacher-dashboard.html
+- Integrado el encabezado completo (incluyendo dropdowns de Cursos/Recursos) mediante la inclusión de js/ui-common.js, js/data.js y js/index-ui.js.
+- Reducido gap en la cuadrícula de tareas y formularios.
+
+Archivo: js/teacher.js
+- Reducido padding de las filas de la tabla de entregas a p-2 para un diseño más compacto.

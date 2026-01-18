@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Carga de Actividad del Profesor ---
     async function fetchTeacherActivity() {
-        submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">Cargando actividad...</td></tr>';
+        submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-2">Cargando actividad...</td></tr>';
         try {
             const [taskSubmissions, examSubmissions, allExams] = await Promise.all([
                 fetchApi('TASK', 'getTeacherActivity', {}),
@@ -104,13 +104,13 @@ document.addEventListener('DOMContentLoaded', () => {
             allActivity.sort((a, b) => new Date(b.fecha || b.fechaLimite) - new Date(a.fecha || a.fechaLimite));
             renderActivity(allActivity);
         } catch (error) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="7" class="text-center p-4 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
+            submissionsTableBody.innerHTML = `<tr><td colspan="7" class="text-center p-2 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
         }
     }
 
     function renderActivity(activity) {
         if (!activity || activity.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">No hay actividad reciente.</td></tr>';
+            submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-2">No hay actividad reciente.</td></tr>';
             return;
         }
         submissionsTableBody.innerHTML = activity.map(item => {
@@ -164,13 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return `
                 <tr class="border-b">
-                    <td class="p-4">${item.alumnoNombre || '<em>N/A</em>'}</td>
-                    <td class="p-4">${item.titulo}</td>
-                    <td class="p-4">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
-                    <td class="p-4">${fileLinkHtml}</td>
-                    <td class="p-4">${item.calificacion || '<em>N/A</em>'}</td>
-                    <td class="p-4">${item.estado || '<em>Pendiente</em>'}</td>
-                    <td class="p-4">${actionHtml}</td>
+                    <td class="p-2">${item.alumnoNombre || '<em>N/A</em>'}</td>
+                    <td class="p-2">${item.titulo}</td>
+                    <td class="p-2">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
+                    <td class="p-2">${fileLinkHtml}</td>
+                    <td class="p-2">${item.calificacion || '<em>N/A</em>'}</td>
+                    <td class="p-2">${item.estado || '<em>Pendiente</em>'}</td>
+                    <td class="p-2">${actionHtml}</td>
                 </tr>`;
         }).join('');
     }

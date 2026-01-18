@@ -3,23 +3,11 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Elements ---
-    const mainHeader = document.getElementById('main-header');
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
-    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-    const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+    // Setup Common UI (Header, Scroll, Logout)
+    if (window.setupCommonUI) window.setupCommonUI();
+    if (window.renderCommonNav) window.renderCommonNav();
 
-    const mobileCoursesToggle = document.getElementById('mobile-courses-toggle');
-    const mobileCoursesArrow = document.getElementById('mobile-courses-arrow');
-    const mobileGradesContainer = document.getElementById('mobile-grades-container');
-    const mobileGradesMenu = document.getElementById('mobile-grades-menu');
-
-    const mobileAdditionalResourcesToggle = document.getElementById('mobile-additional-resources-toggle');
-    const mobileAdditionalResourcesArrow = document.getElementById('mobile-additional-resources-arrow');
-    const mobileAdditionalResourcesContainer = document.getElementById('mobile-additional-resources-container');
-    const mobileAdditionalResourcesMenu = document.getElementById('mobile-additional-resources-menu');
-
+    // --- DOM Elements specific to index.html ---
     const contentDisplayArea = document.getElementById('content-display-area');
     const contentBackButtonContainer = document.getElementById('content-back-button-container');
     const contentBackButton = document.getElementById('content-back-button');
@@ -33,13 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const dynamicallyLoadedGameContainer = document.getElementById('dynamically-loaded-game-container');
 
     // --- State Variables ---
-    let activeMobileGradeElement = null;
-    let activeMobileSubjectElement = null;
     let currentContentView = 'initial';
     let selectedGradeData = null;
     let selectedSubjectData = null;
-    let lastScrollTop = 0;
-    const scrollThreshold = 10;
 
     // --- Utility Functions ---
     function createCustomButton(text, onClickHandler, className = '') {
@@ -70,208 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { once: true });
     }
 
-    // --- Header & Scroll Logic ---
-    window.addEventListener('scroll', () => {
-        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-        // Header Hide/Show on scroll
-        if (currentScrollTop > lastScrollTop && currentScrollTop > mainHeader.offsetHeight + 50) {
-            mainHeader.classList.add('header-hidden');
-        } else if (currentScrollTop < lastScrollTop) {
-            mainHeader.classList.remove('header-hidden');
-        }
-
-        // Header visual state change (scrolled)
-        if (currentScrollTop > scrollThreshold) {
-            mainHeader.classList.add('header-scrolled');
-        } else {
-            mainHeader.classList.remove('header-scrolled');
-        }
-
-        lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
-    });
-
-    // --- Mobile Menu Logic ---
-    function toggleMobileMenu() {
-        const isOpening = mobileMenuOverlay.classList.contains('hidden');
-        mobileMenuOverlay.classList.toggle('hidden');
-        mobileMenuOverlay.classList.toggle('mobile-menu-overlay');
-
-        // Update icon
-        mobileMenuIcon.setAttribute('d', isOpening ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16');
-
-        if (!isOpening) {
-            resetMobileMenuState();
-        }
-    }
-
-    window.closeMobileMenu = function() {
-        mobileMenuOverlay.classList.add('hidden');
-        mobileMenuOverlay.classList.remove('mobile-menu-overlay');
-        mobileMenuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
-        resetMobileMenuState();
-    }
-
-    function resetMobileMenuState() {
-        // Reset top level toggles
-        [mobileGradesContainer, mobileAdditionalResourcesContainer].forEach(el => {
-            el.classList.add('hidden-height');
-            el.classList.remove('visible-height');
-        });
-        [mobileCoursesArrow, mobileAdditionalResourcesArrow].forEach(el => {
-            el.classList.remove('rotate-90');
-        });
-
-        // Reset sub-menus
-        if (activeMobileGradeElement) {
-            closeSubMenu(activeMobileGradeElement);
-            activeMobileGradeElement = null;
-        }
-        if (activeMobileSubjectElement) {
-            closeSubMenu(activeMobileSubjectElement);
-            activeMobileSubjectElement = null;
-        }
-    }
-
-    function closeSubMenu(element) {
-        element.classList.add('hidden-height');
-        element.classList.remove('visible-height');
-        const arrow = element.previousElementSibling.querySelector('span');
-        if (arrow) arrow.classList.remove('rotate-90');
-    }
-
-    mobileMenuButton.addEventListener('click', toggleMobileMenu);
-    mobileMenuCloseButton.addEventListener('click', toggleMobileMenu);
-
-    document.addEventListener('mousedown', (e) => {
-        if (!mobileMenuOverlay.classList.contains('hidden') &&
-            !mobileMenuOverlay.contains(e.target) &&
-            !mobileMenuButton.contains(e.target)) {
-            closeMobileMenu();
-        }
-    });
-
-    mobileCoursesToggle.addEventListener('click', () => {
-        const isExpanding = mobileGradesContainer.classList.contains('hidden-height');
-        mobileGradesContainer.classList.toggle('hidden-height');
-        mobileGradesContainer.classList.toggle('visible-height');
-        mobileCoursesArrow.classList.toggle('rotate-90');
-
-        if (isExpanding) {
-            mobileAdditionalResourcesContainer.classList.add('hidden-height');
-            mobileAdditionalResourcesContainer.classList.remove('visible-height');
-            mobileAdditionalResourcesArrow.classList.remove('rotate-90');
-        }
-    });
-
-    mobileAdditionalResourcesToggle.addEventListener('click', () => {
-        const isExpanding = mobileAdditionalResourcesContainer.classList.contains('hidden-height');
-        mobileAdditionalResourcesContainer.classList.toggle('hidden-height');
-        mobileAdditionalResourcesContainer.classList.toggle('visible-height');
-        mobileAdditionalResourcesArrow.classList.toggle('rotate-90');
-
-        if (isExpanding) {
-            mobileGradesContainer.classList.add('hidden-height');
-            mobileGradesContainer.classList.remove('visible-height');
-            mobileCoursesArrow.classList.remove('rotate-90');
-        }
-    });
-
-    // --- Desktop Menu Rendering ---
-    function renderDesktopNav() {
-        const desktopGradesMenu = document.getElementById('desktop-grades-menu');
-        if (!desktopGradesMenu) return;
-        desktopGradesMenu.innerHTML = '';
-
-        window.presentationData.forEach(gradeData => {
-            const gradeDiv = document.createElement('div');
-            gradeDiv.className = 'relative group/grade';
-            gradeDiv.innerHTML = `
-                <button class="block w-full text-left px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
-                    ${gradeData.grade} <span class="float-right text-xs mt-1">&#9656;</span>
-                </button>
-            `;
-
-            const subjectDiv = document.createElement('div');
-            subjectDiv.className = 'absolute left-full top-0 mt-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/grade:scale-100 origin-left border border-gray-100';
-
-            gradeData.subjects.forEach(subjectData => {
-                const subjectSubDiv = document.createElement('div');
-                subjectSubDiv.className = 'relative group/subject';
-                subjectSubDiv.innerHTML = `
-                    <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 focus:outline-none">
-                        ${subjectData.name} <span class="float-right text-xs mt-1">&#9656;</span>
-                    </button>
-                `;
-
-                const topicDiv = document.createElement('div');
-                topicDiv.className = 'absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/subject:opacity-100 group-hover/subject:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/subject:scale-100 origin-left border border-gray-100';
-
-                subjectData.topics.forEach(topic => {
-                    const topicLink = document.createElement('a');
-                    topicLink.href = topic.file;
-                    topicLink.className = 'block px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 text-sm';
-                    topicLink.textContent = topic.title;
-                    topicDiv.appendChild(topicLink);
-                });
-                subjectSubDiv.appendChild(topicDiv);
-                subjectDiv.appendChild(subjectSubDiv);
-            });
-            gradeDiv.appendChild(subjectDiv);
-            desktopGradesMenu.appendChild(gradeDiv);
-        });
-
-        // Recursos Adicionales Desktop
-        const desktopAdditionalResourcesMenu = document.getElementById('desktop-additional-resources-menu');
-        if (!desktopAdditionalResourcesMenu) return;
-        desktopAdditionalResourcesMenu.innerHTML = '';
-
-        window.additionalResourcesData.forEach(resourceCategory => {
-            const categoryDiv = document.createElement('div');
-            categoryDiv.className = 'relative group/resource-cat';
-            categoryDiv.innerHTML = `
-                <button class="block w-full text-left px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
-                    ${resourceCategory.category} <span class="float-right text-xs mt-1">&#9656;</span>
-                </button>
-            `;
-
-            const itemsDiv = document.createElement('div');
-            itemsDiv.className = 'absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/resource-cat:opacity-100 group-hover/resource-cat:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/resource-cat:scale-100 origin-left border border-gray-100';
-
-            resourceCategory.items.forEach(item => {
-                const itemLink = document.createElement('a');
-                if (item.action) {
-                    itemLink.href = '#';
-                    itemLink.onclick = (e) => {
-                        e.preventDefault();
-                        handleHeaderAction(item.action);
-                    };
-                } else {
-                    itemLink.href = item.file;
-                    itemLink.target = '_blank';
-                }
-                itemLink.className = 'block px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 text-sm';
-                itemLink.textContent = item.title;
-                itemsDiv.appendChild(itemLink);
-            });
-            categoryDiv.appendChild(itemsDiv);
-            desktopAdditionalResourcesMenu.appendChild(categoryDiv);
-        });
-    }
-
-    function handleHeaderAction(action) {
-        showMainContentSections();
-        if (action === 'load-peripherals-game') loadPeripheralsGame();
-        else if (action === 'load-webmaster-quiz') loadWebMasterQuiz();
-        else if (action === 'load-dexterity-game') loadDexterityGame();
-        closeMobileMenu();
-    }
-
-    // --- Mobile Menu Rendering ---
+    // --- Mobile Menu Rendering (Specific to index due to action links) ---
     function renderMobileNav() {
-        mobileGradesMenu.innerHTML = '';
-        mobileAdditionalResourcesMenu.innerHTML = '';
+        const mobileGradesMenu = document.getElementById('mobile-grades-menu');
+        const mobileAdditionalMenu = document.getElementById('mobile-additional-resources-menu');
+        if (!mobileGradesMenu || !window.presentationData) return;
 
+        mobileGradesMenu.innerHTML = '';
         window.presentationData.forEach(gradeData => {
             const gradeToggle = document.createElement('button');
             gradeToggle.className = 'mobile-nav-link justify-between bg-white';
@@ -283,13 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
             mobileGradesMenu.appendChild(subjectsContainer);
 
             gradeToggle.addEventListener('click', () => {
-                if (activeMobileGradeElement && activeMobileGradeElement !== subjectsContainer) {
-                    closeSubMenu(activeMobileGradeElement);
-                }
                 subjectsContainer.classList.toggle('hidden-height');
                 subjectsContainer.classList.toggle('visible-height');
                 gradeToggle.querySelector('span').classList.toggle('rotate-90');
-                activeMobileGradeElement = subjectsContainer.classList.contains('visible-height') ? subjectsContainer : null;
             });
 
             gradeData.subjects.forEach(subjectData => {
@@ -303,13 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 subjectsContainer.appendChild(topicsContainer);
 
                 subjectToggle.addEventListener('click', () => {
-                    if (activeMobileSubjectElement && activeMobileSubjectElement !== topicsContainer) {
-                        closeSubMenu(activeMobileSubjectElement);
-                    }
                     topicsContainer.classList.toggle('hidden-height');
                     topicsContainer.classList.toggle('visible-height');
                     subjectToggle.querySelector('span').classList.toggle('rotate-90');
-                    activeMobileSubjectElement = topicsContainer.classList.contains('visible-height') ? topicsContainer : null;
                 });
 
                 subjectData.topics.forEach(topic => {
@@ -317,34 +98,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     topicLink.href = topic.file;
                     topicLink.className = 'block px-12 py-3 text-gray-600 text-sm border-b border-gray-200';
                     topicLink.textContent = topic.title;
-                    topicLink.onclick = closeMobileMenu;
+                    topicLink.onclick = () => { if(window.closeMobileMenu) window.closeMobileMenu(); };
                     topicsContainer.appendChild(topicLink);
                 });
             });
         });
 
         // Recursos Adicionales Mobile
-        window.additionalResourcesData.forEach(resourceCategory => {
-            const categoryToggle = document.createElement('button');
-            categoryToggle.className = 'mobile-nav-link justify-between bg-white';
-            categoryToggle.innerHTML = `${resourceCategory.category} <span class="transform transition-transform duration-300">&#9656;</span>`;
-            mobileAdditionalResourcesMenu.appendChild(categoryToggle);
+        window.additionalResourcesData.forEach(cat => {
+            const catToggle = document.createElement('button');
+            catToggle.className = 'mobile-nav-link justify-between bg-white';
+            catToggle.innerHTML = `${cat.category} <span class="transform transition-transform duration-300">&#9656;</span>`;
+            mobileAdditionalMenu.appendChild(catToggle);
 
             const itemsContainer = document.createElement('div');
             itemsContainer.className = 'mobile-menu-item-container hidden-height';
-            mobileAdditionalResourcesMenu.appendChild(itemsContainer);
+            mobileAdditionalMenu.appendChild(itemsContainer);
 
-            categoryToggle.addEventListener('click', () => {
-                if (activeMobileGradeElement && activeMobileGradeElement !== itemsContainer) {
-                    closeSubMenu(activeMobileGradeElement);
-                }
+            catToggle.addEventListener('click', () => {
                 itemsContainer.classList.toggle('hidden-height');
                 itemsContainer.classList.toggle('visible-height');
-                categoryToggle.querySelector('span').classList.toggle('rotate-90');
-                activeMobileGradeElement = itemsContainer.classList.contains('visible-height') ? itemsContainer : null;
+                catToggle.querySelector('span').classList.toggle('rotate-90');
             });
 
-            resourceCategory.items.forEach(item => {
+            cat.items.forEach(item => {
                 const itemLink = document.createElement('a');
                 itemLink.className = 'block px-8 py-3 text-gray-700 font-medium bg-gray-50 border-b border-gray-100';
                 itemLink.textContent = item.title;
@@ -352,16 +129,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     itemLink.href = '#';
                     itemLink.onclick = (e) => {
                         e.preventDefault();
-                        handleHeaderAction(item.action);
+                        window.handleHeaderAction(item.action);
                     };
                 } else {
                     itemLink.href = item.file;
                     itemLink.target = '_blank';
-                    itemLink.onclick = closeMobileMenu;
+                    itemLink.onclick = () => { if(window.closeMobileMenu) window.closeMobileMenu(); };
                 }
                 itemsContainer.appendChild(itemLink);
             });
         });
+    }
+
+    window.handleHeaderAction = function(action) {
+        showMainContentSections();
+        if (action === 'load-peripherals-game') loadPeripheralsGame();
+        else if (action === 'load-webmaster-quiz') loadWebMasterQuiz();
+        else if (action === 'load-dexterity-game') loadDexterityGame();
+        if (window.closeMobileMenu) window.closeMobileMenu();
     }
 
     // --- Content Section Logic ---
@@ -430,22 +215,25 @@ document.addEventListener('DOMContentLoaded', () => {
         currentContentView = 'topics';
     }
 
-    contentBackButton.addEventListener('click', () => {
-        animateContentTransition(() => {
-            if (currentContentView === 'subjects') {
-                renderDownloadGrades();
-                selectedGradeData = null;
-            } else if (currentContentView === 'topics') {
-                renderDownloadSubjects();
-                selectedSubjectData = null;
-            } else {
-                renderInitialContentButton();
-            }
+    if (contentBackButton) {
+        contentBackButton.addEventListener('click', () => {
+            animateContentTransition(() => {
+                if (currentContentView === 'subjects') {
+                    renderDownloadGrades();
+                    selectedGradeData = null;
+                } else if (currentContentView === 'topics') {
+                    renderDownloadSubjects();
+                    selectedSubjectData = null;
+                } else {
+                    renderInitialContentButton();
+                }
+            });
         });
-    });
+    }
 
     // --- Activities & Games Logic ---
     function showMainContentSections() {
+        if (!mainContentSections) return;
         mainContentSections.classList.remove('hidden');
         mainContentSections.classList.add('flex');
         dynamicallyLoadedGameContainer.classList.add('hidden');
@@ -455,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadGame(gameId, htmlPath, jsPath, initFnName, title) {
-        mainHeader.classList.add('header-hidden');
+        const mainHeader = document.getElementById('main-header');
+        if (mainHeader) mainHeader.classList.add('header-hidden');
         mainContentSections.classList.add('hidden');
         mainContentSections.classList.remove('flex');
         dynamicallyLoadedGameContainer.classList.remove('hidden');
@@ -485,7 +274,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadDexterityGame = () => loadGame('dexterity', 'juegos/destreza_teclado.html', 'js/destreza_teclado.js', 'initDexterityGame', 'Destreza en el Teclado');
 
     window.returnToMainContent = function() {
-        mainHeader.classList.remove('header-hidden');
+        const mainHeader = document.getElementById('main-header');
+        if (mainHeader) mainHeader.classList.remove('header-hidden');
         dynamicallyLoadedGameContainer.innerHTML = '';
         ['js/perifericos_juego.js', 'js/webmaster_quiz_juego.js', 'js/destreza_teclado.js'].forEach(src => {
             const s = document.querySelector(`script[src="${src}"]`);
@@ -495,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function renderInitialActivityButton() {
+        if (!initialActivityMenu) return;
         initialActivityMenu.classList.remove('hidden');
         initialActivityMenu.classList.add('flex');
         gameListMenu.classList.add('hidden');
@@ -509,18 +300,14 @@ document.addEventListener('DOMContentLoaded', () => {
         mainContentTitle.textContent = 'Actividades';
     }
 
-    showActivitiesButton.addEventListener('click', renderActivityList);
-    document.getElementById('select-peripherals-game-button').addEventListener('click', loadPeripheralsGame);
-    document.getElementById('select-webmaster-quiz-button').addEventListener('click', loadWebMasterQuiz);
-    document.getElementById('select-dexterity-game-button').addEventListener('click', loadDexterityGame);
-    backToMainActivitiesButton.addEventListener('click', renderInitialActivityButton);
-
-    // --- Initialization ---
-    document.getElementById('current-year').textContent = new Date().getFullYear();
-    renderDesktopNav();
-    renderMobileNav();
-    renderInitialContentButton();
-    renderInitialActivityButton();
+    if (showActivitiesButton) showActivitiesButton.addEventListener('click', renderActivityList);
+    const pBtn = document.getElementById('select-peripherals-game-button');
+    if (pBtn) pBtn.addEventListener('click', loadPeripheralsGame);
+    const wBtn = document.getElementById('select-webmaster-quiz-button');
+    if (wBtn) wBtn.addEventListener('click', loadWebMasterQuiz);
+    const dBtn = document.getElementById('select-dexterity-game-button');
+    if (dBtn) dBtn.addEventListener('click', loadDexterityGame);
+    if (backToMainActivitiesButton) backToMainActivitiesButton.addEventListener('click', renderInitialActivityButton);
 
     // Game Storage
     window.gameDataStorage = {
@@ -536,4 +323,8 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem(this.localStorageKey, JSON.stringify(all));
         }
     };
+
+    renderMobileNav();
+    renderInitialContentButton();
+    renderInitialActivityButton();
 });

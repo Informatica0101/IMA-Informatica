@@ -19,6 +19,22 @@
 
             <nav class="hidden md:flex items-center space-x-6">
                 <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Inicio</a>
+                <div class="relative group">
+                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
+                        Cursos <span class="ml-1 text-xs">&#9662;</span>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
+                        <div id="desktop-grades-menu"></div>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
+                        Recursos Adicionales <span class="ml-1 text-xs">&#9662;</span>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
+                        <div id="desktop-additional-resources-menu"></div>
+                    </div>
+                </div>
                 <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Cerrar Sesión</button>
             </nav>
 
@@ -39,6 +55,27 @@
             </button>
             <nav class="flex flex-col mt-16 w-full h-full">
                 <a href="index.html" class="mobile-nav-link">Inicio</a>
+
+                <div class="w-full">
+                    <button id="mobile-courses-toggle" class="mobile-nav-link justify-between">
+                        <span>Cursos</span>
+                        <span id="mobile-courses-arrow" class="transform transition-transform duration-300">&#9656;</span>
+                    </button>
+                    <div id="mobile-grades-container" class="mobile-menu-item-container hidden-height">
+                        <div id="mobile-grades-menu"></div>
+                    </div>
+                </div>
+
+                <div class="w-full">
+                    <button id="mobile-additional-resources-toggle" class="mobile-nav-link justify-between">
+                        <span>Recursos Adicionales</span>
+                        <span id="mobile-additional-resources-arrow" class="transform transition-transform duration-300">&#9656;</span>
+                    </button>
+                    <div id="mobile-additional-resources-container" class="mobile-menu-item-container hidden-height">
+                        <div id="mobile-additional-resources-menu"></div>
+                    </div>
+                </div>
+
                 <a href="#" class="mobile-nav-link text-red-600" id="mobile-logout-button">Cerrar Sesión</a>
             </nav>
         </div>
@@ -105,50 +142,18 @@
         </div>
     </footer>
 
+    <script src="js/ui-common.js"></script>
+    <script src="js/data.js"></script>
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/student.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
-            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-            const mobileMenuIcon = document.getElementById('mobile-menu-icon');
-            const logoutBtn = document.getElementById('logout-button');
-            const mobileLogoutBtn = document.getElementById('mobile-logout-button');
-            const currentYearSpan = document.getElementById('current-year');
-            const header = document.getElementById('main-header');
+            if (window.setupCommonUI) window.setupCommonUI();
+            if (window.renderCommonNav) window.renderCommonNav();
+
             const closeModalX = document.getElementById('close-modal-x');
             const cancelSubmissionBtn = document.getElementById('cancel-submission-btn');
-
-            if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
-
-            function toggleMobileMenu() {
-                const isOpening = mobileMenuOverlay.classList.contains('hidden');
-                mobileMenuOverlay.classList.toggle('hidden');
-                mobileMenuOverlay.classList.toggle('mobile-menu-overlay');
-                mobileMenuIcon.setAttribute('d', isOpening ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16');
-            }
-
-            if (mobileMenuButton) mobileMenuButton.addEventListener('click', toggleMobileMenu);
-            if (mobileMenuCloseButton) mobileMenuCloseButton.addEventListener('click', toggleMobileMenu);
-
-            const handleLogout = () => {
-                localStorage.removeItem('currentUser');
-                window.location.href = 'login.html';
-            };
-
-            if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
-            if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
-
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 10) {
-                    header.classList.add('header-scrolled');
-                } else {
-                    header.classList.remove('header-scrolled');
-                }
-            });
-
             if (closeModalX) closeModalX.onclick = () => document.getElementById('submission-modal').classList.add('hidden');
             if (cancelSubmissionBtn) cancelSubmissionBtn.onclick = () => document.getElementById('submission-modal').classList.add('hidden');
         });

@@ -87,6 +87,8 @@ FLUJO PRINCIPAL DE TRABAJO
 11. ACTUALIZACIÓN DE INSTRUCCIONES.TXT
     - Mover la tarea ejecutada a:
       -> "TAREAS PENDIENTES DE REVISIÓN"
+- Unificación total de encabezados y reducción de márgenes en zona de entregas
+- Reducción de márgenes en tabla de entregas del profesor
 - Reducción de gaps a mínimo y corrección definitiva de posición de footer
 - Ajuste de espaciado en dashboards y corrección de franja blanca en footer
 - Estandarización visual y corrección de desbordamientos en Dashboards y Exámenes
