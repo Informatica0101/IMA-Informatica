@@ -788,3 +788,25 @@ AUDITORÍA DE RECUPERACIÓN DE PREGUNTAS (14/01/2026)
 - Archivo: backend/exam-service/Code.gs
 - Línea(s): 190-202
 - Hallazgo (Crítico): La función `getExamQuestions` devuelve una estructura de datos incorrecta que no coincide con la esperada por el frontend. El backend envía directamente un array de preguntas en la propiedad `data`, mientras que el frontend (`js/exam.js`) espera un objeto que contenga los detalles del examen (título, etc.) junto con el array de preguntas. Esta discrepancia es la causa raíz de que los exámenes se muestren como si no tuvieran preguntas.
+
+AUDITORÍA DE DASHBOARDS Y EXÁMENES - 18/01/2026
+
+1. student-dashboard.html:
+   - No tiene encabezado estandarizado.
+   - El botón de logout es un botón rojo simple en la esquina.
+   - Carece de footer.
+   - No utiliza el archivo css/style.css.
+
+2. teacher-dashboard.html:
+   - Desbordamiento crítico: La tabla de entregas (#submissions-table-body) no es responsiva.
+   - Menú de navegación interno (Dashboard, Crear Tarea, Crear Examen) es inconsistente con el estilo de index.html.
+   - Carece de footer.
+   - No utiliza css/style.css.
+
+3. exam.html y exam-results.html:
+   - Diseño minimalista sin identidad visual corporativa (logo, bandera, footer).
+   - El temporizador y el título del examen necesitan mejor integración visual.
+
+4. results.html:
+   - Tiene un enlace a "student.html" que podría estar roto (el archivo es student-dashboard.html).
+   - Intenta cargar css/styles.css (con 's'), que no existe (es style.css).
