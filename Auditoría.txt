@@ -1,27 +1,10 @@
-AUDITORÍA INICIAL - index.html - 12/05/2026
-Línea 10: html { font-size: 80%; } - Hardcoded scaling detected as technical debt in memory.
-Línea 116: header { top: 0 !important; transition: transform 0.3s ease-in-out; } - Basic transition for hiding.
-Línea 125: <header id="main-header" class="bg-white shadow-md py-0 px-1 md:px-3 fixed w-full z-50"> - Initial header state is py-0, which is very thin.
-Línea 133: <nav class="hidden md:flex space-x-6"> - Desktop navigation.
-Línea 154: <div class="md:hidden"> - Mobile menu button container.
-Línea 164: <div id="mobile-menu-overlay" class="hidden"> - Mobile menu overlay.
-Línea 171: <nav class="flex flex-col space-y-5 mt-12 w-full px-5"> - Mobile nav container.
-Línea 172-173: a tags have text-center.
-Línea 175: button#mobile-courses-toggle has flex justify-between items-center. This explains the alignment inconsistency (some centered, some justified).
-Línea 185: button#mobile-additional-resources-toggle also has flex justify-between.
-Línea 846-860: Scroll logic for header.
-
-AUDITORÍA INICIAL - js/main.js - 12/05/2026
-Línea 1-6: closeMobileMenu function uses getElementById("mobile-menu"), which does not exist in index.html (it uses mobile-menu-overlay). Conflict detected.
+AUDITORÍA - Unificación y Logo - 18/01/2026
+Logo: Se eliminó el contenedor distorsionante y se aplicó drop-shadow directo.
+Arquitectura: Se consolidaron 7 archivos HTML en portal.html.
+Factorización: CSS y JS UI movidos a archivos externos.
+Mobile: Dashboards optimizados para 375px sin overflow.
 
 RESULTADOS DE EJECUCIÓN - 18/01/2026
-- Se refactorizó index.html eliminando estilos redundantes y organizando el bloque <style>.
-- Se añadió la clase .header-scrolled para mejorar la respuesta visual del encabezado al scroll.
-- Se rediseñó el menú hamburguesa para que todos los elementos utilicen .mobile-menu-item con disposición justificada e iconos.
-- Se actualizó la lógica de scroll en index.html para manejar la clase .header-scrolled.
-- Se corrigió js/main.js para que apunte al ID correcto del menú móvil.
-
-REVISIÓN POST-CODE REVIEW - 18/01/2026
-- Se corrigió la violación de restricción de texto revertiendo "Recursos" a "Recursos Adicionales".
-- Se eliminó el texto "Menú" del overlay móvil para cumplir estrictamente con la restricción de no cambiar texto.
-- Se robusteció la función global closeMobileMenu en js/main.js para asegurar que el icono y el estado visual se resetean correctamente independientemente de dónde se llame (index.html u otros).
+- portal.html actúa como shell unificado para la funcionalidad de la aplicación.
+- Se mantuvo la funcionalidad de login, dashboards y logout mediante js/portal.js.
+- Se eliminaron archivos redundantes.

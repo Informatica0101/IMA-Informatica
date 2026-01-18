@@ -1,28 +1,47 @@
 /**
- * Global function to close the mobile menu and reset its visual state.
+ * Unified UI Controller
  */
-function closeMobileMenu() {
-  const overlay = document.getElementById('mobile-menu-overlay');
-  const iconPath = document.querySelector('#mobile-menu-icon-svg path');
+document.addEventListener('DOMContentLoaded', () => {
+    // Current Year
+    const yearEl = document.getElementById('current-year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  if (overlay) {
-    overlay.classList.add('hidden');
-    overlay.classList.remove('mobile-menu-overlay');
-  }
+    // --- Header Scroll Logic ---
+    const header = document.getElementById('main-header');
+    let lastScroll = 0;
+    if (header) {
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > 20) header.classList.add('header-scrolled');
+            else header.classList.remove('header-scrolled');
 
-  if (iconPath) {
-    iconPath.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
-  }
+            if (currentScroll > lastScroll && currentScroll > 100) header.classList.add('header-hidden');
+            else header.classList.remove('header-hidden');
+            lastScroll = currentScroll;
+        });
+    }
 
-  document.body.style.overflow = '';
+    // --- Mobile Menu Logic ---
+    const btn = document.getElementById('mobile-menu-button');
+    const closeBtn = document.getElementById('mobile-menu-close-button');
+    const overlay = document.getElementById('mobile-menu-overlay');
 
-  // Reset arrows and submenus if they exist (handled in index.html, but we can attempt to clear classes)
-  const arrows = document.querySelectorAll('.rotate-icon');
-  arrows.forEach(arrow => arrow.classList.remove('rotated'));
+    const toggleMenu = () => {
+        if (!overlay) return;
+        const isHidden = overlay.classList.contains('hidden');
+        overlay.classList.toggle('hidden');
+        overlay.classList.toggle('mobile-menu-overlay');
+        document.body.style.overflow = isHidden ? 'hidden' : '';
+    };
 
-  const containers = document.querySelectorAll('.mobile-menu-item-container');
-  containers.forEach(container => {
-    container.classList.remove('visible-height');
-    container.classList.add('hidden-height');
-  });
-}
+    if (btn) btn.addEventListener('click', toggleMenu);
+    if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
+
+    window.closeMobileMenu = () => {
+        if (overlay) {
+            overlay.classList.add('hidden');
+            overlay.classList.remove('mobile-menu-overlay');
+        }
+        document.body.style.overflow = '';
+    };
+});

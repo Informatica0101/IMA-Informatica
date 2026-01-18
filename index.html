@@ -6,235 +6,82 @@
     <title>Area de Informatica</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        /* Base Configuration & Scaling */
-        html {
-            font-size: 80%; /* Maintained for consistent scaling as per legacy requirements */
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            color: #1a202c; /* gray-900 */
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-
-        /* --- Transitions & Animations --- */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeOutUp {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0px, 0px) scale(1); }
-        }
-
-        .animate-fade-in-down { animation: fadeInDown 0.5s ease-out forwards; }
-        .animate-fade-out-up { animation: fadeOutUp 0.3s ease-in forwards; }
-        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
-        .animate-blob { animation: blob 7s infinite; }
-
-        .animation-delay-2000 { animation-delay: 2s; }
-        .animation-delay-4000 { animation-delay: 4s; }
-
-        /* --- Header Enhancements --- */
-        #main-header {
-            top: 0 !important;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(0px);
-        }
-
-        /* Scrolled state for header */
-        .header-scrolled {
-            padding-top: 0.25rem !important;
-            padding-bottom: 0.25rem !important;
-            background-color: rgba(255, 255, 255, 0.9) !important;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-hidden {
-            transform: translateY(-100%);
-        }
-
-        /* --- Desktop Navigation Dropdowns --- */
-        .nav-dropdown {
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateY(10px) scale(0.95);
-            transform-origin: top;
-        }
-
-        .group:hover .nav-dropdown,
-        .group\/grade:hover .nav-dropdown,
-        .group\/subject:hover .nav-dropdown {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0) scale(1);
-        }
-
-        /* --- Mobile Menu System --- */
-        .mobile-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background-color: white;
-            z-index: 100;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            padding: 2rem 1.5rem;
-            animation: fadeInDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .mobile-menu-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            padding: 1rem 0.75rem;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1f2937;
-            border-bottom: 1px solid #f3f4f6;
-            transition: all 0.2s ease;
-        }
-
-        .mobile-menu-item:hover {
-            color: #2563eb;
-            background-color: #f9fafb;
-            padding-left: 1rem;
-        }
-
-        .mobile-menu-item-container {
-            overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
-            background-color: #f9fafb;
-        }
-
-        .hidden-height { max-height: 0; opacity: 0; }
-        .visible-height { max-height: 1000px; opacity: 1; }
-
-        .rotate-icon {
-            transition: transform 0.3s ease;
-        }
-        .rotated {
-            transform: rotate(90deg);
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="font-inter antialiased text-gray-900">
 
-    <header id="main-header" class="bg-white/95 shadow-sm py-4 px-4 md:px-8 fixed w-full z-50">
+    <header id="main-header" class="bg-white shadow-md py-0 px-1 md:px-3 fixed w-full z-50">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="index.html" class="flex items-center space-x-3 group">
-                <div class="p-1 bg-blue-50 rounded-lg transition-transform group-hover:scale-110">
-                    <img src="imagenes/logo.png" alt="Logo" class="w-16 h-auto md:w-20">
-                </div>
-                <span class="text-xl md:text-2xl font-black text-blue-900 tracking-tight">Area de Informatica</span>
+            <a href="index.html" class="flex items-center space-x-4">
+                <img src="imagenes/logo.png" alt="Logo" class="w-24 h-auto drop-shadow-lg transition-transform hover:scale-110">
+                <span class="text-2xl font-bold text-blue-800">Area de Informatica</span>
             </a>
 
-            <nav class="hidden md:flex items-center space-x-8">
-                <a href="index.html" class="text-gray-600 hover:text-blue-600 font-semibold transition-all duration-300 relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-blue-600 hover:after:w-full after:transition-all">Inicio</a>
-                <a href="login.html" class="text-gray-600 hover:text-blue-600 font-semibold transition-all duration-300 relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-blue-600 hover:after:w-full after:transition-all">Portal</a>
+            <nav class="hidden md:flex space-x-6">
+                <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Inicio</a>
+                <a href="portal.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Portal</a>
                 <div class="relative group">
-                    <button class="flex items-center text-gray-600 hover:text-blue-600 font-semibold transition-colors duration-300 focus:outline-none">
-                        Cursos <svg class="ml-1 w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
+                        Cursos <span class="ml-1 text-xs">&#9662;</span>
                     </button>
-                    <div class="nav-dropdown absolute left-0 mt-4 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-3 overflow-hidden">
+                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
                         <div id="desktop-grades-menu"></div>
                     </div>
                 </div>
                 <div class="relative group">
-                    <button class="flex items-center text-gray-600 hover:text-blue-600 font-semibold transition-colors duration-300 focus:outline-none">
-                        Recursos Adicionales <svg class="ml-1 w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
+                        Recursos Adicionales <span class="ml-1 text-xs">&#9662;</span>
                     </button>
-                    <div class="nav-dropdown absolute left-0 mt-4 w-72 bg-white rounded-xl shadow-xl border border-gray-100 py-3 overflow-hidden">
+                    <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
                         <div id="desktop-additional-resources-menu"></div>
                     </div>
                 </div>
-                <a href="pseudocode.html" target="_blank" class="text-gray-600 hover:text-blue-600 font-semibold transition-all duration-300">Pseudocódigo</a>
-                <a href="https://wa.me/50488422786" target="_blank" class="px-5 py-2 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 hover:shadow-lg transition-all transform hover:-translate-y-0.5">Contacto</a>
+                <a href="pseudocode.html" target="_blank" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Pseudocódigo</a>
+                <a href="https://wa.me/50488422786" target="_blank" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Contacto</a>
             </nav>
 
-            <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="hidden lg:block w-24 h-auto opacity-90">
+            <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="120" height="auto" class="hidden md:block">
 
             <div class="md:hidden">
-                <button id="mobile-menu-button" class="p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none">
-                    <svg id="mobile-menu-icon-svg" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path id="mobile-menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
             </div>
         </div>
 
         <div id="mobile-menu-overlay" class="hidden">
-            <div class="flex justify-between items-center mb-8">
-                <button id="mobile-menu-close-button" class="p-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors focus:outline-none">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <nav class="flex flex-col">
-                <a href="index.html" class="mobile-menu-item" onclick="closeMobileMenu()">
-                    <span>Inicio</span>
-                    <svg class="w-5 h-5 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </a>
-                <a href="login.html" class="mobile-menu-item" onclick="closeMobileMenu()">
-                    <span>Portal</span>
-                    <svg class="w-5 h-5 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </a>
-
+            <button id="mobile-menu-close-button" class="absolute top-4 right-6 text-gray-700 focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <nav class="flex flex-col space-y-5 mt-12 w-full px-5">
+                <a href="index.html" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Inicio</a>
+                <a href="portal.html" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Portal</a>
                 <div class="w-full">
-                    <button id="mobile-courses-toggle" class="mobile-menu-item focus:outline-none">
-                        <span>Cursos</span>
-                        <svg id="mobile-courses-arrow" class="w-5 h-5 transition-transform rotate-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <button id="mobile-courses-toggle" class="w-full text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 flex justify-between items-center transition-colors duration-200 border-b border-gray-200">
+                        Cursos
+                        <span id="mobile-courses-arrow" class="transform transition-transform duration-300">&#9656;</span>
                     </button>
                     <div id="mobile-grades-container" class="mobile-menu-item-container hidden-height">
-                        <div class="pl-4 py-2 flex flex-col space-y-1" id="mobile-grades-menu"></div>
+                        <div class="pl-3 pt-1 flex flex-col space-y-2" id="mobile-grades-menu">
+                            </div>
                     </div>
                 </div>
-
                 <div class="w-full">
-                    <button id="mobile-additional-resources-toggle" class="mobile-menu-item focus:outline-none">
-                        <span>Recursos Adicionales</span>
-                        <svg id="mobile-additional-resources-arrow" class="w-5 h-5 transition-transform rotate-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <button id="mobile-additional-resources-toggle" class="w-full text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 flex justify-between items-center transition-colors duration-200">
+                        Recursos Adicionales
+                        <span id="mobile-additional-resources-arrow" class="transform transition-transform duration-300">&#9656;</span>
                     </button>
                     <div id="mobile-additional-resources-container" class="mobile-menu-item-container hidden-height">
-                        <div class="pl-4 py-2 flex flex-col space-y-1" id="mobile-additional-resources-menu"></div>
+                        <div class="pl-3 pt-1 flex flex-col space-y-2" id="mobile-additional-resources-menu">
+                            </div>
                     </div>
                 </div>
-
-                <a href="pseudocode.html" target="_blank" class="mobile-menu-item" onclick="closeMobileMenu()">
-                    <span>Pseudocódigo</span>
-                    <svg class="w-5 h-5 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </a>
-                <a href="https://wa.me/50488422786" target="_blank" class="mobile-menu-item border-none text-blue-600" onclick="closeMobileMenu()">
-                    <span>Contacto</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </a>
+                <a href="pseudocode.html" target="_blank" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Pseudocódigo</a>
+                <a href="https://wa.me/50488422786" target="_blank" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Contacto</a>
             </nav>
         </div>
     </header>
@@ -589,45 +436,69 @@
             let activeMobileSubjectElement = null; // Stores the currently open subject container in mobile menu
 
             function toggleMobileMenu() {
-                const isHidden = mobileMenuOverlay.classList.contains('hidden');
                 mobileMenuOverlay.classList.toggle('hidden');
-                mobileMenuOverlay.classList.toggle('mobile-menu-overlay');
+                mobileMenuOverlay.classList.toggle('mobile-menu-overlay'); // Apply overlay styles
+                mobileMenuIcon.setAttribute('d', mobileMenuOverlay.classList.contains('hidden') ? 'M4 6h16M4 12h16M4 18h16' : 'M6 18L18 6M6 6l12 12');
 
-                const iconPath = document.querySelector('#mobile-menu-icon-svg path');
-                if (isHidden) {
-                    iconPath.setAttribute('d', 'M6 18L18 6M6 6l12 12');
-                    document.body.style.overflow = 'hidden'; // Prevent scroll
-                } else {
-                    iconPath.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
-                    document.body.style.overflow = '';
-                    resetMobileMenuState();
-                }
-            }
+                // Reset mobile menu state when closing
+                if (mobileMenuOverlay.classList.contains('hidden')) {
+                    mobileGradesContainer.classList.remove('visible-height');
+                    mobileGradesContainer.classList.add('hidden-height');
+                    mobileCoursesArrow.classList.remove('rotate-90');
+                    mobileCoursesArrow.classList.add('rotate-0');
 
-            function resetMobileMenuState() {
-                mobileGradesContainer.classList.replace('visible-height', 'hidden-height');
-                mobileCoursesArrow.classList.remove('rotated');
+                    mobileAdditionalResourcesContainer.classList.remove('visible-height');
+                    mobileAdditionalResourcesContainer.classList.add('hidden-height');
+                    mobileAdditionalResourcesArrow.classList.remove('rotate-90');
+                    mobileAdditionalResourcesArrow.classList.add('rotate-0');
 
-                mobileAdditionalResourcesContainer.classList.replace('visible-height', 'hidden-height');
-                mobileAdditionalResourcesArrow.classList.remove('rotated');
-
-                [activeMobileGradeElement, activeMobileSubjectElement].forEach(el => {
-                    if (el) {
-                        el.classList.replace('visible-height', 'hidden-height');
-                        const arrow = el.previousElementSibling.querySelector('svg');
-                        if (arrow) arrow.classList.remove('rotated');
+                    // Close any open sub-menus
+                    if (activeMobileGradeElement) {
+                        activeMobileGradeElement.classList.remove('visible-height');
+                        activeMobileGradeElement.classList.add('hidden-height');
+                        activeMobileGradeElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                        activeMobileGradeElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                        activeMobileGradeElement = null;
                     }
-                });
-                activeMobileGradeElement = null;
-                activeMobileSubjectElement = null;
+                    if (activeMobileSubjectElement) {
+                        activeMobileSubjectElement.classList.remove('visible-height');
+                        activeMobileSubjectElement.classList.add('hidden-height');
+                        activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                        activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                        activeMobileSubjectElement = null;
+                    }
+                }
             }
 
             function closeMobileMenu() {
                 mobileMenuOverlay.classList.add('hidden');
                 mobileMenuOverlay.classList.remove('mobile-menu-overlay');
-                document.querySelector('#mobile-menu-icon-svg path').setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
-                document.body.style.overflow = '';
-                resetMobileMenuState();
+                mobileMenuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+                // Reset mobile menu state
+                mobileGradesContainer.classList.remove('visible-height');
+                mobileGradesContainer.classList.add('hidden-height');
+                mobileCoursesArrow.classList.remove('rotate-90');
+                mobileCoursesArrow.classList.add('rotate-0');
+
+                mobileAdditionalResourcesContainer.classList.remove('visible-height');
+                mobileAdditionalResourcesContainer.classList.add('hidden-height');
+                mobileAdditionalResourcesArrow.classList.remove('rotate-90');
+                mobileAdditionalResourcesArrow.classList.add('rotate-0');
+
+                if (activeMobileGradeElement) {
+                    activeMobileGradeElement.classList.remove('visible-height');
+                    activeMobileGradeElement.classList.add('hidden-height');
+                    activeMobileGradeElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                    activeMobileGradeElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                    activeMobileGradeElement = null;
+                }
+                if (activeMobileSubjectElement) {
+                    activeMobileSubjectElement.classList.remove('visible-height');
+                    activeMobileSubjectElement.classList.add('hidden-height');
+                    activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                    activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                    activeMobileSubjectElement = null;
+                }
             }
 
             mobileMenuButton.addEventListener('click', toggleMobileMenu);
@@ -641,21 +512,27 @@
             });
 
             mobileCoursesToggle.addEventListener('click', () => {
-                const isOpen = mobileGradesContainer.classList.contains('visible-height');
-                resetMobileMenuState();
-                if (!isOpen) {
-                    mobileGradesContainer.classList.replace('hidden-height', 'visible-height');
-                    mobileCoursesArrow.classList.add('rotated');
-                }
+                mobileGradesContainer.classList.toggle('hidden-height');
+                mobileGradesContainer.classList.toggle('visible-height');
+                mobileCoursesArrow.classList.toggle('rotate-90');
+                mobileCoursesArrow.classList.toggle('rotate-0');
+                // Close other top-level mobile menus
+                mobileAdditionalResourcesContainer.classList.remove('visible-height');
+                mobileAdditionalResourcesContainer.classList.add('hidden-height');
+                mobileAdditionalResourcesArrow.classList.remove('rotate-90');
+                mobileAdditionalResourcesArrow.classList.add('rotate-0');
             });
 
             mobileAdditionalResourcesToggle.addEventListener('click', () => {
-                const isOpen = mobileAdditionalResourcesContainer.classList.contains('visible-height');
-                resetMobileMenuState();
-                if (!isOpen) {
-                    mobileAdditionalResourcesContainer.classList.replace('hidden-height', 'visible-height');
-                    mobileAdditionalResourcesArrow.classList.add('rotated');
-                }
+                mobileAdditionalResourcesContainer.classList.toggle('hidden-height');
+                mobileAdditionalResourcesContainer.classList.toggle('visible-height');
+                mobileAdditionalResourcesArrow.classList.toggle('rotate-90');
+                mobileAdditionalResourcesArrow.classList.toggle('rotate-0');
+                // Close other top-level mobile menus
+                mobileGradesContainer.classList.remove('visible-height');
+                mobileGradesContainer.classList.add('hidden-height');
+                mobileCoursesArrow.classList.remove('rotate-90');
+                mobileCoursesArrow.classList.add('rotate-0');
             });
 
             // Function to render desktop navigation menu (Presentations)
@@ -673,18 +550,18 @@
                     gradeDiv.appendChild(gradeButton);
 
                     let subjectDiv = document.createElement('div');
-                    subjectDiv.className = 'nav-dropdown absolute left-full top-0 mt-0 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 origin-left';
+                    subjectDiv.className = 'absolute left-full top-0 mt-0 w-56 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/grade:scale-100 origin-left';
 
                     gradeData.subjects.forEach(subjectData => {
                         let subjectSubDiv = document.createElement('div');
                         subjectSubDiv.className = 'relative group/subject';
                         let subjectButton = document.createElement('button');
-                        subjectButton.className = 'block w-full text-left px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 focus:outline-none font-medium';
-                        subjectButton.innerHTML = `${subjectData.name} <span class="float-right text-xs opacity-50">&#9656;</span>`;
+                        subjectButton.className = 'block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200 focus:outline-none';
+                        subjectButton.innerHTML = `${subjectData.name} <span class="float-right text-xs">&#9656;</span>`;
                         subjectSubDiv.appendChild(subjectButton);
 
                         let topicDiv = document.createElement('div');
-                        topicDiv.className = 'nav-dropdown absolute left-full top-0 mt-0 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 origin-left';
+                        topicDiv.className = 'absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover/subject:opacity-100 group-hover/subject:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/subject:scale-100 origin-left';
 
                         subjectData.topics.forEach(topic => {
                             let topicLink = document.createElement('a');
@@ -708,12 +585,12 @@
                     let categoryDiv = document.createElement('div');
                     categoryDiv.className = 'relative group/resource-cat';
                     let categoryButton = document.createElement('button');
-                    categoryButton.className = 'block w-full text-left px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 focus:outline-none font-medium';
-                    categoryButton.innerHTML = `${resourceCategory.category} <span class="float-right text-xs opacity-50">&#9656;</span>`;
+                    categoryButton.className = 'block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200 focus:outline-none';
+                    categoryButton.innerHTML = `${resourceCategory.category} <span class="float-right text-xs">&#9656;</span>`;
                     categoryDiv.appendChild(categoryButton);
 
                     let itemsDiv = document.createElement('div');
-                    itemsDiv.className = 'nav-dropdown absolute left-full top-0 mt-0 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 origin-left';
+                    itemsDiv.className = 'absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover/resource-cat:opacity-100 group-hover/resource-cat:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/resource-cat:scale-100 origin-left';
 
                     resourceCategory.items.forEach(item => {
                         let itemLink = document.createElement('a');
@@ -755,106 +632,167 @@
                 });
             }
 
+            // Function to render mobile navigation menu (Presentations)
             function renderMobileNav() {
-                mobileGradesMenu.innerHTML = '';
-                mobileAdditionalResourcesMenu.innerHTML = '';
+                mobileGradesMenu.innerHTML = ''; // Clear previous content
+                mobileAdditionalResourcesMenu.innerHTML = ''; // Clear previous content
 
+                // Render 'Cursos' from presentationData
                 presentationData.forEach(gradeData => {
                     const gradeToggle = document.createElement('button');
-                    gradeToggle.className = 'w-full flex justify-between items-center py-3 text-gray-700 font-semibold border-b border-gray-100 hover:text-blue-600 transition-colors';
-                    gradeToggle.innerHTML = `<span>${gradeData.grade}</span> <svg class="w-4 h-4 transition-transform rotate-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
+                    gradeToggle.className = 'w-full text-gray-700 hover:text-blue-600 font-semibold text-lg text-left py-2 flex justify-between items-center transition-colors duration-200 border-b border-gray-200';
+                    gradeToggle.innerHTML = `${gradeData.grade} <span class="transform transition-transform duration-300">&#9656;</span>`;
                     mobileGradesMenu.appendChild(gradeToggle);
 
                     const subjectsContainer = document.createElement('div');
-                    subjectsContainer.className = 'mobile-menu-item-container hidden-height bg-gray-50/50';
+                    subjectsContainer.className = 'mobile-menu-item-container hidden-height pl-4';
                     mobileGradesMenu.appendChild(subjectsContainer);
 
                     gradeToggle.addEventListener('click', () => {
-                        const isOpen = subjectsContainer.classList.contains('visible-height');
+                        // Close currently active grade element if different
                         if (activeMobileGradeElement && activeMobileGradeElement !== subjectsContainer) {
-                            activeMobileGradeElement.classList.replace('visible-height', 'hidden-height');
-                            activeMobileGradeElement.previousElementSibling.querySelector('svg').classList.remove('rotated');
+                            activeMobileGradeElement.classList.remove('visible-height');
+                            activeMobileGradeElement.classList.add('hidden-height');
+                            activeMobileGradeElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                            activeMobileGradeElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
                         }
-                        subjectsContainer.classList.toggle('hidden-height', isOpen);
-                        subjectsContainer.classList.toggle('visible-height', !isOpen);
-                        gradeToggle.querySelector('svg').classList.toggle('rotated', !isOpen);
-                        activeMobileGradeElement = !isOpen ? subjectsContainer : null;
+                        // Toggle current grade element
+                        subjectsContainer.classList.toggle('hidden-height');
+                        subjectsContainer.classList.toggle('visible-height');
+                        gradeToggle.querySelector('span').classList.toggle('rotate-90');
+                        gradeToggle.querySelector('span').classList.toggle('rotate-0');
+                        activeMobileGradeElement = subjectsContainer.classList.contains('visible-height') ? subjectsContainer : null;
+
+                        // Close other top-level mobile menus
+                        mobileAdditionalResourcesContainer.classList.remove('visible-height');
+                        mobileAdditionalResourcesContainer.classList.add('hidden-height');
+                        mobileAdditionalResourcesArrow.classList.remove('rotate-90');
+                        mobileAdditionalResourcesArrow.classList.add('rotate-0');
+
+                        // Close any open subject sub-menus when a grade is closed or a new grade is opened
+                        if (activeMobileSubjectElement) {
+                            activeMobileSubjectElement.classList.remove('visible-height');
+                            activeMobileSubjectElement.classList.add('hidden-height');
+                            activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                            activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                            activeMobileSubjectElement = null;
+                        }
                     });
 
                     gradeData.subjects.forEach(subjectData => {
                         const subjectToggle = document.createElement('button');
-                        subjectToggle.className = 'w-full flex justify-between items-center py-3 pl-4 pr-2 text-gray-600 font-medium border-b border-gray-100/50 hover:text-blue-600 transition-colors';
-                        subjectToggle.innerHTML = `<span>${subjectData.name}</span> <svg class="w-4 h-4 transition-transform rotate-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
+                        subjectToggle.className = 'w-full text-gray-600 hover:text-blue-500 font-medium text-base text-left py-2 flex justify-between items-center transition-colors duration-200 border-b border-gray-100';
+                        subjectToggle.innerHTML = `${subjectData.name} <span class="transform transition-transform duration-300">&#9656;</span>`;
                         subjectsContainer.appendChild(subjectToggle);
 
                         const topicsContainer = document.createElement('div');
-                        topicsContainer.className = 'mobile-menu-item-container hidden-height bg-white';
+                        topicsContainer.className = 'mobile-menu-item-container hidden-height pl-4';
                         subjectsContainer.appendChild(topicsContainer);
 
-                        subjectToggle.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const isOpen = topicsContainer.classList.contains('visible-height');
+                        subjectToggle.addEventListener('click', () => {
+                            // Close currently active subject element if different
                             if (activeMobileSubjectElement && activeMobileSubjectElement !== topicsContainer) {
-                                activeMobileSubjectElement.classList.replace('visible-height', 'hidden-height');
-                                activeMobileSubjectElement.previousElementSibling.querySelector('svg').classList.remove('rotated');
+                                activeMobileSubjectElement.classList.remove('visible-height');
+                                activeMobileSubjectElement.classList.add('hidden-height');
+                                activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                                activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
                             }
-                            topicsContainer.classList.toggle('hidden-height', isOpen);
-                            topicsContainer.classList.toggle('visible-height', !isOpen);
-                            subjectToggle.querySelector('svg').classList.toggle('rotated', !isOpen);
-                            activeMobileSubjectElement = !isOpen ? topicsContainer : null;
+                            // Toggle current subject element
+                            topicsContainer.classList.toggle('hidden-height');
+                            topicsContainer.classList.toggle('visible-height');
+                            subjectToggle.querySelector('span').classList.toggle('rotate-90');
+                            subjectToggle.querySelector('span').classList.toggle('rotate-0');
+                            activeMobileSubjectElement = topicsContainer.classList.contains('visible-height') ? topicsContainer : null;
                         });
 
                         subjectData.topics.forEach(topic => {
                             const topicLink = document.createElement('a');
-                            topicLink.href = topic.file;
-                            topicLink.className = 'block py-3 pl-8 text-gray-500 hover:text-blue-500 text-sm border-b border-gray-50 last:border-none';
+                            topicLink.href = topic.file; // Use topic.file (HTML) for presentations
+                            // topicLink.target = '_blank'; // REMOVED: No longer opens in new tab
+                            topicLink.className = 'block px-2 py-1 text-gray-500 hover:text-blue-400 text-sm transition-colors duration-200';
                             topicLink.textContent = topic.title;
-                            topicLink.onclick = closeMobileMenu;
+                            topicLink.onclick = closeMobileMenu; // Close menu when a topic is clicked
                             topicsContainer.appendChild(topicLink);
                         });
                     });
                 });
 
+                // Render 'Recursos Adicionales' for mobile
                 additionalResourcesData.forEach(resourceCategory => {
                     const categoryToggle = document.createElement('button');
-                    categoryToggle.className = 'w-full flex justify-between items-center py-3 text-gray-700 font-semibold border-b border-gray-100 hover:text-blue-600 transition-colors';
-                    categoryToggle.innerHTML = `<span>${resourceCategory.category}</span> <svg class="w-4 h-4 transition-transform rotate-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
+                    categoryToggle.className = 'w-full text-gray-700 hover:text-blue-600 font-semibold text-lg text-left py-2 flex justify-between items-center transition-colors duration-200 border-b border-gray-200';
+                    categoryToggle.innerHTML = `${resourceCategory.category} <span class="transform transition-transform duration-300">&#9656;</span>`;
                     mobileAdditionalResourcesMenu.appendChild(categoryToggle);
 
                     const itemsContainer = document.createElement('div');
-                    itemsContainer.className = 'mobile-menu-item-container hidden-height bg-gray-50/50';
+                    itemsContainer.className = 'mobile-menu-item-container hidden-height pl-4';
                     mobileAdditionalResourcesMenu.appendChild(itemsContainer);
 
                     categoryToggle.addEventListener('click', () => {
-                        const isOpen = itemsContainer.classList.contains('visible-height');
+                        // Close currently active category element if different
                         if (activeMobileGradeElement && activeMobileGradeElement !== itemsContainer) {
-                            activeMobileGradeElement.classList.replace('visible-height', 'hidden-height');
-                            activeMobileGradeElement.previousElementSibling.querySelector('svg').classList.remove('rotated');
+                            activeMobileGradeElement.classList.remove('visible-height');
+                            activeMobileGradeElement.classList.add('hidden-height');
+                            activeMobileGradeElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                            activeMobileGradeElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
                         }
-                        itemsContainer.classList.toggle('hidden-height', isOpen);
-                        itemsContainer.classList.toggle('visible-height', !isOpen);
-                        categoryToggle.querySelector('svg').classList.toggle('rotated', !isOpen);
-                        activeMobileGradeElement = !isOpen ? itemsContainer : null;
+                        // Toggle current category element
+                        itemsContainer.classList.toggle('hidden-height');
+                        itemsContainer.classList.toggle('visible-height');
+                        categoryToggle.querySelector('span').classList.toggle('rotate-90');
+                        categoryToggle.querySelector('span').classList.toggle('rotate-0');
+                        activeMobileGradeElement = itemsContainer.classList.contains('visible-height') ? itemsContainer : null;
+
+                        // Close other top-level mobile menus
+                        mobileGradesContainer.classList.remove('visible-height');
+                        mobileGradesContainer.classList.add('hidden-height');
+                        mobileCoursesArrow.classList.remove('rotate-90');
+                        mobileCoursesArrow.classList.add('rotate-0');
+
+                        // Close any open sub-menus
+                        if (activeMobileSubjectElement) {
+                            activeMobileSubjectElement.classList.remove('visible-height');
+                            activeMobileSubjectElement.classList.add('hidden-height');
+                            activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.remove('rotate-90');
+                            activeMobileSubjectElement.previousElementSibling.querySelector('span').classList.add('rotate-0');
+                            activeMobileSubjectElement = null;
+                        }
                     });
 
                     resourceCategory.items.forEach(item => {
                         const itemLink = document.createElement('a');
-                        itemLink.className = 'block py-3 pl-4 text-gray-500 hover:text-blue-500 text-sm border-b border-gray-100/50 last:border-none';
-                        itemLink.textContent = item.title;
-                        if (item.action) {
+                        if (item.action === 'load-peripherals-game') {
                             itemLink.href = '#';
+                            itemLink.dataset.action = 'load-peripherals-game';
                             itemLink.onclick = (e) => {
                                 e.preventDefault();
-                                if (item.action === 'load-peripherals-game') loadPeripheralsGameFromHeader();
-                                else if (item.action === 'load-webmaster-quiz') loadWebMasterQuizFromHeader();
-                                else if (item.action === 'load-dexterity-game') loadDexterityGameFromHeader();
+                                loadPeripheralsGameFromHeader();
                                 closeMobileMenu();
                             };
-                        } else {
+                        } else if (item.action === 'load-webmaster-quiz') { // Nuevo juego
+                            itemLink.href = '#';
+                            itemLink.dataset.action = 'load-webmaster-quiz';
+                            itemLink.onclick = (e) => {
+                                e.preventDefault();
+                                loadWebMasterQuizFromHeader();
+                                closeMobileMenu();
+                            };
+                        } else if (item.action === 'load-dexterity-game') { // New game
+                            itemLink.href = '#';
+                            itemLink.dataset.action = 'load-dexterity-game';
+                            itemLink.onclick = (e) => {
+                                e.preventDefault();
+                                loadDexterityGameFromHeader();
+                                closeMobileMenu();
+                            };
+                        }
+                        else {
                             itemLink.href = item.file;
                             itemLink.target = '_blank';
-                            itemLink.onclick = closeMobileMenu;
                         }
+                        itemLink.className = 'block px-2 py-1 text-gray-500 hover:text-blue-400 text-sm transition-colors duration-200';
+                        itemLink.textContent = item.title;
+                        itemLink.onclick = closeMobileMenu; // Close menu when a topic is clicked
                         itemsContainer.appendChild(itemLink);
                     });
                 });
@@ -1229,7 +1167,6 @@
             window.addEventListener('scroll', () => {
                 const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-                // Handle Header Visibility (Show/Hide)
                 if (currentScrollTop > lastScrollTop && currentScrollTop > mainHeader.offsetHeight + scrollThreshold) {
                     // Scrolling down
                     mainHeader.classList.add('header-hidden');
@@ -1237,15 +1174,7 @@
                     // Scrolling up
                     mainHeader.classList.remove('header-hidden');
                 }
-
-                // Handle Header Appearance (Scrolled State)
-                if (currentScrollTop > 20) {
-                    mainHeader.classList.add('header-scrolled');
-                } else {
-                    mainHeader.classList.remove('header-scrolled');
-                }
-
-                lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
+                lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // For Mobile or negative scrolling
             });
 
             // Set current year in footer

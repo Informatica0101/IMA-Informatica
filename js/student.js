@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('student-name').textContent = currentUser.nombre;
     const tasksList = document.getElementById('tasks-list');
-    const logoutButton = document.getElementById('logout-button');
+    const logoutButton = document.getElementById('global-logout-btn');
 
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('currentUser');

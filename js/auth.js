@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (currentUser) {
         if (currentUser.rol === 'Profesor') {
-            window.location.href = 'teacher-dashboard.html';
+            showView('view-teacher');
         } else {
-            window.location.href = 'student-dashboard.html';
+            showView('view-student');
         }
     }
 
@@ -24,9 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (result.status === 'success' && result.data) {
                     localStorage.setItem('currentUser', JSON.stringify(result.data));
                     if (result.data.rol === 'Profesor') {
-                        window.location.href = 'teacher-dashboard.html';
+                        showView('view-teacher');
                     } else {
-                        window.location.href = 'student-dashboard.html';
+                        showView('view-student');
                     }
                 } else {
                     alert(result.message || 'Error al iniciar sesión.');
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (result.status === 'success') {
                     alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
-                    window.location.href = 'login.html';
+                    showView('view-login');
                 } else {
                     alert(result.message || 'Error en el registro.');
                 }
