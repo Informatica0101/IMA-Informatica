@@ -176,3 +176,21 @@ Archivos: student-dashboard.html, teacher-dashboard.html, exam.html, exam-result
 - Corrección de desbordamientos en tablas y grids.
 - Implementación de lógica de cierre de sesión unificada usando la clave 'currentUser'.
 - Corrección de navegación rota en results.html (apuntaba a student.html).
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivo: css/style.css
+- Corregida propiedad min-height en body (antes min-h-screen).
+- Ajustado padding de .dashboard-card a 1rem para un diseño más compacto.
+
+Archivo: student-dashboard.html
+- Reducido gap en el grid de tareas de gap-6 a gap-3.
+- Asegurada estructura flex-col en body para posicionamiento correcto del footer.
+
+Archivo: teacher-dashboard.html
+- Reducido gap en formularios de gap-8 a gap-4.
+- Reducido espaciado en preguntas de examen de space-y-8 a space-y-4.
+- Asegurada estructura flex-col en body.
+
+Archivo: index.html
+- Añadidas clases flex-grow y mt-auto para asegurar que el footer no deje franjas blancas inferiores.
