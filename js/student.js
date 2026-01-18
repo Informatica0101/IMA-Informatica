@@ -20,21 +20,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const submissionForm = document.getElementById('submission-form');
     const fileInput = document.getElementById('file-input');
     const cancelSubmissionBtn = document.getElementById('cancel-submission-btn');
+    const filePreviewContainer = document.getElementById('file-preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const fileInfoPreview = document.getElementById('file-info-preview');
+    const acceptFileBtn = document.getElementById('accept-file-btn');
+    const uploadedFilesContainer = document.getElementById('uploaded-files-container');
+    const uploadedFilesList = document.getElementById('uploaded-files-list');
+    const confirmSubmissionBtn = document.getElementById('confirm-submission-btn');
+
     let currentTaskId = null;
+    let currentTaskParcial = null;
+    let currentTaskAsignatura = null;
+    let uploadedFiles = []; // [{fileId, fileName, mimeType}]
+    let currentFolderId = null;
+    let isUploading = false;
 
     // Función para obtener Tareas y Exámenes
     async function fetchAllActivities() {
+        if (!tasksList) return;
         tasksList.innerHTML = '<p class="text-gray-500">Cargando actividades...</p>';
         try {
             const payload = { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion };
 
-            // Realizar ambas llamadas a la API en paralelo
             const [tasksResult, examsResult] = await Promise.all([
                 fetchApi('TASK', 'getStudentTasks', payload),
-                fetchApi('EXAM', 'getStudentExams', payload) // Asumiendo que este endpoint existe
+                fetchApi('EXAM', 'getStudentExams', payload)
             ]);
 
-            // Combinar y renderizar los resultados
             const allActivities = [];
             if (tasksResult.status === 'success' && tasksResult.data) {
                 allActivities.push(...tasksResult.data.map(task => ({ ...task, type: 'Tarea' })));
@@ -43,9 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 allActivities.push(...examsResult.data.map(exam => ({ ...exam, type: 'Examen' })));
             }
 
-            // Ordenar por fecha límite, si existe
             allActivities.sort((a, b) => new Date(a.fechaLimite) - new Date(b.fechaLimite));
-
             renderActivities(allActivities);
 
         } catch (error) {
@@ -73,10 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
                         </div>`;
                 } else {
-                    actionButtonHtml = `<button class="bg-blue-500 text-white px-4 py-2 rounded-lg open-submission-modal" data-task-id="${activity.tareaId}" data-task-title="${activity.titulo}">Entregar Tarea</button>`;
+                    actionButtonHtml = `<button class="bg-blue-500 text-white px-4 py-2 rounded-lg open-submission-modal"
+                        data-task-id="${activity.tareaId}"
+                        data-task-title="${activity.titulo}"
+                        data-parcial="${activity.parcial || ''}"
+                        data-asignatura="${activity.asignatura || ''}">Entregar Tarea</button>`;
                 }
             } else if (activity.type === 'Examen') {
-                const estado = activity.estado || 'Pendiente'; // Estado del examen base o de la entrega
+                const estado = activity.estado || 'Pendiente';
                 const calificacion = activity.calificacionTotal;
 
                 if (estado === 'Activo') {
@@ -114,50 +128,165 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     }
 
-    // --- Delegación de Eventos para Abrir el Modal de Entrega ---
-    tasksList.addEventListener('click', (e) => {
-        if (e.target && e.target.classList.contains('open-submission-modal')) {
-            const taskId = e.target.dataset.taskId;
-            const taskTitle = e.target.dataset.taskTitle;
-            openSubmissionModal(taskId, taskTitle);
-        }
-    });
-
     // --- Lógica del Modal ---
-    function openSubmissionModal(taskId, taskTitle) {
+    function openSubmissionModal(taskId, taskTitle, parcial, asignatura) {
         currentTaskId = taskId;
+        currentTaskParcial = parcial;
+        currentTaskAsignatura = asignatura;
         modalTaskTitle.textContent = taskTitle;
+        uploadedFiles = [];
+        currentFolderId = null;
+        isUploading = false;
+
+        uploadedFilesList.innerHTML = '';
+        uploadedFilesContainer.classList.add('hidden');
+        filePreviewContainer.classList.add('hidden');
+        fileInput.value = '';
+        updateConfirmButtonState();
+
         submissionModal.classList.remove('hidden');
     }
 
     function closeSubmissionModal() {
+        if (isUploading) {
+            if (!confirm('Hay una subida en progreso. ¿Estás seguro de cerrar el modal?')) return;
+        }
         submissionModal.classList.add('hidden');
         submissionForm.reset();
     }
 
-    cancelSubmissionBtn.addEventListener('click', closeSubmissionModal);
-
-    submissionForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const file = fileInput.files[0];
-        if (!file || !currentTaskId) {
-            alert("Por favor, selecciona un archivo.");
-            return;
+    function updateConfirmButtonState() {
+        if (!confirmSubmissionBtn) return;
+        if (uploadedFiles.length > 0 && !isUploading) {
+            confirmSubmissionBtn.disabled = false;
+            confirmSubmissionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            confirmSubmissionBtn.disabled = true;
+            confirmSubmissionBtn.classList.add('opacity-50', 'cursor-not-allowed');
         }
+    }
 
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-            const fileData = reader.result;
-            const payload = {
-                userId: currentUser.userId,
-                tareaId: currentTaskId,
-                fileName: file.name,
-                fileData: fileData,
-                parcial: 'Primer Parcial', // Placeholder
-                asignatura: 'Informática' // Placeholder
+    if (tasksList) {
+        tasksList.addEventListener('click', (e) => {
+            if (e.target && e.target.classList.contains('open-submission-modal')) {
+                const ds = e.target.dataset;
+                openSubmissionModal(ds.taskId, ds.taskTitle, ds.parcial, ds.asignatura);
+            }
+        });
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) {
+                filePreviewContainer.classList.add('hidden');
+                return;
+            }
+            filePreviewContainer.classList.remove('hidden');
+            if (file.type.startsWith('image/')) {
+                imagePreview.classList.remove('hidden');
+                fileInfoPreview.classList.add('hidden');
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.querySelector('img').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.classList.add('hidden');
+                fileInfoPreview.classList.remove('hidden');
+                fileInfoPreview.textContent = `Archivo seleccionado: ${file.name}`;
+            }
+        });
+    }
+
+    if (acceptFileBtn) {
+        acceptFileBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            if (!file || isUploading) return;
+
+            isUploading = true;
+            updateConfirmButtonState();
+            acceptFileBtn.disabled = true;
+            acceptFileBtn.textContent = 'Subiendo...';
+            fileInput.disabled = true;
+
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const fileData = reader.result;
+                const payload = {
+                    userId: currentUser.userId,
+                    tareaId: currentTaskId,
+                    fileName: file.name,
+                    fileData: fileData,
+                    parcial: currentTaskParcial,
+                    asignatura: currentTaskAsignatura
+                };
+
+                try {
+                    const result = await fetchApi('TASK', 'uploadFile', payload);
+                    if (result.status === 'success') {
+                        const uploadedData = result.data;
+                        uploadedFiles.push({
+                            fileId: uploadedData.fileId,
+                            fileName: file.name,
+                            mimeType: uploadedData.mimeType
+                        });
+                        currentFolderId = uploadedData.folderId;
+
+                        uploadedFilesContainer.classList.remove('hidden');
+                        const li = document.createElement('li');
+                        li.className = 'flex items-center space-x-2 text-sm text-gray-700 bg-white p-2 rounded border shadow-sm';
+                        li.innerHTML = `
+                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="truncate">${file.name}</span>
+                        `;
+                        uploadedFilesList.appendChild(li);
+
+                        filePreviewContainer.classList.add('hidden');
+                        fileInput.value = '';
+                    } else {
+                        alert('Error al subir archivo: ' + result.message);
+                    }
+                } catch (error) {
+                    alert('Error de conexión al subir archivo: ' + error.message);
+                } finally {
+                    isUploading = false;
+                    acceptFileBtn.disabled = false;
+                    acceptFileBtn.textContent = 'Aceptar y Subir';
+                    fileInput.disabled = false;
+                    updateConfirmButtonState();
+                }
             };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    if (cancelSubmissionBtn) cancelSubmissionBtn.addEventListener('click', closeSubmissionModal);
+
+    if (submissionForm) {
+        submissionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (uploadedFiles.length === 0 || isUploading) return;
+
+            confirmSubmissionBtn.disabled = true;
+            confirmSubmissionBtn.textContent = 'Enviando...';
 
             try {
+                let finalFileId = uploadedFiles[0].fileId;
+                let finalMimeType = uploadedFiles[0].mimeType;
+
+                if (uploadedFiles.length > 1) {
+                    finalFileId = currentFolderId;
+                    finalMimeType = 'folder';
+                }
+
+                const payload = {
+                    userId: currentUser.userId,
+                    tareaId: currentTaskId,
+                    fileId: finalFileId,
+                    mimeType: finalMimeType
+                };
+
                 const result = await fetchApi('TASK', 'submitAssignment', payload);
                 if (result.status === 'success') {
                     alert('¡Tarea entregada exitosamente!');
@@ -167,11 +296,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(result.message);
                 }
             } catch (error) {
-                alert(`Error al entregar la tarea: ${error.message}`);
+                alert(`Error al finalizar la entrega: ${error.message}`);
+            } finally {
+                confirmSubmissionBtn.disabled = false;
+                confirmSubmissionBtn.textContent = 'Confirmar Entrega';
+                updateConfirmButtonState();
             }
-        };
-        reader.readAsDataURL(file);
-    });
+        });
+    }
 
-    fetchAllActivities(); // Carga inicial
+    fetchAllActivities();
 });

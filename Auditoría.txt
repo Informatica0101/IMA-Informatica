@@ -1,3 +1,25 @@
+AUDITORÍA INICIAL - 18/01/2026
+-------------------------------------------------------------------
+- Archivo: student-dashboard.html
+  - Línea(s): 134-142 (Input de archivo)
+  - Hallazgo: El input de archivo solo acepta imágenes (accept="image/*") y es único. Se requiere soportar PDF y DOCX, y permitir la subida de múltiples archivos uno por uno.
+  - Hallazgo: El modal de entrega carece de un área de previsualización de imágenes y de una lista de archivos ya subidos en segundo plano.
+
+- Archivo: js/student.js
+  - Línea(s): 110-141 (Manejo de envío de tarea)
+  - Hallazgo: La función actual lee el archivo como DataURL y lo envía todo junto. Se requiere desacoplar la subida del archivo de la confirmación final de la tarea.
+  - Hallazgo: Falta lógica para manejar subidas en segundo plano, previsualización y seguimiento de múltiples IDs de archivos.
+
+- Archivo: backend/task-service/Code.gs
+  - Línea(s): 114-144 (Función submitAssignment)
+  - Hallazgo: La función submitAssignment crea un archivo y registra la entrega en una sola operación. Se requiere una nueva acción (uploadFile) para subir archivos individualmente y devolver su ID.
+  - Hallazgo: La lógica de submitAssignment debe actualizarse para aceptar ya sea un ID de archivo único o un ID de carpeta (si hay múltiples archivos).
+  - Hallazgo: Se debe asegurar que si hay más de una imagen, se devuelva el enlace de la carpeta pública.
+
+- Archivo: js/teacher.js
+  - Línea(s): 87-120 (Renderizado de actividad)
+  - Hallazgo: La lógica de renderizado asume que fileId es siempre un archivo. Si es una carpeta, el lightbox o el enlace de descarga fallarán. Se requiere distinguir entre archivo y carpeta (MIME type 'folder' o similar).
+
 - Archivo: backend.gs
 - Ruta completa: /backend.gs
 - Función / método / bloque afectado: Global

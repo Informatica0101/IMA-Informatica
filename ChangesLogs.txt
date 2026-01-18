@@ -1,4 +1,3 @@
-
 14/01/2026
 - Archivo: js/teacher.js, Línea(s): 88-95
   - Se implementó código defensivo en la función `fetchTeacherActivity` para prevenir un error crítico de tipo 'TypeError: Cannot read properties of undefined (reading 'map')'. La modificación asegura que si alguna de las llamadas a la API devuelve `undefined`, el código manejará el valor de forma segura en lugar de fallar, mejorando la robustez general del dashboard del profesor.
@@ -32,7 +31,7 @@
 - Archivo: backend/task-service/Code.gs, Línea(s): 175-179
   - Se implementó una corrección en `getTeacherActivity` para asegurar que el `fileId` se recupere correctamente, incluso si el nombre de la columna en la hoja de cálculo no es "fileUrl", utilizando un índice de columna fijo como respaldo.
 - Archivo: js/teacher.js, Línea(s): 87-96
-  - Se implementó una corrección definitiva en `renderActivity` para que el frontend sea resiliente. Ahora genera un enlace de archivo siempre que `fileId` esté presente. El enlace activa el lightbox solo si `mimeType` es una imagen; de lo contrario, crea un enlace de descarga directa. Esto soluciona el error "N/A" de forma permanente.
+  - Se implementó una corrección definitiva en `renderActivity` para que el frontend sea resiliente. Ahora genera un enlace de archivo siempre que `fileId` esté presente. El enlace activa el lightbox solo si `mimeType` es una imagen; de lo contrario, crea un enlace de descarga directa. Esto soluciona el error "N/A" de forma personalizada.
 
 13/01/2026
 - Archivo: js/teacher.js, Línea(s): 99-102
@@ -162,7 +161,7 @@ En este archivo se regustrara el historial de cambios del proyecto.
 
 14/01/2026
 - Archivo: js/config.js, Línea(s): 17, 20
-  - Se actualizaron las URLs de los microservicios `TASK` y `EXAM` para apuntar a los nuevos endpoints de producción desplegados.
+  - Se actualizaron las URLs de los microservicios `TASK` and `EXAM` para apuntar a los nuevos endpoints de producción desplegados.
 
 REGISTRO DE CAMBIOS - 18/01/2026
 
@@ -198,9 +197,9 @@ Archivo: index.html
 REGISTRO DE CAMBIOS - 18/01/2026
 
 Archivos: student-dashboard.html, teacher-dashboard.html, index.html
-- Reducción extrema de gaps (gap-2) y padding interno (0.75rem) para lograr un diseño de cuadrícula minimalista y profesional.
+- Reducción extrema de gaps (gap-2) and padding interno (0.75rem) para lograr un diseño de cuadrícula minimalista y profesional.
 - Asegurado que todos los archivos usen bg-gray-900 en el footer para uniformidad total.
-- Implementación de mt-auto en todos los footers y flex-grow en los contenedores main para eliminar la franja blanca inferior.
+- Implementación de mt-auto en todos los footers and flex-grow en los contenedores main para eliminar la franja blanca inferior.
 
 REGISTRO DE CAMBIOS - 18/01/2026
 
@@ -220,8 +219,20 @@ Archivo: js/ui-common.js
 - Creado para centralizar la lógica de scroll, menú móvil y logout, permitiendo su reutilización en dashboards.
 
 Archivo: student-dashboard.html, teacher-dashboard.html
-- Integrado el encabezado completo (incluyendo dropdowns de Cursos/Recursos) mediante la inclusión de js/ui-common.js, js/data.js y js/index-ui.js.
-- Reducido gap en la cuadrícula de tareas y formularios.
+- Integrado el encabezado completo (incluyendo dropdowns de Cursos/Recursos) mediante la inclusión de js/ui-common.js, js/data.js and js/index-ui.js.
+- Reducido gap en la cuadrícula de tareas and formularios.
 
 Archivo: js/teacher.js
 - Reducido padding de las filas de la tabla de entregas a p-2 para un diseño más compacto.
+
+18/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 45, 102-140, 143-150
+  - Se implementó la acción `uploadFile` para permitir la subida individual de archivos a carpetas específicas por tarea/alumno.
+  - Se actualizó `submitAssignment` para aceptar IDs de archivos o carpetas ya subidos, simplificando el registro final.
+- Archivo: student-dashboard.html, Línea(s): 118-142
+  - Se actualizó el modal de entrega para soportar PDF/DOCX y permitir la subida múltiple con previsualización y lista de archivos.
+- Archivo: js/student.js, Línea(s): Todas
+  - Se reescribió la lógica del modal de entrega para gestionar subidas en segundo plano, estados de carga y envío final de enlaces (archivos individuales o carpetas).
+  - Se implementó la obtención dinámica de `parcial` y `asignatura` desde los atributos de datos de la tarea.
+- Archivo: js/teacher.js, Línea(s): 125-130, 219-224
+  - Se añadió soporte para visualizar carpetas de Drive ("Ver Carpeta") cuando una entrega contiene múltiples archivos.
