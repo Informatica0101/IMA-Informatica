@@ -194,3 +194,10 @@ Archivo: teacher-dashboard.html
 
 Archivo: index.html
 - Añadidas clases flex-grow y mt-auto para asegurar que el footer no deje franjas blancas inferiores.
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivos: student-dashboard.html, teacher-dashboard.html, index.html
+- Reducción extrema de gaps (gap-2) y padding interno (0.75rem) para lograr un diseño de cuadrícula minimalista y profesional.
+- Asegurado que todos los archivos usen bg-gray-900 en el footer para uniformidad total.
+- Implementación de mt-auto en todos los footers y flex-grow en los contenedores main para eliminar la franja blanca inferior.

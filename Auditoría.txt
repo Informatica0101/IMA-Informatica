@@ -810,3 +810,13 @@ AUDITORÍA DE DASHBOARDS Y EXÁMENES - 18/01/2026
 4. results.html:
    - Tiene un enlace a "student.html" que podría estar roto (el archivo es student-dashboard.html).
    - Intenta cargar css/styles.css (con 's'), que no existe (es style.css).
+
+AUDITORÍA DE AJUSTES FINALES - 18/01/2026
+
+1. DASHBOARDS:
+   - Se verificó que el espaciado entre columnas (gap) es el mínimo necesario para distinguir elementos sin desperdiciar espacio.
+   - Las tarjetas de dashboard ahora son más compactas.
+
+2. FOOTER:
+   - Se confirmó mediante inspección visual y flexbox que el footer se ancla al fondo del viewport incluso en páginas con poco contenido.
+   - La franja blanca ha sido eliminada.
