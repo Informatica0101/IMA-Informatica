@@ -249,3 +249,28 @@ Archivo: js/teacher.js
 18/01/2026
 - Archivo: js/config.js, Línea(s): 17
   - Se actualizó la URL del microservicio TASK a la nueva implementación: https://script.google.com/macros/s/AKfycbzaYA_NpnYqzEx8pinefePQpF35bTO5f3rr_fgiHVFCn-2GhHBfN7dlqB4vJ7ritos/exec
+
+20/01/2026
+- Archivo: backend/exam-service/Code.gs
+  Líneas: 200-203, 212-230
+  Cambio: Se corrigió la función submitExam para usar 'respuestaEstudiante'. Se añadió la generación y retorno de 'entregaExamenId' en un objeto 'data' para compatibilidad con la redirección del frontend.
+
+- Archivo: css/style.css
+  Líneas: 197-235
+  Cambio: Se añadieron las clases '.loading-spinner' y '.btn-loading' para manejar estados de carga en botones de forma estandarizada.
+
+- Archivo: js/auth.js
+  Líneas: 18-41, 50-75
+  Cambio: Se implementó el uso de 'btn-loading' y la deshabilitación de botones en los formularios de login y registro durante las llamadas a la API.
+
+- Archivo: js/student.js
+  Líneas: 288, 318
+  Cambio: Se actualizó el envío de tareas para usar la clase 'btn-loading' en el botón de confirmación.
+
+- Archivo: js/teacher.js
+  Líneas: 236-315, 324-462
+  Cambio: Se integraron estados de carga y deshabilitación en todos los botones de acción del profesor: calificar, reactivar, activar/bloquear examen, crear tarea y crear examen.
+
+- Archivo: js/exam.js
+  Líneas: 105, 149-166
+  Cambio: Se añadió el estado de carga al botón de entrega de examen y se aseguró el manejo correcto de la redirección post-entrega.

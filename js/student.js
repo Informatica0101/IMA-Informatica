@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (uploadedFiles.length === 0 || activeUploads > 0) return;
 
             confirmSubmissionBtn.disabled = true;
-            confirmSubmissionBtn.textContent = 'Enviando...';
+            confirmSubmissionBtn.classList.add('btn-loading');
 
             try {
                 let finalFileId = uploadedFiles[0].fileId;
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(`Error al finalizar la entrega: ${error.message}`);
             } finally {
                 confirmSubmissionBtn.disabled = false;
-                confirmSubmissionBtn.textContent = 'Confirmar Entrega';
+                confirmSubmissionBtn.classList.remove('btn-loading');
                 updateConfirmButtonState();
             }
         });

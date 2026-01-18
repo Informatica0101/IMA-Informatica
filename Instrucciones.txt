@@ -200,6 +200,8 @@ ________________________________________________________________________________
 
 
 
+TAREAS PENDIENTES DE REVISIÓN
+________________________________________________________________________________________________
 tarea 1: Implementar subida múltiple de imágenes una por una con vista previa y carga en segundo plano. (EN REVISIÓN)
 
 tarea 2: Actualizar URL del microservicio TASK. (EN REVISIÓN)
@@ -209,3 +211,5 @@ tarea 3: Optimizar UX de carga en segundo plano (no bloqueante) y corregir backe
 tarea 4: Actualización recurrente de la URL del microservicio TASK. (EN REVISIÓN)
 
 tarea 5: Garantizar la integridad de subidas concurrentes en el dashboard del estudiante. (EN REVISIÓN)
+
+tarea 6: Implementar animaciones de carga en todos los botones de envío al backend y corregir error de entrega de exámenes. (EN REVISIÓN)

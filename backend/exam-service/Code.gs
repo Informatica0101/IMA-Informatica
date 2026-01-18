@@ -197,9 +197,10 @@ function submitExam({ examenId, userId, respuestas }) {
     const q = preguntas.find(p => p[0] === r.preguntaId);
     if (!q) return;
 
+    // Se usa r.respuestaEstudiante que es lo que envía el frontend
     const ok = q[2] === "completacion"
-      ? normalizeString(r.respuesta) === normalizeString(q[5])
-      : r.respuesta === q[5];
+      ? normalizeString(r.respuestaEstudiante) === normalizeString(q[5])
+      : r.respuestaEstudiante === q[5];
 
     if (ok) correctas++;
   });
@@ -208,8 +209,9 @@ function submitExam({ examenId, userId, respuestas }) {
     ? ((correctas / preguntas.length) * 100).toFixed(2)
     : "0";
 
+  const entregaExamenId = "EEX-" + Date.now();
   getSheetOrThrow(ss, "EntregasExamen").appendRow([
-    "EEX-" + Date.now(),
+    entregaExamenId,
     examenId,
     userId,
     new Date(),
@@ -218,7 +220,14 @@ function submitExam({ examenId, userId, respuestas }) {
     "Finalizado"
   ]);
 
-  return { status: "success", calificacion: nota };
+  // Se devuelve el ID en un objeto data para que el frontend pueda redirigir
+  return {
+    status: "success",
+    data: {
+      entregaExamenId: entregaExamenId,
+      calificacion: nota
+    }
+  };
 }
 
 function getStudentExams({ userId, grado, seccion }) {

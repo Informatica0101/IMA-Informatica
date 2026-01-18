@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function submitExam(isBlocked) {
+        const submitBtn = document.querySelector('button[type="submit"]');
         const respuestas = [];
         const questionBlocks = document.querySelectorAll('.question-block');
 
@@ -145,6 +146,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        submitBtn.classList.add('btn-loading');
+        submitBtn.disabled = true;
+
         try {
             const payload = { examenId, userId: currentUser.userId, respuestas, estado: isBlocked ? 'Bloqueado' : 'Entregado' };
             const result = await fetchApi('EXAM', 'submitExam', payload);
@@ -157,6 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             alert(`Error al enviar el examen: ${error.message}`);
+        } finally {
+            submitBtn.classList.remove('btn-loading');
+            submitBtn.disabled = false;
         }
     }
 
