@@ -163,3 +163,9 @@ En este archivo se regustrara el historial de cambios del proyecto.
 14/01/2026
 - Archivo: js/config.js, Línea(s): 17, 20
   - Se actualizaron las URLs de los microservicios `TASK` y `EXAM` para apuntar a los nuevos endpoints de producción desplegados.
+18/01/2026 - index.html: Refactorización completa del bloque <style> para mejorar la gestión de estilos y organización.
+18/01/2026 - index.html: Implementación de estado 'header-scrolled' en el encabezado con reducción de padding, desenfoque de fondo y sombra suave al hacer scroll.
+18/01/2026 - index.html: Rediseño de la estructura del encabezado para mayor flexibilidad y proporciones adecuadas.
+18/01/2026 - index.html: Estandarización del menú móvil (hamburguesa) con disposición justificada, iconos de navegación y animaciones de despliegue consistentes.
+18/01/2026 - index.html: Mejora de la lógica de scroll para suavizar la aparición/desaparición del encabezado y alternar clases de estado.
+18/01/2026 - js/main.js: Corrección de ID de referencia en la función closeMobileMenu de 'mobile-menu' a 'mobile-menu-overlay' para alineación con index.html.
