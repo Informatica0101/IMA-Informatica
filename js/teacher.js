@@ -74,33 +74,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Carga de Actividad del Profesor ---
     async function fetchTeacherActivity() {
+        if (!submissionsTableBody) return;
         submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-2">Cargando actividad...</td></tr>';
         try {
             const [taskSubmissions, examSubmissions, allExams] = await Promise.all([
                 fetchApi('TASK', 'getTeacherActivity', {}),
                 fetchApi('EXAM', 'getTeacherExamActivity', {}),
-                fetchApi('EXAM', 'getAllExams', {}) // Endpoint para obtener todos los exámenes base
+                fetchApi('EXAM', 'getAllExams', {})
             ]);
 
-            console.log("Task Submissions:", taskSubmissions);
-            console.log("Exam Submissions:", examSubmissions);
-            console.log("All Exams:", allExams);
-
             const submissions = [...(((taskSubmissions || {}).data || [])), ...(((examSubmissions || {}).data || []))];
-
-            // Mapear las entregas a sus IDs de examen para no mostrarlos duplicados
             const submittedExamIds = new Set((((examSubmissions || {}).data || [])).map(s => s.examenId));
-
-            // Filtrar los exámenes base para mostrar solo aquellos sin entregas
             const examsWithoutSubmissions = (((allExams || {}).data || []))
                 .filter(exam => !submittedExamIds.has(exam.examenId))
-                .map(exam => ({ ...exam, tipo: 'Examen' })); // <-- Corrección: Añadir el tipo explícitamente
+                .map(exam => ({ ...exam, tipo: 'Examen' }));
 
-            // Combinar las entregas con los exámenes que aún no tienen entregas
             const allActivity = [...submissions, ...examsWithoutSubmissions];
-
-            console.log("Final Activity List:", allActivity);
-
             allActivity.sort((a, b) => new Date(b.fecha || b.fechaLimite) - new Date(a.fecha || a.fechaLimite));
             renderActivity(allActivity);
         } catch (error) {
@@ -117,26 +106,25 @@ document.addEventListener('DOMContentLoaded', () => {
             let actionHtml = '';
             let fileLinkHtml = '<em>N/A</em>';
 
-            // Lógica centralizada para extraer el ID del archivo de la URL.
             if (item.fileId) {
                 const fileId = extractDriveId(item.fileId);
 
                 if (fileId) {
-                    // Si el tipo MIME es una imagen, se crea el enlace para el lightbox.
-                    if (typeof item.mimeType === 'string' && item.mimeType.startsWith('image/')) {
+                    if (item.mimeType === 'folder') {
+                        const folderUrl = `https://drive.google.com/drive/folders/${fileId}`;
+                        fileLinkHtml = `<a href="${folderUrl}" target="_blank" class="text-blue-500 font-bold">Ver Carpeta</a>`;
+                    }
+                    else if (typeof item.mimeType === 'string' && item.mimeType.startsWith('image/')) {
                         fileLinkHtml = `<a href="#" class="text-blue-500 view-file-link" data-file-id="${fileId}" data-title="${item.titulo}">Ver Imagen</a>`;
                     } else {
-                        // Para cualquier otro tipo de archivo, se genera un enlace de descarga directa.
                         const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
                         fileLinkHtml = `<a href="${downloadUrl}" target="_blank" class="text-blue-500" download>Descargar Archivo</a>`;
                     }
                 } else {
-                    // Si no se puede extraer el ID, se muestra un enlace directo a la URL recibida.
                     fileLinkHtml = `<a href="${item.fileId}" target="_blank" class="text-red-500">Enlace (formato no estándar)</a>`;
                 }
             }
 
-            // Si el item tiene `alumnoNombre`, es una entrega. Si no, es un examen base.
             if (item.alumnoNombre) {
                 if (item.tipo === 'Tarea') {
                     actionHtml = `<button class="bg-blue-500 text-white px-2 py-1 rounded text-sm grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
@@ -144,11 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     actionHtml = `<button class="bg-yellow-500 text-white px-2 py-1 rounded text-sm reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>`;
                 }
             } else if (item.tipo === 'Examen') {
-                // Es un examen sin entregas, mostrar botones de control
                 const isActivo = item.estado === 'Activo';
                 const isBloqueado = item.estado === 'Bloqueado';
-
-                // Determinar las clases y el estado 'disabled' de forma explícita para mayor claridad.
                 const activarBtnClass = isActivo ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500';
                 const activarBtnDisabled = isActivo ? 'disabled' : '';
                 const bloquearBtnClass = isBloqueado ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500';
@@ -182,19 +167,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeLightboxBtn = document.getElementById('close-lightbox-btn');
 
     function openLightbox(fileId, title) {
-        // Construye la URL de la miniatura para la imagen en Google Drive, que es más fiable para <img src>.
         const imageUrl = `https://drive.google.com/thumbnail?id=${fileId}`;
-        lightboxImage.src = imageUrl;
-        lightboxTitle.textContent = title;
-        lightboxModal.classList.remove('hidden');
+        if (lightboxImage) lightboxImage.src = imageUrl;
+        if (lightboxTitle) lightboxTitle.textContent = title;
+        if (lightboxModal) lightboxModal.classList.remove('hidden');
     }
 
     function closeLightbox() {
-        lightboxModal.classList.add('hidden');
-        lightboxImage.src = ''; // Limpia el src para evitar flashes de contenido anterior
+        if (lightboxModal) lightboxModal.classList.add('hidden');
+        if (lightboxImage) lightboxImage.src = '';
     }
 
-    closeLightboxBtn.addEventListener('click', closeLightbox);
+    if (closeLightboxBtn) closeLightboxBtn.addEventListener('click', closeLightbox);
 
     // --- Lógica del Modal de Calificación ---
     const gradeModal = document.getElementById('grade-modal');
@@ -204,124 +188,127 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openGradeModal(entrega) {
         currentEditingEntregaId = entrega.entregaId;
-        document.getElementById('student-name-modal').textContent = entrega.alumnoNombre;
+        const studentNameModal = document.getElementById('student-name-modal');
+        if (studentNameModal) studentNameModal.textContent = entrega.alumnoNombre;
 
-        // Lógica centralizada para extraer el ID del archivo de la URL.
         const fileId = extractDriveId(entrega.fileId);
-
         const fileLinkModal = document.getElementById('file-link-modal');
-        if (fileId) {
-            fileLinkModal.href = `https://drive.google.com/uc?export=download&id=${fileId}`;
-            fileLinkModal.textContent = "Descargar Archivo";
-            fileLinkModal.classList.remove('text-red-500');
-        } else {
-            fileLinkModal.href = '#';
-            fileLinkModal.textContent = "Enlace no disponible";
-            fileLinkModal.classList.add('text-red-500');
+        if (fileLinkModal) {
+            if (fileId) {
+                if (entrega.mimeType === 'folder') {
+                    fileLinkModal.href = `https://drive.google.com/drive/folders/${fileId}`;
+                    fileLinkModal.textContent = "Abrir Carpeta de Entrega";
+                } else {
+                    fileLinkModal.href = `https://drive.google.com/uc?export=download&id=${fileId}`;
+                    fileLinkModal.textContent = "Descargar Archivo";
+                }
+                fileLinkModal.classList.remove('text-red-500');
+            } else {
+                fileLinkModal.href = '#';
+                fileLinkModal.textContent = "Enlace no disponible";
+                fileLinkModal.classList.add('text-red-500');
+            }
         }
 
-        document.getElementById('calificacion').value = entrega.calificacion || '';
-        document.getElementById('estado').value = entrega.estado || 'Revisada';
-        document.getElementById('comentario').value = entrega.comentario || '';
-        gradeModal.classList.remove('hidden');
+        const calInput = document.getElementById('calificacion');
+        const estInput = document.getElementById('estado');
+        const comInput = document.getElementById('comentario');
+        if (calInput) calInput.value = entrega.calificacion || '';
+        if (estInput) estInput.value = entrega.estado || 'Revisada';
+        if (comInput) comInput.value = entrega.comentario || '';
+        if (gradeModal) gradeModal.classList.remove('hidden');
     }
 
     function closeGradeModal() {
-        gradeModal.classList.add('hidden');
+        if (gradeModal) gradeModal.classList.add('hidden');
     }
 
-    cancelGradeBtn.addEventListener('click', closeGradeModal);
+    if (cancelGradeBtn) cancelGradeBtn.addEventListener('click', closeGradeModal);
 
-    saveGradeBtn.addEventListener('click', async () => {
-        const payload = {
-            entregaId: currentEditingEntregaId,
-            calificacion: document.getElementById('calificacion').value,
-            estado: document.getElementById('estado').value,
-            comentario: document.getElementById('comentario').value
-        };
-        try {
-            const result = await fetchApi('TASK', 'gradeSubmission', payload);
-            if (result.status === 'success') {
-                alert('Calificación guardada.');
-                closeGradeModal();
-                fetchTeacherActivity();
-            } else { throw new Error(result.message); }
-        } catch (error) { alert(`Error al guardar calificación: ${error.message}`); }
-    });
+    if (saveGradeBtn) {
+        saveGradeBtn.addEventListener('click', async () => {
+            const payload = {
+                entregaId: currentEditingEntregaId,
+                calificacion: document.getElementById('calificacion').value,
+                estado: document.getElementById('estado').value,
+                comentario: document.getElementById('comentario').value
+            };
+            try {
+                const result = await fetchApi('TASK', 'gradeSubmission', payload);
+                if (result.status === 'success') {
+                    alert('Calificación guardada.');
+                    closeGradeModal();
+                    fetchTeacherActivity();
+                } else { throw new Error(result.message); }
+            } catch (error) { alert(`Error al guardar calificación: ${error.message}`); }
+        });
+    }
 
     // --- Delegación de Eventos para la Tabla ---
-    submissionsTableBody.addEventListener('click', async (e) => {
-        const target = e.target;
+    if (submissionsTableBody) {
+        submissionsTableBody.addEventListener('click', async (e) => {
+            const target = e.target;
+            if (target.classList.contains('view-file-link')) {
+                e.preventDefault();
+                openLightbox(target.dataset.fileId, target.dataset.title);
+            }
+            if (target.classList.contains('grade-task-btn')) {
+                openGradeModal(JSON.parse(target.dataset.item));
+            }
+            if (target.classList.contains('reactivate-exam-btn')) {
+                const entregaId = target.dataset.entregaId;
+                if (confirm("¿Reactivar este examen para este alumno?")) {
+                    try {
+                        const result = await fetchApi('EXAM', 'reactivateExam', { entregaExamenId: entregaId });
+                        if (result.status === 'success') {
+                            alert('Examen reactivado.');
+                            fetchTeacherActivity();
+                        } else { throw new Error(result.message); }
+                    } catch (error) { alert(`Error: ${error.message}`); }
+                }
+            }
+            if (target.classList.contains('activate-exam-btn')) {
+                const examenId = target.dataset.examenId;
+                if (confirm("¿Activar este examen para todos los alumnos asignados?")) {
+                    try {
+                        const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Activo' });
+                        if (result.status === 'success') {
+                            alert('Examen activado.');
+                            fetchTeacherActivity();
+                        } else { throw new Error(result.message); }
+                    } catch (error) { alert(`Error: ${error.message}`); }
+                }
+            }
+            if (target.classList.contains('lock-exam-btn')) {
+                const examenId = target.dataset.examenId;
+                if (confirm("¿Bloquear este examen para todos los alumnos?")) {
+                    try {
+                        const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Bloqueado' });
+                        if (result.status === 'success') {
+                            alert('Examen bloqueado.');
+                            fetchTeacherActivity();
+                        } else { throw new Error(result.message); }
+                    } catch (error) { alert(`Error: ${error.message}`); }
+                }
+            }
+        });
+    }
 
-        // Previene la acción por defecto si es un enlace para el lightbox.
-        if (target.classList.contains('view-file-link')) {
+    if (createAssignmentForm) {
+        createAssignmentForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            openLightbox(target.dataset.fileId, target.dataset.title);
-        }
+            const payload = Object.fromEntries(new FormData(e.target).entries());
+            try {
+                const result = await fetchApi('TASK', 'createTask', payload);
+                if (result.status === 'success') {
+                    alert('Tarea creada.');
+                    e.target.reset();
+                    navDashboard.click();
+                } else { throw new Error(result.message); }
+            } catch (error) { alert(`Error: ${error.message}`); }
+        });
+    }
 
-        // Calificar Tarea
-        if (target.classList.contains('grade-task-btn')) {
-            openGradeModal(JSON.parse(target.dataset.item));
-        }
-
-        // Reactivar Examen de una entrega específica
-        if (target.classList.contains('reactivate-exam-btn')) {
-            const entregaId = target.dataset.entregaId;
-            if (confirm("¿Reactivar este examen para este alumno?")) {
-                try {
-                    const result = await fetchApi('EXAM', 'reactivateExam', { entregaExamenId: entregaId });
-                    if (result.status === 'success') {
-                        alert('Examen reactivado.');
-                        fetchTeacherActivity();
-                    } else { throw new Error(result.message); }
-                } catch (error) { alert(`Error: ${error.message}`); }
-            }
-        }
-
-        // Activar un examen para todos
-        if (target.classList.contains('activate-exam-btn')) {
-            const examenId = target.dataset.examenId;
-            if (confirm("¿Activar este examen para todos los alumnos asignados?")) {
-                try {
-                    const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Activo' });
-                    if (result.status === 'success') {
-                        alert('Examen activado.');
-                        fetchTeacherActivity();
-                    } else { throw new Error(result.message); }
-                } catch (error) { alert(`Error: ${error.message}`); }
-            }
-        }
-
-        // Bloquear un examen para todos
-        if (target.classList.contains('lock-exam-btn')) {
-            const examenId = target.dataset.examenId;
-            if (confirm("¿Bloquear este examen para todos los alumnos?")) {
-                try {
-                    const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Bloqueado' });
-                    if (result.status === 'success') {
-                        alert('Examen bloqueado.');
-                        fetchTeacherActivity();
-                    } else { throw new Error(result.message); }
-                } catch (error) { alert(`Error: ${error.message}`); }
-            }
-        }
-    });
-
-    // --- Lógica de Formularios de Creación ---
-    createAssignmentForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const payload = Object.fromEntries(new FormData(e.target).entries());
-        try {
-            const result = await fetchApi('TASK', 'createTask', payload);
-            if (result.status === 'success') {
-                alert('Tarea creada.');
-                e.target.reset();
-                navDashboard.click();
-            } else { throw new Error(result.message); }
-        } catch (error) { alert(`Error: ${error.message}`); }
-    });
-
-    // --- Lógica de Creación de Exámenes ---
     const addQuestionBtn = document.getElementById('add-question-btn');
     const questionsContainer = document.getElementById('questions-container');
     let questionCounter = 0;
@@ -349,7 +336,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <input type="text" class="w-full p-2 border rounded question-text" placeholder="Ej: ¿Capital de Honduras?">
                     </div>
                     <div class="md:col-span-2 options-container">
-                        <!-- Opciones dinámicas aquí -->
                     </div>
                     <div>
                         <label class="block font-medium mb-1">Respuesta Correcta</label>
@@ -379,42 +365,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addQuestion() {
-        console.log('Add question button clicked');
         questionCounter++;
         const questionNode = document.createElement('div');
         questionNode.innerHTML = getQuestionHTML(questionCounter);
-        questionsContainer.appendChild(questionNode);
+        if (questionsContainer) {
+            questionsContainer.appendChild(questionNode);
+            const typeSelect = questionNode.querySelector('.question-type-select');
+            const optionsContainer = questionNode.querySelector('.options-container');
+            if (optionsContainer && typeSelect) {
+                optionsContainer.innerHTML = getOptionsHTML(typeSelect.value);
+                typeSelect.addEventListener('change', (e) => {
+                    optionsContainer.innerHTML = getOptionsHTML(e.target.value);
+                });
+            }
+        }
+    }
 
-        const typeSelect = questionNode.querySelector('.question-type-select');
-        const optionsContainer = questionNode.querySelector('.options-container');
-        optionsContainer.innerHTML = getOptionsHTML(typeSelect.value);
+    if (addQuestionBtn) addQuestionBtn.addEventListener('click', addQuestion);
 
-        typeSelect.addEventListener('change', (e) => {
-            optionsContainer.innerHTML = getOptionsHTML(e.target.value);
+    if (questionsContainer) {
+        questionsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-question-btn')) {
+                e.target.closest('.question-block').remove();
+            }
         });
     }
 
-    if (addQuestionBtn) {
-        addQuestionBtn.addEventListener('click', addQuestion);
-    }
-
-    questionsContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('remove-question-btn')) {
-            e.target.closest('.question-block').remove();
-        }
-    });
-
-    // Add logic for createExamForm if it exists
-    if(createExamForm) {
+    if (createExamForm) {
         createExamForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const mainData = Object.fromEntries(new FormData(e.target).entries());
-            const payload = {
-                ...mainData,
-                preguntas: []
-            };
-
+            const payload = { ...mainData, preguntas: [] };
             const questionBlocks = questionsContainer.querySelectorAll('.question-block');
             questionBlocks.forEach(block => {
                 const pregunta = {
@@ -423,20 +404,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     respuestaCorrecta: block.querySelector('.correct-answer').value,
                     opciones: ''
                 };
-
                 const optionsInput = block.querySelector('.question-options');
-                if (optionsInput) {
-                    pregunta.opciones = optionsInput.value;
-                }
-
+                if (optionsInput) pregunta.opciones = optionsInput.value;
                 payload.preguntas.push(pregunta);
             });
-
             if (payload.preguntas.length === 0) {
-                alert('Un examen no puede estar vacío. Por favor, añada al menos una pregunta.');
+                alert('Un examen no puede estar vacío.');
                 return;
             }
-
             try {
                 const result = await fetchApi('EXAM', 'createExam', payload);
                 if (result.status === 'success') {
@@ -444,17 +419,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.target.reset();
                     questionsContainer.innerHTML = '';
                     questionCounter = 0;
-                    navDashboard.click(); // This handles navigation and data refresh
-                } else {
-                    throw new Error(result.message || 'Error desconocido del servidor.');
-                }
-            } catch (error) {
-                console.error('Error al crear el examen:', error);
-                alert(`Error al crear el examen: ${error.message}`);
-            }
+                    navDashboard.click();
+                } else { throw new Error(result.message); }
+            } catch (error) { alert(`Error al crear el examen: ${error.message}`); }
         });
     }
 
-    // Carga Inicial
     fetchTeacherActivity();
 });
