@@ -877,3 +877,9 @@ AUDITORÍA DE REVISIÓN - 18/01/2026
 - Archivo: js/student.js
 - Línea(s): 198-202
 - Hallazgo: La implementación de carga en segundo plano bloquea el input de archivo. Se requiere rediseñar para permitir selección continua.
+
+AUDITORÍA DE CONFIGURACIÓN - 18/01/2026
+---------------------------------------
+- Archivo: js/config.js
+- Línea(s): 17
+- Hallazgo: La URL del microservicio TASK ha sido actualizada nuevamente por el usuario. Se requiere realizar el cambio a la última implementación proporcionada para mantener la sincronización con el backend.

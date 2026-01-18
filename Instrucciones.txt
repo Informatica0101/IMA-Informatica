@@ -205,3 +205,5 @@ tarea 1: Implementar subida múltiple de imágenes una por una con vista previa 
 tarea 2: Actualizar URL del microservicio TASK. (EN REVISIÓN)
 
 tarea 3: Optimizar UX de carga en segundo plano (no bloqueante) y corregir backend. (EN REVISIÓN)
+
+tarea 4: Actualización recurrente de la URL del microservicio TASK. (EN REVISIÓN)

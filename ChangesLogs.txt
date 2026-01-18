@@ -238,7 +238,7 @@ Archivo: js/teacher.js
 - Archivo: js/teacher.js, Línea(s): 125-130, 219-224
   - Se añadió soporte para visualizar carpetas de Drive ("Ver Carpeta") cuando una entrega contiene múltiples archivos.
 - Archivo: js/config.js, Línea(s): 17
-  - Se actualizó la URL del microservicio TASK a la nueva implementación: https://script.google.com/macros/s/AKfycbzaYA_NpnYqzEx8pinefePQpF35bTO5f3rr_fgiHVFCn-2GhHBfN7dlqB4vJ7ritos/exec
+  - Se actualizó la URL del microservicio TASK a la nueva implementación: https://script.google.com/macros/s/AKfycbyILal440wcxW9ZfJ1YkbqV_3rIIv2Hvt3c3NNWuHuCGYuc2s2zVBbCR7gXE_pZavo/exec
 
 18/01/2026
 - Archivo: js/config.js, Línea(s): 17
