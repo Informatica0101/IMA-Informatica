@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentTaskAsignatura = null;
     let uploadedFiles = []; // [{fileId, fileName, mimeType}]
     let currentFolderId = null;
-    let isUploading = false;
+    let activeUploads = 0;
 
     // Función para obtener Tareas y Exámenes
     async function fetchAllActivities() {
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateConfirmButtonState() {
         if (!confirmSubmissionBtn) return;
-        if (uploadedFiles.length > 0 && !isUploading) {
+        if (uploadedFiles.length > 0 && activeUploads === 0) {
             confirmSubmissionBtn.disabled = false;
             confirmSubmissionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         } else {
@@ -200,88 +200,80 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (acceptFileBtn) {
-    acceptFileBtn.addEventListener('click', async () => {
-        const file = fileInput.files[0];
-        if (!file) return;
+        acceptFileBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            if (!file) return;
 
-        // No bloqueamos fileInput para permitir seleccionar el siguiente mientras este sube
-        const currentFile = file;
-        const currentFileName = currentFile.name;
+            const currentFile = file;
+            const currentFileName = currentFile.name;
 
-        // Crear un indicador visual temporal en la lista de subida
-        const li = document.createElement('li');
-        li.className = 'flex items-center justify-between text-sm text-gray-700 bg-white p-2 rounded border shadow-sm';
-        li.innerHTML = `
-            <div class="flex items-center space-x-2 truncate">
-                <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                <span class="truncate">${currentFileName}</span>
-            </div>
-            <span class="text-xs text-blue-500 font-medium">Subiendo...</span>
-        `;
-        uploadedFilesList.appendChild(li);
-        uploadedFilesContainer.classList.remove('hidden');
+            const li = document.createElement('li');
+            li.className = 'flex items-center justify-between text-sm text-gray-700 bg-white p-2 rounded border shadow-sm';
+            li.innerHTML = `
+                <div class="flex items-center space-x-2 truncate">
+                    <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <span class="truncate">${currentFileName}</span>
+                </div>
+                <span class="text-xs text-blue-500 font-medium">Subiendo...</span>
+            `;
+            uploadedFilesList.appendChild(li);
+            uploadedFilesContainer.classList.remove('hidden');
 
-        // Limpiar preview e input inmediatamente para el siguiente archivo
-        filePreviewContainer.classList.add('hidden');
-        fileInput.value = '';
+            filePreviewContainer.classList.add('hidden');
+            fileInput.value = '';
 
-        isUploading = true;
-        updateConfirmButtonState();
+            activeUploads++;
+            updateConfirmButtonState();
 
-        const reader = new FileReader();
-        reader.onloadend = async () => {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
                 const fileData = reader.result;
                 const payload = {
                     userId: currentUser.userId,
                     tareaId: currentTaskId,
-                    fileName: file.name,
+                    fileName: currentFileName,
                     fileData: fileData,
                     parcial: currentTaskParcial,
                     asignatura: currentTaskAsignatura
                 };
 
-            try {
-                const result = await fetchApi('TASK', 'uploadFile', payload);
-                if (result.status === 'success') {
-                    const uploadedData = result.data;
-                    uploadedFiles.push({
-                        fileId: uploadedData.fileId,
-                        fileName: currentFileName,
-                        mimeType: uploadedData.mimeType
-                    });
-                    currentFolderId = uploadedData.folderId;
+                try {
+                    const result = await fetchApi('TASK', 'uploadFile', payload);
+                    if (result.status === 'success') {
+                        const uploadedData = result.data;
+                        uploadedFiles.push({
+                            fileId: uploadedData.fileId,
+                            fileName: currentFileName,
+                            mimeType: uploadedData.mimeType
+                        });
+                        currentFolderId = uploadedData.folderId;
 
-                    // Actualizar el indicador visual de este archivo
-                    li.innerHTML = `
-                        <div class="flex items-center space-x-2 truncate">
-                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="truncate">${currentFileName}</span>
-                        </div>
-                        <span class="text-xs text-green-600 font-medium">Listo</span>
-                    `;
-                } else {
-                    li.innerHTML = `
-                        <div class="flex items-center space-x-2 truncate">
-                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            <span class="truncate text-red-600">${currentFileName}</span>
-                        </div>
-                        <span class="text-xs text-red-600 font-medium">Error</span>
-                    `;
-                    alert('Error al subir ' + currentFileName + ': ' + result.message);
+                        li.innerHTML = `
+                            <div class="flex items-center space-x-2 truncate">
+                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="truncate">${currentFileName}</span>
+                            </div>
+                            <span class="text-xs text-green-600 font-medium">Listo</span>
+                        `;
+                    } else {
+                        li.innerHTML = `
+                            <div class="flex items-center space-x-2 truncate">
+                                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                <span class="truncate text-red-600">${currentFileName}</span>
+                            </div>
+                            <span class="text-xs text-red-600 font-medium">Error</span>
+                        `;
+                        alert('Error al subir ' + currentFileName + ': ' + result.message);
+                    }
+                } catch (error) {
+                    li.innerHTML = `<span class="text-red-600">Error: ${currentFileName}</span>`;
+                    alert('Error de conexión al subir ' + currentFileName + ': ' + error.message);
+                } finally {
+                    activeUploads--;
+                    updateConfirmButtonState();
                 }
-            } catch (error) {
-                li.innerHTML = `<span class="text-red-600">Error: ${currentFileName}</span>`;
-                alert('Error de conexión al subir ' + currentFileName + ': ' + error.message);
-            } finally {
-                // Comprobamos si todavía hay subidas pendientes
-                // Por simplicidad, decrementamos un contador o similar si quisiéramos ser exactos
-                // Aquí solo reseteamos el flag general si ya no hay procesos asíncronos (mejorar si es necesario)
-                isUploading = false; // Nota: Si hay múltiples en paralelo, este flag es insuficiente.
-                // En un sistema real usaríamos un contador de uploads pendientes.
-                updateConfirmButtonState();
-            }
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(currentFile);
         });
     }
 
@@ -290,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (submissionForm) {
         submissionForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (uploadedFiles.length === 0 || isUploading) return;
+            if (uploadedFiles.length === 0 || activeUploads > 0) return;
 
             confirmSubmissionBtn.disabled = true;
             confirmSubmissionBtn.textContent = 'Enviando...';
