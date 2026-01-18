@@ -3,46 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard del Estudiante</title>
+    <title>Dashboard del Estudiante - Area de Informatica</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-6">
-        <header class="flex justify-between items-center mb-8">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-800">Hola, <span id="student-name"></span>!</h1>
-                <p class="text-gray-600">Tus tareas pendientes:</p>
-            </div>
-            <button id="logout-button" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg">Cerrar Sesión</button>
-        </header>
+<body class="font-inter antialiased text-gray-900 bg-gray-50">
 
-        <main>
-            <div id="tasks-list" class="space-y-4">
-                <!-- Las tareas se cargarán aquí -->
+    <header id="main-header" class="bg-white shadow-md py-2 md:py-4 px-1 md:px-3 fixed w-full z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-4 transition-transform duration-300 logo-container">
+                <img src="imagenes/logo.png" alt="Logo" width="120" height="auto" class="logo-img transition-transform duration-300">
+                <span class="text-2xl font-bold text-blue-800 hidden sm:inline">Area de Informatica</span>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Inicio</a>
+                <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Cerrar Sesión</button>
+            </nav>
+
+            <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="100" height="auto" class="hidden lg:block">
+
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none p-2">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="mobile-menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
-        </main>
-    </div>
+        </div>
+
+        <div id="mobile-menu-overlay" class="hidden">
+            <button id="mobile-menu-close-button" class="absolute top-4 right-6 text-gray-700 focus:outline-none z-50">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <nav class="flex flex-col mt-16 w-full h-full">
+                <a href="index.html" class="mobile-nav-link">Inicio</a>
+                <a href="#" class="mobile-nav-link text-red-600" id="mobile-logout-button">Cerrar Sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="mt-[6rem] pb-12">
+        <div class="container mx-auto px-5">
+            <div class="mb-10 text-center md:text-left">
+                <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Hola, <span id="student-name" class="text-blue-600"></span>!</h1>
+                <p class="text-lg text-gray-600 font-medium">Gestiona tus actividades y exámenes pendientes.</p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-8">
+                <section>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        Tareas y Exámenes
+                    </h2>
+                    <div id="tasks-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Las tareas se cargarán aquí -->
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
 
     <!-- Modal de Entrega -->
-    <div id="submission-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-lg">
-            <h2 class="text-2xl font-bold mb-4">Entregar Tarea</h2>
-            <h3 id="modal-task-title" class="text-xl text-gray-700 mb-6"></h3>
+    <div id="submission-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[60] backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-lg mx-4 animate-fade-in-up">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Entregar Tarea</h2>
+                <button id="close-modal-x" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
 
-            <form id="submission-form">
-                <label for="file-input" class="block font-medium mb-2">Seleccionar Archivo</label>
-                <input type="file" id="file-input" name="file-input" class="w-full p-2 border rounded" required>
+            <h3 id="modal-task-title" class="text-xl text-blue-600 font-semibold mb-8"></h3>
 
-                <div class="flex justify-end space-x-4 mt-8">
-                    <button type="button" id="cancel-submission-btn" class="px-6 py-2 bg-gray-300 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg">Confirmar Entrega</button>
+            <form id="submission-form" class="space-y-6">
+                <div>
+                    <label for="file-input" class="block font-semibold text-gray-700 mb-3">Seleccionar Archivo (Imagen)</label>
+                    <div class="relative group">
+                        <input type="file" id="file-input" name="file-input" accept="image/*" class="w-full p-3 border-2 border-dashed border-gray-300 rounded-xl focus:border-blue-500 transition-colors" required>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-10">
+                    <button type="button" id="cancel-submission-btn" class="px-8 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cancelar</button>
+                    <button type="submit" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl">Confirmar Entrega</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <footer class="bg-gray-800 text-white py-12 mt-auto">
+        <div class="container mx-auto px-5 text-center">
+            <p class="text-lg font-medium mb-6">
+                &copy; <span id="current-year"></span> Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
+            </p>
+            <div class="flex justify-center space-x-8">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Privacidad</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Términos</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Soporte</a>
+            </div>
+        </div>
+    </footer>
+
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/student.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+            const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+            const logoutBtn = document.getElementById('logout-button');
+            const mobileLogoutBtn = document.getElementById('mobile-logout-button');
+            const currentYearSpan = document.getElementById('current-year');
+            const header = document.getElementById('main-header');
+            const closeModalX = document.getElementById('close-modal-x');
+            const cancelSubmissionBtn = document.getElementById('cancel-submission-btn');
+
+            if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
+
+            function toggleMobileMenu() {
+                const isOpening = mobileMenuOverlay.classList.contains('hidden');
+                mobileMenuOverlay.classList.toggle('hidden');
+                mobileMenuOverlay.classList.toggle('mobile-menu-overlay');
+                mobileMenuIcon.setAttribute('d', isOpening ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16');
+            }
+
+            if (mobileMenuButton) mobileMenuButton.addEventListener('click', toggleMobileMenu);
+            if (mobileMenuCloseButton) mobileMenuCloseButton.addEventListener('click', toggleMobileMenu);
+
+            const handleLogout = () => {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            };
+
+            if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+            if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 10) {
+                    header.classList.add('header-scrolled');
+                } else {
+                    header.classList.remove('header-scrolled');
+                }
+            });
+
+            if (closeModalX) closeModalX.onclick = () => document.getElementById('submission-modal').classList.add('hidden');
+            if (cancelSubmissionBtn) cancelSubmissionBtn.onclick = () => document.getElementById('submission-modal').classList.add('hidden');
+        });
+    </script>
 </body>
 </html>

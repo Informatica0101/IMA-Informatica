@@ -1,19 +1,199 @@
-TAREAS PENDIENTES DE EJECUCIÓN - 15/01/2026
+Importante:
+PROHIBIDO AGREGAR CONTENIDO ANTES DEL SIGUIENTE BLOQUE DE TEXTO.
 
-1. MEJORAR MANEJO DE ESTILOS EN index.html:
-   - Externalizar CSS a css/style.css para limpiar el HTML.
-   - Refactorizar el escalado global para que sea más flexible.
+— PROCEDIMIENTO OBLIGATORIO DE TRABAJO.
+===================================================================
 
-2. ARREGLAR Y ANIMAR EL ENCABEZADO:
-   - Añadir estado `.header-scrolled` que reduzca suavemente el padding o cambie la opacidad al hacer scroll.
-   - Asegurar que la estructura no sea rígida y se vea proporcionada en todas las pantallas.
-   - Corregir el problema de "despegado" del top asegurando el posicionamiento `fixed top-0`.
+Este procedimiento es de CUMPLIMIENTO OBLIGATORIO en TODOS los proyectos.
+No se permite omitir, alterar ni reordenar pasos.
 
-3. ESTANDARIZAR MENÚ HAMBURGUESA:
-   - Unificar la disposición de todos los elementos (alineación a la izquierda con iconos consistentes).
-   - Aplicar las mismas animaciones de despliegue a todos los sub-ítems.
-   - Corregir la lógica de sincronización entre el icono (hamburguesa/X) y el estado del overlay.
+--------------------------------------------------
+FLUJO PRINCIPAL DE TRABAJO
+--------------------------------------------------
 
-TAREAS PENDIENTES DE REVISIÓN
-- Mejora visual y refactorización de index.html (Encabezado y Menú Móvil)
-(Vacío)
+1. AUDITORÍA INICIAL DEL ARCHIVO
+   - Auditar el/los archivo(s) involucrados.
+   - Revisión archivo por archivo.
+   - Revisión línea por línea.
+   - Identificar estado actual, riesgos, dependencias y efectos colaterales.
+   - PROHIBIDO modificar código en esta etapa.
+
+2. REGISTRO DE HALLAZGOS
+   - Registrar TODOS los hallazgos en Auditoría.txt.
+   - Crear nueva entrada o actualizar la existente.
+   - PROHIBIDO eliminar información previa.
+   - NO realizar correcciones durante la auditoría.
+
+3. MANEJO DE HALLAZGOS FUERA DE ALCANCE
+   - Si se detectan problemas fuera de la tarea actual:
+     a) Resolverlos en el MISMO commit SOLO si es seguro.
+     b) Si no es posible:
+        -> Registrar nueva tarea en Instrucciones.txt
+        -> Referenciarla en Auditoría.txt
+
+4. RESPALDO OBLIGATORIO ANTES DE EDICIÓN
+   - Crear copia exacta del/los archivo(s) a modificar.
+   - El respaldo DEBE conservar:
+     · Nombre original
+     · Contenido íntegro
+   - El respaldo se usa EXCLUSIVAMENTE para comparación posterior.
+
+5. EJECUCIÓN DE LA TAREA
+   - Implementar ÚNICAMENTE lo solicitado.
+   - PROHIBIDO:
+     · Cambiar estilos no relacionados
+     · Alterar flujos existentes
+     · Introducir optimizaciones no solicitadas
+   - Todo cambio debe estar justificado por la tarea.
+
+6. VERIFICACIÓN FUNCIONAL
+   - Confirmar que la tarea cumple su objetivo.
+   - Verificar que no se rompan funciones existentes.
+   - Probar flujos relacionados directa e indirectamente.
+
+7. COMPARACIÓN POST-EDICIÓN (OBLIGATORIA)
+   - Comparar archivo editado contra el respaldo previo.
+   - Identificar:
+     · Líneas eliminadas
+     · Líneas modificadas
+     · Bloques sobreescritos
+   - Verificar que:
+     -> TODO cambio esté directamente relacionado con la tarea.
+   - Si se detectan cambios ajenos:
+     -> REVERTIRLOS inmediatamente
+     -> Repetir la comparación
+-Los archivos de Respaldo se debe eliminar DESPUES de la revision de codigo de Code Review.
+-Todo archivo, captura generado para la verificación visual o ejecutable debe de ser eliminado en el pre-commit.
+
+8. VERIFICACIÓN DE INTEGRIDAD Y EFECTOS COLATERALES
+   - Revisar dependencias internas y externas.
+   - Detectar efectos colaterales visuales o lógicos.
+   - Confirmar que no existen regresiones.
+
+9. REVISIÓN FINAL DE CÓDIGO
+   - Revisión completa nuevamente.
+   - Línea por línea.
+   - Función por función.
+   - Evaluar consistencia, claridad y impacto.
+
+10. REGISTRO EN CHANGESLOGS.TXT
+    - Registrar TODOS los cambios realizados.
+    - Indicar:
+      · Archivo modificado
+      · Líneas afectadas
+      · Descripción objetiva
+    - PROHIBIDO asumir éxito o usar frases de cierre.
+
+11. ACTUALIZACIÓN DE INSTRUCCIONES.TXT
+    - Mover la tarea ejecutada a:
+      -> "TAREAS PENDIENTES DE REVISIÓN"
+- Estandarización visual y corrección de desbordamientos en Dashboards y Exámenes
+    - NO eliminar tareas sin aprobación del PM.
+
+12. COMMIT
+    - Realizar UN SOLO commit por ciclo completo.
+    - El commit DEBE reflejar EXACTAMENTE
+      lo auditado y documentado.
+
+-----------------------------------------------
+EXTENSIÓN OBLIGATORIA POR CODE REVIEW
+--------------------------------------------------
+
+Si el Code Review detecta:
+- Fallas
+- Bloqueantes
+- Riesgos
+- Cambios requeridos
+
+ENTONCES:
+-> Este MISMO procedimiento DEBE aplicarse nuevamente
+-> Incluso si implica modificar archivos ya editados
+-> NO se permiten correcciones parciales
+
+
+==================================================
+PROTOCOLO DE RESULTADO DE CODE REVIEW
+==================================================
+
+--------------------------------------------------
+FLUJO DE ANÁLISIS
+--------------------------------------------------
+
+1. LECTURA COMPLETA DEL CODE REVIEW
+   - Leer TODO el informe.
+   - No omitir secciones.
+
+2. SAFETY & SIDE EFFECTS
+   - Se considera FUENTE DE VERDAD PRINCIPAL.
+   - SOLO se ignora si el Code Review solicita
+     explícitamente revertir cambios.
+
+--------------------------------------------------
+TRATAMIENTO DE REVERSIÓN
+--------------------------------------------------
+
+3. EVALUACIÓN OBLIGATORIA
+
+   a) CAMBIOS "OUT OF SCOPE"
+      - Verificar si pertenecen a:
+        · Tareas anteriores
+        · Commits previos aprobados
+
+      - Si pertenecen a tareas anteriores:
+        -> IGNORAR solicitud de reversión
+        -> CONTINUAR con el commit actual
+
+   b) CAMBIOS DE LA TAREA ACTUAL
+      - Si los cambios NO solicitados
+        fueron introducidos durante la tarea actual:
+        -> REALIZAR reversión
+        -> REGISTRAR el motivo
+
+--------------------------------------------------
+IMPACTO EN EL FLUJO
+--------------------------------------------------
+
+4. REINICIO DEL CICLO
+   - Toda observación que implique cambios:
+     -> REINICIA el ciclo completo
+        desde la AUDITORÍA INICIAL
+
+   - El reinicio NO afecta:
+     · Commits anteriores
+     · Tareas aprobadas
+     · Cambios fuera de alcance
+
+
+--------------------------------------------------
+DOCUMENTACIÓN OBLIGATORIA
+--------------------------------------------------
+
+Toda acción derivada del Code Review
+DEBE quedar registrada en:
+- Auditoría.txt
+- ChangesLogs.txt
+- Instrucciones.txt (si aplica)
+
+
+--------------------------------------------------
+REGLA FINAL ABSOLUTA
+--------------------------------------------------
+
+SI NO SE AUDITA, NO SE CAMBIA.
+SI NO SE REGISTRA, NO EXISTE.
+
+El incumplimiento de CUALQUIER paso
+INVALIDA el proceso completo.
+
+==================================================
+TAREAS
+=================================================
+
+Despues de esta linea se deben de registrar las nuevas tareas, por realizar o completadas
+
+________________________________________________________________________________________________
+
+
+
+
+tarea 1.
