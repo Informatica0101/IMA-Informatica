@@ -1,7 +1,52 @@
-AUDITORÍA DE CORRECCIÓN POST-FEEDBACK - 18/01/2026
+AUDITORÍA INICIAL - index.html - 15/01/2026
 
-- Header: Se solucionó la separación del top del navegador aplicando 'top: 0 !important' en la clase fija.
-- Footer: Se rediseñó el pie de página para ser más compacto (py-6 en lugar de py-12) y con texto reducido (text-footer).
-- Texto: Se redujo el tamaño de fuente en el menú de navegación y en el footer para cumplir con el requerimiento de proporciones.
-- Hamburguesa: Se verificó que el menú móvil muestra todos los enlaces (Inicio, Portal, Cursos, Recursos) y que los botones de submenú funcionan.
-- Dashboards: Las tablas ahora tienen scroll horizontal en móviles, evitando el desbordamiento de la UI.
+1. ESTRUCTURA GENERAL:
+   - El archivo index.html contiene una mezcla masiva de HTML, CSS interno y JavaScript interno.
+   - Existe una redundancia potencial con js/main.js al final del archivo.
+
+2. ESTILOS (CSS):
+   - Línea 17: Se utiliza una escala global del 80% (font-size: 80%), lo cual es una técnica rígida para el manejo de proporciones.
+   - Líneas 19-86: Animaciones definidas mediante keyframes (fadeInDown, etc.).
+   - Líneas 122-140: Estilos específicos para menús desplegables en desktop que dependen de clases de Tailwind (group-hover).
+   - Línea 143: El header tiene un `top: 0 !important` y una transición de transformación.
+   - Hallazgo: El header se oculta completamente al hacer scroll hacia abajo, lo cual puede ser "brusco" si no se maneja un estado intermedio (sticky con estilo reducido).
+
+3. HEADER (#main-header):
+   - Línea 151: El header tiene `py-0`, lo que lo hace muy delgado dependiendo del tamaño del logo.
+   - Línea 153: El logo y el texto están en un contenedor flex. El logo no tiene padding interno.
+   - Hallazgo: El usuario indica que es "desproporcionado". Posiblemente la relación entre el logo (width="120") y el texto es rígida.
+   - Hallazgo: El header es estático en su diseño visual, no cambia al hacer scroll (solo se oculta o se muestra).
+
+4. MENÚ HAMBURGUESA (#mobile-menu-overlay):
+   - Líneas 183-207 (CSS) y 268-297 (HTML):
+   - Hallazgo: Los botones de "Inicio", "Portal", "Pseudocódigo" y "Contacto" tienen la clase `text-center`.
+   - Hallazgo: Los botones de "Cursos" y "Recursos Adicionales" usan `flex justify-between items-center`.
+   - Inconsistencia: Esto causa una disposición visual dispar donde unos textos están centrados y otros tienen flechas a la derecha.
+   - Hallazgo: La animación de apertura es un simple fadeInDown que afecta a todo el overlay.
+
+5. LÓGICA DE DATOS Y UI (JS):
+   - Líneas 372-984: Bloque masivo de scripts que incluyen:
+     - `presentationData`, `additionalResourcesData`, `downloadContentData`.
+     - Lógica de navegación del portal de descargas.
+     - Lógica de carga dinámica de juegos.
+   - Hallazgo: La carga de juegos oculta el header (`mainHeader.classList.add('header-hidden')`), pero no hay una animación suave de transición.
+
+6. OBSERVACIONES ADICIONALES:
+   - El footer tiene una estructura simple que el usuario considera "exagerada" en sesiones previas, aunque en esta tarea se prohíbe cambiar el texto.
+   - Existe una discrepancia mencionada en la memoria sobre el ID del menú móvil ('mobile-menu' vs 'mobile-menu-overlay'). En el HTML actual es 'mobile-menu-overlay'.
+
+AUDITORÍA FINAL - 18/01/2026
+
+1. ESTRUCTURA:
+   - index.html ahora es un archivo limpio de solo 200 líneas (antes +900).
+   - Separación de preocupaciones (SoC) lograda mediante externalización de CSS y JS.
+
+2. CUMPLIMIENTO DE RESTRICCIONES:
+   - No se alteró el texto de los encabezados ni del pie de página (revertidos cambios accidentales detectados en revisión).
+   - Se eliminaron iconos/emojis de los menús para respetar la integridad del texto original.
+   - El logo se mantiene intacto, solo con animaciones de escala suaves.
+
+3. MEJORAS VISUALES:
+   - El encabezado responde al scroll de forma fluida.
+   - El menú móvil es consistente; ya no hay disparidad entre elementos centrados y justificados.
+   - Las proporciones se corrigieron mediante el ajuste del font-size base y paddings dinámicos.
