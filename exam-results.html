@@ -3,31 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados del Examen</title>
+    <title>Resultados del Examen - Area de Informatica</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-6">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-gray-800">Resultados del Examen</h1>
-        </header>
+<body class="font-inter antialiased text-gray-900 bg-gray-50">
 
-        <main class="bg-white p-8 rounded-lg shadow-md">
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold">Calificación Final</h2>
-                <p id="calificacion-total" class="text-5xl font-bold text-blue-600">--%</p>
-            </div>
+    <header id="main-header" class="bg-white shadow-md py-2 md:py-4 px-1 md:px-3 fixed w-full z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-4">
+                <img src="imagenes/logo.png" alt="Logo" width="120" height="auto">
+                <span class="text-2xl font-bold text-blue-800 hidden sm:inline">Area de Informatica</span>
+            </a>
+            <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="100" height="auto" class="hidden lg:block">
+        </div>
+    </header>
 
-            <div id="results-container" class="space-y-4">
-                <!-- Los resultados por pregunta se renderizarán aquí -->
-            </div>
+    <main class="mt-[7rem] pb-20 flex-grow">
+        <div class="container mx-auto px-5 max-w-4xl">
+            <div class="dashboard-card text-center mb-10">
+                <h1 class="text-3xl font-extrabold text-gray-800 mb-6">Resultados del Examen</h1>
 
-            <div class="text-center mt-8">
-                <a href="student-dashboard.html" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg">Volver al Dashboard</a>
+                <div class="inline-block p-8 bg-blue-50 rounded-full mb-6">
+                    <p class="text-gray-500 font-bold uppercase tracking-wider mb-2">Calificación Final</p>
+                    <p id="calificacion-total" class="text-6xl font-black text-blue-600">--%</p>
+                </div>
+
+                <div id="results-container" class="space-y-6 text-left mt-10">
+                    <!-- Los resultados por pregunta se renderizarán aquí -->
+                    <p class="text-center text-gray-500">Cargando detalles...</p>
+                </div>
+
+                <div class="mt-12 pt-8 border-t border-gray-100">
+                    <a href="student-dashboard.html" class="inline-block bg-blue-600 text-white font-extrabold py-4 px-10 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
+                        Volver al Dashboard
+                    </a>
+                </div>
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-5 text-center">
+            <p class="text-lg font-medium mb-6">
+                &copy; <span id="current-year"></span> Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
+            </p>
+        </div>
+    </footer>
 
     <script src="js/exam-results.js"></script>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>

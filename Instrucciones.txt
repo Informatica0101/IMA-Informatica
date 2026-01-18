@@ -1,5 +1,5 @@
-Importante: 
-PROHIBIDO AGREGAR CONTENIDO ANTES DEL SIGUIENTE BLOQUE DE TEXTO. 
+Importante:
+PROHIBIDO AGREGAR CONTENIDO ANTES DEL SIGUIENTE BLOQUE DE TEXTO.
 
 — PROCEDIMIENTO OBLIGATORIO DE TRABAJO.
 ===================================================================
@@ -62,8 +62,8 @@ FLUJO PRINCIPAL DE TRABAJO
    - Si se detectan cambios ajenos:
      -> REVERTIRLOS inmediatamente
      -> Repetir la comparación
--Los archivos de Respaldo se debe eliminar DESPUES de la revision de codigo de Code Review. 
--Todo archivo, captura generado para la verificación visual o ejecutable debe de ser eliminado en el pre-commit. 
+-Los archivos de Respaldo se debe eliminar DESPUES de la revision de codigo de Code Review.
+-Todo archivo, captura generado para la verificación visual o ejecutable debe de ser eliminado en el pre-commit.
 
 8. VERIFICACIÓN DE INTEGRIDAD Y EFECTOS COLATERALES
    - Revisar dependencias internas y externas.
@@ -87,6 +87,11 @@ FLUJO PRINCIPAL DE TRABAJO
 11. ACTUALIZACIÓN DE INSTRUCCIONES.TXT
     - Mover la tarea ejecutada a:
       -> "TAREAS PENDIENTES DE REVISIÓN"
+- Unificación total de encabezados y reducción de márgenes en zona de entregas
+- Reducción de márgenes en tabla de entregas del profesor
+- Reducción de gaps a mínimo y corrección definitiva de posición de footer
+- Ajuste de espaciado en dashboards y corrección de franja blanca en footer
+- Estandarización visual y corrección de desbordamientos en Dashboards y Exámenes
     - NO eliminar tareas sin aprobación del PM.
 
 12. COMMIT
@@ -195,4 +200,4 @@ ________________________________________________________________________________
 
 
 
-tarea 1. 
+tarea 1.

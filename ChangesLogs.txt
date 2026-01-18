@@ -163,3 +163,65 @@ En este archivo se regustrara el historial de cambios del proyecto.
 14/01/2026
 - Archivo: js/config.js, Línea(s): 17, 20
   - Se actualizaron las URLs de los microservicios `TASK` y `EXAM` para apuntar a los nuevos endpoints de producción desplegados.
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivo: css/style.css
+- Implementado escalado global (font-size: 85%).
+- Añadidas clases .table-container y .dashboard-card para corregir desbordamientos y mejorar el diseño.
+
+Archivos: student-dashboard.html, teacher-dashboard.html, exam.html, exam-results.html, results.html
+- Estandarización de encabezado y pie de página para coincidir con index.html.
+- Vinculación de css/style.css.
+- Corrección de desbordamientos en tablas y grids.
+- Implementación de lógica de cierre de sesión unificada usando la clave 'currentUser'.
+- Corrección de navegación rota en results.html (apuntaba a student.html).
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivo: css/style.css
+- Corregida propiedad min-height en body (antes min-h-screen).
+- Ajustado padding de .dashboard-card a 1rem para un diseño más compacto.
+
+Archivo: student-dashboard.html
+- Reducido gap en el grid de tareas de gap-6 a gap-3.
+- Asegurada estructura flex-col en body para posicionamiento correcto del footer.
+
+Archivo: teacher-dashboard.html
+- Reducido gap en formularios de gap-8 a gap-4.
+- Reducido espaciado en preguntas de examen de space-y-8 a space-y-4.
+- Asegurada estructura flex-col en body.
+
+Archivo: index.html
+- Añadidas clases flex-grow y mt-auto para asegurar que el footer no deje franjas blancas inferiores.
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivos: student-dashboard.html, teacher-dashboard.html, index.html
+- Reducción extrema de gaps (gap-2) y padding interno (0.75rem) para lograr un diseño de cuadrícula minimalista y profesional.
+- Asegurado que todos los archivos usen bg-gray-900 en el footer para uniformidad total.
+- Implementación de mt-auto en todos los footers y flex-grow en los contenedores main para eliminar la franja blanca inferior.
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivo: teacher-dashboard.html
+- Reducido padding de los encabezados de la tabla (th) de p-4 a p-2.
+
+Archivo: js/teacher.js
+- Reducido padding de las celdas de la tabla (td) de p-4 a p-2 en la función renderActivity.
+- Ajustado padding de los mensajes de estado (carga, error, vacío) de p-4 a p-2.
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivo: css/style.css
+- Implementado drop-shadow en .logo-img conforme a la solicitud del usuario.
+
+Archivo: js/ui-common.js
+- Creado para centralizar la lógica de scroll, menú móvil y logout, permitiendo su reutilización en dashboards.
+
+Archivo: student-dashboard.html, teacher-dashboard.html
+- Integrado el encabezado completo (incluyendo dropdowns de Cursos/Recursos) mediante la inclusión de js/ui-common.js, js/data.js y js/index-ui.js.
+- Reducido gap en la cuadrícula de tareas y formularios.
+
+Archivo: js/teacher.js
+- Reducido padding de las filas de la tabla de entregas a p-2 para un diseño más compacto.

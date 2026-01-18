@@ -788,3 +788,55 @@ AUDITORÍA DE RECUPERACIÓN DE PREGUNTAS (14/01/2026)
 - Archivo: backend/exam-service/Code.gs
 - Línea(s): 190-202
 - Hallazgo (Crítico): La función `getExamQuestions` devuelve una estructura de datos incorrecta que no coincide con la esperada por el frontend. El backend envía directamente un array de preguntas en la propiedad `data`, mientras que el frontend (`js/exam.js`) espera un objeto que contenga los detalles del examen (título, etc.) junto con el array de preguntas. Esta discrepancia es la causa raíz de que los exámenes se muestren como si no tuvieran preguntas.
+
+AUDITORÍA DE DASHBOARDS Y EXÁMENES - 18/01/2026
+
+1. student-dashboard.html:
+   - No tiene encabezado estandarizado.
+   - El botón de logout es un botón rojo simple en la esquina.
+   - Carece de footer.
+   - No utiliza el archivo css/style.css.
+
+2. teacher-dashboard.html:
+   - Desbordamiento crítico: La tabla de entregas (#submissions-table-body) no es responsiva.
+   - Menú de navegación interno (Dashboard, Crear Tarea, Crear Examen) es inconsistente con el estilo de index.html.
+   - Carece de footer.
+   - No utiliza css/style.css.
+
+3. exam.html y exam-results.html:
+   - Diseño minimalista sin identidad visual corporativa (logo, bandera, footer).
+   - El temporizador y el título del examen necesitan mejor integración visual.
+
+4. results.html:
+   - Tiene un enlace a "student.html" que podría estar roto (el archivo es student-dashboard.html).
+   - Intenta cargar css/styles.css (con 's'), que no existe (es style.css).
+
+AUDITORÍA DE AJUSTES FINALES - 18/01/2026
+
+1. DASHBOARDS:
+   - Se verificó que el espaciado entre columnas (gap) es el mínimo necesario para distinguir elementos sin desperdiciar espacio.
+   - Las tarjetas de dashboard ahora son más compactas.
+
+2. FOOTER:
+   - Se confirmó mediante inspección visual y flexbox que el footer se ancla al fondo del viewport incluso en páginas con poco contenido.
+   - La franja blanca ha sido eliminada.
+
+AUDITORÍA DE TABLA DE ENTREGAS - 18/01/2026
+
+1. teacher-dashboard.html:
+   - Los encabezados de la tabla (th) usan padding p-4 (Línea 75-81).
+
+2. js/teacher.js:
+   - Las celdas de la tabla (td) se renderizan con padding p-4 (Línea 156-162).
+   - El mensaje de carga también usa p-4 (Línea 72).
+   - El mensaje de error usa p-4 (Línea 105).
+   - El mensaje de "no hay actividad" usa p-4 (Línea 111).
+
+AUDITORÍA FINAL DE TABLA DE ENTREGAS - 18/01/2026
+
+1. teacher-dashboard.html:
+   - Los encabezados ahora usan p-2.
+
+2. js/teacher.js:
+   - Las celdas renderizadas ahora usan p-2.
+   - El espaciado visual de la tabla es ahora mucho más compacto.
