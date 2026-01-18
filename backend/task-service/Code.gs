@@ -113,7 +113,7 @@ function uploadFile(payload) {
 
   const taskData = tareasSheet.getDataRange().getValues().find(row => row[0] === tareaId);
   if (!taskData) throw new Error("Tarea no encontrada.");
-  const [, , tituloTarea] = taskData;
+  const tituloTarea = taskData[2] || "Tarea Sin Titulo";
 
   const rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
   const gradoFolder = getOrCreateFolder(rootFolder, grado);

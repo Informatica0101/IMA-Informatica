@@ -862,3 +862,18 @@ AUDITORÍA FINAL DE TABLA DE ENTREGAS - 18/01/2026
 2. js/teacher.js:
    - Las celdas renderizadas ahora usan p-2.
    - El espaciado visual de la tabla es ahora mucho más compacto.
+
+AUDITORÍA DE CONFIGURACIÓN - 18/01/2026
+---------------------------------------
+- Archivo: js/config.js
+- Línea(s): 17
+- Hallazgo: La URL del microservicio TASK está desactualizada. Se requiere actualizar a la nueva implementación proporcionada por el usuario para asegurar la conectividad con la versión más reciente del backend.
+
+AUDITORÍA DE REVISIÓN - 18/01/2026
+-----------------------------------
+- Archivo: backend/task-service/Code.gs
+- Línea(s): 124 (Función uploadFile)
+- Hallazgo: Se verificó la definición de `tituloTarea`. Aunque el código review indicó que no estaba definida, se confirma que se recupera de `tareasSheet` correctamente. Se mantendrá bajo observación.
+- Archivo: js/student.js
+- Línea(s): 198-202
+- Hallazgo: La implementación de carga en segundo plano bloquea el input de archivo. Se requiere rediseñar para permitir selección continua.
