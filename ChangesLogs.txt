@@ -274,3 +274,12 @@ Archivo: js/teacher.js
 - Archivo: js/exam.js
   Líneas: 105, 149-166
   Cambio: Se añadió el estado de carga al botón de entrega de examen y se aseguró el manejo correcto de la redirección post-entrega.
+
+20/01/2026
+- Archivo: backend/task-service/Code.gs
+  Líneas: 93, 218
+  Cambio: Se modificaron las funciones `getStudentTasks` y `getTeacherActivity` para enviar fechas en formato ISO (`.toISOString()`), eliminando el uso de `.toLocaleString()` que causaba errores de parseo en el frontend.
+
+- Archivo: backend/exam-service/Code.gs
+  Líneas: 143, 247, 300
+  Cambio: Se estandarizó el envío de fechas a formato ISO en las funciones `getAllExams`, `getStudentExams` y `getTeacherExamActivity` para garantizar la compatibilidad con el constructor `new Date()` de JavaScript en cualquier navegador.

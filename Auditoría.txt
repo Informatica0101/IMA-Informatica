@@ -902,3 +902,19 @@ AUDITORÍA DE INTERFAZ Y SERVICIOS - 20/01/2026
 
 - Archivo: tasks.html
   - Hallazgo: El archivo no existe físicamente en el repositorio. Se asume que la funcionalidad de tareas está integrada en los dashboards de estudiante y profesor.
+
+AUDITORÍA DE FORMATO DE FECHAS (DETALLADA) - 20/01/2026
+-------------------------------------------------------------------
+- Archivo: backend/task-service/Code.gs
+  - Hallazgo: La función `getTeacherActivity` usa `item.fecha.toLocaleString()`. Debe cambiarse a `.toISOString()`.
+  - Hallazgo: La función `getStudentTasks` envía `task[8]` (objeto Date). Se recomienda enviarlo como ISO string para evitar inconsistencias en la serialización.
+
+- Archivo: backend/exam-service/Code.gs
+  - Hallazgo: La función `getTeacherExamActivity` usa `item.fecha.toLocaleString()`. Debe cambiarse a `.toISOString()`.
+  - Hallazgo: La función `getAllExams` envía `r[5]` (objeto Date). Debe cambiarse a `.toISOString()`.
+  - Hallazgo: La función `getStudentExams` envía `e[5]` (objeto Date). Debe cambiarse a `.toISOString()`.
+
+- Archivo: js/teacher.js
+  - Hallazgo: La función `renderActivity` intenta instanciar `new Date(item.fecha)` a partir de la cadena ya formateada que recibe del backend.
+  - Hallazgo: Al fallar el parseo de la cadena regional (ej. "20/1/2026 23:45:00"), se genera un objeto "Invalid Date".
+  - Hallazgo: La función `fetchTeacherActivity` también realiza un `sort` intentando instanciar `new Date()` sobre las fechas de ambas fuentes, lo que provoca un ordenamiento incorrecto si el parseo falla.

@@ -213,3 +213,5 @@ tarea 4: Actualización recurrente de la URL del microservicio TASK. (EN REVISI�
 tarea 5: Garantizar la integridad de subidas concurrentes en el dashboard del estudiante. (EN REVISIÓN)
 
 tarea 6: Implementar animaciones de carga en todos los botones de envío al backend y corregir error de entrega de exámenes. (EN REVISIÓN)
+
+tarea 7: Estandarizar formato de fechas a ISO 8601 en servicios de backend para corregir "Invalid Date" en el frontend. (EN REVISIÓN)
