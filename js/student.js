@@ -136,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTaskTitle.textContent = taskTitle;
         uploadedFiles = [];
         currentFolderId = null;
-        isUploading = false;
 
         uploadedFilesList.innerHTML = '';
         uploadedFilesContainer.classList.add('hidden');
@@ -148,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function closeSubmissionModal() {
-        if (isUploading) {
+        if (activeUploads > 0) {
             if (!confirm('Hay una subida en progreso. ¿Estás seguro de cerrar el modal?')) return;
         }
         submissionModal.classList.add('hidden');
@@ -202,7 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (acceptFileBtn) {
         acceptFileBtn.addEventListener('click', async () => {
             const file = fileInput.files[0];
-            if (!file) return;
+            if (!file || activeUploads > 0) return;
+
+            acceptFileBtn.disabled = true;
+            acceptFileBtn.classList.add('btn-loading');
 
             const currentFile = file;
             const currentFileName = currentFile.name;
@@ -239,6 +241,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 try {
                     const result = await fetchApi('TASK', 'uploadFile', payload);
+
+                    acceptFileBtn.disabled = false;
+                    acceptFileBtn.classList.remove('btn-loading');
+
                     if (result.status === 'success') {
                         const uploadedData = result.data;
                         uploadedFiles.push({
@@ -266,6 +272,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         alert('Error al subir ' + currentFileName + ': ' + result.message);
                     }
                 } catch (error) {
+                    acceptFileBtn.disabled = false;
+                    acceptFileBtn.classList.remove('btn-loading');
                     li.innerHTML = `<span class="text-red-600">Error: ${currentFileName}</span>`;
                     alert('Error de conexión al subir ' + currentFileName + ': ' + error.message);
                 } finally {

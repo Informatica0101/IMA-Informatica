@@ -90,7 +90,7 @@ function getStudentTasks(payload) {
     const entrega = entregasData.find(e => e[1] === task[0] && e[2] === userId);
     return {
       tareaId: task[0], tipo: task[1], titulo: task[2], descripcion: task[3], parcial: task[4],
-      asignatura: task[5], fechaLimite: task[8],
+      asignatura: task[5], fechaLimite: task[8] ? new Date(task[8]).toISOString() : null,
       entrega: entrega ? { calificacion: entrega[5], estado: entrega[6], comentario: entrega[7] } : null
     };
   });
@@ -215,7 +215,7 @@ function getTeacherActivity() {
   });
 
   submissions.sort((a, b) => b.fecha - a.fecha);
-  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toLocaleString() }));
+  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
   return { status: "success", data: formattedActivity };
 }
 

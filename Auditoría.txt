@@ -902,3 +902,31 @@ AUDITORÍA DE INTERFAZ Y SERVICIOS - 20/01/2026
 
 - Archivo: tasks.html
   - Hallazgo: El archivo no existe físicamente en el repositorio. Se asume que la funcionalidad de tareas está integrada en los dashboards de estudiante y profesor.
+
+AUDITORÍA DE FORMATO DE FECHAS (DETALLADA) - 20/01/2026
+-------------------------------------------------------------------
+- Archivo: backend/task-service/Code.gs
+  - Hallazgo: La función `getTeacherActivity` usa `item.fecha.toLocaleString()`. Debe cambiarse a `.toISOString()`.
+  - Hallazgo: La función `getStudentTasks` envía `task[8]` (objeto Date). Se recomienda enviarlo como ISO string para evitar inconsistencias en la serialización.
+
+- Archivo: backend/exam-service/Code.gs
+  - Hallazgo: La función `getTeacherExamActivity` usa `item.fecha.toLocaleString()`. Debe cambiarse a `.toISOString()`.
+  - Hallazgo: La función `getAllExams` envía `r[5]` (objeto Date). Debe cambiarse a `.toISOString()`.
+  - Hallazgo: La función `getStudentExams` envía `e[5]` (objeto Date). Debe cambiarse a `.toISOString()`.
+
+- Archivo: js/teacher.js
+  - Hallazgo: La función `renderActivity` intenta instanciar `new Date(item.fecha)` a partir de la cadena ya formateada que recibe del backend.
+  - Hallazgo: Al fallar el parseo de la cadena regional (ej. "20/1/2026 23:45:00"), se genera un objeto "Invalid Date".
+  - Hallazgo: La función `fetchTeacherActivity` también realiza un `sort` intentando instanciar `new Date()` sobre las fechas de ambas fuentes, lo que provoca un ordenamiento incorrecto si el parseo falla.
+
+AUDITORÍA DE CIERRE - 19/01/2026
+-------------------------------------------------------------------
+- Archivo: js/student.js
+  - Hallazgo: Se detectó una variable fantasma `isUploading` que no se actualizaba correctamente. Se reemplazó por la validación de `activeUploads > 0` para mayor confiabilidad.
+  - Hallazgo: El botón `acceptFileBtn` (Aceptar subida individual) no tenía estado de carga ni bloqueo, lo que permitía clics accidentales durante el proceso inicial de subida.
+
+- Archivo: backend/task-service/Code.gs y backend/exam-service/Code.gs
+  - Verificación: Se confirmó que el cambio a `.toISOString()` resuelve definitivamente el error de "Invalid Date" al proporcionar un formato estándar parseable por todos los motores de JavaScript modernos.
+
+- Archivo: js/config.js
+  - Verificación: Se aplicaron las nuevas URLs de producción para TASK y EXAM, asegurando la conectividad con las versiones corregidas del backend.

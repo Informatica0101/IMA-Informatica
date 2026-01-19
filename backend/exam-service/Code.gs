@@ -140,7 +140,7 @@ function getAllExams() {
       asignatura: r[2],
       grado: r[3],
       seccion: r[4],
-      fechaLimite: r[5],
+      fechaLimite: r[5] ? new Date(r[5]).toISOString() : null,
       estado: r[7]
     }))
   };
@@ -244,7 +244,7 @@ function getStudentExams({ userId, grado, seccion }) {
         return {
           examenId: e[0],
           titulo: e[1],
-          fechaLimite: e[5],
+          fechaLimite: e[5] ? new Date(e[5]).toISOString() : null,
           estado: ent ? ent[6] : e[7]
         };
       })
@@ -297,6 +297,6 @@ function getTeacherExamActivity() {
   });
 
   submissions.sort((a, b) => b.fecha - a.fecha);
-  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toLocaleString() }));
+  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
   return { status: "success", data: formattedActivity };
 }
