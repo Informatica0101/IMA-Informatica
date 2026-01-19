@@ -233,6 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 estado: document.getElementById('estado').value,
                 comentario: document.getElementById('comentario').value
             };
+            saveGradeBtn.classList.add('btn-loading');
+            saveGradeBtn.disabled = true;
             try {
                 const result = await fetchApi('TASK', 'gradeSubmission', payload);
                 if (result.status === 'success') {
@@ -241,6 +243,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     fetchTeacherActivity();
                 } else { throw new Error(result.message); }
             } catch (error) { alert(`Error al guardar calificación: ${error.message}`); }
+            finally {
+                saveGradeBtn.classList.remove('btn-loading');
+                saveGradeBtn.disabled = false;
+            }
         });
     }
 
@@ -258,37 +264,55 @@ document.addEventListener('DOMContentLoaded', () => {
             if (target.classList.contains('reactivate-exam-btn')) {
                 const entregaId = target.dataset.entregaId;
                 if (confirm("¿Reactivar este examen para este alumno?")) {
+                    target.classList.add('btn-loading');
+                    target.disabled = true;
                     try {
                         const result = await fetchApi('EXAM', 'reactivateExam', { entregaExamenId: entregaId });
                         if (result.status === 'success') {
                             alert('Examen reactivado.');
                             fetchTeacherActivity();
                         } else { throw new Error(result.message); }
-                    } catch (error) { alert(`Error: ${error.message}`); }
+                    } catch (error) {
+                        alert(`Error: ${error.message}`);
+                        target.classList.remove('btn-loading');
+                        target.disabled = false;
+                    }
                 }
             }
             if (target.classList.contains('activate-exam-btn')) {
                 const examenId = target.dataset.examenId;
                 if (confirm("¿Activar este examen para todos los alumnos asignados?")) {
+                    target.classList.add('btn-loading');
+                    target.disabled = true;
                     try {
                         const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Activo' });
                         if (result.status === 'success') {
                             alert('Examen activado.');
                             fetchTeacherActivity();
                         } else { throw new Error(result.message); }
-                    } catch (error) { alert(`Error: ${error.message}`); }
+                    } catch (error) {
+                        alert(`Error: ${error.message}`);
+                        target.classList.remove('btn-loading');
+                        target.disabled = false;
+                    }
                 }
             }
             if (target.classList.contains('lock-exam-btn')) {
                 const examenId = target.dataset.examenId;
                 if (confirm("¿Bloquear este examen para todos los alumnos?")) {
+                    target.classList.add('btn-loading');
+                    target.disabled = true;
                     try {
                         const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Bloqueado' });
                         if (result.status === 'success') {
                             alert('Examen bloqueado.');
                             fetchTeacherActivity();
                         } else { throw new Error(result.message); }
-                    } catch (error) { alert(`Error: ${error.message}`); }
+                    } catch (error) {
+                        alert(`Error: ${error.message}`);
+                        target.classList.remove('btn-loading');
+                        target.disabled = false;
+                    }
                 }
             }
         });
@@ -297,7 +321,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (createAssignmentForm) {
         createAssignmentForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const submitBtn = createAssignmentForm.querySelector('button[type="submit"]');
             const payload = Object.fromEntries(new FormData(e.target).entries());
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
             try {
                 const result = await fetchApi('TASK', 'createTask', payload);
                 if (result.status === 'success') {
@@ -306,6 +333,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     navDashboard.click();
                 } else { throw new Error(result.message); }
             } catch (error) { alert(`Error: ${error.message}`); }
+            finally {
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.disabled = false;
+            }
         });
     }
 
@@ -394,6 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (createExamForm) {
         createExamForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const submitBtn = createExamForm.querySelector('button[type="submit"]');
             const mainData = Object.fromEntries(new FormData(e.target).entries());
             const payload = { ...mainData, preguntas: [] };
             const questionBlocks = questionsContainer.querySelectorAll('.question-block');
@@ -412,6 +444,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Un examen no puede estar vacío.');
                 return;
             }
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
             try {
                 const result = await fetchApi('EXAM', 'createExam', payload);
                 if (result.status === 'success') {
@@ -422,6 +456,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     navDashboard.click();
                 } else { throw new Error(result.message); }
             } catch (error) { alert(`Error al crear el examen: ${error.message}`); }
+            finally {
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.disabled = false;
+            }
         });
     }
 

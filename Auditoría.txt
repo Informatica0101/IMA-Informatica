@@ -883,3 +883,22 @@ AUDITORÍA DE CONFIGURACIÓN - 18/01/2026
 - Archivo: js/config.js
 - Línea(s): 17
 - Hallazgo: La URL del microservicio TASK ha sido actualizada nuevamente por el usuario. Se requiere realizar el cambio a la última implementación proporcionada para mantener la sincronización con el backend.
+
+AUDITORÍA DE INTERFAZ Y SERVICIOS - 20/01/2026
+-------------------------------------------------------------------
+- Archivo: login.html / register.html
+  - Hallazgo: Los botones de envío (type="submit") carecen de estado de carga. El usuario puede hacer clic múltiples veces durante la espera de la API.
+
+- Archivo: student-dashboard.html
+  - Hallazgo: El botón "Confirmar Entrega" (#confirm-submission-btn) no se deshabilita ni muestra animación de carga al enviar la tarea final al backend.
+
+- Archivo: teacher-dashboard.html
+  - Hallazgo: Múltiples botones de acción (Crear Tarea, Crear Examen, Guardar Calificación, Activar, Bloquear, Reactivar) no proporcionan feedback visual de "Cargando..." ni se deshabilitan tras el clic, permitiendo envíos duplicados.
+
+- Archivo: exam.html / js/exam.js
+  - Hallazgo: El botón de entrega de examen no tiene estado de carga.
+  - Hallazgo (Crítico): Error en el envío del examen. El frontend envía 'respuestaEstudiante' mientras que el backend espera 'respuesta'.
+  - Hallazgo (Crítico): El backend devuelve la calificación directamente en la raíz del objeto de respuesta, pero el frontend espera 'result.data.entregaExamenId' para la redirección, lo que provoca un error de "Cannot read properties of undefined (reading 'entregaExamenId')".
+
+- Archivo: tasks.html
+  - Hallazgo: El archivo no existe físicamente en el repositorio. Se asume que la funcionalidad de tareas está integrada en los dashboards de estudiante y profesor.
