@@ -44,7 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const questionId = question.preguntaId || `q_${index}`;
         const questionType = question.tipo;
         const questionText = question.texto;
-        const options = question.opciones || {};
+        let options = question.opciones || {};
+
+        // Manejar el caso donde las opciones lleguen como string JSON (defensivo)
+        if (typeof options === 'string') {
+            try { options = JSON.parse(options); } catch (e) { options = {}; }
+        }
 
         let optionsHtml = '';
 

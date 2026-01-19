@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'verdadero_falso':
                 return `
                     <label class="block font-medium mb-1">Opciones</label>
-                    <input type="text" value="Verdadero,Falso" disabled class="w-full p-2 border rounded bg-gray-200 question-options">`;
+                    <input type="text" value="Verdadero,Falso" readonly class="w-full p-2 border rounded bg-gray-100 question-options">`;
             case 'termino_pareado':
                  return `
                     <label class="block font-medium mb-1">Pares (concepto:definición,otro:definición)</label>
@@ -430,14 +430,38 @@ document.addEventListener('DOMContentLoaded', () => {
             const payload = { ...mainData, preguntas: [] };
             const questionBlocks = questionsContainer.querySelectorAll('.question-block');
             questionBlocks.forEach(block => {
+                const type = block.querySelector('.question-type-select').value;
+                const optionsInput = block.querySelector('.question-options');
+                let optionsValue = optionsInput ? optionsInput.value : '';
+
                 const pregunta = {
-                    preguntaTipo: block.querySelector('.question-type-select').value,
+                    preguntaTipo: type,
                     textoPregunta: block.querySelector('.question-text').value,
                     respuestaCorrecta: block.querySelector('.correct-answer').value,
-                    opciones: ''
+                    opciones: {}
                 };
-                const optionsInput = block.querySelector('.question-options');
-                if (optionsInput) pregunta.opciones = optionsInput.value;
+
+                // Transformar opciones según el tipo de pregunta
+                if (type === 'opcion_multiple' || type === 'verdadero_falso') {
+                    const parts = optionsValue.split(',').map(s => s.trim()).filter(s => s);
+                    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+                    parts.forEach((part, idx) => {
+                        if (letters[idx]) pregunta.opciones[letters[idx]] = part;
+                    });
+                } else if (type === 'termino_pareado') {
+                    const pairs = optionsValue.split(',').map(s => s.trim()).filter(s => s);
+                    pregunta.opciones = { concepts: [], definitions: [] };
+                    pairs.forEach(pair => {
+                        const [concept, definition] = pair.split(':').map(s => s.trim());
+                        if (concept && definition) {
+                            pregunta.opciones.concepts.push(concept);
+                            pregunta.opciones.definitions.push(definition);
+                        }
+                    });
+                } else {
+                    pregunta.opciones = optionsValue;
+                }
+
                 payload.preguntas.push(pregunta);
             });
             if (payload.preguntas.length === 0) {
