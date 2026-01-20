@@ -955,3 +955,11 @@ AUDITORÍA INICIAL - 20/01/2026 - TAREA: Filtros, Búsqueda y Resultados de Exam
 - Archivo: js/results.js: Falta control de rol Estudiante vs Profesor.
 - Archivo: teacher-dashboard.html: Falta barra de búsqueda y encabezados ordenables.
 - Archivo: js/teacher.js: Falta lógica de filtrado/ordenamiento y calificación de exámenes.
+
+AUDITORÍA INICIAL - 20/01/2026 - TAREA: Nuevas URLs y Gestión de Resultados
+-------------------------------------------------------------------
+- js/config.js: URLs desactualizadas.
+- backend/exam-service/Code.gs: submitExam usa 'Finalizado', debe ser 'Pendiente'.
+- backend/exam-service/Code.gs: getStudentExams no retorna calificacion/comentario.
+- js/student.js: renderActivities no muestra feedback para exámenes.
+- teacher-dashboard.html & js/teacher.js: Verificar consistencia de filtros con metadatos (grado/seccion/asignatura).
