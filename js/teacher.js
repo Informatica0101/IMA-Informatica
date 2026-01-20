@@ -18,6 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const createAssignmentForm = document.getElementById('create-assignment-form');
     const createExamForm = document.getElementById('create-exam-form');
     const logoutButton = document.getElementById('logout-button');
+     const studentSearchInput = document.getElementById('student-search');
+
+     let allActivityRaw = [];
+     let currentSort = { field: 'fecha', direction: 'desc' };
 
     const allSections = [sectionDashboard, sectionCrear, sectionCrearExamen];
     const allNavLinks = [navDashboard, navCrear, navCrearExamen];
@@ -75,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Carga de Actividad del Profesor ---
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
-        submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-2">Cargando actividad...</td></tr>';
+        submissionsTableBody.innerHTML = '<tr><td colspan="10" class="text-center p-2">Cargando actividad...</td></tr>';
         try {
             const [taskSubmissions, examSubmissions, allExams] = await Promise.all([
                 fetchApi('TASK', 'getTeacherActivity', {}),
@@ -89,17 +93,58 @@ document.addEventListener('DOMContentLoaded', () => {
                 .filter(exam => !submittedExamIds.has(exam.examenId))
                 .map(exam => ({ ...exam, tipo: 'Examen' }));
 
-            const allActivity = [...submissions, ...examsWithoutSubmissions];
-            allActivity.sort((a, b) => new Date(b.fecha || b.fechaLimite) - new Date(a.fecha || a.fechaLimite));
-            renderActivity(allActivity);
+            allActivityRaw = [...submissions, ...examsWithoutSubmissions];
+            applyFiltersAndSort();
         } catch (error) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="7" class="text-center p-2 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
+            submissionsTableBody.innerHTML = `<tr><td colspan="10" class="text-center p-2 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
         }
     }
 
+    function applyFiltersAndSort() {
+        const searchTerm = (studentSearchInput ? studentSearchInput.value : '').toLowerCase();
+
+        let filtered = allActivityRaw.filter(item => {
+            const name = (item.alumnoNombre || '').toLowerCase();
+            return name.includes(searchTerm);
+        });
+
+        filtered.sort((a, b) => {
+            let valA = a[currentSort.field] || '';
+            let valB = b[currentSort.field] || '';
+
+            if (currentSort.field === 'fecha' || currentSort.field === 'fechaLimite') {
+                valA = new Date(a.fecha || a.fechaLimite || 0);
+                valB = new Date(b.fecha || b.fechaLimite || 0);
+            }
+
+            if (valA < valB) return currentSort.direction === 'asc' ? -1 : 1;
+            if (valA > valB) return currentSort.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        renderActivity(filtered);
+    }
+
+    if (studentSearchInput) {
+        studentSearchInput.addEventListener('input', applyFiltersAndSort);
+    }
+
+    document.querySelectorAll('.sort-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const field = btn.dataset.sort;
+            if (currentSort.field === field) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.field = field;
+                currentSort.direction = 'asc';
+            }
+            applyFiltersAndSort();
+        });
+    });
+
     function renderActivity(activity) {
         if (!activity || activity.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="7" class="text-center p-2">No hay actividad reciente.</td></tr>';
+            submissionsTableBody.innerHTML = '<tr><td colspan="10" class="text-center p-2">No hay actividad que coincida.</td></tr>';
             return;
         }
         submissionsTableBody.innerHTML = activity.map(item => {
@@ -128,8 +173,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (item.alumnoNombre) {
                 if (item.tipo === 'Tarea') {
                     actionHtml = `<button class="bg-blue-500 text-white px-2 py-1 rounded text-sm grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
-                } else if (item.tipo === 'Examen' && item.estado === 'Bloqueado') {
-                    actionHtml = `<button class="bg-yellow-500 text-white px-2 py-1 rounded text-sm reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>`;
+                } else if (item.tipo === 'Examen') {
+                    actionHtml = `
+                        <div class="flex flex-col space-y-1">
+                            <button class="bg-blue-600 text-white px-2 py-1 rounded text-sm view-results-btn" data-entrega-id="${item.entregaId}">Ver Resultados</button>
+                            <button class="bg-indigo-500 text-white px-2 py-1 rounded text-sm grade-exam-btn" data-item='${JSON.stringify(item)}'>Calificar</button>
+                            ${item.estado === 'Bloqueado' ? `<button class="bg-yellow-500 text-white px-2 py-1 rounded text-sm reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>` : ''}
+                        </div>
+                    `;
                 }
             } else if (item.tipo === 'Examen') {
                 const isActivo = item.estado === 'Activo';
@@ -148,13 +199,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             return `
-                <tr class="border-b">
-                    <td class="p-2">${item.alumnoNombre || '<em>N/A</em>'}</td>
-                    <td class="p-2">${item.titulo}</td>
-                    <td class="p-2">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
-                    <td class="p-2">${fileLinkHtml}</td>
-                    <td class="p-2">${item.calificacion || '<em>N/A</em>'}</td>
-                    <td class="p-2">${item.estado || '<em>Pendiente</em>'}</td>
+                <tr class="border-b hover:bg-gray-50 transition-colors">
+                    <td class="p-2 font-medium">${item.alumnoNombre || '<em>N/A</em>'}</td>
+                    <td class="p-2 text-sm text-gray-600">${item.grado || '<em>N/A</em>'}</td>
+                    <td class="p-2 text-sm text-gray-600">${item.asignatura || '<em>N/A</em>'}</td>
+                    <td class="p-2 text-sm text-gray-600">${item.seccion || '<em>N/A</em>'}</td>
+                    <td class="p-2 text-sm">${item.titulo}</td>
+                    <td class="p-2 text-sm">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
+                    <td class="p-2 text-sm">${fileLinkHtml}</td>
+                    <td class="p-2 font-bold">${item.calificacion || '<em>N/A</em>'}</td>
+                    <td class="p-2"><span class="px-2 py-1 rounded-full text-xs font-semibold ${item.estado === 'Revisada' || item.estado === 'Finalizado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${item.estado || '<em>Pendiente</em>'}</span></td>
                     <td class="p-2">${actionHtml}</td>
                 </tr>`;
         }).join('');
@@ -227,6 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (saveGradeBtn) {
         saveGradeBtn.addEventListener('click', async () => {
+            const type = saveGradeBtn.dataset.type; // 'Tarea' o 'Examen'
             const payload = {
                 entregaId: currentEditingEntregaId,
                 calificacion: document.getElementById('calificacion').value,
@@ -236,7 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
             saveGradeBtn.classList.add('btn-loading');
             saveGradeBtn.disabled = true;
             try {
-                const result = await fetchApi('TASK', 'gradeSubmission', payload);
+                const service = type === 'Tarea' ? 'TASK' : 'EXAM';
+                const action = type === 'Tarea' ? 'gradeSubmission' : 'gradeExamSubmission';
+                const result = await fetchApi(service, action, payload);
                 if (result.status === 'success') {
                     alert('Calificación guardada.');
                     closeGradeModal();
@@ -259,7 +316,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 openLightbox(target.dataset.fileId, target.dataset.title);
             }
             if (target.classList.contains('grade-task-btn')) {
+                if (saveGradeBtn) saveGradeBtn.dataset.type = 'Tarea';
                 openGradeModal(JSON.parse(target.dataset.item));
+            }
+            if (target.classList.contains('grade-exam-btn')) {
+                if (saveGradeBtn) saveGradeBtn.dataset.type = 'Examen';
+                openGradeModal(JSON.parse(target.dataset.item));
+            }
+            if (target.classList.contains('view-results-btn')) {
+                window.location.href = `results.html?entregaExamenId=${target.dataset.entregaId}`;
             }
             if (target.classList.contains('reactivate-exam-btn')) {
                 const entregaId = target.dataset.entregaId;

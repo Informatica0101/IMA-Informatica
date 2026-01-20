@@ -64,6 +64,7 @@ function doPost(e) {
       case "updateExamStatus": result = updateExamStatus(payload); break;
       case "getAllExams": result = getAllExams(); break;
       case "getTeacherExamActivity": result = getTeacherExamActivity(); break;
+      case "gradeExamSubmission": result = gradeExamSubmission(payload); break;
       case "getStudentExams": result = getStudentExams(payload); break;
       case "getExamResult": result = getExamResult(payload); break;
       default:
@@ -323,13 +324,40 @@ function getTeacherExamActivity() {
       examenId: entrega[1],
       titulo: examen ? examen[1] : "Examen Desconocido",
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
+      grado: usuario ? usuario[2] : "N/A",
+      seccion: usuario ? usuario[3] : "N/A",
+      asignatura: examen ? examen[2] : "N/A",
       fecha: new Date(entrega[3]),
       calificacion: entrega[5],
       estado: entrega[6],
+      comentario: entrega[7] || ""
     };
   });
 
   submissions.sort((a, b) => b.fecha - a.fecha);
   const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
   return { status: "success", data: formattedActivity };
+}
+
+function gradeExamSubmission(payload) {
+  const { entregaId, calificacion, estado, comentario } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const entregasSheet = getSheetOrThrow(ss, "EntregasExamen");
+
+  const data = entregasSheet.getDataRange().getValues();
+  // Estructura EntregasExamen: [ID (0), ExamenID (1), UserID (2), Fecha (3), Respuestas (4), Nota (5), Estado (6), Comentario (7)]
+  const rowIndex = data.findIndex(row => row[0] === entregaId);
+
+  if (rowIndex !== -1) {
+    entregasSheet.getRange(rowIndex + 1, 6).setValue(calificacion); // Columna F: Nota
+    entregasSheet.getRange(rowIndex + 1, 7).setValue(estado);       // Columna G: Estado
+    // Asegurarse de que exista la columna de comentario (H)
+    if (data[0].length < 8) {
+      entregasSheet.getRange(1, 8).setValue("Comentario");
+    }
+    entregasSheet.getRange(rowIndex + 1, 8).setValue(comentario);   // Columna H: Comentario
+    return { status: "success", message: "Examen calificado." };
+  }
+
+  throw new Error("Entrega de examen no encontrada.");
 }

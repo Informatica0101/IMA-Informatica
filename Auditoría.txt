@@ -946,3 +946,34 @@ AUDITORÍA DE LÓGICA DE EXÁMENES - 20/01/2026
 - Archivo: js/results.js
   - Hallazgo: Contiene una función 'fetchApi' duplicada.
   - Hallazgo: La lógica de renderizado depende de propiedades inexistentes en la respuesta actual del backend.
+
+AUDITORÍA INICIAL - 18/01/2026 (Tarea: Filtros, Búsqueda y Resultados de Examen)
+-------------------------------------------------------------------
+- Archivo: js/exam.js
+  - Línea(s): 160
+  - Hallazgo: El script redirige a los estudiantes a 'results.html' tras completar un examen. Debe redirigir a 'student-dashboard.html'.
+
+- Archivo: js/results.js
+  - Línea(s): 1-5
+  - Hallazgo: No hay restricción de rol para acceder a los resultados. Los estudiantes pueden ver sus notas si conocen la URL.
+
+- Archivo: teacher-dashboard.html
+  - Línea(s): 102-110
+  - Hallazgo: La tabla de entregas carece de columnas para 'Grado', 'Asignatura' y 'Sección', las cuales son requeridas para los nuevos filtros.
+  - Hallazgo: No existe una barra de búsqueda para filtrar por nombre de alumno.
+  - Hallazgo: Los encabezados de las columnas no tienen elementos interactivos para el ordenamiento.
+
+- Archivo: js/teacher.js
+  - Línea(s): 75-100 (fetchTeacherActivity)
+  - Hallazgo: Los datos se renderizan inmediatamente tras la carga, sin almacenarse en un estado global que permita filtrado o re-ordenamiento local.
+  - Hallazgo: La función 'renderActivity' no incluye las nuevas columnas requeridas.
+  - Hallazgo: Las entregas de exámenes no tienen un botón para "Ver Resultados" o "Calificar".
+
+- Archivo: backend/task-service/Code.gs
+  - Línea(s): 190-218 (getTeacherActivity)
+  - Hallazgo: La respuesta de la API no incluye los campos 'grado', 'seccion' y 'asignatura' para cada entrega, lo cual es necesario para el filtrado en el frontend.
+
+- Archivo: backend/exam-service/Code.gs
+  - Línea(s): 268-300 (getTeacherExamActivity)
+  - Hallazgo: Al igual que en el servicio de tareas, faltan los campos 'grado', 'seccion' y 'asignatura'.
+  - Hallazgo: No existe una acción para calificar manualmente una entrega de examen (añadir comentario o ajustar nota).

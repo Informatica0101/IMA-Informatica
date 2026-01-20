@@ -5,6 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Solo los profesores pueden ver resultados individuales
+    if (currentUser.rol !== 'Profesor') {
+        window.location.href = 'student-dashboard.html';
+        return;
+    }
+
     const resultsContainer = document.getElementById('results-container');
     const urlParams = new URLSearchParams(window.location.search);
     const entregaExamenId = urlParams.get('entregaExamenId');

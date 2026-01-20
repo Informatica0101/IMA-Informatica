@@ -159,8 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await fetchApi('EXAM', 'submitExam', payload);
 
             if (result.status === 'success' && result.data) {
-                // Redirigir a una página de resultados con la calificación
-                window.location.href = `results.html?entregaExamenId=${result.data.entregaExamenId}`;
+                // Redirigir al dashboard del estudiante
+                window.location.href = 'student-dashboard.html';
             } else {
                 throw new Error(result.message || "Error al enviar el examen.");
             }
