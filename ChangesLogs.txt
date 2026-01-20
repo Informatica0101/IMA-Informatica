@@ -301,3 +301,11 @@ Archivo: js/teacher.js
 - Archivo: js/results.js, Líneas: 7-12. Se restringió el acceso a resultados solo a profesores.
 - Archivo: teacher-dashboard.html, Líneas: 99-138. Se añadió barra de búsqueda, columnas de metadatos y botones de ordenamiento.
 - Archivo: js/teacher.js, Líneas: 21-315. Se implementó lógica de búsqueda, filtrado/ordenamiento y calificación unificada para tareas y exámenes.
+
+20/01/2026
+- Archivo: js/config.js
+  Descripción: Actualización de los endpoints de producción para los microservicios de tareas (TASK) y exámenes (EXAM).
+- Archivo: backend/exam-service/Code.gs
+  Descripción: Se modificó la función submitExam para establecer el estado inicial de la entrega como 'Pendiente' en lugar de 'Finalizado'. Se actualizó getStudentExams para retornar un objeto de entrega completo y ocultar la calificación si el estado es 'Pendiente', garantizando la privacidad de los resultados hasta su revisión.
+- Archivo: js/student.js
+  Descripción: Se implementó la lógica de feedback para exámenes en el dashboard del estudiante, mostrando el estado, la calificación (solo tras revisión) y el comentario del profesor, siguiendo la misma consistencia visual que las tareas.

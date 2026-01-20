@@ -90,22 +90,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         data-asignatura="${activity.asignatura || ''}">Entregar Tarea</button>`;
                 }
             } else if (activity.type === 'Examen') {
-                if (activity.entrega) {
-                    const statusColor = activity.entrega.estado === 'Revisada' || activity.entrega.estado === 'Finalizado' ? 'text-green-600' : (activity.entrega.estado === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
-                    feedbackHtml = `
+                const estado = activity.estado || 'Pendiente';
+                const calificacion = activity.calificacionTotal;
+
+                if (estado === 'Activo') {
+                    actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="bg-purple-500 text-white px-4 py-2 rounded-lg">Realizar Examen</a>`;
+                } else {
+                    actionButtonHtml = `<button class="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed" disabled>${estado}</button>`;
+                }
+
+                if (calificacion) {
+                     feedbackHtml = `
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                             <h4 class="font-bold text-md">Estado de tu Examen:</h4>
-                            <p class="font-semibold ${statusColor}">${activity.entrega.estado}</p>
-                            ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
-                            ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
+                            <p class="font-semibold text-green-600">Completado</p>
+                            <p><strong>Calificación:</strong> ${calificacion}</p>
                         </div>`;
-                } else {
-                    const estado = activity.estado || 'Inactivo';
-                    if (estado === 'Activo') {
-                        actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="bg-purple-500 text-white px-4 py-2 rounded-lg">Realizar Examen</a>`;
-                    } else {
-                        actionButtonHtml = `<button class="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed" disabled>${estado}</button>`;
-                    }
                 }
             }
 
