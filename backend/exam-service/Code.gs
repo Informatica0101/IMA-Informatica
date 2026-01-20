@@ -253,20 +253,53 @@ function getStudentExams({ userId, grado, seccion }) {
 
 function getExamResult({ entregaExamenId }) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const row = getSheetOrThrow(ss, "EntregasExamen")
-    .getDataRange().getValues()
-    .find(r => r[0] === entregaExamenId);
+  const entregasSheet = getSheetOrThrow(ss, "EntregasExamen");
+  const entregasData = entregasSheet.getDataRange().getValues();
+  const entregaRow = entregasData.find(r => r[0] === entregaExamenId);
 
-  if (!row) throw new Error("Resultado no encontrado");
+  if (!entregaRow) throw new Error("Resultado no encontrado");
+
+  const examenId = entregaRow[1];
+  const respuestasEstudiante = JSON.parse(entregaRow[4] || "[]");
+
+  // Obtener detalles del examen
+  const examenesSheet = getSheetOrThrow(ss, "Examenes");
+  const examenRow = examenesSheet.getDataRange().getValues().find(r => r[0] === examenId);
+  const examenTitulo = examenRow ? examenRow[1] : "Examen Desconocido";
+
+  // Obtener preguntas para comparar
+  const preguntasSheet = getSheetOrThrow(ss, "PreguntasExamen");
+  const preguntasData = preguntasSheet.getDataRange().getValues().slice(1).filter(p => p[1] === examenId);
+
+  const resultadosDetallados = preguntasData.map(p => {
+    const preguntaId = p[0];
+    const tipo = p[2];
+    const texto = p[3];
+    const respuestaCorrecta = p[5];
+
+    const entrega = respuestasEstudiante.find(r => r.preguntaId === preguntaId);
+    const respuestaEstudiante = entrega ? entrega.respuestaEstudiante : "";
+
+    let esCorrecta = false;
+    if (tipo === "completacion") {
+      esCorrecta = normalizeString(respuestaEstudiante) === normalizeString(respuestaCorrecta);
+    } else {
+      esCorrecta = respuestaEstudiante === respuestaCorrecta;
+    }
+
+    return {
+      texto,
+      respuestaEstudiante,
+      esCorrecta
+    };
+  });
 
   return {
     status: "success",
     data: {
-      examenId: row[1],
-      userId: row[2],
-      fecha: row[3],
-      respuestas: JSON.parse(row[4]),
-      calificacion: row[5]
+      examenTitulo: examenTitulo,
+      calificacionTotal: entregaRow[5],
+      resultadosDetallados: resultadosDetallados
     }
   };
 }

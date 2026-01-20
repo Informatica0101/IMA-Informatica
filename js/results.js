@@ -9,15 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const entregaExamenId = urlParams.get('entregaExamenId');
 
-    async function fetchApi(service, action, payload) {
-        if (!SERVICE_URLS[service]) throw new Error(`URL para el servicio "${service}" no encontrada.`);
-        const response = await fetch(SERVICE_URLS[service], {
-            method: 'POST',
-            body: JSON.stringify({ action, payload })
-        });
-        return await response.json();
-    }
-
     async function loadResults() {
         if (!entregaExamenId) {
             resultsContainer.innerHTML = '<p class="text-red-500">No se proporcionó un ID de entrega de examen.</p>';

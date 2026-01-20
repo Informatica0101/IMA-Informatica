@@ -515,7 +515,7 @@ AUDITORÍA INICIAL - 18/01/2026
 - Ruta completa: /js/auth.js
 - Función / método / bloque afectado: Event listener de registro
 - Línea(s) involucrada(s): 63-69
-- Tipo de problema: Validación
+- Tipo de problema: Validation
 - Descripción detallada del problema: No existe validación de datos en el lado del cliente antes de enviar la petición de registro. Por ejemplo, no se comprueba si la contraseña tiene una longitud mínima o si los campos obligatorios están realmente llenos (aunque el HTML tenga `required`, una validación en JS es más robusta).
 - Impacto potencial: Se envían peticiones al backend que se sabe que fallarán, consumiendo recursos innecesariamente. La experiencia del usuario es pobre porque la retroalimentación sobre datos inválidos no es instantánea.
 - Dependencias afectadas: `register.html`, backend.
@@ -789,7 +789,7 @@ AUDITORÍA DE SERVICIOS (13/01/2026)
      - **Hipótesis:** La causa probable del problema es que los objetos de examen que llegan a la función `renderActivity` carecen de la propiedad `tipo`. Esto puede deberse a que la llamada a `getAllExams` no devuelve los datos esperados, o a un problema en la lógica de transformación de datos previa a la renderización.
   3. **Archivo:** teacher-dashboard.html
      - **Observación:** La estructura HTML es correcta y está preparada para recibir el contenido dinámico. No se identifican anomalías en este archivo.
-- **CONCLUSIÓN:** El problema se origina en el flujo de datos de `js/teacher.js`. Se debe verificar la respuesta de la API `getAllExams` y el estado de los objetos de examen antes de la llamada a `renderActivity` para asegurar que la propiedad `tipo` esté presente.
+- **CONCLUSIÓN:** El problema se origina en el flujo de datos de `js/teacher.js`. Se debe verificar la respuesta de la API `getAllExams` and el estado de los objetos de examen antes de la llamada a `renderActivity` para asegurar que la propiedad `tipo` esté presente.
 
 AUDITORÍA DE CARGA DE EXAMEN (14/01/2026)
 -----------------------------------------
@@ -930,3 +930,19 @@ AUDITORÍA DE CIERRE - 19/01/2026
 
 - Archivo: js/config.js
   - Verificación: Se aplicaron las nuevas URLs de producción para TASK y EXAM, asegurando la conectividad con las versiones corregidas del backend.
+
+AUDITORÍA DE LÓGICA DE EXÁMENES - 20/01/2026
+-------------------------------------------------------------------
+- Archivo: js/teacher.js
+  - Hallazgo: En la creación de exámenes, las opciones se envían como un string plano (ej. "Verdadero,Falso"). El backend lo stringifica como JSON de un string.
+  - Hallazgo: El tipo 'termino_pareado' se envía como un bloque de texto sin estructura interna, lo que impide su correcto procesamiento en el examen y en los resultados.
+
+- Archivo: js/exam.js
+  - Hallazgo: La función 'renderQuestion' espera que 'options' sea un objeto para usar 'Object.entries()'. Al recibir un string JSON-ificado, itera sobre los caracteres, causando el error visual de las letras individuales.
+
+- Archivo: backend/exam-service/Code.gs
+  - Hallazgo: La función 'getExamResult' no devuelve el título del examen ni la comparación detallada de respuestas correctas vs. estudiante, lo que causa que la página de resultados falle al intentar renderizar 'resultadosDetallados'.
+
+- Archivo: js/results.js
+  - Hallazgo: Contiene una función 'fetchApi' duplicada.
+  - Hallazgo: La lógica de renderizado depende de propiedades inexistentes en la respuesta actual del backend.

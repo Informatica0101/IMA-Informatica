@@ -196,24 +196,25 @@ TAREAS
 Despues de esta linea se deben de registrar las nuevas tareas, por realizar o completadas
 
 ________________________________________________________________________________________________
+TAREAS COMPLETADAS (ÁREA PROTEGIDA - NO MODIFICAR)
+________________________________________________________________________________________________
+tarea 1: Implementar subida múltiple de imágenes una por una con vista previa y carga en segundo plano. (COMPLETADA)
 
+tarea 2: Actualizar URL del microservicio TASK. (COMPLETADA)
 
+tarea 3: Optimizar UX de carga en segundo plano (no bloqueante) y corregir backend. (COMPLETADA)
+
+tarea 4: Actualización recurrente de la URL del microservicio TASK. (COMPLETADA)
+
+tarea 5: Garantizar la integridad de subidas concurrentes en el dashboard del estudiante. (COMPLETADA)
+
+tarea 6: Implementar animaciones de carga en todos los botones de envío al backend y corregir error de entrega de exámenes. (COMPLETADA)
+
+tarea 7: Estandarizar formato de fechas a ISO 8601 en servicios de backend para corregir "Invalid Date" en el frontend. (COMPLETADA)
+
+tarea 8: Auditar cambios finales, corregir variables obsoletas y aplicar nuevas URLs de servicios. (COMPLETADA)
 
 
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
-tarea 1: Implementar subida múltiple de imágenes una por una con vista previa y carga en segundo plano. (EN REVISIÓN)
-
-tarea 2: Actualizar URL del microservicio TASK. (EN REVISIÓN)
-
-tarea 3: Optimizar UX de carga en segundo plano (no bloqueante) y corregir backend. (EN REVISIÓN)
-
-tarea 4: Actualización recurrente de la URL del microservicio TASK. (EN REVISIÓN)
-
-tarea 5: Garantizar la integridad de subidas concurrentes en el dashboard del estudiante. (EN REVISIÓN)
-
-tarea 6: Implementar animaciones de carga en todos los botones de envío al backend y corregir error de entrega de exámenes. (EN REVISIÓN)
-
-tarea 7: Estandarizar formato de fechas a ISO 8601 en servicios de backend para corregir "Invalid Date" en el frontend. (EN REVISIÓN)
-
-tarea 8: Auditar cambios finales, corregir variables obsoletas y aplicar nuevas URLs de servicios. (EN REVISIÓN)
+tarea 9: Corregir lógica de renderizado de preguntas Verdadero/Falso y Término Pareado, y habilitar visualización detallada de resultados. (EN REVISIÓN)
