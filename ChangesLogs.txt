@@ -295,21 +295,9 @@ Archivo: js/teacher.js
 - Auditoría Final: Se verificaron todos los cambios realizados en archivos de frontend y backend, confirmando la resolución de los errores de envío de examen, visualización de fechas y falta de animaciones.
 
 20/01/2026
-- Archivo: backend/task-service/Code.gs
-  Línea(s): 205-212
-  Descripción: Se actualizó la función getTeacherActivity para incluir los campos 'grado', 'seccion' y 'asignatura' en el objeto de entrega, permitiendo el filtrado avanzado en el dashboard del profesor.
-- Archivo: backend/exam-service/Code.gs
-  Línea(s): 67, 324-356
-  Descripción: Se añadió la acción 'gradeExamSubmission' para permitir la calificación manual de exámenes. Se actualizó 'getTeacherExamActivity' para incluir metadatos de grado, sección, asignatura y comentario.
-- Archivo: js/exam.js
-  Línea(s): 162
-  Descripción: Se modificó la redirección post-entrega para que los estudiantes sean enviados al dashboard en lugar de la página de resultados.
-- Archivo: js/results.js
-  Línea(s): 7-12
-  Descripción: Se implementó una restricción de acceso basada en roles para asegurar que solo los profesores puedan visualizar el detalle de los resultados de exámenes.
-- Archivo: teacher-dashboard.html
-  Línea(s): 99-138
-  Descripción: Se integró una barra de búsqueda de alumnos y se añadieron columnas interactivas para Grado, Asignatura y Sección con funcionalidad de ordenamiento.
-- Archivo: js/teacher.js
-  Línea(s): 21-105, 175-185, 230-250, 280-315
-  Descripción: Se implementó la lógica de búsqueda y ordenamiento multi-criterio. Se actualizó el renderizado de la tabla para soportar las nuevas columnas y la calificación de exámenes mediante un modal unificado.
+- Archivo: backend/task-service/Code.gs, Líneas: 205-212. Se añadieron metadatos (grado, seccion, asignatura) a getTeacherActivity.
+- Archivo: backend/exam-service/Code.gs, Líneas: 67, 324-356. Se implementó gradeExamSubmission y se añadieron metadatos a getTeacherExamActivity.
+- Archivo: js/exam.js, Línea: 162. Se cambió la redirección post-examen al dashboard del estudiante.
+- Archivo: js/results.js, Líneas: 7-12. Se restringió el acceso a resultados solo a profesores.
+- Archivo: teacher-dashboard.html, Líneas: 99-138. Se añadió barra de búsqueda, columnas de metadatos y botones de ordenamiento.
+- Archivo: js/teacher.js, Líneas: 21-315. Se implementó lógica de búsqueda, filtrado/ordenamiento y calificación unificada para tareas y exámenes.
