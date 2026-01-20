@@ -196,8 +196,10 @@ TAREAS
 Despues de esta linea se deben de registrar las nuevas tareas, por realizar o completadas
 
 ________________________________________________________________________________________________
+tarea 10: Implementar búsqueda, filtrado y ordenamiento en el dashboard del profesor, restringir resultados de examen a estudiantes y habilitar calificación manual de exámenes. (PENDIENTE DE REVISIÓN)
 TAREAS COMPLETADAS (ÁREA PROTEGIDA - NO MODIFICAR)
 ________________________________________________________________________________________________
+tarea 10: Implementar búsqueda, filtrado y ordenamiento en el dashboard del profesor, restringir resultados de examen a estudiantes y habilitar calificación manual de exámenes. (PENDIENTE DE REVISIÓN)
 tarea 1: Implementar subida múltiple de imágenes una por una con vista previa y carga en segundo plano. (COMPLETADA)
 
 tarea 2: Actualizar URL del microservicio TASK. (COMPLETADA)
@@ -217,4 +219,5 @@ tarea 8: Auditar cambios finales, corregir variables obsoletas y aplicar nuevas 
 
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
+tarea 10: Implementar búsqueda, filtrado y ordenamiento en el dashboard del profesor, restringir resultados de examen a estudiantes y habilitar calificación manual de exámenes. (PENDIENTE DE REVISIÓN)
 tarea 9: Corregir lógica de renderizado de preguntas Verdadero/Falso y Término Pareado, y habilitar visualización detallada de resultados. (EN REVISIÓN)

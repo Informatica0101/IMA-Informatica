@@ -293,3 +293,11 @@ Archivo: js/teacher.js
   Cambio: Se actualizaron las URLs de los microservicios TASK y EXAM con los nuevos endpoints finales proporcionados.
 
 - Auditoría Final: Se verificaron todos los cambios realizados en archivos de frontend y backend, confirmando la resolución de los errores de envío de examen, visualización de fechas y falta de animaciones.
+
+20/01/2026
+- Archivo: backend/task-service/Code.gs, Líneas: 205-212. Se añadieron metadatos (grado, seccion, asignatura) a getTeacherActivity.
+- Archivo: backend/exam-service/Code.gs, Líneas: 67, 324-356. Se implementó gradeExamSubmission y se añadieron metadatos a getTeacherExamActivity.
+- Archivo: js/exam.js, Línea: 162. Se cambió la redirección post-examen al dashboard del estudiante.
+- Archivo: js/results.js, Líneas: 7-12. Se restringió el acceso a resultados solo a profesores.
+- Archivo: teacher-dashboard.html, Líneas: 99-138. Se añadió barra de búsqueda, columnas de metadatos y botones de ordenamiento.
+- Archivo: js/teacher.js, Líneas: 21-315. Se implementó lógica de búsqueda, filtrado/ordenamiento y calificación unificada para tareas y exámenes.

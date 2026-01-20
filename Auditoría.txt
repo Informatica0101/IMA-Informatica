@@ -946,3 +946,12 @@ AUDITORÍA DE LÓGICA DE EXÁMENES - 20/01/2026
 - Archivo: js/results.js
   - Hallazgo: Contiene una función 'fetchApi' duplicada.
   - Hallazgo: La lógica de renderizado depende de propiedades inexistentes en la respuesta actual del backend.
+
+AUDITORÍA INICIAL - 20/01/2026 - TAREA: Filtros, Búsqueda y Resultados de Examen
+-------------------------------------------------------------------
+- Archivo: backend/task-service/Code.gs: getTeacherActivity falta grado/seccion/asignatura.
+- Archivo: backend/exam-service/Code.gs: getTeacherExamActivity falta grado/seccion/asignatura. Falta gradeExamSubmission.
+- Archivo: js/exam.js: Redirección a results.html debe ser a student-dashboard.html.
+- Archivo: js/results.js: Falta control de rol Estudiante vs Profesor.
+- Archivo: teacher-dashboard.html: Falta barra de búsqueda y encabezados ordenables.
+- Archivo: js/teacher.js: Falta lógica de filtrado/ordenamiento y calificación de exámenes.
