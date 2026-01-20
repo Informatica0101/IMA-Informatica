@@ -309,3 +309,22 @@ Archivo: js/teacher.js
   Descripción: Se modificó la función submitExam para establecer el estado inicial de la entrega como 'Pendiente' en lugar de 'Finalizado'. Se actualizó getStudentExams para retornar un objeto de entrega completo y ocultar la calificación si el estado es 'Pendiente', garantizando la privacidad de los resultados hasta su revisión.
 - Archivo: js/student.js
   Descripción: Se implementó la lógica de feedback para exámenes en el dashboard del estudiante, mostrando el estado, la calificación (solo tras revisión) y el comentario del profesor, siguiendo la misma consistencia visual que las tareas.
+
+[18/01/2026]
+- Tarea: Restricción de Actividades por Profesor y Filtros Avanzados.
+- Archivo: backend/task-service/Code.gs
+  - Modificado 'createTask' para aceptar y almacenar 'profesorId' en la columna K.
+  - Modificado 'getTeacherActivity' para filtrar las entregas basándose en el 'profesorId' de la tarea, permitiendo que los profesores solo vean sus propias tareas.
+  - Implementada búsqueda dinámica de encabezados para 'profesorId'.
+- Archivo: backend/exam-service/Code.gs
+  - Modificado 'createExam' para aceptar y almacenar 'profesorId' en la columna I.
+  - Modificado 'getAllExams' y 'getTeacherExamActivity' para filtrar por 'profesorId'.
+  - Implementada búsqueda dinámica de encabezados para 'profesorId'.
+- Archivo: teacher-dashboard.html
+  - Agregados elementos de interfaz (select e input) para filtrar entregas por Grado, Sección y Asignatura.
+  - Ajustado el layout de búsqueda para acomodar los nuevos filtros.
+- Archivo: js/teacher.js
+  - Actualizadas las llamadas a 'fetchApi' para incluir 'profesorId: currentUser.userId'.
+  - Actualizados los formularios de creación de tareas y exámenes para incluir 'profesorId'.
+  - Modificada la función 'applyFiltersAndSort' para integrar los filtros de Grado, Sección y Asignatura.
+  - Implementada la función 'updateSeccionOptions' para actualizar dinámicamente el selector de secciones según el grado elegido.

@@ -18,10 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const createAssignmentForm = document.getElementById('create-assignment-form');
     const createExamForm = document.getElementById('create-exam-form');
     const logoutButton = document.getElementById('logout-button');
-     const studentSearchInput = document.getElementById('student-search');
+    const studentSearchInput = document.getElementById('student-search');
+    const filterGrado = document.getElementById('filter-grado');
+    const filterSeccion = document.getElementById('filter-seccion');
+    const filterAsignatura = document.getElementById('filter-asignatura');
 
-     let allActivityRaw = [];
-     let currentSort = { field: 'fecha', direction: 'desc' };
+    let allActivityRaw = [];
+    let currentSort = { field: 'fecha', direction: 'desc' };
 
     const allSections = [sectionDashboard, sectionCrear, sectionCrearExamen];
     const allNavLinks = [navDashboard, navCrear, navCrearExamen];
@@ -81,10 +84,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!submissionsTableBody) return;
         submissionsTableBody.innerHTML = '<tr><td colspan="10" class="text-center p-2">Cargando actividad...</td></tr>';
         try {
+            const payload = { profesorId: currentUser.userId };
             const [taskSubmissions, examSubmissions, allExams] = await Promise.all([
-                fetchApi('TASK', 'getTeacherActivity', {}),
-                fetchApi('EXAM', 'getTeacherExamActivity', {}),
-                fetchApi('EXAM', 'getAllExams', {})
+                fetchApi('TASK', 'getTeacherActivity', payload),
+                fetchApi('EXAM', 'getTeacherExamActivity', payload),
+                fetchApi('EXAM', 'getAllExams', payload)
             ]);
 
             const submissions = [...(((taskSubmissions || {}).data || [])), ...(((examSubmissions || {}).data || []))];
@@ -102,10 +106,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function applyFiltersAndSort() {
         const searchTerm = (studentSearchInput ? studentSearchInput.value : '').toLowerCase();
+        const gradoFilter = (filterGrado ? filterGrado.value : '');
+        const seccionFilter = (filterSeccion ? filterSeccion.value : '').toLowerCase();
+        const asignaturaFilter = (filterAsignatura ? filterAsignatura.value : '').toLowerCase();
+
+        // Actualizar opciones de sección dinámicamente si cambia el grado
+        updateSeccionOptions(gradoFilter);
 
         let filtered = allActivityRaw.filter(item => {
             const name = (item.alumnoNombre || '').toLowerCase();
-            return name.includes(searchTerm);
+            const matchesSearch = name.includes(searchTerm);
+            const matchesGrado = gradoFilter === '' || item.grado === gradoFilter;
+            const matchesSeccion = seccionFilter === '' || (item.seccion || '').toLowerCase().includes(seccionFilter);
+            const matchesAsignatura = asignaturaFilter === '' || (item.asignatura || '').toLowerCase().includes(asignaturaFilter);
+
+            return matchesSearch && matchesGrado && matchesSeccion && matchesAsignatura;
         });
 
         filtered.sort((a, b) => {
@@ -125,9 +140,32 @@ document.addEventListener('DOMContentLoaded', () => {
         renderActivity(filtered);
     }
 
-    if (studentSearchInput) {
-        studentSearchInput.addEventListener('input', applyFiltersAndSort);
+    function updateSeccionOptions(grado) {
+        if (!filterSeccion) return;
+        const currentVal = filterSeccion.value;
+        const sectionsByGrade = {
+            'Décimo': ['A', 'B', 'C'],
+            'Undécimo': ['A', 'B'],
+            'Duodécimo': ['A']
+        };
+        const options = sectionsByGrade[grado] || [];
+
+        // Solo actualizar si las opciones cambian para evitar parpadeos
+        let html = '<option value="">Sección: Todas</option>';
+        options.forEach(s => {
+            html += `<option value="${s}">${s}</option>`;
+        });
+
+        if (filterSeccion.innerHTML !== html) {
+            filterSeccion.innerHTML = html;
+            filterSeccion.value = currentVal; // Intentar mantener valor si existe
+        }
     }
+
+    if (studentSearchInput) studentSearchInput.addEventListener('input', applyFiltersAndSort);
+    if (filterGrado) filterGrado.addEventListener('change', applyFiltersAndSort);
+    if (filterSeccion) filterSeccion.addEventListener('change', applyFiltersAndSort);
+    if (filterAsignatura) filterAsignatura.addEventListener('input', applyFiltersAndSort);
 
     document.querySelectorAll('.sort-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -387,7 +425,10 @@ document.addEventListener('DOMContentLoaded', () => {
         createAssignmentForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = createAssignmentForm.querySelector('button[type="submit"]');
-            const payload = Object.fromEntries(new FormData(e.target).entries());
+            const payload = {
+                ...Object.fromEntries(new FormData(e.target).entries()),
+                profesorId: currentUser.userId
+            };
             submitBtn.classList.add('btn-loading');
             submitBtn.disabled = true;
             try {
@@ -492,7 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const submitBtn = createExamForm.querySelector('button[type="submit"]');
             const mainData = Object.fromEntries(new FormData(e.target).entries());
-            const payload = { ...mainData, preguntas: [] };
+            const payload = { ...mainData, preguntas: [], profesorId: currentUser.userId };
             const questionBlocks = questionsContainer.querySelectorAll('.question-block');
             questionBlocks.forEach(block => {
                 const type = block.querySelector('.question-type-select').value;

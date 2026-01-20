@@ -963,3 +963,21 @@ AUDITORÍA INICIAL - 20/01/2026 - TAREA: Nuevas URLs y Gestión de Resultados
 - backend/exam-service/Code.gs: getStudentExams no retorna calificacion/comentario.
 - js/student.js: renderActivities no muestra feedback para exámenes.
 - teacher-dashboard.html & js/teacher.js: Verificar consistencia de filtros con metadatos (grado/seccion/asignatura).
+
+--- AUDITORÍA - 18/01/2026 - Tarea: Restricción de Actividades por Profesor y Filtros Avanzados ---
+
+[backend/task-service/Code.gs]
+- Hallazgo: La función 'createTask' no registra el ID del profesor que crea la tarea. Se requiere agregar 'profesorId' como columna K (índice 10).
+- Hallazgo: 'getTeacherActivity' devuelve todas las entregas sin filtrar por profesor. Debe filtrar basándose en el 'profesorId' de la tarea asociada.
+
+[backend/exam-service/Code.gs]
+- Hallazgo: 'createExam' no registra el ID del profesor. Se requiere agregar 'profesorId' como columna I (índice 8).
+- Hallazgo: 'getAllExams' y 'getTeacherExamActivity' devuelven todos los exámenes/entregas. Deben filtrar por 'profesorId'.
+
+[teacher-dashboard.html]
+- Hallazgo: Faltan controles de interfaz para filtrar por Grado, Sección y Asignatura en la sección de Dashboard.
+
+[js/teacher.js]
+- Hallazgo: Las llamadas a 'fetchApi' para obtener actividad no envían el 'profesorId'.
+- Hallazgo: Los formularios de creación de tareas y exámenes no incluyen el 'userId' del profesor.
+- Hallazgo: 'applyFiltersAndSort' solo filtra por nombre de alumno, ignorando Grado, Sección y Asignatura.

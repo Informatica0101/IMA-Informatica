@@ -62,8 +62,8 @@ function doPost(e) {
       case "getExamQuestions": result = getExamQuestions(payload); break;
       case "submitExam": result = submitExam(payload); break;
       case "updateExamStatus": result = updateExamStatus(payload); break;
-      case "getAllExams": result = getAllExams(); break;
-      case "getTeacherExamActivity": result = getTeacherExamActivity(); break;
+      case "getAllExams": result = getAllExams(payload); break;
+      case "getTeacherExamActivity": result = getTeacherExamActivity(payload); break;
       case "gradeExamSubmission": result = gradeExamSubmission(payload); break;
       case "getStudentExams": result = getStudentExams(payload); break;
       case "getExamResult": result = getExamResult(payload); break;
@@ -97,7 +97,8 @@ function createExam(p) {
     p.seccionAsignada,
     p.fechaLimite,
     p.tiempoLimite || "",
-    "Inactivo"
+    "Inactivo",
+    p.profesorId || ""
   ]);
 
   (p.preguntas || []).forEach((q, i) => {
@@ -128,14 +129,26 @@ function updateExamStatus({ examenId, estado }) {
   throw new Error("Examen no encontrado");
 }
 
-function getAllExams() {
+function getAllExams(payload) {
+  const { profesorId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const data = getSheetOrThrow(ss, "Examenes")
-    .getDataRange().getValues().slice(1);
+  const sheet = getSheetOrThrow(ss, "Examenes");
+  const values = sheet.getDataRange().getValues();
+  const headers = values[0];
+  const data = values.slice(1);
+
+  const profIdIndex = headers.indexOf("profesorId");
+  const fallbackProfIdIndex = 8;
+  const actualProfIdIndex = profIdIndex !== -1 ? profIdIndex : fallbackProfIdIndex;
+
+  const filteredData = data.filter(r => {
+    if (profesorId && r[actualProfIdIndex] !== profesorId) return false;
+    return true;
+  });
 
   return {
     status: "success",
-    data: data.map(r => ({
+    data: filteredData.map(r => ({
       examenId: r[0],
       titulo: r[1],
       asignatura: r[2],
@@ -312,19 +325,33 @@ function getExamResult({ entregaExamenId }) {
   };
 }
 
-function getTeacherExamActivity() {
+function getTeacherExamActivity(payload) {
+  const { profesorId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
   const examenesSheet = getSheetOrThrow(ss, "Examenes");
   const entregasSheet = getSheetOrThrow(ss, "EntregasExamen");
 
   const usuariosData = usuariosSheet.getDataRange().getValues();
-  const examenesData = examenesSheet.getDataRange().getValues();
+  const examenesValues = examenesSheet.getDataRange().getValues();
+  const examenesHeaders = examenesValues[0];
+  const examenesData = examenesValues.slice(1);
+
+  const profIdIndex = examenesHeaders.indexOf("profesorId");
+  const fallbackProfIdIndex = 8;
+  const actualProfIdIndex = profIdIndex !== -1 ? profIdIndex : fallbackProfIdIndex;
+
   const entregasValues = entregasSheet.getDataRange().getValues();
 
   const submissions = entregasValues.slice(1).map(entrega => {
     const usuario = usuariosData.find(u => u[0] === entrega[2]);
     const examen = examenesData.find(t => t[0] === entrega[1]);
+
+    // Filtrar por profesorId si se proporciona
+    if (profesorId && examen && examen[actualProfIdIndex] !== profesorId) {
+      return null;
+    }
+
     return {
       tipo: 'Examen',
       entregaId: entrega[0],
@@ -339,7 +366,7 @@ function getTeacherExamActivity() {
       estado: entrega[6],
       comentario: entrega[7] || ""
     };
-  });
+  }).filter(s => s !== null);
 
   submissions.sort((a, b) => b.fecha - a.fecha);
   const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
