@@ -309,3 +309,13 @@ Archivo: js/teacher.js
   Descripción: Se modificó la función submitExam para establecer el estado inicial de la entrega como 'Pendiente' en lugar de 'Finalizado'. Se actualizó getStudentExams para retornar un objeto de entrega completo y ocultar la calificación si el estado es 'Pendiente', garantizando la privacidad de los resultados hasta su revisión.
 - Archivo: js/student.js
   Descripción: Se implementó la lógica de feedback para exámenes en el dashboard del estudiante, mostrando el estado, la calificación (solo tras revisión) y el comentario del profesor, siguiendo la misma consistencia visual que las tareas.
+
+21/01/2026
+- Archivo: backend/task-service/Code.gs, Líneas: 48, 63-66, 184-230
+  - Se modificó `createTask` para registrar el `profesorId` en la nueva columna K.
+  - Se actualizó `getTeacherActivity` para filtrar entregas por `profesorId` y por la asignación actual del profesor (grado/sección).
+- Archivo: backend/exam-service/Code.gs, Líneas: 65-66, 97-104, 132-148, 322-358
+  - Se actualizó `createExam` para registrar el `profesorId` en la nueva columna I.
+  - Se modificaron `getAllExams` and `getTeacherExamActivity` para filtrar por `profesorId` y por la asignación actual del profesor.
+- Archivo: js/teacher.js, Líneas: 84-95, 396-399, 504
+  - Se actualizaron las peticiones a la API para incluir `profesorId`, `grado` and `seccion` del usuario actual.

@@ -218,7 +218,7 @@ function submitExam({ examenId, userId, respuestas }) {
     new Date(),
     JSON.stringify(respuestas),
     nota,
-    "Finalizado"
+    "Pendiente"
   ]);
 
   // Se devuelve el ID en un objeto data para que el frontend pueda redirigir
@@ -242,11 +242,18 @@ function getStudentExams({ userId, grado, seccion }) {
       .filter(e => e[3] === grado && (!e[4] || e[4] === seccion))
       .map(e => {
         const ent = entregas.find(x => x[1] === e[0] && x[2] === userId);
+        const estado = ent ? ent[6] : e[7];
+
         return {
           examenId: e[0],
           titulo: e[1],
           fechaLimite: e[5] ? new Date(e[5]).toISOString() : null,
-          estado: ent ? ent[6] : e[7]
+          estado: estado,
+          entrega: ent ? {
+            estado: estado,
+            calificacion: estado === 'Pendiente' ? null : ent[5],
+            comentario: ent[7] || ""
+          } : null
         };
       })
   };

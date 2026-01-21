@@ -963,3 +963,15 @@ AUDITORÍA INICIAL - 20/01/2026 - TAREA: Nuevas URLs y Gestión de Resultados
 - backend/exam-service/Code.gs: getStudentExams no retorna calificacion/comentario.
 - js/student.js: renderActivities no muestra feedback para exámenes.
 - teacher-dashboard.html & js/teacher.js: Verificar consistencia de filtros con metadatos (grado/seccion/asignatura).
+
+AUDITORÍA FINAL - 21/01/2026 - TAREA: Restricción de acceso por profesorId (VERIFICACIÓN)
+-------------------------------------------------------------------
+- Archivo: backend/task-service/Code.gs
+  - Se confirmó que createTask ahora utiliza la columna K (índice 10) para el profesorId.
+  - Se confirmó que getTeacherActivity filtra correctamente por profesorId y metadatos del profesor.
+- Archivo: backend/exam-service/Code.gs
+  - Se confirmó que createExam ahora utiliza la columna I (índice 8) para el profesorId.
+  - Se confirmó que getAllExams and getTeacherExamActivity filtran correctamente.
+- Archivo: js/teacher.js
+  - Se confirmó que todas las llamadas críticas a la API incluyen los metadatos necesarios del usuario actual.
+- Comparación Técnica: Los archivos coinciden con la lógica esperada tras la re-implementación limpia y verificación por Playwright.
