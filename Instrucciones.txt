@@ -213,3 +213,4 @@ ________________________________________________________________________________
 tarea 9: Corregir lógica de renderizado de preguntas Verdadero/Falso y Término Pareado, y habilitar visualización detallada de resultados. (EN REVISIÓN)
 tarea 11: Actualizar URLs de servicios, implementar ocultación de resultados de examen hasta revisión docente y estandarizar lógica de feedback en el dashboard del estudiante. (PENDIENTE DE REVISIÓN)
 tarea 12: Implementar restricción de acceso para profesores, asegurando que solo gestionen sus propias actividades y las de sus grupos asignados. (PENDIENTE DE REVISIÓN)
+tarea 13: Actualizar URLs de los microservicios TASK y EXAM a las nuevas implementaciones finales. (PENDIENTE DE REVISIÓN)
