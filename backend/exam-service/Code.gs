@@ -249,7 +249,8 @@ function getStudentExams({ userId, grado, seccion }) {
       .filter(e => {
         const matchGrado = e[3] === grado;
         const matchSeccion = !e[4] || e[4].trim() === "" || isInTeacherList(seccion, e[4]);
-        return matchGrado && matchSeccion;
+        const ent = entregas.find(x => x[1] === e[0] && x[2] === userId);
+        return matchGrado && matchSeccion && (e[7] === 'Activo' || ent);
       })
       .map(e => {
         const ent = entregas.find(x => x[1] === e[0] && x[2] === userId);

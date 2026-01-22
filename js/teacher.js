@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="question-block border p-4 rounded-lg" data-question-id="${id}">
                 <div class="flex justify-between items-center mb-4">
                     <h4 class="font-bold">Pregunta ${id}</h4>
-                    <button type-="button" class="text-red-500 remove-question-btn">Eliminar</button>
+                    <button type="button" class="text-red-500 remove-question-btn">Eliminar</button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
