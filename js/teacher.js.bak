@@ -81,10 +81,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!submissionsTableBody) return;
         submissionsTableBody.innerHTML = '<tr><td colspan="10" class="text-center p-2">Cargando actividad...</td></tr>';
         try {
+            const payload = {
+                profesorId: currentUser.userId,
+                grado: currentUser.grado,
+                seccion: currentUser.seccion
+            };
+
             const [taskSubmissions, examSubmissions, allExams] = await Promise.all([
-                fetchApi('TASK', 'getTeacherActivity', {}),
-                fetchApi('EXAM', 'getTeacherExamActivity', {}),
-                fetchApi('EXAM', 'getAllExams', {})
+                fetchApi('TASK', 'getTeacherActivity', payload),
+                fetchApi('EXAM', 'getTeacherExamActivity', payload),
+                fetchApi('EXAM', 'getAllExams', { profesorId: currentUser.userId })
             ]);
 
             const submissions = [...(((taskSubmissions || {}).data || [])), ...(((examSubmissions || {}).data || []))];
@@ -214,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     }
 
-    // --- Lógica del Lightbox de Imágenes ---
+    // --- LÓGICA del Lightbox de Imágenes ---
     const lightboxModal = document.getElementById('image-lightbox-modal');
     const lightboxImage = document.getElementById('lightbox-image');
     const lightboxTitle = document.getElementById('lightbox-title');
@@ -234,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (closeLightboxBtn) closeLightboxBtn.addEventListener('click', closeLightbox);
 
-    // --- Lógica del Modal de Calificación ---
+    // --- LÓGICA del Modal de Calificación ---
     const gradeModal = document.getElementById('grade-modal');
     const saveGradeBtn = document.getElementById('save-grade-btn');
     const cancelGradeBtn = document.getElementById('cancel-grade-btn');
@@ -387,7 +393,10 @@ document.addEventListener('DOMContentLoaded', () => {
         createAssignmentForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = createAssignmentForm.querySelector('button[type="submit"]');
-            const payload = Object.fromEntries(new FormData(e.target).entries());
+            const payload = {
+                ...Object.fromEntries(new FormData(e.target).entries()),
+                profesorId: currentUser.userId
+            };
             submitBtn.classList.add('btn-loading');
             submitBtn.disabled = true;
             try {
@@ -492,7 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const submitBtn = createExamForm.querySelector('button[type="submit"]');
             const mainData = Object.fromEntries(new FormData(e.target).entries());
-            const payload = { ...mainData, preguntas: [] };
+            const payload = { ...mainData, preguntas: [], profesorId: currentUser.userId };
             const questionBlocks = questionsContainer.querySelectorAll('.question-block');
             questionBlocks.forEach(block => {
                 const type = block.querySelector('.question-type-select').value;

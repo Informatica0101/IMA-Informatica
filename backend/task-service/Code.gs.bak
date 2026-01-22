@@ -45,7 +45,7 @@ function doPost(e) {
       case "uploadFile": response = uploadFile(payload); break;
       case "submitAssignment": response = submitAssignment(payload); break;
       case "gradeSubmission": response = gradeSubmission(payload); break;
-      case "getTeacherActivity": response = getTeacherActivity(); break;
+      case "getTeacherActivity": response = getTeacherActivity(payload); break;
       default:
         response = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
@@ -60,11 +60,11 @@ function doPost(e) {
 
 // --- LÓGICA DEL SERVICIO ---
 function createTask(payload) {
-  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId } = payload;
+  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId, profesorId } = payload;
   const tareaId = "TSK-" + new Date().getTime();
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
-  tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId || '']);
+  tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId || '', profesorId || '']);
   return { status: "success", message: "Tarea creada." };
 }
 
@@ -181,7 +181,8 @@ function gradeSubmission(payload) {
   throw new Error("Entrega no encontrada.");
 }
 
-function getTeacherActivity() {
+function getTeacherActivity(payload) {
+  const { profesorId, grado, seccion } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
@@ -200,6 +201,16 @@ function getTeacherActivity() {
   const submissions = entregasValues.map(entrega => {
     const usuario = usuariosData.find(u => u[0] === entrega[2]);
     const tarea = tareasData.find(t => t[0] === entrega[1]);
+
+    // Filtro por Profesor (Columna K es índice 10)
+    if (profesorId && tarea && tarea[10] && tarea[10] !== profesorId) return null;
+
+    // Filtro por Grado y Sección del Profesor
+    if (usuario) {
+      if (grado && !isInTeacherList(usuario[2], grado)) return null;
+      if (seccion && !isInTeacherList(usuario[3], seccion)) return null;
+    }
+
     return {
       tipo: 'Tarea',
       entregaId: entrega[0],
@@ -215,11 +226,18 @@ function getTeacherActivity() {
       estado: entrega[6],
       comentario: entrega[7]
     };
-  });
+  }).filter(item => item !== null);
 
   submissions.sort((a, b) => b.fecha - a.fecha);
   const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
   return { status: "success", data: formattedActivity };
+}
+
+function isInTeacherList(value, listString) {
+  if (!listString) return true;
+  if (!value) return false;
+  const list = listString.split(',').map(s => s.trim().toLowerCase());
+  return list.includes(value.toLowerCase());
 }
 
 // --- HELPERS DE DRIVE ---

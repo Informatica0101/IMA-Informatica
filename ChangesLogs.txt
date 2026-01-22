@@ -315,11 +315,13 @@ Archivo: js/teacher.js
   - Se actualizaron los endpoints de producción para los microservicios de tareas (TASK) y exámenes (EXAM) con las nuevas URLs proporcionadas por el usuario.
 
 21/01/2026
-- Archivo: backend/task-service/Code.gs, Líneas: 48, 63-66, 184-230
-  - Se modificó `createTask` para registrar el `profesorId` en la nueva columna K.
-  - Se actualizó `getTeacherActivity` para filtrar entregas por `profesorId` y por la asignación actual del profesor (grado/sección).
-- Archivo: backend/exam-service/Code.gs, Líneas: 65-66, 97-104, 132-148, 322-358
-  - Se actualizó `createExam` para registrar el `profesorId` en la nueva columna I.
-  - Se modificaron `getAllExams` and `getTeacherExamActivity` para filtrar por `profesorId` y por la asignación actual del profesor.
+- Archivo: backend/user-service/Code.gs, Línea: 104, 117
+  - Se cambió la generación de `userId` a formato `USR-<timestamp>`. Se forzó el rol "Estudiante" en el registro.
+- Archivo: backend/task-service/Code.gs, Líneas: 82-87, 212-217
+  - Implementada lógica de visibilidad de secciones para estudiantes: las tareas sin sección asignada son visibles para todo el grado; de lo contrario, solo para las secciones especificadas (soporta listas separadas por comas).
+  - Filtrado estricto en el dashboard del profesor para mostrar solo entregas de sus propios grupos y tareas.
+- Archivo: backend/exam-service/Code.gs, Líneas: 250-254, 342-347
+  - Implementada lógica de visibilidad de secciones para exámenes, idéntica a tareas.
+  - Actualizados filtros de actividad para el profesor.
 - Archivo: js/teacher.js, Líneas: 84-95, 396-399, 504
-  - Se actualizaron las peticiones a la API para incluir `profesorId`, `grado` and `seccion` del usuario actual.
+  - Se configuraron las peticiones a la API para enviar metadatos de sesión del profesor, habilitando el filtrado en el servidor.

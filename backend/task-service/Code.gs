@@ -77,8 +77,14 @@ function getStudentTasks(payload) {
   const entregasData = entregasSheet.getDataRange().getValues().slice(1);
 
   const studentTasks = tasksData.filter(task => {
-    const isForStudent = task[6] === grado && (task[7] === seccion || task[7] === "" || !task[7]);
-    if (!isForStudent) return false;
+    // task[6] es gradoAsignado, task[7] es seccionAsignada
+    const matchGrado = task[6] === grado;
+    // Si seccionAsignada está vacío, aplica a todas las secciones del grado.
+    // Si tiene valor, el estudiante debe estar en esa lista (A, B, etc).
+    const matchSeccion = !task[7] || task[7].trim() === "" || isInTeacherList(seccion, task[7]);
+
+    if (!matchGrado || !matchSeccion) return false;
+
     if (task[1] === 'Credito Extra') {
       const tareaOriginalId = task[9];
       if (!tareaOriginalId) return false;

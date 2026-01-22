@@ -114,7 +114,7 @@ function registerUser(payload) {
     seccion || "",
     email,
     hashedPassword,
-    "Estudiante" // Siempre se registra como Estudiante. El cambio a Profesor se hace manual en la spreadsheet.
+    "Estudiante"
   ]);
 
   return {

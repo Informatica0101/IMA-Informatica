@@ -982,3 +982,16 @@ AUDITORÍA DE CONFIGURACIÓN - 21/01/2026 - TAREA: Actualizar URLs de microservi
   - Línea 17: Se actualizó la URL de TASK a la nueva implementación.
   - Línea 20: Se actualizó la URL de EXAM a la nueva implementación.
   - Verificación: Las URLs coinciden exactamente con las proporcionadas por el usuario.
+
+AUDITORÍA FINAL - 21/01/2026 - TAREA: Restricción de acceso y visibilidad de secciones
+-------------------------------------------------------------------
+- Archivo: backend/user-service/Code.gs
+  - registerUser: Rol forzado a "Estudiante". Generación de ID como "USR-<timestamp>".
+- Archivo: backend/task-service/Code.gs
+  - getStudentTasks: Implementada lógica de visibilidad por sección (soporta lista separada por comas y vacío para todas).
+  - getTeacherActivity: Filtrado estricto por profesorId y grupos asignados al profesor.
+- Archivo: backend/exam-service/Code.gs
+  - getStudentExams: Implementada lógica de visibilidad idéntica a tareas.
+  - getTeacherExamActivity/getAllExams: Filtrado por profesorId y grupos asignados.
+- Archivo: js/teacher.js
+  - Todas las peticiones críticas incluyen profesorId, grado y seccion del usuario actual.

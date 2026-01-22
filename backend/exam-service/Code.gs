@@ -246,7 +246,11 @@ function getStudentExams({ userId, grado, seccion }) {
   return {
     status: "success",
     data: examenes
-      .filter(e => e[3] === grado && (!e[4] || e[4] === seccion))
+      .filter(e => {
+        const matchGrado = e[3] === grado;
+        const matchSeccion = !e[4] || e[4].trim() === "" || isInTeacherList(seccion, e[4]);
+        return matchGrado && matchSeccion;
+      })
       .map(e => {
         const ent = entregas.find(x => x[1] === e[0] && x[2] === userId);
         const estado = ent ? ent[6] : e[7];
