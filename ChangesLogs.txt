@@ -343,3 +343,7 @@ Archivo: js/teacher.js
   - Implementada validación estricta de pertenencia en funciones de actividad docente.
   - Corregido error que permitía ver entregas de actividades ajenas si el registro base no era encontrado.
   - Mejorada la lógica de extracción de metadatos del alumno (grado, sección) y de la actividad (asignatura) para evitar el retorno injustificado de "N/A".
+
+23/01/2026
+- Archivo: js/config.js, Líneas: 17, 20
+  - Actualizadas las URLs de producción para TASK y EXAM a los endpoints finales proporcionados por el usuario.

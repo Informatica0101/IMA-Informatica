@@ -1034,3 +1034,9 @@ AUDITORÍA DE AISLAMIENTO DOCENTE Y METADATOS - 22/01/2026
 - Solución técnica:
   - Implementar validación estricta de pertenencia: si la actividad no se encuentra o no pertenece al profesor, la entrega DEBE descartarse inmediatamente.
   - Mejorar el manejo de errores en los joins para evitar el retorno de "N/A" injustificado.
+
+AUDITORÍA DE CONFIGURACIÓN (NUEVOS ENDPOINTS) - 23/01/2026
+-------------------------------------------------------------------
+- Archivo: js/config.js
+- Hallazgo: Se actualizaron las URLs de los microservicios TASK y EXAM a las versiones de producción finales proporcionadas por el usuario.
+- Verificación: Las URLs TASK (...2Ss) y EXAM (...8Kr) están correctamente configuradas.
