@@ -995,3 +995,26 @@ AUDITORÍA FINAL - 21/01/2026 - TAREA: Restricción de acceso y visibilidad de s
   - getTeacherExamActivity/getAllExams: Filtrado por profesorId y grupos asignados.
 - Archivo: js/teacher.js
   - Todas las peticiones críticas incluyen profesorId, grado y seccion del usuario actual.
+
+AUDITORÍA DE CALIDAD INTEGRAL (FINAL) - 22/01/2026
+-------------------------------------------------------------------
+- Archivo: js/teacher.js
+  - Línea: 426
+  - Hallazgo: Se identificó y corrigió un error de sintaxis en el atributo HTML del botón de eliminar pregunta (type-="button").
+  - Verificación: El atributo ahora es type="button" (Verificado por Playwright).
+
+- Archivo: backend/user-service/Code.gs
+  - Función: registerUser
+  - Hallazgo: Se implementó la generación de IDs en formato legible (USR-<timestamp>).
+  - Función: doPost
+  - Hallazgo: Se estandarizó el manejo de errores para evitar fugas de información y se unificó el MIME type a JSON.
+
+- Archivo: backend/exam-service/Code.gs
+  - Función: getStudentExams
+  - Hallazgo: Se corrigió una regresión donde el filtro de exámenes activos/entregados se había perdido. Los estudiantes ahora solo ven exámenes activos o aquellos que ya entregaron.
+  - Función: doPost
+  - Hallazgo: Se estandarizó el manejo de errores y el MIME type a JSON.
+
+- Archivo: js/config.js
+  - Hallazgo: Se actualizaron las URLs de USER, TASK y EXAM a los endpoints de producción definitivos.
+  - Verificación: Las URLs USER (...gzuh), TASK (...KaRKE30) y EXAM (...V3ci) están correctamente configuradas.

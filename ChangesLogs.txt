@@ -325,3 +325,15 @@ Archivo: js/teacher.js
   - Actualizados filtros de actividad para el profesor.
 - Archivo: js/teacher.js, Líneas: 84-95, 396-399, 504
   - Se configuraron las peticiones a la API para enviar metadatos de sesión del profesor, habilitando el filtrado en el servidor.
+
+22/01/2026
+- Archivo: js/teacher.js, Línea: 426
+  - Corregido error de sintaxis en atributo HTML (type-="button").
+- Archivo: backend/exam-service/Code.gs, Líneas: 251-253
+  - Restaurado filtro de visibilidad de exámenes para estudiantes (solo Activos o Entregados).
+- Archivo: backend/user-service/Code.gs, Línea: 104
+  - Restaurado formato de ID de usuario (USR-timestamp).
+- Archivo: backend/user-service/Code.gs & backend/exam-service/Code.gs
+  - Estandarizado MIME type a JSON y oculto detalle de errores en el bloque catch para seguridad.
+- Archivo: js/config.js, Líneas: 14, 17, 20
+  - Actualizadas URLs de USER, TASK y EXAM a endpoints de producción definitivos.
