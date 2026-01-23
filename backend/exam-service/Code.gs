@@ -62,8 +62,8 @@ function doPost(e) {
       case "getExamQuestions": result = getExamQuestions(payload); break;
       case "submitExam": result = submitExam(payload); break;
       case "updateExamStatus": result = updateExamStatus(payload); break;
-      case "getAllExams": result = getAllExams(); break;
-      case "getTeacherExamActivity": result = getTeacherExamActivity(); break;
+      case "getAllExams": result = getAllExams(payload); break;
+      case "getTeacherExamActivity": result = getTeacherExamActivity(payload); break;
       case "gradeExamSubmission": result = gradeExamSubmission(payload); break;
       case "getStudentExams": result = getStudentExams(payload); break;
       case "getExamResult": result = getExamResult(payload); break;
@@ -97,7 +97,8 @@ function createExam(p) {
     p.seccionAsignada,
     p.fechaLimite,
     p.tiempoLimite || "",
-    "Inactivo"
+    "Inactivo",
+    p.profesorId || ""
   ]);
 
   (p.preguntas || []).forEach((q, i) => {
@@ -128,14 +129,20 @@ function updateExamStatus({ examenId, estado }) {
   throw new Error("Examen no encontrado");
 }
 
-function getAllExams() {
+function getAllExams(payload) {
+  const { profesorId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const data = getSheetOrThrow(ss, "Examenes")
     .getDataRange().getValues().slice(1);
 
+  const filtered = data.filter(r => {
+    if (profesorId && r[8] && r[8] !== profesorId) return false;
+    return true;
+  });
+
   return {
     status: "success",
-    data: data.map(r => ({
+    data: filtered.map(r => ({
       examenId: r[0],
       titulo: r[1],
       asignatura: r[2],
@@ -239,7 +246,12 @@ function getStudentExams({ userId, grado, seccion }) {
   return {
     status: "success",
     data: examenes
-      .filter(e => e[3] === grado && (!e[4] || e[4] === seccion))
+      .filter(e => {
+        const matchGrado = e[3] === grado;
+        const matchSeccion = !e[4] || e[4].trim() === "" || isInTeacherList(seccion, e[4]);
+        const ent = entregas.find(x => x[1] === e[0] && x[2] === userId);
+        return matchGrado && matchSeccion && (e[7] === 'Activo' || ent);
+      })
       .map(e => {
         const ent = entregas.find(x => x[1] === e[0] && x[2] === userId);
         const estado = ent ? ent[6] : e[7];
@@ -312,7 +324,8 @@ function getExamResult({ entregaExamenId }) {
   };
 }
 
-function getTeacherExamActivity() {
+function getTeacherExamActivity(payload) {
+  const { profesorId, grado, seccion } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
   const examenesSheet = getSheetOrThrow(ss, "Examenes");
@@ -323,27 +336,46 @@ function getTeacherExamActivity() {
   const entregasValues = entregasSheet.getDataRange().getValues();
 
   const submissions = entregasValues.slice(1).map(entrega => {
-    const usuario = usuariosData.find(u => u[0] === entrega[2]);
     const examen = examenesData.find(t => t[0] === entrega[1]);
+
+    // SI EL EXAMEN NO EXISTE O NO PERTENECE AL PROFESOR -> DESCARTAR
+    if (!examen) return null;
+    if (profesorId && examen[8] && examen[8] !== profesorId) return null;
+
+    const usuario = usuariosData.find(u => u[0] === entrega[2]);
+
+    // Filtro por Grado y Sección del Profesor
+    if (usuario) {
+      if (grado && !isInTeacherList(usuario[2], grado)) return null;
+      if (seccion && !isInTeacherList(usuario[3], seccion)) return null;
+    }
+
     return {
       tipo: 'Examen',
       entregaId: entrega[0],
       examenId: entrega[1],
-      titulo: examen ? examen[1] : "Examen Desconocido",
+      titulo: examen[1], // Examen ya verificado arriba
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
       grado: usuario ? usuario[2] : "N/A",
       seccion: usuario ? usuario[3] : "N/A",
-      asignatura: examen ? examen[2] : "N/A",
+      asignatura: examen[2] || "N/A",
       fecha: new Date(entrega[3]),
       calificacion: entrega[5],
       estado: entrega[6],
       comentario: entrega[7] || ""
     };
-  });
+  }).filter(item => item !== null);
 
   submissions.sort((a, b) => b.fecha - a.fecha);
   const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
   return { status: "success", data: formattedActivity };
+}
+
+function isInTeacherList(value, listString) {
+  if (!listString) return true;
+  if (!value) return false;
+  const list = listString.split(',').map(s => s.trim().toLowerCase());
+  return list.includes(value.toLowerCase());
 }
 
 function gradeExamSubmission(payload) {

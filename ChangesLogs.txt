@@ -309,3 +309,41 @@ Archivo: js/teacher.js
   Descripción: Se modificó la función submitExam para establecer el estado inicial de la entrega como 'Pendiente' en lugar de 'Finalizado'. Se actualizó getStudentExams para retornar un objeto de entrega completo y ocultar la calificación si el estado es 'Pendiente', garantizando la privacidad de los resultados hasta su revisión.
 - Archivo: js/student.js
   Descripción: Se implementó la lógica de feedback para exámenes en el dashboard del estudiante, mostrando el estado, la calificación (solo tras revisión) y el comentario del profesor, siguiendo la misma consistencia visual que las tareas.
+
+21/01/2026
+- Archivo: js/config.js, Líneas: 17, 20
+  - Se actualizaron los endpoints de producción para los microservicios de tareas (TASK) y exámenes (EXAM) con las nuevas URLs proporcionadas por el usuario.
+
+21/01/2026
+- Archivo: backend/user-service/Code.gs, Línea: 104, 117
+  - Se cambió la generación de `userId` a formato `USR-<timestamp>`. Se forzó el rol "Estudiante" en el registro.
+- Archivo: backend/task-service/Code.gs, Líneas: 82-87, 212-217
+  - Implementada lógica de visibilidad de secciones para estudiantes: las tareas sin sección asignada son visibles para todo el grado; de lo contrario, solo para las secciones especificadas (soporta listas separadas por comas).
+  - Filtrado estricto en el dashboard del profesor para mostrar solo entregas de sus propios grupos y tareas.
+- Archivo: backend/exam-service/Code.gs, Líneas: 250-254, 342-347
+  - Implementada lógica de visibilidad de secciones para exámenes, idéntica a tareas.
+  - Actualizados filtros de actividad para el profesor.
+- Archivo: js/teacher.js, Líneas: 84-95, 396-399, 504
+  - Se configuraron las peticiones a la API para enviar metadatos de sesión del profesor, habilitando el filtrado en el servidor.
+
+22/01/2026
+- Archivo: js/teacher.js, Línea: 426
+  - Corregido error de sintaxis en atributo HTML (type-="button").
+- Archivo: backend/exam-service/Code.gs, Líneas: 251-253
+  - Restaurado filtro de visibilidad de exámenes para estudiantes (solo Activos o Entregados).
+- Archivo: backend/user-service/Code.gs, Línea: 104
+  - Restaurado formato de ID de usuario (USR-timestamp).
+- Archivo: backend/user-service/Code.gs & backend/exam-service/Code.gs
+  - Estandarizado MIME type a JSON y oculto detalle de errores en el bloque catch para seguridad.
+- Archivo: js/config.js, Líneas: 14, 17, 20
+  - Actualizadas URLs de USER, TASK y EXAM a endpoints de producción definitivos.
+
+23/01/2026
+- Archivo: backend/task-service/Code.gs & backend/exam-service/Code.gs
+  - Implementada validación estricta de pertenencia en funciones de actividad docente.
+  - Corregido error que permitía ver entregas de actividades ajenas si el registro base no era encontrado.
+  - Mejorada la lógica de extracción de metadatos del alumno (grado, sección) y de la actividad (asignatura) para evitar el retorno injustificado de "N/A".
+
+23/01/2026
+- Archivo: js/config.js, Líneas: 17, 20
+  - Actualizadas las URLs de producción para TASK y EXAM a los endpoints finales proporcionados por el usuario.

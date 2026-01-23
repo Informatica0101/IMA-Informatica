@@ -212,3 +212,9 @@ TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
 tarea 9: Corregir lógica de renderizado de preguntas Verdadero/Falso y Término Pareado, y habilitar visualización detallada de resultados. (EN REVISIÓN)
 tarea 11: Actualizar URLs de servicios, implementar ocultación de resultados de examen hasta revisión docente y estandarizar lógica de feedback en el dashboard del estudiante. (PENDIENTE DE REVISIÓN)
+tarea 12: Implementar restricción de acceso para profesores, mejorar legibilidad de IDs y lógica de visibilidad de secciones. (COMPLETADA)
+tarea 13: Actualizar URLs de los microservicios TASK y EXAM a las nuevas implementaciones finales. (COMPLETADA)
+tarea 14: Actualizar las URLs de producción definitivas para los microservicios USER, TASK y EXAM. (COMPLETADA)
+tarea 15: Corregir fuga de aislamiento entre profesores y visualización de metadatos "N/A" en el dashboard docente. (COMPLETADA)
+tarea 16: Actualizar URLs de producción para TASK y EXAM (...2Ss y ...8Kr). (PENDIENTE DE REVISIÓN)
+tarea 16: Actualizar URLs de producción para TASK y EXAM (...2Ss y ...8Kr). (PENDIENTE DE REVISIÓN)

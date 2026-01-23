@@ -101,7 +101,7 @@ function registerUser(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
 
-  const userId = Utilities.getUuid();
+  const userId = "USR-" + new Date().getTime();
   const hashedPassword = Utilities
     .computeDigest(Utilities.DigestAlgorithm.SHA_256, password)
     .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2))
@@ -114,7 +114,7 @@ function registerUser(payload) {
     seccion || "",
     email,
     hashedPassword,
-    "Estudiante"
+    "Estudiante" // Siempre se registra como Estudiante. El cambio a Profesor se hace manual en la spreadsheet.
   ]);
 
   return {

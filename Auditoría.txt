@@ -963,3 +963,80 @@ AUDITORÍA INICIAL - 20/01/2026 - TAREA: Nuevas URLs y Gestión de Resultados
 - backend/exam-service/Code.gs: getStudentExams no retorna calificacion/comentario.
 - js/student.js: renderActivities no muestra feedback para exámenes.
 - teacher-dashboard.html & js/teacher.js: Verificar consistencia de filtros con metadatos (grado/seccion/asignatura).
+
+AUDITORÍA FINAL - 21/01/2026 - TAREA: Restricción de acceso por profesorId (VERIFICACIÓN)
+-------------------------------------------------------------------
+- Archivo: backend/task-service/Code.gs
+  - Se confirmó que createTask ahora utiliza la columna K (índice 10) para el profesorId.
+  - Se confirmó que getTeacherActivity filtra correctamente por profesorId y metadatos del profesor.
+- Archivo: backend/exam-service/Code.gs
+  - Se confirmó que createExam ahora utiliza la columna I (índice 8) para el profesorId.
+  - Se confirmó que getAllExams and getTeacherExamActivity filtran correctamente.
+- Archivo: js/teacher.js
+  - Se confirmó que todas las llamadas críticas a la API incluyen los metadatos necesarios del usuario actual.
+- Comparación Técnica: Los archivos coinciden con la lógica esperada tras la re-implementación limpia y verificación por Playwright.
+
+AUDITORÍA DE CONFIGURACIÓN - 21/01/2026 - TAREA: Actualizar URLs de microservicios
+-------------------------------------------------------------------
+- Archivo: js/config.js
+  - Línea 17: Se actualizó la URL de TASK a la nueva implementación.
+  - Línea 20: Se actualizó la URL de EXAM a la nueva implementación.
+  - Verificación: Las URLs coinciden exactamente con las proporcionadas por el usuario.
+
+AUDITORÍA FINAL - 21/01/2026 - TAREA: Restricción de acceso y visibilidad de secciones
+-------------------------------------------------------------------
+- Archivo: backend/user-service/Code.gs
+  - registerUser: Rol forzado a "Estudiante". Generación de ID como "USR-<timestamp>".
+- Archivo: backend/task-service/Code.gs
+  - getStudentTasks: Implementada lógica de visibilidad por sección (soporta lista separada por comas y vacío para todas).
+  - getTeacherActivity: Filtrado estricto por profesorId y grupos asignados al profesor.
+- Archivo: backend/exam-service/Code.gs
+  - getStudentExams: Implementada lógica de visibilidad idéntica a tareas.
+  - getTeacherExamActivity/getAllExams: Filtrado por profesorId y grupos asignados.
+- Archivo: js/teacher.js
+  - Todas las peticiones críticas incluyen profesorId, grado y seccion del usuario actual.
+
+AUDITORÍA DE CALIDAD INTEGRAL (FINAL) - 22/01/2026
+-------------------------------------------------------------------
+- Archivo: js/teacher.js
+  - Línea: 426
+  - Hallazgo: Se identificó y corrigió un error de sintaxis en el atributo HTML del botón de eliminar pregunta (type-="button").
+  - Verificación: El atributo ahora es type="button" (Verificado por Playwright).
+
+- Archivo: backend/user-service/Code.gs
+  - Función: registerUser
+  - Hallazgo: Se implementó la generación de IDs en formato legible (USR-<timestamp>).
+  - Función: doPost
+  - Hallazgo: Se estandarizó el manejo de errores para evitar fugas de información y se unificó el MIME type a JSON.
+
+- Archivo: backend/exam-service/Code.gs
+  - Función: getStudentExams
+  - Hallazgo: Se corrigió una regresión donde el filtro de exámenes activos/entregados se había perdido. Los estudiantes ahora solo ven exámenes activos o aquellos que ya entregaron.
+  - Función: doPost
+  - Hallazgo: Se estandarizó el manejo de errores y el MIME type a JSON.
+
+- Archivo: js/config.js
+  - Hallazgo: Se actualizaron las URLs de USER, TASK y EXAM a los endpoints de producción definitivos.
+  - Verificación: Las URLs USER (...gzuh), TASK (...KaRKE30) y EXAM (...V3ci) están correctamente configuradas.
+
+AUDITORÍA DE AISLAMIENTO DOCENTE Y METADATOS - 22/01/2026
+-------------------------------------------------------------------
+- Archivo: backend/task-service/Code.gs
+  - Función: getTeacherActivity
+  - Hallazgo (AISLAMIENTO): La lógica de filtrado por profesor era vulnerable. Si la tarea asociada a una entrega no se encontraba, se omitía el filtro y la entrega se mostraba a todos los profesores.
+  - Hallazgo (METADATOS): La visualización de "N/A" en grado/sección/asignatura se debe a fallos en la búsqueda (join) de datos de usuarios y tareas.
+
+- Archivo: backend/exam-service/Code.gs
+  - Función: getTeacherExamActivity
+  - Hallazgo (AISLAMIENTO): Vulnerabilidad idéntica a la del servicio de tareas respecto al filtrado por profesor.
+  - Hallazgo (METADATOS): Fallos en el cruce de datos con la hoja de exámenes y usuarios.
+
+- Solución técnica:
+  - Implementar validación estricta de pertenencia: si la actividad no se encuentra o no pertenece al profesor, la entrega DEBE descartarse inmediatamente.
+  - Mejorar el manejo de errores en los joins para evitar el retorno de "N/A" injustificado.
+
+AUDITORÍA DE CONFIGURACIÓN (NUEVOS ENDPOINTS) - 23/01/2026
+-------------------------------------------------------------------
+- Archivo: js/config.js
+- Hallazgo: Se actualizaron las URLs de los microservicios TASK y EXAM a las versiones de producción finales proporcionadas por el usuario.
+- Verificación: Las URLs TASK (...2Ss) y EXAM (...8Kr) están correctamente configuradas.

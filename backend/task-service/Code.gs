@@ -45,7 +45,7 @@ function doPost(e) {
       case "uploadFile": response = uploadFile(payload); break;
       case "submitAssignment": response = submitAssignment(payload); break;
       case "gradeSubmission": response = gradeSubmission(payload); break;
-      case "getTeacherActivity": response = getTeacherActivity(); break;
+      case "getTeacherActivity": response = getTeacherActivity(payload); break;
       default:
         response = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
@@ -60,11 +60,11 @@ function doPost(e) {
 
 // --- LÓGICA DEL SERVICIO ---
 function createTask(payload) {
-  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId } = payload;
+  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId, profesorId } = payload;
   const tareaId = "TSK-" + new Date().getTime();
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
-  tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId || '']);
+  tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId || '', profesorId || '']);
   return { status: "success", message: "Tarea creada." };
 }
 
@@ -77,8 +77,14 @@ function getStudentTasks(payload) {
   const entregasData = entregasSheet.getDataRange().getValues().slice(1);
 
   const studentTasks = tasksData.filter(task => {
-    const isForStudent = task[6] === grado && (task[7] === seccion || task[7] === "" || !task[7]);
-    if (!isForStudent) return false;
+    // task[6] es gradoAsignado, task[7] es seccionAsignada
+    const matchGrado = task[6] === grado;
+    // Si seccionAsignada está vacío, aplica a todas las secciones del grado.
+    // Si tiene valor, el estudiante debe estar en esa lista (A, B, etc).
+    const matchSeccion = !task[7] || task[7].trim() === "" || isInTeacherList(seccion, task[7]);
+
+    if (!matchGrado || !matchSeccion) return false;
+
     if (task[1] === 'Credito Extra') {
       const tareaOriginalId = task[9];
       if (!tareaOriginalId) return false;
@@ -181,7 +187,8 @@ function gradeSubmission(payload) {
   throw new Error("Entrega no encontrada.");
 }
 
-function getTeacherActivity() {
+function getTeacherActivity(payload) {
+  const { profesorId, grado, seccion } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
@@ -198,16 +205,28 @@ function getTeacherActivity() {
   const mimeTypeIndex = entregasHeaders.indexOf("mimeType");
 
   const submissions = entregasValues.map(entrega => {
-    const usuario = usuariosData.find(u => u[0] === entrega[2]);
     const tarea = tareasData.find(t => t[0] === entrega[1]);
+
+    // SI LA TAREA NO EXISTE O NO PERTENECE AL PROFESOR -> DESCARTAR
+    if (!tarea) return null;
+    if (profesorId && tarea[10] && tarea[10] !== profesorId) return null;
+
+    const usuario = usuariosData.find(u => u[0] === entrega[2]);
+
+    // Filtro por Grado y Sección del Profesor (si se especifican en el payload)
+    if (usuario) {
+      if (grado && !isInTeacherList(usuario[2], grado)) return null;
+      if (seccion && !isInTeacherList(usuario[3], seccion)) return null;
+    }
+
     return {
       tipo: 'Tarea',
       entregaId: entrega[0],
-      titulo: tarea ? tarea[2] : "Tarea Desconocida",
+      titulo: tarea[2], // Tarea ya verificada arriba
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
       grado: usuario ? usuario[2] : "N/A",
       seccion: usuario ? usuario[3] : "N/A",
-      asignatura: tarea ? tarea[5] : "N/A",
+      asignatura: tarea[5] || "N/A",
       fecha: new Date(entrega[3]),
       fileId: entrega[fileIdIndex],
       mimeType: mimeTypeIndex > -1 ? entrega[mimeTypeIndex] : null,
@@ -215,11 +234,18 @@ function getTeacherActivity() {
       estado: entrega[6],
       comentario: entrega[7]
     };
-  });
+  }).filter(item => item !== null);
 
   submissions.sort((a, b) => b.fecha - a.fecha);
   const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
   return { status: "success", data: formattedActivity };
+}
+
+function isInTeacherList(value, listString) {
+  if (!listString) return true;
+  if (!value) return false;
+  const list = listString.split(',').map(s => s.trim().toLowerCase());
+  return list.includes(value.toLowerCase());
 }
 
 // --- HELPERS DE DRIVE ---
