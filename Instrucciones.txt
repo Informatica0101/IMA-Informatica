@@ -217,5 +217,5 @@ tarea 13: Actualizar URLs de los microservicios TASK y EXAM a las nuevas impleme
 tarea 14: Actualizar las URLs de producción definitivas para los microservicios USER, TASK y EXAM. (COMPLETADA)
 tarea 15: Corregir fuga de aislamiento entre profesores y visualización de metadatos "N/A" en el dashboard docente. (COMPLETADA)
 tarea 16: Actualizar URLs de producción para TASK y EXAM (...2Ss y ...8Kr). (COMPLETADA)
-tarea 17: Implementar botón de instalación de PWA en menú móvil y pie de página. (COMPLETADA)
+tarea 17: Implementar botón de instalación de PWA en menú móvil y pie de página y mejorar visibilidad. (COMPLETADA)
 tarea 18: Implementar modal de login y sección de acceso (Portal/Iniciar Sesión) en index.html sin afectar secciones existentes. (COMPLETADA)

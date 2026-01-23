@@ -357,3 +357,7 @@ Archivo: js/teacher.js
   - Implementada lógica de instalación de PWA multiplataforma (Android, iOS, HarmonyOS).
   - Implementada lógica de detección de iOS para mostrar instrucciones personalizadas.
   - Implementada lógica de apertura/cierre de modal de login y renderizado dinámico del botón "Portal" vs "Iniciar Sesión".
+
+23/01/2026
+- Archivo: js/index-ui.js
+  - Se mejoró la visibilidad del botón de instalación de PWA. Ahora se detecta cualquier dispositivo móvil y se muestra el botón permanentemente si la app no está instalada, asegurando que los usuarios de Android, iOS y HarmonyOS siempre tengan acceso a la opción de instalación.

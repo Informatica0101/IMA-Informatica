@@ -336,39 +336,57 @@ document.addEventListener('DOMContentLoaded', () => {
     let deferredPrompt;
     const installBtnMobile = document.getElementById("pwa-install-button-mobile");
     const installBtnFooter = document.getElementById("pwa-install-button-footer");
+    const iosModal = document.getElementById("ios-install-modal");
 
-    // Detect platforms
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    // Detect mobile platforms
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|HarmonyOS|HUAWEI/i.test(ua);
     const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
 
-    // Show install buttons on iOS if not already installed
-    if (isIOS && !isStandalone) {
-        if (installBtnMobile) installBtnMobile.classList.remove("hidden");
-        if (installBtnFooter) installBtnFooter.classList.remove("hidden");
+    // Logic to show install buttons
+    function showInstallButtons() {
+        if (isStandalone) return;
+        if (isMobile) {
+            if (installBtnMobile) installBtnMobile.classList.remove("hidden");
+            if (installBtnFooter) installBtnFooter.classList.remove("hidden");
+        }
     }
 
+    // Initial check
+    showInstallButtons();
+
     window.addEventListener("beforeinstallprompt", (e) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt
         e.preventDefault();
+        // Stash the event so it can be triggered later.
         deferredPrompt = e;
-        if (installBtnMobile) installBtnMobile.classList.remove("hidden");
-        if (installBtnFooter) installBtnFooter.classList.remove("hidden");
+        // Ensure buttons are visible if they were hidden
+        showInstallButtons();
     });
 
     async function handleInstall() {
+        // If iOS, show the special instructions modal
         if (isIOS) {
-            const iosModal = document.getElementById("ios-install-modal");
             if (iosModal) iosModal.classList.remove("opacity-0", "pointer-events-none");
             return;
         }
 
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === "accepted") {
-            if (installBtnMobile) installBtnMobile.classList.add("hidden");
-            if (installBtnFooter) installBtnFooter.classList.add("hidden");
+        // If we have the deferredPrompt (Android/Chrome), use it
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === "accepted") {
+                if (installBtnMobile) installBtnMobile.classList.add("hidden");
+                if (installBtnFooter) installBtnFooter.classList.add("hidden");
+            }
+            deferredPrompt = null;
+        } else {
+            // Fallback for other mobile browsers (generic instructions)
+            // We can reuse the iOS modal or customize it.
+            // For simplicity, let's just show a message if it's mobile but no prompt.
+            alert("Para instalar esta aplicación, usa la opción 'Añadir a la pantalla de inicio' en el menú de tu navegador.");
         }
-        deferredPrompt = null;
     }
 
     if (installBtnMobile) installBtnMobile.addEventListener("click", handleInstall);
@@ -377,7 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeIosModal = document.getElementById("close-ios-modal");
     if (closeIosModal) {
         closeIosModal.addEventListener("click", () => {
-            const iosModal = document.getElementById("ios-install-modal");
             if (iosModal) iosModal.classList.add("opacity-0", "pointer-events-none");
         });
     }

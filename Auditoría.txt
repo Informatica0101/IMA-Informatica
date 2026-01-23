@@ -1071,3 +1071,8 @@ AUDITORÍA DE CALIDAD - DUPLICACIÓN DE SCRIPTS - 23/01/2026
 - Archivo: index.html
   - Se detectó y corrigió una duplicación de etiquetas <script> al final del archivo.
   - Se eliminaron las líneas 215-217 que contenían scripts redundantes.
+AUDITORÍA DE VISIBILIDAD PWA - 23/01/2026
+-------------------------------------------------------------------
+- Archivo: js/index-ui.js
+  - Hallazgo: El botón de instalación de PWA solo se mostraba si el evento 'beforeinstallprompt' se disparaba o si era Safari en iOS. Algunos navegadores móviles ocultan el evento o requieren interacción previa.
+  - Mejora: Se implementó una detección de dispositivos móviles más amplia (incluyendo Android, HarmonyOS y genéricos). Los botones ahora se muestran permanentemente en dispositivos móviles si la app no está instalada, proporcionando instrucciones manuales como fallback si el evento automático no está disponible.
