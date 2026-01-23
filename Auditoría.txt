@@ -1018,3 +1018,19 @@ AUDITORÍA DE CALIDAD INTEGRAL (FINAL) - 22/01/2026
 - Archivo: js/config.js
   - Hallazgo: Se actualizaron las URLs de USER, TASK y EXAM a los endpoints de producción definitivos.
   - Verificación: Las URLs USER (...gzuh), TASK (...KaRKE30) y EXAM (...V3ci) están correctamente configuradas.
+
+AUDITORÍA DE AISLAMIENTO DOCENTE Y METADATOS - 22/01/2026
+-------------------------------------------------------------------
+- Archivo: backend/task-service/Code.gs
+  - Función: getTeacherActivity
+  - Hallazgo (AISLAMIENTO): La lógica de filtrado por profesor era vulnerable. Si la tarea asociada a una entrega no se encontraba, se omitía el filtro y la entrega se mostraba a todos los profesores.
+  - Hallazgo (METADATOS): La visualización de "N/A" en grado/sección/asignatura se debe a fallos en la búsqueda (join) de datos de usuarios y tareas.
+
+- Archivo: backend/exam-service/Code.gs
+  - Función: getTeacherExamActivity
+  - Hallazgo (AISLAMIENTO): Vulnerabilidad idéntica a la del servicio de tareas respecto al filtrado por profesor.
+  - Hallazgo (METADATOS): Fallos en el cruce de datos con la hoja de exámenes y usuarios.
+
+- Solución técnica:
+  - Implementar validación estricta de pertenencia: si la actividad no se encuentra o no pertenece al profesor, la entrega DEBE descartarse inmediatamente.
+  - Mejorar el manejo de errores en los joins para evitar el retorno de "N/A" injustificado.

@@ -205,13 +205,15 @@ function getTeacherActivity(payload) {
   const mimeTypeIndex = entregasHeaders.indexOf("mimeType");
 
   const submissions = entregasValues.map(entrega => {
-    const usuario = usuariosData.find(u => u[0] === entrega[2]);
     const tarea = tareasData.find(t => t[0] === entrega[1]);
 
-    // Filtro por Profesor (Columna K es índice 10)
-    if (profesorId && tarea && tarea[10] && tarea[10] !== profesorId) return null;
+    // SI LA TAREA NO EXISTE O NO PERTENECE AL PROFESOR -> DESCARTAR
+    if (!tarea) return null;
+    if (profesorId && tarea[10] && tarea[10] !== profesorId) return null;
 
-    // Filtro por Grado y Sección del Profesor
+    const usuario = usuariosData.find(u => u[0] === entrega[2]);
+
+    // Filtro por Grado y Sección del Profesor (si se especifican en el payload)
     if (usuario) {
       if (grado && !isInTeacherList(usuario[2], grado)) return null;
       if (seccion && !isInTeacherList(usuario[3], seccion)) return null;
@@ -220,11 +222,11 @@ function getTeacherActivity(payload) {
     return {
       tipo: 'Tarea',
       entregaId: entrega[0],
-      titulo: tarea ? tarea[2] : "Tarea Desconocida",
+      titulo: tarea[2], // Tarea ya verificada arriba
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
       grado: usuario ? usuario[2] : "N/A",
       seccion: usuario ? usuario[3] : "N/A",
-      asignatura: tarea ? tarea[5] : "N/A",
+      asignatura: tarea[5] || "N/A",
       fecha: new Date(entrega[3]),
       fileId: entrega[fileIdIndex],
       mimeType: mimeTypeIndex > -1 ? entrega[mimeTypeIndex] : null,

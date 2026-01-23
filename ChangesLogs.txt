@@ -337,3 +337,9 @@ Archivo: js/teacher.js
   - Estandarizado MIME type a JSON y oculto detalle de errores en el bloque catch para seguridad.
 - Archivo: js/config.js, Líneas: 14, 17, 20
   - Actualizadas URLs de USER, TASK y EXAM a endpoints de producción definitivos.
+
+23/01/2026
+- Archivo: backend/task-service/Code.gs & backend/exam-service/Code.gs
+  - Implementada validación estricta de pertenencia en funciones de actividad docente.
+  - Corregido error que permitía ver entregas de actividades ajenas si el registro base no era encontrado.
+  - Mejorada la lógica de extracción de metadatos del alumno (grado, sección) y de la actividad (asignatura) para evitar el retorno injustificado de "N/A".

@@ -336,11 +336,13 @@ function getTeacherExamActivity(payload) {
   const entregasValues = entregasSheet.getDataRange().getValues();
 
   const submissions = entregasValues.slice(1).map(entrega => {
-    const usuario = usuariosData.find(u => u[0] === entrega[2]);
     const examen = examenesData.find(t => t[0] === entrega[1]);
 
-    // Filtro por Profesor (Columna I es índice 8)
-    if (profesorId && examen && examen[8] && examen[8] !== profesorId) return null;
+    // SI EL EXAMEN NO EXISTE O NO PERTENECE AL PROFESOR -> DESCARTAR
+    if (!examen) return null;
+    if (profesorId && examen[8] && examen[8] !== profesorId) return null;
+
+    const usuario = usuariosData.find(u => u[0] === entrega[2]);
 
     // Filtro por Grado y Sección del Profesor
     if (usuario) {
@@ -352,11 +354,11 @@ function getTeacherExamActivity(payload) {
       tipo: 'Examen',
       entregaId: entrega[0],
       examenId: entrega[1],
-      titulo: examen ? examen[1] : "Examen Desconocido",
+      titulo: examen[1], // Examen ya verificado arriba
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
       grado: usuario ? usuario[2] : "N/A",
       seccion: usuario ? usuario[3] : "N/A",
-      asignatura: examen ? examen[2] : "N/A",
+      asignatura: examen[2] || "N/A",
       fecha: new Date(entrega[3]),
       calificacion: entrega[5],
       estado: entrega[6],
