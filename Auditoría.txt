@@ -53,7 +53,7 @@ AUDITORÍA INICIAL - 18/01/2026
 - Línea(s) involucrada(s): 80
 - Tipo de problema: Robustez
 - Descripción detallada del problema: El ID de usuario se genera usando `new Date().getTime()`.
-- Impacto potencial: Aunque es poco probable, si dos usuarios se registran en el mismo milisegundo, podrían obtener el mismo ID, causando colisiones de datos y comportamiento inesperado. No garantiza unicidad absoluta.
+- Impacto potencial: Aunque es poco probable, si dos usuarios se registrran en el mismo milisegundo, podrían obtener el mismo ID, causando colisiones de datos y comportamiento inesperado. No garantiza unicidad absoluta.
 - Dependencias afectadas: Cualquier lógica que dependa de la unicidad del `userId`.
 
 - Archivo: backend.gs
@@ -647,7 +647,7 @@ AUDITORÍA INICIAL - 18/01/2026
 - Archivo: backend/exam-service/Code.gs
 - Función / método / bloque afectado: doPost
 - Tipo de problema: Configuración de Red (Crítico)
-- Descripción detallada del problema: Las respuestas enviadas desde la función `doPost` (tanto en casos de éxito como de error) no incluían las cabeceras CORS necesarias (`Access-Control-Allow-Origin`).
+- Descripción detallada del problema: Las respuestas enviadas desde la función `doPost` (tanto en casos de éxito como de error) no incluían las caberas CORS necesarias (`Access-Control-Allow-Origin`).
 - Impacto potencial: Esto causaba errores intermitentes de `TypeError: Failed to fetch` en el frontend, ya que los navegadores bloqueaban las respuestas que no cumplían con la política de CORS. Hacía que la aplicación fuera inestable y poco fiable.
 - Solución: Se añadió `.setHeaders(corsHeaders)` a todas las declaraciones `ContentService.createTextOutput(...)` dentro del `try/catch` de `doPost`.
 
@@ -809,7 +809,7 @@ AUDITORÍA DE RECUPERACIÓN DE PREGUNTAS (14/01/2026)
 -------------------------------------------------
 - Archivo: backend/exam-service/Code.gs
 - Línea(s): 190-202
-- Hallazgo (Crítico): La función `getExamQuestions` devuelve una estructura de datos incorrecta que no coincide con la esperada por el frontend. El backend envía directamente un array de preguntas en la propiedad `data`, mientras que el frontend (`js/exam.js`) espera un objeto que contenga los detalles del examen (título, etc.) junto con el array de preguntas. Esta discrepancia es la causa raíz de que los exámenes se muestren como si no tuvieran preguntas.
+- Hallazgo (Crítico): La función `getExamQuestions` devuelve una estructura de datos incorrecta que no coincide con la esperada por el frontend. El backend envía directamente un array de preguntas en la propiedad `data`, mientras que el frontend (`js/exam.js`) espera un objeto que contenga los detalles del examen (título, etc.) junto con el array de preguntas. Esta discrepancia es la causa raíz de que los exámenes se mostraran como si no tuvieran preguntas.
 
 AUDITORÍA DE DASHBOARDS Y EXÁMENES - 18/01/2026
 
@@ -1017,7 +1017,7 @@ AUDITORÍA DE CALIDAD INTEGRAL (FINAL) - 22/01/2026
 
 - Archivo: js/config.js
   - Hallazgo: Se actualizaron las URLs de USER, TASK y EXAM a los endpoints de producción definitivos.
-  - Verificación: Las URLs USER (...gzuh), TASK (...KaRKE30) y EXAM (...V3ci) están correctamente configuradas.
+  - Verificación: Las URLs USER (...uh/exec), TASK (...2Ss/exec) y EXAM (...8Kr/exec) están correctamente configuradas.
 
 AUDITORÍA DE AISLAMIENTO DOCENTE Y METADATOS - 22/01/2026
 -------------------------------------------------------------------
@@ -1038,5 +1038,36 @@ AUDITORÍA DE AISLAMIENTO DOCENTE Y METADATOS - 22/01/2026
 AUDITORÍA DE CONFIGURACIÓN (NUEVOS ENDPOINTS) - 23/01/2026
 -------------------------------------------------------------------
 - Archivo: js/config.js
-- Hallazgo: Se actualizaron las URLs de los microservicios TASK y EXAM a las versiones de producción finales proporcionadas por el usuario.
+- Hallazgo: Se actualizaron las URLs de los microservicios TASK y EXAM a las versiones finales de producción proporcionadas por el usuario.
 - Verificación: Las URLs TASK (...2Ss) y EXAM (...8Kr) están correctamente configuradas.
+
+AUDITORÍA INICIAL - PWA & LOGIN MODAL - 23/01/2026
+-------------------------------------------------------------------
+- Archivo: index.html
+  - Hallazgo: El menú móvil no tiene un lugar para el botón de instalación de PWA. Se agregará al final de la lista de navegación.
+  - Hallazgo: El footer carece de enlaces de utilidad extra como la instalación de PWA.
+  - Hallazgo: La sección de 'Contenido y Actividades' usa un diseño de dos columnas en desktop. Se agregará una sección de Acceso después de Actividades.
+  - Hallazgo: Falta el esqueleto del modal de login. Se ubicará antes del cierre de body.
+
+- Archivo: js/ui-common.js
+  - Hallazgo: Centraliza la lógica de scroll y mobile menu. Se puede usar para manejar el estado global de la sesión.
+
+- Archivo: js/index-ui.js
+  - Hallazgo: Maneja la navegación dinámica del index. Se integrará aquí la lógica del modal y el cambio de texto del botón (Iniciar Sesión / Portal).
+
+AUDITORÍA DE COMPATIBILIDAD PWA - 23/01/2026
+-------------------------------------------------------------------
+- Archivo: index.html
+  - Se integró el modal 'ios-install-modal' para proporcionar instrucciones específicas a usuarios de Apple.
+  - Se verificó que los botones de instalación existan en menú hamburguesa y footer.
+
+- Archivo: js/index-ui.js
+  - Se implementó la detección de plataforma (iOS, Android, HarmonyOS).
+  - Se ajustó la lógica para mostrar el botón de instalación permanentemente en iOS (si no está instalado) ya que no soporta el evento 'beforeinstallprompt'.
+  - Para Android y HarmonyOS, se mantiene el flujo estándar basado en eventos.
+
+AUDITORÍA DE CALIDAD - DUPLICACIÓN DE SCRIPTS - 23/01/2026
+-------------------------------------------------------------------
+- Archivo: index.html
+  - Se detectó y corrigió una duplicación de etiquetas <script> al final del archivo.
+  - Se eliminaron las líneas 215-217 que contenían scripts redundantes.

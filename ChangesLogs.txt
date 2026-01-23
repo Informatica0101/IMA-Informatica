@@ -347,3 +347,13 @@ Archivo: js/teacher.js
 23/01/2026
 - Archivo: js/config.js, Líneas: 17, 20
   - Actualizadas las URLs de producción para TASK y EXAM a los endpoints finales proporcionados por el usuario.
+
+23/01/2026
+- Archivo: index.html
+  - Implementado botón de instalación de PWA en el menú hamburguesa (móvil) y en el pie de página (web).
+  - Agregado contenedor de Acceso al Sistema después de la sección de actividades.
+  - Implementado modal de Login y modal de instrucciones para iOS.
+- Archivo: js/index-ui.js
+  - Implementada lógica de instalación de PWA multiplataforma (Android, iOS, HarmonyOS).
+  - Implementada lógica de detección de iOS para mostrar instrucciones personalizadas.
+  - Implementada lógica de apertura/cierre de modal de login y renderizado dinámico del botón "Portal" vs "Iniciar Sesión".
