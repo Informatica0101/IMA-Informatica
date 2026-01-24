@@ -328,3 +328,127 @@ document.addEventListener('DOMContentLoaded', () => {
     renderInitialContentButton();
     renderInitialActivityButton();
 });
+
+/**
+ * PWA Installation and Login Modal Logic
+ */
+(function() {
+    let deferredPrompt;
+    const installBtnMobile = document.getElementById("pwa-install-button-mobile");
+    const installBtnFooter = document.getElementById("pwa-install-button-footer");
+    const iosModal = document.getElementById("ios-install-modal");
+
+    // Detect mobile platforms
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|HarmonyOS|HUAWEI/i.test(ua);
+    const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+
+    // Logic to show install buttons
+    function showInstallButtons() {
+        if (isStandalone) return;
+        if (isMobile) {
+            if (installBtnMobile) installBtnMobile.classList.remove("hidden");
+            if (installBtnFooter) installBtnFooter.classList.remove("hidden");
+        }
+    }
+
+    // Initial check
+    showInstallButtons();
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later.
+        deferredPrompt = e;
+        // Ensure buttons are visible if they were hidden
+        showInstallButtons();
+    });
+
+    async function handleInstall() {
+        // If iOS, show the special instructions modal
+        if (isIOS) {
+            if (iosModal) iosModal.classList.remove("opacity-0", "pointer-events-none");
+            return;
+        }
+
+        // If we have the deferredPrompt (Android/Chrome), use it
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === "accepted") {
+                if (installBtnMobile) installBtnMobile.classList.add("hidden");
+                if (installBtnFooter) installBtnFooter.classList.add("hidden");
+            }
+            deferredPrompt = null;
+        } else {
+            // Fallback for other mobile browsers (generic instructions)
+            // We can reuse the iOS modal or customize it.
+            // For simplicity, let's just show a message if it's mobile but no prompt.
+            alert("Para instalar esta aplicación, usa la opción 'Añadir a la pantalla de inicio' en el menú de tu navegador.");
+        }
+    }
+
+    if (installBtnMobile) installBtnMobile.addEventListener("click", handleInstall);
+    if (installBtnFooter) installBtnFooter.addEventListener("click", handleInstall);
+
+    const closeIosModal = document.getElementById("close-ios-modal");
+    if (closeIosModal) {
+        closeIosModal.addEventListener("click", () => {
+            if (iosModal) iosModal.classList.add("opacity-0", "pointer-events-none");
+        });
+    }
+
+    // --- Modal Logic ---
+    const loginModal = document.getElementById('login-modal');
+    const loginModalContent = document.getElementById('login-modal-content');
+    const closeLoginModal = document.getElementById('close-login-modal');
+    const accessButtonContainer = document.getElementById('access-button-container');
+
+    function openModal() {
+        if (!loginModal) return;
+        loginModal.classList.remove('opacity-0', 'pointer-events-none');
+        if (loginModalContent) {
+            loginModalContent.classList.remove('scale-95');
+            loginModalContent.classList.add('scale-100');
+        }
+    }
+
+    function closeModal() {
+        if (!loginModal) return;
+        loginModal.classList.add('opacity-0', 'pointer-events-none');
+        if (loginModalContent) {
+            loginModalContent.classList.remove('scale-100');
+            loginModalContent.classList.add('scale-95');
+        }
+    }
+
+    if (closeLoginModal) closeLoginModal.addEventListener('click', closeModal);
+    if (loginModal) {
+        loginModal.addEventListener('click', (e) => {
+            if (e.target === loginModal) closeModal();
+        });
+    }
+
+    function renderAccessButton() {
+        if (!accessButtonContainer) return;
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        accessButtonContainer.innerHTML = '';
+
+        if (currentUser) {
+            const portalBtn = document.createElement('a');
+            portalBtn.href = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
+            portalBtn.className = 'px-10 py-5 rounded-2xl font-bold text-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
+            portalBtn.textContent = 'Ir al Portal';
+            accessButtonContainer.appendChild(portalBtn);
+        } else {
+            const loginBtn = document.createElement('button');
+            loginBtn.className = 'px-10 py-5 rounded-2xl font-bold text-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
+            loginBtn.textContent = 'Iniciar Sesión';
+            loginBtn.addEventListener("click", openModal);
+            accessButtonContainer.appendChild(loginBtn);
+        }
+    }
+
+    renderAccessButton();
+})();

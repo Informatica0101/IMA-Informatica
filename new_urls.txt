@@ -1,2 +1,0 @@
-TASK: https://script.google.com/macros/s/AKfycbw-YEGeeKhoVrJQtjejaaHp6TzvV_0-3CpF63Zea62NqLt2PnCiGvH9OgscKaRKE30/exec
-EXAM: https://script.google.com/macros/s/AKfycbwxzCbud6qeXH9vxsoSnMQVDwCs_hZbivfWuimAe0fDnDslNtgsrbuZD9X0v8xVS3ci/exec
