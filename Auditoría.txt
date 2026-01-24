@@ -1153,3 +1153,13 @@ AUDITORÍA DE REESTRUCTURACIÓN DASHBOARD DOCENTE - 24/01/2026
     - Actualmente tiene buscador global y checkbox "Solo con pendientes". El requerimiento pide filtros en encabezado.
   - TAREA 6 (Búsqueda global):
     - Debe mantenerse independiente de los filtros.
+AUDITORÍA DE OPTIMIZACIÓN VISUAL DASHBOARD DOCENTE - 24/01/2026
+-------------------------------------------------------------------
+- Archivo: teacher-dashboard.html
+  - Título: #dashboard-level-title tiene clase text-2xl. Se cambiará a text-lg.
+  - Buscador: El contenedor div que envuelve a #student-search está dentro de un flex header. Se moverá antes del table-container.
+  - Botón Regresar: #back-nav-btn está al lado del título. Se moverá debajo de la tabla.
+
+- Archivo: js/teacher.js
+  - Funciones de renderizado: Usan p-3, p-2 y p-1.5. Se unificará a p-1 o p-1.5 para mayor compacidad.
+  - Tabla: En teacher-dashboard.html, la tabla tiene w-full min-w-[800px]. Se evaluará quitar min-w si causa demasiada separación en pantallas grandes.

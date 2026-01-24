@@ -409,3 +409,10 @@ MODIFICACIÓN DEL DASHBOARD DOCENTE - 24/01/2026
 - js/teacher.js: Línea 250-322. Se rediseñó renderAlumnos para mostrar solo las columnas Nombre y Estado, implementar navegación por clic en nombre y añadir lógica de reordenamiento (asc/desc).
 - js/teacher.js: Línea 367-430. Se actualizó renderDetalles para incluir la columna "Estado" con mapeo a "Completada", "Pendiente" y "Por calificar".
 - js/teacher.js: Línea 455-470. Se añadió listener de delegación en dashboardTableHead para gestionar el ordenamiento de la tabla de alumnos.
+OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
+- teacher-dashboard.html: Línea 112. Se cambió el tamaño del título de navegación de text-2xl a text-lg.
+- teacher-dashboard.html: Línea 118-121. Se reubicó la barra de búsqueda arriba del contenedor de la tabla.
+- teacher-dashboard.html: Línea 131-136. Se reubicó el botón "Regresar" debajo de la tabla.
+- teacher-dashboard.html: Línea 122. Se ajustó la tabla a w-auto para compactar las columnas.
+- js/teacher.js: Se redujo el padding de celdas (th/td) a p-1 y se añadió whitespace-nowrap en todas las funciones de renderizado (renderGrados, renderSecciones, renderAsignaturas, renderAlumnos, renderExamenesGestion, renderDetalles).
+- js/teacher.js: Se ajustaron los tamaños de botones y etiquetas dentro de las tablas a text-xs o text-[10px] para mayor compacidad.
