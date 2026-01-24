@@ -215,3 +215,5 @@ tarea 16: Actualizar URLs de producción para TASK y EXAM (...2Ss y ...8Kr). (CO
 tarea 17: Implementar botón de instalación de PWA en menú móvil y pie de página y mejorar visibilidad. (COMPLETADA)
 tarea 18: Implementar modal de login y sección de acceso (Portal/Iniciar Sesión) en index.html sin afectar secciones existentes. (COMPLETADA)
 tarea 19: Unificación total de encabezados y pies de página, reducción de márgenes y gaps, y estandarización visual en dashboards y exámenes. (COMPLETADA)
+tarea 20: Implementar navegación jerárquica y filtrado avanzado en el Dashboard del Profesor (navStack, filtros, títulos dinámicos). (COMPLETADA)
+tarea 21: Optimizar accesibilidad móvil asegurando un área de toque mínima de 44px para todos los elementos interactivos. (COMPLETADA)

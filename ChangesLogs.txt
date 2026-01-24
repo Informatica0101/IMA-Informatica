@@ -378,3 +378,21 @@ Archivo: js/teacher.js
 - Archivo: css/style.css
   - Línea(s): 184-210
   - Cambio: Ajuste de la clase .dashboard-card para un diseño más compacto y adición de .table-compact para control de espaciado en tablas.
+
+24/01/2026
+- Archivo: index.html, login.html, register.html, student-dashboard.html, teacher-dashboard.html, exam.html, results.html
+  - Unificación de encabezados y pies de página en toda la plataforma.
+  - Implementación de estructura Flexbox para anclaje de footer.
+- Archivo: css/style.css
+  - Implementación de regla global para objetivos de toque mínimos de 44px en elementos interactivos.
+  - Creación de clases .dashboard-card (p-4) y .table-compact para diseños más densos.
+  - Ajuste de gap-4 a gap-2/3 en contenedores de tarjetas.
+- Archivo: js/teacher.js
+  - Implementación de navegación jerárquica (navStack) con 5 niveles de profundidad.
+  - Adición de lógica para título dinámico y botón de retroceso.
+  - Integración de filtros contextuales (Búsqueda y "Solo con pendientes").
+  - Unificación de delegación de eventos en un solo listener para la tabla de entregas.
+- Archivo: js/ui-common.js
+  - Centralización de lógica de PWA, menú móvil y efectos de scroll para todas las páginas.
+- Archivo: js/student.js
+  - Actualización de renderizado de tareas para usar clases compactas (.dashboard-card).
