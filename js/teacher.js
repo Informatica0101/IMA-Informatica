@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let allActivityRaw = [];
     let currentSort = { field: 'fecha', direction: 'desc' };
+    let studentSort = { field: 'nombre', direction: 'asc' };
     let navStack = [{ level: 'Grados', data: null }]; // Stack de navegación
 
     const allSections = [sectionDashboard, sectionCrear, sectionCrearExamen];
@@ -256,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                 }
                 alumnosMap[item.alumnoNombre].total++;
-                if (item.estado === 'Pendiente' || !item.estado) {
+                if (item.estado === 'Pendiente' || !item.estado || item.estado === 'Por calificar') {
                     alumnosMap[item.alumnoNombre].pendientes++;
                 }
             });
@@ -265,25 +266,57 @@ document.addEventListener('DOMContentLoaded', () => {
         if (showOnlyPending) {
             alumnos = alumnos.filter(a => a.pendientes > 0);
         }
+
+        // Aplicar ordenamiento
+        alumnos.sort((a, b) => {
+            let valA, valB;
+            if (studentSort.field === 'nombre') {
+                valA = a.nombre.toLowerCase();
+                valB = b.nombre.toLowerCase();
+            } else {
+                valA = a.pendientes;
+                valB = b.pendientes;
+            }
+            if (valA < valB) return studentSort.direction === 'asc' ? -1 : 1;
+            if (valA > valB) return studentSort.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
         const filtered = alumnos.filter(a => a.nombre.toLowerCase().includes(search));
+
+        const sortIconName = studentSort.field === 'nombre' ? (studentSort.direction === 'asc' ? ' ↑' : ' ↓') : '';
+        const sortIconStatus = studentSort.field === 'estado' ? (studentSort.direction === 'asc' ? ' ↑' : ' ↓') : '';
 
         dashboardTableHead.innerHTML = `
             <tr class="bg-gray-50 border-b border-gray-100">
-                <th class="p-1.5 text-left font-bold text-gray-600">Nombre del Alumno</th>
-                <th class="p-1.5 text-left font-bold text-gray-600">Estado de Actividad</th>
-                <th class="p-1.5 text-right font-bold text-gray-600">Acción</th>
+                <th class="p-1.5 text-left font-bold text-gray-600 cursor-pointer sort-student select-none" data-field="nombre">
+                    Nombre del Alumno${sortIconName}
+                </th>
+                <th class="p-1.5 text-left font-bold text-gray-600 cursor-pointer sort-student select-none" data-field="estado">
+                    Estado de Actividad${sortIconStatus}
+                </th>
             </tr>`;
+
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-4 text-gray-500">No hay alumnos encontrados.</td></tr>';
+            return;
+        }
 
         submissionsTableBody.innerHTML = filtered.map(a => `
             <tr class="border-b hover:bg-gray-50 transition-colors">
-                <td class="p-3 font-semibold text-gray-800">${a.nombre}</td>
+                <td class="p-3">
+                    <button class="font-semibold text-blue-700 hover:underline nav-btn text-left"
+                            data-alumno-nombre="${a.nombre}"
+                            data-grado="${grado}"
+                            data-seccion="${seccion}"
+                            data-asignatura="${asignatura}">
+                        ${a.nombre}
+                    </button>
+                </td>
                 <td class="p-3">
                     <span class="px-2 py-1 rounded-full text-xs font-bold ${a.pendientes > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}">
-                        ${a.pendientes > 0 ? `${a.pendientes} Pendientes` : 'Al día'}
+                        ${a.pendientes > 0 ? `${a.pendientes} por calificar` : 'Al día'}
                     </span>
-                </td>
-                <td class="p-3 text-right">
-                    <button class="bg-blue-600 text-white px-4 py-1.5 rounded-xl text-sm font-bold nav-btn" data-alumno-nombre="${a.nombre}" data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asignatura}">Ver Detalles</button>
                 </td>
             </tr>
         `).join('');
@@ -348,6 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardTableHead.innerHTML = `
             <tr class="bg-gray-50 border-b border-gray-100">
                 <th class="p-1.5 text-left font-bold text-gray-600">Actividad</th>
+                <th class="p-1.5 text-left font-bold text-gray-600">Estado</th>
                 <th class="p-1.5 text-left font-bold text-gray-600">Fecha</th>
                 <th class="p-1.5 text-left font-bold text-gray-600">Archivo</th>
                 <th class="p-1.5 text-left font-bold text-gray-600">Calificación</th>
@@ -369,6 +403,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
+            // Lógica de Estado
+            let statusText = 'Pendiente';
+            let statusClass = 'bg-gray-100 text-gray-600';
+
+            if (item.estado === 'Revisada' || (item.tipo === 'Tarea' && item.calificacion)) {
+                statusText = 'Completada';
+                statusClass = 'bg-green-100 text-green-700';
+            } else if (item.fileId || item.respuestas || item.entregaId) {
+                statusText = 'Por calificar';
+                statusClass = 'bg-yellow-100 text-yellow-700';
+            } else {
+                statusText = 'Pendiente';
+                statusClass = 'bg-red-100 text-red-700';
+            }
+
             let actionHtml = '';
             if (item.tipo === 'Tarea') {
                 actionHtml = `<button class="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-bold grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
@@ -384,6 +433,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return `
                 <tr class="border-b hover:bg-gray-50 transition-colors">
                     <td class="p-2 font-medium text-gray-800">${item.titulo}</td>
+                    <td class="p-2">
+                        <span class="px-2 py-1 rounded-full text-[10px] font-bold ${statusClass}">${statusText}</span>
+                    </td>
                     <td class="p-2 text-xs text-gray-600">${item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'}</td>
                     <td class="p-2">${fileLinkHtml}</td>
                     <td class="p-2 font-bold text-gray-700">${item.calificacion || '-'}</td>
@@ -398,6 +450,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (onlyPendingFilter) {
         onlyPendingFilter.addEventListener('change', () => renderCurrentLevel());
+    }
+
+    if (dashboardTableHead) {
+        dashboardTableHead.addEventListener('click', (e) => {
+            const sortBtn = e.target.closest('.sort-student');
+            if (sortBtn) {
+                const field = sortBtn.dataset.field;
+                if (studentSort.field === field) {
+                    studentSort.direction = studentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    studentSort.field = field;
+                    studentSort.direction = 'asc';
+                }
+                renderCurrentLevel();
+            }
+        });
     }
 
     // --- Delegación de Eventos para la Tabla ---

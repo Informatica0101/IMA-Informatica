@@ -87,6 +87,10 @@ FLUJO PRINCIPAL DE TRABAJO
 11. ACTUALIZACIÓN DE INSTRUCCIONES.TXT
     - Mover la tarea ejecutada a:
       -> "TAREAS PENDIENTES DE REVISIÓN"
+tarea 24: Reestructurar navegación del dashboard del profesor (Grados -> Sección -> Asignatura -> Alumno). (COMPLETADA)
+tarea 25: Implementar vista de detalle del alumno con estados Completada/Pendiente/Por calificar. (COMPLETADA)
+tarea 26: Implementar tabla de alumnos resumida con reordenamiento asc/desc. (COMPLETADA)
+tarea 27: Implementar filtros avanzados en tabla de alumnos y conservar búsqueda global. (COMPLETADA)
     - NO eliminar tareas sin aprobación del PM.
 
 12. COMMIT
@@ -204,6 +208,10 @@ tarea 8: Auditar cambios finales, corregir variables obsoletas y aplicar nuevas 
 tarea 10: Implementar búsqueda, filtrado y ordenamiento en el dashboard del profesor, restringir resultados de examen a estudiantes y habilitar calificación manual de exámenes. (COMPLETADA)
 
 TAREAS PENDIENTES DE REVISIÓN
+tarea 24: Reestructurar navegación del dashboard del profesor (Grados -> Sección -> Asignatura -> Alumno). (COMPLETADA)
+tarea 25: Implementar vista de detalle del alumno con estados Completada/Pendiente/Por calificar. (COMPLETADA)
+tarea 26: Implementar tabla de alumnos resumida con reordenamiento asc/desc. (COMPLETADA)
+tarea 27: Implementar filtros avanzados en tabla de alumnos y conservar búsqueda global. (COMPLETADA)
 ________________________________________________________________________________________________
 tarea 9: Corregir lógica de renderizado de preguntas Verdadero/Falso y Término Pareado, y habilitar visualización detallada de resultados. (COMPLETADA)
 tarea 11: Actualizar URLs de servicios, implementar ocultación de resultados de examen hasta revisión docente y estandarizar lógica de feedback en el dashboard del estudiante. (COMPLETADA)

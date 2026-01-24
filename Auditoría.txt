@@ -1132,3 +1132,24 @@ AUDITORÍA DE NORMALIZACIÓN DE METADATOS - 24/01/2026
 - Consecuencia: Los niveles de navegación (Grados, Secciones) no muestran datos si solo hay definiciones de exámenes sin entregas previas, ya que los filtros buscan 'grado' y 'seccion'.
 - Hallazgo: El buscador persiste entre niveles de navegación, lo que puede causar tablas vacías al navegar a un nuevo contexto.
 - Solución: Normalizar todos los objetos de actividad a un esquema común { grado, seccion, asignatura } inmediatamente después de la carga. Limpiar el buscador en pushNav/popNav.
+AUDITORÍA DE REESTRUCTURACIÓN DASHBOARD DOCENTE - 24/01/2026
+-------------------------------------------------------------------
+- Archivo: teacher-dashboard.html
+  - Hallazgo: La estructura actual soporta la navegación jerárquica, pero los encabezados de tabla son fijos en el HTML para algunos casos o se sobreescriben en JS.
+  - Hallazgo: El buscador global y el filtro de pendientes ya existen pero deben asegurar integración con la nueva lógica.
+
+- Archivo: js/teacher.js
+  - TAREA 2 (Navegación): La navegación actual Grados > Secciones > Asignaturas > Alumnos > Detalles sigue el orden solicitado. Se verificará que no haya saltos.
+  - TAREA 3 (Detalle Alumno):
+    - Columnas actuales: Actividad, Fecha, Archivo, Calificación, Acción.
+    - Requerimiento: Mostrar estado (Completada, Pendiente, Por calificar). Actualmente se muestra item.estado en la tabla o el modal.
+    - Requerimiento: "Botón de calificar". Actualmente existe 'Calificar' para tareas y 'Calificar' + 'Resultados' + 'Reactivar' para exámenes.
+  - TAREA 4 (Tabla Alumnos - Resumida):
+    - Columnas actuales: Nombre, Estado, Acción.
+    - Requerimiento: EXACTAMENTE Nombre del alumno y Estado de la actividad.
+    - Requerimiento: Indicar si tiene tareas por calificar.
+    - Requerimiento CRÍTICO: Reordenamiento (asc/desc) en AMBAS columnas. Actualmente NO implementado.
+  - TAREA 5 (Filtros):
+    - Actualmente tiene buscador global y checkbox "Solo con pendientes". El requerimiento pide filtros en encabezado.
+  - TAREA 6 (Búsqueda global):
+    - Debe mantenerse independiente de los filtros.

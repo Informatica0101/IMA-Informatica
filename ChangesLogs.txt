@@ -403,3 +403,9 @@ Archivo: js/teacher.js
   - Mejora de UX: se implementó la limpieza automática del valor del buscador (studentSearchInput) al realizar pushNav y popNav.
   - Corrección de filtros: se actualizó renderExamenesGestion para utilizar los campos normalizados.
   - Limpieza: eliminación de una llave de cierre huérfana.
+MODIFICACIÓN DEL DASHBOARD DOCENTE - 24/01/2026
+- teacher-dashboard.html: Línea 111-114. Se modificó el botón "Regresar" para incluir texto y mejor estilo visual. Se actualizó el label del filtro de pendientes.
+- js/teacher.js: Línea 30. Se añadió el estado studentSort.
+- js/teacher.js: Línea 250-322. Se rediseñó renderAlumnos para mostrar solo las columnas Nombre y Estado, implementar navegación por clic en nombre y añadir lógica de reordenamiento (asc/desc).
+- js/teacher.js: Línea 367-430. Se actualizó renderDetalles para incluir la columna "Estado" con mapeo a "Completada", "Pendiente" y "Por calificar".
+- js/teacher.js: Línea 455-470. Se añadió listener de delegación en dashboardTableHead para gestionar el ordenamiento de la tabla de alumnos.
