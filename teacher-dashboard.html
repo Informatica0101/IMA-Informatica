@@ -3,78 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard del Profesor</title>
+    <title>Panel de Profesor - Area de Informatica</title>
+    <link rel="icon" type="image/png" href="IMA-Logo.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-6">
-        <header class="flex justify-between items-center mb-8">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-800">Panel de Profesor</h1>
-                <p class="text-gray-600">Bienvenido, <span id="teacher-name"></span>.</p>
+<body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
+
+    <header id="main-header" class="bg-white shadow-md py-2 md:py-4 px-1 md:px-3 fixed w-full z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-4 transition-transform duration-300 logo-container">
+                <img src="imagenes/logo.png" alt="Logo" width="120" height="auto" class="logo-img transition-transform duration-300">
+                <span class="text-2xl font-bold text-blue-800 hidden sm:inline">Area de Informatica</span>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Inicio</a>
+                <div class="relative group">
+                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
+                        Cursos <span class="ml-1 text-xs">&#9662;</span>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
+                        <div id="desktop-grades-menu"></div>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
+                        Recursos Adicionales <span class="ml-1 text-xs">&#9662;</span>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
+                        <div id="desktop-additional-resources-menu"></div>
+                    </div>
+                </div>
+                <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Cerrar Sesión</button>
+            </nav>
+
+            <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="100" height="auto" class="hidden lg:block">
+
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none p-2">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="mobile-menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
-            <button id="logout-button" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg">Cerrar Sesión</button>
-        </header>
+        </div>
 
-        <nav class="mb-8">
-            <a href="#" id="nav-dashboard" class="px-4 py-2 bg-gray-700 text-white rounded-lg">Dashboard</a>
-            <a href="#" id="nav-crear" class="px-4 py-2 text-gray-700 rounded-lg">Crear Tarea</a>
-            <a href="#" id="nav-crear-examen" class="px-4 py-2 text-gray-700 rounded-lg">Crear Examen</a>
-        </nav>
+        <div id="mobile-menu-overlay" class="hidden">
+            <button id="mobile-menu-close-button" class="absolute top-4 right-6 text-gray-700 focus:outline-none z-50">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <nav class="flex flex-col mt-16 w-full h-full">
+                <a href="index.html" class="mobile-nav-link">Inicio</a>
 
-        <main>
+                <div class="w-full">
+                    <button id="mobile-courses-toggle" class="mobile-nav-link justify-between">
+                        <span>Cursos</span>
+                        <span id="mobile-courses-arrow" class="transform transition-transform duration-300">&#9656;</span>
+                    </button>
+                    <div id="mobile-grades-container" class="mobile-menu-item-container hidden-height">
+                        <div id="mobile-grades-menu"></div>
+                    </div>
+                </div>
+
+                <div class="w-full">
+                    <button id="mobile-additional-resources-toggle" class="mobile-nav-link justify-between">
+                        <span>Recursos Adicionales</span>
+                        <span id="mobile-additional-resources-arrow" class="transform transition-transform duration-300">&#9656;</span>
+                    </button>
+                    <div id="mobile-additional-resources-container" class="mobile-menu-item-container hidden-height">
+                        <div id="mobile-additional-resources-menu"></div>
+                    </div>
+                </div>
+
+                <a href="#" class="mobile-nav-link text-red-600" id="mobile-logout-button">Cerrar Sesión</a>
+                <button id="pwa-install-button-mobile" class="mobile-nav-link text-blue-600 font-bold hidden">
+                    <span class="flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Instalar Aplicación
+                    </span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="mt-[5rem] md:mt-[6rem] pb-12 flex-grow">
+        <div class="container mx-auto px-5">
+            <div class="mb-8 text-center md:text-left">
+                <h1 class="text-3xl font-extrabold text-gray-800">Panel de Profesor</h1>
+                <p class="text-lg text-gray-600 font-medium">Bienvenido, <span id="teacher-name" class="text-blue-600 font-bold"></span>.</p>
+            </div>
+
+            <nav class="flex flex-wrap gap-4 mb-6">
+                <button id="nav-dashboard" class="px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md bg-blue-600 text-white">Dashboard</button>
+                <button id="nav-crear" class="px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Tarea</button>
+                <button id="nav-crear-examen" class="px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Examen</button>
+            </nav>
+
             <!-- Sección de Dashboard (Entregas) -->
-            <section id="section-dashboard">
-                <h2 class="text-2xl font-bold mb-4">Últimas Entregas</h2>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="border-b">
-                                <th class="p-4 text-left">Alumno</th>
-                                <th class="p-4 text-left">Tarea</th>
-                                <th class="p-4 text-left">Fecha</th>
-                                <th class="p-4 text-left">Archivo</th>
-                                <th class="p-4 text-left">Calificación</th>
-                                <th class="p-4 text-left">Estado</th>
-                                <th class="p-4 text-left">Acción</th>
-                            </tr>
+            <section id="section-dashboard" class="animate-fade-in-up">
+                 <div class="flex flex-col space-y-3 mb-4">
+                    <div class="flex items-center justify-between">
+                        <h2 id="dashboard-level-title" class="text-lg font-bold text-gray-800">Grados</h2>
+                        <label id="pending-filter-container" class="hidden flex items-center space-x-2 cursor-pointer bg-white px-3 py-1 rounded-xl border border-gray-200 shadow-sm hover:bg-gray-50 transition-all">
+                            <input type="checkbox" id="only-pending-filter" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                            <span class="text-sm font-medium text-gray-700">Pendientes por calificar</span>
+                        </label>
+                    </div>
+                    <div class="w-full md:w-64 relative">
+                        <input type="text" id="student-search" placeholder="Buscar..." class="w-full pl-10 pr-4 py-1.5 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all text-sm">
+                        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                 </div>
+                <div class="table-container overflow-x-auto">
+                     <table class="w-auto">
+                        <thead id="dashboard-table-head">
+                            <!-- Los encabezados se renderizarán dinámicamente -->
                         </thead>
-                        <tbody id="submissions-table-body">
+                        <tbody id="submissions-table-body" class="divide-y divide-gray-100">
                             <!-- Las entregas se cargarán aquí -->
                         </tbody>
                     </table>
                 </div>
+                <div class="mt-4">
+                    <button id="back-nav-btn" class="hidden flex items-center space-x-2 px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors shadow-sm">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        <span class="text-sm font-bold text-gray-600">Regresar</span>
+                    </button>
+                </div>
             </section>
 
             <!-- Sección de Crear Tarea -->
-            <section id="section-crear" class="hidden">
-                <h2 class="text-2xl font-bold mb-4">Crear Nueva Tarea</h2>
-                <div class="bg-white p-8 rounded-lg shadow-md">
+            <section id="section-crear" class="hidden animate-fade-in-up">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Crear Nueva Tarea</h2>
+                <div class="dashboard-card">
                     <form id="create-assignment-form">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                             <div>
-                                <label for="titulo" class="block font-medium mb-2">Título</label>
-                                <input type="text" id="titulo" name="titulo" class="w-full p-2 border rounded" required>
+                                <label for="titulo" class="block font-bold text-gray-700 mb-2">Título</label>
+                                <input type="text" id="titulo" name="titulo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
                             </div>
                             <div>
-                                <label for="tipo" class="block font-medium mb-2">Tipo</label>
-                                <select id="tipo" name="tipo" class="w-full p-2 border rounded">
+                                <label for="tipo" class="block font-bold text-gray-700 mb-2">Tipo</label>
+                                <select id="tipo" name="tipo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all">
                                     <option value="Tarea">Tarea</option>
                                     <option value="Examen">Examen</option>
                                     <option value="Credito Extra">Crédito Extra</option>
                                 </select>
                             </div>
                             <div id="credito-extra-fields" class="hidden md:col-span-2">
-                                <label for="tareaOriginalId" class="block font-medium mb-2">ID de Tarea Original Rechazada (Opcional)</label>
-                                <input type="text" id="tareaOriginalId" name="tareaOriginalId" placeholder="TSK-..." class="w-full p-2 border rounded">
+                                <label for="tareaOriginalId" class="block font-bold text-gray-700 mb-2">ID de Tarea Original Rechazada</label>
+                                <input type="text" id="tareaOriginalId" name="tareaOriginalId" placeholder="TSK-..." class="w-full p-3 border rounded-xl">
                             </div>
                             <div class="md:col-span-2">
-                                <label for="descripcion" class="block font-medium mb-2">Descripción</label>
-                                <textarea id="descripcion" name="descripcion" rows="4" class="w-full p-2 border rounded"></textarea>
+                                <label for="descripcion" class="block font-bold text-gray-700 mb-2">Descripción</label>
+                                <textarea id="descripcion" name="descripcion" rows="4" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all"></textarea>
                             </div>
                              <div>
-                                <label for="parcial" class="block font-medium mb-2">Parcial</label>
-                                <select id="parcial" name="parcial" class="w-full p-2 border rounded" required>
+                                <label for="parcial" class="block font-bold text-gray-700 mb-2">Parcial</label>
+                                <select id="parcial" name="parcial" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
                                     <option value="Primer Parcial">Primer Parcial</option>
                                     <option value="Segundo Parcial">Segundo Parcial</option>
                                     <option value="Tercer Parcial">Tercer Parcial</option>
@@ -82,12 +172,12 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="asignatura" class="block font-medium mb-2">Asignatura</label>
-                                <input type="text" id="asignatura" name="asignatura" class="w-full p-2 border rounded" required>
+                                <label for="asignatura" class="block font-bold text-gray-700 mb-2">Asignatura</label>
+                                <input type="text" id="asignatura" name="asignatura" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
                             </div>
                             <div>
-                                <label for="gradoAsignado" class="block font-medium mb-2">Grado Asignado</label>
-                                <select id="gradoAsignado" name="gradoAsignado" class="w-full p-2 border rounded" required>
+                                <label for="gradoAsignado" class="block font-bold text-gray-700 mb-2">Grado Asignado</label>
+                                <select id="gradoAsignado" name="gradoAsignado" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
                                     <option value="">Selecciona un Grado</option>
                                     <option value="Décimo">Décimo</option>
                                     <option value="Undécimo">Undécimo</option>
@@ -95,37 +185,36 @@
                                 </select>
                             </div>
                              <div>
-                                <label for="seccionAsignada" class="block font-medium mb-2">Sección Asignada (Opcional)</label>
-                                <input type="text" id="seccionAsignada" name="seccionAsignada" class="w-full p-2 border rounded">
+                                <label for="seccionAsignada" class="block font-bold text-gray-700 mb-2">Sección (Opcional)</label>
+                                <input type="text" id="seccionAsignada" name="seccionAsignada" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all">
                             </div>
                             <div>
-                                <label for="fechaLimite" class="block font-medium mb-2">Fecha Límite</label>
-                                <input type="date" id="fechaLimite" name="fechaLimite" class="w-full p-2 border rounded" required>
+                                <label for="fechaLimite" class="block font-bold text-gray-700 mb-2">Fecha Límite</label>
+                                <input type="date" id="fechaLimite" name="fechaLimite" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
                             </div>
                         </div>
-                        <button type="submit" class="mt-6 bg-blue-600 text-white font-bold py-2 px-6 rounded-lg">Crear</button>
+                        <button type="submit" class="mt-10 bg-blue-600 text-white font-bold py-4 px-10 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">Crear Tarea</button>
                     </form>
                 </div>
             </section>
 
             <!-- Sección de Crear Examen -->
-            <section id="section-crear-examen" class="hidden">
-                <h2 class="text-2xl font-bold mb-4">Crear Nuevo Examen</h2>
-                <div class="bg-white p-8 rounded-lg shadow-md">
+            <section id="section-crear-examen" class="hidden animate-fade-in-up">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Crear Nuevo Examen</h2>
+                <div class="dashboard-card">
                     <form id="create-exam-form">
-                        <!-- Detalles Generales del Examen -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-b pb-6 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 border-b border-gray-100 pb-4 mb-4">
                             <div>
-                                <label for="exam-titulo" class="block font-medium mb-2">Título del Examen</label>
-                                <input type="text" id="exam-titulo" name="titulo" class="w-full p-2 border rounded" required>
+                                <label for="exam-titulo" class="block font-bold text-gray-700 mb-2">Título del Examen</label>
+                                <input type="text" id="exam-titulo" name="titulo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" required>
                             </div>
                             <div>
-                                <label for="exam-asignatura" class="block font-medium mb-2">Asignatura</label>
-                                <input type="text" id="exam-asignatura" name="asignatura" class="w-full p-2 border rounded" required>
+                                <label for="exam-asignatura" class="block font-bold text-gray-700 mb-2">Asignatura</label>
+                                <input type="text" id="exam-asignatura" name="asignatura" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" required>
                             </div>
                             <div>
-                                <label for="exam-grado" class="block font-medium mb-2">Grado Asignado</label>
-                                <select id="exam-grado" name="gradoAsignado" class="w-full p-2 border rounded" required>
+                                <label for="exam-grado" class="block font-bold text-gray-700 mb-2">Grado Asignado</label>
+                                <select id="exam-grado" name="gradoAsignado" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" required>
                                     <option value="">Selecciona un Grado</option>
                                     <option value="Décimo">Décimo</option>
                                     <option value="Undécimo">Undécimo</option>
@@ -133,69 +222,152 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="exam-seccion" class="block font-medium mb-2">Sección (Opcional)</label>
-                                <input type="text" id="exam-seccion" name="seccionAsignada" class="w-full p-2 border rounded">
+                                <label for="exam-seccion" class="block font-bold text-gray-700 mb-2">Sección (Opcional)</label>
+                                <input type="text" id="exam-seccion" name="seccionAsignada" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all">
                             </div>
                             <div>
-                                <label for="exam-fechaLimite" class="block font-medium mb-2">Fecha Límite</label>
-                                <input type="date" id="exam-fechaLimite" name="fechaLimite" class="w-full p-2 border rounded" required>
+                                <label for="exam-fechaLimite" class="block font-bold text-gray-700 mb-2">Fecha Límite</label>
+                                <input type="date" id="exam-fechaLimite" name="fechaLimite" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" required>
                             </div>
                              <div>
-                                <label for="exam-tiempoLimite" class="block font-medium mb-2">Tiempo Límite (minutos)</label>
-                                <input type="number" id="exam-tiempoLimite" name="tiempoLimite" class="w-full p-2 border rounded" min="1">
+                                <label for="exam-tiempoLimite" class="block font-bold text-gray-700 mb-2">Tiempo Límite (minutos)</label>
+                                <input type="number" id="exam-tiempoLimite" name="tiempoLimite" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" min="1">
                             </div>
                         </div>
 
-                        <!-- Contenedor para Preguntas Dinámicas -->
-                        <div id="questions-container" class="space-y-6">
+                        <div id="questions-container" class="space-y-2">
                             <!-- Las preguntas se añadirán aquí dinámicamente -->
                         </div>
 
-                        <!-- Acciones -->
-                        <div class="flex items-center justify-between mt-8">
-                            <button type="button" id="add-question-btn" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg">Añadir Pregunta</button>
-                            <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg">Guardar Examen</button>
+                        <div class="flex flex-col sm:flex-row items-center justify-between mt-12 gap-4">
+                            <button type="button" id="add-question-btn" class="w-full sm:w-auto bg-green-500 text-white font-bold py-3 px-6 rounded-xl shadow hover:shadow-lg transition-all">Añadir Pregunta</button>
+                            <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white font-bold py-4 px-10 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">Guardar Examen</button>
                         </div>
                     </form>
                 </div>
             </section>
-        </main>
-    </div>
+        </div>
+    </main>
 
-    <!-- Modal de Calificación -->
-    <div id="grade-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-4">Calificar Entrega</h2>
-            <p><strong>Alumno:</strong> <span id="student-name-modal"></span></p>
-            <p class="mb-4"><strong>Archivo:</strong> <a id="file-link-modal" href="#" target="_blank" class="text-blue-500 hover:underline">Ver Entrega</a></p>
-
-            <div class="mb-4">
-                <label for="calificacion" class="block font-medium mb-2">Calificación</label>
-                <input type="number" id="calificacion" class="w-full p-2 border rounded">
+    <!-- Lightbox Modal -->
+    <div id="image-lightbox-modal" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center hidden z-[70] backdrop-blur-md">
+        <div class="bg-white p-6 rounded-3xl shadow-2xl w-full max-w-4xl mx-4 relative">
+            <div class="flex justify-between items-center border-b pb-4 mb-6">
+                <h2 id="lightbox-title" class="text-xl font-bold text-gray-800">Vista Previa</h2>
+                <button id="close-lightbox-btn" class="text-gray-400 hover:text-gray-800 transition-colors">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
-
-            <div class="mb-4">
-                <label for="estado" class="block font-medium mb-2">Estado</label>
-                <select id="estado" class="w-full p-2 border rounded">
-                    <option value="Revisada">Revisada</option>
-                    <option value="Rechazada">Rechazada</option>
-                </select>
-            </div>
-
-            <div class="mb-6">
-                <label for="comentario" class="block font-medium mb-2">Comentario (Opcional)</label>
-                <textarea id="comentario" rows="3" class="w-full p-2 border rounded"></textarea>
-            </div>
-
-            <div class="flex justify-end space-x-4">
-                <button id="cancel-grade-btn" class="px-6 py-2 bg-gray-300 rounded-lg">Cancelar</button>
-                <button id="save-grade-btn" class="px-6 py-2 bg-blue-600 text-white rounded-lg">Guardar</button>
+            <div class="flex justify-center bg-gray-50 rounded-2xl overflow-hidden">
+                <img id="lightbox-image" src="" alt="Vista previa" class="max-w-full max-h-[70vh] object-contain">
             </div>
         </div>
     </div>
 
+    <!-- Modal de Calificación -->
+    <div id="grade-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[60] backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md mx-4 animate-fade-in-up">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Calificar Entrega</h2>
+
+            <div class="space-y-4 mb-8">
+                <div class="flex justify-between">
+                    <span class="text-gray-500 font-medium">Alumno:</span>
+                    <span id="student-name-modal" class="font-bold text-gray-800"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500 font-medium">Archivo:</span>
+                    <a id="file-link-modal" href="#" target="_blank" class="text-blue-600 font-bold hover:underline">Ver Entrega</a>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <label for="calificacion" class="block font-bold text-gray-700 mb-2">Calificación (0-100)</label>
+                    <input type="number" id="calificacion" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
+                </div>
+
+                <div>
+                    <label for="estado" class="block font-bold text-gray-700 mb-2">Estado</label>
+                    <select id="estado" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
+                        <option value="Revisada">Revisada</option>
+                        <option value="Rechazada">Rechazada</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="comentario" class="block font-bold text-gray-700 mb-2">Comentario (Opcional)</label>
+                    <textarea id="comentario" rows="3" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" placeholder="Añade una retroalimentación..."></textarea>
+                </div>
+            </div>
+
+            <div class="flex space-x-4 mt-10">
+                <button id="cancel-grade-btn" class="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cancelar</button>
+                <button id="save-grade-btn" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-900 text-white py-12 mt-auto">
+        <div class="container mx-auto px-5 text-center">
+            <p class="text-lg font-medium mb-6">
+                &copy; <span id="current-year"></span> Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
+            </p>
+            <div class="flex justify-center space-x-8">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Privacidad</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Términos</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Soporte</a>
+                <button id="pwa-install-button-footer" class="text-gray-400 hover:text-white transition-colors duration-200 hidden">Instalar App</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de Instrucciones iOS -->
+    <div id="ios-install-modal" class="fixed inset-0 z-[70] flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-sm mx-4 rounded-3xl shadow-2xl overflow-hidden p-6 text-center">
+            <div class="flex justify-center mb-4">
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                </div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Instalar en iOS</h3>
+            <p class="text-gray-600 mb-6 text-sm">Para instalar esta aplicación en tu iPhone o iPad:</p>
+            <div class="space-y-4 text-left mb-6">
+                <div class="flex items-center space-x-3">
+                    <span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                    <span class="text-sm">Pulsa el botón "Compartir" en Safari.</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                    <span class="text-sm">Baja y selecciona "Añadir a la pantalla de inicio".</span>
+                </div>
+            </div>
+            <button id="close-ios-modal" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors">Entendido</button>
+        </div>
+    </div>
+
+    <script src="js/ui-common.js"></script>
+    <script src="js/data.js"></script>
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/teacher.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.setupCommonUI) window.setupCommonUI();
+            if (window.renderCommonNav) window.renderCommonNav();
+
+            // Re-style dynamic buttons from teacher.js logic
+            const tabs = [document.getElementById('nav-dashboard'), document.getElementById('nav-crear'), document.getElementById('nav-crear-examen')];
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => {
+                        t.classList.remove('bg-blue-600', 'text-white');
+                        t.classList.add('bg-white', 'text-gray-700');
+                    });
+                    tab.classList.remove('bg-white', 'text-gray-700');
+                    tab.classList.add('bg-blue-600', 'text-white');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
