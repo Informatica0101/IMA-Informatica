@@ -416,3 +416,10 @@ OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
 - teacher-dashboard.html: Línea 122. Se ajustó la tabla a w-auto para compactar las columnas.
 - js/teacher.js: Se redujo el padding de celdas (th/td) a p-1 y se añadió whitespace-nowrap en todas las funciones de renderizado (renderGrados, renderSecciones, renderAsignaturas, renderAlumnos, renderExamenesGestion, renderDetalles).
 - js/teacher.js: Se ajustaron los tamaños de botones y etiquetas dentro de las tablas a text-xs o text-[10px] para mayor compacidad.
+
+24/01/2026
+- Archivo: js/teacher.js
+  - Refactorización de renderAlumnos para priorizar las columnas "Nombre del Alumno" y "Estado de Actividad" según Tarea 4.
+  - Refactorización de renderDetalles para mostrar exclusivamente las 5 columnas solicitadas en Tarea 3 (Actividad, Fecha, Archivo, Calificación, Botón de calificar).
+  - Integración del estado de actividad (badge) dentro de la columna "Actividad" en la vista de detalles para mantener el contexto visual solicitado sin añadir columnas extra.
+  - Verificación de la jerarquía de navegación (Grados > Secciones > Asignaturas > Alumnos) y el funcionamiento del stack de navegación.

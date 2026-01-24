@@ -147,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (current.level === 'Secciones') title = `Secciones - ${current.data.grado}`;
         else if (current.level === 'Asignaturas') title = `Asignaturas - ${current.data.grado} ${current.data.seccion}`;
         else if (current.level === 'Alumnos') title = `Alumnos - ${current.data.asignatura}`;
+        else if (current.level === 'EntregasExamen') title = `Entregas de Exámenes - ${current.data.asignatura}`;
         else if (current.level === 'Exámenes') title = `Exámenes - ${current.data.asignatura}`;
         else if (current.level === 'Detalles') title = `Actividades - ${current.data.alumnoNombre}`;
 
@@ -170,9 +171,54 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'Secciones': renderSecciones(current.data.grado, searchTerm); break;
             case 'Asignaturas': renderAsignaturas(current.data.grado, current.data.seccion, searchTerm); break;
             case 'Alumnos': renderAlumnos(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
+            case 'EntregasExamen': renderEntregasExamen(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
             case 'Exámenes': renderExamenesGestion(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
             case 'Detalles': renderDetalles(current.data.alumnoNombre, current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
         }
+    }
+
+    function renderEntregasExamen(grado, seccion, asignatura, search) {
+        const filtered = allActivityRaw.filter(i =>
+            i.tipo === 'Examen' &&
+            i.alumnoNombre &&
+            i.grado === grado &&
+            i.seccion === seccion &&
+            i.asignatura === asignatura &&
+            (i.alumnoNombre.toLowerCase().includes(search) || i.titulo.toLowerCase().includes(search))
+        );
+
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Alumno</th>
+                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Examen</th>
+                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Fecha</th>
+                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Calificación</th>
+                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Acción</th>
+                <th class="p-1 text-center font-bold text-indigo-600 cursor-pointer hover:underline whitespace-nowrap view-alumnos-tab"
+                    data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asignatura}">
+                    Lista Alumnos
+                </th>
+            </tr>`;
+
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = '<tr><td colspan="5" class="text-center p-2 text-gray-500">No hay entregas de exámenes.</td></tr>';
+            return;
+        }
+
+        submissionsTableBody.innerHTML = filtered.map((item, idx) => `
+            <tr class="border-b hover:bg-gray-50 transition-colors">
+                <td class="p-1 font-semibold text-gray-800 whitespace-nowrap text-sm">${item.alumnoNombre}</td>
+                <td class="p-1 whitespace-nowrap text-sm">${item.titulo}</td>
+                <td class="p-1 text-[10px] text-gray-600 whitespace-nowrap">${item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'}</td>
+                <td class="p-1 font-bold text-gray-700 whitespace-nowrap text-sm">${item.calificacion || '-'}</td>
+                <td class="p-1 whitespace-nowrap">
+                    <button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-exam-btn" data-idx="${idx}">Calificar Examen</button>
+                </td>
+            </tr>
+        `).join('');
+
+        // Almacenar items filtrados para recuperación por índice
+        submissionsTableBody.dataset.currentItems = JSON.stringify(filtered);
     }
 
     function renderGrados(search) {
@@ -182,19 +228,17 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardTableHead.innerHTML = `
             <tr class="bg-gray-50 border-b border-gray-100">
                 <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Grado</th>
-                <th class="p-1 text-right font-bold text-gray-600 whitespace-nowrap">Acción</th>
             </tr>`;
 
         if (filtered.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-2 text-gray-500">No hay grados encontrados.</td></tr>';
+            submissionsTableBody.innerHTML = '<tr><td class="text-center p-2 text-gray-500">No hay grados encontrados.</td></tr>';
             return;
         }
 
         submissionsTableBody.innerHTML = filtered.map(grado => `
             <tr class="border-b hover:bg-gray-50 transition-colors">
-                <td class="p-1 font-semibold text-gray-800 whitespace-nowrap">${grado}</td>
-                <td class="p-1 text-right whitespace-nowrap">
-                    <button class="bg-blue-600 text-white px-3 py-1 rounded-xl text-xs font-bold nav-btn" data-grado="${grado}">Ver Secciones</button>
+                <td class="p-1 font-semibold text-blue-700 hover:underline whitespace-nowrap cursor-pointer nav-btn" data-grado="${grado}">
+                    ${grado}
                 </td>
             </tr>
         `).join('');
@@ -207,14 +251,12 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardTableHead.innerHTML = `
             <tr class="bg-gray-50 border-b border-gray-100">
                 <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Sección</th>
-                <th class="p-1 text-right font-bold text-gray-600 whitespace-nowrap">Acción</th>
             </tr>`;
 
         submissionsTableBody.innerHTML = filtered.map(seccion => `
             <tr class="border-b hover:bg-gray-50 transition-colors">
-                <td class="p-1 font-semibold text-gray-800 whitespace-nowrap">${seccion}</td>
-                <td class="p-1 text-right whitespace-nowrap">
-                    <button class="bg-blue-600 text-white px-3 py-1 rounded-xl text-xs font-bold nav-btn" data-grado="${grado}" data-seccion="${seccion}">Ver Asignaturas</button>
+                <td class="p-1 font-semibold text-blue-700 hover:underline whitespace-nowrap cursor-pointer nav-btn" data-grado="${grado}" data-seccion="${seccion}">
+                    ${seccion}
                 </td>
             </tr>
         `).join('');
@@ -227,15 +269,12 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardTableHead.innerHTML = `
             <tr class="bg-gray-50 border-b border-gray-100">
                 <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Asignatura</th>
-                <th class="p-1 text-right font-bold text-gray-600 whitespace-nowrap">Acción</th>
             </tr>`;
 
         submissionsTableBody.innerHTML = filtered.map(asig => `
             <tr class="border-b hover:bg-gray-50 transition-colors">
-                <td class="p-1 font-semibold text-gray-800 whitespace-nowrap">${asig}</td>
-                <td class="p-1 text-right space-x-2 whitespace-nowrap">
-                    <button class="bg-blue-600 text-white px-3 py-1 rounded-xl text-xs font-bold nav-btn" data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asig}">Ver Alumnos</button>
-                    <button class="bg-indigo-600 text-white px-3 py-1 rounded-xl text-xs font-bold manage-exams-btn" data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asig}">Exámenes</button>
+                <td class="p-1 font-semibold text-blue-700 hover:underline whitespace-nowrap cursor-pointer nav-btn" data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asig}">
+                    ${asig}
                 </td>
             </tr>
         `).join('');
@@ -287,6 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sortIconName = studentSort.field === 'nombre' ? (studentSort.direction === 'asc' ? ' ↑' : ' ↓') : '';
         const sortIconStatus = studentSort.field === 'estado' ? (studentSort.direction === 'asc' ? ' ↑' : ' ↓') : '';
 
+        // TAREA 4: Tabla de alumnos con columnas obligatorias
         dashboardTableHead.innerHTML = `
             <tr class="bg-gray-50 border-b border-gray-100">
                 <th class="p-1 text-left font-bold text-gray-600 cursor-pointer sort-student select-none whitespace-nowrap" data-field="nombre">
@@ -295,29 +335,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 <th class="p-1 text-left font-bold text-gray-600 cursor-pointer sort-student select-none whitespace-nowrap" data-field="estado">
                     Estado de Actividad${sortIconStatus}
                 </th>
+                <!-- Tabs de gestión adicionales -->
+                <th class="p-1 text-center font-bold text-indigo-600 cursor-pointer hover:underline whitespace-nowrap view-exam-submissions-tab"
+                    data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asignatura}">
+                    Entregas Examen
+                </th>
+                <th class="p-1 text-center font-bold text-indigo-600 cursor-pointer hover:underline whitespace-nowrap view-exam-manage-tab"
+                    data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asignatura}">
+                    Gestión Exámenes
+                </th>
             </tr>`;
 
         if (filtered.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-2 text-gray-500">No hay alumnos encontrados.</td></tr>';
+            submissionsTableBody.innerHTML = '<tr><td colspan="4" class="text-center p-2 text-gray-500">No hay alumnos encontrados.</td></tr>';
             return;
         }
 
         submissionsTableBody.innerHTML = filtered.map(a => `
             <tr class="border-b hover:bg-gray-50 transition-colors">
-                <td class="p-1 whitespace-nowrap">
-                    <button class="font-semibold text-blue-700 hover:underline nav-btn text-left text-sm"
-                            data-alumno-nombre="${a.nombre}"
-                            data-grado="${grado}"
-                            data-seccion="${seccion}"
-                            data-asignatura="${asignatura}">
-                        ${a.nombre}
-                    </button>
+                <td class="p-1 whitespace-nowrap font-semibold text-blue-700 hover:underline text-sm cursor-pointer nav-btn"
+                    data-alumno-nombre="${a.nombre}"
+                    data-grado="${grado}"
+                    data-seccion="${seccion}"
+                    data-asignatura="${asignatura}">
+                    ${a.nombre}
                 </td>
                 <td class="p-1 whitespace-nowrap">
                     <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${a.pendientes > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}">
                         ${a.pendientes > 0 ? `${a.pendientes} por calificar` : 'Al día'}
                     </span>
                 </td>
+                <td colspan="2"></td>
             </tr>
         `).join('');
     }
@@ -378,14 +426,14 @@ document.addEventListener('DOMContentLoaded', () => {
             i.titulo.toLowerCase().includes(search)
         );
 
+        // TAREA 3: Vista de detalle con columnas específicas
         dashboardTableHead.innerHTML = `
             <tr class="bg-gray-50 border-b border-gray-100">
                 <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Actividad</th>
-                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Estado</th>
                 <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Fecha</th>
                 <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Archivo</th>
                 <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Calificación</th>
-                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Acción</th>
+                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Botón de calificar</th>
             </tr>`;
 
         submissionsTableBody.innerHTML = filtered.map(item => {
@@ -403,7 +451,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Lógica de Estado
+            // Lógica de Estado para mostrar visualmente (aunque no tenga columna propia, se puede reflejar en el estilo o tooltip si se desea,
+            // pero el requerimiento pide columnas exactas)
             let statusText = 'Pendiente';
             let statusClass = 'bg-gray-100 text-gray-600';
 
@@ -419,29 +468,33 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             let actionHtml = '';
+            let titleHtml = `<div class="flex flex-col">
+                                <span class="text-sm font-medium">${item.titulo}</span>
+                                <span class="text-[9px] font-bold ${statusClass} px-1 rounded w-fit">${statusText}</span>
+                             </div>`;
+
             if (item.tipo === 'Tarea') {
-                actionHtml = `<button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
+                actionHtml = `<button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-task-btn" data-idx="${idx}">Calificar</button>`;
             } else if (item.tipo === 'Examen') {
                 actionHtml = `
                     <div class="flex flex-col space-y-0.5">
-                        <button class="bg-indigo-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold view-results-btn" data-entrega-id="${item.entregaId}">Resultados</button>
-                        <button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-exam-btn" data-item='${JSON.stringify(item)}'>Calificar</button>
+                        <button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-exam-btn" data-idx="${idx}">Calificar</button>
                         ${item.estado === 'Bloqueado' ? `<button class="bg-yellow-500 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>` : ''}
+                        <button class="font-medium text-blue-700 hover:underline text-[9px] view-results-btn text-left" data-entrega-id="${item.entregaId}">Ver Resultados</button>
                     </div>`;
             }
 
             return `
                 <tr class="border-b hover:bg-gray-50 transition-colors">
-                    <td class="p-1 font-medium text-gray-800 whitespace-nowrap text-sm">${item.titulo}</td>
-                    <td class="p-1 whitespace-nowrap">
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusClass}">${statusText}</span>
-                    </td>
+                    <td class="p-1 whitespace-nowrap">${titleHtml}</td>
                     <td class="p-1 text-[10px] text-gray-600 whitespace-nowrap">${item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'}</td>
                     <td class="p-1 whitespace-nowrap text-sm">${fileLinkHtml}</td>
                     <td class="p-1 font-bold text-gray-700 whitespace-nowrap text-sm">${item.calificacion || '-'}</td>
                     <td class="p-1 whitespace-nowrap">${actionHtml}</td>
                 </tr>`;
         }).join('');
+
+        submissionsTableBody.dataset.currentItems = JSON.stringify(filtered);
     }
 
     if (studentSearchInput) {
@@ -455,6 +508,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dashboardTableHead) {
         dashboardTableHead.addEventListener('click', (e) => {
             const sortBtn = e.target.closest('.sort-student');
+            const examTab = e.target.closest('.view-exam-submissions-tab');
+
             if (sortBtn) {
                 const field = sortBtn.dataset.field;
                 if (studentSort.field === field) {
@@ -464,6 +519,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     studentSort.direction = 'asc';
                 }
                 renderCurrentLevel();
+            } else if (examTab) {
+                const ds = examTab.dataset;
+                pushNav('EntregasExamen', { grado: ds.grado, seccion: ds.seccion, asignatura: ds.asignatura });
+            } else if (e.target.closest('.view-exam-manage-tab')) {
+                const ds = e.target.closest('.view-exam-manage-tab').dataset;
+                pushNav('Exámenes', { grado: ds.grado, seccion: ds.seccion, asignatura: ds.asignatura });
+            } else if (e.target.closest('.view-alumnos-tab')) {
+                const ds = e.target.closest('.view-alumnos-tab').dataset;
+                pushNav('Alumnos', { grado: ds.grado, seccion: ds.seccion, asignatura: ds.asignatura });
             }
         });
     }
@@ -494,12 +558,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 openLightbox(target.dataset.fileId, target.dataset.title);
             }
             if (target.classList.contains('grade-task-btn')) {
+                const idx = target.dataset.idx;
+                const items = JSON.parse(submissionsTableBody.dataset.currentItems || '[]');
                 if (saveGradeBtn) saveGradeBtn.dataset.type = 'Tarea';
-                openGradeModal(JSON.parse(target.dataset.item));
+                openGradeModal(items[idx]);
             }
             if (target.classList.contains('grade-exam-btn')) {
+                const idx = target.dataset.idx;
+                const items = JSON.parse(submissionsTableBody.dataset.currentItems || '[]');
                 if (saveGradeBtn) saveGradeBtn.dataset.type = 'Examen';
-                openGradeModal(JSON.parse(target.dataset.item));
+                openGradeModal(items[idx]);
             }
             if (target.classList.contains('view-results-btn')) {
                 window.location.href = `results.html?entregaExamenId=${target.dataset.entregaId}`;

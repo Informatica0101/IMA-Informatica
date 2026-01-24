@@ -1163,3 +1163,15 @@ AUDITORÍA DE OPTIMIZACIÓN VISUAL DASHBOARD DOCENTE - 24/01/2026
 - Archivo: js/teacher.js
   - Funciones de renderizado: Usan p-3, p-2 y p-1.5. Se unificará a p-1 o p-1.5 para mayor compacidad.
   - Tabla: En teacher-dashboard.html, la tabla tiene w-full min-w-[800px]. Se evaluará quitar min-w si causa demasiada separación en pantallas grandes.
+
+AUDITORÍA DE NAVEGACIÓN Y TABLAS (TAREAS 2-6) - 24/01/2026
+-------------------------------------------------------------------
+- Archivo: js/teacher.js
+  - renderAlumnos: Actualmente muestra 4 columnas (Nombre, Estado, Entregas Examen, Gestión Exámenes). Tarea 4 especifica 2 columnas obligatorias. Se evaluará simplificar para cumplir estrictamente.
+  - renderAlumnos: El ordenamiento (sort-student) ya está implementado en ambas columnas obligatorias.
+  - renderDetalles: Actualmente muestra 6 columnas (Actividad, Estado, Fecha, Archivo, Calificación, Acción). Tarea 3 especifica 5 columnas: Actividad, Fecha, Archivo, Calificación, Botón de calificar. Se debe eliminar la columna "Estado" (integrando su información en otra parte si es necesario) y renombrar "Acción".
+  - navStack: El flujo Grados -> Sección -> Asignatura -> Alumno -> Detalles se cumple correctamente.
+  - search/filters: El buscador global y el filtro de pendientes operan sin recargar la página.
+
+- Archivo: teacher-dashboard.html
+  - La estructura soporta el renderizado dinámico de encabezados y el botón "Regresar" posicionado según optimización visual previa.

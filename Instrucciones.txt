@@ -71,10 +71,10 @@ FLUJO PRINCIPAL DE TRABAJO
    - Confirmar que no existen regresiones.
 
 9. REVISIÓN FINAL DE CÓDIGO
-   - Revisar nuevamente el archivo completo modificado:
-     - Línea por línea
-     - Función por función
-   - Validar coherencia, legibilidad y cumplimiento de reglas.
+   - Revisión completa nuevamente.
+   - Línea por línea.
+   - Función por función.
+   - Evaluar consistencia, claridad y impacto.
 
 10. REGISTRO EN CHANGESLOGS.TXT
     - Registrar TODOS los cambios realizados.
@@ -87,7 +87,6 @@ FLUJO PRINCIPAL DE TRABAJO
 11. ACTUALIZACIÓN DE INSTRUCCIONES.TXT
     - Mover la tarea ejecutada a:
       -> "TAREAS PENDIENTES DE REVISIÓN"
-tarea 28: Optimización visual del Dashboard del Profesor (Reducir márgenes, ajustar columnas, reposicionar buscador y botón regresar). (COMPLETADA)
     - NO eliminar tareas sin aprobación del PM.
 
 12. COMMIT
@@ -207,9 +206,9 @@ tarea 24: Reestructurar navegación del dashboard del profesor (Grados -> Secci�
 tarea 25: Implementar vista de detalle del alumno con estados Completada/Pendiente/Por calificar. (COMPLETADA)
 tarea 26: Implementar tabla de alumnos resumida con reordenamiento asc/desc. (COMPLETADA)
 tarea 27: Implementar filtros avanzados en tabla de alumnos y conservar búsqueda global. (COMPLETADA)
+tarea 28: Optimización visual del Dashboard del Profesor (Reducir márgenes, ajustar columnas, reposicionar buscador y botón regresar). (COMPLETADA)
 
 TAREAS PENDIENTES DE REVISIÓN
-tarea 28: Optimización visual del Dashboard del Profesor (Reducir márgenes, ajustar columnas, reposicionar buscador y botón regresar). (COMPLETADA)
 ________________________________________________________________________________________________
 tarea 9: Corregir lógica de renderizado de preguntas Verdadero/Falso y Término Pareado, y habilitar visualización detallada de resultados. (COMPLETADA)
 tarea 11: Actualizar URLs de servicios, implementar ocultación de resultados de examen hasta revisión docente y estandarizar lógica de feedback en el dashboard del estudiante. (COMPLETADA)
@@ -225,6 +224,8 @@ tarea 20: Implementar navegación jerárquica y filtrado avanzado en el Dashboar
 tarea 21: Optimizar accesibilidad móvil asegurando un área de toque mínima de 44px para todos los elementos interactivos. (COMPLETADA)
 tarea 22: Corregir normalización de metadatos (grado vs gradoAsignado) en el dashboard del profesor para asegurar visibilidad de exámenes sin entregas en la jerarquía. (COMPLETADA)
 tarea 23: Implementar limpieza automática del buscador al cambiar de nivel en la navegación jerárquica del dashboard docente. (COMPLETADA)
+tarea 29: Navegación del Dashboard del Profesor sin botones (clic en celdas). (COMPLETADA)
+tarea 30: Implementar pestaña de "Exámenes" en el encabezado para ver entregas de exámenes por alumno con botón de calificar. (COMPLETADA)
 
 TAREAS PENDIENTES
 ________________________________________________________________________________________________
