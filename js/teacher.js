@@ -143,6 +143,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderCurrentLevel() {
         const current = navStack[navStack.length - 1];
+
+        // Limpiar scroll horizontal clean si no estamos en Detalles
+        const tableContainer = document.querySelector('.table-container');
+        if (tableContainer && current.level !== 'Detalles') {
+            tableContainer.classList.remove('scroll-horizontal-clean');
+        }
+
         let title = current.level;
         if (current.level === 'Secciones') title = `Secciones - ${current.data.grado}`;
         else if (current.level === 'Asignaturas') title = `Asignaturas - ${current.data.grado} ${current.data.seccion}`;
@@ -191,10 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         submissionsTableBody.innerHTML = filtered.map(grado => `
-            <tr class="border-b hover:bg-gray-50 transition-colors">
-                <td class="p-1 font-semibold text-gray-800 whitespace-nowrap">${grado}</td>
+            <tr class="border-b hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-grado="${grado}">
+                <td class="p-1 font-semibold text-gray-800 whitespace-nowrap text-custom-plus">${grado}</td>
                 <td class="p-1 text-right whitespace-nowrap">
-                    <button class="bg-blue-600 text-white px-3 py-1 rounded-xl text-xs font-bold nav-btn" data-grado="${grado}">Ver Secciones</button>
+                    <span class="text-blue-600 font-bold text-xs">Ver Secciones &rsaquo;</span>
                 </td>
             </tr>
         `).join('');
@@ -211,10 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>`;
 
         submissionsTableBody.innerHTML = filtered.map(seccion => `
-            <tr class="border-b hover:bg-gray-50 transition-colors">
-                <td class="p-1 font-semibold text-gray-800 whitespace-nowrap">${seccion}</td>
+            <tr class="border-b hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-grado="${grado}" data-seccion="${seccion}">
+                <td class="p-1 font-semibold text-gray-800 whitespace-nowrap text-custom-plus">${seccion}</td>
                 <td class="p-1 text-right whitespace-nowrap">
-                    <button class="bg-blue-600 text-white px-3 py-1 rounded-xl text-xs font-bold nav-btn" data-grado="${grado}" data-seccion="${seccion}">Ver Asignaturas</button>
+                    <span class="text-blue-600 font-bold text-xs">Ver Asignaturas &rsaquo;</span>
                 </td>
             </tr>
         `).join('');
@@ -231,22 +238,28 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>`;
 
         submissionsTableBody.innerHTML = filtered.map(asig => `
-            <tr class="border-b hover:bg-gray-50 transition-colors">
-                <td class="p-1 font-semibold text-gray-800 whitespace-nowrap">${asig}</td>
-                <td class="p-1 text-right space-x-2 whitespace-nowrap">
-                    <button class="bg-blue-600 text-white px-3 py-1 rounded-xl text-xs font-bold nav-btn" data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asig}">Ver Alumnos</button>
-                    <button class="bg-indigo-600 text-white px-3 py-1 rounded-xl text-xs font-bold manage-exams-btn" data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asig}">Exámenes</button>
+            <tr class="border-b hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asig}">
+                <td class="p-1 font-semibold text-gray-800 whitespace-nowrap text-custom-plus">${asig}</td>
+                <td class="p-1 text-right whitespace-nowrap">
+                    <span class="text-blue-600 font-bold text-xs">Ver Alumnos &rsaquo;</span>
                 </td>
             </tr>
         `).join('');
     }
 
     function renderAlumnos(grado, seccion, asignatura, search) {
+        const current = navStack[navStack.length - 1];
+        const activeTab = current.data.tab || 'tareas';
         const showOnlyPending = onlyPendingFilter && onlyPendingFilter.checked;
 
-        // Agrupar por alumno para ver su estado general en esta asignatura
+        if (activeTab === 'examenes') {
+            renderAlumnosExamenes(grado, seccion, asignatura, search);
+            return;
+        }
+
+        // Agrupar por alumno para ver su estado general en esta asignatura (Tareas)
         const alumnosMap = {};
-        allActivityRaw.filter(i => i.grado === grado && i.seccion === seccion && i.asignatura === asignatura)
+        allActivityRaw.filter(i => i.grado === grado && i.seccion === seccion && i.asignatura === asignatura && i.tipo === 'Tarea')
             .forEach(item => {
                 if (!item.alumnoNombre) return;
                 if (!alumnosMap[item.alumnoNombre]) {
@@ -293,30 +306,83 @@ document.addEventListener('DOMContentLoaded', () => {
                     Nombre del Alumno${sortIconName}
                 </th>
                 <th class="p-1 text-left font-bold text-gray-600 cursor-pointer sort-student select-none whitespace-nowrap" data-field="estado">
-                    Estado de Actividad${sortIconStatus}
+                    Estado${sortIconStatus}
+                </th>
+                <th class="p-1 text-right whitespace-nowrap">
+                    <div class="inline-flex rounded-lg border border-gray-200 p-0.5 bg-gray-50">
+                        <button class="px-2 py-1 rounded-md text-[10px] font-bold transition-all ${activeTab === 'tareas' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'} alumno-tab-btn" data-tab="tareas">Tareas</button>
+                        <button class="px-2 py-1 rounded-md text-[10px] font-bold transition-all ${activeTab === 'examenes' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'} alumno-tab-btn" data-tab="examenes">Exámenes</button>
+                    </div>
                 </th>
             </tr>`;
 
         if (filtered.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-2 text-gray-500">No hay alumnos encontrados.</td></tr>';
+            submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-2 text-gray-500">No hay alumnos con tareas.</td></tr>';
             return;
         }
 
         submissionsTableBody.innerHTML = filtered.map(a => `
-            <tr class="border-b hover:bg-gray-50 transition-colors">
-                <td class="p-1 whitespace-nowrap">
-                    <button class="font-semibold text-blue-700 hover:underline nav-btn text-left text-sm"
-                            data-alumno-nombre="${a.nombre}"
-                            data-grado="${grado}"
-                            data-seccion="${seccion}"
-                            data-asignatura="${asignatura}">
-                        ${a.nombre}
-                    </button>
-                </td>
+            <tr class="border-b hover:bg-gray-50 transition-colors cursor-pointer nav-btn"
+                data-alumno-nombre="${a.nombre}"
+                data-grado="${grado}"
+                data-seccion="${seccion}"
+                data-asignatura="${asignatura}">
+                <td class="p-1 whitespace-nowrap font-semibold text-blue-700 text-sm text-custom-plus">${a.nombre}</td>
                 <td class="p-1 whitespace-nowrap">
                     <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${a.pendientes > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}">
-                        ${a.pendientes > 0 ? `${a.pendientes} por calificar` : 'Al día'}
+                        ${a.pendientes > 0 ? `${a.pendientes} pendientes` : 'Al día'}
                     </span>
+                </td>
+                <td class="p-1 text-right whitespace-nowrap">
+                     <span class="text-blue-600 font-bold text-xs">Ver detalles &rsaquo;</span>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function renderAlumnosExamenes(grado, seccion, asignatura, search) {
+        const showOnlyPending = onlyPendingFilter && onlyPendingFilter.checked;
+
+        // Filtrar solo entregas de exámenes
+        let entregasExamen = allActivityRaw.filter(i =>
+            i.tipo === 'Examen' &&
+            i.alumnoNombre &&
+            i.grado === grado &&
+            i.seccion === seccion &&
+            i.asignatura === asignatura
+        );
+
+        if (showOnlyPending) {
+            entregasExamen = entregasExamen.filter(i => i.estado === 'Pendiente' || !i.estado || i.estado === 'Por calificar');
+        }
+
+        const filtered = entregasExamen.filter(i => i.alumnoNombre.toLowerCase().includes(search));
+
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Nombre del Alumno</th>
+                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Examen</th>
+                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Calificación</th>
+                <th class="p-1 text-right whitespace-nowrap">
+                    <div class="inline-flex rounded-lg border border-gray-200 p-0.5 bg-gray-50">
+                        <button class="px-2 py-1 rounded-md text-[10px] font-bold transition-all text-gray-500 hover:text-gray-700 alumno-tab-btn" data-tab="tareas">Tareas</button>
+                        <button class="px-2 py-1 rounded-md text-[10px] font-bold transition-all bg-white shadow-sm text-blue-600 alumno-tab-btn" data-tab="examenes">Exámenes</button>
+                    </div>
+                </th>
+            </tr>`;
+
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = '<tr><td colspan="4" class="text-center p-2 text-gray-500">No hay entregas de exámenes.</td></tr>';
+            return;
+        }
+
+        submissionsTableBody.innerHTML = filtered.map(item => `
+            <tr class="border-b hover:bg-gray-50 transition-colors">
+                <td class="p-1 whitespace-nowrap font-semibold text-gray-800 text-sm text-custom-plus">${item.alumnoNombre}</td>
+                <td class="p-1 whitespace-nowrap text-sm">${item.titulo}</td>
+                <td class="p-1 whitespace-nowrap font-bold text-gray-700 text-sm">${item.calificacion || '-'}</td>
+                <td class="p-1 text-right whitespace-nowrap">
+                    <button class="bg-blue-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold grade-exam-btn" data-item='${JSON.stringify(item)}'>Calificar Examen</button>
                 </td>
             </tr>
         `).join('');
@@ -370,6 +436,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderDetalles(alumnoNombre, grado, seccion, asignatura, search) {
+        // Asegurar que el contenedor de la tabla tenga scroll horizontal limpio en esta vista
+        const tableContainer = document.querySelector('.table-container');
+        if (tableContainer) {
+            tableContainer.classList.add('scroll-horizontal-clean');
+        }
+
         const filtered = allActivityRaw.filter(i =>
             i.alumnoNombre === alumnoNombre &&
             i.grado === grado &&
@@ -422,12 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (item.tipo === 'Tarea') {
                 actionHtml = `<button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
             } else if (item.tipo === 'Examen') {
-                actionHtml = `
-                    <div class="flex flex-col space-y-0.5">
-                        <button class="bg-indigo-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold view-results-btn" data-entrega-id="${item.entregaId}">Resultados</button>
-                        <button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-exam-btn" data-item='${JSON.stringify(item)}'>Calificar</button>
-                        ${item.estado === 'Bloqueado' ? `<button class="bg-yellow-500 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>` : ''}
-                    </div>`;
+                actionHtml = `<button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-exam-btn" data-item='${JSON.stringify(item)}'>Calificar Examen</button>`;
             }
 
             return `
@@ -473,7 +540,6 @@ document.addEventListener('DOMContentLoaded', () => {
         submissionsTableBody.addEventListener('click', async (e) => {
             const target = e.target;
             const navBtn = target.closest('.nav-btn');
-            const manageExamsBtn = target.closest('.manage-exams-btn');
 
             // Navegación
             if (navBtn) {
@@ -481,11 +547,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const current = navStack[navStack.length - 1];
                 if (current.level === 'Grados') pushNav('Secciones', { grado: ds.grado });
                 else if (current.level === 'Secciones') pushNav('Asignaturas', { grado: ds.grado, seccion: ds.seccion });
-                else if (current.level === 'Asignaturas') pushNav('Alumnos', { grado: ds.grado, seccion: ds.seccion, asignatura: ds.asignatura });
+                else if (current.level === 'Asignaturas') pushNav('Alumnos', { grado: ds.grado, seccion: ds.seccion, asignatura: ds.asignatura, tab: 'tareas' });
                 else if (current.level === 'Alumnos') pushNav('Detalles', { alumnoNombre: ds.alumnoNombre, grado: ds.grado, seccion: ds.seccion, asignatura: ds.asignatura });
-            } else if (manageExamsBtn) {
-                const ds = manageExamsBtn.dataset;
-                pushNav('Exámenes', { grado: ds.grado, seccion: ds.seccion, asignatura: ds.asignatura });
+            } else if (target.closest('.alumno-tab-btn')) {
+                const tab = target.closest('.alumno-tab-btn').dataset.tab;
+                const current = navStack[navStack.length - 1];
+                current.data.tab = tab;
+                renderCurrentLevel();
             }
 
             // Acciones de Tabla

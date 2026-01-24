@@ -210,6 +210,7 @@ tarea 27: Implementar filtros avanzados en tabla de alumnos y conservar búsqued
 
 TAREAS PENDIENTES DE REVISIÓN
 tarea 28: Optimización visual del Dashboard del Profesor (Reducir márgenes, ajustar columnas, reposicionar buscador y botón regresar). (COMPLETADA)
+tarea 29: Implementación de navegación directa sin botones, pestaña de exámenes, tablas responsivas, ajuste de tipografía y optimización de footer/hero. (COMPLETADA)
 ________________________________________________________________________________________________
 tarea 9: Corregir lógica de renderizado de preguntas Verdadero/Falso y Término Pareado, y habilitar visualización detallada de resultados. (COMPLETADA)
 tarea 11: Actualizar URLs de servicios, implementar ocultación de resultados de examen hasta revisión docente y estandarizar lógica de feedback en el dashboard del estudiante. (COMPLETADA)

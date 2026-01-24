@@ -182,6 +182,19 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
+.scroll-horizontal-clean {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.scroll-horizontal-clean::-webkit-scrollbar {
+    display: none;
+}
+
+.text-custom-plus {
+    font-size: calc(100% + 1px);
+}
+
 .dashboard-card {
     background: white;
     border-radius: 1.25rem;

@@ -416,3 +416,19 @@ OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
 - teacher-dashboard.html: Línea 122. Se ajustó la tabla a w-auto para compactar las columnas.
 - js/teacher.js: Se redujo el padding de celdas (th/td) a p-1 y se añadió whitespace-nowrap en todas las funciones de renderizado (renderGrados, renderSecciones, renderAsignaturas, renderAlumnos, renderExamenesGestion, renderDetalles).
 - js/teacher.js: Se ajustaron los tamaños de botones y etiquetas dentro de las tablas a text-xs o text-[10px] para mayor compacidad.
+
+25/01/2026
+- Archivo: js/teacher.js
+  - Implementación de navegación directa sin botones: se eliminaron los botones físicos de navegación interna ("Ver Secciones", "Ver Asignaturas", etc.) y se habilitó la navegación mediante clic en la fila o celda correspondiente (clase .nav-btn en <tr>).
+  - Implementación de pestaña "Exámenes": se añadió una interfaz de pestañas (Tareas/Exámenes) en el encabezado de la tabla de alumnos. La pestaña "Exámenes" muestra una tabla con los alumnos que han entregado exámenes y un botón "Calificar Examen".
+  - Ajuste de tipografía: se aplicó la clase .text-custom-plus (+1px) a los campos de Grado, Sección, Asignatura y Nombre del Alumno.
+  - Optimización responsiva: se integró la lógica para añadir/quitar la clase .scroll-horizontal-clean al contenedor de la tabla según la vista activa (activado específicamente en Detalles).
+- Archivo: css/style.css
+  - Definición de .text-custom-plus para incremento de tamaño de fuente.
+  - Definición de .scroll-horizontal-clean para permitir scroll horizontal sin barra visible.
+- Archivos: index.html, teacher-dashboard.html, student-dashboard.html, login.html, register.html, exam.html, results.html, exam-results.html
+  - Ajuste visual del encabezado: se aumentó el tamaño de la bandera de Honduras a 120px para igualar visualmente al logo del instituto.
+  - Optimización del pie de página: se redujo el padding vertical de py-12 a py-6 para un diseño más compacto.
+  - Refuerzo de anclaje de footer: se verificó la estructura flex-col y mt-auto para eliminar franjas blancas.
+- Archivo: index.html
+  - Ajuste de Hero Section: se redujo el padding y la altura mínima de la sección de bienvenida para optimizar el espacio vertical.
