@@ -87,11 +87,6 @@ FLUJO PRINCIPAL DE TRABAJO
 11. ACTUALIZACIÓN DE INSTRUCCIONES.TXT
     - Mover la tarea ejecutada a:
       -> "TAREAS PENDIENTES DE REVISIÓN"
-- Unificación total de encabezados y reducción de márgenes en zona de entregas
-- Reducción de márgenes en tabla de entregas del profesor
-- Reducción de gaps a mínimo y corrección definitiva de posición de footer
-- Ajuste de espaciado en dashboards y corrección de franja blanca en footer
-- Estandarización visual y corrección de desbordamientos en Dashboards y Exámenes
     - NO eliminar tareas sin aprobación del PM.
 
 12. COMMIT
@@ -219,3 +214,4 @@ tarea 15: Corregir fuga de aislamiento entre profesores y visualización de meta
 tarea 16: Actualizar URLs de producción para TASK y EXAM (...2Ss y ...8Kr). (COMPLETADA)
 tarea 17: Implementar botón de instalación de PWA en menú móvil y pie de página y mejorar visibilidad. (COMPLETADA)
 tarea 18: Implementar modal de login y sección de acceso (Portal/Iniciar Sesión) en index.html sin afectar secciones existentes. (COMPLETADA)
+tarea 19: Unificación total de encabezados y pies de página, reducción de márgenes y gaps, y estandarización visual en dashboards y exámenes. (COMPLETADA)

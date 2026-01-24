@@ -1076,3 +1076,19 @@ AUDITORÍA DE VISIBILIDAD PWA - 23/01/2026
 - Archivo: js/index-ui.js
   - Hallazgo: El botón de instalación de PWA solo se mostraba si el evento 'beforeinstallprompt' se disparaba o si era Safari en iOS. Algunos navegadores móviles ocultan el evento o requieren interacción previa.
   - Mejora: Se implementó una detección de dispositivos móviles más amplia (incluyendo Android, HarmonyOS y genéricos). Los botones ahora se muestran permanentemente en dispositivos móviles si la app no está instalada, proporcionando instrucciones manuales como fallback si el evento automático no está disponible.
+
+AUDITORÍA DE ESTANDARIZACIÓN VISUAL Y MÁRGENES - 24/01/2026
+-------------------------------------------------------------------
+- Archivo: student-dashboard.html, teacher-dashboard.html, exam.html, exam-results.html, results.html, login.html, register.html
+  - Hallazgo: Inconsistencia en encabezados y pies de página. Páginas como login.html y register.html carecen de ellos. Páginas de exámenes tienen versiones simplificadas.
+  - Hallazgo: Algunos archivos no aplican 'min-h-screen flex flex-col' en body, lo que puede causar que el footer no se posicione correctamente.
+
+- Archivo: js/student.js
+  - Hallazgo: La función 'renderActivities' usa 'p-6' para las tarjetas de tareas, lo cual genera demasiado espacio desperdiciado en dispositivos móviles. Se recomienda 'p-4' o 'p-3'.
+
+- Archivo: js/teacher.js
+  - Hallazgo: La función 'renderActivity' usa 'p-2' para las celdas de la tabla. Se recomienda reducir a 'p-1' o 'p-1.5' para maximizar la información visible sin scroll excesivo.
+
+- Archivo: css/style.css
+  - Hallazgo: La clase '.dashboard-card' tiene un padding de '0.75rem' (p-3), pero no se usa consistentemente en todas las tarjetas generadas por JS.
+  - Hallazgo: Es necesario asegurar que el footer siempre tenga 'mt-auto' y que no haya márgenes parásitos en 'html' o 'body'.

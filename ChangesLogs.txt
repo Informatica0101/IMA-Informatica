@@ -361,3 +361,20 @@ Archivo: js/teacher.js
 23/01/2026
 - Archivo: js/index-ui.js
   - Se mejoró la visibilidad del botón de instalación de PWA. Ahora se detecta cualquier dispositivo móvil y se muestra el botón permanentemente si la app no está instalada, asegurando que los usuarios de Android, iOS y HarmonyOS siempre tengan acceso a la opción de instalación.
+
+24/01/2026:
+- Archivo: login.html, register.html, exam.html, exam-results.html, results.html
+  - Línea(s): Todas
+  - Cambio: Unificación total de encabezados y pies de página para coincidir con la identidad visual de la página principal. Implementación de diseño responsivo y anclaje de footer.
+- Archivo: student-dashboard.html, teacher-dashboard.html
+  - Línea(s): 90-95
+  - Cambio: Ajuste de márgenes superiores de main para coherencia responsiva (mt-[5rem] md:mt-[6rem]).
+- Archivo: js/student.js
+  - Línea(s): 110-120
+  - Cambio: Reducción de padding en tarjetas de tareas (de p-6 a .dashboard-card con 1rem).
+- Archivo: js/teacher.js, teacher-dashboard.html
+  - Línea(s): Varias
+  - Cambio: Reducción de padding en celdas y encabezados de la tabla de entregas a p-1.5 para mayor densidad de información.
+- Archivo: css/style.css
+  - Línea(s): 184-210
+  - Cambio: Ajuste de la clase .dashboard-card para un diseño más compacto y adición de .table-compact para control de espaciado en tablas.

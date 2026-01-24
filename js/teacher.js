@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Carga de Actividad del Profesor ---
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
-        submissionsTableBody.innerHTML = '<tr><td colspan="10" class="text-center p-2">Cargando actividad...</td></tr>';
+        submissionsTableBody.innerHTML = '<tr><td colspan="10" class="text-center p-1.5">Cargando actividad...</td></tr>';
         try {
             const payload = {
                 profesorId: currentUser.userId,
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             allActivityRaw = [...submissions, ...examsWithoutSubmissions];
             applyFiltersAndSort();
         } catch (error) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="10" class="text-center p-2 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
+            submissionsTableBody.innerHTML = `<tr><td colspan="10" class="text-center p-1.5 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
         }
     }
 
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderActivity(activity) {
         if (!activity || activity.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="10" class="text-center p-2">No hay actividad que coincida.</td></tr>';
+            submissionsTableBody.innerHTML = '<tr><td colspan="10" class="text-center p-1.5">No hay actividad que coincida.</td></tr>';
             return;
         }
         submissionsTableBody.innerHTML = activity.map(item => {
@@ -206,16 +206,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return `
                 <tr class="border-b hover:bg-gray-50 transition-colors text-sm">
-                    <td class="p-2 font-medium">${item.alumnoNombre || '<em>N/A</em>'}</td>
-                    <td class="p-2 text-gray-600">${item.grado || '<em>N/A</em>'}</td>
-                    <td class="p-2 text-gray-600">${item.asignatura || '<em>N/A</em>'}</td>
-                    <td class="p-2 text-gray-600">${item.seccion || '<em>N/A</em>'}</td>
-                    <td class="p-2">${item.titulo}</td>
-                    <td class="p-2">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
-                    <td class="p-2">${fileLinkHtml}</td>
-                    <td class="p-2 font-bold">${item.calificacion || '<em>N/A</em>'}</td>
-                    <td class="p-2"><span class="px-2 py-1 rounded-full text-xs font-semibold ${item.estado === 'Revisada' || item.estado === 'Finalizado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${item.estado || '<em>Pendiente</em>'}</span></td>
-                    <td class="p-2">${actionHtml}</td>
+                    <td class="p-1.5 font-medium">${item.alumnoNombre || '<em>N/A</em>'}</td>
+                    <td class="p-1.5 text-gray-600">${item.grado || '<em>N/A</em>'}</td>
+                    <td class="p-1.5 text-gray-600">${item.asignatura || '<em>N/A</em>'}</td>
+                    <td class="p-1.5 text-gray-600">${item.seccion || '<em>N/A</em>'}</td>
+                    <td class="p-1.5">${item.titulo}</td>
+                    <td class="p-1.5">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
+                    <td class="p-1.5">${fileLinkHtml}</td>
+                    <td class="p-1.5 font-bold">${item.calificacion || '<em>N/A</em>'}</td>
+                    <td class="p-1.5"><span class="px-2 py-1 rounded-full text-xs font-semibold ${item.estado === 'Revisada' || item.estado === 'Finalizado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${item.estado || '<em>Pendiente</em>'}</span></td>
+                    <td class="p-1.5">${actionHtml}</td>
                 </tr>`;
         }).join('');
     }

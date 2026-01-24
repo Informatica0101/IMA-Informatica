@@ -110,10 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             return `
-                <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="dashboard-card">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-xl font-bold">${activity.titulo} <span class="text-sm font-normal text-gray-500">(${activity.type})</span></h3>
+                            <h3 class="text-lg font-bold">${activity.titulo} <span class="text-xs font-normal text-gray-500">(${activity.type})</span></h3>
                             <p class="text-sm text-gray-500 mb-2"><strong>Asignatura:</strong> ${activity.asignatura || 'No especificada'}</p>
                         </div>
                         <span class="text-sm font-semibold text-gray-600">${activity.fechaLimite}</span>
