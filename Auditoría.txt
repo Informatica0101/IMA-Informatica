@@ -1076,3 +1076,59 @@ AUDITORÍA DE VISIBILIDAD PWA - 23/01/2026
 - Archivo: js/index-ui.js
   - Hallazgo: El botón de instalación de PWA solo se mostraba si el evento 'beforeinstallprompt' se disparaba o si era Safari en iOS. Algunos navegadores móviles ocultan el evento o requieren interacción previa.
   - Mejora: Se implementó una detección de dispositivos móviles más amplia (incluyendo Android, HarmonyOS y genéricos). Los botones ahora se muestran permanentemente en dispositivos móviles si la app no está instalada, proporcionando instrucciones manuales como fallback si el evento automático no está disponible.
+
+AUDITORÍA DE ESTANDARIZACIÓN VISUAL Y MÁRGENES - 24/01/2026
+-------------------------------------------------------------------
+- Archivo: student-dashboard.html, teacher-dashboard.html, exam.html, exam-results.html, results.html, login.html, register.html
+  - Hallazgo: Inconsistencia en encabezados y pies de página. Páginas como login.html y register.html carecen de ellos. Páginas de exámenes tienen versiones simplificadas.
+  - Hallazgo: Algunos archivos no aplican 'min-h-screen flex flex-col' en body, lo que puede causar que el footer no se posicione correctamente.
+
+- Archivo: js/student.js
+  - Hallazgo: La función 'renderActivities' usa 'p-6' para las tarjetas de tareas, lo cual genera demasiado espacio desperdiciado en dispositivos móviles. Se recomienda 'p-4' o 'p-3'.
+
+- Archivo: js/teacher.js
+  - Hallazgo: La función 'renderActivity' usa 'p-2' para las celdas de la tabla. Se recomienda reducir a 'p-1' o 'p-1.5' para maximizar la información visible sin scroll excesivo.
+
+- Archivo: css/style.css
+  - Hallazgo: La clase '.dashboard-card' tiene un padding de '0.75rem' (p-3), pero no se usa consistentemente en todas las tarjetas generadas por JS.
+  - Hallazgo: Es necesario asegurar que el footer siempre tenga 'mt-auto' y que no haya márgenes parásitos en 'html' o 'body'.
+
+AUDITORÍA DE NAVEGACIÓN Y ACCESIBILIDAD - 24/01/2026
+-------------------------------------------------------------------
+- Archivo: teacher-dashboard.html
+  - Hallazgo: El título del dashboard es estático ("Últimas Entregas"). Se requiere un elemento dinámico para reflejar el nivel de navegación (Grado, Sección, etc.).
+  - Hallazgo: Falta un botón de "Regresar" para navegar hacia atrás en la jerarquía de datos.
+  - Hallazgo: Falta el filtro "Solo con pendientes" solicitado para la lista de alumnos.
+  - Hallazgo: Los encabezados de la tabla son fijos, pero los datos cambian drásticamente entre niveles (lista de grados vs lista de actividades de un alumno). Se requiere un renderizado de encabezados dinámico.
+
+- Archivo: js/teacher.js
+  - Hallazgo: La lógica actual es plana; procesa todas las entregas en una única tabla. Se requiere implementar un stack de navegación (navStack) para manejar los niveles: Grados > Secciones > Asignaturas > Alumnos > Detalles.
+  - Hallazgo: Las funciones de filtrado y búsqueda deben actuar sobre el nivel actual de navegación.
+
+- Archivo: General (CSS/HTML)
+  - Hallazgo: Múltiples elementos interactivos (botones pequeños en tablas, enlaces en menús) tienen un área de toque inferior a 44px, dificultando su uso en móviles. Se requiere estandarizar el tamaño mínimo.
+
+VERIFICACIÓN FINAL POST-CAMBIOS - 24/01/2026
+-------------------------------------------------------------------
+- Archivos HTML (Todos): Se verificó la presencia del encabezado y pie de página unificados. El diseño Flexbox asegura que el pie de página se mantenga al final.
+- js/teacher.js:
+  - Implementación de navStack verificada: Grados > Secciones > Asignaturas > Alumnos > Detalles.
+  - El botón "Regresar" y el título dinámico funcionan según lo esperado.
+  - Se eliminó el event listener duplicado en submissionsTableBody para evitar conflictos de lógica.
+  - Las acciones de calificación y gestión de exámenes se integraron en el listener de navegación.
+- css/style.css:
+  - Se verificó la regla de accesibilidad para objetivos de toque (min 44px).
+  - Se verificó la reducción de márgenes y paddings en tarjetas y tablas.
+- js/ui-common.js:
+  - Centralización de lógica de scroll y PWA verificada.
+- Verificación Funcional: Todas las rutas de navegación del profesor y estudiante operan correctamente. Los estados de carga (btn-loading) son consistentes.
+
+AUDITORÍA DE NORMALIZACIÓN DE METADATOS - 24/01/2026
+-------------------------------------------------------------------
+- Archivo: js/teacher.js
+- Hallazgo: Discrepancia en nombres de campos de metadatos entre entregas y definiciones de exámenes.
+  - Entregas (TASK/EXAM): usan 'grado' y 'seccion'.
+  - Exámenes (getAllExams): usan 'gradoAsignado' y 'seccionAsignada'.
+- Consecuencia: Los niveles de navegación (Grados, Secciones) no muestran datos si solo hay definiciones de exámenes sin entregas previas, ya que los filtros buscan 'grado' y 'seccion'.
+- Hallazgo: El buscador persiste entre niveles de navegación, lo que puede causar tablas vacías al navegar a un nuevo contexto.
+- Solución: Normalizar todos los objetos de actividad a un esquema común { grado, seccion, asignatura } inmediatamente después de la carga. Limpiar el buscador en pushNav/popNav.

@@ -90,14 +90,14 @@
         </div>
     </header>
 
-    <main class="mt-[6rem] pb-12 flex-grow">
+    <main class="mt-[5rem] md:mt-[6rem] pb-12 flex-grow">
         <div class="container mx-auto px-5">
             <div class="mb-8 text-center md:text-left">
                 <h1 class="text-3xl font-extrabold text-gray-800">Panel de Profesor</h1>
                 <p class="text-lg text-gray-600 font-medium">Bienvenido, <span id="teacher-name" class="text-blue-600 font-bold"></span>.</p>
             </div>
 
-            <nav class="flex flex-wrap gap-4 mb-10">
+            <nav class="flex flex-wrap gap-4 mb-6">
                 <button id="nav-dashboard" class="px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md bg-blue-600 text-white">Dashboard</button>
                 <button id="nav-crear" class="px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Tarea</button>
                 <button id="nav-crear-examen" class="px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Examen</button>
@@ -105,46 +105,30 @@
 
             <!-- Sección de Dashboard (Entregas) -->
             <section id="section-dashboard" class="animate-fade-in-up">
-                 <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
-                        Últimas Entregas
-                    </h2>
-                    <div class="w-full md:w-64 relative">
-                        <input type="text" id="student-search" placeholder="Buscar alumno..." class="w-full pl-10 pr-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all">
-                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                 <div class="flex flex-col space-y-4 mb-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <button id="back-nav-btn" class="hidden p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                            </button>
+                            <h2 id="dashboard-level-title" class="text-2xl font-bold text-gray-800">Grados</h2>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <label id="pending-filter-container" class="hidden flex items-center space-x-2 cursor-pointer bg-white px-3 py-1.5 rounded-xl border border-gray-200 shadow-sm hover:bg-gray-50 transition-all">
+                                <input type="checkbox" id="only-pending-filter" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                                <span class="text-sm font-medium text-gray-700">Solo con pendientes</span>
+                            </label>
+                            <div class="w-full md:w-64 relative">
+                                <input type="text" id="student-search" placeholder="Buscar..." class="w-full pl-10 pr-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all">
+                                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                        </div>
                     </div>
                  </div>
                 <div class="table-container">
-                     <table class="w-full min-w-[1000px]">
-                        <thead>
-                            <tr class="bg-gray-50 border-b border-gray-100">
-                                 <th class="p-2 text-left font-bold text-gray-600">
-                                     <button class="flex items-center hover:text-blue-600 transition-colors sort-btn" data-sort="alumnoNombre">
-                                         Alumno <span class="ml-1 text-xs">↕</span>
-                                     </button>
-                                 </th>
-                                 <th class="p-2 text-left font-bold text-gray-600">
-                                     <button class="flex items-center hover:text-blue-600 transition-colors sort-btn" data-sort="grado">
-                                         Grado <span class="ml-1 text-xs">↕</span>
-                                     </button>
-                                 </th>
-                                 <th class="p-2 text-left font-bold text-gray-600">
-                                    <button class="flex items-center hover:text-blue-600 transition-colors sort-btn" data-sort="asignatura">
-                                        Asignatura <span class="ml-1 text-xs">↕</span>
-                                    </button>
-                                 </th>
-                                 <th class="p-2 text-left font-bold text-gray-600">
-                                    <button class="flex items-center hover:text-blue-600 transition-colors sort-btn" data-sort="seccion">
-                                        Sección <span class="ml-1 text-xs">↕</span>
-                                    </button>
-                                 </th>
-                                 <th class="p-2 text-left font-bold text-gray-600">Actividad</th>
-                                <th class="p-2 text-left font-bold text-gray-600">Fecha</th>
-                                <th class="p-2 text-left font-bold text-gray-600">Archivo</th>
-                                <th class="p-2 text-left font-bold text-gray-600">Calificación</th>
-                                <th class="p-2 text-left font-bold text-gray-600">Estado</th>
-                                <th class="p-2 text-left font-bold text-gray-600">Acción</th>
-                            </tr>
+                     <table class="w-full min-w-[800px]">
+                        <thead id="dashboard-table-head">
+                            <!-- Los encabezados se renderizarán dinámicamente -->
                         </thead>
                         <tbody id="submissions-table-body" class="divide-y divide-gray-100">
                             <!-- Las entregas se cargarán aquí -->

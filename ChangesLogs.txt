@@ -361,3 +361,45 @@ Archivo: js/teacher.js
 23/01/2026
 - Archivo: js/index-ui.js
   - Se mejoró la visibilidad del botón de instalación de PWA. Ahora se detecta cualquier dispositivo móvil y se muestra el botón permanentemente si la app no está instalada, asegurando que los usuarios de Android, iOS y HarmonyOS siempre tengan acceso a la opción de instalación.
+
+24/01/2026:
+- Archivo: login.html, register.html, exam.html, exam-results.html, results.html
+  - Línea(s): Todas
+  - Cambio: Unificación total de encabezados y pies de página para coincidir con la identidad visual de la página principal. Implementación de diseño responsivo y anclaje de footer.
+- Archivo: student-dashboard.html, teacher-dashboard.html
+  - Línea(s): 90-95
+  - Cambio: Ajuste de márgenes superiores de main para coherencia responsiva (mt-[5rem] md:mt-[6rem]).
+- Archivo: js/student.js
+  - Línea(s): 110-120
+  - Cambio: Reducción de padding en tarjetas de tareas (de p-6 a .dashboard-card con 1rem).
+- Archivo: js/teacher.js, teacher-dashboard.html
+  - Línea(s): Varias
+  - Cambio: Reducción de padding en celdas y encabezados de la tabla de entregas a p-1.5 para mayor densidad de información.
+- Archivo: css/style.css
+  - Línea(s): 184-210
+  - Cambio: Ajuste de la clase .dashboard-card para un diseño más compacto y adición de .table-compact para control de espaciado en tablas.
+
+24/01/2026
+- Archivo: index.html, login.html, register.html, student-dashboard.html, teacher-dashboard.html, exam.html, results.html
+  - Unificación de encabezados y pies de página en toda la plataforma.
+  - Implementación de estructura Flexbox para anclaje de footer.
+- Archivo: css/style.css
+  - Implementación de regla global para objetivos de toque mínimos de 44px en elementos interactivos.
+  - Creación de clases .dashboard-card (p-4) y .table-compact para diseños más densos.
+  - Ajuste de gap-4 a gap-2/3 en contenedores de tarjetas.
+- Archivo: js/teacher.js
+  - Implementación de navegación jerárquica (navStack) con 5 niveles de profundidad.
+  - Adición de lógica para título dinámico y botón de retroceso.
+  - Integración de filtros contextuales (Búsqueda y "Solo con pendientes").
+  - Unificación de delegación de eventos en un solo listener para la tabla de entregas.
+- Archivo: js/ui-common.js
+  - Centralización de lógica de PWA, menú móvil y efectos de scroll para todas las páginas.
+- Archivo: js/student.js
+  - Actualización de renderizado de tareas para usar clases compactas (.dashboard-card).
+
+24/01/2026 (Refinamiento de Navegación)
+- Archivo: js/teacher.js
+  - Normalización de metadatos: se mapearon los campos 'gradoAsignado' y 'seccionAsignada' a 'grado' y 'seccion' en fetchTeacherActivity para garantizar que los exámenes sin entregas aparezcan en la jerarquía.
+  - Mejora de UX: se implementó la limpieza automática del valor del buscador (studentSearchInput) al realizar pushNav y popNav.
+  - Corrección de filtros: se actualizó renderExamenesGestion para utilizar los campos normalizados.
+  - Limpieza: eliminación de una llave de cierre huérfana.

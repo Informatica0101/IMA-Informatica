@@ -18,10 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const createAssignmentForm = document.getElementById('create-assignment-form');
     const createExamForm = document.getElementById('create-exam-form');
     const logoutButton = document.getElementById('logout-button');
-     const studentSearchInput = document.getElementById('student-search');
+    const studentSearchInput = document.getElementById('student-search');
+    const backNavBtn = document.getElementById('back-nav-btn');
+    const dashboardLevelTitle = document.getElementById('dashboard-level-title');
+    const pendingFilterContainer = document.getElementById('pending-filter-container');
+    const onlyPendingFilter = document.getElementById('only-pending-filter');
+    const dashboardTableHead = document.getElementById('dashboard-table-head');
 
-     let allActivityRaw = [];
-     let currentSort = { field: 'fecha', direction: 'desc' };
+    let allActivityRaw = [];
+    let currentSort = { field: 'fecha', direction: 'desc' };
+    let navStack = [{ level: 'Grados', data: null }]; // Stack de navegación
 
     const allSections = [sectionDashboard, sectionCrear, sectionCrearExamen];
     const allNavLinks = [navDashboard, navCrear, navCrearExamen];
@@ -38,7 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
         navElement.classList.remove('text-gray-700');
     }
 
-    navDashboard.addEventListener('click', () => { navigateTo(sectionDashboard, navDashboard); fetchTeacherActivity(); });
+    navDashboard.addEventListener('click', () => {
+        navigateTo(sectionDashboard, navDashboard);
+        navStack = [{ level: 'Grados', data: null }];
+        fetchTeacherActivity();
+    });
     navCrear.addEventListener('click', () => navigateTo(sectionCrear, navCrear));
     navCrearExamen.addEventListener('click', () => navigateTo(sectionCrearExamen, navCrearExamen));
     logoutButton.addEventListener('click', () => {
@@ -76,10 +86,27 @@ document.addEventListener('DOMContentLoaded', () => {
         return null; // Si no se encuentra un ID válido, devuelve null.
     }
 
+    // --- Lógica de Navegación Jerárquica ---
+    function pushNav(level, data) {
+        if (studentSearchInput) studentSearchInput.value = '';
+        navStack.push({ level, data });
+        renderCurrentLevel();
+    }
+
+    function popNav() {
+        if (navStack.length > 1) {
+            if (studentSearchInput) studentSearchInput.value = '';
+            navStack.pop();
+            renderCurrentLevel();
+        }
+    }
+
+    if (backNavBtn) backNavBtn.addEventListener('click', popNav);
+
     // --- Carga de Actividad del Profesor ---
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
-        submissionsTableBody.innerHTML = '<tr><td colspan="10" class="text-center p-2">Cargando actividad...</td></tr>';
+        submissionsTableBody.innerHTML = '<tr><td colspan="10" class="text-center p-1.5">Cargando actividad...</td></tr>';
         try {
             const payload = {
                 profesorId: currentUser.userId,
@@ -93,132 +120,380 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetchApi('EXAM', 'getAllExams', { profesorId: currentUser.userId })
             ]);
 
-            const submissions = [...(((taskSubmissions || {}).data || [])), ...(((examSubmissions || {}).data || []))];
+            const submissions = [
+                ...(((taskSubmissions || {}).data || [])).map(s => ({ ...s, tipo: 'Tarea' })),
+                ...(((examSubmissions || {}).data || [])).map(s => ({ ...s, tipo: 'Examen' }))
+            ];
             const submittedExamIds = new Set((((examSubmissions || {}).data || [])).map(s => s.examenId));
             const examsWithoutSubmissions = (((allExams || {}).data || []))
                 .filter(exam => !submittedExamIds.has(exam.examenId))
                 .map(exam => ({ ...exam, tipo: 'Examen' }));
 
-            allActivityRaw = [...submissions, ...examsWithoutSubmissions];
-            applyFiltersAndSort();
+            allActivityRaw = [...submissions, ...examsWithoutSubmissions].map(item => ({
+                ...item,
+                grado: item.grado || item.gradoAsignado,
+                seccion: item.seccion || item.seccionAsignada
+            }));
+            renderCurrentLevel();
         } catch (error) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="10" class="text-center p-2 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
+            submissionsTableBody.innerHTML = `<tr><td colspan="10" class="text-center p-1.5 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
         }
     }
 
-    function applyFiltersAndSort() {
+    function renderCurrentLevel() {
+        const current = navStack[navStack.length - 1];
+        let title = current.level;
+        if (current.level === 'Secciones') title = `Secciones - ${current.data.grado}`;
+        else if (current.level === 'Asignaturas') title = `Asignaturas - ${current.data.grado} ${current.data.seccion}`;
+        else if (current.level === 'Alumnos') title = `Alumnos - ${current.data.asignatura}`;
+        else if (current.level === 'Exámenes') title = `Exámenes - ${current.data.asignatura}`;
+        else if (current.level === 'Detalles') title = `Actividades - ${current.data.alumnoNombre}`;
+
+        if (dashboardLevelTitle) dashboardLevelTitle.textContent = title;
+        if (backNavBtn) {
+            if (navStack.length > 1) backNavBtn.classList.remove('hidden');
+            else backNavBtn.classList.add('hidden');
+        }
+
+        // Mostrar/Ocultar filtro de pendientes solo en el nivel de Alumnos
+        if (pendingFilterContainer) {
+            if (current.level === 'Alumnos') pendingFilterContainer.classList.remove('hidden');
+            else pendingFilterContainer.classList.add('hidden');
+        }
+
         const searchTerm = (studentSearchInput ? studentSearchInput.value : '').toLowerCase();
 
-        let filtered = allActivityRaw.filter(item => {
-            const name = (item.alumnoNombre || '').toLowerCase();
-            return name.includes(searchTerm);
-        });
-
-        filtered.sort((a, b) => {
-            let valA = a[currentSort.field] || '';
-            let valB = b[currentSort.field] || '';
-
-            if (currentSort.field === 'fecha' || currentSort.field === 'fechaLimite') {
-                valA = new Date(a.fecha || a.fechaLimite || 0);
-                valB = new Date(b.fecha || b.fechaLimite || 0);
-            }
-
-            if (valA < valB) return currentSort.direction === 'asc' ? -1 : 1;
-            if (valA > valB) return currentSort.direction === 'asc' ? 1 : -1;
-            return 0;
-        });
-
-        renderActivity(filtered);
+        // Determinar qué renderizar según el nivel
+        switch (current.level) {
+            case 'Grados': renderGrados(searchTerm); break;
+            case 'Secciones': renderSecciones(current.data.grado, searchTerm); break;
+            case 'Asignaturas': renderAsignaturas(current.data.grado, current.data.seccion, searchTerm); break;
+            case 'Alumnos': renderAlumnos(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
+            case 'Exámenes': renderExamenesGestion(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
+            case 'Detalles': renderDetalles(current.data.alumnoNombre, current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
+        }
     }
 
-    if (studentSearchInput) {
-        studentSearchInput.addEventListener('input', applyFiltersAndSort);
-    }
+    function renderGrados(search) {
+        const grados = [...new Set(allActivityRaw.map(item => item.grado).filter(g => g))];
+        const filtered = grados.filter(g => g.toLowerCase().includes(search));
 
-    document.querySelectorAll('.sort-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const field = btn.dataset.sort;
-            if (currentSort.field === field) {
-                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSort.field = field;
-                currentSort.direction = 'asc';
-            }
-            applyFiltersAndSort();
-        });
-    });
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-1.5 text-left font-bold text-gray-600">Grado</th>
+                <th class="p-1.5 text-right font-bold text-gray-600">Acción</th>
+            </tr>`;
 
-    function renderActivity(activity) {
-        if (!activity || activity.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="10" class="text-center p-2">No hay actividad que coincida.</td></tr>';
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-4 text-gray-500">No hay grados encontrados.</td></tr>';
             return;
         }
-        submissionsTableBody.innerHTML = activity.map(item => {
-            let actionHtml = '';
-            let fileLinkHtml = '<em>N/A</em>';
 
+        submissionsTableBody.innerHTML = filtered.map(grado => `
+            <tr class="border-b hover:bg-gray-50 transition-colors">
+                <td class="p-3 font-semibold text-gray-800">${grado}</td>
+                <td class="p-3 text-right">
+                    <button class="bg-blue-600 text-white px-4 py-1.5 rounded-xl text-sm font-bold nav-btn" data-grado="${grado}">Ver Secciones</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function renderSecciones(grado, search) {
+        const secciones = [...new Set(allActivityRaw.filter(i => i.grado === grado).map(i => i.seccion).filter(s => s))];
+        const filtered = secciones.filter(s => s.toLowerCase().includes(search));
+
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-1.5 text-left font-bold text-gray-600">Sección</th>
+                <th class="p-1.5 text-right font-bold text-gray-600">Acción</th>
+            </tr>`;
+
+        submissionsTableBody.innerHTML = filtered.map(seccion => `
+            <tr class="border-b hover:bg-gray-50 transition-colors">
+                <td class="p-3 font-semibold text-gray-800">${seccion}</td>
+                <td class="p-3 text-right">
+                    <button class="bg-blue-600 text-white px-4 py-1.5 rounded-xl text-sm font-bold nav-btn" data-grado="${grado}" data-seccion="${seccion}">Ver Asignaturas</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function renderAsignaturas(grado, seccion, search) {
+        const asignaturas = [...new Set(allActivityRaw.filter(i => i.grado === grado && i.seccion === seccion).map(i => i.asignatura).filter(a => a))];
+        const filtered = asignaturas.filter(a => a.toLowerCase().includes(search));
+
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-1.5 text-left font-bold text-gray-600">Asignatura</th>
+                <th class="p-1.5 text-right font-bold text-gray-600">Acción</th>
+            </tr>`;
+
+        submissionsTableBody.innerHTML = filtered.map(asig => `
+            <tr class="border-b hover:bg-gray-50 transition-colors">
+                <td class="p-3 font-semibold text-gray-800">${asig}</td>
+                <td class="p-3 text-right space-x-2">
+                    <button class="bg-blue-600 text-white px-4 py-1.5 rounded-xl text-sm font-bold nav-btn" data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asig}">Ver Alumnos</button>
+                    <button class="bg-indigo-600 text-white px-4 py-1.5 rounded-xl text-sm font-bold manage-exams-btn" data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asig}">Exámenes</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function renderAlumnos(grado, seccion, asignatura, search) {
+        const showOnlyPending = onlyPendingFilter && onlyPendingFilter.checked;
+
+        // Agrupar por alumno para ver su estado general en esta asignatura
+        const alumnosMap = {};
+        allActivityRaw.filter(i => i.grado === grado && i.seccion === seccion && i.asignatura === asignatura)
+            .forEach(item => {
+                if (!item.alumnoNombre) return;
+                if (!alumnosMap[item.alumnoNombre]) {
+                    alumnosMap[item.alumnoNombre] = {
+                        nombre: item.alumnoNombre,
+                        pendientes: 0,
+                        total: 0
+                    };
+                }
+                alumnosMap[item.alumnoNombre].total++;
+                if (item.estado === 'Pendiente' || !item.estado) {
+                    alumnosMap[item.alumnoNombre].pendientes++;
+                }
+            });
+
+        let alumnos = Object.values(alumnosMap);
+        if (showOnlyPending) {
+            alumnos = alumnos.filter(a => a.pendientes > 0);
+        }
+        const filtered = alumnos.filter(a => a.nombre.toLowerCase().includes(search));
+
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-1.5 text-left font-bold text-gray-600">Nombre del Alumno</th>
+                <th class="p-1.5 text-left font-bold text-gray-600">Estado de Actividad</th>
+                <th class="p-1.5 text-right font-bold text-gray-600">Acción</th>
+            </tr>`;
+
+        submissionsTableBody.innerHTML = filtered.map(a => `
+            <tr class="border-b hover:bg-gray-50 transition-colors">
+                <td class="p-3 font-semibold text-gray-800">${a.nombre}</td>
+                <td class="p-3">
+                    <span class="px-2 py-1 rounded-full text-xs font-bold ${a.pendientes > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}">
+                        ${a.pendientes > 0 ? `${a.pendientes} Pendientes` : 'Al día'}
+                    </span>
+                </td>
+                <td class="p-3 text-right">
+                    <button class="bg-blue-600 text-white px-4 py-1.5 rounded-xl text-sm font-bold nav-btn" data-alumno-nombre="${a.nombre}" data-grado="${grado}" data-seccion="${seccion}" data-asignatura="${asignatura}">Ver Detalles</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function renderExamenesGestion(grado, seccion, asignatura, search) {
+        const exams = allActivityRaw.filter(i =>
+            i.tipo === 'Examen' &&
+            !i.alumnoNombre &&
+            i.grado === grado &&
+            (i.seccion === seccion || !i.seccion || i.seccion === "") &&
+            i.asignatura === asignatura
+        );
+        const filtered = exams.filter(e => e.titulo.toLowerCase().includes(search));
+
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-1.5 text-left font-bold text-gray-600">Examen</th>
+                <th class="p-1.5 text-left font-bold text-gray-600">Estado</th>
+                <th class="p-1.5 text-right font-bold text-gray-600">Acción</th>
+            </tr>`;
+
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-4 text-gray-500">No hay exámenes para esta asignatura.</td></tr>';
+            return;
+        }
+
+        submissionsTableBody.innerHTML = filtered.map(item => {
+            const isActivo = item.estado === 'Activo';
+            const isBloqueado = item.estado === 'Bloqueado';
+            const activarBtnClass = isActivo ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700';
+            const activarBtnDisabled = isActivo ? 'disabled' : '';
+            const bloquearBtnClass = isBloqueado ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700';
+            const bloquearBtnDisabled = isBloqueado ? 'disabled' : '';
+
+            return `
+                <tr class="border-b hover:bg-gray-50 transition-colors">
+                    <td class="p-3 font-semibold text-gray-800">${item.titulo}</td>
+                    <td class="p-3">
+                        <span class="px-2 py-1 rounded-full text-xs font-bold ${isActivo ? 'bg-green-100 text-green-700' : (isBloqueado ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700')}">
+                            ${item.estado || 'Pendiente'}
+                        </span>
+                    </td>
+                    <td class="p-3 text-right space-x-2">
+                        <button class="${activarBtnClass} text-white px-3 py-1.5 rounded-xl text-xs font-bold activate-exam-btn" data-examen-id="${item.examenId}" ${activarBtnDisabled}>Activar</button>
+                        <button class="${bloquearBtnClass} text-white px-3 py-1.5 rounded-xl text-xs font-bold lock-exam-btn" data-examen-id="${item.examenId}" ${bloquearBtnDisabled}>Bloquear</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderDetalles(alumnoNombre, grado, seccion, asignatura, search) {
+        const filtered = allActivityRaw.filter(i =>
+            i.alumnoNombre === alumnoNombre &&
+            i.grado === grado &&
+            i.seccion === seccion &&
+            i.asignatura === asignatura &&
+            i.titulo.toLowerCase().includes(search)
+        );
+
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-1.5 text-left font-bold text-gray-600">Actividad</th>
+                <th class="p-1.5 text-left font-bold text-gray-600">Fecha</th>
+                <th class="p-1.5 text-left font-bold text-gray-600">Archivo</th>
+                <th class="p-1.5 text-left font-bold text-gray-600">Calificación</th>
+                <th class="p-1.5 text-left font-bold text-gray-600">Acción</th>
+            </tr>`;
+
+        submissionsTableBody.innerHTML = filtered.map(item => {
+            let fileLinkHtml = '<em>N/A</em>';
             if (item.fileId) {
                 const fileId = extractDriveId(item.fileId);
-
                 if (fileId) {
                     if (item.mimeType === 'folder') {
-                        const folderUrl = `https://drive.google.com/drive/folders/${fileId}`;
-                        fileLinkHtml = `<a href="${folderUrl}" target="_blank" class="text-blue-500 font-bold">Ver Carpeta</a>`;
-                    }
-                    else if (typeof item.mimeType === 'string' && item.mimeType.startsWith('image/')) {
-                        fileLinkHtml = `<a href="#" class="text-blue-500 view-file-link" data-file-id="${fileId}" data-title="${item.titulo}">Ver Imagen</a>`;
+                        fileLinkHtml = `<a href="https://drive.google.com/drive/folders/${fileId}" target="_blank" class="text-blue-600 font-bold hover:underline">Carpeta</a>`;
+                    } else if (typeof item.mimeType === 'string' && item.mimeType.startsWith('image/')) {
+                        fileLinkHtml = `<button class="text-blue-600 font-bold hover:underline view-file-link" data-file-id="${fileId}" data-title="${item.titulo}">Imagen</button>`;
                     } else {
-                        const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-                        fileLinkHtml = `<a href="${downloadUrl}" target="_blank" class="text-blue-500" download>Descargar Archivo</a>`;
+                        fileLinkHtml = `<a href="https://drive.google.com/uc?export=download&id=${fileId}" target="_blank" class="text-blue-600 font-bold hover:underline">Archivo</a>`;
                     }
-                } else {
-                    fileLinkHtml = `<a href="${item.fileId}" target="_blank" class="text-red-500">Enlace (formato no estándar)</a>`;
                 }
             }
 
-            if (item.alumnoNombre) {
-                if (item.tipo === 'Tarea') {
-                    actionHtml = `<button class="bg-blue-500 text-white px-2 py-1 rounded text-sm grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
-                } else if (item.tipo === 'Examen') {
-                    actionHtml = `
-                        <div class="flex flex-col space-y-1">
-                            <button class="bg-blue-600 text-white px-2 py-1 rounded text-sm view-results-btn" data-entrega-id="${item.entregaId}">Ver Resultados</button>
-                            <button class="bg-indigo-500 text-white px-2 py-1 rounded text-sm grade-exam-btn" data-item='${JSON.stringify(item)}'>Calificar</button>
-                            ${item.estado === 'Bloqueado' ? `<button class="bg-yellow-500 text-white px-2 py-1 rounded text-sm reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>` : ''}
-                        </div>
-                    `;
-                }
+            let actionHtml = '';
+            if (item.tipo === 'Tarea') {
+                actionHtml = `<button class="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-bold grade-task-btn" data-item='${JSON.stringify(item)}'>Calificar</button>`;
             } else if (item.tipo === 'Examen') {
-                const isActivo = item.estado === 'Activo';
-                const isBloqueado = item.estado === 'Bloqueado';
-                const activarBtnClass = isActivo ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500';
-                const activarBtnDisabled = isActivo ? 'disabled' : '';
-                const bloquearBtnClass = isBloqueado ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500';
-                const bloquearBtnDisabled = isBloqueado ? 'disabled' : '';
-
                 actionHtml = `
-                    <div class="flex space-x-2">
-                        <button class="${activarBtnClass} text-white px-2 py-1 rounded text-sm activate-exam-btn" data-examen-id="${item.examenId}" ${activarBtnDisabled}>Activar</button>
-                        <button class="${bloquearBtnClass} text-white px-2 py-1 rounded text-sm lock-exam-btn" data-examen-id="${item.examenId}" ${bloquearBtnDisabled}>Bloquear</button>
-                    </div>
-                `;
+                    <div class="flex flex-col space-y-1">
+                        <button class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold view-results-btn" data-entrega-id="${item.entregaId}">Resultados</button>
+                        <button class="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-bold grade-exam-btn" data-item='${JSON.stringify(item)}'>Calificar</button>
+                        ${item.estado === 'Bloqueado' ? `<button class="bg-yellow-500 text-white px-3 py-1 rounded-lg text-xs font-bold reactivate-exam-btn" data-entrega-id="${item.entregaId}">Reactivar</button>` : ''}
+                    </div>`;
             }
 
             return `
-                <tr class="border-b hover:bg-gray-50 transition-colors text-sm">
-                    <td class="p-2 font-medium">${item.alumnoNombre || '<em>N/A</em>'}</td>
-                    <td class="p-2 text-gray-600">${item.grado || '<em>N/A</em>'}</td>
-                    <td class="p-2 text-gray-600">${item.asignatura || '<em>N/A</em>'}</td>
-                    <td class="p-2 text-gray-600">${item.seccion || '<em>N/A</em>'}</td>
-                    <td class="p-2">${item.titulo}</td>
-                    <td class="p-2">${item.fecha ? new Date(item.fecha).toLocaleDateString() : '<em>N/A</em>'}</td>
+                <tr class="border-b hover:bg-gray-50 transition-colors">
+                    <td class="p-2 font-medium text-gray-800">${item.titulo}</td>
+                    <td class="p-2 text-xs text-gray-600">${item.fecha ? new Date(item.fecha).toLocaleDateString() : 'N/A'}</td>
                     <td class="p-2">${fileLinkHtml}</td>
-                    <td class="p-2 font-bold">${item.calificacion || '<em>N/A</em>'}</td>
-                    <td class="p-2"><span class="px-2 py-1 rounded-full text-xs font-semibold ${item.estado === 'Revisada' || item.estado === 'Finalizado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${item.estado || '<em>Pendiente</em>'}</span></td>
+                    <td class="p-2 font-bold text-gray-700">${item.calificacion || '-'}</td>
                     <td class="p-2">${actionHtml}</td>
                 </tr>`;
         }).join('');
     }
+
+    if (studentSearchInput) {
+        studentSearchInput.addEventListener('input', () => renderCurrentLevel());
+    }
+
+    if (onlyPendingFilter) {
+        onlyPendingFilter.addEventListener('change', () => renderCurrentLevel());
+    }
+
+    // --- Delegación de Eventos para la Tabla ---
+    if (submissionsTableBody) {
+        submissionsTableBody.addEventListener('click', async (e) => {
+            const target = e.target;
+            const navBtn = target.closest('.nav-btn');
+            const manageExamsBtn = target.closest('.manage-exams-btn');
+
+            // Navegación
+            if (navBtn) {
+                const ds = navBtn.dataset;
+                const current = navStack[navStack.length - 1];
+                if (current.level === 'Grados') pushNav('Secciones', { grado: ds.grado });
+                else if (current.level === 'Secciones') pushNav('Asignaturas', { grado: ds.grado, seccion: ds.seccion });
+                else if (current.level === 'Asignaturas') pushNav('Alumnos', { grado: ds.grado, seccion: ds.seccion, asignatura: ds.asignatura });
+                else if (current.level === 'Alumnos') pushNav('Detalles', { alumnoNombre: ds.alumnoNombre, grado: ds.grado, seccion: ds.seccion, asignatura: ds.asignatura });
+            } else if (manageExamsBtn) {
+                const ds = manageExamsBtn.dataset;
+                pushNav('Exámenes', { grado: ds.grado, seccion: ds.seccion, asignatura: ds.asignatura });
+            }
+
+            // Acciones de Tabla
+            if (target.classList.contains('view-file-link')) {
+                e.preventDefault();
+                openLightbox(target.dataset.fileId, target.dataset.title);
+            }
+            if (target.classList.contains('grade-task-btn')) {
+                if (saveGradeBtn) saveGradeBtn.dataset.type = 'Tarea';
+                openGradeModal(JSON.parse(target.dataset.item));
+            }
+            if (target.classList.contains('grade-exam-btn')) {
+                if (saveGradeBtn) saveGradeBtn.dataset.type = 'Examen';
+                openGradeModal(JSON.parse(target.dataset.item));
+            }
+            if (target.classList.contains('view-results-btn')) {
+                window.location.href = `results.html?entregaExamenId=${target.dataset.entregaId}`;
+            }
+            if (target.classList.contains('reactivate-exam-btn')) {
+                const entregaId = target.dataset.entregaId;
+                if (confirm("¿Reactivar este examen para este alumno?")) {
+                    target.classList.add('btn-loading');
+                    target.disabled = true;
+                    try {
+                        const result = await fetchApi('EXAM', 'reactivateExam', { entregaExamenId: entregaId });
+                        if (result.status === 'success') {
+                            alert('Examen reactivado.');
+                            fetchTeacherActivity();
+                        } else { throw new Error(result.message); }
+                    } catch (error) {
+                        alert(`Error: ${error.message}`);
+                        target.classList.remove('btn-loading');
+                        target.disabled = false;
+                    }
+                }
+            }
+            if (target.classList.contains('activate-exam-btn')) {
+                const examenId = target.dataset.examenId;
+                if (confirm("¿Activar este examen para todos los alumnos asignados?")) {
+                    target.classList.add('btn-loading');
+                    target.disabled = true;
+                    try {
+                        const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Activo' });
+                        if (result.status === 'success') {
+                            alert('Examen activado.');
+                            fetchTeacherActivity();
+                        } else { throw new Error(result.message); }
+                    } catch (error) {
+                        alert(`Error: ${error.message}`);
+                        target.classList.remove('btn-loading');
+                        target.disabled = false;
+                    }
+                }
+            }
+            if (target.classList.contains('lock-exam-btn')) {
+                const examenId = target.dataset.examenId;
+                if (confirm("¿Bloquear este examen? Nadie más podrá realizarlo.")) {
+                    target.classList.add('btn-loading');
+                    target.disabled = true;
+                    try {
+                        const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Bloqueado' });
+                        if (result.status === 'success') {
+                            alert('Examen bloqueado.');
+                            fetchTeacherActivity();
+                        } else { throw new Error(result.message); }
+                    } catch (error) {
+                        alert(`Error: ${error.message}`);
+                        target.classList.remove('btn-loading');
+                        target.disabled = false;
+                    }
+                }
+            }
+        });
+    }
+
+    // Se elimina renderActivity ya que fue reemplazada por funciones de nivel específicas
 
     // --- LÓGICA del Lightbox de Imágenes ---
     const lightboxModal = document.getElementById('image-lightbox-modal');
@@ -314,81 +589,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Delegación de Eventos para la Tabla ---
-    if (submissionsTableBody) {
-        submissionsTableBody.addEventListener('click', async (e) => {
-            const target = e.target;
-            if (target.classList.contains('view-file-link')) {
-                e.preventDefault();
-                openLightbox(target.dataset.fileId, target.dataset.title);
-            }
-            if (target.classList.contains('grade-task-btn')) {
-                if (saveGradeBtn) saveGradeBtn.dataset.type = 'Tarea';
-                openGradeModal(JSON.parse(target.dataset.item));
-            }
-            if (target.classList.contains('grade-exam-btn')) {
-                if (saveGradeBtn) saveGradeBtn.dataset.type = 'Examen';
-                openGradeModal(JSON.parse(target.dataset.item));
-            }
-            if (target.classList.contains('view-results-btn')) {
-                window.location.href = `results.html?entregaExamenId=${target.dataset.entregaId}`;
-            }
-            if (target.classList.contains('reactivate-exam-btn')) {
-                const entregaId = target.dataset.entregaId;
-                if (confirm("¿Reactivar este examen para este alumno?")) {
-                    target.classList.add('btn-loading');
-                    target.disabled = true;
-                    try {
-                        const result = await fetchApi('EXAM', 'reactivateExam', { entregaExamenId: entregaId });
-                        if (result.status === 'success') {
-                            alert('Examen reactivado.');
-                            fetchTeacherActivity();
-                        } else { throw new Error(result.message); }
-                    } catch (error) {
-                        alert(`Error: ${error.message}`);
-                        target.classList.remove('btn-loading');
-                        target.disabled = false;
-                    }
-                }
-            }
-            if (target.classList.contains('activate-exam-btn')) {
-                const examenId = target.dataset.examenId;
-                if (confirm("¿Activar este examen para todos los alumnos asignados?")) {
-                    target.classList.add('btn-loading');
-                    target.disabled = true;
-                    try {
-                        const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Activo' });
-                        if (result.status === 'success') {
-                            alert('Examen activado.');
-                            fetchTeacherActivity();
-                        } else { throw new Error(result.message); }
-                    } catch (error) {
-                        alert(`Error: ${error.message}`);
-                        target.classList.remove('btn-loading');
-                        target.disabled = false;
-                    }
-                }
-            }
-            if (target.classList.contains('lock-exam-btn')) {
-                const examenId = target.dataset.examenId;
-                if (confirm("¿Bloquear este examen para todos los alumnos?")) {
-                    target.classList.add('btn-loading');
-                    target.disabled = true;
-                    try {
-                        const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Bloqueado' });
-                        if (result.status === 'success') {
-                            alert('Examen bloqueado.');
-                            fetchTeacherActivity();
-                        } else { throw new Error(result.message); }
-                    } catch (error) {
-                        alert(`Error: ${error.message}`);
-                        target.classList.remove('btn-loading');
-                        target.disabled = false;
-                    }
-                }
-            }
-        });
-    }
-
     if (createAssignmentForm) {
         createAssignmentForm.addEventListener('submit', async (e) => {
             e.preventDefault();

@@ -4,22 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultados - Area de Informatica</title>
+    <link rel="icon" type="image/png" href="IMA-Logo.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-
-    <!-- PWA Settings -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="IMA-Logo.png">
-    <link rel="apple-touch-icon" href="IMA-Logo.png">
-    <meta name="theme-color" content="#2563eb">
 </head>
-<body class="font-inter antialiased text-gray-900 bg-gray-50">
+<body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
 
     <header id="main-header" class="bg-white shadow-md py-2 md:py-4 px-1 md:px-3 fixed w-full z-50">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="index.html" class="flex items-center space-x-4">
-                <img src="imagenes/logo.png" alt="Logo" width="120" height="auto">
+            <a href="index.html" class="flex items-center space-x-4 transition-transform duration-300 logo-container">
+                <img src="imagenes/logo.png" alt="Logo" width="120" height="auto" class="logo-img transition-transform duration-300">
                 <span class="text-2xl font-bold text-blue-800 hidden sm:inline">Area de Informatica</span>
             </a>
             <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="100" height="auto" class="hidden lg:block">
@@ -50,7 +47,10 @@
                 &copy; <span id="current-year"></span> Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
             </p>
             <div class="flex justify-center space-x-8">
-                <button id="pwa-install-button-footer" class="text-gray-400 hover:text-white transition-colors duration-200 hidden">Instalar App</button>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 text-sm">Privacidad</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 text-sm">Términos</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 text-sm">Soporte</a>
+                <button id="pwa-install-button-footer" class="text-gray-400 hover:text-white transition-colors duration-200 text-sm hidden">Instalar App</button>
             </div>
         </div>
     </footer>
