@@ -396,3 +396,10 @@ Archivo: js/teacher.js
   - Centralización de lógica de PWA, menú móvil y efectos de scroll para todas las páginas.
 - Archivo: js/student.js
   - Actualización de renderizado de tareas para usar clases compactas (.dashboard-card).
+
+24/01/2026 (Refinamiento de Navegación)
+- Archivo: js/teacher.js
+  - Normalización de metadatos: se mapearon los campos 'gradoAsignado' y 'seccionAsignada' a 'grado' y 'seccion' en fetchTeacherActivity para garantizar que los exámenes sin entregas aparezcan en la jerarquía.
+  - Mejora de UX: se implementó la limpieza automática del valor del buscador (studentSearchInput) al realizar pushNav y popNav.
+  - Corrección de filtros: se actualizó renderExamenesGestion para utilizar los campos normalizados.
+  - Limpieza: eliminación de una llave de cierre huérfana.

@@ -1122,3 +1122,13 @@ VERIFICACIÓN FINAL POST-CAMBIOS - 24/01/2026
 - js/ui-common.js:
   - Centralización de lógica de scroll y PWA verificada.
 - Verificación Funcional: Todas las rutas de navegación del profesor y estudiante operan correctamente. Los estados de carga (btn-loading) son consistentes.
+
+AUDITORÍA DE NORMALIZACIÓN DE METADATOS - 24/01/2026
+-------------------------------------------------------------------
+- Archivo: js/teacher.js
+- Hallazgo: Discrepancia en nombres de campos de metadatos entre entregas y definiciones de exámenes.
+  - Entregas (TASK/EXAM): usan 'grado' y 'seccion'.
+  - Exámenes (getAllExams): usan 'gradoAsignado' y 'seccionAsignada'.
+- Consecuencia: Los niveles de navegación (Grados, Secciones) no muestran datos si solo hay definiciones de exámenes sin entregas previas, ya que los filtros buscan 'grado' y 'seccion'.
+- Hallazgo: El buscador persiste entre niveles de navegación, lo que puede causar tablas vacías al navegar a un nuevo contexto.
+- Solución: Normalizar todos los objetos de actividad a un esquema común { grado, seccion, asignatura } inmediatamente después de la carga. Limpiar el buscador en pushNav/popNav.

@@ -88,12 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Lógica de Navegación Jerárquica ---
     function pushNav(level, data) {
+        if (studentSearchInput) studentSearchInput.value = '';
         navStack.push({ level, data });
         renderCurrentLevel();
     }
 
     function popNav() {
         if (navStack.length > 1) {
+            if (studentSearchInput) studentSearchInput.value = '';
             navStack.pop();
             renderCurrentLevel();
         }
@@ -127,7 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 .filter(exam => !submittedExamIds.has(exam.examenId))
                 .map(exam => ({ ...exam, tipo: 'Examen' }));
 
-            allActivityRaw = [...submissions, ...examsWithoutSubmissions];
+            allActivityRaw = [...submissions, ...examsWithoutSubmissions].map(item => ({
+                ...item,
+                grado: item.grado || item.gradoAsignado,
+                seccion: item.seccion || item.seccionAsignada
+            }));
             renderCurrentLevel();
         } catch (error) {
             submissionsTableBody.innerHTML = `<tr><td colspan="10" class="text-center p-1.5 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
@@ -287,8 +293,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const exams = allActivityRaw.filter(i =>
             i.tipo === 'Examen' &&
             !i.alumnoNombre &&
-            i.gradoAsignado === grado &&
-            (i.seccionAsignada === seccion || !i.seccionAsignada || i.seccionAsignada === "") &&
+            i.grado === grado &&
+            (i.seccion === seccion || !i.seccion || i.seccion === "") &&
             i.asignatura === asignatura
         );
         const filtered = exams.filter(e => e.titulo.toLowerCase().includes(search));
@@ -583,8 +589,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Delegación de Eventos para la Tabla ---
-    }
-
     if (createAssignmentForm) {
         createAssignmentForm.addEventListener('submit', async (e) => {
             e.preventDefault();

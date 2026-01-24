@@ -217,3 +217,8 @@ tarea 18: Implementar modal de login y sección de acceso (Portal/Iniciar Sesió
 tarea 19: Unificación total de encabezados y pies de página, reducción de márgenes y gaps, y estandarización visual en dashboards y exámenes. (COMPLETADA)
 tarea 20: Implementar navegación jerárquica y filtrado avanzado en el Dashboard del Profesor (navStack, filtros, títulos dinámicos). (COMPLETADA)
 tarea 21: Optimizar accesibilidad móvil asegurando un área de toque mínima de 44px para todos los elementos interactivos. (COMPLETADA)
+
+TAREAS PENDIENTES
+________________________________________________________________________________________________
+tarea 22: Corregir normalización de metadatos (grado vs gradoAsignado) en el dashboard del profesor para asegurar visibilidad de exámenes sin entregas en la jerarquía. (COMPLETADA)
+tarea 23: Implementar limpieza automática del buscador al cambiar de nivel en la navegación jerárquica del dashboard docente. (COMPLETADA)
