@@ -363,6 +363,11 @@ C. PROCESO DE APROBACIÓN
 
 
 ------------------- TAREAS POR REVISAR ------------------
+**Tarea Principal: Navegación Directa Sin Botones y Optimizaciones UI**
+*   **Estado:** PENDIENTE DE REVISIÓN POR EL PM
+*   **Descripción:** Se implementó la navegación jerárquica buttonless, la pestaña de exámenes integrada, tipografía mejorada, tablas responsivas y pie de página estandarizado.
+*   **Referencia:** ChangesLogs.txt (23/01/2026)
+
 **Archivo: js/teacher.js**
 
 *   **Componente: Creación de Exámenes**

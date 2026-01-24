@@ -203,9 +203,10 @@ El frontend es una aplicación cliente que consume los microservicios.
 - **`config.js`**: Punto central de configuración. Define el objeto `SERVICE_URLS` que mapea cada servicio (`USER`, `TASK`, `EXAM`) a su URL de despliegue en Google Apps Script. **Es el único lugar que se debe modificar al desplegar los servicios**.
 - **`auth.js`**: Maneja los formularios de `login.html` y `register.html`. Se comunica exclusivamente con el **microservicio de usuarios**. Tras un login exitoso, guarda los datos del usuario en `localStorage` y redirige al dashboard correspondiente.
 - **`teacher.js`**: Controla el `teacher-dashboard.html`.
-  - **Creación**: Llama al servicio de `TASK` para crear tareas y al de `EXAM` para crear exámenes.
-  - **Visualización**: Para mostrar la lista de actividades, llama en paralelo a `getTeacherActivity` del servicio de tareas y a `getTeacherExamActivity` del servicio de exámenes. Luego, **combina y ordena los resultados en el lado del cliente** antes de renderizarlos.
-  - **Calificación**: Llama a `gradeSubmission` (servicio de tareas) o `reactivateExam` (servicio de exámenes) según la acción.
+  - **Navegación**: Implementa un sistema de navegación jerárquica buttonless (Grados > Secciones > Asignaturas > Alumnos > Detalles) mediante interacciones directas con la tabla.
+  - **Creación**: Llama al servicio de `TASK` para crear tareas y al de `EXAM` para crear exámenes. Las acciones de creación están integradas en el nivel de Asignaturas.
+  - **Visualización**: Combina datos de tareas y exámenes. Incluye una pestaña de "Exámenes" integrada en el encabezado para filtrar entregas de evaluaciones.
+  - **Calificación**: Permite calificar tareas (`gradeSubmission`) y exámenes (`gradeExamSubmission`), además de reactivar exámenes bloqueados.
 - **`student.js`**: Controla el `student-dashboard.html`. De forma similar al dashboard del profesor, llama a los servicios `TASK` y `EXAM` para obtener la lista de actividades pendientes del estudiante y las muestra combinadas.
 - **`exam.js`**: Gestiona la página `exam.html`. Se comunica exclusivamente con el **microservicio de exámenes** para obtener las preguntas (`getExamQuestions`) y para enviar las respuestas (`submitExam`).
 

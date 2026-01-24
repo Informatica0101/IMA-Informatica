@@ -2,6 +2,28 @@ Registro de cambios de IMA - Area de Informática V 2.0
 
 En este archivo se regustrara el historial de cambios del proyecto. 
 
+23/01/2026
+- Archivo: backend/task-service/Code.gs, backend/exam-service/Code.gs, backend.gs
+  - Se añadieron campos de metadatos (grado, seccion, asignatura) a las respuestas de las funciones de obtención de actividad del profesor.
+  - Se implementó la acción `gradeExamSubmission` en el servicio de exámenes para permitir la calificación manual de entregas de exámenes.
+- Archivo: js/teacher.js
+  - Se implementó un sistema de navegación jerárquica (Grados > Secciones > Asignaturas > Alumnos > Detalles) mediante clics directos en celdas de la tabla.
+  - Se eliminó la navegación basada en botones independientes, reemplazándola por interacciones integradas en la tabla.
+  - Se implementó una pestaña de "Exámenes" en el nivel de lista de alumnos, con filtrado específico y botones de calificación de exámenes.
+  - Se añadió lógica para limpiar el campo de búsqueda al cambiar de nivel de navegación.
+- Archivo: teacher-dashboard.html
+  - Se rediseñó la estructura del dashboard para soportar la navegación jerárquica, eliminando el menú de navegación superior.
+  - Se añadió un título dinámico de navegación y un contenedor de búsqueda contextual.
+  - Se integró un pie de página optimizado.
+- Archivo: css/style.css
+  - Se centralizaron los estilos globales y se añadieron reglas para tablas responsivas con desplazamiento horizontal limpio (sin scrollbar visible).
+  - Se ajustó la tipografía de elementos clave de la tabla (+1px).
+- Archivo: index.html
+  - Se redujo la altura de la sección hero y se optimizó el pie de página incluyendo la bandera de Honduras.
+- Archivos HTML globales: login.html, register.html, student-dashboard.html, exam.html, exam-results.html, pseudocode.html, interactivo.html
+  - Se vinculó la hoja de estilos centralizada `css/style.css`.
+  - Se implementó un pie de página compacto y consistente con la bandera de Honduras y diseño sticky.
+
 08/01/2026
 - Archivo: js/teacher.js, Línea(s): 158-297
   - Se implementó la funcionalidad completa para añadir, eliminar y gestionar preguntas dinámicamente en el formulario de creación de exámenes.

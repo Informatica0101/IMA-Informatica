@@ -162,7 +162,10 @@ function getTeacherActivity() {
     return {
       tipo: 'Tarea', entregaId: entrega[0], titulo: tarea ? tarea[2] : "Tarea Desconocida",
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido", fecha: new Date(entrega[3]),
-      archivoUrl: entrega[4], calificacion: entrega[5], estado: entrega[6], comentario: entrega[7]
+      archivoUrl: entrega[4], calificacion: entrega[5], estado: entrega[6], comentario: entrega[7],
+      grado: usuario ? usuario[2] : "N/A",
+      seccion: usuario ? usuario[3] : "N/A",
+      asignatura: tarea ? tarea[5] : "N/A"
     };
   });
 

@@ -64,6 +64,9 @@ function doPost(e) {
       case "reactivateExam":
         result = reactivateExam(payload);
         break;
+      case "gradeExamSubmission":
+        result = gradeExamSubmission(payload);
+        break;
       default:
         result = { status: "error", message: "Acción no reconocida." };
     }
@@ -230,7 +233,10 @@ function getTeacherActivity(payload) {
       archivoUrl: entrega[4],
       calificacion: entrega[5],
       estado: entrega[6],
-      comentario: entrega[7]
+      comentario: entrega[7],
+      grado: usuario ? usuario[2] : "N/A",
+      seccion: usuario ? usuario[3] : "N/A",
+      asignatura: tarea ? tarea[5] : "N/A"
     };
   });
 
@@ -246,7 +252,10 @@ function getTeacherActivity(payload) {
           alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
           fecha: new Date(entrega[3]),
           calificacion: entrega[5],
-          estado: entrega[6] // Ej: 'Entregado', 'Bloqueado'
+          estado: entrega[6], // Ej: 'Entregado', 'Bloqueado'
+          grado: usuario ? usuario[2] : "N/A",
+          seccion: usuario ? usuario[3] : "N/A",
+          asignatura: examen ? examen[2] : "N/A"
       };
   });
 
@@ -287,6 +296,20 @@ function gradeSubmission(payload) {
   }
 
   return { status: "error", message: "Entrega no encontrada." };
+}
+
+function gradeExamSubmission(payload) {
+  const { entregaId, calificacion, estado, comentario } = payload;
+  const data = entregasExamenSheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === entregaId) {
+      entregasExamenSheet.getRange(i + 1, 6).setValue(calificacion);
+      entregasExamenSheet.getRange(i + 1, 7).setValue(estado);
+      entregasExamenSheet.getRange(i + 1, 8).setValue(comentario);
+      return { status: "success", message: "Examen calificado exitosamente." };
+    }
+  }
+  return { status: "error", message: "Entrega de examen no encontrada." };
 }
 
 function createExam(payload) {

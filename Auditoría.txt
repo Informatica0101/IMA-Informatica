@@ -1,16 +1,42 @@
 **Archivo: teacher-dashboard.html**
-
-*   **Componente: Formulario de Creación de Examen (`#create-exam-form`)**
-    *   **Hallazgo:** El formulario y sus elementos principales están correctamente definidos.
-    *   **ID del Formulario:** `create-exam-form`
-    *   **Contenedor de Preguntas:** Existe un `div` con ID `questions-container`, destinado a albergar las preguntas dinámicas.
-    *   **Botón de Añadir Pregunta:** Existe un botón con ID `add-question-btn`, claramente identificado para añadir nuevas preguntas.
-    *   **Botón de Guardar:** Existe un botón `type="submit"` dentro del formulario para guardar el examen.
-    *   **Observación:** La estructura HTML está completa y es adecuada para la funcionalidad requerida. No se observan errores estructurales. La lógica faltante reside en el archivo JavaScript asociado.
+*   **Componente: Navegación**
+    *   **Hallazgo:** La navegación actual se basa en un menú `<nav>` con botones (`<a>` con IDs `nav-dashboard`, `nav-crear`, `nav-crear-examen`). La tarea requiere eliminar esta navegación basada en botones.
+    *   **Hallazgo:** Falta el pie de página (footer) que existe en `index.html`.
+*   **Componente: Tabla de Entregas**
+    *   **Hallazgo:** La tabla es básica y no permite navegación jerárquica. La navegación debe ser directa al hacer clic en las celdas.
+    *   **Hallazgo:** No existe una pestaña de "Exámenes" en el encabezado de la tabla.
+*   **Componente: Responsividad**
+    *   **Hallazgo:** La tabla no tiene contenedores para scroll horizontal en móvil, lo que puede causar desbordamiento.
+*   **Componente: Tipografía**
+    *   **Hallazgo:** El tamaño de letra en la tabla usa clases estándar de Tailwind. Debe aumentarse en +1px según requerimiento.
 
 **Archivo: js/teacher.js**
+*   **Componente: Lógica de Navegación**
+    *   **Hallazgo:** La función `navigateTo` maneja la visibilidad de secciones basándose en clics en los enlaces de navegación. Debe ser reemplazada o adaptada para soportar navegación jerárquica mediante clics en la tabla.
+*   **Componente: Renderizado de Actividad**
+    *   **Hallazgo:** La función `renderActivity` genera filas de tabla con datos fijos. Debe adaptarse para permitir clics en celdas de Grado, Sección, Asignatura y Alumno.
+    *   **Hallazgo:** El payload de `getTeacherActivity` y `getTeacherExamActivity` (según se ve en `backend.gs`) no incluye `grado`, `seccion` ni `asignatura`. Esto impedirá la navegación jerárquica si no se corrige el backend.
+*   **Componente: Gestión de Exámenes**
+    *   **Hallazgo:** No hay lógica para una pestaña de "Exámenes" que filtre solo alumnos con entregas de exámenes.
 
-*   **Componente: Lógica de Creación de Examen**
-    *   **Hallazgo 1 (Botón sin acción):** No existe un `addEventListener` para el elemento `add-question-btn`. Esto confirma por qué el botón no realiza ninguna acción al ser presionado.
-    *   **Hallazgo 2 (Error al guardar):** El `addEventListener` para el evento `submit` del formulario `createExamForm` está presente, pero la lógica para recolectar los datos está incompleta. La variable `payload` se inicializa como un objeto vacío (`{}`) y se envía directamente a la API. Esto causa el error `forEach` en el backend, ya que el servicio espera un array de `preguntas` que no existe en el payload.
-    *   **Observación:** El archivo está en el estado original reportado en la tarea, con la funcionalidad de añadir preguntas y guardar el examen rota.
+**Archivo: index.html**
+*   **Componente: Hero Section**
+    *   **Hallazgo:** La sección tiene `py-20 md:py-28 min-h-[200px]`. El requerimiento pide reducir su altura.
+*   **Componente: Footer**
+    *   **Hallazgo:** El footer tiene `py-8` y márgenes internos que se consideran excesivos según el nuevo requerimiento.
+    *   **Hallazgo:** No incluye la bandera de Honduras en el pie de página.
+    *   **Hallazgo:** Puede aparecer una franja blanca debajo si el contenido es poco y no se usa un layout flex-col min-h-screen.
+
+**Archivo: backend/task-service/Code.gs**
+*   **Hallazgo:** La acción `getTeacherActivity` no retorna metadatos del estudiante (grado, seccion) ni de la tarea (asignatura).
+
+**Archivo: backend/exam-service/Code.gs**
+*   **Hallazgo:** La acción `getTeacherExamActivity` no retorna metadatos del estudiante ni del examen.
+*   **Estado:** Resuelto. Se añadieron los campos necesarios y se implementó `gradeExamSubmission`.
+
+**Resumen de Auditoría Final - 23/01/2026**
+*   **Navegación:** Se validó la navegación jerárquica sin botones en el Dashboard del Profesor. El sistema funciona mediante clics en celdas.
+*   **Exámenes:** Se integró la pestaña de exámenes en el encabezado de la tabla de alumnos.
+*   **UI/UX:** Se verificó la responsividad de las tablas y la legibilidad de la tipografía (+1px).
+*   **Pie de página:** Se estandarizó el footer en todas las páginas, eliminando la franja blanca y añadiendo la bandera nacional.
+*   **Hero Section:** Se optimizó el espacio visual en `index.html`.

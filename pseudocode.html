@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador de PSeInt Avanzado</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
         /* Estilos generales */
         * {
@@ -12,14 +13,14 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
             color: #333;
             min-height: 100vh;
             padding: 20px;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -28,7 +29,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
-        
+
         /* Cabecera */
         .header {
             background: linear-gradient(to right, #2c3e50, #4a6491);
@@ -39,19 +40,19 @@
             align-items: flex-start;
             border-bottom: 3px solid #3498db;
         }
-        
+
         .logo {
             display: flex;
             align-items: center;
             gap: 15px;
             margin-bottom: 15px; /* Space between logo and toolbar */
         }
-        
+
         .logo h1 {
             font-size: 1.8rem;
             font-weight: 600;
         }
-        
+
         .logo-icon {
             font-size: 2rem;
             background: #3498db;
@@ -62,7 +63,7 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         /* Barra de herramientas */
         .toolbar {
             display: flex;
@@ -76,7 +77,7 @@
             position: relative;
             display: inline-block;
         }
-        
+
         .toolbar-dropdown-btn {
             background: #3498db;
             color: white;
@@ -90,13 +91,13 @@
             gap: 5px;
             transition: all 0.3s;
         }
-        
+
         .toolbar-dropdown-btn:hover {
             background: #2980b9;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        
+
         .dropdown-menu {
             display: none;
             position: absolute;
@@ -109,12 +110,12 @@
             top: 100%; /* Position below the button */
             overflow: hidden;
         }
-        
+
         .dropdown-menu.show {
             display: block;
             animation: fadeIn 0.3s ease;
         }
-        
+
         .menu-item {
             padding: 10px 15px;
             text-decoration: none;
@@ -123,23 +124,23 @@
             border-bottom: 1px solid #eee;
             transition: all 0.2s;
         }
-        
+
         .menu-item:last-child {
             border-bottom: none;
         }
-        
+
         .menu-item:hover {
             background-color: #3498db;
             color: white;
             padding-left: 20px;
         }
-        
+
         /* Contenido principal */
         .main-content {
             display: flex;
             min-height: 600px;
         }
-        
+
         /* Panel de variables colapsable */
         .variables-panel {
             width: 300px;
@@ -147,7 +148,7 @@
             padding: 20px;
             border-right: 2px solid #bdc3c7;
         }
-        
+
         .panel-title {
             font-size: 1.3rem;
             margin-bottom: 15px;
@@ -158,7 +159,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .collapse-btn {
             background: none;
             border: none;
@@ -166,14 +167,14 @@
             cursor: pointer;
             color: #2c3e50;
         }
-        
+
         .variables-section {
             margin-bottom: 25px;
             border: 1px solid #bdc3c7;
             border-radius: 8px;
             overflow: hidden;
         }
-        
+
         .section-header {
             background: #3498db;
             color: white;
@@ -184,16 +185,16 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-        
+
         .section-header:hover {
             background: #2980b9;
         }
-        
+
         .section-header h3 {
             font-size: 1.1rem;
             margin: 0;
         }
-        
+
         .section-content {
             padding: 15px;
             background: white;
@@ -201,16 +202,16 @@
             overflow: hidden;
             transition: max-height 0.4s ease, padding 0.4s ease;
         }
-        
+
         .section-content.collapsed {
             max-height: 0;
             padding: 0 15px;
         }
-        
+
         .checkbox-group {
             margin: 10px 0;
         }
-        
+
         .checkbox-group label {
             display: flex;
             align-items: center;
@@ -235,14 +236,14 @@
         .realtime-help p {
             margin-bottom: 5px;
         }
-        
+
         /* Editor de código */
         .editor-panel {
             flex: 1;
             display: flex;
             flex-direction: column;
         }
-        
+
         .editor-header {
             background: #34495e;
             color: white;
@@ -250,11 +251,11 @@
             display: flex;
             justify-content: space-between;
         }
-        
+
         .filename {
             font-weight: bold;
         }
-        
+
         .editor-actions button {
             background: transparent;
             border: none;
@@ -264,11 +265,11 @@
             border-radius: 3px;
             transition: background 0.3s;
         }
-        
+
         .editor-actions button:hover {
             background: rgba(255, 255, 255, 0.2);
         }
-        
+
         .code-editor {
             flex: 1;
             padding: 20px;
@@ -283,7 +284,7 @@
             white-space: pre;
             tab-size: 4;
         }
-        
+
         .code-toolbar {
             background: #95a5a6;
             padding: 10px;
@@ -291,7 +292,7 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        
+
         .code-btn {
             padding: 8px 15px;
             background: #2c3e50;
@@ -301,12 +302,12 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .code-btn:hover {
             background: #3498db;
             transform: translateY(-2px);
         }
-        
+
         /* Consola de salida */
         .console-panel {
             background: #1a1a1a;
@@ -318,14 +319,14 @@
             font-family: 'Courier New', monospace;
             border-top: 3px solid #3498db;
         }
-        
+
         .console-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
             color: #3498db;
         }
-        
+
         .console-actions button {
             background: #2c3e50;
             color: white;
@@ -335,28 +336,28 @@
             border-radius: 3px;
             cursor: pointer;
         }
-        
+
         /* Animaciones */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         @keyframes slideDown {
             from { max-height: 0; opacity: 0; }
             to { max-height: 500px; opacity: 1; }
         }
-        
+
         .pulse {
             animation: pulse 2s infinite;
         }
-        
+
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
             100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
         }
-        
+
         /* Responsive */
         @media (min-width: 769px) {
             .header {
@@ -378,7 +379,7 @@
             .main-content {
                 flex-direction: column;
             }
-            
+
             .variables-panel {
                 width: 100%;
                 border-right: none;
@@ -403,7 +404,7 @@
                 <div class="logo-icon">P</div>
                 <h1>Simulador de PSeInt Avanzado</h1>
             </div>
-            
+
             <nav class="toolbar">
                 <div class="menu-container">
                     <button class="toolbar-dropdown-btn" id="fileMenuBtn">Archivo ▼</button>
@@ -417,7 +418,7 @@
                         <a href="#" class="menu-item">Salir</a>
                     </div>
                 </div>
-                
+
                 <div class="menu-container">
                     <button class="toolbar-dropdown-btn" id="editMenuBtn">Editar ▼</button>
                     <div class="dropdown-menu" id="editDropdown">
@@ -447,14 +448,14 @@
                 </div>
             </nav>
         </header>
-        
+
         <div class="main-content">
             <div class="variables-panel">
                 <div class="panel-title">
                     Panel de Variables
                     <button class="collapse-btn" id="collapseAllBtn">⮝</button>
                 </div>
-                
+
                 <div class="variables-section">
                     <div class="section-header" data-section="variables">
                         <h3>Variables</h3>
@@ -491,7 +492,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="variables-section">
                     <div class="section-header" data-section="functions">
                         <h3>Funciones</h3>
@@ -524,7 +525,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="variables-section">
                     <div class="section-header" data-section="arrays">
                         <h3>Arreglos</h3>
@@ -561,7 +562,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="editor-panel">
                 <div class="editor-header">
                     <div class="filename">hola_mundo.psc</div>
@@ -570,14 +571,14 @@
                         <button id="runBtn">Ejecutar</button>
                     </div>
                 </div>
-                
+
                 <textarea class="code-editor" id="codeEditor">Algoritmo HolaMundo
 
     // Este es un comentario
     Escribir "Hola Mundo desde PSeInt!"
-    
+
 FinAlgoritmo</textarea>
-                
+
                 <div class="code-toolbar">
                     <button class="code-btn" data-code="Algoritmo MiAlgoritmo\n\nFinAlgoritmo">Algoritmo</button>
                     <button class="code-btn" data-code="Funcion resultado <- NombreFuncion (parametro)\n    \nFinFuncion">Función</button>
@@ -592,7 +593,7 @@ FinAlgoritmo</textarea>
                 </div>
             </div>
         </div>
-        
+
         <div class="console-panel">
             <div class="console-header">
                 <div>Consola de Salida</div>
@@ -609,15 +610,27 @@ FinAlgoritmo</textarea>
         </div>
     </div>
 
+    <footer class="bg-gray-800 text-white py-4 mt-auto w-full">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-4">
+                    <img src="imagenes/logo.png" alt="Logo" class="h-8 w-auto">
+                    <img src="imagenes/bandera-de-honduras.png" alt="Honduras" class="h-8 w-auto">
+                    <p class="text-sm">&copy; IMA - Area de Informatica</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script>
         // Dropdown menu functionality for toolbar
         const dropdownButtons = document.querySelectorAll('.toolbar-dropdown-btn');
-        
+
         dropdownButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const dropdownId = this.id.replace('Btn', 'Dropdown');
                 const dropdownMenu = document.getElementById(dropdownId);
-                
+
                 // Close any other open dropdowns
                 document.querySelectorAll('.dropdown-menu.show').forEach(openMenu => {
                     if (openMenu !== dropdownMenu) {
@@ -629,7 +642,7 @@ FinAlgoritmo</textarea>
                 dropdownMenu.classList.toggle('show');
             });
         });
-        
+
         // Close dropdowns when clicking outside
         window.addEventListener('click', function(event) {
             if (!event.target.closest('.menu-container')) {
@@ -642,28 +655,28 @@ FinAlgoritmo</textarea>
         // Panel de variables colapsable
         const sectionHeaders = document.querySelectorAll('.section-header');
         const collapseAllBtn = document.getElementById('collapseAllBtn');
-        
+
         sectionHeaders.forEach(header => {
             header.addEventListener('click', function() {
                 const sectionId = this.getAttribute('data-section');
                 const content = document.getElementById(`${sectionId}Content`);
                 content.classList.toggle('collapsed');
-                
+
                 // Actualizar indicador
                 const indicator = this.querySelector('.collapse-indicator');
                 indicator.textContent = content.classList.contains('collapsed') ? '▶' : '▼';
             });
         });
-        
+
         // Colapsar/expandir todo
         let allCollapsed = false;
         collapseAllBtn.addEventListener('click', function() {
             const allContents = document.querySelectorAll('.section-content');
             const indicators = document.querySelectorAll('.collapse-indicator');
-            
+
             allCollapsed = !allCollapsed;
             this.textContent = allCollapsed ? '⮟' : '⮝';
-            
+
             allContents.forEach(content => {
                 if (allCollapsed) {
                     content.classList.add('collapsed');
@@ -671,24 +684,24 @@ FinAlgoritmo</textarea>
                     content.classList.remove('collapsed');
                 }
             });
-            
+
             indicators.forEach(indicator => {
                 indicator.textContent = allCollapsed ? '▶' : '▼';
             });
         });
-        
+
         // Ayuda rápida (remains as a toggle for a specific help section)
         const quickHelpToggle = document.getElementById('quickHelpToggle');
         const quickHelp = document.getElementById('quickHelp');
-        
+
         quickHelpToggle.addEventListener('change', function() {
             quickHelp.style.display = this.checked ? 'block' : 'none';
         });
-        
+
         // Botones de código
         const codeButtons = document.querySelectorAll('.code-btn');
         const codeEditor = document.getElementById('codeEditor');
-        
+
         codeButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const codeSnippet = this.getAttribute('data-code');
@@ -697,9 +710,9 @@ FinAlgoritmo</textarea>
                     const cursorPos = codeEditor.selectionStart;
                     const textBefore = codeEditor.value.substring(0, cursorPos);
                     const textAfter = codeEditor.value.substring(cursorPos);
-                    
+
                     codeEditor.value = textBefore + codeSnippet + textAfter;
-                    
+
                     // Posicionar cursor después del snippet
                     const newCursorPos = cursorPos + codeSnippet.length;
                     codeEditor.setSelectionRange(newCursorPos, newCursorPos);
@@ -707,12 +720,12 @@ FinAlgoritmo</textarea>
                 }
             });
         });
-        
+
         // Ejecutar código
         const runBtn = document.getElementById('runBtn');
         const consoleOutput = document.getElementById('consoleOutput');
         const clearConsole = document.getElementById('clearConsole');
-        
+
         runBtn.addEventListener('click', function() {
             // Simular ejecución del código
             const editorContent = codeEditor.value;
@@ -739,22 +752,22 @@ FinAlgoritmo</textarea>
             }
 
             consoleOutput.innerHTML += '&gt; Ejecución completada<br>';
-            
+
             // Desplazar al final de la consola
             consoleOutput.scrollTop = consoleOutput.scrollHeight;
         });
-        
+
         // Limpiar consola
         clearConsole.addEventListener('click', function() {
             consoleOutput.innerHTML = '&gt; Consola limpiada<br>';
         });
-        
+
         // Simulación de arreglos (kept for consistency with the example variables)
         const arrays = {
             'numeros': [10, 20, 30, 40, 50],
             'nombres': ['Ana', 'Carlos', 'Diana']
         };
-        
+
         // Mostrar mensaje inicial en consola
         setTimeout(() => {
             consoleOutput.innerHTML += '&gt; Sistema de arreglos inicializado correctamente<br>';

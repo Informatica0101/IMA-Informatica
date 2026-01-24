@@ -47,7 +47,8 @@ function doPost(e) {
       case "getExamQuestions": result = getExamQuestions(payload); break;
       case "submitExam": result = submitExam(payload); break;
       case "reactivateExam": result = reactivateExam(payload); break;
-      case "getTeacherExamActivity": result = getTeacherExamActivity(); break; // Nuevo endpoint
+      case "getTeacherExamActivity": result = getTeacherExamActivity(); break;
+      case "gradeExamSubmission": result = gradeExamSubmission(payload); break;
       default:
         result = { status: "error", message: `Acción no reconocida en Exam-Service: ${action}` };
     }
@@ -145,10 +146,30 @@ function getTeacherExamActivity() {
         return {
             tipo: 'Examen', entregaId: entrega[0], titulo: examen ? examen[1] : "Examen Desconocido",
             alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido", fecha: new Date(entrega[3]),
-            calificacion: entrega[5], estado: entrega[6]
+            calificacion: entrega[5], estado: entrega[6],
+            comentario: entrega[7] || '',
+            grado: usuario ? usuario[2] : "N/A",
+            seccion: usuario ? usuario[3] : "N/A",
+            asignatura: examen ? examen[2] : "N/A"
         };
     });
     return { status: "success", data: examSubmissions };
+}
+
+function gradeExamSubmission(payload) {
+  const { entregaId, calificacion, estado, comentario } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const entregasExamenSheet = getSheetOrThrow(ss, "EntregasExamen");
+  const data = entregasExamenSheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === entregaId) {
+      entregasExamenSheet.getRange(i + 1, 6).setValue(calificacion);
+      entregasExamenSheet.getRange(i + 1, 7).setValue(estado);
+      entregasExamenSheet.getRange(i + 1, 8).setValue(comentario);
+      return { status: "success", message: "Examen calificado exitosamente." };
+    }
+  }
+  throw new Error("Entrega de examen no encontrada.");
 }
 
 

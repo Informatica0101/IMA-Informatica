@@ -1,0 +1,172 @@
+/* Global Styles */
+html {
+    font-size: 80%; /* Reduces overall size by 20% */
+}
+
+/* Sticky footer layout */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #1a202c; /* gray-900 */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+main {
+    flex-grow: 1;
+}
+
+/* Custom animations for transitions */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOutUp {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blob {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-fade-in-down { animation: fadeInDown 0.5s ease-out forwards; }
+.animate-fade-out-up { animation: fadeOutUp 0.3s ease-in forwards; }
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+.animate-blob { animation: blob 7s infinite; }
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-4000 { animation-delay: 4s; }
+
+/* Mobile menu specific styles */
+.mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    z-index: 40;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 2rem;
+    animation: fadeInDown 0.5s ease-out forwards;
+}
+
+.mobile-menu-item-container {
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.mobile-menu-item-container.hidden-height { max-height: 0; opacity: 0; }
+.mobile-menu-item-container.visible-height { max-height: 1000px; opacity: 1; }
+
+/* Desktop dropdown styles */
+.group .group-hover\:opacity-100 {
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease-in-out;
+    transform: scale(0.95);
+    transform-origin: top;
+}
+.group:hover .group-hover\:opacity-100 { opacity: 1; visibility: visible; transform: scale(1); }
+
+.group\/grade .group-hover\/grade\:opacity-100 {
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease-in-out;
+    transform: scale(0.95);
+    transform-origin: left;
+}
+.group\/grade:hover .group-hover\/grade\:opacity-100 { opacity: 1; visibility: visible; transform: scale(1); }
+
+.group\/subject .group-hover\/subject\:opacity-100 {
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease-in-out;
+    transform: scale(0.95);
+    transform-origin: left;
+}
+.group\/subject:hover .group-hover\/subject\:opacity-100 { opacity: 1; visibility: visible; transform: scale(1); }
+
+/* Header visibility logic */
+header {
+    top: 0 !important;
+    transition: transform 0.3s ease-in-out;
+}
+.header-hidden { transform: translateY(-100%); }
+
+/* Responsive tables */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+}
+.table-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+/* Specific horizontal scroll for delivered content without visible scrollbar */
+.scroll-horizontal-clean {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.scroll-horizontal-clean::-webkit-scrollbar {
+    display: none;
+}
+
+/* Typography adjustment (+1px approximation) */
+.text-custom-plus {
+    font-size: 1.05rem !important; /* ~16.8px if base is 16px. Since html is 80%, this is ~13.4px */
+}
+@media (max-width: 768px) {
+    .text-custom-plus {
+        font-size: 1.1rem !important; /* Slightly larger on mobile for readability */
+    }
+}
+
+/* Navigation buttons in tables */
+.nav-btn {
+    color: #2563eb; /* blue-600 */
+    cursor: pointer;
+    font-weight: 600;
+}
+.nav-btn:hover {
+    text-decoration: underline;
+}
+
+/* Exams Tab */
+.exams-tab {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    background-color: #f3f4f6;
+    color: #374151;
+    font-weight: 600;
+    border: 1px solid #e5e7eb;
+    border-bottom: none;
+}
+.exams-tab.active {
+    background-color: #ffffff;
+    color: #2563eb;
+    border-bottom: 2px solid #ffffff;
+    margin-bottom: -1px;
+}
