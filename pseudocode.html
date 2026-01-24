@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador de PSeInt Avanzado</title>
+
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="IMA-Logo.png">
+    <link rel="apple-touch-icon" href="IMA-Logo.png">
+    <meta name="theme-color" content="#2563eb">
+
     <style>
         /* Estilos generales */
         * {
@@ -760,6 +767,14 @@ FinAlgoritmo</textarea>
             consoleOutput.innerHTML += '&gt; Sistema de arreglos inicializado correctamente<br>';
             consoleOutput.innerHTML += '&gt; Use el botón "Ejecutar" para probar el algoritmo<br>';
         }, 1000);
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registrado', reg))
+                    .catch(err => console.log('SW error', err));
+            });
+        }
 
         // Real-time help suggestions (basic keyword detection)
         const realtimeSuggestions = document.getElementById('realtimeSuggestions');
