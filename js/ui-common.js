@@ -130,7 +130,92 @@ window.setupCommonUI = function() {
     // Set Year
     const yearSpan = document.getElementById('current-year');
     if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+
+    // --- PWA Logic ---
+    setupPWALogic();
 };
+
+/**
+ * PWA Logic: Installation and Service Worker registration
+ */
+function setupPWALogic() {
+    let deferredPrompt;
+    const installBtnMobile = document.getElementById("pwa-install-button-mobile");
+    const installBtnFooter = document.getElementById("pwa-install-button-footer");
+    const iosModal = document.getElementById("ios-install-modal");
+
+    // Detect platforms
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+
+    // Logic to show install buttons
+    function showInstallButtons() {
+        if (isStandalone) return;
+
+        // iOS always shows the button if not standalone (manual instructions)
+        if (isIOS) {
+            if (installBtnMobile) installBtnMobile.classList.remove("hidden");
+            if (installBtnFooter) installBtnFooter.classList.remove("hidden");
+        }
+    }
+
+    // Initial check
+    showInstallButtons();
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+        // Prevent Chrome from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later.
+        deferredPrompt = e;
+        // Show the buttons now that we know we can prompt
+        if (!isStandalone) {
+            if (installBtnMobile) installBtnMobile.classList.remove("hidden");
+            if (installBtnFooter) installBtnFooter.classList.remove("hidden");
+        }
+    });
+
+    async function handleInstall() {
+        // If iOS, show the special instructions modal
+        if (isIOS) {
+            if (iosModal) iosModal.classList.remove("opacity-0", "pointer-events-none");
+            return;
+        }
+
+        // If we have the deferredPrompt (Android/Chrome/PC), use it
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === "accepted") {
+                if (installBtnMobile) installBtnMobile.classList.add("hidden");
+                if (installBtnFooter) installBtnFooter.classList.add("hidden");
+                deferredPrompt = null;
+            }
+        } else {
+            // Fallback for mobile browsers where prompt is not available
+            alert("Para instalar esta aplicación, usa la opción 'Añadir a la pantalla de inicio' en el menú de tu navegador.");
+        }
+    }
+
+    if (installBtnMobile) installBtnMobile.addEventListener("click", handleInstall);
+    if (installBtnFooter) installBtnFooter.addEventListener("click", handleInstall);
+
+    const closeIosModal = document.getElementById("close-ios-modal");
+    if (closeIosModal) {
+        closeIosModal.addEventListener("click", () => {
+            if (iosModal) iosModal.classList.add("opacity-0", "pointer-events-none");
+        });
+    }
+
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('SW registrado', reg))
+                .catch(err => console.log('SW error', err));
+        });
+    }
+}
 
 window.renderCommonNav = function() {
     const desktopGradesMenu = document.getElementById('desktop-grades-menu');
@@ -195,6 +280,4 @@ window.renderCommonNav = function() {
             desktopAdditionalMenu.appendChild(catDiv);
         });
     }
-
-    // Mobile render is complex due to event listeners, skipped for simple unification or simplified
 };

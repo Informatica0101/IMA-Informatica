@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Profesor - Area de Informatica</title>
+    <link rel="icon" type="image/png" href="IMA-Logo.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -77,6 +80,12 @@
                 </div>
 
                 <a href="#" class="mobile-nav-link text-red-600" id="mobile-logout-button">Cerrar Sesión</a>
+                <button id="pwa-install-button-mobile" class="mobile-nav-link text-blue-600 font-bold hidden">
+                    <span class="flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Instalar Aplicación
+                    </span>
+                </button>
             </nav>
         </div>
     </header>
@@ -324,9 +333,34 @@
                 <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Privacidad</a>
                 <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Términos</a>
                 <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Soporte</a>
+                <button id="pwa-install-button-footer" class="text-gray-400 hover:text-white transition-colors duration-200 hidden">Instalar App</button>
             </div>
         </div>
     </footer>
+
+    <!-- Modal de Instrucciones iOS -->
+    <div id="ios-install-modal" class="fixed inset-0 z-[70] flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-sm mx-4 rounded-3xl shadow-2xl overflow-hidden p-6 text-center">
+            <div class="flex justify-center mb-4">
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                </div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Instalar en iOS</h3>
+            <p class="text-gray-600 mb-6 text-sm">Para instalar esta aplicación en tu iPhone o iPad:</p>
+            <div class="space-y-4 text-left mb-6">
+                <div class="flex items-center space-x-3">
+                    <span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                    <span class="text-sm">Pulsa el botón "Compartir" en Safari.</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                    <span class="text-sm">Baja y selecciona "Añadir a la pantalla de inicio".</span>
+                </div>
+            </div>
+            <button id="close-ios-modal" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors">Entendido</button>
+        </div>
+    </div>
 
     <script src="js/ui-common.js"></script>
     <script src="js/data.js"></script>
