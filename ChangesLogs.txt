@@ -564,3 +564,9 @@ Descripción: Se reestructuró el encabezado para igualar el diseño del Panel d
   - Se normalizó la lógica de calificación para preguntas de 'Completación' y 'Verdadero/Falso', aplicando comparaciones case-insensitive y trimmed.
 - Archivo: js/teacher.js
   - Se añadió validación en el formulario de creación de exámenes para impedir definiciones duplicadas en preguntas de 'Término Pareado', evitando conflictos en la lógica de calificación.
+
+25/01/2026
+- Archivo: js/config.js, Línea(s): 20
+  - Actualización de la URL del microservicio EXAM al nuevo endpoint proporcionado por el usuario.
+- Archivo: sw.js, *.html, js/ui-common.js
+  - Incremento de la versión de caché a 'v6' para asegurar el despliegue inmediato de la nueva configuración.

@@ -64,3 +64,9 @@ Auditoría Post-Implementación - Regresión en Módulo de Exámenes - Sun Jan 2
    - submitExam: Implementada calificación para Término Pareado (JSON mapping) y normalización para T/F y Completación.
 4. js/config.js y sw.js:
    - Actualizado endpoint de EXAM y bump a v5.
+
+Auditoría Final v6 - Sun Jan 25 21:15:00 UTC 2026
+--------------------------------------------------
+1. js/config.js: Actualización de EXAM URL a endpoint definitivo.
+2. sw.js: Bump a v6 and actualización de assets precacheados.
+3. Global: Cache-busting v=6 aplicado.
