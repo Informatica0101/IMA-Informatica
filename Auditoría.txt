@@ -332,3 +332,39 @@ Impacto: Bajo/Medio (Mantenibilidad)
 Contexto: Código legado que debe ser eliminado para evitar confusiones en futuros desarrollos.
 
 --------------------------------------------------
+
+==================================================
+AUDITORÍA PROFUNDA POST-IMPLEMENTACIÓN (2026-01-26)
+==================================================
+
+1. ID: P-01
+   Archivo: js/teacher.js
+   Función: renderDetalles
+   Línea aproximada: 377, 379
+   Descripción objetiva del problema: Uso de la variable 'index' no definida en el ámbito del callback. El método map se declaró como 'filtered.map(item => { ... })', omitiendo el segundo argumento (índice).
+   Riesgo: Alto (Error funcional crítico que impide la calificación).
+   Evidencia técnica: Al generar el HTML de los botones 'grade-task-btn' y 'grade-exam-btn', se intenta interpolar ${index}, lo que lanzará un ReferenceError en tiempo de ejecución.
+
+2. ID: P-02
+   Archivo: js/teacher.js
+   Función: submissionsTableBody.addEventListener
+   Línea aproximada: 424, 427
+   Descripción objetiva del problema: Presencia de bloques lógicos para manejar 'view-results-btn' y 'reactivate-exam-btn'. Estos elementos ya no son generados por ninguna función de renderizado.
+   Riesgo: Bajo (Mantenibilidad / Código muerto).
+   Evidencia técnica: Las funciones renderAlumnosExamenes y renderDetalles no incluyen botones con estas clases en su salida HTML.
+
+3. ID: P-03
+   Archivo: exam-results.html
+   Función: N/A
+   Línea aproximada: 1-65
+   Descripción objetiva del problema: Archivo huérfano. La lógica de redirección post-examen en js/exam.js apunta ahora a 'student-dashboard.html', dejando esta página inaccesible y obsoleta.
+   Riesgo: Bajo (Mantenibilidad).
+   Evidencia técnica: No existen referencias activas a 'exam-results.html' en el código base actual.
+
+4. ID: P-04
+   Archivo: js/teacher.js
+   Función: renderDetalles
+   Línea aproximada: 331
+   Descripción objetiva del problema: Inconsistencia en la aplicación de filtros. El filtro 'Pendientes por calificar' (onlyPendingFilter) se ignora por completo en la vista de detalles del alumno, a pesar de ser visible en la interfaz si el navStack fue manipulado incorrectamente o si el usuario espera consistencia.
+   Riesgo: Bajo (UX).
+   Evidencia técnica: La función renderDetalles no consulta el estado de 'onlyPendingFilter.checked' antes de filtrar el array 'allActivityRaw'.
