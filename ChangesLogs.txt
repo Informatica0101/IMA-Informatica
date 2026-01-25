@@ -523,3 +523,11 @@ OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
   - Se implementó cache-busting añadiendo el parámetro `?v=4` a todas las referencias de archivos CSS y JS locales.
 - Archivo: js/ui-common.js, pseudocode.html
   - Se actualizó la versión del registro del Service Worker a `sw.js?v=4` para forzar la detección de cambios por el navegador.
+
+Archivo: student-dashboard.html
+Línea: 83
+Descripción: Se cambió la clase 'text-4xl' por 'text-lg' en el saludo del estudiante para mantener consistencia visual con el panel del profesor.
+
+Archivo: student-dashboard.html
+Línea: 95-98
+Descripción: Se reestructuró el encabezado para igualar el diseño del Panel de Profesor: se añadió un H1 'Panel de Estudiante' (text-3xl) y se movió el saludo al párrafo P (text-lg), asegurando simetría visual entre ambos perfiles.

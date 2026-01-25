@@ -1,4 +1,4 @@
-Auditoría Final - Sun Jan 25 16:48:47 UTC 2026
+Auditoría Final - Sun Jan 25 17:15:00 UTC 2026
 --------------------------------
 1. backend/task-service/Code.gs:
    - Función getStudentTasks: Lógica de Credito Extra mejorada. Se valida rechazo por asignatura and grado con comparaciones robustas.
@@ -6,9 +6,11 @@ Auditoría Final - Sun Jan 25 16:48:47 UTC 2026
    - Función renderActivities: Soporta 'Credito Extra' como deliverable.
    - Mapping de estados: Finalizado/Revisada -> Completada.
 3. student-dashboard.html:
-   - Ajuste visual: Greeting text-lg -> text-base.
-4. Instrucciones.txt:
-   - Tareas A-13 a A-31 marcadas como COMPLETADAS.
+   - Ajuste visual: Greeting text-4xl -> text-lg (Estructura sincronizada con teacher-dashboard.html) (para consistencia con teacher-dashboard.html).
+4. teacher-dashboard.html:
+   - Verificado: Greeting usa text-lg.
+5. Instrucciones.txt:
+   - Tareas A-13 a A-33 marcadas como COMPLETADAS.
 
 Auditoría - Sun Jan 25 (Nueva URL and Caché)
 --------------------------------

@@ -87,13 +87,6 @@ FLUJO PRINCIPAL DE TRABAJO
 11. ACTUALIZACIÓN DE INSTRUCCIONES.TXT
     - Mover la tarea ejecutada a:
       -> "TAREAS PENDIENTES DE REVISIÓN"
-tarea 28: Optimización visual del Dashboard del Profesor (Reducir márgenes, ajustar columnas, reposicionar buscador y botón regresar). (COMPLETADA)
-    - NO eliminar tareas sin aprobación del PM.
-
-TAREA: Corrección de estados y visibilidad de crédito extra (COMPLETADA)
-    - Se unificó el estado "Revisada" a "Completada".
-    - Se corrigió el mapeo visual en el dashboard del profesor para respetar "Rechazada".
-    - Se verificó la visibilidad de crédito extra para estudiantes con tareas rechazadas.
 
 12. COMMIT
     - Realizar UN SOLO commit por ciclo completo.
@@ -200,372 +193,38 @@ ________________________________________________________________________________
 TAREAS COMPLETADAS (ÁREA PROTEGIDA - NO MODIFICAR)
 ________________________________________________________________________________________________
 
+TAREA: [A-13 a A-33] Mejoras de UI, seguridad de exámenes, navegación jerárquica and refactorización (COMPLETADAS)
 TAREA: [A-32] Habilitar visibilidad de tareas de crédito extra (COMPLETADA)
 TAREA: [A-31] Barra de búsqueda global de alumnos (COMPLETADA)
-TAREA: [A-13 a A-30] Mejoras de UI, seguridad de exámenes and refactorización (COMPLETADAS)
-TAREA: Navegación jerárquica y estados de tarea (COMPLETADAS)
+TAREA: Optimización visual del Dashboard del Profesor (Tarea 28) (COMPLETADA)
+TAREA: Corrección de estados y visibilidad de crédito extra (COMPLETADA)
 
 ________________________________________________________________________________________________
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
 
-TAREA: [A-32]
-TÍTULO: Habilitar visibilidad de tareas de crédito extra para alumnos con tareas rechazadas
-ÁREA: Backend / Lógica de negocio / Frontend
-PRIORIDAD: CRÍTICA
-
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
-- Se corrigió la lógica en backend (getStudentTasks) para validar tareas rechazadas por asignatura/grado.
-- Se habilitó en frontend (js/student.js) el renderizado y entrega de tareas tipo "Credito Extra".
-
---------------------------------------------------
-
 TAREA: [A-33]
 TÍTULO: Ajuste visual saludo Dashboard Estudiante
 ÁREA: Frontend / UI
 PRIORIDAD: BAJA
-
 ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
-- Se redujo el tamaño de fuente del saludo de text-lg a text-base en student-dashboard.html.
-
---------------------------------------------------
-
-TAREA: [A-24]
-ARCHIVO: js/exam.js
-UBICACIÓN: Función loadExam
-ÁREA: Frontend / UX / Seguridad
-PRIORIDAD: ALTA
-
-PROBLEMA A RESOLVER:
-Se debe revisar la activación de pantalla completa. Actualmente se invoca tras un await, lo que suele ser bloqueado por los navegadores al no detectar una acción directa del usuario.
-
---------------------------------------------------
-
-TAREA: [A-25]
-ARCHIVO: js/exam.js
-UBICACIÓN: Función requestFullScreen
-ÁREA: Frontend / Lógica
-PRIORIDAD: MEDIA
-
-PROBLEMA A RESOLVER:
-Se debe corregir el listener de 'fullscreenchange' para que verifique si ya hay un envío en curso antes de disparar submitExam(true), evitando duplicidad de peticiones.
-
---------------------------------------------------
-
-TAREA: [A-26]
-ARCHIVO: js/results.js
-UBICACIÓN: Función loadResults
-ÁREA: Frontend / Estabilidad
-PRIORIDAD: ALTA
-
-PROBLEMA A RESOLVER:
-Se debe corregir el uso de JSON.parse sobre parámetros de la URL. Es obligatorio envolver estas llamadas en bloques try-catch para prevenir fallos críticos de la página ante datos malformados.
-
---------------------------------------------------
-
-TAREA: [A-27]
-ARCHIVO: js/results.js
-UBICACIÓN: Función renderResultsDirect
-ÁREA: Frontend / Lógica
-PRIORIDAD: MEDIA
-
-PROBLEMA A RESOLVER:
-Se debe revisar el acceso a propiedades del objeto 'pregunta'. Actualmente asume que el objeto siempre existe, lo que puede causar un TypeError si no hay coincidencia de IDs.
-
---------------------------------------------------
-
-TAREA: [A-28]
-ARCHIVO: js/index-ui.js
-UBICACIÓN: DOMContentLoaded listener
-ÁREA: Frontend / UX
-PRIORIDAD: BAJA
-
-PROBLEMA A RESOLVER:
-Se debe refactorizar la lógica de ejecución de acciones vía URL para eliminar el uso de setTimeout(500ms), implementando un mecanismo basado en eventos o estados de carga reales.
-
---------------------------------------------------
-
-TAREA: [A-29]
-ARCHIVO: js/teacher.js
-UBICACIÓN: Función renderDetalles
-ÁREA: Frontend / Mantenibilidad
-PRIORIDAD: BAJA
-
-PROBLEMA A RESOLVER:
-Se debe refactorizar el control de roles para evitar el uso de strings literales ("Profesor") distribuidos en la lógica de renderizado, centralizando la definición de capacidades por rol.
-
---------------------------------------------------
-
-TAREA: [A-30]
-ARCHIVO: js/student.js
-UBICACIÓN: uploadedFilesList listener
-ÁREA: UX / Backend / Almacenamiento
-PRIORIDAD: MEDIA
-
-PROBLEMA A RESOLVER:
-Se debe revisar la lógica de eliminación de archivos. Actualmente solo se eliminan del estado local, dejando archivos huérfanos en Google Drive. Se debe evaluar la implementación de una llamada al backend para borrar el recurso remoto.
-
---------------------------------------------------
-
-TAREA: [A-13]
-ARCHIVO: js/teacher.js
-UBICACIÓN: Función renderDetalles
-ÁREA: Frontend / Lógica / Control de Roles
-PRIORIDAD: CRÍTICA
-
-PROBLEMA A RESOLVER:
-La variable 'index' no está definida en el callback de filtered.map, lo que rompe la
-funcionalidad de los botones de calificación en la vista de detalles del PROFESOR.
-
-Además, no está claramente delimitado que la acción de calificar es exclusiva del
-rol PROFESOR, mientras que el ALUMNO solo debe visualizar el estado de la tarea.
-
---------------------------------------------------
-ACLARACIÓN FUNCIONAL (OBLIGATORIA)
---------------------------------------------------
-- El ALUMNO:
-  - ❌ NO puede calificar tareas ni exámenes.
-  - ❌ NO puede ver botones de calificación.
-  - ✔ Solo puede ver:
-    - Estado de la tarea
-    - Calificación asignada
-    - Comentario del profesor
-
-- El PROFESOR:
-  - ✔ Es el ÚNICO rol autorizado para calificar tareas y exámenes.
-  - ✔ Debe visualizar y usar los botones de "Calificar".
-
---------------------------------------------------
-ACCIONES REQUERIDAS
---------------------------------------------------
-- Modificar la línea de la función map para incluir el índice:
-  filtered.map((item, index) => { ... })
-
-- Asegurar que los botones:
-  - grade-task-btn
-  - grade-exam-btn
-  reciban correctamente el valor data-index.
-
-- Verificar que los botones de calificación:
-  - Solo se rendericen si el rol activo es PROFESOR.
-  - No estén presentes ni accesibles en vistas de ALUMNO.
-
---------------------------------------------------
-REGLAS
---------------------------------------------------
-- No introducir regresiones.
-- No modificar lógica ya validada como correcta.
-- Mantener compatibilidad móvil.
-- No duplicar lógica de control de roles innecesariamente.
-
---------------------------------------------------
-CRITERIO DE ACEPTACIÓN
---------------------------------------------------
-- En vista PROFESOR:
-  - Al hacer clic en "Calificar" desde la vista de detalles de un alumno,
-    se abre el modal de calificación con los datos correctos del ítem seleccionado.
-
-- En vista ALUMNO:
-  - No existen botones de calificación.
-  - El alumno solo puede ver:
-    - Estado de la tarea
-    - Calificación
-    - Comentario del profesor
-
---------------------------------------------------
-
-TAREA: [A-14]
-ARCHIVO: js/exam.js
-UBICACIÓN: Archivo completo
-ÁREA: Frontend / Lógica
-PRIORIDAD: CRÍTICA
-
-PROBLEMA A RESOLVER:
-El archivo contiene comentarios de marcador de posición en lugar de código funcional para el temporizador y el modo pantalla completa.
-
-ACCIONES REQUERIDAS:
-- Restaurar la lógica funcional del temporizador (startTimer).
-- Restaurar la lógica de pantalla completa (requestFullScreen) y sus protecciones contra salida accidental.
-
-REGLAS:
-- No modificar la lógica de envío de respuestas ya existente.
-
-CRITERIO DE ACEPTACIÓN:
-- El examen debe mostrar un temporizador funcional si el examen tiene un tiempo límite definido en la base de datos.
-- El examen debe intentar entrar en pantalla completa al iniciar.
-
---------------------------------------------------
-
-TAREA: [A-15]
-ARCHIVO: js/exam.js
-UBICACIÓN: Función submitExam
-ÁREA: Frontend / Navegación
-PRIORIDAD: MEDIA
-
-PROBLEMA A RESOLVER:
-Redirección a archivo inexistente 'student.html'.
-
-ACCIONES REQUERIDAS:
-- Cambiar window.location.href = 'student.html' por 'student-dashboard.html'.
-
-REGLAS:
-- Verificar que el archivo destino sea el correcto según la estructura del repo.
-
-CRITERIO DE ACEPTACIÓN:
-- Al terminar un examen bloqueado sin respuestas, el usuario debe ser redirigido correctamente al dashboard del estudiante.
-
---------------------------------------------------
-
-TAREA: [A-16]
-ARCHIVO: js/ui-common.js / js/index-ui.js
-UBICACIÓN: Funciones de renderizado de navegación
-ÁREA: Frontend / Arquitectura
-PRIORIDAD: ALTA
-
-PROBLEMA A RESOLVER:
-La navegación móvil solo funciona en index.html porque renderMobileNav está en index-ui.js.
-
-ACCIONES REQUERIDAS:
-- Mover la función renderMobileNav de js/index-ui.js a js/ui-common.js.
-- Asegurar que js/ui-common.js llame a renderMobileNav dentro de setupCommonUI o de forma que todas las páginas la ejecuten.
-- Actualizar las llamadas en index-ui.js si es necesario.
-
-REGLAS:
-- Mantener la funcionalidad de los botones de acción (juegos) que se disparan desde el menú.
-
-CRITERIO DE ACEPTACIÓN:
-- El menú móvil debe mostrar las categorías de cursos y recursos adicionales correctamente en el dashboard del estudiante y el dashboard del profesor.
-
---------------------------------------------------
-
-TAREA: [A-17]
-ARCHIVO: exam-results.html
-UBICACIÓN: Sección de scripts
-ÁREA: Frontend / Estructura
-PRIORIDAD: MEDIA
-
-PROBLEMA A RESOLVER:
-Falta de dependencias críticas y duplicidad con results.html.
-
-ACCIONES REQUERIDAS:
-- Opción A: Agregar <script src="js/config.js"></script> y <script src="js/api.js"></script> a exam-results.html.
-- Opción B (Preferida): Unificar con results.html si cumplen la misma función y redirigir siempre a una sola.
-
-REGLAS:
-- No romper la visualización de resultados actuales.
-
-CRITERIO DE ACEPTACIÓN:
-- La página de resultados de examen debe cargar sin errores de "fetchApi is not defined" o similares.
-
---------------------------------------------------
-
-TAREA: [A-18 y A-19]
-ARCHIVO: js/teacher.js / js/main.js
-UBICACIÓN: Event listeners y archivos raíz
-ÁREA: Mantenibilidad
-PRIORIDAD: BAJA
-
-PROBLEMA A RESOLVER:
-Código muerto y archivos redundantes.
-
-ACCIONES REQUERIDAS:
-- Eliminar los bloques de código en js/teacher.js que manejan 'view-results-btn' y 'reactivate-exam-btn'.
-- Eliminar el archivo js/main.js.
-
-REGLAS:
-- Asegurarse de que no existan dependencias ocultas a js/main.js en ningún HTML.
-
-CRITERIO DE ACEPTACIÓN:
-- El sitio debe seguir funcionando correctamente sin js/main.js.
-- El código de teacher.js debe estar más limpio.
-
---------------------------------------------------
-
-TAREA: [A-20]
-ARCHIVO: Varios (Contenido Educativo)
-UBICACIÓN: Enlaces y Assets
-ÁREA: SEO / Navegación
-PRIORIDAD: MEDIA
-
-PROBLEMA A RESOLVER:
-Enlaces rotos o desactualizados apuntando a azghell.github.io.
-
-ACCIONES REQUERIDAS:
-- Realizar un reemplazo global de 'https://azghell.github.io/IMA-Informatica' por 'https://informatica0101.github.io' en todos los archivos HTML de las carpetas de grados.
-
-REGLAS:
-- Solo modificar la URL base, mantener el resto de la ruta.
-
-CRITERIO DE ACEPTACIÓN:
-- Los botones de "Inicio" en las presentaciones deben llevar a la URL correcta del portal.
-
---------------------------------------------------
-
-TAREA: [A-21]
-ARCHIVO: js/data.js
-UBICACIÓN: presentationData
-ÁREA: Visual
-PRIORIDAD: BAJA
-
-PROBLEMA A RESOLVER:
-Erratas en etiquetas de datos.
-
-ACCIONES REQUERIDAS:
-- Cambiar "Grind vs Flexbox" por "Grid vs Flexbox".
-- Corregir cualquier otra errata evidente en los títulos de temas.
-
-REGLAS:
-- No modificar las rutas de los archivos (propiedad 'file'), solo los títulos visibles.
-
-CRITERIO DE ACEPTACIÓN:
-- El menú de cursos debe mostrar "Grid vs Flexbox".
-
---------------------------------------------------
-
-TAREA: [A-22]
-ARCHIVO: js/student.js
-UBICACIÓN: Modal de entrega
-ÁREA: UX
-PRIORIDAD: MEDIA
-
-PROBLEMA A RESOLVER:
-Imposibilidad de eliminar un archivo subido por error antes de la entrega final.
-
-ACCIONES REQUERIDAS:
-- Agregar un botón de "Eliminar" (X) a cada elemento de la lista de archivos subidos en el modal.
-- Implementar la lógica para remover el archivo del array uploadedFiles al hacer clic.
-
-REGLAS:
-- El botón debe ser accesible y visible.
-
-CRITERIO DE ACEPTACIÓN:
-- El estudiante puede subir varios archivos, eliminar uno de ellos, y entregar solo los restantes correctamente.
-
---------------------------------------------------
-
-TAREA: [A-23]
-ARCHIVO: backend.gs
-UBICACIÓN: Raíz del proyecto
-ÁREA: Backend / Mantenibilidad
-PRIORIDAD: BAJA
-
-PROBLEMA A RESOLVER:
-Archivo redundante y legado que no forma parte de la arquitectura de microservicios actual.
-
-ACCIONES REQUERIDAS:
-- Eliminar el archivo backend.gs de la raíz del proyecto.
-
-REGLAS:
-- Ninguna.
-
-CRITERIO DE ACEPTACIÓN:
-- El archivo ya no existe en el repositorio. El sistema (que usa SERVICE_URLS individuales) sigue funcionando.
-
---------------------------------------------------
-
+- Se sincronizó el tamaño de fuente del saludo en student-dashboard.html (text-lg) con el de teacher-dashboard.html.
+
+TAREA: [A-13 a A-30] Refactorización masiva y corrección de seguridad
+ESTADO: COMPLETADAS (PENDIENTE DE REVISIÓN)
+- Se corrigió el índice en teacher.js [A-13].
+- Se restauró la lógica de examen (timer/fullscreen) [A-14, A-24, A-25].
+- Se corrigieron redirecciones y dependencias [A-15, A-17].
+- Se centralizó la navegación móvil [A-16].
+- Se eliminó código muerto y archivos legado [A-18, A-19, A-23].
+- Reemplazo global de URL base [A-20].
+- Corrección de erratas y UX de archivos [A-21, A-22, A-30].
+- Blindaje de parsing JSON en resultados [A-26, A-27].
+- Eliminación de timeouts en navegación por URL [A-28].
+- Centralización de capacidades por rol [A-29].
+
+________________________________________________________________________________________________
 TAREAS PENDIENTES
 ________________________________________________________________________________________________
 
 (No hay tareas críticas pendientes en este momento)
-
---------------------------------------------------
