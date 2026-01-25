@@ -194,38 +194,7 @@ Despues de esta linea se deben de registrar las nuevas tareas, por realizar o co
 ________________________________________________________________________________________________
 TAREAS COMPLETADAS (ÁREA PROTEGIDA - NO MODIFICAR)
 ________________________________________________________________________________________________
-tarea 1: Implementar subida múltiple de imágenes una por una con vista previa y carga en segundo plano. (COMPLETADA)
-tarea 2: Actualizar URL del microservicio TASK. (COMPLETADA)
-tarea 3: Optimizar UX de carga en segundo plano (no bloqueante) y corregir backend. (COMPLETADA)
-tarea 4: Actualización recurrente de la URL del microservicio TASK. (COMPLETADA)
-tarea 5: Garantizar la integridad de subidas concurrentes en el dashboard del estudiante. (COMPLETADA)
-tarea 6: Implementar animaciones de carga en todos los botones de envío al backend y corregir error de entrega de exámenes. (COMPLETADA)
-tarea 7: Estandarizar formato de fechas a ISO 8601 en servicios de backend para corregir "Invalid Date" en el frontend. (COMPLETADA)
-tarea 8: Auditar cambios finales, corregir variables obsoletas y aplicar nuevas URLs de servicios. (COMPLETADA)
-tarea 10: Implementar búsqueda, filtrado y ordenamiento en el dashboard del profesor, restringir resultados de examen a estudiantes y habilitar calificación manual de exámenes. (COMPLETADA)
-tarea 24: Reestructurar navegación del dashboard del profesor (Grados -> Sección -> Asignatura -> Alumno). (COMPLETADA)
-tarea 25: Implementar vista de detalle del alumno con estados Completada/Pendiente/Por calificar. (COMPLETADA)
-tarea 26: Implementar tabla de alumnos resumida con reordenamiento asc/desc. (COMPLETADA)
-tarea 27: Implementar filtros avanzados en tabla de alumnos y conservar búsqueda global. (COMPLETADA)
 
-TAREAS PENDIENTES DE REVISIÓN
-tarea 28: Optimización visual del Dashboard del Profesor (Reducir márgenes, ajustar columnas, reposicionar buscador y botón regresar). (COMPLETADA)
-tarea 29: Implementación de navegación directa sin botones, pestaña de exámenes, tablas responsivas, ajuste de tipografía y optimización de footer/hero. (COMPLETADA)
-________________________________________________________________________________________________
-tarea 9: Corregir lógica de renderizado de preguntas Verdadero/Falso y Término Pareado, y habilitar visualización detallada de resultados. (COMPLETADA)
-tarea 11: Actualizar URLs de servicios, implementar ocultación de resultados de examen hasta revisión docente y estandarizar lógica de feedback en el dashboard del estudiante. (COMPLETADA)
-tarea 12: Implementar restricción de acceso para profesores, mejorar legibilidad de IDs y lógica de visibilidad de secciones. (COMPLETADA)
-tarea 13: Actualizar URLs de los microservicios TASK y EXAM a las nuevas implementaciones finales. (COMPLETADA)
-tarea 14: Actualizar las URLs de producción definitivas para los microservicios USER, TASK y EXAM. (COMPLETADA)
-tarea 15: Corregir fuga de aislamiento entre profesores y visualización de metadatos "N/A" en el dashboard docente. (COMPLETADA)
-tarea 16: Actualizar URLs de producción para TASK y EXAM (...2Ss y ...8Kr). (COMPLETADA)
-tarea 17: Implementar botón de instalación de PWA en menú móvil y pie de página y mejorar visibilidad. (COMPLETADA)
-tarea 18: Implementar modal de login y sección de acceso (Portal/Iniciar Sesión) en index.html sin afectar secciones existentes. (COMPLETADA)
-tarea 19: Unificación total de encabezados y pies de página, reducción de márgenes y gaps, y estandarización visual en dashboards y exámenes. (COMPLETADA)
-tarea 20: Implementar navegación jerárquica y filtrado avanzado en el Dashboard del Profesor (navStack, filtros, títulos dinámicos). (COMPLETADA)
-tarea 21: Optimizar accesibilidad móvil asegurando un área de toque mínima de 44px para todos los elementos interactivos. (COMPLETADA)
-tarea 22: Corregir normalización de metadatos (grado vs gradoAsignado) en el dashboard del profesor para asegurar visibilidad de exámenes sin entregas en la jerarquía. (COMPLETADA)
-tarea 23: Implementar limpieza automática del buscador al cambiar de nivel en la navegación jerárquica del dashboard docente. (COMPLETADA)
 
 TAREAS PENDIENTES
 ________________________________________________________________________________________________
@@ -233,22 +202,67 @@ ________________________________________________________________________________
 TAREA: [A-13]
 ARCHIVO: js/teacher.js
 UBICACIÓN: Función renderDetalles
-ÁREA: Frontend / Lógica
+ÁREA: Frontend / Lógica / Control de Roles
 PRIORIDAD: CRÍTICA
 
 PROBLEMA A RESOLVER:
-La variable 'index' no está definida en el callback de filtered.map, lo que rompe la funcionalidad de los botones de calificación en la vista de detalles.
+La variable 'index' no está definida en el callback de filtered.map, lo que rompe la
+funcionalidad de los botones de calificación en la vista de detalles del PROFESOR.
 
-ACCIONES REQUERIDAS:
-- Modificar la línea de la función map para incluir el índice: filtered.map((item, index) => { ... })
-- Asegurar que los botones grade-task-btn y grade-exam-btn reciban el valor correcto en data-index.
+Además, no está claramente delimitado que la acción de calificar es exclusiva del
+rol PROFESOR, mientras que el ALUMNO solo debe visualizar el estado de la tarea.
 
-REGLAS:
+--------------------------------------------------
+ACLARACIÓN FUNCIONAL (OBLIGATORIA)
+--------------------------------------------------
+- El ALUMNO:
+  - ❌ NO puede calificar tareas ni exámenes.
+  - ❌ NO puede ver botones de calificación.
+  - ✔ Solo puede ver:
+    - Estado de la tarea
+    - Calificación asignada
+    - Comentario del profesor
+
+- El PROFESOR:
+  - ✔ Es el ÚNICO rol autorizado para calificar tareas y exámenes.
+  - ✔ Debe visualizar y usar los botones de "Calificar".
+
+--------------------------------------------------
+ACCIONES REQUERIDAS
+--------------------------------------------------
+- Modificar la línea de la función map para incluir el índice:
+  filtered.map((item, index) => { ... })
+
+- Asegurar que los botones:
+  - grade-task-btn
+  - grade-exam-btn
+  reciban correctamente el valor data-index.
+
+- Verificar que los botones de calificación:
+  - Solo se rendericen si el rol activo es PROFESOR.
+  - No estén presentes ni accesibles en vistas de ALUMNO.
+
+--------------------------------------------------
+REGLAS
+--------------------------------------------------
 - No introducir regresiones.
+- No modificar lógica ya validada como correcta.
 - Mantener compatibilidad móvil.
+- No duplicar lógica de control de roles innecesariamente.
 
-CRITERIO DE ACEPTACIÓN:
-- Al hacer clic en "Calificar" desde la vista de detalles de un alumno, debe abrirse el modal de calificación con los datos correctos del ítem seleccionado.
+--------------------------------------------------
+CRITERIO DE ACEPTACIÓN
+--------------------------------------------------
+- En vista PROFESOR:
+  - Al hacer clic en "Calificar" desde la vista de detalles de un alumno,
+    se abre el modal de calificación con los datos correctos del ítem seleccionado.
+
+- En vista ALUMNO:
+  - No existen botones de calificación.
+  - El alumno solo puede ver:
+    - Estado de la tarea
+    - Calificación
+    - Comentario del profesor
 
 --------------------------------------------------
 
@@ -417,7 +431,7 @@ REGLAS:
 - El botón debe ser accesible y visible.
 
 CRITERIO DE ACEPTACIÓN:
-- El estudiante puede subir 3 archivos, eliminar el segundo, y entregar solo los 2 restantes correctamente.
+- El estudiante puede subir varios archivos, eliminar uno de ellos, y entregar solo los restantes correctamente.
 
 --------------------------------------------------
 
