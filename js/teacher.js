@@ -933,7 +933,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const mainData = Object.fromEntries(new FormData(e.target).entries());
             const payload = { ...mainData, preguntas: [], profesorId: currentUser.userId };
             const questionBlocks = questionsContainer.querySelectorAll('.question-block');
+            let hasError = false;
+
             questionBlocks.forEach(block => {
+                if (hasError) return;
                 const type = block.querySelector('.question-type-select').value;
                 const optionsInput = block.querySelector('.question-options');
                 let optionsValue = optionsInput ? optionsInput.value : '';
@@ -956,15 +959,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     const pairs = optionsValue.split(',').map(s => s.trim()).filter(s => s);
                     pregunta.opciones = { concepts: [], definitions: [] };
                     const correctMapping = {};
-                    pairs.forEach((pair, idx) => {
-                        const [concept, definition] = pair.split(':').map(s => s.trim());
+                    const seenDefs = new Set();
+
+                    for (let i = 0; i < pairs.length; i++) {
+                        const [concept, definition] = pairs[i].split(':').map(s => s.trim());
                         if (concept && definition) {
+                            // Tarea 2: Evitar definiciones duplicadas que rompen la lógica de emparejamiento
+                            if (seenDefs.has(definition)) {
+                                alert(`Error: La definición "${definition}" está duplicada. Cada concepto debe tener una definición única.`);
+                                hasError = true;
+                                break;
+                            }
+                            seenDefs.add(definition);
                             pregunta.opciones.concepts.push(concept);
                             pregunta.opciones.definitions.push(definition);
-                            // Mapeamos: índice de definición (idx) -> número de concepto (idx + 1)
-                            correctMapping[idx] = (idx + 1).toString();
+                            // Mapeamos: índice de definición (i) -> número de concepto (i + 1)
+                            correctMapping[i] = (i + 1).toString();
                         }
-                    });
+                    }
                     pregunta.respuestaCorrecta = JSON.stringify(correctMapping);
                 } else {
                     pregunta.opciones = optionsValue;
@@ -972,6 +984,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 payload.preguntas.push(pregunta);
             });
+
+            if (hasError) return;
+
             if (payload.preguntas.length === 0) {
                 alert('Un examen no puede estar vacío.');
                 return;

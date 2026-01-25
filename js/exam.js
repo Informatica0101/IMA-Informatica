@@ -11,6 +11,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const examenId = urlParams.get('examenId');
     let originalQuestions = [];
 
+    /**
+     * Tarea 2: Implementación de Fisher-Yates para barajado robusto.
+     */
+    function shuffleArray(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
     // --- Lógica del Examen ---
     async function loadExam() {
         const startOverlay = document.getElementById('start-exam-overlay');
@@ -74,12 +86,16 @@ document.addEventListener('DOMContentLoaded', () => {
         switch (questionType) {
             case 'opcion_multiple':
             case 'verdadero_falso':
-                optionsHtml = Object.entries(options).map(([key, value]) => `
-                    <label class="block p-2 rounded hover:bg-gray-100">
-                        <input type="radio" name="question_${questionId}" value="${key}" class="mr-2">
-                        ${value}
-                    </label>
-                `).join('');
+                optionsHtml = Object.entries(options).map(([key, value]) => {
+                    // Tarea 1: Enviar valor semántico para Verdadero/Falso
+                    const inputValue = (questionType === 'verdadero_falso') ? value : key;
+                    return `
+                        <label class="block p-2 rounded hover:bg-gray-100">
+                            <input type="radio" name="question_${questionId}" value="${inputValue}" class="mr-2">
+                            ${value}
+                        </label>
+                    `;
+                }).join('');
                 break;
             case 'completacion':
             case 'respuesta_breve':
@@ -87,9 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'termino_pareado':
                 if (options.concepts && options.definitions) {
-                    // Guardar índices originales antes de barajar
+                    // Tarea 2: Barajado robusto de definiciones sin duplicados
                     const indexedDefinitions = options.definitions.map((def, idx) => ({ def, idx }));
-                    const shuffledDefinitions = indexedDefinitions.sort(() => Math.random() - 0.5);
+                    const shuffledDefinitions = shuffleArray(indexedDefinitions);
                     optionsHtml = `
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>

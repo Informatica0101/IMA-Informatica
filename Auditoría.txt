@@ -37,3 +37,30 @@ Auditoría - Regresión en Módulo de Exámenes - Sun Jan 25 20:03:24 UTC 2026
    - submitExam: El formato de envío para 'termino_pareado' debe ser estandarizado para facilitar la calificación en el backend.
 4. js/results.js:
    - renderResults: No interpreta el formato JSON de las respuestas de 'Término Pareado', mostrando texto crudo al usuario.
+
+Auditoría - Ajustes en Lógica de Preguntas - Sun Jan 25 20:38:02 UTC 2026
+--------------------------------------------------
+1. js/exam.js:
+   - renderQuestion (verdadero_falso): Usa 'key' (A/B) como valor del input, enviando identificadores en lugar de valores semánticos.
+   - renderQuestion (termino_pareado): Usa sort() inestable para el barajado, lo que puede causar comportamientos inesperados (aunque la duplicación reportada podría ser un efecto colateral de re-renderizados o datos base).
+2. backend/exam-service/Code.gs:
+   - submitExam: Compara directamente el valor enviado contra la respuesta correcta. Si se envía "A" pero se espera "Verdadero", fallará.
+3. js/teacher.js:
+   - Procesamiento de opciones: Asigna letras correlativas (A, B...) a las opciones. Para T/F, esto crea la discordancia entre el label y el valor enviado.
+
+Auditoría Post-Implementación - Regresión en Módulo de Exámenes - Sun Jan 25 21:05:00 UTC 2026
+--------------------------------------------------
+1. js/teacher.js:
+   - Añadida pestaña "Gestión" en la vista de alumnos para administrar plantillas de exámenes.
+   - Implementada generación automática de 'respuestaCorrecta' (JSON mapping) para Término Pareado.
+   - Agregada validación de definiciones duplicadas en la creación de exámenes.
+   - Enlace de revisión en el modal de calificación ahora funcional y apunta a results.html con parámetros correctos.
+2. js/exam.js:
+   - Implementado Fisher-Yates para barajado estable de definiciones en Término Pareado.
+   - Uso de 'data-original-index' para vinculación robusta de respuestas.
+   - Envío de valores semánticos ("Verdadero"/"Falso") para preguntas de T/F.
+3. backend/exam-service/Code.gs:
+   - getStudentExams: Normalización (trim/toLowerCase) de grado y sección para visibilidad garantizada.
+   - submitExam: Implementada calificación para Término Pareado (JSON mapping) y normalización para T/F y Completación.
+4. js/config.js y sw.js:
+   - Actualizado endpoint de EXAM y bump a v5.

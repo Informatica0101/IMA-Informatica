@@ -220,7 +220,8 @@ function submitExam({ examenId, userId, respuestas }) {
         points = totalPairs > 0 ? (correctPairs / totalPairs) : 0;
       } catch (e) { points = 0; }
     } else {
-      const ok = q[2] === "completacion"
+      // Tarea 1: Normalizar comparación para Verdadero/Falso y Completación
+      const ok = (q[2] === "completacion" || q[2] === "verdadero_falso")
         ? normalizeString(r.respuestaEstudiante) === normalizeString(q[5])
         : r.respuestaEstudiante === q[5];
       points = ok ? 1 : 0;
@@ -330,7 +331,8 @@ function getExamResult({ entregaExamenId }) {
         esCorrecta = hits === total;
         score = total > 0 ? (hits / total) : 0;
       } catch (e) {}
-    } else if (tipo === "completacion") {
+    } else if (tipo === "completacion" || tipo === "verdadero_falso") {
+      // Tarea 1: Normalizar comparación para Verdadero/Falso y Completación en resultados
       esCorrecta = normalizeString(respuestaEstudiante) === normalizeString(respuestaCorrecta);
       score = esCorrecta ? 1 : 0;
     } else {

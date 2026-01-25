@@ -555,3 +555,12 @@ Descripción: Se reestructuró el encabezado para igualar el diseño del Panel d
   - Incrementada la versión del caché a 'informatic-app-v5' para forzar la actualización de la configuración en los clientes.
 - Archivos: *.html, js/ui-common.js
   - Aplicado cache-busting 'v=5' a todas las referencias de activos locales.
+
+25/01/2026
+- Archivo: js/exam.js
+  - Se implementó el algoritmo Fisher-Yates para un barajado estable de las definiciones en preguntas de 'Término Pareado'.
+  - Se corrigió el envío de respuestas de 'Verdadero/Falso' para que se envíen los valores semánticos ("Verdadero"/"Falso") en lugar de índices (A/B), asegurando la compatibilidad con el backend.
+- Archivo: backend/exam-service/Code.gs
+  - Se normalizó la lógica de calificación para preguntas de 'Completación' y 'Verdadero/Falso', aplicando comparaciones case-insensitive y trimmed.
+- Archivo: js/teacher.js
+  - Se añadió validación en el formulario de creación de exámenes para impedir definiciones duplicadas en preguntas de 'Término Pareado', evitando conflictos en la lógica de calificación.

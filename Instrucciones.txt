@@ -238,3 +238,13 @@ TAREAS PENDIENTES
 ________________________________________________________________________________________________
 
 (No hay tareas críticas pendientes en este momento)
+
+TAREA: [A-35]
+TÍTULO: Refinamiento de Lógica de Preguntas (T/F y Término Pareado)
+ÁREA: Frontend / Backend / Exámenes
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Corregido envío de valores semánticos ("Verdadero"/"Falso") para preguntas de T/F.
+- Implementado barajado estable (Fisher-Yates) para definiciones en Término Pareado.
+- Agregada validación de definiciones duplicadas en la creación de exámenes.
+- Normalizada comparación de strings en el backend para calificación de Completación y T/F.
