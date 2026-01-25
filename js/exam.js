@@ -31,9 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (tiempoLimite) {
-                    // ... (lógica de timer sin cambios)
+                    startTimer(tiempoLimite);
                 }
-                // ... (lógica de fullscreen sin cambios)
+                requestFullScreen();
             } else { throw new Error(result.message); }
         } catch (error) {
             questionsContainer.innerHTML = `<p class="text-red-500">Error al cargar el examen: ${error.message}</p>`;
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Detener si es un bloqueo y no hay respuestas (p.ej. el estudiante no empezó)
         if (isBlocked && respuestas.length === 0) {
-            window.location.href = 'student.html';
+            window.location.href = 'student-dashboard.html';
             return;
         }
 
@@ -172,7 +172,56 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ... (El resto de las funciones: renderQuestion, startTimer, requestFullScreen, etc. no necesitan cambios)
+    function startTimer(durationMinutes) {
+        if (!durationMinutes || !timerEl) return;
+        let timeRemaining = durationMinutes * 60;
+
+        const updateTimerDisplay = () => {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeRemaining <= 60) {
+                timerEl.classList.add('text-red-600', 'animate-pulse');
+            }
+        };
+
+        updateTimerDisplay();
+
+        const timerInterval = setInterval(() => {
+            timeRemaining--;
+            updateTimerDisplay();
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                alert('El tiempo ha terminado. El examen se enviará automáticamente.');
+                submitExam(true);
+            }
+        }, 1000);
+    }
+
+    function requestFullScreen() {
+        const docEl = document.documentElement;
+        const request = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+
+        if (request) {
+            request.call(docEl).catch(err => {
+                console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+            });
+        }
+
+        // Protecciones contra salida accidental
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                // Solo alertar y enviar si el examen no ha sido ya enviado
+                const submitBtn = document.querySelector('button[type="submit"]');
+                if (submitBtn && !submitBtn.disabled) {
+                    alert('Has salido del modo pantalla completa. Por seguridad, el examen se enviará automáticamente.');
+                    submitExam(true);
+                }
+            }
+        });
+    }
 
     examForm.addEventListener('submit', (e) => {
         e.preventDefault();

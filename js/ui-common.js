@@ -133,6 +133,9 @@ window.setupCommonUI = function() {
 
     // --- PWA Logic ---
     setupPWALogic();
+
+    // Render Mobile Nav
+    window.renderMobileNav();
 };
 
 /**
@@ -216,6 +219,111 @@ function setupPWALogic() {
         });
     }
 }
+
+window.handleHeaderAction = function(action) {
+    if (!window.showMainContentSections) {
+        // Si no estamos en la home, redirigir a index.html con el parámetro de acción
+        window.location.href = `index.html?action=${action}`;
+        return;
+    }
+    window.showMainContentSections();
+    if (action === 'load-peripherals-game') { if(window.loadPeripheralsGame) window.loadPeripheralsGame(); }
+    else if (action === 'load-webmaster-quiz') { if(window.loadWebMasterQuiz) window.loadWebMasterQuiz(); }
+    else if (action === 'load-dexterity-game') { if(window.loadDexterityGame) window.loadDexterityGame(); }
+    if (window.closeMobileMenu) window.closeMobileMenu();
+};
+
+window.renderMobileNav = function() {
+    const mobileGradesMenu = document.getElementById('mobile-grades-menu');
+    const mobileAdditionalMenu = document.getElementById('mobile-additional-resources-menu');
+    if (!mobileGradesMenu || !window.presentationData) return;
+
+    mobileGradesMenu.innerHTML = '';
+    window.presentationData.forEach(gradeData => {
+        const gradeToggle = document.createElement('button');
+        gradeToggle.className = 'mobile-nav-link justify-between bg-white';
+        gradeToggle.innerHTML = `${gradeData.grade} <span class="transform transition-transform duration-300">&#9656;</span>`;
+        mobileGradesMenu.appendChild(gradeToggle);
+
+        const subjectsContainer = document.createElement('div');
+        subjectsContainer.className = 'mobile-menu-item-container hidden-height';
+        mobileGradesMenu.appendChild(subjectsContainer);
+
+        gradeToggle.addEventListener('click', () => {
+            subjectsContainer.classList.toggle('hidden-height');
+            subjectsContainer.classList.toggle('visible-height');
+            const arrow = gradeToggle.querySelector('span');
+            if (arrow) arrow.classList.toggle('rotate-90');
+        });
+
+        gradeData.subjects.forEach(subjectData => {
+            const subjectToggle = document.createElement('button');
+            subjectToggle.className = 'w-full text-gray-700 font-medium text-left px-8 py-3 flex justify-between items-center bg-gray-50 border-b border-gray-100';
+            subjectToggle.innerHTML = `${subjectData.name} <span class="transform transition-transform duration-300">&#9656;</span>`;
+            subjectsContainer.appendChild(subjectToggle);
+
+            const topicsContainer = document.createElement('div');
+            topicsContainer.className = 'mobile-menu-item-container hidden-height bg-gray-100';
+            subjectsContainer.appendChild(topicsContainer);
+
+            subjectToggle.addEventListener('click', () => {
+                topicsContainer.classList.toggle('hidden-height');
+                topicsContainer.classList.toggle('visible-height');
+                const arrow = subjectToggle.querySelector('span');
+                if (arrow) arrow.classList.toggle('rotate-90');
+            });
+
+            subjectData.topics.forEach(topic => {
+                const topicLink = document.createElement('a');
+                topicLink.href = topic.file;
+                topicLink.className = 'block px-12 py-3 text-gray-600 text-sm border-b border-gray-200';
+                topicLink.textContent = topic.title;
+                topicLink.onclick = () => { if(window.closeMobileMenu) window.closeMobileMenu(); };
+                topicsContainer.appendChild(topicLink);
+            });
+        });
+    });
+
+    // Recursos Adicionales Mobile
+    if (mobileAdditionalMenu && window.additionalResourcesData) {
+        mobileAdditionalMenu.innerHTML = '';
+        window.additionalResourcesData.forEach(cat => {
+            const catToggle = document.createElement('button');
+            catToggle.className = 'mobile-nav-link justify-between bg-white';
+            catToggle.innerHTML = `${cat.category} <span class="transform transition-transform duration-300">&#9656;</span>`;
+            mobileAdditionalMenu.appendChild(catToggle);
+
+            const itemsContainer = document.createElement('div');
+            itemsContainer.className = 'mobile-menu-item-container hidden-height';
+            mobileAdditionalMenu.appendChild(itemsContainer);
+
+            catToggle.addEventListener('click', () => {
+                itemsContainer.classList.toggle('hidden-height');
+                itemsContainer.classList.toggle('visible-height');
+                const arrow = catToggle.querySelector('span');
+                if (arrow) arrow.classList.toggle('rotate-90');
+            });
+
+            cat.items.forEach(item => {
+                const itemLink = document.createElement('a');
+                itemLink.className = 'block px-8 py-3 text-gray-700 font-medium bg-gray-50 border-b border-gray-100';
+                itemLink.textContent = item.title;
+                if (item.action) {
+                    itemLink.href = '#';
+                    itemLink.onclick = (e) => {
+                        e.preventDefault();
+                        window.handleHeaderAction(item.action);
+                    };
+                } else {
+                    itemLink.href = item.file;
+                    itemLink.target = '_blank';
+                    itemLink.onclick = () => { if(window.closeMobileMenu) window.closeMobileMenu(); };
+                }
+                itemsContainer.appendChild(itemLink);
+            });
+        });
+    }
+};
 
 window.renderCommonNav = function() {
     const desktopGradesMenu = document.getElementById('desktop-grades-menu');

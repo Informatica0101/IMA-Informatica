@@ -432,3 +432,29 @@ OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
   - Refuerzo de anclaje de footer: se verificó la estructura flex-col y mt-auto para eliminar franjas blancas.
 - Archivo: index.html
   - Ajuste de Hero Section: se redujo el padding y la altura mínima de la sección de bienvenida para optimizar el espacio vertical.
+
+25/01/2026
+- Archivo: js/teacher.js
+  - Se definió el parámetro 'index' en la función map de renderDetalles para corregir la funcionalidad de los botones de calificación.
+  - Se implementó una restricción visual para que los botones de calificación solo sean visibles para el rol 'Profesor'.
+  - Se eliminaron bloques de código obsoletos para 'view-results-btn' y 'reactivate-exam-btn' del listener de eventos de la tabla.
+- Archivo: js/exam.js
+  - Se restauró la lógica del temporizador (startTimer) permitiendo que los exámenes tengan tiempo límite funcional.
+  - Se implementó la entrada obligatoria a pantalla completa (requestFullScreen) y la detección de salida del modo pantalla completa para auto-envío del examen.
+  - Se corrigió la ruta de redirección post-examen de 'student.html' a 'student-dashboard.html'.
+- Archivos: js/ui-common.js, js/index-ui.js
+  - Se movió la función renderMobileNav a js/ui-common.js para habilitar el menú móvil en dashboards y otras subpáginas.
+  - Se trasladó handleHeaderAction a js/ui-common.js con lógica de redirección a index.html para mantener la funcionalidad de los juegos desde cualquier página.
+  - Se añadió lógica en index-ui.js para procesar acciones solicitadas vía URL tras una redirección.
+- Archivos: results.html, js/results.js, exam-results.html, js/exam-results.js
+  - Se unificó la lógica de visualización de resultados en results.html, permitiendo tanto la consulta vía API como el paso de datos por URL.
+  - Se eliminaron los archivos redundantes exam-results.html y js/exam-results.js.
+  - Se habilitó el acceso controlado a los resultados para los estudiantes.
+- Archivos HTML (Varios)
+  - Se realizó un reemplazo masivo de la URL base antigua 'azghell.github.io/IMA-Informatica' por la nueva URL oficial 'https://informatica0101.github.io' en todos los archivos de contenido educativo.
+- Archivo: js/data.js
+  - Se corrigieron erratas en los títulos de los temas: "Grid vs Flexbox", "Hojas de Cálculo", "Tabla Dinámica", "Metodologías Ágiles", "Artículos", "Evolución de Suites Informáticas".
+- Archivo: js/student.js
+  - Se añadió un botón de eliminación (X) en la lista de archivos subidos del modal de entrega, permitiendo al alumno gestionar sus archivos antes del envío final.
+- Archivos Eliminados
+  - Se eliminaron los archivos js/main.js y backend.gs por ser redundantes y no pertenecer a la arquitectura de microservicios actual.

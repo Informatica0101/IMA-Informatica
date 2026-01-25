@@ -5,33 +5,67 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Solo los profesores pueden ver resultados individuales
-    if (currentUser.rol !== 'Profesor') {
-        window.location.href = 'student-dashboard.html';
-        return;
-    }
-
+    // Validar acceso (Profesores siempre, estudiantes solo si es su resultado)
     const resultsContainer = document.getElementById('results-container');
     const urlParams = new URLSearchParams(window.location.search);
     const entregaExamenId = urlParams.get('entregaExamenId');
+    const calificacionParam = urlParams.get('calificacion');
 
     async function loadResults() {
+        // Caso A: Datos pasados directamente por URL (Legacy/Instantáneo)
+        if (calificacionParam) {
+            try {
+                const resultados = JSON.parse(decodeURIComponent(urlParams.get('resultados')));
+                const preguntas = JSON.parse(decodeURIComponent(urlParams.get('preguntas')));
+                renderResultsDirect(calificacionParam, resultados, preguntas);
+                return;
+            } catch (e) {
+                console.error("Error al procesar parámetros de URL:", e);
+            }
+        }
+
+        // Caso B: Fetch desde API por entregaId
         if (!entregaExamenId) {
             resultsContainer.innerHTML = '<p class="text-red-500">No se proporcionó un ID de entrega de examen.</p>';
             return;
         }
 
         try {
-            const result = await fetchApi('EXAM', 'getExamResult', { entregaExamenId });
+            const result = await fetchApi('EXAM', 'getExamResult', { entregaExamenId, userId: currentUser.userId });
 
             if (result.status === 'success' && result.data) {
                 renderResults(result.data);
             } else {
+                // Si el estudiante intenta ver un examen que no es suyo, el backend debería denegarlo
                 throw new Error(result.message || 'No se pudieron cargar los resultados.');
             }
         } catch (error) {
             resultsContainer.innerHTML = `<p class="text-red-500">Error al cargar los resultados: ${error.message}</p>`;
         }
+    }
+
+    function renderResultsDirect(calificacion, resultados, preguntas) {
+        let detailsHtml = '<div class="space-y-4">';
+        resultados.forEach((res, index) => {
+            const pregunta = preguntas.find(p => p.preguntaId === res.preguntaId);
+            const bgColor = res.esCorrecta ? 'bg-green-100' : 'bg-red-100';
+            const borderColor = res.esCorrecta ? 'border-green-500' : 'border-red-500';
+
+            detailsHtml += `
+                <div class="p-4 rounded border ${borderColor} ${bgColor}">
+                    <p class="font-bold">${index + 1}. ${pregunta ? pregunta.textoPregunta : 'Pregunta desconocida'}</p>
+                    <p class="text-sm">Tu respuesta: <span class="font-mono">${res.respuestaEstudiante || 'No respondida'}</span> ${res.esCorrecta ? '✅' : '❌'}</p>
+                </div>
+            `;
+        });
+        detailsHtml += '</div>';
+
+        resultsContainer.innerHTML = `
+            <p class="text-4xl font-bold text-center mb-6 text-blue-600">Calificación: ${calificacion}%</p>
+            <hr class="my-6">
+            <h3 class="text-xl font-bold mb-4">Detalle de Respuestas</h3>
+            ${detailsHtml}
+        `;
     }
 
     function renderResults(data) {
@@ -53,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         resultsContainer.innerHTML = `
             <h2 class="text-2xl font-bold text-center mb-2">Examen: ${examenTitulo}</h2>
-            <p class="text-4xl font-bold text-center mb-6">Calificación Final: ${calificacionTotal}%</p>
+            <p class="text-4xl font-bold text-center mb-6 text-blue-600">Calificación Final: ${calificacionTotal}%</p>
             <hr class="my-6">
             <h3 class="text-xl font-bold mb-4">Detalle de Respuestas</h3>
             ${detailsHtml}
