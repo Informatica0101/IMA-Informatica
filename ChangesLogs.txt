@@ -547,3 +547,11 @@ Descripción: Se reestructuró el encabezado para igualar el diseño del Panel d
   - Estandarizado el formato de envío de respuestas para 'Término Pareado' usando índices originales para garantizar una calificación precisa a pesar del barajado en la UI.
 - Archivo: js/results.js
   - Implementado parseo y visualización legible de respuestas de emparejamiento en los resúmenes de calificación.
+
+25/01/2026
+- Archivo: js/config.js
+  - Actualizada la URL del microservicio EXAM al nuevo endpoint de producción proporcionado por el usuario.
+- Archivo: sw.js
+  - Incrementada la versión del caché a 'informatic-app-v5' para forzar la actualización de la configuración en los clientes.
+- Archivos: *.html, js/ui-common.js
+  - Aplicado cache-busting 'v=5' a todas las referencias de activos locales.
