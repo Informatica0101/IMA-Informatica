@@ -13,12 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Lógica del Examen ---
     async function loadExam() {
+        const startOverlay = document.getElementById('start-exam-overlay');
+        const startBtn = document.getElementById('start-exam-btn');
+        let timeLimitFromApi = 0;
+
         try {
             // Apuntar al microservicio de exámenes
             const result = await fetchApi('EXAM', 'getExamQuestions', { examenId });
             if (result.status === 'success' && result.data) {
                 const { titulo, tiempoLimite, preguntas } = result.data;
                 examTitleEl.textContent = titulo;
+                timeLimitFromApi = tiempoLimite;
 
                 // Se asigna un array vacío por defecto si la propiedad 'preguntas' no existe.
                 originalQuestions = preguntas || [];
@@ -27,16 +32,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     questionsContainer.innerHTML = originalQuestions.map(renderQuestion).join('');
                 } else {
                     questionsContainer.innerHTML = '<p class="text-gray-500">Este examen no tiene preguntas actualmente.</p>';
-                    document.querySelector('button[type="submit"]').style.display = 'none'; // Ocultar botón de envío
+                    const submitBtn = document.querySelector('button[type="submit"]');
+                    if (submitBtn) submitBtn.style.display = 'none';
                 }
 
-                if (tiempoLimite) {
-                    startTimer(tiempoLimite);
+                // Habilitar botón de inicio solo si cargó correctamente (A-24)
+                if (startBtn) {
+                    startBtn.addEventListener('click', () => {
+                        if (startOverlay) startOverlay.classList.add('hidden');
+                        if (timeLimitFromApi) startTimer(timeLimitFromApi);
+                        requestFullScreen();
+                    });
                 }
-                requestFullScreen();
             } else { throw new Error(result.message); }
         } catch (error) {
-            questionsContainer.innerHTML = `<p class="text-red-500">Error al cargar el examen: ${error.message}</p>`;
+            questionsContainer.innerHTML = `<p class="text-red-500 text-center py-10 font-bold">Error al cargar el examen: ${error.message}</p>`;
+            // Si falla la carga, mostramos un botón de reintento o volvemos
+            if (startBtn) {
+                startBtn.textContent = "Volver al Dashboard";
+                startBtn.classList.replace('bg-blue-600', 'bg-gray-600');
+                startBtn.addEventListener('click', () => {
+                    window.location.href = 'student-dashboard.html';
+                });
+            }
         }
     }
 
@@ -210,12 +228,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Protecciones contra salida accidental
+        // Protecciones contra salida accidental (A-25)
         document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement) {
-                // Solo alertar y enviar si el examen no ha sido ya enviado
                 const submitBtn = document.querySelector('button[type="submit"]');
-                if (submitBtn && !submitBtn.disabled) {
+                // Verificar explícitamente que no haya un envío en curso
+                if (submitBtn && !submitBtn.disabled && !submitBtn.classList.contains('btn-loading')) {
                     alert('Has salido del modo pantalla completa. Por seguridad, el examen se enviará automáticamente.');
                     submitExam(true);
                 }

@@ -136,6 +136,9 @@ window.setupCommonUI = function() {
 
     // Render Mobile Nav
     window.renderMobileNav();
+
+    // (A-28) Signal that common UI is ready
+    document.dispatchEvent(new CustomEvent('common-ui-ready'));
 };
 
 /**

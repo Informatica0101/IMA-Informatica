@@ -458,3 +458,23 @@ OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
   - Se añadió un botón de eliminación (X) en la lista de archivos subidos del modal de entrega, permitiendo al alumno gestionar sus archivos antes del envío final.
 - Archivos Eliminados
   - Se eliminaron los archivos js/main.js y backend.gs por ser redundantes y no pertenecer a la arquitectura de microservicios actual.
+
+25/01/2026
+- Archivo: js/exam.js, exam.html
+  - Se introdujo un overlay de inicio ("start-exam-overlay") para asegurar un gesto de usuario antes de activar el modo pantalla completa, cumpliendo con las políticas de seguridad del navegador.
+  - Se añadió una guarda en el listener 'fullscreenchange' para prevenir múltiples envíos concurrentes si el botón de entrega ya está deshabilitado o en estado de carga.
+- Archivo: js/results.js
+  - Se implementaron bloques try-catch alrededor de JSON.parse para el procesamiento de parámetros de URL, evitando el colapso de la página ante datos corruptos.
+  - Se añadió validación de existencia para el objeto 'pregunta' en renderResultsDirect.
+- Archivo: js/index-ui.js, js/ui-common.js
+  - Se reemplazó el mecanismo de setTimeout(500ms) por un evento personalizado 'common-ui-ready' para disparar acciones automáticas desde la URL de forma determinista.
+- Archivo: js/teacher.js
+  - Se refactorizó el control de roles utilizando un objeto centralizado 'RoleCapabilities' para mejorar la mantenibilidad y escalabilidad de los permisos.
+- Archivo: backend/task-service/Code.gs
+  - Se implementó la acción 'deleteFile' en el backend para permitir la eliminación física de archivos en Google Drive (moviéndolos a la papelera).
+- Archivo: js/student.js
+  - Se integró la llamada a la API de eliminación remota en el handler de borrado de la lista de archivos subidos, evitando la acumulación de archivos huérfanos.
+
+25/01/2026 (Corrección Post-Code Review)
+- Repositorio: Eliminados todos los archivos de respaldo (.bak) para limpiar el entorno de producción.
+- Archivos JavaScript: Corregidos errores de sintaxis en template literals (backticks y dollar signs) que impedían la ejecución correcta de scripts en producción.

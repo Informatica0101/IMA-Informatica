@@ -1,8 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // (A-29) Centralizar capacidades por rol
+    const RoleCapabilities = {
+        canGrade: (user) => user && user.rol === 'Profesor',
+        canManageExams: (user) => user && user.rol === 'Profesor'
+    };
+
     let submissionsTableBody = document.getElementById('submissions-table-body');
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-    if (!currentUser || currentUser.rol !== 'Profesor') {
+    if (!currentUser || !RoleCapabilities.canManageExams(currentUser)) {
         window.location.href = 'login.html';
         return;
     }
@@ -494,8 +500,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             let actionHtml = '';
-            // Solo se renderizan botones de calificación si el rol es Profesor
-            if (currentUser.rol === 'Profesor') {
+            // Solo se renderizan botones de calificación si el rol tiene la capacidad (A-29)
+            if (RoleCapabilities.canGrade(currentUser)) {
                 if (item.tipo === 'Tarea') {
                     actionHtml = `<button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-task-btn" data-index="${index}">Calificar</button>`;
                 } else if (item.tipo === 'Examen') {

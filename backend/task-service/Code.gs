@@ -43,6 +43,7 @@ function doPost(e) {
       case "createTask": response = createTask(payload); break;
       case "getStudentTasks": response = getStudentTasks(payload); break;
       case "uploadFile": response = uploadFile(payload); break;
+      case "deleteFile": response = deleteFile(payload); break;
       case "submitAssignment": response = submitAssignment(payload); break;
       case "gradeSubmission": response = gradeSubmission(payload); break;
       case "getTeacherActivity": response = getTeacherActivity(payload); break;
@@ -157,6 +158,24 @@ function submitAssignment(payload) {
   const entregaId = "ENT-" + new Date().getTime();
   entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente', '', mimeType]);
   return { status: "success", message: "Tarea entregada." };
+}
+
+/**
+ * Elimina un archivo de Drive (lo mueve a la papelera) (A-30).
+ */
+function deleteFile(payload) {
+  const { fileId } = payload;
+  if (!fileId) throw new Error("ID de archivo no proporcionado.");
+
+  try {
+    const file = DriveApp.getFileById(fileId);
+    file.setTrashed(true);
+    return { status: "success", message: "Archivo eliminado." };
+  } catch (e) {
+    logDebug("Error al eliminar archivo:", { fileId, error: e.message });
+    // No lanzamos error para que la UX no se rompa si el archivo ya no existe
+    return { status: "success", message: "Archivo no encontrado o ya eliminado." };
+  }
 }
 
 function gradeSubmission(payload) {

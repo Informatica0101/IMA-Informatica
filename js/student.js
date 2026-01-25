@@ -293,12 +293,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cancelSubmissionBtn) cancelSubmissionBtn.addEventListener('click', closeSubmissionModal);
 
     if (uploadedFilesList) {
-        uploadedFilesList.addEventListener('click', (e) => {
+        uploadedFilesList.addEventListener('click', async (e) => {
             const btn = e.target.closest('.remove-file-btn');
             if (btn) {
                 const fileId = btn.dataset.fileId;
+                const li = btn.closest('li');
+
+                // (A-30) Eliminar archivo remoto
+                btn.disabled = true;
+                li.style.opacity = '0.5';
+
+                try {
+                    // Se intenta eliminar de Drive pero no bloqueamos si falla la red
+                    await fetchApi('TASK', 'deleteFile', { fileId });
+                } catch (error) {
+                    console.error("Error al eliminar archivo remoto:", error);
+                }
+
                 uploadedFiles = uploadedFiles.filter(f => f.fileId !== fileId);
-                btn.closest('li').remove();
+                li.remove();
                 if (uploadedFiles.length === 0) {
                     uploadedFilesContainer.classList.add('hidden');
                 }

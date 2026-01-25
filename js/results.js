@@ -12,15 +12,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const calificacionParam = urlParams.get('calificacion');
 
     async function loadResults() {
-        // Caso A: Datos pasados directamente por URL (Legacy/Instantáneo)
+        // Caso A: Datos pasados directamente por URL (Legacy/Instantáneo) (A-26)
         if (calificacionParam) {
             try {
-                const resultados = JSON.parse(decodeURIComponent(urlParams.get('resultados')));
-                const preguntas = JSON.parse(decodeURIComponent(urlParams.get('preguntas')));
+                const rawResultados = urlParams.get('resultados');
+                const rawPreguntas = urlParams.get('preguntas');
+
+                if (!rawResultados || !rawPreguntas) {
+                    throw new Error("Faltan parámetros de resultados o preguntas en la URL.");
+                }
+
+                const resultados = JSON.parse(decodeURIComponent(rawResultados));
+                const preguntas = JSON.parse(decodeURIComponent(rawPreguntas));
                 renderResultsDirect(calificacionParam, resultados, preguntas);
                 return;
             } catch (e) {
                 console.error("Error al procesar parámetros de URL:", e);
+                resultsContainer.innerHTML = `<p class="text-red-500">Error al cargar resultados directos: ${e.message}</p>`;
+                return;
             }
         }
 
@@ -47,13 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderResultsDirect(calificacion, resultados, preguntas) {
         let detailsHtml = '<div class="space-y-4">';
         resultados.forEach((res, index) => {
-            const pregunta = preguntas.find(p => p.preguntaId === res.preguntaId);
+            // (A-27) Validación de existencia del objeto pregunta
+            const pregunta = (preguntas || []).find(p => p.preguntaId === res.preguntaId);
             const bgColor = res.esCorrecta ? 'bg-green-100' : 'bg-red-100';
             const borderColor = res.esCorrecta ? 'border-green-500' : 'border-red-500';
+            const textoPregunta = pregunta && pregunta.textoPregunta ? pregunta.textoPregunta : 'Pregunta no encontrada';
 
             detailsHtml += `
                 <div class="p-4 rounded border ${borderColor} ${bgColor}">
-                    <p class="font-bold">${index + 1}. ${pregunta ? pregunta.textoPregunta : 'Pregunta desconocida'}</p>
+                    <p class="font-bold">${index + 1}. ${textoPregunta}</p>
                     <p class="text-sm">Tu respuesta: <span class="font-mono">${res.respuestaEstudiante || 'No respondida'}</span> ${res.esCorrecta ? '✅' : '❌'}</p>
                 </div>
             `;

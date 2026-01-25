@@ -429,3 +429,42 @@ AUDITORÍA TÉCNICA INDEPENDIENTE - JULES - 2026
    Descripción objetiva: La eliminación de un archivo solo afecta al estado local (array uploadedFiles), pero el archivo físico ya reside en Google Drive (subido previamente en acceptFileBtn).
    Riesgo: Bajo. Acumulación de archivos "huérfanos" en la nube que consumen almacenamiento sin estar asociados a ninguna entrega finalizada.
    Evidencia técnica: Line 301: "uploadedFiles = uploadedFiles.filter(f => f.fileId !== fileId);" no realiza ninguna llamada fetchApi para borrar el recurso remoto.
+
+==================================================
+AUDITORÍA PRE-EDICIÓN - TAREAS [A-24] A [A-30]
+==================================================
+
+1. js/exam.js:
+   - Se requiere introducir un modal de "Inicio de Examen" para cumplir con la política de gestos de usuario del navegador para pantalla completa.
+   - Se debe añadir una variable global o de estado para rastrear si el examen ya está en proceso de envío.
+
+2. js/results.js:
+   - Se implementarán validaciones try-catch en el procesamiento de URLParams.
+   - Se añadirá una verificación null/undefined antes de acceder a las propiedades del objeto de pregunta.
+
+3. js/index-ui.js & js/ui-common.js:
+   - Se utilizará un sistema de "ready state" o eventos personalizados en lugar de retardos fijos para las acciones automáticas.
+
+4. js/teacher.js:
+   - Se definirá un mapa de capacidades (RolePermissions) al inicio del archivo.
+
+5. backend/task-service/Code.gs:
+   - Se añadirá la función 'deleteFile(id)' que validará la existencia del archivo antes de enviarlo a la papelera.
+
+6. js/student.js:
+   - Se integrará una llamada fetchApi('TASK', 'deleteFile', {fileId}) en el handler de eliminación.
+
+==================================================
+AUDITORÍA FINAL POST-CORRECCIÓN - 25/01/2026
+==================================================
+
+1. Archivos JavaScript:
+   - Verificación: node -c confirma ausencia de errores de sintaxis en exam.js, results.js, student.js, teacher.js, index-ui.js y ui-common.js.
+   - Verificación: grep confirma la eliminación de backslashes innecesarios en template literals.
+
+2. Repositorio:
+   - Verificación: No existen archivos .bak en el sistema de archivos.
+
+SOLUCIONES APLICADAS:
+- Limpieza total de archivos temporales.
+- Estandarización de sintaxis JavaScript según estándares modernos.
