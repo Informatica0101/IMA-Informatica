@@ -23,3 +23,17 @@ Auditoría - Sun Jan 25 (Nueva URL and Caché)
    - Versionamiento de assets en ASSETS array.
 3. HTML files (General):
    - Cache-busting ?v=4 aplicado a scripts and links.
+
+Auditoría - Regresión en Módulo de Exámenes - Sun Jan 25 20:03:24 UTC 2026
+--------------------------------------------------
+1. js/teacher.js:
+   - renderAlumnos y renderAlumnosExamenes: Falta pestaña "Gestión" para acceder a la activación/bloqueo de exámenes.
+   - createExamForm: La respuesta correcta para 'termino_pareado' no se genera automáticamente, depende de un input manual propenso a errores.
+   - openGradeModal: El enlace de revisión no apunta a la vista detallada de resultados para exámenes.
+2. backend/exam-service/Code.gs:
+   - getStudentExams: Comparación de grado y sección es sensible a mayúsculas y espacios, lo que oculta exámenes a estudiantes.
+   - submitExam: La lógica de calificación no soporta respuestas en formato JSON (Término Pareado), resultando en 0 puntos.
+3. js/exam.js:
+   - submitExam: El formato de envío para 'termino_pareado' debe ser estandarizado para facilitar la calificación en el backend.
+4. js/results.js:
+   - renderResults: No interpreta el formato JSON de las respuestas de 'Término Pareado', mostrando texto crudo al usuario.

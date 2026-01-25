@@ -84,13 +84,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let detailsHtml = '<div class="space-y-4">';
         resultadosDetallados.forEach((item, index) => {
-            const bgColor = item.esCorrecta ? 'bg-green-100' : 'bg-red-100';
-            const borderColor = item.esCorrecta ? 'border-green-500' : 'border-red-500';
+            const bgColor = item.esCorrecta ? 'bg-green-100' : (parseFloat(item.score) > 0 ? 'bg-yellow-50' : 'bg-red-100');
+            const borderColor = item.esCorrecta ? 'border-green-500' : (parseFloat(item.score) > 0 ? 'border-yellow-500' : 'border-red-500');
+
+            let displayAnswer = item.respuestaEstudiante;
+            if (item.tipo === 'termino_pareado') {
+                try {
+                    const sMap = JSON.parse(item.respuestaEstudiante || "{}");
+                    displayAnswer = Object.entries(sMap).map(([idx, concept]) => `Definición ${parseInt(idx)+1} → Concepto ${concept}`).join(', ');
+                } catch(e) {}
+            }
+
             detailsHtml += `
                 <div class="p-4 rounded border ${borderColor} ${bgColor}">
-                    <p class="font-semibold">Pregunta ${index + 1}</p>
-                    <p>Tu respuesta: <span class="font-mono">${item.respuestaEstudiante || 'No respondida'}</span></p>
-                    <p>Resultado: <span class="font-bold">${item.esCorrecta ? 'Correcta' : 'Incorrecta'}</span></p>
+                    <p class="font-semibold">Pregunta ${index + 1}: ${item.texto}</p>
+                    <p>Respuesta: <span class="font-mono">${displayAnswer || 'No respondida'}</span></p>
+                    <p>Puntaje: <span class="font-bold">${item.score}</span></p>
                 </div>
             `;
         });

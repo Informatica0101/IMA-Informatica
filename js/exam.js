@@ -87,8 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'termino_pareado':
                 if (options.concepts && options.definitions) {
-                    // Randomize definitions for the student
-                    const shuffledDefinitions = [...options.definitions].sort(() => Math.random() - 0.5);
+                    // Guardar índices originales antes de barajar
+                    const indexedDefinitions = options.definitions.map((def, idx) => ({ def, idx }));
+                    const shuffledDefinitions = indexedDefinitions.sort(() => Math.random() - 0.5);
                     optionsHtml = `
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -100,10 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div>
                                 <h4 class="font-bold mb-2">Definiciones</h4>
                                 <div class="space-y-2">
-                                    ${shuffledDefinitions.map((def, i) => `
+                                    ${shuffledDefinitions.map((item, i) => `
                                         <div class="flex items-center">
-                                            <input type="text" name="question_${questionId}_${i}" data-original-definition="${def}" class="w-12 p-1 border rounded mr-3 text-center" placeholder="#">
-                                            <span>${def}</span>
+                                            <input type="text" name="question_${questionId}_${i}" data-original-index="${item.idx}" class="w-12 p-1 border rounded mr-3 text-center" placeholder="#">
+                                            <span>${item.def}</span>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -150,14 +151,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     break;
                 case 'termino_pareado':
-                    // Para términos pareados, la respuesta puede ser un objeto o un string JSON
                     const pairInputs = block.querySelectorAll(`input[name^="question_${preguntaId}"]`);
                     const pairs = {};
                     pairInputs.forEach(input => {
-                        const conceptIndex = input.name.split('_').pop();
-                        pairs[conceptIndex] = input.value.trim();
+                        const originalIdx = input.dataset.originalIndex;
+                        pairs[originalIdx] = input.value.trim();
                     });
-                    respuestaEstudiante = JSON.stringify(pairs); // Convertir a string para enviar
+                    respuestaEstudiante = JSON.stringify(pairs);
                     break;
             }
             respuestas.push({ preguntaId, respuestaEstudiante });

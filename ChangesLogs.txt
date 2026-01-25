@@ -531,3 +531,19 @@ Descripción: Se cambió la clase 'text-4xl' por 'text-lg' en el saludo del estu
 Archivo: student-dashboard.html
 Línea: 95-98
 Descripción: Se reestructuró el encabezado para igualar el diseño del Panel de Profesor: se añadió un H1 'Panel de Estudiante' (text-3xl) y se movió el saludo al párrafo P (text-lg), asegurando simetría visual entre ambos perfiles.
+
+25/01/2026
+- Archivo: js/teacher.js
+  - Implementada pestaña "Gestión" en la lista de alumnos para permitir el acceso a la activación y bloqueo de exámenes.
+  - Corregido el filtrado de gestión de exámenes para incluir la opción "Todas" las secciones.
+  - Automatizada la generación de 'respuestaCorrecta' para preguntas de tipo "Término Pareado" usando mapeo JSON.
+  - Integrado enlace "Revisar Respuestas Detalladas" en el modal de calificación de exámenes.
+  - Corregida delegación de eventos para las pestañas de navegación, moviéndolas al encabezado de la tabla.
+- Archivo: backend/exam-service/Code.gs
+  - Robustecida la visibilidad de exámenes para estudiantes en 'getStudentExams' mediante normalización de strings (grado y sección).
+  - Implementada calificación parcial para 'Término Pareado' en 'submitExam' comparando mapeos JSON.
+  - Mejorada la estructura de retorno en 'getExamResult' para incluir el tipo de pregunta y el puntaje obtenido.
+- Archivo: js/exam.js
+  - Estandarizado el formato de envío de respuestas para 'Término Pareado' usando índices originales para garantizar una calificación precisa a pesar del barajado en la UI.
+- Archivo: js/results.js
+  - Implementado parseo y visualización legible de respuestas de emparejamiento en los resúmenes de calificación.
