@@ -1,28 +1,26 @@
-AUDITORÍA INICIAL - 25/01/2026 - TAREA: Navegación Directa, Exámenes, Responsive y Footer
--------------------------------------------------------------------
+AUDITORÍA FINAL - 25/01/2026 - TAREA: Navegación, Exámenes, Responsive, Footer y Tipografía
+-----------------------------------------------------------------------------------------
 
-- Archivo: teacher-dashboard.html
-  - Línea 30: Logo del instituto tiene width="120".
-  - Línea 47: Bandera de Honduras tiene width="100". El requerimiento pide mismo tamaño visual.
-  - Línea 96-100: Botones de navegación interna (Dashboard, Crear Tarea, Crear Examen). No son los que se deben eliminar (esos son los de la tabla).
-  - Línea 112: Título de nivel de dashboard.
-  - Línea 133: Botón Regresar.
-  - Línea 232-243: Footer. Padding py-12 es excesivo.
+1. Archivo: js/teacher.js
+   - Hallazgo: Uso de JSON.stringify() en atributos HTML (data-item). Riesgo de rotura de HTML si los datos contienen comillas. (CRÍTICO)
+   - Hallazgo: La pestaña de Exámenes (renderAlumnosExamenes) no implementa el ordenamiento asc/desc que sí tiene la de Tareas. (MENOR)
+   - Hallazgo: Las funciones de activación/bloqueo de exámenes han quedado inaccesibles al reemplazar el botón de "Exámenes" por una pestaña de entregas. (FUNCIONAL)
+   - Verificación: No hay errores de sintaxis (node -c ok).
+   - Verificación: La navegación directa (.nav-btn en tr) está correctamente implementada.
+   - Verificación: La lógica de scroll horizontal limpio se activa/desactiva contextualmente.
 
-- Archivo: js/teacher.js
-  - Línea 184: renderGrados() genera botones .nav-btn. Debe ser reemplazado por clic en fila/celda.
-  - Línea 204: renderSecciones() genera botones .nav-btn.
-  - Línea 225: renderAsignaturas() genera botones .nav-btn y .manage-exams-btn. "Exámenes" debe ser una pestaña en el siguiente nivel.
-  - Línea 250: renderAlumnos() calcula pendientes/total.
-  - Línea 276-281: Encabezados de tabla Alumnos. Aquí se debe integrar la pestaña "Exámenes".
-  - Línea 306: renderExamenesGestion() es la vista de gestión de exámenes (Activar/Bloquear).
-  - Línea 341: renderDetalles() muestra actividades del alumno.
-  - Línea 393-400: Botones de acción para exámenes. Se debe renombrar "Calificar" a "Calificar Examen" y ver si se conservan "Resultados" y "Reactivar". El requerimiento dice "Solo se deben conservar: Botón de 'Calificar' (tareas) y Botón de 'Calificar Examen'".
+2. Archivo: css/style.css
+   - Verificación: Clases .text-custom-plus y .scroll-horizontal-clean correctamente definidas.
+   - Verificación: Ajustes de padding en footer correctos.
 
-- Archivo: index.html
-  - Línea 261: Hero section padding py-20 md:py-32. Es excesivo.
+3. Archivos HTML
+   - Verificación: Bandera de Honduras ajustada a 120px en todos los archivos.
+   - Verificación: Footer con py-6 y mt-auto en todos los archivos.
+   - Verificación: Hero section en index.html optimizada.
 
-- Archivo: css/style.css
-  - Línea 184: .table-container tiene overflow-x: auto.
-  - Línea 191: .dashboard-card padding 1rem.
-  - Footer styles: .bg-gray-900 py-12.
+4. Archivo: sw.js
+   - Verificación: Cache versionada a 'informatic-app-v2'.
+
+SOLUCIONES A APLICAR:
+- Refactorizar js/teacher.js para usar índices de arreglos en lugar de JSON en atributos.
+- Asegurar que la lógica de Activar/Bloquear exámenes siga disponible si es técnicamente posible sin violar "Solo se deben conservar...". (Se mantendrá la decisión de eliminarlos siguiendo la lista exacta de botones a conservar).
