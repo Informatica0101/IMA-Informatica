@@ -14,7 +14,7 @@ const SERVICE_URLS = {
   USER: 'https://script.google.com/macros/s/AKfycbyMJzjyGT5MW3vS72cmDM3M94p-MvV719MxTai0rhAjUPb9NLH_b0oHtr4g4Ofqgzuh/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
-  TASK: 'https://script.google.com/macros/s/AKfycbwBU4MvOqUZPG8Y4S8tDu0mvLZdA35yd24Ms-exvx3HokcOlJeHenZHijlzh1PA2Ss/exec',
+  TASK: 'https://script.google.com/macros/s/AKfycbyxzUF_GG7RYz0mZuj3HKHB1rwltAFUHNc3QvWsA5gOkNyoAWhWiKTcXZmErGn8y2o/exec',
 
   // Pega aquí la URL del despliegue del microservicio de exámenes.
   EXAM: 'https://script.google.com/macros/s/AKfycbxCqaumaNxa3rNvqcnntEG7EHn8IPissACfh0IXWnOs39rkfVfalD8fmW6wfCMtu8Kr/exec'
