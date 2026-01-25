@@ -79,7 +79,7 @@ function getStudentTasks(payload) {
 
   const studentTasks = tasksData.filter(task => {
     // task[6] es gradoAsignado, task[7] es seccionAsignada
-    const matchGrado = (task[6] || "").toString().trim().toLowerCase() === (grado || "").toString().trim().toLowerCase();
+    const matchGrado = task[6] === grado;
     // Si seccionAsignada está vacío, aplica a todas las secciones del grado.
     // Si tiene valor, el estudiante debe estar en esa lista (A, B, etc).
     const matchSeccion = !task[7] || task[7].trim() === "" || isInTeacherList(seccion, task[7]);
@@ -88,19 +88,10 @@ function getStudentTasks(payload) {
 
     if (task[1] === 'Credito Extra') {
       const asignatura = (task[5] || "").toString().toLowerCase().trim();
-      // Buscamos tareas de la misma asignatura, grado y sección para la validación de rechazo
       const tasksInAsig = tasksData
-        .filter(t =>
-          (t[5] || "").toString().toLowerCase().trim() === asignatura &&
-          (t[6] || "").toString().trim().toLowerCase() === (grado || "").toString().trim().toLowerCase()
-        )
+        .filter(t => (t[5] || "").toString().toLowerCase().trim() === asignatura)
         .map(t => t[0]);
-
-      return entregasData.some(e =>
-        e[2] === userId &&
-        tasksInAsig.includes(e[1]) &&
-        ((e[6] || "").toString().trim().toLowerCase() === 'rechazada' || (e[6] || "").toString().trim().toLowerCase() === 'revisada_rechazada')
-      );
+      return entregasData.some(e => e[2] === userId && tasksInAsig.includes(e[1]) && e[6] === 'Rechazada');
     }
     return true;
   }).map(task => {

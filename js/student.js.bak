@@ -49,8 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const allActivities = [];
             if (tasksResult.status === 'success' && tasksResult.data) {
-                // Conservar el tipo original (Tarea o Credito Extra)
-                allActivities.push(...tasksResult.data.map(task => ({ ...task, type: task.tipo || 'Tarea' })));
+                allActivities.push(...tasksResult.data.map(task => ({ ...task, type: 'Tarea' })));
             }
             if (examsResult.status === 'success' && examsResult.data) {
                 allActivities.push(...examsResult.data.map(exam => ({ ...exam, type: 'Examen' })));
@@ -73,11 +72,11 @@ document.addEventListener('DOMContentLoaded', () => {
             let feedbackHtml = '';
             let actionButtonHtml = '';
 
-            if (activity.type === 'Tarea' || activity.type === 'Credito Extra') {
+            if (activity.type === 'Tarea') {
                 if (activity.entrega) {
                     const status = activity.entrega.estado;
-                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
-                    const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+                    const statusColor = (status === 'Completada' || status === 'Revisada') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    const displayStatus = (status === 'Revisada' ? 'Completada' : status);
 
                     feedbackHtml = `
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">

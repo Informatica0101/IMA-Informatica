@@ -1,11 +1,11 @@
-Auditoría de Tareas y Estados - Sun Jan 25 16:17:55 UTC 2026
+Auditoría Final - Sun Jan 25 16:48:47 UTC 2026
 --------------------------------
-1. js/teacher.js:
-   - Función renderDetalles: Lógica de estado incorrecta. Prioriza 'calificacion' sobre 'estado', lo que marca tareas rechazadas como 'Completada'.
-   - Uso de 'Revisada' en lugar de 'Completada'.
+1. backend/task-service/Code.gs:
+   - Función getStudentTasks: Lógica de Credito Extra mejorada. Se valida rechazo por asignatura and grado con comparaciones robustas.
 2. js/student.js:
-   - Función renderActivities: Uso de 'Revisada' and 'Finalizado'. Debe unificarse a 'Completada'.
-3. teacher-dashboard.html:
-   - Modal de calificación: Opción 'Revisada' debe ser 'Completada'.
-4. backend/task-service/Code.gs:
-   - Función getStudentTasks: La visibilidad de crédito extra depende del estado 'Rechazada'.
+   - Función renderActivities: Soporta 'Credito Extra' como deliverable.
+   - Mapping de estados: Finalizado/Revisada -> Completada.
+3. student-dashboard.html:
+   - Ajuste visual: Greeting text-lg -> text-base.
+4. Instrucciones.txt:
+   - Tareas A-13 a A-31 marcadas como COMPLETADAS.

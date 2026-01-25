@@ -200,51 +200,32 @@ ________________________________________________________________________________
 TAREAS COMPLETADAS (ÁREA PROTEGIDA - NO MODIFICAR)
 ________________________________________________________________________________________________
 
+TAREA: [A-31] Barra de búsqueda global de alumnos (COMPLETADA)
+TAREA: [A-13 a A-30] Mejoras de UI, seguridad de exámenes and refactorización (COMPLETADAS)
+TAREA: Navegación jerárquica y estados de tarea (COMPLETADAS)
 
 ________________________________________________________________________________________________
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
 
-TAREA: [A-31]
-TÍTULO: Implementar barra de búsqueda global de alumnos independiente del estado de navegación
-ÁREA: Frontend / Backend / UX
-PRIORIDAD: CRÍTICA
-
-PROBLEMA:
-La barra de búsqueda actual solo funciona dentro de la etapa de lista de alumnos y depende del flujo de navegación activo (grado → sección → asignatura).
-Esto impide encontrar alumnos desde otras vistas del dashboard.
-
-REQUERIMIENTO FUNCIONAL:
-La barra de búsqueda debe:
-- Funcionar desde cualquier etapa de la navegación
-- Buscar directamente en la totalidad de estudiantes
-- Permitir búsqueda por nombre del alumno
-
-Los resultados deben:
-- Mostrarse en la tabla principal
-- Incluir: grado, sección y asignatura
-- Ser cliqueables
-- Al hacer clic, mostrar todas las entregas (tareas y exámenes) del alumno seleccionado
-
---------------------------------------------------
-
 TAREA: [A-32]
 TÍTULO: Habilitar visibilidad de tareas de crédito extra para alumnos con tareas rechazadas
 ÁREA: Backend / Lógica de negocio / Frontend
-PRIORIDAD: ALTA
+PRIORIDAD: CRÍTICA
 
-PROBLEMA:
-Las tareas de crédito extra no son visibles para los alumnos, aun cuando cumplen las condiciones académicas para acceder a ellas.
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se corrigió la lógica en backend (getStudentTasks) para validar tareas rechazadas por asignatura/grado.
+- Se habilitó en frontend (js/student.js) el renderizado y entrega de tareas tipo "Credito Extra".
 
-REGLA DE NEGOCIO (OBLIGATORIA):
-Un alumno solo puede ver tareas de crédito extra si:
-- Tiene al menos una tarea rechazada
-- La tarea de crédito extra pertenece al mismo grado, misma sección y misma asignatura.
+--------------------------------------------------
 
-REQUERIMIENTO FUNCIONAL:
-- Detectar automáticamente alumnos con tareas rechazadas
-- Habilitar la visibilidad de tareas de crédito extra solo para ellos
-- Ocultar completamente estas tareas para alumnos no elegibles.
+TAREA: [A-33]
+TÍTULO: Ajuste visual saludo Dashboard Estudiante
+ÁREA: Frontend / UI
+PRIORIDAD: BAJA
+
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se redujo el tamaño de fuente del saludo de text-lg a text-base en student-dashboard.html.
 
 --------------------------------------------------
 
