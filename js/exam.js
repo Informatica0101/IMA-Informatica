@@ -31,9 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (tiempoLimite) {
-                    // ... (lógica de timer sin cambios)
+                    startTimer(tiempoLimite);
                 }
-                // ... (lógica de fullscreen sin cambios)
+                requestFullScreen();
             } else { throw new Error(result.message); }
         } catch (error) {
             questionsContainer.innerHTML = `<p class="text-red-500">Error al cargar el examen: ${error.message}</p>`;
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Detener si es un bloqueo y no hay respuestas (p.ej. el estudiante no empezó)
         if (isBlocked && respuestas.length === 0) {
-            window.location.href = 'student.html';
+            window.location.href = 'student-dashboard.html';
             return;
         }
 
@@ -172,7 +172,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ... (El resto de las funciones: renderQuestion, startTimer, requestFullScreen, etc. no necesitan cambios)
+    function startTimer(minutes) {
+        let seconds = minutes * 60;
+        const interval = setInterval(() => {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            if (timerEl) timerEl.textContent = `Tiempo restante: ${m}:${s < 10 ? '0' : ''}${s}`;
+
+            if (seconds <= 0) {
+                clearInterval(interval);
+                alert('El tiempo ha terminado. El examen se enviará automáticamente.');
+                submitExam(true);
+            }
+            seconds--;
+        }, 1000);
+    }
+
+    function requestFullScreen() {
+        const docEl = document.documentElement;
+        const requestMethod = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
+        if (requestMethod) {
+            requestMethod.call(docEl).catch(err => {
+                console.log("Error al intentar activar pantalla completa:", err);
+            });
+        }
+    }
 
     examForm.addEventListener('submit', (e) => {
         e.preventDefault();

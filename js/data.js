@@ -12,7 +12,7 @@ window.presentationData = [
                     { title: "Procesadores de Texto", file: "Informatica_I/prosesadores_texto.html" },
                     { title: "Formato de texto y tablas", file: "Informatica_I/texto_tablas.html" },
                     { title: "Insertar/Formato de página", file: "Informatica_I/insertar_formato.html" },
-                    { title: "Hojas de Calculo", file: "Informatica_I/hojas_calculo.html" }
+                    { title: "Hojas de Cálculo", file: "Informatica_I/hojas_calculo.html" }
                 ]
             }
         ]
@@ -50,7 +50,7 @@ window.presentationData = [
             {
                 name: "Diseño Web II",
                 topics: [
-                    { title: "Grind vs Flexbox", file: "III_BTP_A/dw_II/tablas_columnas.html" },
+                    { title: "Grid vs Flexbox", file: "III_BTP_A/dw_II/tablas_columnas.html" },
                     { title: "Eventos de JavaScript", file: "III_BTP_A/dw_II/eventos_javascript.html" }
                 ]
             }
@@ -88,7 +88,7 @@ window.downloadContentData = [
                     { title: "Procesadores de Texto", file: "Informatica_I/procesadores_palabras.pdf" },
                     { title: "Formato de texto y tablas", file: "Informatica_I/texto_tablas.pdf" },
                     { title: "Insertar/Formato de página", file: "Informatica_I/formato_insercion.pdf" },
-                    { title: "Hojas de Calculo", file: "Informatica_I/hojas_calculo.pdf" },
+                    { title: "Hojas de Cálculo", file: "Informatica_I/hojas_calculo.pdf" },
                     { title: "Guia de Estudio", file: "guia_estudios/GE_infoA.pdf"}
                 ]
             }
@@ -134,7 +134,7 @@ window.downloadContentData = [
             {
                 name: "Diseño Web II",
                 topics: [
-                    { title: "Grind vs Flexbox", file: "III_BTP_A/dw_II/tablas_columnas.pdf" },
+                    { title: "Grid vs Flexbox", file: "III_BTP_A/dw_II/tablas_columnas.pdf" },
                     { title: "Eventos de JavaScript", file: "III_BTP_A/dw_II/eventosJS.pdf" },
                     { title: "Guía de Estudios IV Parcial", file: "guia_estudios/GDESR-DW-IIIBTP_4parcial.pdf" }
                 ]

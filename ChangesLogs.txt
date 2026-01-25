@@ -432,3 +432,24 @@ OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
   - Refuerzo de anclaje de footer: se verificó la estructura flex-col y mt-auto para eliminar franjas blancas.
 - Archivo: index.html
   - Ajuste de Hero Section: se redujo el padding y la altura mínima de la sección de bienvenida para optimizar el espacio vertical.
+
+26/01/2026
+- Archivo: js/teacher.js, Línea(s): 476, 558-574
+  - Se corrigió el ReferenceError de la variable 'index' en la función 'renderDetalles' [P-01].
+  - Se eliminó el código muerto del listener de la tabla relacionado con botones inexistentes ('view-results-btn', 'reactivate-exam-btn') [P-02].
+  - Se implementó la lógica del filtro 'onlyPendingFilter' en la vista de detalles del alumno [P-04].
+- Archivo: js/exam.js, Línea(s): 34, 150, 175-199
+  - Se restauró la lógica funcional del temporizador del examen ('startTimer') [A-14].
+  - Se restauró la lógica de activación de pantalla completa ('requestFullScreen') [A-14].
+  - Se corrigió la URL de redirección a 'student-dashboard.html' [A-15].
+- Archivo: js/ui-common.js, js/index-ui.js
+  - Se centralizó la lógica de renderizado del menú móvil ('renderMobileNav') en 'js/ui-common.js' [A-16].
+  - Se implementó el patrón 'handleHeaderAction/executeHeaderAction' para soportar acciones del menú en todas las páginas [A-16].
+- Archivo: js/student.js, Línea(s): 262-267, 295-307
+  - Se añadió la funcionalidad para eliminar archivos subidos de la lista antes de la entrega final [A-22].
+- Archivos Varios HTML (Presentaciones y Artículos)
+  - Se realizó un reemplazo global de la URL base antigua 'https://azghell.github.io/IMA-Informatica' por la URL oficial 'https://informatica0101.github.io' [A-20].
+- Archivo: js/data.js
+  - Se corrigieron erratas en los títulos de temas: "Grind vs Flexbox" por "Grid vs Flexbox" y "Hojas de Calculo" por "Hojas de Cálculo" [A-21].
+- Eliminación de Archivos:
+  - Se eliminaron los archivos obsoletos 'exam-results.html', 'js/exam-results.js', 'js/main.js' y 'backend.gs' [P-03, A-17, A-19, A-23].
