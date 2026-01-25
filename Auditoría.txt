@@ -488,3 +488,21 @@ AUDITORÍA DE CACHE - 25/01/2026
 
 SOLUCIONES APLICADAS:
 - Refresco automático y manual de contenidos garantizado.
+
+==================================================
+AUDITORÍA INICIAL - TAREAS [A-31] Y [A-32]
+==================================================
+
+1. Archivo: js/teacher.js
+   - Hallazgo: La barra de búsqueda 'studentSearchInput' está ligada estrictamente al nivel actual de 'navStack'.
+   - Riesgo: UX limitada. El profesor debe navegar manualmente al nivel de alumnos para buscar por nombre.
+   - Solución: Interceptar el flujo en 'renderCurrentLevel'. Si hay texto en el buscador, priorizar una vista de resultados globales de estudiantes.
+
+2. Archivo: backend/task-service/Code.gs
+   - Hallazgo: La lógica de 'Credito Extra' en 'getStudentTasks' requiere obligatoriamente un 'tareaOriginalId'.
+   - Riesgo: Incumplimiento de la regla de negocio amplia. Si el profesor no vincula una tarea específica, el crédito extra nunca es visible.
+   - Solución: Refactorizar para detectar cualquier tarea rechazada del mismo usuario en la misma asignatura dentro del grado/sección actual.
+
+SOLUCIONES APLICADAS:
+- Implementación de 'renderGlobalSearch' en teacher.js.
+- Refactorización de filtrado de 'Credito Extra' en el backend.

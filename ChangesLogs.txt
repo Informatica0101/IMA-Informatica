@@ -488,3 +488,10 @@ OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
   - Se añadieron meta tags de Cache-Control para evitar que el navegador guarde versiones obsoletas del documento principal.
 - Archivo: js/ui-common.js
   - Se mejoró la lógica de registro del Service Worker para detectar actualizaciones y solicitar al usuario que recargue la página cuando haya una nueva versión disponible.
+
+25/01/2026
+- Archivo: js/teacher.js
+  - Implementación de Búsqueda Global ([A-31]): se añadió una funcionalidad de búsqueda que permite encontrar alumnos por nombre desde cualquier nivel de la jerarquía. La búsqueda muestra resultados planos (alumno, grado, sección, asignatura) y redirige directamente a la vista de detalles.
+  - Actualización de navegación: se modificó el listener de eventos de la tabla para manejar redirecciones desde los resultados de búsqueda global.
+- Archivo: backend/task-service/Code.gs
+  - Lógica de Crédito Extra ([A-32]): se simplificó la condición de visibilidad de las tareas de "Crédito Extra". Ahora son visibles para cualquier estudiante que tenga al menos una tarea con estado "Rechazada" en la misma asignatura, eliminando la dependencia de un ID de tarea original específico. Se aplicó normalización (lowercase/trim) para la comparación de asignaturas.

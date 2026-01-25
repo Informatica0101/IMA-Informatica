@@ -176,7 +176,13 @@ document.addEventListener('DOMContentLoaded', () => {
             else pendingFilterContainer.classList.add('hidden');
         }
 
-        const searchTerm = (studentSearchInput ? studentSearchInput.value : '').toLowerCase();
+        const searchTerm = (studentSearchInput ? studentSearchInput.value : '').trim().toLowerCase();
+
+        // (A-31) Priorizar búsqueda global si hay texto y no estamos en detalles profundos
+        if (searchTerm !== '' && current.level !== 'Detalles') {
+            renderGlobalSearch(searchTerm);
+            return;
+        }
 
         // Determinar qué renderizar según el nivel
         switch (current.level) {
@@ -187,6 +193,56 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'Exámenes': renderExamenesGestion(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
             case 'Detalles': renderDetalles(current.data.alumnoNombre, current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
         }
+    }
+
+    function renderGlobalSearch(search) {
+        if (dashboardLevelTitle) dashboardLevelTitle.textContent = "Resultados de Búsqueda Global";
+
+        // Extraer alumnos únicos con su metadata
+        const alumnosGlobal = [];
+        const seen = new Set();
+
+        allActivityRaw.forEach(item => {
+            if (!item.alumnoNombre) return;
+            const key = `${item.alumnoNombre}-${item.grado}-${item.seccion}-${item.asignatura}`;
+            if (!seen.has(key)) {
+                if (item.alumnoNombre.toLowerCase().includes(search)) {
+                    alumnosGlobal.push({
+                        nombre: item.alumnoNombre,
+                        grado: item.grado,
+                        seccion: item.seccion,
+                        asignatura: item.asignatura
+                    });
+                    seen.add(key);
+                }
+            }
+        });
+
+        currentFilteredItems = alumnosGlobal;
+
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Alumno</th>
+                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Grado / Sección</th>
+                <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Asignatura</th>
+                <th class="p-1 text-right font-bold text-gray-600 whitespace-nowrap">Acción</th>
+            </tr>`;
+
+        if (alumnosGlobal.length === 0) {
+            submissionsTableBody.innerHTML = '<tr><td colspan="4" class="text-center p-2 text-gray-500">No se encontraron alumnos con ese nombre.</td></tr>';
+            return;
+        }
+
+        submissionsTableBody.innerHTML = alumnosGlobal.map((a, idx) => `
+            <tr class="border-b hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
+                <td class="p-1 whitespace-nowrap font-semibold text-blue-700 text-sm text-custom-plus">${a.nombre}</td>
+                <td class="p-1 whitespace-nowrap text-xs text-gray-600">${a.grado} - ${a.seccion || 'N/A'}</td>
+                <td class="p-1 whitespace-nowrap text-xs text-gray-600">${a.asignatura}</td>
+                <td class="p-1 text-right whitespace-nowrap">
+                     <span class="text-blue-600 font-bold text-xs">Ver actividades &rsaquo;</span>
+                </td>
+            </tr>
+        `).join('');
     }
 
     function renderGrados(search) {
@@ -624,6 +680,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const idx = navBtn.dataset.index;
                 const item = currentFilteredItems[idx];
                 const current = navStack[navStack.length - 1];
+                const searchTerm = (studentSearchInput ? studentSearchInput.value : '').trim();
+
+                // (A-31) Manejar clic en resultados de búsqueda global
+                if (searchTerm !== '' && current.level !== 'Detalles') {
+                    const alumnoNombre = item.nombre;
+                    pushNav('Detalles', {
+                        alumnoNombre,
+                        grado: item.grado,
+                        seccion: item.seccion,
+                        asignatura: item.asignatura
+                    });
+                    return;
+                }
 
                 if (current.level === 'Grados') {
                     pushNav('Secciones', { grado: item });

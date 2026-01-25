@@ -87,10 +87,11 @@ function getStudentTasks(payload) {
     if (!matchGrado || !matchSeccion) return false;
 
     if (task[1] === 'Credito Extra') {
-      const tareaOriginalId = task[9];
-      if (!tareaOriginalId) return false;
-      const entregaOriginal = entregasData.find(e => e[1] === tareaOriginalId && e[2] === userId);
-      return entregaOriginal && entregaOriginal[6] === 'Rechazada';
+      const asignatura = (task[5] || "").toString().toLowerCase().trim();
+      const tasksInAsig = tasksData
+        .filter(t => (t[5] || "").toString().toLowerCase().trim() === asignatura)
+        .map(t => t[0]);
+      return entregasData.some(e => e[2] === userId && tasksInAsig.includes(e[1]) && e[6] === 'Rechazada');
     }
     return true;
   }).map(task => {
