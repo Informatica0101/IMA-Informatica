@@ -468,3 +468,23 @@ AUDITORÍA FINAL POST-CORRECCIÓN - 25/01/2026
 SOLUCIONES APLICADAS:
 - Limpieza total de archivos temporales.
 - Estandarización de sintaxis JavaScript según estándares modernos.
+
+==================================================
+AUDITORÍA DE CACHE - 25/01/2026
+==================================================
+
+1. Service Worker (sw.js):
+   - Hallazgo: La estrategia anterior era 'Cache First', lo que impedía ver cambios sin cambiar manualmente el nombre del cache.
+   - Solución: Implementada estrategia 'Network First'. Ahora se prioriza la red para obtener los archivos más recientes y se actualiza el cache dinámicamente.
+   - Verificación: Se incluyó skipWaiting y clients.claim para acelerar la transición entre versiones.
+
+2. Cabeceras de Control (index.html):
+   - Hallazgo: El navegador podía cachear el HTML base por tiempo indefinido.
+   - Solución: Añadidos meta tags de control de cache (no-cache, no-store).
+
+3. UX de Actualización (ui-common.js):
+   - Hallazgo: El usuario no sabía cuándo había una actualización lista.
+   - Solución: Implementado prompt de confirmación al detectar un nuevo Service Worker instalado.
+
+SOLUCIONES APLICADAS:
+- Refresco automático y manual de contenidos garantizado.

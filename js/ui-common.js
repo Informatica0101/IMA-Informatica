@@ -217,8 +217,31 @@ function setupPWALogic() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('SW registrado', reg))
+                .then(reg => {
+                    console.log('SW registrado', reg);
+                    // Forzar actualización si hay un nuevo SW esperando
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        installingWorker.onstatechange = () => {
+                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('Nuevo contenido disponible; por favor refresca.');
+                                if(confirm("Nueva versión disponible. ¿Deseas actualizar ahora?")) {
+                                    window.location.reload();
+                                }
+                            }
+                        };
+                    };
+                })
                 .catch(err => console.log('SW error', err));
+        });
+
+        // Asegurar que los cambios se apliquen al recargar
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!refreshing) {
+                window.location.reload();
+                refreshing = true;
+            }
         });
     }
 }

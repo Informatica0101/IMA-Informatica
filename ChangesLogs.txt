@@ -478,3 +478,13 @@ OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
 25/01/2026 (Corrección Post-Code Review)
 - Repositorio: Eliminados todos los archivos de respaldo (.bak) para limpiar el entorno de producción.
 - Archivos JavaScript: Corregidos errores de sintaxis en template literals (backticks y dollar signs) que impedían la ejecución correcta de scripts en producción.
+
+25/01/2026 (Optimización de Cache)
+- Archivo: sw.js
+  - Se incrementó la versión del cache a 'informatic-app-v3'.
+  - Se cambió la estrategia de carga a 'Network First' para asegurar que los cambios se vean reflejados inmediatamente cuando hay conexión a internet.
+  - Se añadió 'self.skipWaiting()' y 'clients.claim()' para forzar la activación inmediata del nuevo Service Worker.
+- Archivo: index.html
+  - Se añadieron meta tags de Cache-Control para evitar que el navegador guarde versiones obsoletas del documento principal.
+- Archivo: js/ui-common.js
+  - Se mejoró la lógica de registro del Service Worker para detectar actualizaciones y solicitar al usuario que recargue la página cuando haya una nueva versión disponible.
