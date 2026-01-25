@@ -15,8 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
             const email = e.target.email.value;
             const password = e.target.password.value;
+
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
 
             try {
                 const result = await fetchApi('USER', 'loginUser', { email, password });
@@ -34,6 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error('Error en el fetch:', error);
                 alert('Hubo un problema de conexión. Revisa la consola.');
+            } finally {
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.disabled = false;
             }
         });
     }
@@ -41,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const submitBtn = registerForm.querySelector('button[type="submit"]');
             const payload = {
                 nombre: e.target.nombre.value,
                 grado: e.target.grado.value,
@@ -48,6 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 email: e.target.email.value,
                 password: e.target.password.value
             };
+
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
 
             try {
                 const result = await fetchApi('USER', 'registerUser', payload);
@@ -61,6 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error('Error en el fetch:', error);
                 alert('Hubo un problema de conexión. Revisa la consola.');
+            } finally {
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.disabled = false;
             }
         });
     }

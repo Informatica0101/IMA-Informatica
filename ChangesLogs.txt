@@ -1,6 +1,81 @@
+14/01/2026
+- Archivo: js/teacher.js, Línea(s): 88-95
+  - Se implementó código defensivo en la función `fetchTeacherActivity` para prevenir un error crítico de tipo 'TypeError: Cannot read properties of undefined (reading 'map')'. La modificación asegura que si alguna de las llamadas a la API devuelve `undefined`, el código manejará el valor de forma segura en lugar de fallar, mejorando la robustez general del dashboard del profesor.
+
+
+14/01/2026
+- Archivo: js/teacher.js, Línea(s): 90, 129
+  - Se verificó que la lógica para asignar la propiedad `tipo: 'Examen'` a los exámenes base (sin entregas) es correcta y funciona como se esperaba. Esta verificación confirma que el código renderizará los botones de control de examen ('Activar'/'Bloquear') cuando los datos de la API no incluyan explícitamente el tipo de actividad.
+
+14/01/2026
+- Archivo: js/exam.js, Línea(s): 35-45
+  - Se implementó una corrección en la función `loadExam` para manejar de forma segura los casos en que la respuesta de la API de un examen no contiene la propiedad `preguntas`. Se asigna un array vacío por defecto para prevenir un `TypeError` fatal.
+- Archivo: js/exam.js, Línea(s): 43-45
+  - Se mejoró la experiencia del usuario mostrando el mensaje "Este examen no tiene preguntas actualmente" y ocultando el botón de envío si un examen se carga sin preguntas.
+- Archivo: exam.html, Línea(s): 29
+  - Se añadió la importación del script `js/api.js` para permitir la refactorización y eliminación de código duplicado en `js/exam.js`.
+- Archivo: js/exam.js, Línea(s): 15-22
+  - Se eliminó una función `fetchApi` duplicada, centralizando las llamadas a la API a través del script `js/api.js`.
+
+14/01/2026
+- Archivo: backend/exam-service/Code.gs, Línea(s): 191-224
+  - Se refactorizó la función `getExamQuestions` para que devuelva la estructura de datos correcta que el frontend espera. La función ahora busca los detalles del examen (título, tiempo) y los combina con el array de preguntas en un único objeto, solucionando el bug que causaba que todos los exámenes se mostraran sin preguntas.
+- Archivo: js/exam.js, Línea(s): 41-112
+  - Se reintrodujo la función `renderQuestion` que había sido eliminada accidentalmente. Esta función es crucial para renderizar el HTML de cada pregunta del examen, y su ausencia provocaba un error silencioso que impedía mostrar las preguntas.
+
+13/01/2026
+- Archivo: js/config.js, Línea(s): 17
+  - Se actualizó la URL del microservicio `TASK` con el endpoint de producción final y definitivo.
+
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 175-179
+  - Se implementó una corrección en `getTeacherActivity` para asegurar que el `fileId` se recupere correctamente, incluso si el nombre de la columna en la hoja de cálculo no es "fileUrl", utilizando un índice de columna fijo como respaldo.
+- Archivo: js/teacher.js, Línea(s): 87-96
+  - Se implementó una corrección definitiva en `renderActivity` para que el frontend sea resiliente. Ahora genera un enlace de archivo siempre que `fileId` esté presente. El enlace activa el lightbox solo si `mimeType` es una imagen; de lo contrario, crea un enlace de descarga directa. Esto soluciona el error "N/A" de forma personalizada.
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 99-102
+  - Se implementó una interfaz de diagnóstico temporal en el frontend. Si los datos de archivo esperados (`fileId`, `mimeType`) no se reciben, la celda "Archivo" mostrará el objeto JSON completo de la API para facilitar la depuración.
+
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 154-158
+  - Se corrigió un error de "off-by-one" en la función `gradeSubmission` que provocaba que se intentara actualizar la fila incorrecta en la hoja de cálculo.
+- Archivo: js/teacher.js, Línea(s): 87-101
+  - Se eliminó la lógica de retrocompatibilidad por instrucción del usuario. El frontend ahora depende exclusivamente de los campos `fileId` y `mimeType` proporcionados por el backend.
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 87-101
+  - Se implementó una lógica retrocompatible en `renderActivity` para manejar tanto la estructura de datos nueva (`fileId`, `mimeType`) como la antigua (`archivoUrl`). Esto asegura que siempre se muestre un enlace de archivo funcional y se evite el error "N/A", independientemente de la versión del backend desplegado.
+
+13/01/2026
+- Archivo: js/config.js, Línea(s): 17
+  - Se revirtió la URL del microservicio `TASK` a la versión anterior para restaurar la funcionalidad del dashboard después de determinar que la nueva URL proporcionada era incorrecta.
+
+13/01/2026
+- Archivo: js/config.js, Línea(s): 17
+  - Se actualizó la URL del microservicio `TASK` al nuevo endpoint de producción.
+
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 125-131, 175-194
+  - Se modificó `submitAssignment` para almacenar el ID del archivo y su MIME type en la hoja `Entregas`.
+  - Se actualizó `getTeacherActivity` para recuperar el `fileId` y el `mimeType`, eliminando la `archivoUrl` obsoleta.
+- Archivo: README.md, Línea(s): 150
+  - Se añadió la columna `mimeType` a la documentación de la hoja `Entregas`.
+- Archivo: teacher-dashboard.html, Línea(s): 165-175
+  - Se añadió la estructura HTML para un modal de lightbox para la previsualización de imágenes.
+- Archivo: js/teacher.js, Línea(s): 87-101, 131-150, 198-202
+  - Se actualizó `renderActivity` para generar enlaces condicionales: descarga directa para documentos y un activador de lightbox para imágenes.
+  - Se implementó la lógica para controlar la apertura y cierre del lightbox.
+  - Se añadió un event listener para gestionar los clics en los enlaces de visualización de archivos.
+
 Registro de cambios de IMA - Area de Informática V 2.0 
 
 En este archivo se regustrara el historial de cambios del proyecto. 
+
+09/01/2026
+- Archivo: index.html, Línea(s): 203, 250
+  - Se añadió un enlace "Portal" a la barra de navegación principal (vista de escritorio y móvil) para dirigir a los usuarios a `login.html`.
+  - Se revirtió el cambio anterior que enlazaba incorrectamente el logo principal a `login.html`.
 
 08/01/2026
 - Archivo: js/teacher.js, Línea(s): 158-297
@@ -12,6 +87,348 @@ En este archivo se regustrara el historial de cambios del proyecto.
 - Archivo: register.html, Línea(s): 44
   - Se corrigió un error de `ReferenceError` al añadir la importación del script `js/api.js`, que era necesario para el funcionamiento del formulario de registro.
 
+08/01/2026
+- Archivo: js/student.js, Línea(s): 12-17
+  - Se implementó el `addEventListener` para el botón de `logout-button`, solucionando el bug que impedía al estudiante cerrar sesión.
+- Archivo: js/student.js, Línea(s): 29-91
+  - Se modificó la lógica de obtención de actividades para incluir una llamada a `getStudentExams`.
+  - Se actualizó la función `renderActivities` para mostrar tanto tareas como exámenes, añadiendo un botón "Realizar Examen".
+- Archivo: index.html, Línea(s): 201
+  - Se actualizó el `href` del enlace principal para dirigir a `login.html`, conectando la página de inicio con el portal.
+
 07/01/2026 
 -Se creo los archicos README.md, Instrucciones.txt y Changeslogs.txt 
-- Archivos relacionados README.md, Instrucciones.txt y Changeslogs.txt. 
+- Archivos relacionados README.md, Instrucciones.txt y Changeslogs.txt.
+
+10/01/2026
+- Archivo: backend/user-service/Code.gs, backend/task-service/Code.gs, Línea(s): Todas
+  - Se realizó una auditoría completa de los archivos para verificar la definición, alcance y orden de ejecución de las funciones. Se determinó que la estructura actual previene errores de referencia de funciones no definidas.
+
+11/01/2026
+- Archivo: backend/user-service/Code.gs, Línea(s): 67, 91
+  - Se modificó el bloque `catch` de la función `doPost` para registrar los errores internamente y devolver un mensaje genérico al cliente, mejorando la seguridad.
+  - Se actualizó la función `registerUser` para utilizar `Utilities.getUuid()` en la generación de `userId`, garantizando identificadores únicos.
+- Archivo: backend/task-service/Code.gs, Línea(s): 64, 137-139, 151-171
+  - Se modificó el bloque `catch` de la función `doPost` para devolver un mensaje de error genérico.
+  - Se añadió una validación en `submitAssignment` para asegurar que el tipo MIME se extraiga correctamente del `fileData`.
+  - Se refactorizó la función `gradeSubmission` para utilizar los nombres de los encabezados de la hoja de cálculo al buscar las columnas, eliminando los índices codificados.
+
+12/01/2026
+- Archivo: backend/user-service/Code.gs, Línea(s): 31-33
+  - Se reestructuró la función `doGet` para separar la llamada `setMimeType` de la creación inicial del objeto `TextOutput`, alineando el código con la documentación oficial de Google Apps Script y resolviendo un `TypeError`.
+- Archivo: backend/task-service/Code.gs, Línea(s): 28-30
+  - Se aplicó la misma reestructuración a la función `doGet` para resolver el `TypeError` idéntico.
+
+13/01/2026
+- Archivo: js/config.js, Línea(s): 13, 16, 19
+  - Se actualizaron las variables `USER`, `TASK` y `EXAM` con las nuevas URLs de despliegue de los microservicios de backend.
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 88-109
+  - Se implementó una lógica para extraer el ID del archivo de la URL completa de Google Drive. Esto corrige la generación de enlaces de descarga y visualización que estaban rotos debido a que se trataba la URL completa como si fuera el ID.
+
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 176-193
+  - Se corrigió un bug en el modal de calificación. El enlace 'Descargar Archivo' dentro del modal ahora extrae correctamente el ID del archivo de la URL completa de Google Drive, solucionando un problema identificado durante la revisión de código.
+
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 45-68, 114, 195
+  - Se implementó una función auxiliar 'extractDriveId' para manejar múltiples formatos de URL de Google Drive, incluyendo el formato no estándar reportado.
+  - Se refactorizó la lógica en 'renderActivity' y 'openGradeModal' para usar esta función centralizada, haciendo la extracción de IDs más robusta.
+
+
+13/01/2026
+- Archivo: js/teacher.js, Línea(s): 54-56
+  - Se implementó la corrección final en 'extractDriveId' para manejar IDs de archivo limpios. La función ahora comprueba si la entrada es un ID antes de intentar analizarla como una URL, evitando así una regresión crítica.
+
+
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 152-161
+  - Se re-implementó la corrección del error 'off-by-one' en la función 'gradeSubmission'. Se ajustó la lógica de búsqueda y actualización de filas para asegurar que la calificación se escriba en la fila correcta de la hoja de cálculo, solucionando el 'error interno del servidor'.
+
+
+13/01/2026
+- Archivo: js/config.js, Línea(s): 17
+  - Se actualizó la URL del microservicio 'TASK' al nuevo endpoint proporcionado. Se realizaron pruebas de conectividad con 'curl' para verificar el nuevo endpoint y los existentes antes de aplicar el cambio.
+
+13/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 143-145
+  - Se modificaron los nombres de las columnas en `gradeSubmission` para que coincidan con la especificación de la base de datos (minúsculas, sin acentos), solucionando el error persistente de "error interno del servidor".
+- Archivo: backend/exam-service/Code.gs, Línea(s): 65, 268-299
+  - Se implementó la acción `getTeacherExamActivity` que faltaba en el backend. Esta función agrega datos de múltiples hojas para proporcionar una lista completa de las entregas de exámenes para el dashboard del profesor, solucionando el error "Acción no válida".
+
+14/01/2026
+- Archivo: js/config.js, Línea(s): 17, 20
+  - Se actualizaron las URLs de los microservicios `TASK` and `EXAM` para apuntar a los nuevos endpoints de producción desplegados.
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivo: css/style.css
+- Implementado escalado global (font-size: 85%).
+- Añadidas clases .table-container y .dashboard-card para corregir desbordamientos y mejorar el diseño.
+
+Archivos: student-dashboard.html, teacher-dashboard.html, exam.html, exam-results.html, results.html
+- Estandarización de encabezado y pie de página para coincidir con index.html.
+- Vinculación de css/style.css.
+- Corrección de desbordamientos en tablas y grids.
+- Implementación de lógica de cierre de sesión unificada usando la clave 'currentUser'.
+- Corrección de navegación rota en results.html (apuntaba a student.html).
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivo: css/style.css
+- Corregida propiedad min-height en body (antes min-h-screen).
+- Ajustado padding de .dashboard-card a 1rem para un diseño más compacto.
+
+Archivo: student-dashboard.html
+- Reducido gap en el grid de tareas de gap-6 a gap-3.
+- Asegurada estructura flex-col en body para posicionamiento correcto del footer.
+
+Archivo: teacher-dashboard.html
+- Reducido gap en formularios de gap-8 a gap-4.
+- Reducido espaciado en preguntas de examen de space-y-8 a space-y-4.
+- Asegurada estructura flex-col en body.
+
+Archivo: index.html
+- Añadidas clases flex-grow y mt-auto para asegurar que el footer no deje franjas blancas inferiores.
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivos: student-dashboard.html, teacher-dashboard.html, index.html
+- Reducción extrema de gaps (gap-2) and padding interno (0.75rem) para lograr un diseño de cuadrícula minimalista y profesional.
+- Asegurado que todos los archivos usen bg-gray-900 en el footer para uniformidad total.
+- Implementación de mt-auto en todos los footers and flex-grow en los contenedores main para eliminar la franja blanca inferior.
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivo: teacher-dashboard.html
+- Reducido padding de los encabezados de la tabla (th) de p-4 a p-2.
+
+Archivo: js/teacher.js
+- Reducido padding de las celdas de la tabla (td) de p-4 a p-2 en la función renderActivity.
+- Ajustado padding de los mensajes de estado (carga, error, vacío) de p-4 a p-2.
+
+REGISTRO DE CAMBIOS - 18/01/2026
+
+Archivo: css/style.css
+- Implementado drop-shadow en .logo-img conforme a la solicitud del usuario.
+
+Archivo: js/ui-common.js
+- Creado para centralizar la lógica de scroll, menú móvil y logout, permitiendo su reutilización en dashboards.
+
+Archivo: student-dashboard.html, teacher-dashboard.html
+- Integrado el encabezado completo (incluyendo dropdowns de Cursos/Recursos) mediante la inclusión de js/ui-common.js, js/data.js and js/index-ui.js.
+- Reducido gap en la cuadrícula de tareas and formularios.
+
+Archivo: js/teacher.js
+- Reducido padding de las filas de la tabla de entregas a p-2 para un diseño más compacto.
+
+18/01/2026
+- Archivo: backend/task-service/Code.gs, Línea(s): 45, 102-140, 143-150
+  - Se implementó la acción `uploadFile` para permitir la subida individual de archivos a carpetas específicas por tarea/alumno.
+  - Se actualizó `submitAssignment` para aceptar IDs de archivos o carpetas ya subidos, simplificando el registro final.
+- Archivo: student-dashboard.html, Línea(s): 118-142
+  - Se actualizó el modal de entrega para soportar PDF/DOCX y permitir la subida múltiple con previsualización y lista de archivos.
+- Archivo: js/student.js, Línea(s): Todas
+  - Se reescribió la lógica del modal de entrega para gestionar subidas en segundo plano, estados de carga y envío final de enlaces (archivos individuales o carpetas).
+  - Se implementó la obtención dinámica de `parcial` y `asignatura` desde los atributos de datos de la tarea.
+  - Se optimizó la carga en segundo plano para no bloquear el input de selección de archivos.
+- Archivo: js/teacher.js, Línea(s): 125-130, 219-224
+  - Se añadió soporte para visualizar carpetas de Drive ("Ver Carpeta") cuando una entrega contiene múltiples archivos.
+- Archivo: js/config.js, Línea(s): 17
+  - Se actualizó la URL del microservicio TASK a la nueva implementación: https://script.google.com/macros/s/AKfycbyILal440wcxW9ZfJ1YkbqV_3rIIv2Hvt3c3NNWuHuCGYuc2s2zVBbCR7gXE_pZavo/exec
+
+18/01/2026
+- Archivo: js/student.js, Línea(s): 36, 160, 203-278, 285
+  - Se reemplazó el flag `isUploading` por un contador `activeUploads`.
+  - Se aseguró que la selección de archivos sea continua y no bloqueante.
+  - Se garantizó la integridad de la entrega final validando que no haya subidas pendientes.
+
+18/01/2026
+- Archivo: js/config.js, Línea(s): 17
+  - Se actualizó la URL del microservicio TASK a la nueva implementación: https://script.google.com/macros/s/AKfycbzaYA_NpnYqzEx8pinefePQpF35bTO5f3rr_fgiHVFCn-2GhHBfN7dlqB4vJ7ritos/exec
+
+20/01/2026
+- Archivo: backend/exam-service/Code.gs
+  Líneas: 200-203, 212-230
+  Cambio: Se corrigió la función submitExam para usar 'respuestaEstudiante'. Se añadió la generación y retorno de 'entregaExamenId' en un objeto 'data' para compatibilidad con la redirección del frontend.
+
+- Archivo: css/style.css
+  Líneas: 197-235
+  Cambio: Se añadieron las clases '.loading-spinner' y '.btn-loading' para manejar estados de carga en botones de forma estandarizada.
+
+- Archivo: js/auth.js
+  Líneas: 18-41, 50-75
+  Cambio: Se implementó el uso de 'btn-loading' y la deshabilitación de botones en los formularios de login y registro durante las llamadas a la API.
+
+- Archivo: js/student.js
+  Líneas: 288, 318
+  Cambio: Se actualizó el envío de tareas para usar la clase 'btn-loading' en el botón de confirmación.
+
+- Archivo: js/teacher.js
+  Líneas: 236-315, 324-462
+  Cambio: Se integraron estados de carga y deshabilitación en todos los botones de acción del profesor: calificar, reactivar, activar/bloquear examen, crear tarea y crear examen.
+
+- Archivo: js/exam.js
+  Líneas: 105, 149-166
+  Cambio: Se añadió el estado de carga al botón de entrega de examen y se aseguró el manejo correcto de la redirección post-entrega.
+
+20/01/2026
+- Archivo: backend/task-service/Code.gs
+  Líneas: 93, 218
+  Cambio: Se modificaron las funciones `getStudentTasks` y `getTeacherActivity` para enviar fechas en formato ISO (`.toISOString()`), eliminando el uso de `.toLocaleString()` que causaba errores de parseo en el frontend.
+
+- Archivo: backend/exam-service/Code.gs
+  Líneas: 143, 247, 300
+  Cambio: Se estandarizó el envío de fechas a formato ISO en las funciones `getAllExams`, `getStudentExams` y `getTeacherExamActivity` para garantizar la compatibilidad con el constructor `new Date()` de JavaScript en cualquier navegador.
+
+19/01/2026
+-------------------------------------------------------------------
+- Archivo: js/student.js
+  Cambio: Se eliminó la variable `isUploading` en favor de `activeUploads` para gestionar el cierre del modal de forma segura. Se añadió estado de carga y bloqueo al botón `acceptFileBtn` para prevenir subidas duplicadas del mismo archivo antes de que inicie el proceso en segundo plano.
+
+- Archivo: js/config.js
+  Cambio: Se actualizaron las URLs de los microservicios TASK y EXAM con los nuevos endpoints finales proporcionados.
+
+- Auditoría Final: Se verificaron todos los cambios realizados en archivos de frontend y backend, confirmando la resolución de los errores de envío de examen, visualización de fechas y falta de animaciones.
+
+20/01/2026
+- Archivo: backend/task-service/Code.gs, Líneas: 205-212. Se añadieron metadatos (grado, seccion, asignatura) a getTeacherActivity.
+- Archivo: backend/exam-service/Code.gs, Líneas: 67, 324-356. Se implementó gradeExamSubmission y se añadieron metadatos a getTeacherExamActivity.
+- Archivo: js/exam.js, Línea: 162. Se cambió la redirección post-examen al dashboard del estudiante.
+- Archivo: js/results.js, Líneas: 7-12. Se restringió el acceso a resultados solo a profesores.
+- Archivo: teacher-dashboard.html, Líneas: 99-138. Se añadió barra de búsqueda, columnas de metadatos y botones de ordenamiento.
+- Archivo: js/teacher.js, Líneas: 21-315. Se implementó lógica de búsqueda, filtrado/ordenamiento y calificación unificada para tareas y exámenes.
+
+20/01/2026
+- Archivo: js/config.js
+  Descripción: Actualización de los endpoints de producción para los microservicios de tareas (TASK) y exámenes (EXAM).
+- Archivo: backend/exam-service/Code.gs
+  Descripción: Se modificó la función submitExam para establecer el estado inicial de la entrega como 'Pendiente' en lugar de 'Finalizado'. Se actualizó getStudentExams para retornar un objeto de entrega completo y ocultar la calificación si el estado es 'Pendiente', garantizando la privacidad de los resultados hasta su revisión.
+- Archivo: js/student.js
+  Descripción: Se implementó la lógica de feedback para exámenes en el dashboard del estudiante, mostrando el estado, la calificación (solo tras revisión) y el comentario del profesor, siguiendo la misma consistencia visual que las tareas.
+
+21/01/2026
+- Archivo: js/config.js, Líneas: 17, 20
+  - Se actualizaron los endpoints de producción para los microservicios de tareas (TASK) y exámenes (EXAM) con las nuevas URLs proporcionadas por el usuario.
+
+21/01/2026
+- Archivo: backend/user-service/Code.gs, Línea: 104, 117
+  - Se cambió la generación de `userId` a formato `USR-<timestamp>`. Se forzó el rol "Estudiante" en el registro.
+- Archivo: backend/task-service/Code.gs, Líneas: 82-87, 212-217
+  - Implementada lógica de visibilidad de secciones para estudiantes: las tareas sin sección asignada son visibles para todo el grado; de lo contrario, solo para las secciones especificadas (soporta listas separadas por comas).
+  - Filtrado estricto en el dashboard del profesor para mostrar solo entregas de sus propios grupos y tareas.
+- Archivo: backend/exam-service/Code.gs, Líneas: 250-254, 342-347
+  - Implementada lógica de visibilidad de secciones para exámenes, idéntica a tareas.
+  - Actualizados filtros de actividad para el profesor.
+- Archivo: js/teacher.js, Líneas: 84-95, 396-399, 504
+  - Se configuraron las peticiones a la API para enviar metadatos de sesión del profesor, habilitando el filtrado en el servidor.
+
+22/01/2026
+- Archivo: js/teacher.js, Línea: 426
+  - Corregido error de sintaxis en atributo HTML (type-="button").
+- Archivo: backend/exam-service/Code.gs, Líneas: 251-253
+  - Restaurado filtro de visibilidad de exámenes para estudiantes (solo Activos o Entregados).
+- Archivo: backend/user-service/Code.gs, Línea: 104
+  - Restaurado formato de ID de usuario (USR-timestamp).
+- Archivo: backend/user-service/Code.gs & backend/exam-service/Code.gs
+  - Estandarizado MIME type a JSON y oculto detalle de errores en el bloque catch para seguridad.
+- Archivo: js/config.js, Líneas: 14, 17, 20
+  - Actualizadas URLs de USER, TASK y EXAM a endpoints de producción definitivos.
+
+23/01/2026
+- Archivo: backend/task-service/Code.gs & backend/exam-service/Code.gs
+  - Implementada validación estricta de pertenencia en funciones de actividad docente.
+  - Corregido error que permitía ver entregas de actividades ajenas si el registro base no era encontrado.
+  - Mejorada la lógica de extracción de metadatos del alumno (grado, sección) y de la actividad (asignatura) para evitar el retorno injustificado de "N/A".
+
+23/01/2026
+- Archivo: js/config.js, Líneas: 17, 20
+  - Actualizadas las URLs de producción para TASK y EXAM a los endpoints finales proporcionados por el usuario.
+
+23/01/2026
+- Archivo: index.html
+  - Implementado botón de instalación de PWA en el menú hamburguesa (móvil) y en el pie de página (web).
+  - Agregado contenedor de Acceso al Sistema después de la sección de actividades.
+  - Implementado modal de Login y modal de instrucciones para iOS.
+- Archivo: js/index-ui.js
+  - Implementada lógica de instalación de PWA multiplataforma (Android, iOS, HarmonyOS).
+  - Implementada lógica de detección de iOS para mostrar instrucciones personalizadas.
+  - Implementada lógica de apertura/cierre de modal de login y renderizado dinámico del botón "Portal" vs "Iniciar Sesión".
+
+23/01/2026
+- Archivo: js/index-ui.js
+  - Se mejoró la visibilidad del botón de instalación de PWA. Ahora se detecta cualquier dispositivo móvil y se muestra el botón permanentemente si la app no está instalada, asegurando que los usuarios de Android, iOS y HarmonyOS siempre tengan acceso a la opción de instalación.
+
+24/01/2026:
+- Archivo: login.html, register.html, exam.html, exam-results.html, results.html
+  - Línea(s): Todas
+  - Cambio: Unificación total de encabezados y pies de página para coincidir con la identidad visual de la página principal. Implementación de diseño responsivo y anclaje de footer.
+- Archivo: student-dashboard.html, teacher-dashboard.html
+  - Línea(s): 90-95
+  - Cambio: Ajuste de márgenes superiores de main para coherencia responsiva (mt-[5rem] md:mt-[6rem]).
+- Archivo: js/student.js
+  - Línea(s): 110-120
+  - Cambio: Reducción de padding en tarjetas de tareas (de p-6 a .dashboard-card con 1rem).
+- Archivo: js/teacher.js, teacher-dashboard.html
+  - Línea(s): Varias
+  - Cambio: Reducción de padding en celdas y encabezados de la tabla de entregas a p-1.5 para mayor densidad de información.
+- Archivo: css/style.css
+  - Línea(s): 184-210
+  - Cambio: Ajuste de la clase .dashboard-card para un diseño más compacto y adición de .table-compact para control de espaciado en tablas.
+
+24/01/2026
+- Archivo: index.html, login.html, register.html, student-dashboard.html, teacher-dashboard.html, exam.html, results.html
+  - Unificación de encabezados y pies de página en toda la plataforma.
+  - Implementación de estructura Flexbox para anclaje de footer.
+- Archivo: css/style.css
+  - Implementación de regla global para objetivos de toque mínimos de 44px en elementos interactivos.
+  - Creación de clases .dashboard-card (p-4) y .table-compact para diseños más densos.
+  - Ajuste de gap-4 a gap-2/3 en contenedores de tarjetas.
+- Archivo: js/teacher.js
+  - Implementación de navegación jerárquica (navStack) con 5 niveles de profundidad.
+  - Adición de lógica para título dinámico y botón de retroceso.
+  - Integración de filtros contextuales (Búsqueda y "Solo con pendientes").
+  - Unificación de delegación de eventos en un solo listener para la tabla de entregas.
+- Archivo: js/ui-common.js
+  - Centralización de lógica de PWA, menú móvil y efectos de scroll para todas las páginas.
+- Archivo: js/student.js
+  - Actualización de renderizado de tareas para usar clases compactas (.dashboard-card).
+
+24/01/2026 (Refinamiento de Navegación)
+- Archivo: js/teacher.js
+  - Normalización de metadatos: se mapearon los campos 'gradoAsignado' y 'seccionAsignada' a 'grado' y 'seccion' en fetchTeacherActivity para garantizar que los exámenes sin entregas aparezcan en la jerarquía.
+  - Mejora de UX: se implementó la limpieza automática del valor del buscador (studentSearchInput) al realizar pushNav y popNav.
+  - Corrección de filtros: se actualizó renderExamenesGestion para utilizar los campos normalizados.
+  - Limpieza: eliminación de una llave de cierre huérfana.
+MODIFICACIÓN DEL DASHBOARD DOCENTE - 24/01/2026
+- teacher-dashboard.html: Línea 111-114. Se modificó el botón "Regresar" para incluir texto y mejor estilo visual. Se actualizó el label del filtro de pendientes.
+- js/teacher.js: Línea 30. Se añadió el estado studentSort.
+- js/teacher.js: Línea 250-322. Se rediseñó renderAlumnos para mostrar solo las columnas Nombre y Estado, implementar navegación por clic en nombre y añadir lógica de reordenamiento (asc/desc).
+- js/teacher.js: Línea 367-430. Se actualizó renderDetalles para incluir la columna "Estado" con mapeo a "Completada", "Pendiente" y "Por calificar".
+- js/teacher.js: Línea 455-470. Se añadió listener de delegación en dashboardTableHead para gestionar el ordenamiento de la tabla de alumnos.
+OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
+- teacher-dashboard.html: Línea 112. Se cambió el tamaño del título de navegación de text-2xl a text-lg.
+- teacher-dashboard.html: Línea 118-121. Se reubicó la barra de búsqueda arriba del contenedor de la tabla.
+- teacher-dashboard.html: Línea 131-136. Se reubicó el botón "Regresar" debajo de la tabla.
+- teacher-dashboard.html: Línea 122. Se ajustó la tabla a w-auto para compactar las columnas.
+- js/teacher.js: Se redujo el padding de celdas (th/td) a p-1 y se añadió whitespace-nowrap en todas las funciones de renderizado (renderGrados, renderSecciones, renderAsignaturas, renderAlumnos, renderExamenesGestion, renderDetalles).
+- js/teacher.js: Se ajustaron los tamaños de botones y etiquetas dentro de las tablas a text-xs o text-[10px] para mayor compacidad.
+
+25/01/2026
+- Archivo: js/teacher.js
+  - Implementación de navegación directa sin botones: se eliminaron los botones físicos de navegación interna ("Ver Secciones", "Ver Asignaturas", etc.) y se habilitó la navegación mediante clic en la fila o celda correspondiente (clase .nav-btn en <tr>).
+  - Implementación de pestaña "Exámenes": se añadió una interfaz de pestañas (Tareas/Exámenes) en el encabezado de la tabla de alumnos. La pestaña "Exámenes" muestra una tabla con los alumnos que han entregado exámenes y un botón "Calificar Examen".
+  - Ajuste de tipografía: se aplicó la clase .text-custom-plus (+1px) a los campos de Grado, Sección, Asignatura y Nombre del Alumno.
+  - Optimización responsiva: se integró la lógica para añadir/quitar la clase .scroll-horizontal-clean al contenedor de la tabla según la vista activa (activado específicamente en Detalles).
+- Archivo: css/style.css
+  - Definición de .text-custom-plus para incremento de tamaño de fuente.
+  - Definición de .scroll-horizontal-clean para permitir scroll horizontal sin barra visible.
+- Archivos: index.html, teacher-dashboard.html, student-dashboard.html, login.html, register.html, exam.html, results.html, exam-results.html
+  - Ajuste visual del encabezado: se aumentó el tamaño de la bandera de Honduras a 120px para igualar visualmente al logo del instituto.
+  - Optimización del pie de página: se redujo el padding vertical de py-12 a py-6 para un diseño más compacto.
+  - Refuerzo de anclaje de footer: se verificó la estructura flex-col y mt-auto para eliminar franjas blancas.
+- Archivo: index.html
+  - Ajuste de Hero Section: se redujo el padding y la altura mínima de la sección de bienvenida para optimizar el espacio vertical.

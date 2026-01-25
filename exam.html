@@ -3,27 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Realizar Examen</title>
+    <title>Realizar Examen - Area de Informatica</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-6">
-        <header class="flex justify-between items-center mb-8">
-            <h1 id="exam-title" class="text-3xl font-bold text-gray-800">Cargando Examen...</h1>
-            <div id="timer" class="text-2xl font-bold text-red-600"></div>
-        </header>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 
-        <main>
-            <form id="exam-form" class="bg-white p-8 rounded-lg shadow-md space-y-8">
-                <div id="questions-container" class="space-y-6">
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="IMA-Logo.png">
+    <link rel="apple-touch-icon" href="IMA-Logo.png">
+    <meta name="theme-color" content="#2563eb">
+</head>
+<body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
+
+    <header id="main-header" class="bg-white shadow-md py-2 md:py-4 px-1 md:px-3 fixed w-full z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-4 transition-transform duration-300 logo-container">
+                <img src="imagenes/logo.png" alt="Logo" width="120" height="auto" class="logo-img transition-transform duration-300">
+                <span class="text-2xl font-bold text-blue-800 hidden sm:inline">Area de Informatica</span>
+            </a>
+
+            <div class="flex items-center space-x-6">
+                <div id="timer" class="text-xl md:text-2xl font-black text-red-600 bg-red-50 px-4 py-2 rounded-xl border-2 border-red-100 animate-pulse">00:00</div>
+            </div>
+
+            <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="120" height="auto" class="hidden lg:block">
+        </div>
+    </header>
+
+    <main class="mt-[7rem] pb-20 flex-grow">
+        <div class="container mx-auto px-5 max-w-4xl">
+            <div class="mb-10 text-center">
+                <h1 id="exam-title" class="text-3xl md:text-4xl font-extrabold text-gray-800">Cargando Examen...</h1>
+                <p class="text-gray-500 mt-2 font-medium">Lee cuidadosamente cada pregunta antes de responder.</p>
+            </div>
+
+            <form id="exam-form" class="space-y-8">
+                <div id="questions-container" class="space-y-8">
                     <!-- Las preguntas del examen se renderizarán aquí -->
+                    <div class="flex justify-center py-20">
+                        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
+                    </div>
                 </div>
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg">Entregar Examen</button>
+
+                <div class="pt-10">
+                    <button type="submit" class="w-full bg-blue-600 text-white font-extrabold py-5 rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all text-xl">
+                        Finalizar y Entregar Examen
+                    </button>
+                </div>
             </form>
-        </main>
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 text-white py-6 mt-auto">
+        <div class="container mx-auto px-5 text-center">
+            <p class="text-lg font-medium mb-6">
+                &copy; <span id="current-year"></span> Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
+            </p>
+            <div class="flex justify-center space-x-8">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 text-sm">Privacidad</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 text-sm">Términos</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 text-sm">Soporte</a>
+                <button id="pwa-install-button-footer" class="text-gray-400 hover:text-white transition-colors duration-200 text-sm hidden">Instalar App</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de Instrucciones iOS -->
+    <div id="ios-install-modal" class="fixed inset-0 z-[70] flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-sm mx-4 rounded-3xl shadow-2xl overflow-hidden p-6 text-center">
+            <div class="flex justify-center mb-4">
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                </div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Instalar en iOS</h3>
+            <p class="text-gray-600 mb-6 text-sm">Para instalar esta aplicación en tu iPhone o iPad:</p>
+            <div class="space-y-4 text-left mb-6">
+                <div class="flex items-center space-x-3">
+                    <span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                    <span class="text-sm">Pulsa el botón "Compartir" en Safari.</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                    <span class="text-sm">Baja y selecciona "Añadir a la pantalla de inicio".</span>
+                </div>
+            </div>
+            <button id="close-ios-modal" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors">Entendido</button>
+        </div>
     </div>
 
     <script src="js/config.js"></script>
+    <script src="js/ui-common.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/exam.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.setupCommonUI) window.setupCommonUI();
+        });
+    </script>
 </body>
 </html>

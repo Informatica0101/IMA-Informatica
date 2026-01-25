@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados del Examen - Area de Informatica</title>
+    <title>Resultados - Area de Informatica</title>
     <link rel="icon" type="image/png" href="IMA-Logo.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
@@ -26,16 +26,10 @@
     <main class="mt-[7rem] pb-20 flex-grow">
         <div class="container mx-auto px-5 max-w-4xl">
             <div class="dashboard-card text-center mb-10">
-                <h1 class="text-3xl font-extrabold text-gray-800 mb-6">Resultados del Examen</h1>
+                <h1 class="text-3xl font-extrabold text-gray-800 mb-8">Resumen de Calificación</h1>
 
-                <div class="inline-block p-8 bg-blue-50 rounded-full mb-6">
-                    <p class="text-gray-500 font-bold uppercase tracking-wider mb-2">Calificación Final</p>
-                    <p id="calificacion-total" class="text-6xl font-black text-blue-600">--%</p>
-                </div>
-
-                <div id="results-container" class="space-y-6 text-left mt-10">
-                    <!-- Los resultados por pregunta se renderizarán aquí -->
-                    <p class="text-center text-gray-500">Cargando detalles...</p>
+                <div id="results-container" class="min-h-[200px] flex flex-col justify-center items-center">
+                    <div class="animate-pulse text-gray-400 font-medium text-lg">Cargando resultados...</div>
                 </div>
 
                 <div class="mt-12 pt-8 border-t border-gray-100">
@@ -85,8 +79,10 @@
         </div>
     </div>
 
+    <script src="js/api.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/ui-common.js"></script>
-    <script src="js/exam-results.js"></script>
+    <script src="js/results.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (window.setupCommonUI) window.setupCommonUI();

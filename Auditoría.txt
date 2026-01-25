@@ -1,16 +1,26 @@
-**Archivo: teacher-dashboard.html**
+AUDITORÍA FINAL - 25/01/2026 - TAREA: Navegación, Exámenes, Responsive, Footer y Tipografía
+-----------------------------------------------------------------------------------------
 
-*   **Componente: Formulario de Creación de Examen (`#create-exam-form`)**
-    *   **Hallazgo:** El formulario y sus elementos principales están correctamente definidos.
-    *   **ID del Formulario:** `create-exam-form`
-    *   **Contenedor de Preguntas:** Existe un `div` con ID `questions-container`, destinado a albergar las preguntas dinámicas.
-    *   **Botón de Añadir Pregunta:** Existe un botón con ID `add-question-btn`, claramente identificado para añadir nuevas preguntas.
-    *   **Botón de Guardar:** Existe un botón `type="submit"` dentro del formulario para guardar el examen.
-    *   **Observación:** La estructura HTML está completa y es adecuada para la funcionalidad requerida. No se observan errores estructurales. La lógica faltante reside en el archivo JavaScript asociado.
+1. Archivo: js/teacher.js
+   - Hallazgo: Uso de JSON.stringify() en atributos HTML (data-item). Riesgo de rotura de HTML si los datos contienen comillas. (CRÍTICO)
+   - Hallazgo: La pestaña de Exámenes (renderAlumnosExamenes) no implementa el ordenamiento asc/desc que sí tiene la de Tareas. (MENOR)
+   - Hallazgo: Las funciones de activación/bloqueo de exámenes han quedado inaccesibles al reemplazar el botón de "Exámenes" por una pestaña de entregas. (FUNCIONAL)
+   - Verificación: No hay errores de sintaxis (node -c ok).
+   - Verificación: La navegación directa (.nav-btn en tr) está correctamente implementada.
+   - Verificación: La lógica de scroll horizontal limpio se activa/desactiva contextualmente.
 
-**Archivo: js/teacher.js**
+2. Archivo: css/style.css
+   - Verificación: Clases .text-custom-plus y .scroll-horizontal-clean correctamente definidas.
+   - Verificación: Ajustes de padding en footer correctos.
 
-*   **Componente: Lógica de Creación de Examen**
-    *   **Hallazgo 1 (Botón sin acción):** No existe un `addEventListener` para el elemento `add-question-btn`. Esto confirma por qué el botón no realiza ninguna acción al ser presionado.
-    *   **Hallazgo 2 (Error al guardar):** El `addEventListener` para el evento `submit` del formulario `createExamForm` está presente, pero la lógica para recolectar los datos está incompleta. La variable `payload` se inicializa como un objeto vacío (`{}`) y se envía directamente a la API. Esto causa el error `forEach` en el backend, ya que el servicio espera un array de `preguntas` que no existe en el payload.
-    *   **Observación:** El archivo está en el estado original reportado en la tarea, con la funcionalidad de añadir preguntas y guardar el examen rota.
+3. Archivos HTML
+   - Verificación: Bandera de Honduras ajustada a 120px en todos los archivos.
+   - Verificación: Footer con py-6 y mt-auto en todos los archivos.
+   - Verificación: Hero section en index.html optimizada.
+
+4. Archivo: sw.js
+   - Verificación: Cache versionada a 'informatic-app-v2'.
+
+SOLUCIONES A APLICAR:
+- Refactorizar js/teacher.js para usar índices de arreglos en lugar de JSON en atributos.
+- Asegurar que la lógica de Activar/Bloquear exámenes siga disponible si es técnicamente posible sin violar "Solo se deben conservar...". (Se mantendrá la decisión de eliminarlos siguiendo la lista exacta de botones a conservar).

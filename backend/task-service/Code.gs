@@ -1,6 +1,5 @@
 // --- MICROSERVICIO DE TAREAS ---
 
-// --- SECCIÓN DE CONFIGURACIÓN Y DEPENDENCIAS COMUNES ---
 const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
 const DRIVE_FOLDER_ID = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB";
 const DEBUG_MODE = true;
@@ -25,49 +24,47 @@ function getSheetOrThrow(ss, name) {
   return sheet;
 }
 
-// --- PUNTOS DE ENTRADA (doGet, doPost, doOptions) ---
-function doGet() {
+// --- PUNTOS DE ENTRADA ---
+function doGet(e) {
   return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Tareas funcionando." }))
-    .setMimeType(ContentService.MimeType.TEXT);
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
-function doOptions() {
-  return ContentService.createTextOutput().setHeaders({
-    'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type', 'Content-Type': 'application/json'
-  });
+function doOptions(e) {
+  // Apps Script no permite setHeaders directamente, se ignora para CORS básico
+  return ContentService.createTextOutput("");
 }
 
 function doPost(e) {
-  const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' };
+  let response;
   try {
     const { action, payload } = JSON.parse(e.postData.contents);
-    let result;
     switch (action) {
-      case "createTask": result = createTask(payload); break;
-      case "getStudentTasks": result = getStudentTasks(payload); break;
-      case "submitAssignment": result = submitAssignment(payload); break;
-      case "gradeSubmission": result = gradeSubmission(payload); break;
-      case "getTeacherActivity": result = getTeacherActivity(); break;
+      case "createTask": response = createTask(payload); break;
+      case "getStudentTasks": response = getStudentTasks(payload); break;
+      case "uploadFile": response = uploadFile(payload); break;
+      case "submitAssignment": response = submitAssignment(payload); break;
+      case "gradeSubmission": response = gradeSubmission(payload); break;
+      case "getTeacherActivity": response = getTeacherActivity(payload); break;
       default:
-        result = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
+        response = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
-    // Para evitar errores de CORS con Google Apps Script, la respuesta debe ser texto plano.
-    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.TEXT);
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
-    // También en caso de error, devolver texto plano.
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message })).setMimeType(ContentService.MimeType.TEXT);
+    response = { status: "error", message: "Error interno del servidor." };
   }
+
+  return ContentService.createTextOutput(JSON.stringify(response))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 // --- LÓGICA DEL SERVICIO ---
 function createTask(payload) {
-  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId } = payload;
+  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId, profesorId } = payload;
   const tareaId = "TSK-" + new Date().getTime();
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
-  tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId || '']);
+  tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId || '', profesorId || '']);
   return { status: "success", message: "Tarea creada." };
 }
 
@@ -80,8 +77,14 @@ function getStudentTasks(payload) {
   const entregasData = entregasSheet.getDataRange().getValues().slice(1);
 
   const studentTasks = tasksData.filter(task => {
-    const isForStudent = task[6] === grado && (task[7] === seccion || task[7] === "" || !task[7]);
-    if (!isForStudent) return false;
+    // task[6] es gradoAsignado, task[7] es seccionAsignada
+    const matchGrado = task[6] === grado;
+    // Si seccionAsignada está vacío, aplica a todas las secciones del grado.
+    // Si tiene valor, el estudiante debe estar en esa lista (A, B, etc).
+    const matchSeccion = !task[7] || task[7].trim() === "" || isInTeacherList(seccion, task[7]);
+
+    if (!matchGrado || !matchSeccion) return false;
+
     if (task[1] === 'Credito Extra') {
       const tareaOriginalId = task[9];
       if (!tareaOriginalId) return false;
@@ -93,19 +96,22 @@ function getStudentTasks(payload) {
     const entrega = entregasData.find(e => e[1] === task[0] && e[2] === userId);
     return {
       tareaId: task[0], tipo: task[1], titulo: task[2], descripcion: task[3], parcial: task[4],
-      asignatura: task[5], fechaLimite: task[8],
+      asignatura: task[5], fechaLimite: task[8] ? new Date(task[8]).toISOString() : null,
       entrega: entrega ? { calificacion: entrega[5], estado: entrega[6], comentario: entrega[7] } : null
     };
   });
   return { status: "success", data: studentTasks.reverse() };
 }
 
-function submitAssignment(payload) {
+/**
+ * Sube un archivo individualmente a Drive sin registrar la entrega aún.
+ * Crea una carpeta específica para la entrega del alumno en esa tarea.
+ */
+function uploadFile(payload) {
   const { userId, tareaId, parcial, asignatura, fileData, fileName } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
-  const entregasSheet = getSheetOrThrow(ss, "Entregas");
 
   const userData = usuariosSheet.getDataRange().getValues().find(row => row[0] === userId);
   if (!userData) throw new Error("Usuario no encontrado.");
@@ -113,22 +119,43 @@ function submitAssignment(payload) {
 
   const taskData = tareasSheet.getDataRange().getValues().find(row => row[0] === tareaId);
   if (!taskData) throw new Error("Tarea no encontrada.");
-  const [, , tituloTarea] = taskData;
+  const tituloTarea = taskData[2] || "Tarea Sin Titulo";
 
   const rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
   const gradoFolder = getOrCreateFolder(rootFolder, grado);
   const seccionFolder = getOrCreateFolder(gradoFolder, seccion || 'General');
   const alumnoFolder = getOrCreateFolder(seccionFolder, nombre);
-  const parcialFolder = getOrCreateFolder(alumnoFolder, parcial);
-  const asignaturaFolder = getOrCreateFolder(parcialFolder, asignatura);
+  const parcialFolder = getOrCreateFolder(alumnoFolder, parcial || 'General');
+  const asignaturaFolder = getOrCreateFolder(parcialFolder, asignatura || 'General');
+
+  const taskDeliveryFolder = getOrCreateFolder(asignaturaFolder, `${tituloTarea}_${userId}`);
 
   const fileInfo = fileData.split(',');
-  const mimeType = fileInfo[0].match(/:(.*?);/)[1];
-  const blob = Utilities.newBlob(Utilities.base64Decode(fileInfo[1]), mimeType, fileName).setName(tituloTarea);
-  const fileUrl = asignaturaFolder.createFile(blob).getUrl();
+  const mimeMatch = fileInfo[0].match(/:(.*?);/);
+  if (!mimeMatch || !mimeMatch[1]) throw new Error("No se pudo extraer el tipo MIME del archivo.");
+  const mimeType = mimeMatch[1];
+  const blob = Utilities.newBlob(Utilities.base64Decode(fileInfo[1]), mimeType, fileName);
+
+  const file = taskDeliveryFolder.createFile(blob);
+  taskDeliveryFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+  return {
+    status: "success",
+    data: {
+      fileId: file.getId(),
+      folderId: taskDeliveryFolder.getId(),
+      mimeType: mimeType
+    }
+  };
+}
+
+function submitAssignment(payload) {
+  const { userId, tareaId, fileId, mimeType } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const entregasSheet = getSheetOrThrow(ss, "Entregas");
 
   const entregaId = "ENT-" + new Date().getTime();
-  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileUrl, '', 'Pendiente', '']);
+  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente', '', mimeType]);
   return { status: "success", message: "Tarea entregada." };
 }
 
@@ -136,17 +163,32 @@ function gradeSubmission(payload) {
   const { entregaId, calificacion, estado, comentario } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const entregasSheet = getSheetOrThrow(ss, "Entregas");
-  const entregasData = entregasSheet.getDataRange().getValues();
-  for (let i = 1; i < entregasData.length; i++) {
-    if (entregasData[i][0] === entregaId) {
-      entregasSheet.getRange(i + 1, 6, 1, 3).setValues([[calificacion, estado, comentario]]);
-      return { status: "success", message: "Calificación actualizada." };
-    }
+
+  const data = entregasSheet.getDataRange().getValues();
+  const headers = data[0];
+
+  const calificacionCol = headers.indexOf("calificacion");
+  const estadoCol = headers.indexOf("estado");
+  const comentarioCol = headers.indexOf("comentario");
+
+  if (calificacionCol === -1 || estadoCol === -1 || comentarioCol === -1) {
+    throw new Error("No se encontraron las columnas necesarias en la hoja de Entregas.");
   }
+
+  const rowIndex = data.findIndex(row => row[0] === entregaId);
+
+  if (rowIndex !== -1) {
+    entregasSheet.getRange(rowIndex + 1, calificacionCol + 1).setValue(calificacion);
+    entregasSheet.getRange(rowIndex + 1, estadoCol + 1).setValue(estado);
+    entregasSheet.getRange(rowIndex + 1, comentarioCol + 1).setValue(comentario);
+    return { status: "success", message: "Calificación actualizada." };
+  }
+
   throw new Error("Entrega no encontrada.");
 }
 
-function getTeacherActivity() {
+function getTeacherActivity(payload) {
+  const { profesorId, grado, seccion } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
@@ -154,23 +196,56 @@ function getTeacherActivity() {
 
   const usuariosData = usuariosSheet.getDataRange().getValues();
   const tareasData = tareasSheet.getDataRange().getValues();
-  const entregasData = entregasSheet.getDataRange().getValues().slice(1);
+  const entregasValues = entregasSheet.getDataRange().getValues();
+  const entregasHeaders = entregasValues.shift();
+  let fileIdIndex = entregasHeaders.indexOf("fileUrl");
+  if (fileIdIndex === -1) {
+      fileIdIndex = 4;
+  }
+  const mimeTypeIndex = entregasHeaders.indexOf("mimeType");
 
-  const submissions = entregasData.map(entrega => {
-    const usuario = usuariosData.find(u => u[0] === entrega[2]);
+  const submissions = entregasValues.map(entrega => {
     const tarea = tareasData.find(t => t[0] === entrega[1]);
-    return {
-      tipo: 'Tarea', entregaId: entrega[0], titulo: tarea ? tarea[2] : "Tarea Desconocida",
-      alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido", fecha: new Date(entrega[3]),
-      archivoUrl: entrega[4], calificacion: entrega[5], estado: entrega[6], comentario: entrega[7]
-    };
-  });
 
-  // En un futuro, este servicio podría llamar al Exam-Service para obtener las entregas de exámenes.
-  // Por ahora, solo devuelve las de tareas.
+    // SI LA TAREA NO EXISTE O NO PERTENECE AL PROFESOR -> DESCARTAR
+    if (!tarea) return null;
+    if (profesorId && tarea[10] && tarea[10] !== profesorId) return null;
+
+    const usuario = usuariosData.find(u => u[0] === entrega[2]);
+
+    // Filtro por Grado y Sección del Profesor (si se especifican en el payload)
+    if (usuario) {
+      if (grado && !isInTeacherList(usuario[2], grado)) return null;
+      if (seccion && !isInTeacherList(usuario[3], seccion)) return null;
+    }
+
+    return {
+      tipo: 'Tarea',
+      entregaId: entrega[0],
+      titulo: tarea[2], // Tarea ya verificada arriba
+      alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
+      grado: usuario ? usuario[2] : "N/A",
+      seccion: usuario ? usuario[3] : "N/A",
+      asignatura: tarea[5] || "N/A",
+      fecha: new Date(entrega[3]),
+      fileId: entrega[fileIdIndex],
+      mimeType: mimeTypeIndex > -1 ? entrega[mimeTypeIndex] : null,
+      calificacion: entrega[5],
+      estado: entrega[6],
+      comentario: entrega[7]
+    };
+  }).filter(item => item !== null);
+
   submissions.sort((a, b) => b.fecha - a.fecha);
-  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toLocaleString() }));
+  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
   return { status: "success", data: formattedActivity };
+}
+
+function isInTeacherList(value, listString) {
+  if (!listString) return true;
+  if (!value) return false;
+  const list = listString.split(',').map(s => s.trim().toLowerCase());
+  return list.includes(value.toLowerCase());
 }
 
 // --- HELPERS DE DRIVE ---

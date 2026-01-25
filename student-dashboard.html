@@ -3,46 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard del Estudiante</title>
+    <title>Dashboard del Estudiante - Area de Informatica</title>
+    <link rel="icon" type="image/png" href="IMA-Logo.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-6">
-        <header class="flex justify-between items-center mb-8">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-800">Hola, <span id="student-name"></span>!</h1>
-                <p class="text-gray-600">Tus tareas pendientes:</p>
-            </div>
-            <button id="logout-button" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg">Cerrar Sesión</button>
-        </header>
+<body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
 
-        <main>
-            <div id="tasks-list" class="space-y-4">
-                <!-- Las tareas se cargarán aquí -->
+    <header id="main-header" class="bg-white shadow-md py-2 md:py-4 px-1 md:px-3 fixed w-full z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-4 transition-transform duration-300 logo-container">
+                <img src="imagenes/logo.png" alt="Logo" width="120" height="auto" class="logo-img transition-transform duration-300">
+                <span class="text-2xl font-bold text-blue-800 hidden sm:inline">Area de Informatica</span>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Inicio</a>
+                <div class="relative group">
+                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
+                        Cursos <span class="ml-1 text-xs">&#9662;</span>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
+                        <div id="desktop-grades-menu"></div>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
+                        Recursos Adicionales <span class="ml-1 text-xs">&#9662;</span>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
+                        <div id="desktop-additional-resources-menu"></div>
+                    </div>
+                </div>
+                <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Cerrar Sesión</button>
+            </nav>
+
+            <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="120" height="auto" class="hidden lg:block">
+
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none p-2">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="mobile-menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
-        </main>
-    </div>
+        </div>
+
+        <div id="mobile-menu-overlay" class="hidden">
+            <button id="mobile-menu-close-button" class="absolute top-4 right-6 text-gray-700 focus:outline-none z-50">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <nav class="flex flex-col mt-16 w-full h-full">
+                <a href="index.html" class="mobile-nav-link">Inicio</a>
+
+                <div class="w-full">
+                    <button id="mobile-courses-toggle" class="mobile-nav-link justify-between">
+                        <span>Cursos</span>
+                        <span id="mobile-courses-arrow" class="transform transition-transform duration-300">&#9656;</span>
+                    </button>
+                    <div id="mobile-grades-container" class="mobile-menu-item-container hidden-height">
+                        <div id="mobile-grades-menu"></div>
+                    </div>
+                </div>
+
+                <div class="w-full">
+                    <button id="mobile-additional-resources-toggle" class="mobile-nav-link justify-between">
+                        <span>Recursos Adicionales</span>
+                        <span id="mobile-additional-resources-arrow" class="transform transition-transform duration-300">&#9656;</span>
+                    </button>
+                    <div id="mobile-additional-resources-container" class="mobile-menu-item-container hidden-height">
+                        <div id="mobile-additional-resources-menu"></div>
+                    </div>
+                </div>
+
+                <a href="#" class="mobile-nav-link text-red-600" id="mobile-logout-button">Cerrar Sesión</a>
+                <button id="pwa-install-button-mobile" class="mobile-nav-link text-blue-600 font-bold hidden">
+                    <span class="flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Instalar Aplicación
+                    </span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="mt-[5rem] md:mt-[6rem] pb-12 flex-grow">
+        <div class="container mx-auto px-5">
+            <div class="mb-6 text-center md:text-left">
+                <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Hola, <span id="student-name" class="text-blue-600"></span>!</h1>
+                <p class="text-lg text-gray-600 font-medium">Gestiona tus actividades y exámenes pendientes.</p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-8">
+                <section>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                        Tareas y Exámenes
+                    </h2>
+                    <div id="tasks-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                        <!-- Las tareas se cargarán aquí -->
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
 
     <!-- Modal de Entrega -->
-    <div id="submission-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-lg">
-            <h2 class="text-2xl font-bold mb-4">Entregar Tarea</h2>
-            <h3 id="modal-task-title" class="text-xl text-gray-700 mb-6"></h3>
+    <div id="submission-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[60] backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-lg mx-4 animate-fade-in-up">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Entregar Tarea</h2>
+                <button id="close-modal-x" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
 
-            <form id="submission-form">
-                <label for="file-input" class="block font-medium mb-2">Seleccionar Archivo</label>
-                <input type="file" id="file-input" name="file-input" class="w-full p-2 border rounded" required>
+            <h3 id="modal-task-title" class="text-xl text-blue-600 font-semibold mb-8"></h3>
 
-                <div class="flex justify-end space-x-4 mt-8">
-                    <button type="button" id="cancel-submission-btn" class="px-6 py-2 bg-gray-300 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg">Confirmar Entrega</button>
+            <form id="submission-form" class="space-y-6">
+                <div>
+                    <label for="file-input" class="block font-semibold text-gray-700 mb-3">Seleccionar Archivo (Imagen, PDF, Word)</label>
+                    <div class="relative group">
+                        <input type="file" id="file-input" name="file-input" accept="image/*,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="w-full p-3 border-2 border-dashed border-gray-300 rounded-xl focus:border-blue-500 transition-colors">
+                    </div>
+                </div>
+
+                <!-- Area de Vista Previa -->
+                <div id="file-preview-container" class="hidden mt-4 p-4 border rounded-xl bg-gray-50">
+                    <p class="text-sm font-semibold text-gray-600 mb-2">Vista Previa:</p>
+                    <div id="image-preview" class="flex justify-center">
+                        <img src="" alt="Preview" class="max-h-48 rounded-lg shadow-md">
+                    </div>
+                    <div id="file-info-preview" class="text-center text-gray-700 font-medium py-4 hidden"></div>
+                    <button type="button" id="accept-file-btn" class="w-full mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg transition-colors">Aceptar y Subir</button>
+                </div>
+
+                <!-- Lista de Archivos Subidos -->
+                <div id="uploaded-files-container" class="hidden mt-6">
+                    <p class="text-sm font-semibold text-gray-600 mb-2">Archivos Subidos:</p>
+                    <ul id="uploaded-files-list" class="space-y-2">
+                        <!-- Items de archivos subidos -->
+                    </ul>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-10">
+                    <button type="button" id="cancel-submission-btn" class="px-8 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cancelar</button>
+                    <button type="submit" id="confirm-submission-btn" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl opacity-50 cursor-not-allowed" disabled>Confirmar Entrega</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <footer class="bg-gray-900 text-white py-6 mt-auto">
+        <div class="container mx-auto px-5 text-center">
+            <p class="text-lg font-medium mb-6">
+                &copy; <span id="current-year"></span> Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
+            </p>
+            <div class="flex justify-center space-x-8">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Privacidad</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Términos</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Soporte</a>
+                <button id="pwa-install-button-footer" class="text-gray-400 hover:text-white transition-colors duration-200 hidden">Instalar App</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de Instrucciones iOS -->
+    <div id="ios-install-modal" class="fixed inset-0 z-[70] flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-sm mx-4 rounded-3xl shadow-2xl overflow-hidden p-6 text-center">
+            <div class="flex justify-center mb-4">
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                </div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Instalar en iOS</h3>
+            <p class="text-gray-600 mb-6 text-sm">Para instalar esta aplicación en tu iPhone o iPad:</p>
+            <div class="space-y-4 text-left mb-6">
+                <div class="flex items-center space-x-3">
+                    <span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                    <span class="text-sm">Pulsa el botón "Compartir" en Safari.</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                    <span class="text-sm">Baja y selecciona "Añadir a la pantalla de inicio".</span>
+                </div>
+            </div>
+            <button id="close-ios-modal" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors">Entendido</button>
+        </div>
+    </div>
+
+    <script src="js/ui-common.js"></script>
+    <script src="js/data.js"></script>
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/student.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.setupCommonUI) window.setupCommonUI();
+            if (window.renderCommonNav) window.renderCommonNav();
+
+            const closeModalX = document.getElementById('close-modal-x');
+            const cancelSubmissionBtn = document.getElementById('cancel-submission-btn');
+            if (closeModalX) closeModalX.onclick = () => document.getElementById('submission-modal').classList.add('hidden');
+            if (cancelSubmissionBtn) cancelSubmissionBtn.onclick = () => document.getElementById('submission-modal').classList.add('hidden');
+        });
+    </script>
 </body>
 </html>
