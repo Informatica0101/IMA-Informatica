@@ -90,6 +90,11 @@ FLUJO PRINCIPAL DE TRABAJO
 tarea 28: Optimización visual del Dashboard del Profesor (Reducir márgenes, ajustar columnas, reposicionar buscador y botón regresar). (COMPLETADA)
     - NO eliminar tareas sin aprobación del PM.
 
+TAREA: Corrección de estados y visibilidad de crédito extra (COMPLETADA)
+    - Se unificó el estado "Revisada" a "Completada".
+    - Se corrigió el mapeo visual en el dashboard del profesor para respetar "Rechazada".
+    - Se verificó la visibilidad de crédito extra para estudiantes con tareas rechazadas.
+
 12. COMMIT
     - Realizar UN SOLO commit por ciclo completo.
     - El commit DEBE reflejar EXACTAMENTE

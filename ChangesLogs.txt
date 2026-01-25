@@ -495,3 +495,9 @@ OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
   - Actualización de navegación: se modificó el listener de eventos de la tabla para manejar redirecciones desde los resultados de búsqueda global.
 - Archivo: backend/task-service/Code.gs
   - Lógica de Crédito Extra ([A-32]): se simplificó la condición de visibilidad de las tareas de "Crédito Extra". Ahora son visibles para cualquier estudiante que tenga al menos una tarea con estado "Rechazada" en la misma asignatura, eliminando la dependencia de un ID de tarea original específico. Se aplicó normalización (lowercase/trim) para la comparación de asignaturas.
+
+25/01/2026
+- Archivo: teacher-dashboard.html, js/teacher.js, js/student.js
+  - Unificación de estados: se migró el estado "Revisada" al estándar "Completada" en toda la plataforma.
+  - Corrección de lógica de estados: se ajustó el renderizado del dashboard del profesor para que respete el estado "Rechazada", evitando que se muestre erróneamente como "Completada" si existe una calificación.
+  - Mejora en Dashboard de Estudiante: se actualizó el feedback visual para soportar el nuevo modelo de estados (Completada, Rechazada, Pendiente) con sus respectivos colores.

@@ -540,13 +540,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Lógica de Estado
+            // Lógica de Estado (Modelo Único: Pendiente, Completada, Rechazada)
             let statusText = 'Pendiente';
             let statusClass = 'bg-gray-100 text-gray-600';
 
-            if (item.estado === 'Revisada' || (item.tipo === 'Tarea' && item.calificacion)) {
+            if (item.estado === 'Completada' || item.estado === 'Revisada') {
                 statusText = 'Completada';
                 statusClass = 'bg-green-100 text-green-700';
+            } else if (item.estado === 'Rechazada') {
+                statusText = 'Rechazada';
+                statusClass = 'bg-red-100 text-red-700';
             } else if (item.fileId || item.respuestas || item.entregaId) {
                 statusText = 'Por calificar';
                 statusClass = 'bg-yellow-100 text-yellow-700';
@@ -765,7 +768,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const estInput = document.getElementById('estado');
         const comInput = document.getElementById('comentario');
         if (calInput) calInput.value = entrega.calificacion || '';
-        if (estInput) estInput.value = entrega.estado || 'Revisada';
+        if (estInput) estInput.value = (entrega.estado === 'Revisada' ? 'Completada' : (entrega.estado || 'Completada'));
         if (comInput) comInput.value = entrega.comentario || '';
         if (gradeModal) gradeModal.classList.remove('hidden');
     }

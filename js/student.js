@@ -74,11 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (activity.type === 'Tarea') {
                 if (activity.entrega) {
-                    const statusColor = activity.entrega.estado === 'Revisada' ? 'text-green-600' : (activity.entrega.estado === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    const status = activity.entrega.estado;
+                    const statusColor = (status === 'Completada' || status === 'Revisada') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    const displayStatus = (status === 'Revisada' ? 'Completada' : status);
+
                     feedbackHtml = `
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                             <h4 class="font-bold text-md">Estado de tu Entrega:</h4>
-                            <p class="font-semibold ${statusColor}">${activity.entrega.estado}</p>
+                            <p class="font-semibold ${statusColor}">${displayStatus}</p>
                             ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
                             ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
                         </div>`;
@@ -91,11 +94,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else if (activity.type === 'Examen') {
                 if (activity.entrega) {
-                    const statusColor = activity.entrega.estado === 'Revisada' || activity.entrega.estado === 'Finalizado' ? 'text-green-600' : (activity.entrega.estado === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    const status = activity.entrega.estado;
+                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+
                     feedbackHtml = `
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                             <h4 class="font-bold text-md">Estado de tu Examen:</h4>
-                            <p class="font-semibold ${statusColor}">${activity.entrega.estado}</p>
+                            <p class="font-semibold ${statusColor}">${displayStatus}</p>
                             ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
                             ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
                         </div>`;
