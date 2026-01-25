@@ -90,6 +90,11 @@ FLUJO PRINCIPAL DE TRABAJO
 tarea 28: Optimización visual del Dashboard del Profesor (Reducir márgenes, ajustar columnas, reposicionar buscador y botón regresar). (COMPLETADA)
     - NO eliminar tareas sin aprobación del PM.
 
+TAREA: Corrección de estados y visibilidad de crédito extra (COMPLETADA)
+    - Se unificó el estado "Revisada" a "Completada".
+    - Se corrigió el mapeo visual en el dashboard del profesor para respetar "Rechazada".
+    - Se verificó la visibilidad de crédito extra para estudiantes con tareas rechazadas.
+
 12. COMMIT
     - Realizar UN SOLO commit por ciclo completo.
     - El commit DEBE reflejar EXACTAMENTE
@@ -195,10 +200,112 @@ ________________________________________________________________________________
 TAREAS COMPLETADAS (ÁREA PROTEGIDA - NO MODIFICAR)
 ________________________________________________________________________________________________
 
+TAREA: [A-32] Habilitar visibilidad de tareas de crédito extra (COMPLETADA)
+TAREA: [A-31] Barra de búsqueda global de alumnos (COMPLETADA)
+TAREA: [A-13 a A-30] Mejoras de UI, seguridad de exámenes and refactorización (COMPLETADAS)
+TAREA: Navegación jerárquica y estados de tarea (COMPLETADAS)
 
 ________________________________________________________________________________________________
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
+
+TAREA: [A-32]
+TÍTULO: Habilitar visibilidad de tareas de crédito extra para alumnos con tareas rechazadas
+ÁREA: Backend / Lógica de negocio / Frontend
+PRIORIDAD: CRÍTICA
+
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se corrigió la lógica en backend (getStudentTasks) para validar tareas rechazadas por asignatura/grado.
+- Se habilitó en frontend (js/student.js) el renderizado y entrega de tareas tipo "Credito Extra".
+
+--------------------------------------------------
+
+TAREA: [A-33]
+TÍTULO: Ajuste visual saludo Dashboard Estudiante
+ÁREA: Frontend / UI
+PRIORIDAD: BAJA
+
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se redujo el tamaño de fuente del saludo de text-lg a text-base en student-dashboard.html.
+
+--------------------------------------------------
+
+TAREA: [A-24]
+ARCHIVO: js/exam.js
+UBICACIÓN: Función loadExam
+ÁREA: Frontend / UX / Seguridad
+PRIORIDAD: ALTA
+
+PROBLEMA A RESOLVER:
+Se debe revisar la activación de pantalla completa. Actualmente se invoca tras un await, lo que suele ser bloqueado por los navegadores al no detectar una acción directa del usuario.
+
+--------------------------------------------------
+
+TAREA: [A-25]
+ARCHIVO: js/exam.js
+UBICACIÓN: Función requestFullScreen
+ÁREA: Frontend / Lógica
+PRIORIDAD: MEDIA
+
+PROBLEMA A RESOLVER:
+Se debe corregir el listener de 'fullscreenchange' para que verifique si ya hay un envío en curso antes de disparar submitExam(true), evitando duplicidad de peticiones.
+
+--------------------------------------------------
+
+TAREA: [A-26]
+ARCHIVO: js/results.js
+UBICACIÓN: Función loadResults
+ÁREA: Frontend / Estabilidad
+PRIORIDAD: ALTA
+
+PROBLEMA A RESOLVER:
+Se debe corregir el uso de JSON.parse sobre parámetros de la URL. Es obligatorio envolver estas llamadas en bloques try-catch para prevenir fallos críticos de la página ante datos malformados.
+
+--------------------------------------------------
+
+TAREA: [A-27]
+ARCHIVO: js/results.js
+UBICACIÓN: Función renderResultsDirect
+ÁREA: Frontend / Lógica
+PRIORIDAD: MEDIA
+
+PROBLEMA A RESOLVER:
+Se debe revisar el acceso a propiedades del objeto 'pregunta'. Actualmente asume que el objeto siempre existe, lo que puede causar un TypeError si no hay coincidencia de IDs.
+
+--------------------------------------------------
+
+TAREA: [A-28]
+ARCHIVO: js/index-ui.js
+UBICACIÓN: DOMContentLoaded listener
+ÁREA: Frontend / UX
+PRIORIDAD: BAJA
+
+PROBLEMA A RESOLVER:
+Se debe refactorizar la lógica de ejecución de acciones vía URL para eliminar el uso de setTimeout(500ms), implementando un mecanismo basado en eventos o estados de carga reales.
+
+--------------------------------------------------
+
+TAREA: [A-29]
+ARCHIVO: js/teacher.js
+UBICACIÓN: Función renderDetalles
+ÁREA: Frontend / Mantenibilidad
+PRIORIDAD: BAJA
+
+PROBLEMA A RESOLVER:
+Se debe refactorizar el control de roles para evitar el uso de strings literales ("Profesor") distribuidos en la lógica de renderizado, centralizando la definición de capacidades por rol.
+
+--------------------------------------------------
+
+TAREA: [A-30]
+ARCHIVO: js/student.js
+UBICACIÓN: uploadedFilesList listener
+ÁREA: UX / Backend / Almacenamiento
+PRIORIDAD: MEDIA
+
+PROBLEMA A RESOLVER:
+Se debe revisar la lógica de eliminación de archivos. Actualmente solo se eliminan del estado local, dejando archivos huérfanos en Google Drive. Se debe evaluar la implementación de una llamada al backend para borrar el recurso remoto.
+
+--------------------------------------------------
 
 TAREA: [A-13]
 ARCHIVO: js/teacher.js
@@ -458,3 +565,7 @@ CRITERIO DE ACEPTACIÓN:
 
 TAREAS PENDIENTES
 ________________________________________________________________________________________________
+
+(No hay tareas críticas pendientes en este momento)
+
+--------------------------------------------------

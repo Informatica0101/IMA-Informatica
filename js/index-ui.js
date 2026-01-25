@@ -234,14 +234,17 @@ document.addEventListener('DOMContentLoaded', () => {
     renderInitialContentButton();
     renderInitialActivityButton();
 
-    // --- Handle Action from URL (Redirected from other pages) ---
-    const urlParams = new URLSearchParams(window.location.search);
-    const action = urlParams.get('action');
-    if (action) {
-        setTimeout(() => {
+    // --- Handle Action from URL (A-28) ---
+    function processUrlAction() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const action = urlParams.get('action');
+        if (action) {
             window.handleHeaderAction(action);
-        }, 500); // Pequeño delay para asegurar que todo esté listo
+        }
     }
+
+    // Escuchar el evento de que la UI común está lista para disparar acciones
+    document.addEventListener('common-ui-ready', processUrlAction, { once: true });
 });
 
 /**

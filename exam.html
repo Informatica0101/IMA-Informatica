@@ -6,7 +6,7 @@
     <title>Realizar Examen - Area de Informatica</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=4">
 
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
@@ -31,10 +31,24 @@
         </div>
     </header>
 
+    <!-- Overlay de Inicio de Examen -->
+    <div id="start-exam-overlay" class="fixed inset-0 z-[100] bg-gray-900 flex items-center justify-center p-5">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full text-center animate-fade-in-up">
+            <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Listo para comenzar?</h2>
+            <p class="text-gray-600 mb-8">El examen se realizará en modo pantalla completa. Asegúrate de tener una conexión estable.</p>
+            <button id="start-exam-btn" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all text-lg">
+                Comenzar Examen
+            </button>
+        </div>
+    </div>
+
     <main class="mt-[7rem] pb-20 flex-grow">
         <div class="container mx-auto px-5 max-w-4xl">
             <div class="mb-10 text-center">
-                <h1 id="exam-title" class="text-3xl md:text-4xl font-extrabold text-gray-800">Cargando Examen...</h1>
+                <h1 id="exam-title" class="text-3xl md:text-4xl font-extrabold text-gray-800">Examen</h1>
                 <p class="text-gray-500 mt-2 font-medium">Lee cuidadosamente cada pregunta antes de responder.</p>
             </div>
 
@@ -93,10 +107,10 @@
         </div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/ui-common.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/exam.js"></script>
+    <script src="js/config.js?v=4"></script>
+    <script src="js/ui-common.js?v=4"></script>
+    <script src="js/api.js?v=4"></script>
+    <script src="js/exam.js?v=4"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (window.setupCommonUI) window.setupCommonUI();

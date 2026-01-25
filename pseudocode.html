@@ -770,8 +770,20 @@ FinAlgoritmo</textarea>
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('SW registrado', reg))
+                navigator.serviceWorker.register('sw.js?v=4')
+                    .then(reg => {
+                        console.log('SW registrado', reg);
+                        reg.onupdatefound = () => {
+                            const installingWorker = reg.installing;
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    if(confirm("Nueva versión disponible. ¿Deseas actualizar ahora?")) {
+                                        window.location.reload();
+                                    }
+                                }
+                            };
+                        };
+                    })
                     .catch(err => console.log('SW error', err));
             });
         }

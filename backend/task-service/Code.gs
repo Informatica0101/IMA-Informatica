@@ -43,6 +43,7 @@ function doPost(e) {
       case "createTask": response = createTask(payload); break;
       case "getStudentTasks": response = getStudentTasks(payload); break;
       case "uploadFile": response = uploadFile(payload); break;
+      case "deleteFile": response = deleteFile(payload); break;
       case "submitAssignment": response = submitAssignment(payload); break;
       case "gradeSubmission": response = gradeSubmission(payload); break;
       case "getTeacherActivity": response = getTeacherActivity(payload); break;
@@ -78,7 +79,7 @@ function getStudentTasks(payload) {
 
   const studentTasks = tasksData.filter(task => {
     // task[6] es gradoAsignado, task[7] es seccionAsignada
-    const matchGrado = task[6] === grado;
+    const matchGrado = (task[6] || "").toString().trim().toLowerCase() === (grado || "").toString().trim().toLowerCase();
     // Si seccionAsignada está vacío, aplica a todas las secciones del grado.
     // Si tiene valor, el estudiante debe estar en esa lista (A, B, etc).
     const matchSeccion = !task[7] || task[7].trim() === "" || isInTeacherList(seccion, task[7]);
@@ -86,10 +87,20 @@ function getStudentTasks(payload) {
     if (!matchGrado || !matchSeccion) return false;
 
     if (task[1] === 'Credito Extra') {
-      const tareaOriginalId = task[9];
-      if (!tareaOriginalId) return false;
-      const entregaOriginal = entregasData.find(e => e[1] === tareaOriginalId && e[2] === userId);
-      return entregaOriginal && entregaOriginal[6] === 'Rechazada';
+      const asignatura = (task[5] || "").toString().toLowerCase().trim();
+      // Buscamos tareas de la misma asignatura, grado y sección para la validación de rechazo
+      const tasksInAsig = tasksData
+        .filter(t =>
+          (t[5] || "").toString().toLowerCase().trim() === asignatura &&
+          (t[6] || "").toString().trim().toLowerCase() === (grado || "").toString().trim().toLowerCase()
+        )
+        .map(t => t[0]);
+
+      return entregasData.some(e =>
+        e[2] === userId &&
+        tasksInAsig.includes(e[1]) &&
+        ((e[6] || "").toString().trim().toLowerCase() === 'rechazada' || (e[6] || "").toString().trim().toLowerCase() === 'revisada_rechazada')
+      );
     }
     return true;
   }).map(task => {
@@ -157,6 +168,24 @@ function submitAssignment(payload) {
   const entregaId = "ENT-" + new Date().getTime();
   entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente', '', mimeType]);
   return { status: "success", message: "Tarea entregada." };
+}
+
+/**
+ * Elimina un archivo de Drive (lo mueve a la papelera) (A-30).
+ */
+function deleteFile(payload) {
+  const { fileId } = payload;
+  if (!fileId) throw new Error("ID de archivo no proporcionado.");
+
+  try {
+    const file = DriveApp.getFileById(fileId);
+    file.setTrashed(true);
+    return { status: "success", message: "Archivo eliminado." };
+  } catch (e) {
+    logDebug("Error al eliminar archivo:", { fileId, error: e.message });
+    // No lanzamos error para que la UX no se rompa si el archivo ya no existe
+    return { status: "success", message: "Archivo no encontrado o ya eliminado." };
+  }
 }
 
 function gradeSubmission(payload) {

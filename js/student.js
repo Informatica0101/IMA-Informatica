@@ -49,7 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const allActivities = [];
             if (tasksResult.status === 'success' && tasksResult.data) {
-                allActivities.push(...tasksResult.data.map(task => ({ ...task, type: 'Tarea' })));
+                // Conservar el tipo original (Tarea o Credito Extra)
+                allActivities.push(...tasksResult.data.map(task => ({ ...task, type: task.tipo || 'Tarea' })));
             }
             if (examsResult.status === 'success' && examsResult.data) {
                 allActivities.push(...examsResult.data.map(exam => ({ ...exam, type: 'Examen' })));
@@ -72,13 +73,16 @@ document.addEventListener('DOMContentLoaded', () => {
             let feedbackHtml = '';
             let actionButtonHtml = '';
 
-            if (activity.type === 'Tarea') {
+            if (activity.type === 'Tarea' || activity.type === 'Credito Extra') {
                 if (activity.entrega) {
-                    const statusColor = activity.entrega.estado === 'Revisada' ? 'text-green-600' : (activity.entrega.estado === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    const status = activity.entrega.estado;
+                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+
                     feedbackHtml = `
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                             <h4 class="font-bold text-md">Estado de tu Entrega:</h4>
-                            <p class="font-semibold ${statusColor}">${activity.entrega.estado}</p>
+                            <p class="font-semibold ${statusColor}">${displayStatus}</p>
                             ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
                             ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
                         </div>`;
@@ -91,11 +95,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else if (activity.type === 'Examen') {
                 if (activity.entrega) {
-                    const statusColor = activity.entrega.estado === 'Revisada' || activity.entrega.estado === 'Finalizado' ? 'text-green-600' : (activity.entrega.estado === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    const status = activity.entrega.estado;
+                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+
                     feedbackHtml = `
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                             <h4 class="font-bold text-md">Estado de tu Examen:</h4>
-                            <p class="font-semibold ${statusColor}">${activity.entrega.estado}</p>
+                            <p class="font-semibold ${statusColor}">${displayStatus}</p>
                             ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
                             ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
                         </div>`;
@@ -293,12 +300,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cancelSubmissionBtn) cancelSubmissionBtn.addEventListener('click', closeSubmissionModal);
 
     if (uploadedFilesList) {
-        uploadedFilesList.addEventListener('click', (e) => {
+        uploadedFilesList.addEventListener('click', async (e) => {
             const btn = e.target.closest('.remove-file-btn');
             if (btn) {
                 const fileId = btn.dataset.fileId;
+                const li = btn.closest('li');
+
+                // (A-30) Eliminar archivo remoto
+                btn.disabled = true;
+                li.style.opacity = '0.5';
+
+                try {
+                    // Se intenta eliminar de Drive pero no bloqueamos si falla la red
+                    await fetchApi('TASK', 'deleteFile', { fileId });
+                } catch (error) {
+                    console.error("Error al eliminar archivo remoto:", error);
+                }
+
                 uploadedFiles = uploadedFiles.filter(f => f.fileId !== fileId);
-                btn.closest('li').remove();
+                li.remove();
                 if (uploadedFiles.length === 0) {
                     uploadedFilesContainer.classList.add('hidden');
                 }
