@@ -241,3 +241,116 @@ tarea 23: Implementar limpieza automática del buscador al cambiar de nivel en l
 
 TAREAS PENDIENTES
 ________________________________________________________________________________________________
+
+TAREA: [F-01]
+ARCHIVO: backend/exam-service/Code.gs, js/teacher.js, js/exam.js
+UBICACIÓN: submitExam, creación de exámenes, renderQuestion
+ÁREA: Backend / Frontend / Lógica
+PRIORIDAD: ALTA
+
+PROBLEMA A RESOLVER:
+Lógica incompleta para tipos de preguntas avanzados. "Selección múltiple" no existe (solo opción única), "Término pareado" y "Respuesta breve" no se califican automáticamente. La interfaz de creación no soporta respuestas complejas.
+
+ACCIONES REQUERIDAS:
+- Implementar el tipo "Selección múltiple" (Checkboxes) permitiendo múltiples respuestas correctas.
+- Refactorizar el backend para calificar "Término pareado" (comparando el objeto de pares) y "Respuesta breve".
+- Actualizar el formulario de creación de exámenes para capturar correctamente las soluciones de estos nuevos tipos.
+
+REGLAS:
+- Mantener compatibilidad con los exámenes ya creados.
+- Asegurar que el cálculo de la nota final (0-100) sea preciso para todos los tipos.
+
+CRITERIO DE ACEPTACIÓN:
+- Un examen con preguntas de emparejamiento y selección múltiple se califica automáticamente y de forma correcta al ser entregado.
+
+--------------------------------------------------
+
+TAREA: [F-02]
+ARCHIVO: js/teacher.js
+UBICACIÓN: Navegación (navStack / renderCurrentLevel)
+ÁREA: Frontend / UX
+PRIORIDAD: CRÍTICA
+
+PROBLEMA A RESOLVER:
+La vista de gestión de exámenes (Activar/Bloquear) es inalcanzable desde la interfaz de usuario. Las funciones existen pero no hay un botón o ruta para activarlas.
+
+ACCIONES REQUERIDAS:
+- Añadir un punto de entrada en la jerarquía de navegación para acceder a 'Exámenes' (gestión).
+- Puede ser un botón en el nivel de 'Asignaturas' o una opción dentro de la pestaña de 'Alumnos' -> 'Exámenes'.
+- Asegurar que pushNav('Exámenes', data) se ejecute correctamente.
+
+REGLAS:
+- No romper la navegación jerárquica existente.
+- Mantener la consistencia visual del dashboard.
+
+CRITERIO DE ACEPTACIÓN:
+- El profesor puede navegar hasta una vista donde se listan los exámenes de una asignatura y puede usar los botones "Activar" y "Bloquear" funcionalmente.
+
+--------------------------------------------------
+
+TAREA: [F-03]
+ARCHIVO: backend/task-service/Code.gs
+UBICACIÓN: submitAssignment
+ÁREA: Backend / Seguridad
+PRIORIDAD: MEDIA
+
+PROBLEMA A RESOLVER:
+El alumno puede reenviar tareas múltiples veces llamando directamente a la API, ya que el backend no valida si ya existe una entrega para el par (userId, tareaId).
+
+ACCIONES REQUERIDAS:
+- Modificar submitAssignment para que verifique en la hoja 'Entregas' si el usuario ya realizó una entrega para esa tarea específica.
+- Si ya existe, debe devolver un error o actualizar la entrega existente en lugar de crear un duplicado (definir política de negocio).
+
+REGLAS:
+- No afectar el rendimiento de la subida de archivos.
+- Devolver mensajes de error claros al frontend.
+
+CRITERIO DE ACEPTACIÓN:
+- Al intentar realizar una entrega de una tarea ya entregada por API, el sistema devuelve un estado de error y no duplica la fila en la hoja de cálculo.
+
+--------------------------------------------------
+
+TAREA: [F-04]
+ARCHIVO: js/teacher.js, backend/user-service/Code.gs (o similar)
+UBICACIÓN: Header del dashboard / Nueva función de búsqueda
+ÁREA: Frontend / Backend / UX
+PRIORIDAD: ALTA
+
+PROBLEMA A RESOLVER:
+La búsqueda es contextual y limitada al nivel actual. No existe una búsqueda global de alumnos que permita encontrarlos rápidamente a través de toda la institución.
+
+ACCIONES REQUERIDAS:
+- Implementar una barra de búsqueda global (o mejorar la existente) que consulte la base de datos completa de estudiantes.
+- Los resultados deben mostrar Nombre, Grado, Sección y ser clickeables.
+- Al hacer clic en un resultado, debe llevar directamente a la vista de 'Detalles' de ese alumno, mostrando todas sus entregas de todas sus asignaturas (o una vista unificada).
+
+REGLAS:
+- La búsqueda global no debe interferir con el filtrado contextual de las tablas si se mantienen ambas.
+- Respetar la privacidad: un profesor solo debe encontrar alumnos a los que tiene acceso si se requiere (o búsqueda total si es administrativo).
+
+CRITERIO DE ACEPTACIÓN:
+- Escribir el nombre de un alumno en la búsqueda desde cualquier nivel (ej. desde Grados) y que aparezca el resultado correcto permitiendo ir a sus detalles.
+
+--------------------------------------------------
+
+TAREA: [F-05]
+ARCHIVO: js/student.js, student-dashboard.html
+UBICACIÓN: Modal de entrega / fileInput listener
+ÁREA: Frontend / UX
+PRIORIDAD: BAJA
+
+PROBLEMA A RESOLVER:
+La vista previa solo soporta imágenes. Los documentos (PDF, Word) no muestran una previsualización del contenido, dificultando la verificación del archivo seleccionado por el alumno.
+
+ACCIONES REQUERIDAS:
+- Implementar previsualización para archivos PDF (usando un iframe o similar).
+- Para archivos Word, mejorar el feedback visual mostrando un icono representativo y más detalles del archivo.
+
+REGLAS:
+- No sobrecargar el modal.
+- Mantener la compatibilidad con dispositivos móviles.
+
+CRITERIO DE ACEPTACIÓN:
+- Al seleccionar un PDF, el alumno puede ver una miniatura o vista previa del documento dentro del modal de entrega.
+
+--------------------------------------------------

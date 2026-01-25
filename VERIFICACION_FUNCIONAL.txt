@@ -1,0 +1,78 @@
+==================================================
+VERIFICACIÓN FUNCIONAL DEL SISTEMA - INFORME
+==================================================
+
+- Funcionalidad: 1. Calificación por tarea
+- Estado: IMPLEMENTADO
+- Evidencia (archivo / función / UI): js/teacher.js -> openGradeModal / backend/task-service/Code.gs -> gradeSubmission
+- Observaciones: Funciona correctamente desde la vista de detalles del alumno.
+- Riesgo (si aplica): Bajo.
+
+- Funcionalidad: 2. Lógica de TODOS los tipos de preguntas
+- Estado: REQUIRES REVISION
+- Evidencia (archivo / función / UI): js/exam.js -> renderQuestion / backend/exam-service/Code.gs -> submitExam
+- Observaciones:
+  - "Selección múltiple" no está implementado como tal (solo hay "Opción múltiple" con radio buttons, que permite una sola respuesta).
+  - "Término pareado" y "Respuesta breve" no tienen lógica de calificación automática en el backend (se ignoran por simplicidad).
+  - La interfaz de creación de exámenes en js/teacher.js no permite capturar las respuestas correctas complejas necesarias para "Término pareado".
+- Riesgo (si aplica): Alto (Inconsistencia en evaluaciones y datos incompletos).
+
+- Funcionalidad: 3. Activar / desactivar un examen desde el dashboard del profesor
+- Estado: REQUIRES REVISION
+- Evidencia (archivo / función / UI): js/teacher.js -> renderExamenesGestion (unreachable)
+- Observaciones: Aunque la función renderExamenesGestion y los listeners para activar/bloquear existen en js/teacher.js, no hay ninguna ruta en la navegación jerárquica (navStack) que permita al usuario llegar a esa vista.
+- Riesgo (si aplica): Crítico (El profesor no puede gestionar la disponibilidad de los exámenes).
+
+- Funcionalidad: 4. Vista previa de imagen o documento al subir tareas (alumno)
+- Estado: PARCIAL
+- Evidencia (archivo / función / UI): js/student.js -> fileInput.addEventListener
+- Observaciones: La vista previa funciona para imágenes (image/*). Para otros documentos (PDF, Word) solo se muestra el nombre del archivo, no hay una vista previa del contenido.
+- Riesgo (si aplica): Bajo.
+
+- Funcionalidad: 5. Capacidad del alumno de subir múltiples tareas (archivos)
+- Estado: IMPLEMENTADO
+- Evidencia (archivo / función / UI): js/student.js -> uploadedFiles array / acceptFileBtn listener
+- Observaciones: Permite subir varios archivos para una sola entrega, creando una carpeta en Drive si son más de uno.
+- Riesgo (si aplica): Bajo.
+
+- Funcionalidad: 6. Navegación jerárquica: grado → sección → asignatura → alumno
+- Estado: IMPLEMENTADO
+- Evidencia (archivo / función / UI): js/teacher.js -> navStack / pushNav / renderCurrentLevel
+- Observaciones: La jerarquía está correctamente establecida.
+- Riesgo (si aplica): Bajo.
+
+- Funcionalidad: 7. Visibilidad y calificación de tareas/exámenes SOLO por el profesor que los creó
+- Estado: IMPLEMENTADO
+- Evidencia (archivo / función / UI): backend/task-service/Code.gs -> getTeacherActivity / backend/exam-service/Code.gs -> getTeacherExamActivity
+- Observaciones: Se valida el profesorId en las consultas al backend.
+- Riesgo (si aplica): Bajo.
+
+- Funcionalidad: 8. Restricción de alumnos: solo ver y entregar tareas según su grado, sección y asignatura
+- Estado: IMPLEMENTADO
+- Evidencia (archivo / función / UI): backend/task-service/Code.gs -> getStudentTasks
+- Observaciones: El filtrado por metadatos del estudiante está presente en el backend.
+- Riesgo (si aplica): Bajo.
+
+- Funcionalidad: 9. Tareas de crédito extra
+- Estado: IMPLEMENTADO
+- Evidencia (archivo / función / UI): backend/task-service/Code.gs -> getStudentTasks (lógica de Credito Extra)
+- Observaciones: Se verifica que la tarea original esté en estado 'Rechazada' antes de mostrar la de crédito extra.
+- Riesgo (si aplica): Bajo.
+
+- Funcionalidad: 10. Exámenes: Alumno responde, NO ve calificación total hasta revisión del profesor
+- Estado: IMPLEMENTADO
+- Evidencia (archivo / función / UI): backend/exam-service/Code.gs -> submitExam (estado 'Pendiente') / js/results.js (restricción por rol)
+- Observaciones: La calificación se oculta al estudiante mientras el estado sea 'Pendiente'.
+- Riesgo (si aplica): Bajo.
+
+- Funcionalidad: 11. Restricción: Alumno NO puede reenviar la tarea
+- Estado: REQUIRES REVISION
+- Evidencia (archivo / función / UI): js/student.js -> renderActivities
+- Observaciones: La restricción solo existe en el frontend (no se muestra el botón si ya hay entrega). El backend no verifica duplicados en submitAssignment.
+- Riesgo (si aplica): Medio (Posible bypass mediante consola).
+
+- Funcionalidad: 12. Barra de búsqueda global de alumnos
+- Estado: AUSENTE
+- Evidencia (archivo / función / UI): js/teacher.js -> renderCurrentLevel (search contextual)
+- Observaciones: La barra de búsqueda actual solo filtra los elementos visibles en el nivel actual del dashboard. No existe una búsqueda global que consulte toda la base de datos de estudiantes independientemente de la navegación.
+- Riesgo (si aplica): Alto (Dificultad para encontrar alumnos específicos rápidamente en grandes bases de datos).
