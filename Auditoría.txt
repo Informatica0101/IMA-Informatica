@@ -376,3 +376,56 @@ SOLUCIONES APLICADAS:
 - Implementación de medidas de seguridad y control de tiempo en exámenes.
 - Unificación de vistas de resultados.
 - Limpieza de código legado.
+
+==================================================
+AUDITORÍA TÉCNICA INDEPENDIENTE - JULES - 2026
+==================================================
+
+1. Archivo: js/exam.js
+   Función: loadExam
+   Línea aproximada: 37
+   Descripción objetiva: Llamada automática a requestFullScreen() tras una operación asíncrona (API fetch) sin interacción directa previa del usuario.
+   Riesgo: Alto. Los navegadores modernos bloquean peticiones de pantalla completa que no son disparadas por un gesto del usuario (clic/tecla). La funcionalidad fallará en la mayoría de entornos de producción.
+   Evidencia técnica: Line 37: "requestFullScreen();" se ejecuta inmediatamente después del await de fetchApi, fuera del contexto del evento de usuario original.
+
+2. Archivo: js/exam.js
+   Función: requestFullScreen
+   Línea aproximada: 213-225
+   Descripción objetiva: El listener 'fullscreenchange' activa submitExam(true) sin verificar si ya existe un proceso de envío en curso (submitBtn.disabled).
+   Riesgo: Medio. Puede provocar múltiples llamadas concurrentes a la API de envío si se detectan varios cambios de estado antes de que la página redirija.
+   Evidencia técnica: Line 214-224: "document.addEventListener('fullscreenchange', () => { ... submitExam(true); });" carece de guardas contra estados de carga.
+
+3. Archivo: js/results.js
+   Función: loadResults
+   Línea aproximada: 18-19
+   Descripción objetiva: Uso de JSON.parse() sobre parámetros de URL (resultados, preguntas) sin bloques try-catch.
+   Riesgo: Medio. Cualquier error en el formato del parámetro o edición manual del usuario provocará un error fatal en el script, impidiendo la carga de toda la página.
+   Evidencia técnica: Line 18: "const resultados = JSON.parse(decodeURIComponent(urlParams.get('resultados')));" no está envuelto en validación.
+
+4. Archivo: js/results.js
+   Función: renderResultsDirect
+   Línea aproximada: 54
+   Descripción objetiva: Acceso a propiedad 'textoPregunta' de un objeto potencialmente indefinido si preguntas.find() no localiza el ID.
+   Riesgo: Medio. Error de tipo (TypeError) si hay discrepancia de IDs entre los parámetros 'resultados' y 'preguntas' de la URL.
+   Evidencia técnica: Line 54: "pregunta.textoPregunta" asume que 'pregunta' (resultado de Line 49) es un objeto válido.
+
+5. Archivo: js/index-ui.js
+   Función: DOMContentLoaded listener
+   Línea aproximada: 241
+   Descripción objetiva: Uso de un retardo arbitrario (setTimeout 500ms) para ejecutar acciones redirigidas desde otras páginas.
+   Riesgo: Bajo. Inconsistencia funcional. En dispositivos lentos o redes congestionadas, los contenedores de juegos podrían no estar listos, haciendo que la acción falle silenciosamente.
+   Evidencia técnica: Line 241: "setTimeout(() => { window.handleHeaderAction(action); }, 500);"
+
+6. Archivo: js/teacher.js
+   Función: renderDetalles
+   Línea aproximada: 502
+   Descripción objetiva: El control de roles para la visualización de botones de calificación está codificado ("Profesor") directamente en la lógica de renderizado.
+   Riesgo: Bajo. Dificulta el mantenimiento y la escalabilidad si se añaden nuevos roles administrativos o se cambian los nombres de los roles existentes.
+   Evidencia técnica: Line 502: "if (currentUser.rol === 'Profesor')".
+
+7. Archivo: js/student.js
+   Función: uploadedFilesList listener
+   Línea aproximada: 301
+   Descripción objetiva: La eliminación de un archivo solo afecta al estado local (array uploadedFiles), pero el archivo físico ya reside en Google Drive (subido previamente en acceptFileBtn).
+   Riesgo: Bajo. Acumulación de archivos "huérfanos" en la nube que consumen almacenamiento sin estar asociados a ninguna entrega finalizada.
+   Evidencia técnica: Line 301: "uploadedFiles = uploadedFiles.filter(f => f.fileId !== fileId);" no realiza ninguna llamada fetchApi para borrar el recurso remoto.
