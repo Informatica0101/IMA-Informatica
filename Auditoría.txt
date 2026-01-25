@@ -9,3 +9,15 @@ Auditoría Final - Sun Jan 25 16:48:47 UTC 2026
    - Ajuste visual: Greeting text-lg -> text-base.
 4. Instrucciones.txt:
    - Tareas A-13 a A-31 marcadas como COMPLETADAS.
+
+Auditoría - Sun Jan 25 (Nueva URL and Caché)
+--------------------------------
+1. js/config.js:
+   - Actualización de TASK URL a endpoint definitivo.
+2. sw.js:
+   - Bump a v4.
+   - Estrategia Network First con timeout de 3s.
+   - Bypass de caché para script.google.com.
+   - Versionamiento de assets en ASSETS array.
+3. HTML files (General):
+   - Cache-busting ?v=4 aplicado a scripts and links.

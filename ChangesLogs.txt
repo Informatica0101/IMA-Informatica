@@ -510,3 +510,16 @@ OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
   - Unificación de estados: Se añadió soporte para el mapeo visual de "Finalizado" a "Completada".
 - Archivo: student-dashboard.html
   - Ajuste UI: Se redujo el tamaño de fuente del saludo del estudiante de text-lg a text-base por requerimiento de diseño.
+
+25/01/2026 (Actualización de URLs y Optimización de Caché)
+- Archivo: js/config.js, Línea(s): 17
+  - Se actualizó la URL del microservicio TASK al nuevo endpoint proporcionado: `https://script.google.com/macros/s/AKfycbwDKCvCSl55eekJRK3PfcPg_Q9sWij0n52JzFV5JO2HRmaAlm2NFRdfauygchyNXzg/exec`.
+- Archivo: sw.js
+  - Se incrementó la versión del caché a 'informatic-app-v4'.
+  - Se mejoró la estrategia 'Network First' añadiendo un timeout de 3 segundos para prevenir esperas excesivas en conexiones lentas.
+  - Se añadió lógica para omitir el caché en llamadas a microservicios de Google Scripts, garantizando datos siempre frescos.
+  - Se actualizaron los assets precacheados para incluir versiones cache-busting (?v=4).
+- Archivos: index.html, login.html, register.html, student-dashboard.html, teacher-dashboard.html, exam.html, results.html, pseudocode.html, interactivo.html
+  - Se implementó cache-busting añadiendo el parámetro `?v=4` a todas las referencias de archivos CSS y JS locales.
+- Archivo: js/ui-common.js, pseudocode.html
+  - Se actualizó la versión del registro del Service Worker a `sw.js?v=4` para forzar la detección de cambios por el navegador.
