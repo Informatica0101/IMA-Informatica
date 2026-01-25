@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <th class="p-1 text-left font-bold text-gray-600 whitespace-nowrap">Acción</th>
             </tr>`;
 
-        submissionsTableBody.innerHTML = filtered.map(item => {
+        submissionsTableBody.innerHTML = filtered.map((item, index) => {
             let fileLinkHtml = '<em>N/A</em>';
             if (item.fileId) {
                 const fileId = extractDriveId(item.fileId);
@@ -494,10 +494,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             let actionHtml = '';
-            if (item.tipo === 'Tarea') {
-                actionHtml = `<button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-task-btn" data-index="${index}">Calificar</button>`;
-            } else if (item.tipo === 'Examen') {
-                actionHtml = `<button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-exam-btn" data-index="${index}">Calificar Examen</button>`;
+            // Solo se renderizan botones de calificación si el rol es Profesor
+            if (currentUser.rol === 'Profesor') {
+                if (item.tipo === 'Tarea') {
+                    actionHtml = `<button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-task-btn" data-index="${index}">Calificar</button>`;
+                } else if (item.tipo === 'Examen') {
+                    actionHtml = `<button class="bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold grade-exam-btn" data-index="${index}">Calificar Examen</button>`;
+                }
             }
 
             return `
@@ -545,7 +548,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Priorizar acciones de botones para evitar navegación accidental
             if (target.closest('.grade-task-btn') || target.closest('.grade-exam-btn') ||
-                target.closest('.view-results-btn') || target.closest('.reactivate-exam-btn') ||
                 target.closest('.activate-exam-btn') || target.closest('.lock-exam-btn') ||
                 target.closest('.view-file-link')) {
 
@@ -561,27 +563,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (target.classList.contains('grade-exam-btn')) {
                     if (saveGradeBtn) saveGradeBtn.dataset.type = 'Examen';
                     openGradeModal(currentFilteredItems[target.dataset.index]);
-                }
-                if (target.classList.contains('view-results-btn')) {
-                    window.location.href = `results.html?entregaExamenId=${target.dataset.entregaId}`;
-                }
-                if (target.classList.contains('reactivate-exam-btn')) {
-                    const entregaId = target.dataset.entregaId;
-                    if (confirm("¿Reactivar este examen para este alumno?")) {
-                        target.classList.add('btn-loading');
-                        target.disabled = true;
-                        try {
-                            const result = await fetchApi('EXAM', 'reactivateExam', { entregaExamenId: entregaId });
-                            if (result.status === 'success') {
-                                alert('Examen reactivado.');
-                                fetchTeacherActivity();
-                            } else { throw new Error(result.message); }
-                        } catch (error) {
-                            alert(`Error: ${error.message}`);
-                            target.classList.remove('btn-loading');
-                            target.disabled = false;
-                        }
-                    }
                 }
                 if (target.classList.contains('activate-exam-btn')) {
                     const examenId = target.dataset.examenId;

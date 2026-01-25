@@ -259,7 +259,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                 <span class="truncate">${currentFileName}</span>
                             </div>
-                            <span class="text-xs text-green-600 font-medium">Listo</span>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-xs text-green-600 font-medium">Listo</span>
+                                <button type="button" class="text-red-500 hover:text-red-700 remove-file-btn" data-file-id="${uploadedData.fileId}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
                         `;
                     } else {
                         li.innerHTML = `
@@ -286,6 +291,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (cancelSubmissionBtn) cancelSubmissionBtn.addEventListener('click', closeSubmissionModal);
+
+    if (uploadedFilesList) {
+        uploadedFilesList.addEventListener('click', (e) => {
+            const btn = e.target.closest('.remove-file-btn');
+            if (btn) {
+                const fileId = btn.dataset.fileId;
+                uploadedFiles = uploadedFiles.filter(f => f.fileId !== fileId);
+                btn.closest('li').remove();
+                if (uploadedFiles.length === 0) {
+                    uploadedFilesContainer.classList.add('hidden');
+                }
+                updateConfirmButtonState();
+            }
+        });
+    }
 
     if (submissionForm) {
         submissionForm.addEventListener('submit', async (e) => {
