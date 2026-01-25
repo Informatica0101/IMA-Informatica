@@ -203,6 +203,16 @@ ________________________________________________________________________________
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
 
+TAREA: [A-34]
+TÍTULO: Corrección de Regresión en Módulo de Exámenes
+ÁREA: Frontend / Backend / Exámenes
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se restauró la visibilidad de exámenes en el Dashboard del Profesor mediante la pestaña "Gestión".
+- Se robusteció la visibilidad de exámenes para estudiantes en el backend (grado/sección case-insensitive).
+- Se implementó la lógica completa de "Término Pareado" (auto-mapeo, envío JSON y calificación parcial).
+- Se habilitó la revisión detallada de respuestas de examen para el profesor desde el modal de calificación.
+
 TAREA: [A-33]
 TÍTULO: Ajuste visual saludo Dashboard Estudiante
 ÁREA: Frontend / UI
