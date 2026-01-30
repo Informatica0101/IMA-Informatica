@@ -379,6 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="inline-flex rounded-lg border border-gray-200 p-0.5 bg-gray-50">
                         <button class="px-2 py-1 rounded-md text-[10px] font-bold transition-all ${activeTab === 'tareas' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'} alumno-tab-btn" data-tab="tareas">Tareas</button>
                         <button class="px-2 py-1 rounded-md text-[10px] font-bold transition-all ${activeTab === 'examenes' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'} alumno-tab-btn" data-tab="examenes">Exámenes</button>
+                        <button class="px-2 py-1 rounded-md text-[10px] font-bold transition-all ${activeTab === 'gestion' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'} alumno-tab-btn" data-tab="gestion">Gestión</button>
                     </div>
                 </th>
             </tr>`;
@@ -430,7 +431,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <th class="p-1 text-right whitespace-nowrap">
                     <div class="inline-flex rounded-lg border border-gray-200 p-0.5 bg-gray-50">
                         <button class="px-2 py-1 rounded-md text-[10px] font-bold transition-all text-gray-500 hover:text-gray-700 alumno-tab-btn" data-tab="tareas">Tareas</button>
-                        <button class="px-2 py-1 rounded-md text-[10px] font-bold transition-all bg-white shadow-sm text-blue-600 alumno-tab-btn" data-tab="examenes">Exámenes</button>
+                        <button class="px-2 py-1 rounded-md text-[10px] font-bold transition-all text-gray-500 hover:text-gray-700 alumno-tab-btn" data-tab="examenes">Exámenes</button>
+                        <button class="px-2 py-1 rounded-md text-[10px] font-bold transition-all text-gray-500 hover:text-gray-700 alumno-tab-btn" data-tab="gestion">Gestión</button>
                     </div>
                 </th>
             </tr>`;
@@ -457,7 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
             i.tipo === 'Examen' &&
             !i.alumnoNombre &&
             i.grado === grado &&
-            (i.seccion === seccion || !i.seccion || i.seccion === "") &&
+            (i.seccion === seccion || !i.seccion || i.seccion === "" || (i.seccion && i.seccion.toString().toLowerCase() === "todas")) &&
             i.asignatura === asignatura
         );
         const filtered = exams.filter(e => e.titulo.toLowerCase().includes(search));
@@ -602,6 +604,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     studentSort.direction = 'asc';
                 }
                 renderCurrentLevel();
+                return;
+            }
+
+            const tabBtn = e.target.closest('.alumno-tab-btn');
+            if (tabBtn) {
+                const tab = tabBtn.dataset.tab;
+                const current = navStack[navStack.length - 1];
+                if (tab === 'gestion') {
+                    pushNav('Exámenes', { ...current.data, tab: 'gestion' });
+                } else {
+                    current.data.tab = tab;
+                    renderCurrentLevel();
+                }
             }
         });
     }
@@ -668,14 +683,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return; // Evitar que el clic en el botón active la navegación de la fila
             }
 
-            // Navegación de pestañas
-            if (target.closest('.alumno-tab-btn')) {
-                const tab = target.closest('.alumno-tab-btn').dataset.tab;
-                const current = navStack[navStack.length - 1];
-                current.data.tab = tab;
-                renderCurrentLevel();
-                return;
-            }
 
             // Navegación de jerarquía
             const navBtn = target.closest('.nav-btn');
@@ -748,7 +755,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const fileId = extractDriveId(entrega.fileId);
         const fileLinkModal = document.getElementById('file-link-modal');
         if (fileLinkModal) {
-            if (fileId) {
+            if (entrega.tipo === 'Examen') {
+                fileLinkModal.href = `results.html?entregaExamenId=${entrega.entregaId}`;
+                fileLinkModal.textContent = "Revisar Respuestas Detalladas";
+                fileLinkModal.classList.remove('text-red-500');
+            } else if (fileId) {
                 if (entrega.mimeType === 'folder') {
                     fileLinkModal.href = `https://drive.google.com/drive/folders/${fileId}`;
                     fileLinkModal.textContent = "Abrir Carpeta de Entrega";
@@ -922,7 +933,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const mainData = Object.fromEntries(new FormData(e.target).entries());
             const payload = { ...mainData, preguntas: [], profesorId: currentUser.userId };
             const questionBlocks = questionsContainer.querySelectorAll('.question-block');
+            let hasError = false;
+
             questionBlocks.forEach(block => {
+                if (hasError) return;
                 const type = block.querySelector('.question-type-select').value;
                 const optionsInput = block.querySelector('.question-options');
                 let optionsValue = optionsInput ? optionsInput.value : '';
@@ -944,19 +958,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (type === 'termino_pareado') {
                     const pairs = optionsValue.split(',').map(s => s.trim()).filter(s => s);
                     pregunta.opciones = { concepts: [], definitions: [] };
-                    pairs.forEach(pair => {
-                        const [concept, definition] = pair.split(':').map(s => s.trim());
+                    const correctMapping = {};
+                    const seenDefs = new Set();
+
+                    for (let i = 0; i < pairs.length; i++) {
+                        const [concept, definition] = pairs[i].split(':').map(s => s.trim());
                         if (concept && definition) {
+                            // Tarea 2: Evitar definiciones duplicadas que rompen la lógica de emparejamiento
+                            if (seenDefs.has(definition)) {
+                                alert(`Error: La definición "${definition}" está duplicada. Cada concepto debe tener una definición única.`);
+                                hasError = true;
+                                break;
+                            }
+                            seenDefs.add(definition);
                             pregunta.opciones.concepts.push(concept);
                             pregunta.opciones.definitions.push(definition);
+                            // Mapeamos: índice de definición (i) -> número de concepto (i + 1)
+                            correctMapping[i] = (i + 1).toString();
                         }
-                    });
+                    }
+                    pregunta.respuestaCorrecta = JSON.stringify(correctMapping);
                 } else {
                     pregunta.opciones = optionsValue;
                 }
 
                 payload.preguntas.push(pregunta);
             });
+
+            if (hasError) return;
+
             if (payload.preguntas.length === 0) {
                 alert('Un examen no puede estar vacío.');
                 return;

@@ -203,6 +203,16 @@ ________________________________________________________________________________
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
 
+TAREA: [A-34]
+TÍTULO: Corrección de Regresión en Módulo de Exámenes
+ÁREA: Frontend / Backend / Exámenes
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se restauró la visibilidad de exámenes en el Dashboard del Profesor mediante la pestaña "Gestión".
+- Se robusteció la visibilidad de exámenes para estudiantes en el backend (grado/sección case-insensitive).
+- Se implementó la lógica completa de "Término Pareado" (auto-mapeo, envío JSON y calificación parcial).
+- Se habilitó la revisión detallada de respuestas de examen para el profesor desde el modal de calificación.
+
 TAREA: [A-33]
 TÍTULO: Ajuste visual saludo Dashboard Estudiante
 ÁREA: Frontend / UI
@@ -228,3 +238,13 @@ TAREAS PENDIENTES
 ________________________________________________________________________________________________
 
 (No hay tareas críticas pendientes en este momento)
+
+TAREA: [A-35]
+TÍTULO: Refinamiento de Lógica de Preguntas (T/F y Término Pareado)
+ÁREA: Frontend / Backend / Exámenes
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Corregido envío de valores semánticos ("Verdadero"/"Falso") para preguntas de T/F.
+- Implementado barajado estable (Fisher-Yates) para definiciones en Término Pareado.
+- Agregada validación de definiciones duplicadas en la creación de exámenes.
+- Normalizada comparación de strings en el backend para calificación de Completación y T/F.

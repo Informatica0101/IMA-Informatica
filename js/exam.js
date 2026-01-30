@@ -11,6 +11,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const examenId = urlParams.get('examenId');
     let originalQuestions = [];
 
+    /**
+     * Tarea 2: Implementación de Fisher-Yates para barajado robusto.
+     */
+    function shuffleArray(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
     // --- Lógica del Examen ---
     async function loadExam() {
         const startOverlay = document.getElementById('start-exam-overlay');
@@ -74,12 +86,16 @@ document.addEventListener('DOMContentLoaded', () => {
         switch (questionType) {
             case 'opcion_multiple':
             case 'verdadero_falso':
-                optionsHtml = Object.entries(options).map(([key, value]) => `
-                    <label class="block p-2 rounded hover:bg-gray-100">
-                        <input type="radio" name="question_${questionId}" value="${key}" class="mr-2">
-                        ${value}
-                    </label>
-                `).join('');
+                optionsHtml = Object.entries(options).map(([key, value]) => {
+                    // Tarea 1: Enviar valor semántico para Verdadero/Falso
+                    const inputValue = (questionType === 'verdadero_falso') ? value : key;
+                    return `
+                        <label class="block p-2 rounded hover:bg-gray-100">
+                            <input type="radio" name="question_${questionId}" value="${inputValue}" class="mr-2">
+                            ${value}
+                        </label>
+                    `;
+                }).join('');
                 break;
             case 'completacion':
             case 'respuesta_breve':
@@ -87,8 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'termino_pareado':
                 if (options.concepts && options.definitions) {
-                    // Randomize definitions for the student
-                    const shuffledDefinitions = [...options.definitions].sort(() => Math.random() - 0.5);
+                    // Tarea 2: Barajado robusto de definiciones sin duplicados
+                    const indexedDefinitions = options.definitions.map((def, idx) => ({ def, idx }));
+                    const shuffledDefinitions = shuffleArray(indexedDefinitions);
                     optionsHtml = `
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -100,10 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div>
                                 <h4 class="font-bold mb-2">Definiciones</h4>
                                 <div class="space-y-2">
-                                    ${shuffledDefinitions.map((def, i) => `
+                                    ${shuffledDefinitions.map((item, i) => `
                                         <div class="flex items-center">
-                                            <input type="text" name="question_${questionId}_${i}" data-original-definition="${def}" class="w-12 p-1 border rounded mr-3 text-center" placeholder="#">
-                                            <span>${def}</span>
+                                            <input type="text" name="question_${questionId}_${i}" data-original-index="${item.idx}" class="w-12 p-1 border rounded mr-3 text-center" placeholder="#">
+                                            <span>${item.def}</span>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -150,14 +167,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     break;
                 case 'termino_pareado':
-                    // Para términos pareados, la respuesta puede ser un objeto o un string JSON
                     const pairInputs = block.querySelectorAll(`input[name^="question_${preguntaId}"]`);
                     const pairs = {};
                     pairInputs.forEach(input => {
-                        const conceptIndex = input.name.split('_').pop();
-                        pairs[conceptIndex] = input.value.trim();
+                        const originalIdx = input.dataset.originalIndex;
+                        pairs[originalIdx] = input.value.trim();
                     });
-                    respuestaEstudiante = JSON.stringify(pairs); // Convertir a string para enviar
+                    respuestaEstudiante = JSON.stringify(pairs);
                     break;
             }
             respuestas.push({ preguntaId, respuestaEstudiante });

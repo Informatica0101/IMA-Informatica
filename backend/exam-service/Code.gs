@@ -205,12 +205,28 @@ function submitExam({ examenId, userId, respuestas }) {
     const q = preguntas.find(p => p[0] === r.preguntaId);
     if (!q) return;
 
-    // Se usa r.respuestaEstudiante que es lo que envía el frontend
-    const ok = q[2] === "completacion"
-      ? normalizeString(r.respuestaEstudiante) === normalizeString(q[5])
-      : r.respuestaEstudiante === q[5];
-
-    if (ok) correctas++;
+    let points = 0;
+    if (q[2] === "termino_pareado") {
+      try {
+        const studentMapping = JSON.parse(r.respuestaEstudiante || "{}");
+        const correctMapping = JSON.parse(q[5] || "{}");
+        let totalPairs = Object.keys(correctMapping).length;
+        let correctPairs = 0;
+        for (let key in correctMapping) {
+          if (studentMapping[key] === correctMapping[key]) {
+            correctPairs++;
+          }
+        }
+        points = totalPairs > 0 ? (correctPairs / totalPairs) : 0;
+      } catch (e) { points = 0; }
+    } else {
+      // Tarea 1: Normalizar comparación para Verdadero/Falso y Completación
+      const ok = (q[2] === "completacion" || q[2] === "verdadero_falso")
+        ? normalizeString(r.respuestaEstudiante) === normalizeString(q[5])
+        : r.respuestaEstudiante === q[5];
+      points = ok ? 1 : 0;
+    }
+    correctas += points;
   });
 
   const nota = preguntas.length
@@ -247,8 +263,11 @@ function getStudentExams({ userId, grado, seccion }) {
     status: "success",
     data: examenes
       .filter(e => {
-        const matchGrado = e[3] === grado;
-        const matchSeccion = !e[4] || e[4].trim() === "" || isInTeacherList(seccion, e[4]);
+        const examGrado = (e[3] || "").toString().trim().toLowerCase();
+        const studentGrado = (grado || "").toString().trim().toLowerCase();
+        const matchGrado = examGrado === studentGrado;
+
+        const matchSeccion = !e[4] || e[4].trim() === "" || e[4].trim().toLowerCase() === "todas" || isInTeacherList(seccion, e[4]);
         const ent = entregas.find(x => x[1] === e[0] && x[2] === userId);
         return matchGrado && matchSeccion && (e[7] === 'Activo' || ent);
       })
@@ -301,16 +320,33 @@ function getExamResult({ entregaExamenId }) {
     const respuestaEstudiante = entrega ? entrega.respuestaEstudiante : "";
 
     let esCorrecta = false;
-    if (tipo === "completacion") {
+    let score = 0;
+    if (tipo === "termino_pareado") {
+      try {
+        const sMap = JSON.parse(respuestaEstudiante || "{}");
+        const cMap = JSON.parse(respuestaCorrecta || "{}");
+        let total = Object.keys(cMap).length;
+        let hits = 0;
+        for (let k in cMap) { if (sMap[k] === cMap[k]) hits++; }
+        esCorrecta = hits === total;
+        score = total > 0 ? (hits / total) : 0;
+      } catch (e) {}
+    } else if (tipo === "completacion" || tipo === "verdadero_falso") {
+      // Tarea 1: Normalizar comparación para Verdadero/Falso y Completación en resultados
       esCorrecta = normalizeString(respuestaEstudiante) === normalizeString(respuestaCorrecta);
+      score = esCorrecta ? 1 : 0;
     } else {
       esCorrecta = respuestaEstudiante === respuestaCorrecta;
+      score = esCorrecta ? 1 : 0;
     }
 
     return {
       texto,
+      tipo,
       respuestaEstudiante,
-      esCorrecta
+      respuestaCorrecta,
+      esCorrecta,
+      score: (score * 100).toFixed(0) + "%"
     };
   });
 

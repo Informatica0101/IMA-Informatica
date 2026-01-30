@@ -531,3 +531,42 @@ Descripción: Se cambió la clase 'text-4xl' por 'text-lg' en el saludo del estu
 Archivo: student-dashboard.html
 Línea: 95-98
 Descripción: Se reestructuró el encabezado para igualar el diseño del Panel de Profesor: se añadió un H1 'Panel de Estudiante' (text-3xl) y se movió el saludo al párrafo P (text-lg), asegurando simetría visual entre ambos perfiles.
+
+25/01/2026
+- Archivo: js/teacher.js
+  - Implementada pestaña "Gestión" en la lista de alumnos para permitir el acceso a la activación y bloqueo de exámenes.
+  - Corregido el filtrado de gestión de exámenes para incluir la opción "Todas" las secciones.
+  - Automatizada la generación de 'respuestaCorrecta' para preguntas de tipo "Término Pareado" usando mapeo JSON.
+  - Integrado enlace "Revisar Respuestas Detalladas" en el modal de calificación de exámenes.
+  - Corregida delegación de eventos para las pestañas de navegación, moviéndolas al encabezado de la tabla.
+- Archivo: backend/exam-service/Code.gs
+  - Robustecida la visibilidad de exámenes para estudiantes en 'getStudentExams' mediante normalización de strings (grado y sección).
+  - Implementada calificación parcial para 'Término Pareado' en 'submitExam' comparando mapeos JSON.
+  - Mejorada la estructura de retorno en 'getExamResult' para incluir el tipo de pregunta y el puntaje obtenido.
+- Archivo: js/exam.js
+  - Estandarizado el formato de envío de respuestas para 'Término Pareado' usando índices originales para garantizar una calificación precisa a pesar del barajado en la UI.
+- Archivo: js/results.js
+  - Implementado parseo y visualización legible de respuestas de emparejamiento en los resúmenes de calificación.
+
+25/01/2026
+- Archivo: js/config.js
+  - Actualizada la URL del microservicio EXAM al nuevo endpoint de producción proporcionado por el usuario.
+- Archivo: sw.js
+  - Incrementada la versión del caché a 'informatic-app-v5' para forzar la actualización de la configuración en los clientes.
+- Archivos: *.html, js/ui-common.js
+  - Aplicado cache-busting 'v=5' a todas las referencias de activos locales.
+
+25/01/2026
+- Archivo: js/exam.js
+  - Se implementó el algoritmo Fisher-Yates para un barajado estable de las definiciones en preguntas de 'Término Pareado'.
+  - Se corrigió el envío de respuestas de 'Verdadero/Falso' para que se envíen los valores semánticos ("Verdadero"/"Falso") en lugar de índices (A/B), asegurando la compatibilidad con el backend.
+- Archivo: backend/exam-service/Code.gs
+  - Se normalizó la lógica de calificación para preguntas de 'Completación' y 'Verdadero/Falso', aplicando comparaciones case-insensitive y trimmed.
+- Archivo: js/teacher.js
+  - Se añadió validación en el formulario de creación de exámenes para impedir definiciones duplicadas en preguntas de 'Término Pareado', evitando conflictos en la lógica de calificación.
+
+25/01/2026
+- Archivo: js/config.js, Línea(s): 20
+  - Actualización de la URL del microservicio EXAM al nuevo endpoint proporcionado por el usuario.
+- Archivo: sw.js, *.html, js/ui-common.js
+  - Incremento de la versión de caché a 'v6' para asegurar el despliegue inmediato de la nueva configuración.
