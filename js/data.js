@@ -3,7 +3,7 @@
  */
 
 window.presentationData = [
-    {
+    /* {
         grade: "Décimo",
         subjects: [
             {
@@ -16,11 +16,17 @@ window.presentationData = [
                 ]
             }
         ]
-    },
+    }, */
     {
         grade: "Undécimo",
         subjects: [
             {
+                name: "Programación",
+                topics: [
+                    { title: "Introducción a la Programación", file: "II_BTP_A/Programacion/introduccion_programacion.html" }
+                ]
+            }
+            /* {
                 name: "Informática Aplicada I",
                 topics: [
                     { title: "Sistemas de Numeración", file: "II_BTP_A/Informatica_Aplicada_I/sistemas_numeracion.html" },
@@ -41,19 +47,25 @@ window.presentationData = [
             {
                 name: "Análisis y Diseño de Sistemas",
                 topics: []
-            }
+            } */
         ]
     },
     {
         grade: "Duodécimo",
         subjects: [
             {
+                name: "Diseño Web",
+                topics: [
+                    { title: "Introducción al Diseño Web", file: "III_BTP_A/introduccion_diseno_web.html" }
+                ]
+            }
+            /* {
                 name: "Diseño Web II",
                 topics: [
                     { title: "Grid vs Flexbox", file: "III_BTP_A/dw_II/tablas_columnas.html" },
                     { title: "Eventos de JavaScript", file: "III_BTP_A/dw_II/eventos_javascript.html" }
                 ]
-            }
+            } */
         ]
     }
 ];
@@ -63,7 +75,7 @@ window.additionalResourcesData = [
         category: "Artículos",
         items: [
             { title: "Destreza en el teclado", file: "II_BTP_A/Ofimatica_I/articulo-destreza.html" },
-            { title: "Línea de tiempo de la computación", file: "Informatica_I/articulo_lineadetiempo.html" },
+            // { title: "Línea de tiempo de la computación", file: "Informatica_I/articulo_lineadetiempo.html" },
             { title: "Evolución de Suites Informáticas", file: "II_BTP_A/Ofimatica_I/articulo-evolucion-suite.html" }
         ]
     },
@@ -79,7 +91,7 @@ window.additionalResourcesData = [
 ];
 
 window.downloadContentData = [
-    {
+    /* {
         grade: "Décimo",
         subjects: [
             {
@@ -93,11 +105,17 @@ window.downloadContentData = [
                 ]
             }
         ]
-    },
+    }, */
     {
         grade: "Undécimo",
         subjects: [
             {
+                name: "Programación",
+                topics: [
+                    { title: "Libro de Programación", file: "II_BTP_A/Programacion/pdf-libro-m2-programacion-ipdf_compress.pdf" }
+                ]
+            }
+            /* {
                 name: "Informática Aplicada I",
                 topics: [
                     { title: "Sistemas de Numeración", file: "II_BTP_A/Informatica_Aplicada_I/sistemas_numeracion.pdf" },
@@ -125,20 +143,26 @@ window.downloadContentData = [
                     { title: "Creación de Bases de Datos", file: "II_BTP_A/analisis_diseno/Base_de_datos.pdf" },
                     { title: "Guia de Estudio", file: "guia_estudios/GE_AYD.pdf" }
                 ]
-            }
+            } */
         ]
     },
     {
         grade: "Duodécimo",
         subjects: [
             {
+                name: "Diseño Web",
+                topics: [
+                    { title: "Libro de Diseño Web", file: "III_BTP_A/Diseño Web Editorial Fares III edicion.pdf" }
+                ]
+            }
+            /* {
                 name: "Diseño Web II",
                 topics: [
                     { title: "Grid vs Flexbox", file: "III_BTP_A/dw_II/tablas_columnas.pdf" },
                     { title: "Eventos de JavaScript", file: "III_BTP_A/dw_II/eventosJS.pdf" },
                     { title: "Guía de Estudios IV Parcial", file: "guia_estudios/GDESR-DW-IIIBTP_4parcial.pdf" }
                 ]
-            }
+            } */
         ]
     }
 ];

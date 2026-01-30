@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducción a la Programación</title>
+    <!-- CDN de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos base para un diseño consistente */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Ajuste global para reducir el tamaño base en un 10%. (1rem = 0.9rem) */
+        html {
+            font-size: 90%;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            justify-content: space-between;
+        }
+
+        #presentation-container {
+            width: 100%;
+            height: calc(100vh - 7rem);
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            max-width: 100vw;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 1.8rem;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            overflow-y: auto;
+        }
+        .slide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation-name: fadeIn;
+            animation-duration: 0.8s;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .slide h2, .slide h3 {
+                font-size: 1.4rem;
+            }
+            .slide p, .slide li {
+                font-size: 0.9rem;
+            }
+            .nav-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Estilos del Cuestionario */
+        .quiz-option-button {
+            transition: background-color 0.3s, transform 0.2s;
+            text-align: left; /* Aseguramos que el texto esté a la izquierda */
+            padding-left: 1.5rem; /* Espaciado interno */
+        }
+
+        .quiz-option-button.correct {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .quiz-option-button.incorrect {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        /* Estilo para placeholder de imagen */
+        .image-placeholder {
+            height: 150px;
+            width: 250px;
+            color: #009688;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            border-radius: 8px;
+            margin: 1rem auto;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 10px;
+        }
+        @media (min-width: 640px) {
+            .image-placeholder {
+                height: 200px;
+                width: 350px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header de la página -->
+    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
+            <img src="https://informatica0101.github.io/imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
+            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Introducción a la Programación</h1>
+        </div>
+        <nav class="mt-3 sm:mt-0">
+            <ul class="flex space-x-2 sm:space-x-3">
+                <li><a href="https://informatica0101.github.io" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Acerca de</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenido principal de la presentación -->
+    <main class="flex-grow flex justify-center items-center p-3">
+        <div id="presentation-container" class="relative">
+
+            <!-- Diapositiva 1: Portada -->
+            <div id="slide-1" class="slide active">
+                <img src="https://informatica0101.github.io/imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-3 sm:mb-7">
+                <h2 class="text-lg sm:text-xl mb-1 sm:mb-3 text-blue-600">Introducción a la Programación</h2>
+                <p class="text-xs sm:text-sm text-gray-600">Temas: Lógica, Programación y Algoritmos</p>
+                <div class="mt-3 sm:mt-7 text-xs text-gray-500">
+                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                    <p>Fecha: 1 de febrero de 2026</p>
+                    <p>Grado: Undécimo de Informática</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 2: Introducción a la Lógica -->
+            <div id="slide-2" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Introducción a la Lógica</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    La <b>lógica</b> es la base del pensamiento computacional. Es la capacidad de razonar de manera estructurada para resolver problemas complejos de forma coherente.
+                </p>
+                <div class="image-placeholder mt-5">
+                    <img src="https://informatica0101.github.io/imagenes/so_concepto.png" alt="Lógica y pensamiento" class="h-full">
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: Importancia de la Lógica -->
+            <div id="slide-3" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¿Por qué es importante la Lógica?</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl text-left">
+                    <div class="bg-blue-50 p-4 rounded-lg shadow">
+                        <p class="font-bold text-blue-700">Resolución de Problemas</p>
+                        <p class="text-sm">Permite descomponer un problema grande en partes pequeñas y manejables.</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg shadow">
+                        <p class="font-bold text-green-700">Eficiencia</p>
+                        <p class="text-sm">Ayuda a encontrar la ruta más corta y efectiva para llegar a una solución.</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg shadow">
+                        <p class="font-bold text-yellow-700">Estructura</p>
+                        <p class="text-sm">Proporciona el orden necesario para que las instrucciones sean claras.</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg shadow">
+                        <p class="font-bold text-purple-700">Base Tecnológica</p>
+                        <p class="text-sm">Es el lenguaje fundamental que permite a los humanos comunicarse con las máquinas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: Introducción a la Programación -->
+            <div id="slide-4" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¿Qué es la Programación?</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Programar es el proceso de <b>diseñar, codificar, depurar y mantener</b> el código fuente de programas computacionales. Básicamente, es dar instrucciones precisas a una computadora.
+                </p>
+                <div class="image-placeholder mt-5">
+                    <img src="https://informatica0101.github.io/imagenes/terminal_cli.png" alt="Código de programación" class="h-full">
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Lenguajes de Programación -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Lenguajes de Programación</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
+                    Son herramientas que permiten traducir nuestras ideas al lenguaje de las máquinas.
+                </p>
+                <div class="bg-gray-100 p-5 rounded-lg max-w-3xl w-full text-left">
+                    <ul class="space-y-3">
+                        <li><b>Bajo Nivel:</b> Directamente relacionado con el hardware (Ej: Lenguaje Ensamblador).</li>
+                        <li><b>Alto Nivel:</b> Más cercano al lenguaje humano, fácil de aprender (Ej: Python, C++, Java).</li>
+                        <li><b>Propósito:</b> Pueden ser para web, aplicaciones móviles, ciencia de datos o sistemas.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: ¿Qué es un Algoritmo? -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¿Qué es un Algoritmo?</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Es una <b>secuencia lógica, finita y definida</b> de pasos para resolver un problema o realizar una tarea específica.
+                </p>
+                <div class="bg-blue-100 p-4 rounded-lg mt-5 max-w-xl">
+                    <p class="italic">"Un algoritmo es como una receta de cocina: sigues los pasos en orden para obtener un resultado delicioso".</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Características de un Algoritmo -->
+            <div id="slide-7" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Características de un Algoritmo</h3>
+                <div class="flex flex-col space-y-4 max-w-2xl w-full">
+                    <div class="flex items-center p-3 bg-white border-l-4 border-blue-500 shadow-sm">
+                        <span class="font-bold text-blue-600 mr-4">1. Preciso:</span>
+                        <span class="text-sm">Debe indicar el orden exacto de realización de cada paso.</span>
+                    </div>
+                    <div class="flex items-center p-3 bg-white border-l-4 border-green-500 shadow-sm">
+                        <span class="font-bold text-green-600 mr-4">2. Definido:</span>
+                        <span class="text-sm">Si se sigue dos veces con los mismos datos, se obtiene el mismo resultado.</span>
+                    </div>
+                    <div class="flex items-center p-3 bg-white border-l-4 border-red-500 shadow-sm">
+                        <span class="font-bold text-red-600 mr-4">3. Finito:</span>
+                        <span class="text-sm">Debe tener un número determinado de pasos; debe terminar en algún momento.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Representación de Algoritmos -->
+            <div id="slide-8" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Representación de Algoritmos</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-5xl">
+                    <div class="p-4 border border-gray-200 rounded-xl">
+                        <p class="font-bold mb-2">Lenguaje Natural</p>
+                        <p class="text-xs">Descripción simple paso a paso usando nuestro propio idioma.</p>
+                    </div>
+                    <div class="p-4 border border-gray-200 rounded-xl bg-gray-50">
+                        <p class="font-bold mb-2">Pseudocódigo</p>
+                        <p class="text-xs">Uso de palabras clave que simulan código real pero en español/inglés simple.</p>
+                    </div>
+                    <div class="p-4 border border-gray-200 rounded-xl">
+                        <p class="font-bold mb-2">Diagramas de Flujo</p>
+                        <p class="text-xs">Representación gráfica mediante símbolos estandarizados.</p>
+                    </div>
+                </div>
+                <div class="image-placeholder mt-5">
+                    <img src="https://informatica0101.github.io/imagenes/sdlc_diagrama_flujo.png" alt="Diagrama de flujo" class="h-full">
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Estructuras Lógicas Básicas -->
+            <div id="slide-9" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Estructuras Lógicas Básicas</h3>
+                <div class="bg-indigo-50 p-6 rounded-2xl max-w-3xl text-left">
+                    <p class="mb-4 text-sm">Todo programa o algoritmo se construye usando tres estructuras fundamentales:</p>
+                    <ul class="space-y-4 text-sm">
+                        <li><span class="font-bold text-indigo-700">Secuencial:</span> Las instrucciones se ejecutan una tras otra en el orden en que aparecen.</li>
+                        <li><span class="font-bold text-indigo-700">Decisión (Si/Entonces):</span> Permite elegir entre dos o más caminos según se cumpla una condición.</li>
+                        <li><span class="font-bold text-indigo-700">Repetición (Bucles):</span> Permite ejecutar un bloque de instrucciones varias veces.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Cuestionario -->
+            <div id="slide-10" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¡Cuestionario de Introducción!</h3>
+                <div id="quiz-container" class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-md max-w-3xl w-full text-center">
+                    <div id="quiz-question" class="text-base sm:text-xl font-semibold mb-2 sm:mb-5 text-gray-800"></div>
+                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-3"></div>
+                    <div id="quiz-feedback" class="mt-3 sm:mt-5 text-sm sm:text-base font-bold"></div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 11: Conclusión -->
+            <div id="slide-11" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Conclusión</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Dominar la lógica y entender los algoritmos es el primer paso para convertirte en un desarrollador exitoso. La programación no se trata solo de escribir código, sino de <b>resolver problemas de manera inteligente</b>.
+                </p>
+                <p class="text-lg mt-8 font-bold text-blue-600">¡El viaje al mundo del código apenas comienza!</p>
+            </div>
+        </div>
+
+        <!-- Botones de navegación -->
+        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
+            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
+            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        </div>
+        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 11</div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
+            <img src="https://informatica0101.github.io/imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts para la navegación y la lógica del cuestionario -->
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const header = document.getElementById('page-header');
+        const footer = document.getElementById('page-footer');
+        let currentSlideIndex = 0;
+        let isTransitioning = false;
+
+        const quizQuestions = [
+            {
+                question: "1. ¿Cuál es la base fundamental del pensamiento computacional?",
+                options: ["El hardware potente", "La lógica", "La conexión a internet", "La memoria RAM"],
+                correctAnswer: "La lógica"
+            },
+            {
+                question: "2. ¿Cómo se define el proceso de dar instrucciones a una computadora?",
+                options: ["Navegar", "Formatear", "Programar", "Instalar"],
+                correctAnswer: "Programar"
+            },
+            {
+                question: "3. ¿Qué característica indica que un algoritmo debe terminar en algún momento?",
+                options: ["Preciso", "Definido", "Finito", "Infinito"],
+                correctAnswer: "Finito"
+            },
+            {
+                question: "4. ¿Cuál de estos es un lenguaje de programación de alto nivel?",
+                options: ["Ensamblador", "Python", "Binario", "Código Máquina"],
+                correctAnswer: "Python"
+            },
+            {
+                question: "5. ¿Qué representación de algoritmos utiliza símbolos gráficos?",
+                options: ["Pseudocódigo", "Lenguaje Natural", "Diagrama de Flujo", "Texto Plano"],
+                correctAnswer: "Diagrama de Flujo"
+            },
+            {
+                question: "6. Si sigues un algoritmo dos veces con los mismos datos y obtienes el mismo resultado, es:",
+                options: ["Preciso", "Definido", "Finito", "Rápido"],
+                correctAnswer: "Definido"
+            },
+            {
+                question: "7. La estructura que permite ejecutar instrucciones una tras otra es:",
+                options: ["Decisión", "Repetición", "Secuencial", "Aleatoria"],
+                correctAnswer: "Secuencial"
+            },
+            {
+                question: "8. ¿Qué estructura lógica permite elegir entre varios caminos según una condición?",
+                options: ["Secuencial", "Decisión", "Bucle", "Salto"],
+                correctAnswer: "Decisión"
+            },
+            {
+                question: "9. El pseudocódigo es un lenguaje intermedio entre el humano y el:",
+                options: ["Hardware", "Código real de programación", "Diseño gráfico", "Sistema Operativo"],
+                correctAnswer: "Código real de programación"
+            },
+            {
+                question: "10. ¿Cuál es el objetivo principal de un algoritmo?",
+                options: ["Ocupar memoria", "Resolver un problema", "Gastar energía", "Crear imágenes"],
+                correctAnswer: "Resolver un problema"
+            }
+        ];
+        let currentQuizQuestionIndex = 0;
+
+        function updateQuizDisplay() {
+            const quizQuestionElement = document.getElementById('quiz-question');
+            const quizOptionsElement = document.getElementById('quiz-options');
+            const quizFeedbackElement = document.getElementById('quiz-feedback');
+
+            if (currentQuizQuestionIndex >= quizQuestions.length) {
+                quizQuestionElement.textContent = "¡Cuestionario completado! ¡Excelente progreso!";
+                quizOptionsElement.innerHTML = '';
+                quizFeedbackElement.textContent = '';
+                return;
+            }
+
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            quizQuestionElement.textContent = currentQuestion.question;
+            quizOptionsElement.innerHTML = '';
+            quizFeedbackElement.textContent = '';
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = "quiz-option-button w-full px-5 py-2 rounded-xl border border-blue-400 bg-blue-50 text-blue-700 font-semibold transition-colors duration-200 hover:bg-blue-100 text-sm";
+                button.onclick = () => checkAnswer(option);
+                quizOptionsElement.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            const quizFeedback = document.getElementById('quiz-feedback');
+            const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
+            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+
+            buttons.forEach(button => {
+                button.disabled = true;
+                if (button.textContent === currentQuestion.correctAnswer) {
+                    button.classList.add('correct');
+                } else if (button.textContent === selectedOption) {
+                    button.classList.add('incorrect');
+                }
+            });
+
+            if (isCorrect) {
+                quizFeedback.textContent = '¡Correcto!';
+                quizFeedback.classList.add('text-green-500');
+            } else {
+                quizFeedback.textContent = 'Incorrecto. La respuesta es: ' + currentQuestion.correctAnswer;
+                quizFeedback.classList.add('text-red-500');
+            }
+
+            setTimeout(() => {
+                currentQuizQuestionIndex++;
+                updateQuizDisplay();
+            }, 2000);
+        }
+
+        function showSlide(index) {
+            if (isTransitioning || index < 0 || index >= slides.length) return;
+            isTransitioning = true;
+            slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+            currentSlideIndex = index;
+            if (currentSlideIndex === 9) { currentQuizQuestionIndex = 0; updateQuizDisplay(); }
+            const activeSlide = slides[currentSlideIndex];
+            activeSlide.style.display = 'flex';
+            setTimeout(() => {
+                activeSlide.classList.add('active');
+                slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+                prevButton.disabled = currentSlideIndex === 0;
+                nextButton.disabled = currentSlideIndex === slides.length - 1;
+                isTransitioning = false;
+            }, 10);
+        }
+
+        nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
+        prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>

@@ -70,3 +70,20 @@ Auditoría Final v6 - Sun Jan 25 21:15:00 UTC 2026
 1. js/config.js: Actualización de EXAM URL a endpoint definitivo.
 2. sw.js: Bump a v6 and actualización de assets precacheados.
 3. Global: Cache-busting v=6 aplicado.
+
+Auditoría - Creación de Presentaciones and Normalización - 2026-02-01
+--------------------------------------------------------------------------------
+1. Imágenes:
+   - Unificación total de activos en /imagenes/ raíz.
+   - Normalización de rutas en todos los .html (absolutas a informatica0101.github.io).
+   - Hallazgo: Algunas imágenes referenciadas en archivos antiguos no existen en el repo (ej. maquina_tabuladora.jpg).
+2. js/data.js:
+   - Décimo grado comentado.
+   - Undécimo: Solo visible "Programación".
+   - Duodécimo: Solo visible "Diseño Web".
+3. Nuevas Presentaciones:
+   - II_BTP_A/Programacion/introduccion_programacion.html (Lógica, Programación, Algoritmos).
+   - III_BTP_A/introduccion_diseno_web.html (Diseño Web, HTML).
+   - Ambas respetan la plantilla base and lógica de cuestionario.
+4. Hallazgo Crítico:
+   - Los PDFs proporcionados son escaneos de imagen sin capa de texto. Se procedió con contenido basado en temas solicitados and currículo estándar.
