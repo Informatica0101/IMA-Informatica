@@ -102,3 +102,17 @@ Auditoría - Unificación de Imágenes y Expansión de Contenido - 01/02/2026
    - Se corrigieron los botones "Inicio" para apuntar a index.html con URL absoluta.
    - Se corrigieron enlaces rotos a pseudocode.js (ahora pseudocode.html) y fundamentos_ii.pdf (ahora #).
    - Se validó la integridad de la navegación principal del sistema.
+
+Auditoría - Corrección de Rutas para Portabilidad (GitHub Pages) - 01/02/2026
+--------------------------------------------------------------------------------
+1. Rutas de Imágenes y Navegación:
+   - Hallazgo: El uso de rutas absolutas (/imagenes/, /index.html) o URLs completas (https://informatica0101.github.io/...) rompe la visualización de activos y navegación cuando el sitio no se sirve desde la raíz exacta del dominio o en entornos de previsualización.
+   - Acción: Se convirtieron todas las rutas a relativas (../../, ../, etc.) calculando la profundidad de cada archivo.
+2. Centralización de Activos:
+   - Hallazgo: Existían directorios /imagenes/ redundantes dentro de subcarpetas (III_BTP_A/dw_II/imagenes/, Informatica_I/imagenes/, etc.) que contenían duplicados.
+   - Acción: Se eliminaron todos los directorios /imagenes/ secundarios y se normalizaron las referencias a la carpeta raíz /imagenes/.
+3. Scripts y Juegos:
+   - Hallazgo: js/perifericos_juego.js usaba rutas absolutas para las imágenes de los periféricos.
+   - Acción: Se actualizaron las rutas a relativas compatibles con el punto de entrada del juego.
+4. Verificación:
+   - Se comprobó mediante screenshots que las imágenes en las presentaciones de "Programación" y "Diseño Web" ahora cargan correctamente tras la normalización.

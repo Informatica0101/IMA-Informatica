@@ -2,17 +2,19 @@
 - Archivo: II_BTP_A/Programacion/introduccion_programacion.html
   - Ampliación masiva de contenido a 16 diapositivas educativas (Lógica, Fases de Desarrollo, Algoritmos, Traductores, etc.).
   - Actualización del cuestionario a 10 preguntas objetivas alineadas con el nuevo temario.
-  - Normalización de rutas de imágenes a URL absoluta.
+  - Corrección de rutas a formato relativo (../) para asegurar portabilidad.
 - Archivo: III_BTP_A/introduccion_diseno_web.html
   - Ampliación masiva de contenido a 16 diapositivas educativas (Evolución Web, Cliente-Servidor, Estructura HTML5, Etiquetas Esenciales, Introducción a CSS).
   - Actualización del cuestionario a 10 preguntas objetivas alineadas con el nuevo temario.
-  - Normalización de rutas de imágenes a URL absoluta.
-- Directorio: js/imagenes/
-  - Eliminación del directorio redundante para unificar todos los activos en la carpeta raíz /imagenes/.
-- Global (HTML, CSS, JS):
-  - Reemplazo masivo de rutas relativas de imágenes por la URL absoluta https://informatica0101.github.io/imagenes/.
-  - Corrección de botones "Inicio" para apuntar a https://informatica0101.github.io/index.html.
-  - Reparación de enlaces rotos a pseudocode.js y fundamentos_ii.pdf.
+  - Corrección de rutas a formato relativo (../) para asegurar portabilidad.
+- Directorio: /imagenes/ (Global)
+  - Eliminación de carpetas de imágenes redundantes en subdirectorios (III_BTP_A/dw_II/imagenes/, II_BTP_A/analisis_diseno/imagenes/, etc.).
+  - Unificación total de activos en la carpeta raíz.
+- Archivos HTML (Global):
+  - Conversión masiva de rutas absolutas (/imagenes/, /index.html) a rutas relativas (../../, ../) calculadas por profundidad de directorio.
+  - Esto garantiza que las imágenes y la navegación funcionen en cualquier entorno de hosting (GitHub Pages subdirs, etc.).
+- Archivo: js/perifericos_juego.js
+  - Normalización de rutas de imágenes de activos de juego a formato relativo.
 
 14/01/2026
 - Archivo: js/teacher.js, Línea(s): 88-95
