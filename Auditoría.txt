@@ -87,3 +87,18 @@ Auditoría - Creación de Presentaciones and Normalización - 2026-02-01
    - Ambas respetan la plantilla base and lógica de cuestionario.
 4. Hallazgo Crítico:
    - Los PDFs proporcionados son escaneos de imagen sin capa de texto. Se procedió con contenido basado en temas solicitados and currículo estándar.
+
+Auditoría - Unificación de Imágenes y Expansión de Contenido - 01/02/2026
+--------------------------------------------------
+1. Unificación de Imágenes:
+   - Se eliminó el directorio js/imagenes/ tras confirmar que no contenía archivos únicos.
+   - Se aplicó una sustitución global en HTML, CSS y JS para usar la URL absoluta https://informatica0101.github.io/imagenes/.
+   - Se corrigieron rutas relativas rotas en múltiples subdirectorios.
+2. Expansión de Presentaciones:
+   - II_BTP_A/Programacion/introduccion_programacion.html ampliada a 19 diapositivas (16 de contenido, portada, cuestionario y conclusión).
+   - III_BTP_A/introduccion_diseno_web.html ampliada a 19 diapositivas (16 de contenido, portada, cuestionario y conclusión).
+   - Ambas presentaciones incluyen ahora un cuestionario de 10 preguntas vinculadas al nuevo contenido.
+3. Saneamiento de Enlaces:
+   - Se corrigieron los botones "Inicio" para apuntar a index.html con URL absoluta.
+   - Se corrigieron enlaces rotos a pseudocode.js (ahora pseudocode.html) y fundamentos_ii.pdf (ahora #).
+   - Se validó la integridad de la navegación principal del sistema.
