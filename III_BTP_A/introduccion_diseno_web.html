@@ -154,12 +154,12 @@
     <!-- Header de la página -->
     <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
         <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="https://informatica0101.github.io/imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
+            <img src="/imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
             <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Introducción al Diseño Web</h1>
         </div>
         <nav class="mt-3 sm:mt-0">
             <ul class="flex space-x-2 sm:space-x-3">
-                <li><a href="https://informatica0101.github.io" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
+                <li><a href="/index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
                 <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Acerca de</a></li>
                 <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Contacto</a></li>
             </ul>
@@ -172,7 +172,7 @@
 
             <!-- Diapositiva 1: Portada -->
             <div id="slide-1" class="slide active">
-                <img src="https://informatica0101.github.io/imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-3 sm:mb-7">
+                <img src="/imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-3 sm:mb-7">
                 <h2 class="text-lg sm:text-xl mb-1 sm:mb-3 text-blue-600">Introducción al Diseño Web</h2>
                 <p class="text-xs sm:text-sm text-gray-600">Conceptos básicos y Lenguaje HTML</p>
                 <div class="mt-3 sm:mt-7 text-xs text-gray-500">
@@ -184,141 +184,215 @@
 
             <!-- Diapositiva 2: ¿Qué es el Diseño Web? -->
             <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¿Qué es el Diseño Web?</h3>
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">1. ¿Qué es el Diseño Web?</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
-                    Es el proceso de <b>planificar, conceptualizar y organizar</b> contenido para internet. Implica la combinación de estética visual, usabilidad y funcionalidad técnica.
+                    Es la planificación, creación y mantenimiento de sitios web. Combina aspectos visuales (estética) con aspectos funcionales (usabilidad y arquitectura de información).
                 </p>
                 <div class="image-placeholder mt-5">
-                    <img src="https://informatica0101.github.io/imagenes/frontend_visual.png" alt="Diseño web visual" class="h-full">
+                    <img src="/imagenes/frontend_visual.png" alt="Diseño Web" class="h-full">
                 </div>
             </div>
 
             <!-- Diapositiva 3: Evolución de la Web -->
             <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Evolución de la Web</h3>
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2. Evolución de la Web</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-5xl text-center">
                     <div class="bg-gray-50 p-4 rounded-lg shadow">
                         <p class="font-bold text-gray-700">Web 1.0</p>
-                        <p class="text-xs">Web estática, de solo lectura. El usuario es un espectador pasivo.</p>
+                        <p class="text-xs">Estática, solo lectura. Páginas simples de texto e imágenes.</p>
                     </div>
                     <div class="bg-blue-50 p-4 rounded-lg shadow border-b-4 border-blue-400">
                         <p class="font-bold text-blue-700">Web 2.0</p>
-                        <p class="text-xs">Web social y dinámica. Los usuarios crean contenido (Blogs, RRSS).</p>
+                        <p class="text-xs">Social y colaborativa. El usuario crea contenido (Blogs, RRSS).</p>
                     </div>
-                    <div class="bg-purple-50 p-4 rounded-lg shadow">
+                    <div class="bg-purple-50 p-4 rounded-lg shadow border-b-4 border-purple-400">
                         <p class="font-bold text-purple-700">Web 3.0</p>
-                        <p class="text-xs">Web semántica e inteligente. IA, descentralización y personalización.</p>
+                        <p class="text-xs">Semántica e inteligente. IA y descentralización.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 4: Conceptos y Definiciones -->
+            <!-- Diapositiva 4: Conceptos: Cliente y Servidor -->
             <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Conceptos y Definiciones</h3>
-                <div class="bg-gray-100 p-5 rounded-lg max-w-3xl w-full text-left">
-                    <ul class="space-y-2 text-sm">
-                        <li><b>Navegador:</b> Aplicación para interpretar código web (Ej: Chrome, Firefox).</li>
-                        <li><b>Servidor:</b> Computadora que almacena y entrega los archivos de la web.</li>
-                        <li><b>URL:</b> Localizador de recursos uniforme (la dirección de la página).</li>
-                        <li><b>Dominio:</b> Nombre amigable asociado a una dirección IP (Ej: google.com).</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: HTTP y Hosting -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Protocolos y Hosting</h3>
-                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 max-w-4xl">
-                    <div class="flex-1 p-4 bg-yellow-50 rounded-xl border border-yellow-200">
-                        <p class="font-bold text-yellow-800">HTTP / HTTPS</p>
-                        <p class="text-xs">Protocolo de transferencia de datos. La "S" indica que la conexión está cifrada y es segura.</p>
-                    </div>
-                    <div class="flex-1 p-4 bg-indigo-50 rounded-xl border border-indigo-200">
-                        <p class="font-bold text-indigo-800">Hosting (Alojamiento)</p>
-                        <p class="text-xs">Servicio de alquiler de espacio en un servidor para que tu sitio sea accesible desde internet.</p>
-                    </div>
-                </div>
-                <div class="image-placeholder mt-5">
-                    <img src="https://informatica0101.github.io/imagenes/servidor.jpg" alt="Servidor web" class="h-full">
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: Introducción a HTML -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¿Qué es HTML?</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
-                    <b>HyperText Markup Language</b>. Es el lenguaje estándar para crear la estructura de las páginas web. No es un lenguaje de programación, sino de <b>marcado</b>.
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">3. Cliente y Servidor</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
+                    La web funciona mediante una arquitectura de peticiones y respuestas.
                 </p>
-                <div class="bg-gray-800 text-green-400 p-4 rounded-lg mt-5 font-mono text-xs">
-                    &lt;p&gt;Hola, esto es un párrafo en HTML&lt;/p&gt;
+                <ul class="text-left space-y-3 max-w-2xl">
+                    <li><b>Cliente:</b> El navegador del usuario que solicita información (Chrome, Safari).</li>
+                    <li><b>Servidor:</b> Computadora remota que almacena los archivos y los envía al cliente.</li>
+                </ul>
+                <div class="image-placeholder mt-5">
+                    <img src="/imagenes/servidor.jpg" alt="Arquitectura Cliente Servidor" class="h-full">
                 </div>
             </div>
 
-            <!-- Diapositiva 7: Estructura de un Documento HTML -->
+            <!-- Diapositiva 5: Navegadores Web -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">4. Navegadores Web</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Es el software encargado de interpretar el código HTML, CSS y JS para mostrarlo visualmente al usuario.
+                </p>
+                <div class="flex justify-center space-x-10 mt-5">
+                    <img src="/imagenes/logo.png" alt="Navegador" class="h-16 grayscale">
+                    <p class="text-gray-500 mt-4">Chrome, Firefox, Edge, Safari...</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: Protocolos HTTP y HTTPS -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">5. Protocolos HTTP y HTTPS</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Reglas para transferir datos en la web. La "S" en <b>HTTPS</b> significa "Seguro", indicando que los datos viajan cifrados.
+                </p>
+                <div class="bg-green-100 p-4 rounded-lg mt-5 border border-green-200">
+                    <p class="text-green-800 font-bold">Siempre utiliza HTTPS para proteger la privacidad del usuario.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Dominios y Hosting -->
             <div id="slide-7" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Estructura Básica</h3>
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">6. Dominios y Hosting</h3>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 max-w-4xl text-left">
+                    <div class="flex-1 p-4 bg-yellow-50 rounded-xl border border-yellow-200 shadow">
+                        <p class="font-bold text-yellow-800 text-lg">Dominio</p>
+                        <p class="text-sm">El nombre único del sitio web (Ej: google.com). Es la "dirección" de la casa.</p>
+                    </div>
+                    <div class="flex-1 p-4 bg-indigo-50 rounded-xl border border-indigo-200 shadow">
+                        <p class="font-bold text-indigo-800 text-lg">Hosting</p>
+                        <p class="text-sm">El espacio alquilado en el servidor para guardar los archivos. Es el "terreno" donde se construye la casa.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: ¿Qué es HTML? -->
+            <div id="slide-8" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">7. ¿Qué es HTML?</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    <b>HyperText Markup Language</b>. Es el lenguaje base de la web. Se utiliza para definir la estructura y el contenido de las páginas mediante etiquetas.
+                </p>
+                <div class="image-placeholder mt-5">
+                    <img src="/imagenes/html_logo.svg" alt="HTML5 Logo" class="h-24">
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Estructura Básica HTML -->
+            <div id="slide-9" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">8. Estructura Básica</h3>
                 <div class="bg-gray-900 text-blue-300 p-5 rounded-xl font-mono text-left text-xs max-w-2xl w-full">
                     <p class="text-gray-500">&lt;!DOCTYPE html&gt;</p>
-                    <p>&lt;html lang="es"&gt;</p>
-                    <p class="ml-4">&lt;head&gt;</p>
-                    <p class="ml-8 text-yellow-200">&lt;title&gt;Mi Primera Web&lt;/title&gt;</p>
-                    <p class="ml-4">&lt;/head&gt;</p>
-                    <p class="ml-4">&lt;body&gt;</p>
-                    <p class="ml-8 text-white">&lt;h1&gt;Bienvenidos&lt;/h1&gt;</p>
-                    <p class="ml-8 text-white">&lt;p&gt;Contenido visible aquí.&lt;/p&gt;</p>
-                    <p class="ml-4">&lt;/body&gt;</p>
+                    <p>&lt;html&gt;</p>
+                    <p class="ml-4">&lt;head&gt; ... &lt;/head&gt;</p>
+                    <p class="ml-4">&lt;body&gt; ... &lt;/body&gt;</p>
                     <p>&lt;/html&gt;</p>
                 </div>
+                <p class="mt-4 text-xs text-gray-500">Todo documento HTML5 debe comenzar con la declaración doctype.</p>
             </div>
 
-            <!-- Diapositiva 8: Etiquetas Esenciales (I) -->
-            <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Etiquetas Fundamentales</h3>
-                <div class="grid grid-cols-2 gap-4 max-w-4xl w-full text-left text-sm">
-                    <div class="p-3 bg-white border border-gray-200 rounded shadow-sm">
-                        <code class="text-blue-600 font-bold">&lt;h1&gt; a &lt;h6&gt;</code>
-                        <p class="text-xs text-gray-500 mt-1">Encabezados de diferentes niveles.</p>
-                    </div>
-                    <div class="p-3 bg-white border border-gray-200 rounded shadow-sm">
-                        <code class="text-blue-600 font-bold">&lt;p&gt;</code>
-                        <p class="text-xs text-gray-500 mt-1">Define un párrafo de texto.</p>
-                    </div>
-                    <div class="p-3 bg-white border border-gray-200 rounded shadow-sm">
-                        <code class="text-blue-600 font-bold">&lt;a href="..."&gt;</code>
-                        <p class="text-xs text-gray-500 mt-1">Crea enlaces a otras páginas.</p>
-                    </div>
-                    <div class="p-3 bg-white border border-gray-200 rounded shadow-sm">
-                        <code class="text-blue-600 font-bold">&lt;img src="..."&gt;</code>
-                        <p class="text-xs text-gray-500 mt-1">Inserta una imagen en la página.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Listas y Contenedores -->
-            <div id="slide-9" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Listas y Contenedores</h3>
-                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-8 max-w-3xl">
-                    <div class="text-left">
-                        <p class="font-bold mb-2">Listas</p>
-                        <ul class="list-disc list-inside text-sm">
-                            <li><code>&lt;ul&gt;</code>: Desordenada.</li>
-                            <li><code>&lt;ol&gt;</code>: Ordenada (1, 2, 3).</li>
-                            <li><code>&lt;li&gt;</code>: Elemento de lista.</li>
-                        </ul>
-                    </div>
-                    <div class="text-left">
-                        <p class="font-bold mb-2">Contenedores</p>
-                        <ul class="list-disc list-inside text-sm">
-                            <li><code>&lt;div&gt;</code>: Bloque genérico.</li>
-                            <li><code>&lt;span&gt;</code>: Línea genérica.</li>
-                            <li><code>&lt;header&gt; / &lt;footer&gt;</code></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 10: Cuestionario -->
+            <!-- Diapositiva 10: El elemento HEAD -->
             <div id="slide-10" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">9. El elemento &lt;head&gt;</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Contiene metadatos e información no visible directamente para el usuario, como el título de la pestaña, enlaces a estilos y scripts.
+                </p>
+                <ul class="text-left mt-4 text-sm space-y-1">
+                    <li><code>&lt;title&gt;</code>: Título de la página.</li>
+                    <li><code>&lt;meta&gt;</code>: Codificación y descripción.</li>
+                    <li><code>&lt;link&gt;</code>: Conexión con CSS.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 11: El elemento BODY -->
+            <div id="slide-11" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">10. El elemento &lt;body&gt;</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Contiene todo el contenido visible de la página web: textos, imágenes, videos, formularios y botones.
+                </p>
+                <div class="image-placeholder mt-5">
+                    <img src="/imagenes/icono_inicio.png" alt="Contenido Visible" class="h-16">
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Títulos y Párrafos -->
+            <div id="slide-12" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">11. Títulos y Párrafos</h3>
+                <div class="bg-gray-100 p-5 rounded-lg w-full max-w-2xl text-left">
+                    <p class="mb-3"><code>&lt;h1&gt;</code> al <code>&lt;h6&gt;</code>: Definen niveles de jerarquía en los encabezados.</p>
+                    <p><code>&lt;p&gt;</code>: Se utiliza para agrupar bloques de texto.</p>
+                </div>
+                <div class="mt-5 border p-3 rounded">
+                    <h1 class="text-2xl font-bold">Título H1</h1>
+                    <p class="text-sm">Esto es un párrafo de ejemplo.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 13: Enlaces e Hipervínculos -->
+            <div id="slide-13" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">12. Enlaces (Etiqueta &lt;a&gt;)</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Permiten navegar entre diferentes páginas. El atributo más importante es <b>href</b> (Hypertext Reference).
+                </p>
+                <code class="block bg-gray-200 p-3 mt-4 rounded">&lt;a href="pagina.html"&gt;Ir a...&lt;/a&gt;</code>
+            </div>
+
+            <!-- Diapositiva 14: Inserción de Imágenes -->
+            <div id="slide-14" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">13. Imágenes (Etiqueta &lt;img&gt;)</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Es una etiqueta de auto-cierre. Requiere los atributos <b>src</b> (ruta) y <b>alt</b> (texto alternativo).
+                </p>
+                <div class="bg-gray-800 text-white p-4 rounded-lg mt-5 font-mono text-xs">
+                    &lt;img src="foto.jpg" alt="Descripción de la foto"&gt;
+                </div>
+            </div>
+
+            <!-- Diapositiva 15: Listas -->
+            <div id="slide-15" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">14. Listas en HTML</h3>
+                <div class="flex space-x-10 mt-5">
+                    <div class="text-left">
+                        <p class="font-bold">Desordenadas (&lt;ul&gt;)</p>
+                        <ul class="list-disc list-inside text-sm">
+                            <li>Item A</li>
+                            <li>Item B</li>
+                        </ul>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-bold">Ordenadas (&lt;ol&gt;)</p>
+                        <ol class="list-decimal list-inside text-sm">
+                            <li>Primero</li>
+                            <li>Segundo</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 16: Introducción a CSS -->
+            <div id="slide-16" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">15. Introducción a CSS</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    <b>Cascading Style Sheets</b>. Se encarga de la presentación visual del sitio (colores, fuentes, márgenes).
+                </p>
+                <div class="image-placeholder mt-5">
+                    <img src="/imagenes/css_logo.svg" alt="CSS3 Logo" class="h-24">
+                </div>
+            </div>
+
+            <!-- Diapositiva 17: Selectores CSS -->
+            <div id="slide-17" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">16. Selectores Básicos</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Permiten elegir a qué elementos HTML aplicarles estilo.
+                </p>
+                <div class="bg-gray-100 p-5 rounded-lg mt-5 text-left text-sm max-w-md mx-auto">
+                    <p><b>Elemento:</b> <code>p { color: red; }</code></p>
+                    <p><b>Clase:</b> <code>.mi-clase { ... }</code></p>
+                    <p><b>ID:</b> <code>#mi-id { ... }</code></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 18: Cuestionario -->
+            <div id="slide-18" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¡Cuestionario de Diseño Web!</h3>
                 <div id="quiz-container" class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-md max-w-3xl w-full text-center">
                     <div id="quiz-question" class="text-base sm:text-xl font-semibold mb-2 sm:mb-5 text-gray-800"></div>
@@ -327,13 +401,13 @@
                 </div>
             </div>
 
-            <!-- Diapositiva 11: Conclusión -->
-            <div id="slide-11" class="slide">
+            <!-- Diapositiva 19: Conclusión -->
+            <div id="slide-19" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Conclusión</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
-                    El diseño web combina creatividad y técnica. HTML es el primer paso de este emocionante camino que te permitirá construir tus propias ventanas al mundo digital.
+                    El diseño web es la puerta al mundo digital. Dominar HTML y CSS te permitirá crear experiencias únicas en internet.
                 </p>
-                <p class="text-lg mt-8 font-bold text-blue-600">¡Sigue practicando y construyendo la web del futuro!</p>
+                <p class="text-lg mt-8 font-bold text-blue-600">¡Sigue creando y diseñando el futuro!</p>
             </div>
         </div>
 
@@ -342,13 +416,13 @@
             <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
             <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
         </div>
-        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 11</div>
+        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 19</div>
     </main>
 
     <!-- Pie de página -->
     <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
         <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
-            <img src="https://informatica0101.github.io/imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
+            <img src="/imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
             <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
         </div>
     </footer>
@@ -364,54 +438,54 @@
 
         const quizQuestions = [
             {
-                question: "1. ¿Cuál es el proceso de planificar y organizar contenido para internet?",
-                options: ["Diseño Web", "Mantenimiento de PC", "Redes", "Ofimática"],
-                correctAnswer: "Diseño Web"
+                question: "1. ¿Qué software interpreta el código HTML?",
+                options: ["Word", "Navegador", "Excel", "Antivirus"],
+                correctAnswer: "Navegador"
             },
             {
-                question: "2. ¿En qué etapa de la web los usuarios empezaron a crear contenido activamente?",
+                question: "2. ¿Qué significan las siglas HTML?",
+                options: ["HyperText Markup Language", "High Tech Modern Logic", "Home Tool Markup List", "Hyperlink Text Main Line"],
+                correctAnswer: "HyperText Markup Language"
+            },
+            {
+                question: "3. ¿En qué etapa de la web los usuarios empezaron a crear contenido?",
                 options: ["Web 1.0", "Web 2.0", "Web 3.0", "Web 4.0"],
                 correctAnswer: "Web 2.0"
             },
             {
-                question: "3. ¿Qué software utilizamos para visualizar páginas web?",
-                options: ["Word", "Photoshop", "Navegador", "Excel"],
-                correctAnswer: "Navegador"
+                question: "4. ¿Qué protocolo es más seguro?",
+                options: ["HTTP", "FTP", "HTTPS", "SMTP"],
+                correctAnswer: "HTTPS"
             },
             {
-                question: "4. ¿Qué significan las siglas URL?",
-                options: ["Uniform Resource Locator", "Universal Radio Link", "User Response Line", "Under Real Line"],
-                correctAnswer: "Uniform Resource Locator"
+                question: "5. ¿Para qué sirve el Hosting?",
+                options: ["Para comprar dominios", "Para alojar archivos del sitio", "Para diseñar logos", "Para navegar"],
+                correctAnswer: "Para alojar archivos del sitio"
             },
             {
-                question: "5. ¿Qué indica la 'S' en el protocolo HTTPS?",
-                options: ["Sencillo", "Seguro (Cifrado)", "Sincronizado", "Superior"],
-                correctAnswer: "Seguro (Cifrado)"
-            },
-            {
-                question: "6. ¿Qué lenguaje define la estructura y el contenido de una web?",
-                options: ["C++", "Python", "HTML", "Java"],
-                correctAnswer: "HTML"
-            },
-            {
-                question: "7. ¿Cuál es la etiqueta que contiene toda la información visible al usuario?",
-                options: ["<head>", "<body>", "<html>", "<title>"],
+                question: "6. ¿Qué etiqueta contiene lo que el usuario ve en pantalla?",
+                options: ["<head>", "<body>", "<html>", "<meta>"],
                 correctAnswer: "<body>"
             },
             {
-                question: "8. ¿Qué etiqueta se utiliza para crear un enlace o hipervínculo?",
-                options: ["<img>", "<li>", "<a>", "<div>"],
-                correctAnswer: "<a>"
+                question: "7. ¿Cuál es el atributo principal de un enlace (<a>)?",
+                options: ["src", "alt", "href", "title"],
+                correctAnswer: "href"
             },
             {
-                question: "9. ¿Cuál de estos niveles de encabezado representa el título más grande?",
-                options: ["<h3>", "<h6>", "<h1>", "<h5>"],
-                correctAnswer: "<h1>"
+                question: "8. ¿Qué etiqueta se usa para insertar imágenes?",
+                options: ["<link>", "<src>", "<img>", "<a>"],
+                correctAnswer: "<img>"
             },
             {
-                question: "10. ¿Para qué sirve el Hosting?",
-                options: ["Para comprar un mouse", "Para alojar los archivos del sitio web en un servidor", "Para navegar por internet", "Para escribir código HTML"],
-                correctAnswer: "Para alojar los archivos del sitio web en un servidor"
+                question: "9. ¿Qué lenguaje se encarga del estilo visual?",
+                options: ["HTML", "C++", "CSS", "PHP"],
+                correctAnswer: "CSS"
+            },
+            {
+                question: "10. ¿Qué selector CSS aplica estilo a un ID específico?",
+                options: ["Punto (.)", "Almohadilla (#)", "Coma (,)", "Asterisco (*)"],
+                correctAnswer: "Almohadilla (#)"
             }
         ];
         let currentQuizQuestionIndex = 0;
@@ -467,7 +541,8 @@
             isTransitioning = true;
             slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
             currentSlideIndex = index;
-            if (currentSlideIndex === 9) { currentQuizQuestionIndex = 0; updateQuizDisplay(); }
+            // Quiz is index 17 (18th slide)
+            if (currentSlideIndex === 17) { currentQuizQuestionIndex = 0; updateQuizDisplay(); }
             const activeSlide = slides[currentSlideIndex];
             activeSlide.style.display = 'flex';
             setTimeout(() => {
