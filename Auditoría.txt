@@ -70,3 +70,49 @@ Auditoría Final v6 - Sun Jan 25 21:15:00 UTC 2026
 1. js/config.js: Actualización de EXAM URL a endpoint definitivo.
 2. sw.js: Bump a v6 and actualización de assets precacheados.
 3. Global: Cache-busting v=6 aplicado.
+
+Auditoría - Creación de Presentaciones and Normalización - 2026-02-01
+--------------------------------------------------------------------------------
+1. Imágenes:
+   - Unificación total de activos en /imagenes/ raíz.
+   - Normalización de rutas en todos los .html (absolutas a informatica0101.github.io).
+   - Hallazgo: Algunas imágenes referenciadas en archivos antiguos no existen en el repo (ej. maquina_tabuladora.jpg).
+2. js/data.js:
+   - Décimo grado comentado.
+   - Undécimo: Solo visible "Programación".
+   - Duodécimo: Solo visible "Diseño Web".
+3. Nuevas Presentaciones:
+   - II_BTP_A/Programacion/introduccion_programacion.html (Lógica, Programación, Algoritmos).
+   - III_BTP_A/introduccion_diseno_web.html (Diseño Web, HTML).
+   - Ambas respetan la plantilla base and lógica de cuestionario.
+4. Hallazgo Crítico:
+   - Los PDFs proporcionados son escaneos de imagen sin capa de texto. Se procedió con contenido basado en temas solicitados and currículo estándar.
+
+Auditoría - Unificación de Imágenes y Expansión de Contenido - 01/02/2026
+--------------------------------------------------
+1. Unificación de Imágenes:
+   - Se eliminó el directorio js/imagenes/ tras confirmar que no contenía archivos únicos.
+   - Se aplicó una sustitución global en HTML, CSS y JS para usar la URL absoluta https://informatica0101.github.io/imagenes/.
+   - Se corrigieron rutas relativas rotas en múltiples subdirectorios.
+2. Expansión de Presentaciones:
+   - II_BTP_A/Programacion/introduccion_programacion.html ampliada a 19 diapositivas (16 de contenido, portada, cuestionario y conclusión).
+   - III_BTP_A/introduccion_diseno_web.html ampliada a 19 diapositivas (16 de contenido, portada, cuestionario y conclusión).
+   - Ambas presentaciones incluyen ahora un cuestionario de 10 preguntas vinculadas al nuevo contenido.
+3. Saneamiento de Enlaces:
+   - Se corrigieron los botones "Inicio" para apuntar a index.html con URL absoluta.
+   - Se corrigieron enlaces rotos a pseudocode.js (ahora pseudocode.html) y fundamentos_ii.pdf (ahora #).
+   - Se validó la integridad de la navegación principal del sistema.
+
+Auditoría - Corrección de Rutas para Portabilidad (GitHub Pages) - 01/02/2026
+--------------------------------------------------------------------------------
+1. Rutas de Imágenes y Navegación:
+   - Hallazgo: El uso de rutas absolutas (/imagenes/, /index.html) o URLs completas (https://informatica0101.github.io/...) rompe la visualización de activos y navegación cuando el sitio no se sirve desde la raíz exacta del dominio o en entornos de previsualización.
+   - Acción: Se convirtieron todas las rutas a relativas (../../, ../, etc.) calculando la profundidad de cada archivo.
+2. Centralización de Activos:
+   - Hallazgo: Existían directorios /imagenes/ redundantes dentro de subcarpetas (III_BTP_A/dw_II/imagenes/, Informatica_I/imagenes/, etc.) que contenían duplicados.
+   - Acción: Se eliminaron todos los directorios /imagenes/ secundarios y se normalizaron las referencias a la carpeta raíz /imagenes/.
+3. Scripts y Juegos:
+   - Hallazgo: js/perifericos_juego.js usaba rutas absolutas para las imágenes de los periféricos.
+   - Acción: Se actualizaron las rutas a relativas compatibles con el punto de entrada del juego.
+4. Verificación:
+   - Se comprobó mediante screenshots que las imágenes en las presentaciones de "Programación" y "Diseño Web" ahora cargan correctamente tras la normalización.

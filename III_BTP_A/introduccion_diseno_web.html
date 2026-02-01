@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducción al Diseño Web</title>
+    <!-- CDN de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos base para un diseño consistente */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Ajuste global para reducir el tamaño base en un 10%. (1rem = 0.9rem) */
+        html {
+            font-size: 90%;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            justify-content: space-between;
+        }
+
+        #presentation-container {
+            width: 100%;
+            height: calc(100vh - 7rem);
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            max-width: 100vw;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 1.8rem;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            overflow-y: auto;
+        }
+        .slide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation-name: fadeIn;
+            animation-duration: 0.8s;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .slide h2, .slide h3 {
+                font-size: 1.4rem;
+            }
+            .slide p, .slide li {
+                font-size: 0.9rem;
+            }
+            .nav-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Estilos del Cuestionario */
+        .quiz-option-button {
+            transition: background-color 0.3s, transform 0.2s;
+            text-align: left; /* Aseguramos que el texto esté a la izquierda */
+            padding-left: 1.5rem; /* Espaciado interno */
+        }
+
+        .quiz-option-button.correct {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .quiz-option-button.incorrect {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        /* Estilo para placeholder de imagen */
+        .image-placeholder {
+            height: 150px;
+            width: 250px;
+            color: #009688;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            border-radius: 8px;
+            margin: 1rem auto;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 10px;
+        }
+        @media (min-width: 640px) {
+            .image-placeholder {
+                height: 200px;
+                width: 350px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header de la página -->
+    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
+            <img src="../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
+            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Introducción al Diseño Web</h1>
+        </div>
+        <nav class="mt-3 sm:mt-0">
+            <ul class="flex space-x-2 sm:space-x-3">
+                <li><a href="../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
+                <li><a href="../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Acerca de</a></li>
+                <li><a href="../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenido principal de la presentación -->
+    <main class="flex-grow flex justify-center items-center p-3">
+        <div id="presentation-container" class="relative">
+
+            <!-- Diapositiva 1: Portada -->
+            <div id="slide-1" class="slide active">
+                <img src="../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-3 sm:mb-7">
+                <h2 class="text-lg sm:text-xl mb-1 sm:mb-3 text-blue-600">Introducción al Diseño Web</h2>
+                <p class="text-xs sm:text-sm text-gray-600">Conceptos básicos y Lenguaje HTML</p>
+                <div class="mt-3 sm:mt-7 text-xs text-gray-500">
+                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                    <p>Fecha: 1 de febrero de 2026</p>
+                    <p>Grado: Duodécimo de Informática</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 2: ¿Qué es el Diseño Web? -->
+            <div id="slide-2" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">1. ¿Qué es el Diseño Web?</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Es la planificación, creación y mantenimiento de sitios web. Combina aspectos visuales (estética) con aspectos funcionales (usabilidad y arquitectura de información).
+                </p>
+                <div class="image-placeholder mt-5">
+                    <img src="../imagenes/frontend_visual.png" alt="Diseño Web" class="h-full">
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: Evolución de la Web -->
+            <div id="slide-3" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2. Evolución de la Web</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-5xl text-center">
+                    <div class="bg-gray-50 p-4 rounded-lg shadow">
+                        <p class="font-bold text-gray-700">Web 1.0</p>
+                        <p class="text-xs">Estática, solo lectura. Páginas simples de texto e imágenes.</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg shadow border-b-4 border-blue-400">
+                        <p class="font-bold text-blue-700">Web 2.0</p>
+                        <p class="text-xs">Social y colaborativa. El usuario crea contenido (Blogs, RRSS).</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg shadow border-b-4 border-purple-400">
+                        <p class="font-bold text-purple-700">Web 3.0</p>
+                        <p class="text-xs">Semántica e inteligente. IA y descentralización.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: Conceptos: Cliente y Servidor -->
+            <div id="slide-4" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">3. Cliente y Servidor</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
+                    La web funciona mediante una arquitectura de peticiones y respuestas.
+                </p>
+                <ul class="text-left space-y-3 max-w-2xl">
+                    <li><b>Cliente:</b> El navegador del usuario que solicita información (Chrome, Safari).</li>
+                    <li><b>Servidor:</b> Computadora remota que almacena los archivos y los envía al cliente.</li>
+                </ul>
+                <div class="image-placeholder mt-5">
+                    <img src="../imagenes/servidor.jpg" alt="Arquitectura Cliente Servidor" class="h-full">
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Navegadores Web -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">4. Navegadores Web</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Es el software encargado de interpretar el código HTML, CSS y JS para mostrarlo visualmente al usuario.
+                </p>
+                <div class="flex justify-center space-x-10 mt-5">
+                    <img src="../imagenes/logo.png" alt="Navegador" class="h-16 grayscale">
+                    <p class="text-gray-500 mt-4">Chrome, Firefox, Edge, Safari...</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: Protocolos HTTP y HTTPS -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">5. Protocolos HTTP y HTTPS</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Reglas para transferir datos en la web. La "S" en <b>HTTPS</b> significa "Seguro", indicando que los datos viajan cifrados.
+                </p>
+                <div class="bg-green-100 p-4 rounded-lg mt-5 border border-green-200">
+                    <p class="text-green-800 font-bold">Siempre utiliza HTTPS para proteger la privacidad del usuario.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Dominios y Hosting -->
+            <div id="slide-7" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">6. Dominios y Hosting</h3>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 max-w-4xl text-left">
+                    <div class="flex-1 p-4 bg-yellow-50 rounded-xl border border-yellow-200 shadow">
+                        <p class="font-bold text-yellow-800 text-lg">Dominio</p>
+                        <p class="text-sm">El nombre único del sitio web (Ej: google.com). Es la "dirección" de la casa.</p>
+                    </div>
+                    <div class="flex-1 p-4 bg-indigo-50 rounded-xl border border-indigo-200 shadow">
+                        <p class="font-bold text-indigo-800 text-lg">Hosting</p>
+                        <p class="text-sm">El espacio alquilado en el servidor para guardar los archivos. Es el "terreno" donde se construye la casa.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: ¿Qué es HTML? -->
+            <div id="slide-8" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">7. ¿Qué es HTML?</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    <b>HyperText Markup Language</b>. Es el lenguaje base de la web. Se utiliza para definir la estructura y el contenido de las páginas mediante etiquetas.
+                </p>
+                <div class="image-placeholder mt-5">
+                    <img src="../imagenes/html_logo.svg" alt="HTML5 Logo" class="h-24">
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Estructura Básica HTML -->
+            <div id="slide-9" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">8. Estructura Básica</h3>
+                <div class="bg-gray-900 text-blue-300 p-5 rounded-xl font-mono text-left text-xs max-w-2xl w-full">
+                    <p class="text-gray-500">&lt;!DOCTYPE html&gt;</p>
+                    <p>&lt;html&gt;</p>
+                    <p class="ml-4">&lt;head&gt; ... &lt;/head&gt;</p>
+                    <p class="ml-4">&lt;body&gt; ... &lt;/body&gt;</p>
+                    <p>&lt;/html&gt;</p>
+                </div>
+                <p class="mt-4 text-xs text-gray-500">Todo documento HTML5 debe comenzar con la declaración doctype.</p>
+            </div>
+
+            <!-- Diapositiva 10: El elemento HEAD -->
+            <div id="slide-10" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">9. El elemento &lt;head&gt;</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Contiene metadatos e información no visible directamente para el usuario, como el título de la pestaña, enlaces a estilos y scripts.
+                </p>
+                <ul class="text-left mt-4 text-sm space-y-1">
+                    <li><code>&lt;title&gt;</code>: Título de la página.</li>
+                    <li><code>&lt;meta&gt;</code>: Codificación y descripción.</li>
+                    <li><code>&lt;link&gt;</code>: Conexión con CSS.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 11: El elemento BODY -->
+            <div id="slide-11" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">10. El elemento &lt;body&gt;</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Contiene todo el contenido visible de la página web: textos, imágenes, videos, formularios y botones.
+                </p>
+                <div class="image-placeholder mt-5">
+                    <img src="../imagenes/icono_inicio.png" alt="Contenido Visible" class="h-16">
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Títulos y Párrafos -->
+            <div id="slide-12" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">11. Títulos y Párrafos</h3>
+                <div class="bg-gray-100 p-5 rounded-lg w-full max-w-2xl text-left">
+                    <p class="mb-3"><code>&lt;h1&gt;</code> al <code>&lt;h6&gt;</code>: Definen niveles de jerarquía en los encabezados.</p>
+                    <p><code>&lt;p&gt;</code>: Se utiliza para agrupar bloques de texto.</p>
+                </div>
+                <div class="mt-5 border p-3 rounded">
+                    <h1 class="text-2xl font-bold">Título H1</h1>
+                    <p class="text-sm">Esto es un párrafo de ejemplo.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 13: Enlaces e Hipervínculos -->
+            <div id="slide-13" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">12. Enlaces (Etiqueta &lt;a&gt;)</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Permiten navegar entre diferentes páginas. El atributo más importante es <b>href</b> (Hypertext Reference).
+                </p>
+                <code class="block bg-gray-200 p-3 mt-4 rounded">&lt;a href="pagina.html"&gt;Ir a...&lt;/a&gt;</code>
+            </div>
+
+            <!-- Diapositiva 14: Inserción de Imágenes -->
+            <div id="slide-14" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">13. Imágenes (Etiqueta &lt;img&gt;)</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Es una etiqueta de auto-cierre. Requiere los atributos <b>src</b> (ruta) y <b>alt</b> (texto alternativo).
+                </p>
+                <div class="bg-gray-800 text-white p-4 rounded-lg mt-5 font-mono text-xs">
+                    &lt;img src="foto.jpg" alt="Descripción de la foto"&gt;
+                </div>
+            </div>
+
+            <!-- Diapositiva 15: Listas -->
+            <div id="slide-15" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">14. Listas en HTML</h3>
+                <div class="flex space-x-10 mt-5">
+                    <div class="text-left">
+                        <p class="font-bold">Desordenadas (&lt;ul&gt;)</p>
+                        <ul class="list-disc list-inside text-sm">
+                            <li>Item A</li>
+                            <li>Item B</li>
+                        </ul>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-bold">Ordenadas (&lt;ol&gt;)</p>
+                        <ol class="list-decimal list-inside text-sm">
+                            <li>Primero</li>
+                            <li>Segundo</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 16: Introducción a CSS -->
+            <div id="slide-16" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">15. Introducción a CSS</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    <b>Cascading Style Sheets</b>. Se encarga de la presentación visual del sitio (colores, fuentes, márgenes).
+                </p>
+                <div class="image-placeholder mt-5">
+                    <img src="../imagenes/css_logo.svg" alt="CSS3 Logo" class="h-24">
+                </div>
+            </div>
+
+            <!-- Diapositiva 17: Selectores CSS -->
+            <div id="slide-17" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">16. Selectores Básicos</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Permiten elegir a qué elementos HTML aplicarles estilo.
+                </p>
+                <div class="bg-gray-100 p-5 rounded-lg mt-5 text-left text-sm max-w-md mx-auto">
+                    <p><b>Elemento:</b> <code>p { color: red; }</code></p>
+                    <p><b>Clase:</b> <code>.mi-clase { ... }</code></p>
+                    <p><b>ID:</b> <code>#mi-id { ... }</code></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 18: Cuestionario -->
+            <div id="slide-18" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¡Cuestionario de Diseño Web!</h3>
+                <div id="quiz-container" class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-md max-w-3xl w-full text-center">
+                    <div id="quiz-question" class="text-base sm:text-xl font-semibold mb-2 sm:mb-5 text-gray-800"></div>
+                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-3"></div>
+                    <div id="quiz-feedback" class="mt-3 sm:mt-5 text-sm sm:text-base font-bold"></div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 19: Conclusión -->
+            <div id="slide-19" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Conclusión</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    El diseño web es la puerta al mundo digital. Dominar HTML y CSS te permitirá crear experiencias únicas en internet.
+                </p>
+                <p class="text-lg mt-8 font-bold text-blue-600">¡Sigue creando y diseñando el futuro!</p>
+            </div>
+        </div>
+
+        <!-- Botones de navegación -->
+        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
+            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
+            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        </div>
+        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 19</div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
+            <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        let currentSlideIndex = 0;
+        let isTransitioning = false;
+
+        const quizQuestions = [
+            {
+                question: "1. ¿Qué software interpreta el código HTML?",
+                options: ["Word", "Navegador", "Excel", "Antivirus"],
+                correctAnswer: "Navegador"
+            },
+            {
+                question: "2. ¿Qué significan las siglas HTML?",
+                options: ["HyperText Markup Language", "High Tech Modern Logic", "Home Tool Markup List", "Hyperlink Text Main Line"],
+                correctAnswer: "HyperText Markup Language"
+            },
+            {
+                question: "3. ¿En qué etapa de la web los usuarios empezaron a crear contenido?",
+                options: ["Web 1.0", "Web 2.0", "Web 3.0", "Web 4.0"],
+                correctAnswer: "Web 2.0"
+            },
+            {
+                question: "4. ¿Qué protocolo es más seguro?",
+                options: ["HTTP", "FTP", "HTTPS", "SMTP"],
+                correctAnswer: "HTTPS"
+            },
+            {
+                question: "5. ¿Para qué sirve el Hosting?",
+                options: ["Para comprar dominios", "Para alojar archivos del sitio", "Para diseñar logos", "Para navegar"],
+                correctAnswer: "Para alojar archivos del sitio"
+            },
+            {
+                question: "6. ¿Qué etiqueta contiene lo que el usuario ve en pantalla?",
+                options: ["<head>", "<body>", "<html>", "<meta>"],
+                correctAnswer: "<body>"
+            },
+            {
+                question: "7. ¿Cuál es el atributo principal de un enlace (<a>)?",
+                options: ["src", "alt", "href", "title"],
+                correctAnswer: "href"
+            },
+            {
+                question: "8. ¿Qué etiqueta se usa para insertar imágenes?",
+                options: ["<link>", "<src>", "<img>", "<a>"],
+                correctAnswer: "<img>"
+            },
+            {
+                question: "9. ¿Qué lenguaje se encarga del estilo visual?",
+                options: ["HTML", "C++", "CSS", "PHP"],
+                correctAnswer: "CSS"
+            },
+            {
+                question: "10. ¿Qué selector CSS aplica estilo a un ID específico?",
+                options: ["Punto (.)", "Almohadilla (#)", "Coma (,)", "Asterisco (*)"],
+                correctAnswer: "Almohadilla (#)"
+            }
+        ];
+        let currentQuizQuestionIndex = 0;
+
+        function updateQuizDisplay() {
+            const quizQuestionElement = document.getElementById('quiz-question');
+            const quizOptionsElement = document.getElementById('quiz-options');
+            const quizFeedbackElement = document.getElementById('quiz-feedback');
+            if (currentQuizQuestionIndex >= quizQuestions.length) {
+                quizQuestionElement.textContent = "¡Cuestionario completado! ¡Eres un experto!";
+                quizOptionsElement.innerHTML = '';
+                quizFeedbackElement.textContent = '';
+                return;
+            }
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            quizQuestionElement.textContent = currentQuestion.question;
+            quizOptionsElement.innerHTML = '';
+            quizFeedbackElement.textContent = '';
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = "quiz-option-button w-full px-5 py-2 rounded-xl border border-blue-400 bg-blue-50 text-blue-700 font-semibold transition-colors duration-200 hover:bg-blue-100 text-sm";
+                button.onclick = () => checkAnswer(option);
+                quizOptionsElement.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            const quizFeedback = document.getElementById('quiz-feedback');
+            const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
+            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+            buttons.forEach(button => {
+                button.disabled = true;
+                if (button.textContent === currentQuestion.correctAnswer) button.classList.add('correct');
+                else if (button.textContent === selectedOption) button.classList.add('incorrect');
+            });
+            if (isCorrect) {
+                quizFeedback.textContent = '¡Correcto!';
+                quizFeedback.classList.add('text-green-500');
+            } else {
+                quizFeedback.textContent = 'Incorrecto. La respuesta es: ' + currentQuestion.correctAnswer;
+                quizFeedback.classList.add('text-red-500');
+            }
+            setTimeout(() => {
+                currentQuizQuestionIndex++;
+                updateQuizDisplay();
+            }, 2000);
+        }
+
+        function showSlide(index) {
+            if (isTransitioning || index < 0 || index >= slides.length) return;
+            isTransitioning = true;
+            slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+            currentSlideIndex = index;
+            // Quiz is index 17 (18th slide)
+            if (currentSlideIndex === 17) { currentQuizQuestionIndex = 0; updateQuizDisplay(); }
+            const activeSlide = slides[currentSlideIndex];
+            activeSlide.style.display = 'flex';
+            setTimeout(() => {
+                activeSlide.classList.add('active');
+                slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+                prevButton.disabled = currentSlideIndex === 0;
+                nextButton.disabled = currentSlideIndex === slides.length - 1;
+                isTransitioning = false;
+            }, 10);
+        }
+
+        nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
+        prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>

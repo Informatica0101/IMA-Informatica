@@ -1,3 +1,21 @@
+01/02/2026
+- Archivo: II_BTP_A/Programacion/introduccion_programacion.html
+  - Ampliación masiva de contenido a 16 diapositivas educativas (Lógica, Fases de Desarrollo, Algoritmos, Traductores, etc.).
+  - Actualización del cuestionario a 10 preguntas objetivas alineadas con el nuevo temario.
+  - Corrección de rutas a formato relativo (../) para asegurar portabilidad.
+- Archivo: III_BTP_A/introduccion_diseno_web.html
+  - Ampliación masiva de contenido a 16 diapositivas educativas (Evolución Web, Cliente-Servidor, Estructura HTML5, Etiquetas Esenciales, Introducción a CSS).
+  - Actualización del cuestionario a 10 preguntas objetivas alineadas con el nuevo temario.
+  - Corrección de rutas a formato relativo (../) para asegurar portabilidad.
+- Directorio: /imagenes/ (Global)
+  - Eliminación de carpetas de imágenes redundantes en subdirectorios (III_BTP_A/dw_II/imagenes/, II_BTP_A/analisis_diseno/imagenes/, etc.).
+  - Unificación total de activos en la carpeta raíz.
+- Archivos HTML (Global):
+  - Conversión masiva de rutas absolutas (/imagenes/, /index.html) a rutas relativas (../../, ../) calculadas por profundidad de directorio.
+  - Esto garantiza que las imágenes y la navegación funcionen en cualquier entorno de hosting (GitHub Pages subdirs, etc.).
+- Archivo: js/perifericos_juego.js
+  - Normalización de rutas de imágenes de activos de juego a formato relativo.
+
 14/01/2026
 - Archivo: js/teacher.js, Línea(s): 88-95
   - Se implementó código defensivo en la función `fetchTeacherActivity` para prevenir un error crítico de tipo 'TypeError: Cannot read properties of undefined (reading 'map')'. La modificación asegura que si alguna de las llamadas a la API devuelve `undefined`, el código manejará el valor de forma segura en lugar de fallar, mejorando la robustez general del dashboard del profesor.
@@ -519,7 +537,7 @@ OPTIMIZACIÓN VISUAL DEL DASHBOARD DOCENTE - 24/01/2026
   - Se mejoró la estrategia 'Network First' añadiendo un timeout de 3 segundos para prevenir esperas excesivas en conexiones lentas.
   - Se añadió lógica para omitir el caché en llamadas a microservicios de Google Scripts, garantizando datos siempre frescos.
   - Se actualizaron los assets precacheados para incluir versiones cache-busting (?v=4).
-- Archivos: index.html, login.html, register.html, student-dashboard.html, teacher-dashboard.html, exam.html, results.html, pseudocode.html, interactivo.html
+- Archivos: *.html, login.html, register.html, student-dashboard.html, teacher-dashboard.html, exam.html, results.html, pseudocode.html, interactivo.html
   - Se implementó cache-busting añadiendo el parámetro `?v=4` a todas las referencias de archivos CSS y JS locales.
 - Archivo: js/ui-common.js, pseudocode.html
   - Se actualizó la versión del registro del Service Worker a `sw.js?v=4` para forzar la detección de cambios por el navegador.

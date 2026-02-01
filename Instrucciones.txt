@@ -203,6 +203,27 @@ ________________________________________________________________________________
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
 
+TAREA: [A-36]
+TÍTULO: Unificación de Imágenes y Expansión de Contenido Educativo
+ÁREA: Frontend / Contenido / Activos
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se unificaron todas las imágenes en el directorio raíz /imagenes/ y se eliminaron carpetas redundantes en subdirectorios.
+- Se normalizaron todas las rutas de imágenes y enlaces a formato relativo (../, ../../) para asegurar portabilidad total en GitHub Pages y entornos locales.
+- Se ampliaron las presentaciones de Programación (Undécimo) y Diseño Web (Duodécimo) a 16 diapositivas de contenido educativo riguroso cada una.
+- Se implementaron cuestionarios de 10 preguntas por presentación, sincronizados con el nuevo contenido.
+- Se sanearon enlaces rotos y se corrigió la redirección del botón de Inicio en todo el sistema usando rutas relativas.
+
+TAREA: [A-35]
+TÍTULO: Refinamiento de Lógica de Preguntas (T/F y Término Pareado)
+ÁREA: Frontend / Backend / Exámenes
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Corregido envío de valores semánticos ("Verdadero"/"Falso") para preguntas de T/F.
+- Implementado barajado estable (Fisher-Yates) para definiciones en Término Pareado.
+- Agregada validación de definiciones duplicadas en la creación de exámenes.
+- Normalizada comparación de strings en el backend para calificación de Completación y T/F.
+
 TAREA: [A-34]
 TÍTULO: Corrección de Regresión en Módulo de Exámenes
 ÁREA: Frontend / Backend / Exámenes
@@ -238,13 +259,3 @@ TAREAS PENDIENTES
 ________________________________________________________________________________________________
 
 (No hay tareas críticas pendientes en este momento)
-
-TAREA: [A-35]
-TÍTULO: Refinamiento de Lógica de Preguntas (T/F y Término Pareado)
-ÁREA: Frontend / Backend / Exámenes
-PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
-- Corregido envío de valores semánticos ("Verdadero"/"Falso") para preguntas de T/F.
-- Implementado barajado estable (Fisher-Yates) para definiciones en Término Pareado.
-- Agregada validación de definiciones duplicadas en la creación de exámenes.
-- Normalizada comparación de strings en el backend para calificación de Completación y T/F.
