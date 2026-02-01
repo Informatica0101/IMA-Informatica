@@ -1,0 +1,473 @@
+```
+# 1. Introducción
+
+## 1.1 Cómo “piensa” una computadora
+
+Aunque las computadoras cada vez más complejas pueden razonar mejor, una computadora solamente hace lo que se le ordena. Ahí es donde aparece el software. Un programa de software es una **sucesión de instrucciones**. Puede ser simple, como para que puedas calcular sumas o restas, o complicado, como para predecir la trayectoria de un cohete lanzado al espacio.
+
+A veces, un error en el programa de la computadora (BUGS) provoca un resultado inesperado y, generalmente, desagradable. Para los ingenieros de software es extremadamente difícil diseñar un programa perfecto. Por eso la mayoría de los programas inicialmente contienen errores y la **depuración** se convierte en una tarea diaria para los programadores.
+
+Depurar generalmente es una tarea difícil y agotadora. El elemento más importante para depurar un problema es la capacidad del programador para hacerlo. Sin embargo, la dificultad de la depuración del software varía considerablemente de acuerdo con el lenguaje de programación usado y a las herramientas utilizadas como depuradores.
+
+Los **depuradores** son herramientas de software que permiten que el programador pueda controlar la ejecución de un programa, detenerla, reiniciarla, ejecutarla en cámara lenta, cambiar los valores de la memoria y en algunos casos, retroceder en el tiempo.
+
+Finalmente, una computadora debe saber cómo comunicarse. Para ello es necesario conectarla a dispositivos periféricos. En el mundo digital actual, la computadora no sólo está equipada con los elementos básicos (teclado, mouse y pantalla) sino también con un módem, una cámara y una impresora.
+
+Muchas, y en realidad probablemente la mayoría de las computadoras, no cuentan con teclado ni pantalla sino que están incorporadas en diferentes dispositivos. Así, en un automóvil hay una computadora que detecta el funcionamiento y estado del motor y controla diferentes funciones.
+
+---
+
+## 1.2 Definición de lenguaje de programación
+
+El lenguaje de programación es la combinación de símbolos y reglas que permiten la elaboración de programas con los cuales la computadora puede realizar tareas o resolver problemas de manera eficiente.
+
+---
+
+# Algoritmos y su representación
+
+### Inicio
+1. Aflojar los tornillos de la llanta pinchada con la llave inglesa.
+2. Ubicar el gato mecánico en su sitio.
+3. Levantar el gato hasta que la rueda pinchada pueda girar libremente.
+4. Quitar los tornillos y la rueda pinchada.
+5. Poner rueda de repuesto y los tornillos.
+6. Bajar el gato hasta que se pueda liberar.
+7. Sacar el gato de su sitio.
+8. Apretar los tornillos con la llave inglesa.
+
+**Fin**
+
+---
+
+2. PROBLEMA: Un estudiante se encuentra en su casa (durmiendo) y debe ir al colegio (a tomar la clase de programación), ¿qué debe hacer el estudiante?
+
+#### Inicio
+1. Dormir.
+2. Haga 1 hasta que suene el despertador (o lo llame la mamá).
+3. Mirar la hora.
+4. ¿Hay tiempo suficiente?
+5. Si hay, entonces:
+6. Bañarse.
+7. Vestirse.
+8. Desayunar.
+9. Sino:
+10. Vestirse.
+11. Despedirse de la mamá y el papá.
+12. ¿Hay tiempo suficiente?
+13. Si: Caminar hasta la parada de buses.
+14. Sino: Correr a la parada de buses.
+15. Hasta que pase un bus para el colegio haga:
+16. Esperar el bus.
+17. Ver a las demás personas que esperan un bus.
+18. Tomar el bus.
+19. Mientras no llegue al colegio haga:
+20. Seguir en el bus.
+21. Bajarse.
+22. Entrar al colegio.
+
+**Fin**
+
+---
+
+## INTRODUCCIÓN A LA PROGRAMACIÓN
+
+### Los lenguajes de programación se clasifican en:
+
+1. **Lenguaje máquina.** Las instrucciones son directamente entendibles por la computadora y no necesitan traductor para que el CPU (unidad de procesamiento central) pueda entender y ejecutar el programa. Utiliza un código binario (0 y 1), se basa en bits (abreviatura inglesa de dígitos binarios).
+
+2. **Lenguaje de bajo nivel (ensamblador).** Las instrucciones se escriben en códigos alfabéticos conocidos como mnemotécnicos.
+
+3. **Lenguaje de alto nivel.** Es semejante al lenguaje humano (en general en inglés), lo que facilita la elaboración y comprensión del programa. Por ejemplo Basic, Pascal, Cobol, Fortran, C, C++, etc.
+
+---
+
+### Diagrama
+
+Lenguajes de programación
+│
+├── Lenguaje de bajo nivel (ensamblador)
+│   ├── Código binario
+│   │   01010101010101010100111
+│   │   01010101010101010100110
+│   │   00000101001000100100100
+│   │
+│   └── Representación mnemotécnica
+│       1=T,D - 2=N,N - 3=M
+│       -4=C - 5=L,LL - 6=S,Z -
+│       7=F,J - 8=G,H
+│
+└── Lenguaje de alto nivel.
+    ├── #include <iostream>
+    ├── using namespace std;
+    ├── int main()
+    └── {
+          cout << "Hola mundo" << endl;
+          cin.get();
+        }
+
+---
+
+Un algoritmo, cuando necesita ser ejecutado en una computadora, se escribe con el formato del *lenguaje de programación* elegido, respetando sus reglas sintácticas en un editor particular. (Pero puede escribirse en cualquier editor básico, notepad por ejemplo), y se guarda con la extensión correspondiente.
+
+Este programa se denomina “fuente” (está escrito en palabras que reconocemos, y es el origen de todo el proceso). Pero la secuencia de ordenes no puede ser ejecutada porque la computadora no conoce el formato en que se expresan las órdenes, para poder ser reconocido, se debe escribir el programa en “lenguaje objeto” que tiene órdenes entendibles para la computadora (escrito en ceros y unos, en muy alto nivel). Para esto, el paquete del lenguaje correspondiente, lo traduce (por medio de un “traductor” o lo “compila” [puede tener una o ambas de las herramientas]). Un traductor “traduce” a *lenguaje máquina* cada una de las instrucciones (en memoria) y las ejecuta, cortando el proceso cuando encuentra algún error (vuelve a la fuente, se arregla y se traduce nuevamente).
+
+---
+
+# Algoritmos y su representación
+
+El “compilador” tiene un proceso más completo y complejo. En primer lugar se ocupa de los errores y los marca en pantalla de diferentes maneras, uno a uno. Cuando el proceso completo está libre de errores, procede a enlazar las rutinas (pedazos que se encadenan al proceso general) que componen el programa, con rutinas, matemáticas, etc. o del usuario; y finalmente, produce una salida en lenguaje objeto que es ejecutada por el procesador (o almacenada en disco). Los errores que analiza y marca un compilador se relacionan con la gramática y la sintaxis del lenguaje: es decir, si alguna palabra está escrita en forma incorrecta, si todos los lazos están cerrados, si las variables han sido declaradas o utilizadas en forma correcta (uso de la memoria), si existen las rutinas que se citan, etc. Sin embargo, no puede descubrir errores de lógica, es decir un programa bien compilado no necesariamente resuelve el problema planteado, solamente está escrito en forma entendible para ser procesado.
+
+---
+
+## 2. Algoritmos
+
+Algoritmo se define como un conjunto de instrucciones que la computadora debe seguir para resolver un problema. La palabra algoritmo se deriva de la traducción al latín del nombre Muhammad Musa Alkhawarizmi, un matemático y astrónomo árabe que en el siglo IX escribió un tratado sobre manipulación de números y ecuaciones.
+
+### 2.1 Definición de Algoritmo
+
+Informalmente, un algoritmo es cualquier procedimiento de cálculo bien definido que toma algún valor, o conjunto de valores, como **entrada** y produce un cierto valor, o conjunto de valores, llamados **salida**. Así, un algoritmo es una secuencia de pasos de cálculo que transforman cálculos de entrada en salidas. Podemos ver un algoritmo como la herramienta para dar solución a un problema, mediante un cálculo bien especificado. El planteamiento del problema se especifica en términos generales como una relación **entrada/salida**. En el algoritmo se describe un procedimiento de cálculo específico que sirve para lograr dicha relación entre entrada/salida.
+
+Por ejemplo, puede ser que tenga que ordenar una secuencia de números en orden creciente (menor a mayor). Este problema se presenta con frecuencia en la práctica y proporciona un terreno fértil para ir introduciendo muchas normas técnicas de diseño y herramientas de análisis.
+
+Esta es la forma estándar de representar el problema:
+
+**Entrada**: Una secuencia de \( n \) números \( <a_1, a_2, \dots, a_n> \)
+
+**Salida**: [reordenamiento] \( <a'_1, a'_2, \dots, a'_n> \) secuencia de entrada tal como: \( a'_1 \leq a'_2 \leq \dots \leq a'_n \)
+
+Por ejemplo, dada la secuencia de entrada \( <31, 41, 59, 26, 41, 58> \), un algoritmo de clasificación devuelve como salida la secuencia \( <26; 31; 41; 41; 58; 59> \). Tal secuencia de entrada es llamada una **instancia del problema**. En general, una **instancia** de un problema consiste en la **entrada** (puede ser cualquier cosa que contenga como declaración un problema a resolver) necesaria para calcular la solución del problema.
+
+---
+
+### 2.2 Características de los Algoritmos
+
+- **Entradas**: Un algoritmo tiene cero o más entradas (cantidades que se le dan inicialmente antes de que comience su ejecución).
+
+- **Salidas**: Un algoritmo tiene una o más salidas (cantidades que tienen una relación específica con las entradas).
+
+---
+
+#### Todo algoritmo debe ser:
+
+1. **Finito** en tamaño o número de instrucciones (tiene un primer paso y un último paso) y tiempo de ejecución (debe terminar en algún momento). Por lo tanto, debe tener un punto particular de inicio y fin.
+
+2. **Preciso**. Debe tener un orden entre los pasos.
+
+3. **Definido**. No debe ser ambiguo (dobles interpretaciones); si se ejecuta el mismo algoritmo el resultado siempre será el mismo, sin importar las entradas proporcionadas.
+
+4. **General**. Debe tolerar cambios que se puedan presentar en la definición del problema.
+
+---
+
+Toda actividad que realizamos la podemos expresar en forma de algoritmo. Existen dos tipos de algoritmos, los que se desarrollan para ser ejecutados por una computadora, llamados algoritmos computacionales, y los que realiza el ser humano, es decir, algoritmos no computacionales; como ejemplos de éstos tenemos:
+
+- Cambiar la llanta de un auto.
+- Prepararse para ir a clases.
+- Calcular el área de un triangulo.
+
+---
+
+#### Ejemplos:
+
+1. **PROBLEMA**: Cambiar la rueda pinchada de un automóvil teniendo un gato mecánico en buen estado, una rueda de reemplazo y una llave inglesa.
+
+---
+
+## INTRODUCCIÓN A LA PROGRAMACIÓN
+
+3. PROBLEMA: Escribe un algoritmo para obtener el área de un triángulo, tomando en cuenta que:
+   - área: (base * altura)/2.
+
+### Inicio
+1. Pedir la base y la altura (B, H).
+2. Multiplicar la base y la altura y dividirlas entre 2 (A = B * H / 2).
+3. Mostrar resultados (A).
+
+### Fin
+
+Los dos primeros algoritmos están relacionados con situaciones de la vida cotidiana, y el último algoritmo es un cálculo específico el cual tiene un resultado exacto, o sea un valor.
+
+---
+
+## 2.3 Clasificación de algoritmos
+
+Los algoritmos se pueden clasificar en cuatro tipos:
+
+1. **Algoritmo computacional**: Es un algoritmo que puede ser ejecutado en una computadora. Ejemplo: Fórmula aplicada para un cálculo de la raíz cuadrada de un valor x.
+
+2. **Algoritmo no computacional**: Es un algoritmo que no requiere de una computadora para ser ejecutado. Ejemplo: Instalación de un equipo de sonido.
+
+3. **Algoritmo cualitativo**: Un algoritmo es cualitativo cuando en sus pasos o instrucciones no están involucrados cálculos numéricos. Ejemplos: Las instrucciones para desarrollar una actividad física, encontrar un tesoro.
+
+4. **Algoritmo cuantitativo**: Un algoritmo es cuantitativo cuando en sus pasos o instrucciones involucran cálculos numéricos. Ejemplo: Solución de una ecuación de segundo grado.
+
+---
+
+# 2.4 Definición de programa de computadora
+
+## Existen diferentes conceptos
+1. Es un algoritmo desarrollado en un determinado lenguaje de programación, para ser utilizado por la computadora; es decir, es una serie de pasos o instrucciones ordenadas y finitas que pueden ser procesadas por una computadora, a fin de permitirnos resolver un problema o tarea específica.
+
+2. Secuencia de instrucciones mediante las cuales se ejecutan diferentes acciones de acuerdo con los datos que se desee procesar en la computadora.
+
+3. Expresión de un algoritmo en un lenguaje preciso que puede llegar a entender una computadora.
+
+## 2.5 Etapas o pasos en la creación de un programa
+La resolución de un problema con una computadora conduce a la escritura de un programa y a su ejecución en la misma. Aunque el proceso de diseñar programas es un proceso creativo, los pasos a seguir se establecen en varios modelos para el desarrollo de sistemas uno de ellos es el modelo de cascada. Este se define como el proceso que se sigue para diseñar, construir, entregar y hacer evolucionar el software, desde la concepción de una idea hasta la entrega y el retiro del sistema.
+
+Las fases para la creación de un programa son siete, aunque para algunos autores pueden describirse en sólo seis, pues omiten la primera porque es una etapa algo obvia.
+
+Las etapas se describen a continuación:
+- **Paso 1: Análisis del problema.** Esta fase requiere una clara definición, donde se contemple exactamente lo que debe hacer el programa y el resultado o solución deseada. Para poder definir bien un problema es conveniente responder a las preguntas:
+  - ¿Qué cantidad y tipo de datos de entrada se requieren?
+  - ¿Qué cantidad y tipo de salidas se desean?
+  - Los métodos y fórmulas que se necesitan para procesar los datos y producir esa salida.
+
+- **Paso 2. Diseño del Algoritmo.** En esta etapa se define cómo hace el programa la tarea solicitada, es decir, se define el algoritmo. La etapa de diseño se centra en desarrollar el algoritmo basándnos en las especificaciones de la etapa del análisis; podemos representar un algoritmo mediante el diagrama de flujo o el pseudocódigo.
+
+- **Paso 3. Codificación.** En la etapa de codificación se transcribe el algoritmo definido en la etapa de diseño en un código reconocido por la computadora; es decir, en un lenguaje de programación; a éste se le conoce como código fuente.
+
+- **Paso 4. Compilación y Ejecución.** El proceso de compilación consiste en pasar el programa de código fuente a un código ejecutable. La ejecución es “correr” el programa generado en el proceso de compilación.
+
+- **Paso 5. Depuración.** Se ejecuta el programa con datos de prueba para detectar y corregir errores en tiempo de ejecución. La prueba consiste en capturar datos hasta que el programa funcione correctamente. A la actividad de localizar errores se le llama depuración. Existen dos tipos de pruebas: de sintaxis y de lógica.
+
+  - Las pruebas de sintaxis se ejecutan primero, son las más sencillas y las realiza el compilador del programa cada vez que se ejecuta el programa hasta que el código no presente errores, es decir, que la sintaxis que requiere el lenguaje sea la correcta, de lo contrario el propio compilador va mostrando los errores encontrados para que se modifiquen y se pueda ejecutar el código; estas pruebas pueden ser falta de paréntesis, o puntos y comas o palabras reservadas mal escritas.
+
+  - Las pruebas de lógica son las más complicadas ya que éstas las realiza el programador, consisten en la captura de diferentes valores y revisar que el resultado sea el deseado, es decir, el programador tendría que modificar el código hasta que el programa funcione correctamente.
+
+- **Paso 6. Documentación.** Interna: Comentarios dentro del programa. Externa: Manuales del programador, del usuario, de instalación, etc.
+
+- **Paso 7. Entrega y Mantenimiento**
+
+### 2.6 Estrategias para la solución de problemas
+Cuando se trata de resolver un problema, pueden presentarse varias estrategias para solucionarlo. Las técnicas o estrategias más comunes son:
+
+#### 2.6.1 Estrategias de solución directa
+
+1. **Algoritmos de Solución Forzada:** Un algoritmo de este tipo resuelve el problema de la forma más simple, obvia o directa. Como resultado es posible que el algoritmo haga más trabajo que una solución más sofisticada. Por otra parte, las soluciones forzadas son más fáciles de implementar y por eso algunas veces resultan más eficientes.
+
+2. **Algoritmos Codiciosos:** Se caracterizan porque las decisiones que toman se basan en que la búsqueda del menor costo en esa parte del problema, pero no toman en cuenta el resto de la solución y en ocasiones no generan soluciones óptimas.
+
+#### 2.6.2 Estrategias de Vuelta Atrás  
+Un algoritmo de vuelta atrás sistemáticamente considera todos los posibles resultados para cada decisión. En este sentido, los algoritmos vuelta atrás son como las soluciones forzadas. Sin embargo, los algoritmos vuelta atrás se distinguen por la forma en que exploran todas las posibles soluciones; en ocasiones estos algoritmos encuentran que una búsqueda exhaustiva es innecesaria y por lo tanto pueden tener una mejor ejecución.
+
+#### 2.6.3 Estrategias arriba-abajo  
+- **Algoritmos divide y vencerás.** Para resolver un problema, este se subdivide en uno o más subproblemas, cada uno de los cuales es similar al problema dado. Cada uno de los subproblemas se soluciona en forma independiente y al final las soluciones de todos los subproblemas se combinan para obtener la solución general del problema completo.
+
+#### 2.6.4 Estrategias abajo-arriba  
+- **Programación Dinámica:** Para resolver un problema se resuelven una serie de subproblemas. La serie de subproblemas es planeada cuidadosamente de tal forma que cada solución subsecuente se obtiene mediante la combinación de las soluciones de uno o más subproblemas que ya han sido resueltos. Todas las soluciones intermedias se mantienen en una tabla para evitar la duplicidad de esfuerzos.
+
+#### 2.6.5 Estrategias Probabilísticas  
+En los algoritmos probabilísticos existe un elemento de aleatoriedad en la forma en que el algoritmo soluciona el problema; se dice que estos métodos son el último recurso debido a que se usan cuando no hay otra técnica conocida que se pueda aplicar. Los métodos probabilísticos se usan cuando el espacio de soluciones es tan grande que una búsqueda exhaustiva no sería factible.
+
+### 2.7 Técnicas de representación  
+Para la representación de un algoritmo, antes de ser convertido a lenguaje de programación, se utilizan algunos métodos de representación escrita, gráfica o matemática. Los métodos más conocidos son:  
+- Diagramación libre (Diagramas de flujo).  
+- Diagramas Nassi-Shneiderman.  
+- Pseudocódigo.  
+- Lenguaje natural (español, inglés, etc.).  
+- Fórmulas matemáticas.  
+
+**Nota:** Más adelante estudiaremos detenidamente: diagramas de flujo y pseudocódigo.
+
+---
+
+# 3. Análisis del problema
+
+El objetivo del análisis del problema es ayudar al programador a llegar a una cierta comprensión de la naturaleza del mismo. Este análisis supone, en particular, la superación de una serie de pasos:
+
+- Definir el problema con total precisión.
+- Especificar los datos de partida necesarios para la resolución del mismo (especificaciones de entrada).
+- Especificar la información que debe proporcionarse al resolver (especificaciones de salida).
+
+---
+
+**Ejemplo:** Elaborar el análisis para obtener el área y la longitud de una circunferencia.
+
+1. Utilizar las fórmulas del área y la circunferencia en función del radio.
+2. Las entradas de datos se reducen al dato correspondiente al radio del círculo.
+3. Dada la naturaleza del mismo y el procesamiento al cual lo someteremos, su tipo de dato debe ser un número real.
+4. Las salidas serán dos variables también reales: área y circunferencia.
+
+La finalización de la fase de análisis del problema nos llevaría al siguiente resultado:
+
+- **Entradas:** Radio del círculo (variable `RADIO`).
+- **Salidas:**
+  - Superficie del círculo (variable `AREA`).
+  - Circunferencia del círculo (variable `CIRCUNFERENCIA`).
+- **Variables:** `RADIO`, `AREA`, `CIRCUNFERENCIA`: tipo real.
+
+---
+
+# 4. Diseño del algoritmo
+
+Diseñar un algoritmo puede ser una tarea difícil y su aprendizaje no es inmediato, ya que requiere una buena dosis de experiencia y creatividad. Hace ya 100 años, un matemático de la talla de Henri Poincaré, que no sólo trabajó en temas relacionados con la física, el álgebra y el análisis, sino también sobre la filosofía de la ciencia, trató de explicar sus experiencias personales de cómo un problema, a cuya resolución había dedicado mucho tiempo sin éxito, podía aparecer tiempo después resuelto repentinamente en su cabeza, incluso cuando se estaba dedicando a proyectos distintos. Desgraciadamente sus resultados en este empleo, distaron mucho de la brillantez de sus logros como físico y matemático.
+
+---
+
+## Algoritmos y su representación
+
+El periodo que existe entre el análisis de un problema y el diseño de su solución recibe el nombre de **periodo de incubación** y el proceso mental, que se da durante el mismo sigue siendo un tema de investigación para los psicólogos. Estamos por tanto en el terreno de la inspiración y la madurez mental. Seamos optimistas y pensemos que vamos a tener la capacidad de tener ideas, propias o adquiridas, para desarrollar algoritmos que nos permitan actuar ante los problemas que se nos planteen.
+
+Para diseñar algoritmos hay que tener presente los requisitos siguientes:
+
+- Indicar el orden de realización de cada paso,
+- Estar definido sin ambigüedad y
+- Ser finito
+
+Veamos el siguiente ejemplo:
+
+### Averiguar si un número es primo o no.
+suponiendo que razonamos de la siguiente forma:
+“Del análisis del hecho de que un número N es primo si sólo puede dividirse por sí mismo y por la unidad, un método que nos puede dar la solución sería dividir sucesivamente el número por 2, 3, 4..., etc. y, según el resultado, podríamos resolver el problema”.
+
+Un diseño del mismo sería:
+
+#### Inicio
+1. Poner X igual a 2 (\(X = 2\), \(X\), variable que representa a los posibles divisores de \(N\))
+2. Dividir \(N\) por \(X\) (\(N/X\))
+3. Si el resultado es entero, entonces \(N\) no es primo, y saltar al punto 9 (en caso contrario continuar el proceso en el siguiente punto, 5)
+4. Incrementar \(X\) en una unidad
+5. Si \(X\) es menor que \(N\) saltar al punto 3 (en caso contrario continuar el proceso en el siguiente punto, 7)
+6. Declarar \(N\) es primo;
+7. Saltar al Fin (punto 10)
+8. Declarar \(N\) no es primo
+
+Como parte del diseño de algoritmo está la selección de uno que sea razonablemente aceptable, entre todos los muchos posibles que resuelven el mismo problema (el ejemplo que acabamos de ver es claramente mejorable, pues si \(N\) no era divisible por 2 no tiene mucho sentido volverse a preguntar si lo es por 4).
+
+---
+
+## INTRODUCCIÓN A LA PROGRAMACIÓN
+
+Durante el diseño es posible y aconsejable, realizar comparaciones entre algoritmos que resuelven el mismo problema. La bondad de un algoritmo puede medirse por dos factores:
+
+- El tiempo que se necesita para ejecutarlo. Para tener una idea aproximada de ello, basta con saber el número de instrucciones de cada tipo necesarias para resolver el problema.
+- Los recursos que se necesitan para implantarlo.
+
+Así, una vez diseñado un primer algoritmo, conviene realizar una evaluación del mismo, cosa a veces nada trivial. Si se decide que éste no es eficiente será necesario o bien diseñar uno nuevo o bien optimizar el original. Optimizar un algoritmo consiste en introducir modificaciones en él, tendentes a disminuir el tiempo que necesita para resolver el problema o a reducir los recursos que utiliza. (En el ejemplo 2 el algoritmo se optimiza, si \( N \) se declara como primo cuando \( X \) supera a \( N/2 \)).
+
+### 4.1 Diseño Descendente o Modular
+
+Los problemas complejos se pueden resolver más eficazmente cuando se **descomponen** en **subproblemas** que sean más fáciles resolver el original. Este método se denomina divide y vencerse y consiste en convertir un problema complejo en otros más simples que, una vez resueltos, en su conjunto nos solucionen el original. Al procedimiento de descomposición de un problema en subproblemas más simples, llamados **módulos** para, a continuación, seguir dividiendo estos subproblemas en otros más simples, se le denomina diseño descendente. Las ventajas más importantes de este tipo de diseño son:
+
+1. El problema se comprende más fácilmente al dividirse en módulos o partes más simples. Adelantemos que cuando demos el salto a la programación, utilizaremos esta idea constantemente, de forma que hablaremos también de procedimientos, o subprogramas.
+2. Las modificaciones en los módulos son más fáciles, pues estamos ante algoritmos más sencillos.
+3. La comprobación del problema se puede realizar más fácilmente, al poder localizar los posibles fallos con mayor precisión.
+
+---
+
+Módulo Principal  
+PROGRAMA PRINCIPAL  
+│  
+├── Submódulo 1  
+│   └── SUBPROGRAMA 1  
+│  
+├── Submódulo 2  
+│   ├── SUBPROGRAMA 2.1  
+│   ├── SUBPROGRAMA 2.2  
+│   └── SUBPROGRAMA 2.n  
+│  
+└── Submódulo n  
+    └── SUBPROGRAMA n  
+### 4.2 Refinamiento por pasos
+
+Durante el diseño, entenderemos por refinamiento por pasos, la metodología por la que en un primer esbozo del algoritmo nos limitamos a señalar o describir un reducido número de pasos, que deberán ser expresados con mayor detalle posteriormente. Tras esta primera descripción, éstos se especifican con mayor minuciosidad, de forma más extensa y con más pasos específicos.
+
+En cada nivel de refinamiento hay que considerar dos fases: ¿Qué hace el módulo? para a continuación responder a ¿Cómo lo hace?. Como es natural, dependiendo de la complejidad del problema se necesitarán diferentes y sucesivos niveles de refinamiento antes de que pueda obtenerse un algoritmo con suficiente nivel de detalle.
+
+Así en el ejemplo del cálculo de la longitud y superficie de un círculo que vimos anteriormente, a pesar de presentar un bajo nivel de complejidad, en su diseño, se puede descomponer en subproblemas más simples:
+1. Leer datos de entrada,
+2. Calcular superficie y longitud
+3. Escribir resultados.
+
+El ejemplo siguiente, nos muestra el diseño de un algoritmo para un problema de carácter no numérico.
+
+**PROBLEMA:** Diseñar un algoritmo que responda a la pregunta: ¿Qué debo hacer para ver la película XYZ?. Un primer análisis nos conduce a un esbozo de solución, descomponiéndolo en cuatro módulos sucesivos:
+1. Ir al cine donde proyectan XYZ
+2. Comprar una entrada
+3. Ver la película
+4. Regresar a casa
+
+Estos cuatro pasos se pueden refinar un poco más y así este problema lo podríamos descomponer de la siguiente forma:
+
+**inicio** {algoritmo para ver la película XYZ}
+1. consultar la cartelera de cines
+2. si proyectan “XYZ” entonces
+3. ir al cine correspondiente
+4. si no proyectan “XYZ”
+5. declarar el fracaso del objetivo y terminar
+6. acudir al cine correspondiente
+7. si hay cola entonces ponerse en ella
+8. mientras haya personas delante en la cola hacer avanzar en la cola
+9. preguntar si quedan entradas  
+10. **si** hay entradas **entonces**  
+11. comprar una entrada  
+12. **si_no** quedan entradas  
+13. declarar el fracaso del objetivo, regresar a casa y terminar  
+14. encontrar el asiento correspondiente  
+15. mientras proyectan la película hacer  
+16. ver la película  
+17. abandonar el cine  
+18. regresar a casa  
+
+**fin**
+
+Algunas de estas acciones son primitivas para nosotros, es decir, no es necesario descomponerlas más, como el abandonar el cine. Sin embargo hay otras acciones que son susceptibles de mayor descomposición. Este es el caso de la acción: “encontrar el asiento correspondiente” si los números de los asientos están impresos en la entrada, esta acción compuesta se resuelve con el siguiente algoritmo:
+
+### inicio
+{algoritmo para encontrar el asiento del espectador}
+
+1. caminar hasta llegar a la primera fila de asientos  
+2. repetir  
+3. comparar número de fila con número impreso en billete  
+4. **si** no son iguales, entonces pasar a la siguiente fila  
+5. **hasta_que** se localice la fila correcta  
+6. mientras número de asiento no coincida con número de billete  
+7. hacer avanzar a través de la fila a la siguiente butaca  
+8. sentarse en la butaca  
+
+**fin**
+
+---
+
+# 5. Programación del algoritmo
+
+Una vez que el algoritmo está diseñado y representado, se debe pasar a la fase de resolución práctica del problema con el ordenador. Esta fase se descompone a su vez en las siguientes subfases:
+
+1. Codificación del algoritmo en un programa.  
+2. Ejecución del programa.  
+3. Comprobación del programa.
+
+---
+
+### Diagrama: Programación del algoritmo
+
++---------------------+
+|  Codificación del   |
+|      programa       |
++---------------------+
+           |
+           v
++---------------------+
+|  Ejecución del      |
+|      programa       |
++---------------------+
+           |
+           v
++---------------------+
+|  Comprobación del   |
+|      programa       |
++---------------------+
+
+La fase de conversión de un algoritmo en instrucciones de un lenguaje de programación, como sabemos, se denomina codificación. El código deberá estar escrito de acuerdo con la sintaxis del lenguaje de programación ya que solamente las instrucciones sintácticamente correctas pueden ser interpretadas por la computadora.
+
+Tenga en cuenta que durante el proceso de programación, se debe separar el diseño del algoritmo de su posterior implementación en un lenguaje de programación específico. Por ello distinguimos entre el concepto más general de programación y el más particular de codificación, que depende del lenguaje de programación utilizado. Tras la codificación del programa, éste deberá ejecutarse en la computadora. El resultado de esta primera ejecución es incierto, ya que existe una alta posibilidad de que aparezcan errores, bien en la codificación, bien en el propio algoritmo. Por tanto, el paso siguiente consiste en comprobar el correcto funcionamiento del programa y en asegurarse, en la medida de lo posible, de la validez de los resultados proporcionados por la máquina.
+
+## 6. Representación de algoritmos
+
+Un algoritmo es algo puramente conceptual que necesita una forma de representación, bien para comunicarlo a otra persona bien para ayudar a convertirlo en un programa. De hecho, la codificación en un lenguaje de programación, es una representación muy utilizada de un algoritmo, sin embargo tiene el inconveniente de que no todas las personas conocen el lenguaje que se haya elegido.
+
+Por ello, existen diferentes métodos que permiten que se pueda independizar el algoritmo de su correspondiente codificación. Veamos dos de ellos:
+
+- Pseudocódigo
+- Organigramas o diagramas de flujo
