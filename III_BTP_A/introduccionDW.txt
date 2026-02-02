@@ -1,0 +1,468 @@
+1. Introducción
+
+1.1 ¿Por qué aprender HTML?
+
+El World Wide Web (WWW) es un sistema que contiene una cantidad de información casi infinita. Pero esta información debe estar ordenada de alguna forma de manera que sea posible encontrar lo que se busca. La unidad básica donde está almacenada esta información son las páginas Web. Estas páginas se caracterizan por contener texto, imágenes, animaciones e incluso sonido y video. Una de las características más importantes de las páginas Web es que son hipertexto.
+
+Esto quiere decir que las páginas no son elementos aislados, sino que están unidas a otras mediante los links o enlaces hipertexto. Gracias a estos enlaces el navegante de internet puede pulsar sobre un texto (texto al que llamaremos de ahora en adelante activo) de una página para navegar hasta otra página.
+
+Cada página web que mirás está escrita en un lenguaje llamado HTML. HTML es como un esqueleto que le da estructura a cada página web. En este libro, usaremos HTML para añadir párrafos, encabezados, imágenes y enlaces a una página web.
+
+---
+
+Será cuestión del programador de la página inicial decidir qué palabras o frases serán activas y a dónde nos conducirá pulsar sobre ellas. En algunos ambientes se discute que el World Wide Web ya no es un sistema hipertexto sino hipermedia. Los que defienden el cambio se apoyan en que aunque en sus orígenes el WWW constaba únicamente de texto en la actualidad es un sistema principalmente gráfico y se puede hacer que las zonas activas sean, no sólo texto, sino imágenes, videos, botones,... en definitiva cualquier elemento de una página.
+
+---
+
+1.2 Características del lenguaje HTML
+
+Pero empecemos ya con lo que nos interesa. ¿Cómo se hace una página Web? Cuando los diseñadores del WWW se hicieron esta pregunta decidieron que se debían cumplir, entre otras, las siguientes características:
+
+· Tenía que ser distribuido: La información repartida en páginas no muy grandes enlazadas entre sí.
+· Tenía que ser hipertexto y debía ser fácil navegar por él.
+· Tenía que ser compatible con todo tipo de computadoras (PCs, Macintosh, estaciones de trabajo...).
+· Con todo tipo de sistemas operativos (Windows, MS-DOS, UNIX, MAC-OS, etc.)
+· Debía ser dinámico: el proceso de cambiar y actualizar la información debía ser ágil y rápido.
+
+Estas características son las que marcaron el diseño de todos los elementos del WWW incluidas la programación de páginas Web. Como respuesta a todos estos requisitos se creó el lenguaje HTML (HyperText Markup Language), cuyas siglas significan “lenguaje hipertexto de marcas”.
+Este lenguaje será el encargado de convertir un inocente archivo de texto inicial en una página web con diferentes tipos y tamaños de letra, con imágenes impactantes, animaciones sorprendentes, formularios interactivos, etc.
+
+---
+
+Qué se necesita para crear una página web
+
+Una de las características de este lenguaje más importantes para el programador es que no es necesario ningún programa especial para crear una página Web. Gracias a ello se ha conseguido que se puedan crear páginas con cualquier computadora y sistema operativo. El código HTML, como hemos adelantado en el párrafo anterior, no es más que texto y por tanto lo único necesario para escribirlo es un editor de texto como el que acompañan a todos los sistemas operativos ejemplo el block de notas en Windows. Por supuesto estos no son los únicos editores de texto que pueden ser usados, sino cualquier otro. También se puede usar procesadores de texto, que son editores con capacidades añadidas, como pueden ser Microsoft Word™ o WordPerfect™ pero hay que tener cuidado porque en ocasiones hacen traducciones automáticas del código HTML que no siempre son deseadas. En estos dos últimos casos, también hay que tener en cuenta que deberemos guardar el archivo en modo texto.
+
+---
+
+En este libro de texto los ejemplos y ejercicios fueron desarrollados utilizando Microsoft Visual Studio Express 2015, herramienta gratuita de Microsoft para programadores, este programa lo puedes descargar sin costo desde esta dirección web:
+
+https://www.visualstudio.com/es-es/products/visual-studio-express-vs
+
+Recuerda el código HTML puede ser escrito desde cualquier editor de texto por ejemplo NOTEPAD, WORDAPAD o Microsoft WORD. Pero utilizar las herramientas de Visual Studio te facilitan mucho el trabajo al ser herramientas dedicadas a la programación.
+
+---
+
+2. HTML y CSS
+
+HTML como hemos dicho significa Hyper Text Markup Language (Lenguaje de marcado de hipertexto).
+Hipertexto quiere decir “texto que contiene enlaces”. Cada vez que hacés clic en una palabra que te lleva a otra página web, estás haciendo clic en un hipertexto.
+
+Un lenguaje de marcado es un lenguaje de programación usado para que el texto haga algo más que aparecer en una página: puede convertir texto en imágenes, enlaces, cuadros, listas, y mucho más. El lenguaje de marcado que aprenderemos es HTML.
+
+¿Qué es lo que hace que una página web sea atractiva? Las CSS – Cascading Style Sheets – (Hojas de estilo en cascada). Imagínate que es la piel y el maquillaje que cubre los huesos del HTML. Primero vamos a aprender HTML y después, nos vamos a ocupar de las CSS.
+
+Lo primero que debemos hacer es configurar el esqueleto de la página.
+
+a. Escribe siempre <!DOCTYPE html> en la primera línea. Esto le dice al navegador qué lenguaje está leyendo (en este caso, HTML).
+b. Escribe siempre <html> en la línea siguiente. Esto comienza el documento de HTML.
+c. Escribe siempre </html> en la última línea. Esto finaliza el documento de HTML.
+
+ejemplo
+
+<!DOCTYPE html>
+
+<html>
+</html>
+
+2.1 Terminología básica
+
+Para aprender más HTML, debemos aprender cómo hablar sobre HTML. Ya ha visto que usamos mucho los símbolos mayor y menor que < >.
+
+El texto dentro de < > se llama etiqueta.
+
+Las etiquetas casi siempre vienen de a pares: una etiqueta de inicio y una etiqueta de cierre.
+Un ejemplo de una etiqueta de inicio es: <html>
+Un ejemplo de una etiqueta de cierre es: </html>
+
+Imagine que las etiquetas son como paréntesis; cuando abre uno, después tiene que cerrarlo. Las etiquetas también pueden anidarse, así que hay que cerrarlas en el orden correcto: la última etiqueta que abres debe ser la primera que cierres, como se muestra en este ejemplo:
+
+<primer_a_etiqueta><segunda_etiqueta>Algún texto</segunda_etiqueta></primer_a_etiqueta>
+
+---
+
+Ejercicios prácticos
+
+En este ejercicio pondremos en práctica el uso de las etiquetas: HEAD, TITLE, HEADING, BODY.
+
+1. Comenzaremos abriendo el programa Express for Web, (de Microsoft Visual Studio Express)
+
+---
+
+Visual Studio
+
+Descubra las novedades de Express 2
+Más información acerca de las nuevas características de Express 2015 para Web
+Conozca las novedades de .NET Framework
+Descubre las novedades de Visual Studio Online
+
+· Iniciar
+    Nuevo proyecto...
+    Abrir proyecto...
+    Abrir desde el control de código fuente...
+· Reciente
+    Novedades en las plataformas de Microsoft
+  · ASP.NET y Visual Studio Tools
+  · ASP.NET 3 y Web
+  · Microsoft Azure
+· Noticias
+    Meet AzureCon
+    We're excited to announce AzureCon, a virtual event on September 29. AzureCon is for the Azure community—developers and IT professionals who want to learn about...
+    NUVEO lunes, 24 de agosto de 2015
+  ASP.NET Community Standup - August
+    12, 2015
+
+---
+
+1. Una vez con el programa abierto vamos a crear un nuevo archivo.
+2. Vamos al menú archivo y seleccionamos Nuevo Archivo o utilizamos el shortcut (Control + N)
+
+---
+
+Archivo
+
+· Archivo principal
+· Microsoft Visual Studio Express 2015 para Web (Administrador)
+· Nuevo proyecto...
+· Nuevo sitio web...
+· Nuevo proyecto de equipo...
+· Nuevo archivo...
+· Abrir proyecto...
+· Abrir sitio web...
+· Abrir desde el control de código fuente...
+· Conectar a proyecto de equipo...
+· Cerrar
+· Cerrar solución
+· Guardar elementos seleccionados
+· Guardar elementos seleccionados como...
+
+---
+
+Explorador de soluciones
+
+· Explorador de soluciones
+· Team Explorer
+· Explorador de servidores...
+
+---
+
+1. Se abrirá una ventana, seleccione la opción Página HTML y haga clic en abrir.
+
+---
+
+1. El nuevo archivo html comienza con una plantilla que ya contiene las etiquetas basicas para iniciar a programar como por ejemplo: <HEAD>, <TITLE>, <BODY> . También la instrucción de la versión HTML que vamos a utilizar así como el lenguaje web y el tipo de carcteres en este caso utf=8 (8-bit Unicode Transformation Format)
+
+---
+
+Hagamos el encabezado
+
+Todo dentro de nuestro archivo HTML irá en medio de las etiquetas de inicio <html> y de cierre </html>.
+El archivo siempre consiste de dos partes: el encabezado y el cuerpo. Vamos a empezar con el encabezado.
+
+El encabezado tiene información sobre el archivo HTML, como por ejemplo su título. El título es lo que vemos en la barra de títulos del buscador o pestaña de la página.
+
+1. Agreguemos una etiqueta y un título a nuestra página web.
+   Agrega una etiqueta de inicio <head> y una de cierre </head>.
+   En medio de las etiquetas <head> de inicio y de cierre, coloca una etiqueta de título <title> de inicio y una etiqueta <title> de cierre.
+   Entre las etiquetas <title>, escribe un título para tu página web. Por ejemplo, “Mi página web”.
+   Guarda tu trabajo.
+
+---
+
+NOTA: Visual studio agrega de manera automática la etiqueta cierra según sea el caso.
+
+---
+
+2.1 Párrafos del cuerpo del archivo
+
+El cuerpo es donde se ingresa el contenido, como textos, imágenes y enlaces. El contenido del cuerpo es lo que se verá en la página real.
+
+El cuerpo va dentro de las etiquetas, inmediatamente después de las etiquetas de título, así:
+
+<html>
+<head>
+<title>Mi página web</title>
+</head>
+<body>
+</body>
+</html>
+
+Escribe en el archivo que has creado lo siguiente:
+Debajo de la etiqueta <head> de cierre coloca una etiqueta <body> de inicio y una etiqueta <body> de cierre, como en el ejemplo de arriba.
+
+Dentro del cuerpo agrega dos párrafos. Cada párrafo empieza con una etiqueta <p> de inicio y termina con una etiqueta </p> de cierre. Podemos ingresar contenido entre las etiquetas, así:
+
+Ejemplo
+
+<body>
+<p>¡Hola mundo!</p>
+</body>
+
+---
+
+2.2 Párrafos y encabezados
+
+Ahora pondremos encabezados a nuestros párrafos usando las etiquetas de encabezado. Vamos a comenzar con la etiqueta <h1>. Lo que aparece entre estas etiquetas tendrá la letra más grande.
+
+veamos como colocar el encabezado
+
+1. En la sección del cuerpo escribe un encabezado. Para esto, crea una etiqueta <h1>.
+2. Agrega algún contenido.
+3. Cierra ese elemento con una etiqueta de cierre de encabezado. El contenido que agregaste desde el cuerpo será: <h1>, <h2>, etc.
+4. Debajo de las etiquetas de encabezado agrega dos párrafos, con cualquier contenido, usando los siguientes tags: <p>
+
+Ejemplo:
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Mi Página web</title>
+</head>
+<body>
+<h1>Encabezado1</h1>
+<p>Aqui colocamos el primer parrafo</p>
+
+<h1> Encabezado 2 </h1>
+<p>Aqui colocamos el segundo parrafo</p>
+
+</body>
+</html>
+
+En realidad, HTML nos permite tener más de un tamaño de encabezados. Hay seis tamaños de encabezados: <h1> es el más grande, de mayor jerarquía y <h6> es el más chiquito, de menor jerarquía.
+
+· <h1> -
+· <h2> -
+· <h3> -
+· <h4> -
+· <h5> -
+· <h6> -
+
+A continuación te pediremos que agregues encabezados de varios tamaños. Escribe lo que quieras como encabezado.
+
+Tu código por ahora tiene un solo encabezado <h1> y dos párrafos.
+
+1. Agrega un encabezado <h3> antes del segundo párrafo.
+2. Agregá un encabezado <h5> después del segundo párrafo y un tercer párrafo después de este encabezado.
+
+Ejemplo:
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>My primera pagina web</title>
+</head>
+<body>
+
+<h1> Encabezado 1</h1>
+<p>Aqui colocamos el primer parrafo</p>
+
+<h3> Encabezado 2</h3>
+<p>Aqui colocamos el segundo parrafo</p>
+
+<h5> Encabezado 3</h5>
+<p>Aqui colocamos el tercer parrafo </p>
+
+</body>
+</html>
+
+---
+
+NOTA: cuando ingrese este código recuerde que Visual Studio ya colocó algunas etiquetas no es necesario escribirlas de nuevo, Visual Studio le ayuda a autocompletar las instrucciones una vez que se ha escrito una etiqueta correctamente.
+
+Guarde su página web con el nombre que guste (Shortcut: Control + S), quedará guardada bajo la extensión HTML, para ver el resultado debe hacer clic sobre el archivo guardado y se abrirá el navegador web que este configurado como principal con el contenido de su página web.
+
+---
+
+Resumen
+
+1. HTML se usa para darle estructura a los sitios web.
+2. Abrimos los archivos HTML usando un navegador, y el navegador reproduce el archivo (nos lo muestra).
+3. Los archivos HTML tienen un encabezado <head> y un cuerpo <body> (Igual que nosotros, que tenemos cabeza y cuerpo).
+4. En el encabezado tenemos las etiquetas de título <title> y las usamos para especificar el nombre de la página web.
+
+---
+
+2.3 Hipervinculos
+
+¿Qué pasaría si quisieras mandar al usuario a otra parte de tu sitio web o directamente a otro sitio web? Tienes que usar hipervínculos. También los podemos llamar vínculos, para abreviar.
+
+Ejemplo:
+
+```html
+<a href="http://www.google.com">Mi sitio web favorito</a>
+```
+
+Para crear vínculos hacemos lo siguiente:
+
+1. Primero hay una etiqueta de apertura <a> y esa etiqueta tiene un atributo que se llama href. El valor href le dice a tu enlace adónde quieres que vaya, en este caso http://www.google.com.
+2. Después hay una descripción de tu enlace entre tu etiqueta <a> de apertura y tu etiqueta </a> de cierre. Ahí es donde podemos hacer clic.
+3. Finalmente aparece la etiqueta </a> de cierre.
+
+Intenta crear 4 vínculos a las siguientes paginas:
+
+· www.google.com
+· www.facebook.com
+· www.yahoo.com
+· www.wikipedia.com
+
+Recuerda que seguido del atributo href es donde colocas la dirección completa del sitio web entre comillas y cierras con un símbolo >, seguido colocas alguna descripción que oculte la dirección web por ejemplo www.google.com “buscador web”.
+
+```html
+<a href= "DIRECCION DEL SITIO WEB" > NOMBRE A MOSTRAR </a>
+```
+
+Completa lo siguiente:
+
+1. Para google
+      <a href="_____">Para buscar información</a>
+2. Para facebook
+      <______"http://www.facebook.com"> ______</a>
+3. Para yahoo
+      <a href= _____ email </a>
+4. Para wikipedia
+   ---
+
+---
+
+2.4 Agregar imágenes
+
+Se puede agregar imágenes a los sitios web para que sean más atractivos.
+
+Usamos una etiqueta de imagen, como: <img>. Esta etiqueta es un poco diferente de las demás. En vez de colocar el contenido en medio de las etiquetas, le indicas a la etiqueta dónde buscar la imagen, usando src. También es diferente porque no hay etiqueta de cierre. Tiene una barra / en la etiqueta para cerrarla: <img src="url"/>.
+
+Ejemplo:
+
+```html
+<img src="imagen frontal.jpg"/>
+```
+
+La url de la imagen o dirección de la imagen puede ser el sitio web donde esta la imagen guardada o bien puede o puede ser una imagen guardada en tu computadora.
+
+Ejemplo:
+
+Imagen de la bandera de Honduras desde el sitio web de wikipedia.
+
+URL:
+https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Flag_of_Honduras.svg/2000px-Flag_of_Honduras.svg.png
+
+Colocada para mostrarse en nuestro sitio web:
+
+```html
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Flag_of_Honduras.svg/2000px-Flag_of_Honduras.svg.png"/>
+```
+
+¿Ves la dirección web (o URL, por localizador de recursos uniforme) después de src=? es https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Flag_of_Honduras.svg/2000px-Flag_of_Honduras.svg.png? Le dice a la etiqueta <img> dónde obtener la imagen.
+
+Cada imagen en la web tiene su propio URL de imagen. Simplemente haces clic con el botón derecho sobre una imagen y eliges “Copiar el URL de la imagen”. Pega ese URL entre comillas después de src= para insertarlo con tu etiqueta de imagen <img>.
+
+---
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>
+    El club de los niños
+    </title>
+</head>
+<body>
+    <center>
+    <h1>
+    <img src="clubnino.jpg">
+    <br/>
+    EL CLUB DE LOS NIÑOS
+    <br/>
+    Humor | Diversión | Entretenimiento | Aprendizaje
+    <hr size="2">
+    </h1>
+    </center>
+    <h2>
+    Quienes somos
+    </h2>
+    <p>
+    Somos un grupo de artistas dedicados al mundo de la magia, la comedia y el espectáculo infantil. Entre nosotros podrás encontrar humoristas, magos, payasitos y más, etc.
+    </p>
+</body>
+</html>
+
+***** la etiqueta <br/> se utiliza para crear espacios entre el texto es como dar enter (espacio) entre parrafos.
+
+En esta primera sección del código estan el título, la imagen del logo, una linea, y un encabezado.
+
+1. Intenta identificar las siguientes lineas de código y escribe que representan.
+   · a. <img src="clubnino.jpg">
+   · b. <hr size="2">
+   · c. <h2>
+2. Identifica esta sección de código en la página web de ejemplo. Escribe cual es su función (investiga la etiqueta address)
+
+```html
+<address>
+Página creada por el equipo de programación Web de “El club de niños”  
+<br> Ultima actualización: 1-Diciembre-2015  
+</address>
+```
+
+1. Identifica esta sección de código en la página web de ejemplo. Escribe cual es su función
+
+---
+
+---
+
+---
+
+---
+
+```html
+<a href="http://www.yogabbagabba.tv/">  
+yogabbagabba TV  
+</a>: Sitio dedicado al aprendizaje mediante el juego interactivo, incluye actividades para entrenar y enseñar a los niños mientras juegan.  
+<p>
+```
+
+B. Completa cerrando las etiquetas body, html
+C. Ahora que ya tienes la mayor parte del código de la página intenta hacer una página web similar reemplazando partes del código original por elementos y lecturas de tu gusto.
+
+---
+
+3. Imagenes
+
+Ahora ya sabes cómo agregar enlaces e imágenes a tu sitio web. Pero, ¿qué tal si quisieras convertir esa imagen en un enlace? Por ejemplo:
+
+```html
+<a href="http://www.honduras.com">  
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Flag_of_Honduras.svg.png">  
+</a>
+```
+
+Como hacer para colocar un vinculo a una imagen:
+
+1. Primero abrimos nuestra etiqueta <a> y dirigimos <a href="http://www.honduras.com"> otra vez.
+2. Pero esta vez, en lugar de usar texto dentro de la etiqueta <a>, usamos una etiqueta de imagen <img>.
+3. Finalmente colocamos la etiqueta de cierre </a>.
+
+******* Colocar una etiqueta HTML dentro de otra se denomina anidado.
+
+---
+
+Abre visual studio express y práctica colocando el siguiente código dentro de la página web que creaste como ejercicio 2.
+
+Abre el archivo html que has creado una manera rápida es haciendo clic derecho sobre el archivo html, y luego escogiendo del menu desplegable la opción abrir con (open with) y luego seleccionar el programa Microsoft Visual Studio Express for web.
+
+Este es el código:
+
+```html
+<a href="http://www.honduras.com"><img src= "http://www.historiadehonduras.hn/SimbolosNacionales/800px-Flag_of_Honduras.svg.png" /></a>
+```
+
+El resultado debería ser una imagen de la bandera de honduras y al hacer clic sobre ella debe redireccionarse al sitio web www.honduras.com
+
+**** Practica creando al menos 5 vinculos más utilizando imagenes y sitios que tu elijas.
+
+---
+
+Resumen:
+Cada casa necesita una estructura, una página HTML es como una casa: necesita cierta cantidad de estructuras esenciales para poder sostenerse.
+Al igual que una casa, una página HTML necesita una estructura. En este caso, tu estructura está hecha de etiquetas <!DOCTYPE>, <html>, <head> y <body>.
