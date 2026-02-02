@@ -190,8 +190,28 @@ TAREAS
 Despues de esta linea se deben de registrar las nuevas tareas, por realizar o completadas
 
 ________________________________________________________________________________________________
+
+TAREA: [A-37]
+TÍTULO: Actualización de Presentación de Programación y Corrección de UI
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se actualizó el contenido de la presentación introduccion_programacion.html basándose en Clase 1.txt.
+- Se corrigió la lógica de visibilidad del encabezado y pie de página para ocultarlos después de la portada.
+- Se implementó la navegación por clic en el contenedor de la presentación.
+- Se actualizaron las 10 preguntas del cuestionario para alinearlas con el nuevo contenido.
 TAREAS COMPLETADAS (ÁREA PROTEGIDA - NO MODIFICAR)
 ________________________________________________________________________________________________
+
+TAREA: [A-37]
+TÍTULO: Actualización de Presentación de Programación y Corrección de UI
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se actualizó el contenido de la presentación introduccion_programacion.html basándose en Clase 1.txt.
+- Se corrigió la lógica de visibilidad del encabezado y pie de página para ocultarlos después de la portada.
+- Se implementó la navegación por clic en el contenedor de la presentación.
+- Se actualizaron las 10 preguntas del cuestionario para alinearlas con el nuevo contenido.
 
 TAREA: [A-13 a A-33] Mejoras de UI, seguridad de exámenes, navegación jerárquica and refactorización (COMPLETADAS)
 TAREA: [A-32] Habilitar visibilidad de tareas de crédito extra (COMPLETADA)
@@ -200,8 +220,28 @@ TAREA: Optimización visual del Dashboard del Profesor (Tarea 28) (COMPLETADA)
 TAREA: Corrección de estados y visibilidad de crédito extra (COMPLETADA)
 
 ________________________________________________________________________________________________
+
+TAREA: [A-37]
+TÍTULO: Actualización de Presentación de Programación y Corrección de UI
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se actualizó el contenido de la presentación introduccion_programacion.html basándose en Clase 1.txt.
+- Se corrigió la lógica de visibilidad del encabezado y pie de página para ocultarlos después de la portada.
+- Se implementó la navegación por clic en el contenedor de la presentación.
+- Se actualizaron las 10 preguntas del cuestionario para alinearlas con el nuevo contenido.
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
+
+TAREA: [A-37]
+TÍTULO: Actualización de Presentación de Programación y Corrección de UI
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se actualizó el contenido de la presentación introduccion_programacion.html basándose en Clase 1.txt.
+- Se corrigió la lógica de visibilidad del encabezado y pie de página para ocultarlos después de la portada.
+- Se implementó la navegación por clic en el contenedor de la presentación.
+- Se actualizaron las 10 preguntas del cuestionario para alinearlas con el nuevo contenido.
 
 TAREA: [A-36]
 TÍTULO: Unificación de Imágenes y Expansión de Contenido Educativo
@@ -255,7 +295,27 @@ ESTADO: COMPLETADAS (PENDIENTE DE REVISIÓN)
 - Centralización de capacidades por rol [A-29].
 
 ________________________________________________________________________________________________
+
+TAREA: [A-37]
+TÍTULO: Actualización de Presentación de Programación y Corrección de UI
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se actualizó el contenido de la presentación introduccion_programacion.html basándose en Clase 1.txt.
+- Se corrigió la lógica de visibilidad del encabezado y pie de página para ocultarlos después de la portada.
+- Se implementó la navegación por clic en el contenedor de la presentación.
+- Se actualizaron las 10 preguntas del cuestionario para alinearlas con el nuevo contenido.
 TAREAS PENDIENTES
 ________________________________________________________________________________________________
+
+TAREA: [A-37]
+TÍTULO: Actualización de Presentación de Programación y Corrección de UI
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Se actualizó el contenido de la presentación introduccion_programacion.html basándose en Clase 1.txt.
+- Se corrigió la lógica de visibilidad del encabezado y pie de página para ocultarlos después de la portada.
+- Se implementó la navegación por clic en el contenedor de la presentación.
+- Se actualizaron las 10 preguntas del cuestionario para alinearlas con el nuevo contenido.
 
 (No hay tareas críticas pendientes en este momento)
