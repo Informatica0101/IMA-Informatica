@@ -592,3 +592,7 @@ Descripción: Se reestructuró el encabezado para igualar el diseño del Panel d
 Archivo: II_BTP_A/Programacion/introduccion_programacion.html
 Líneas: 182-411, 431-485, 541-600
 Cambio: Actualización completa del contenido de las diapositivas y el cuestionario basándose en Clase 1.txt. Implementación de la lógica de visibilidad de encabezado/pie de página y navegación por clic en el contenedor de la presentación.
+
+Archivo: II_BTP_A/Programacion/introduccion_programacion.html
+Líneas: 182-390
+Cambio: Reorganización completa del flujo de diapositivas para agrupar definiciones de algoritmos antes de los ejemplos. Mejora de las definiciones de Programa de Computadora y Algoritmo. Integración de imágenes del repositorio para ilustrar conceptos técnicos (flujos, sintaxis, lógica).
