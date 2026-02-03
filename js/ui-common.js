@@ -185,6 +185,20 @@ function setupPWALogic() {
         // If iOS, show the special instructions modal
         if (isIOS) {
             if (iosModal) iosModal.classList.remove("opacity-0", "pointer-events-none");
+
+            // Atajo para iOS: Intentar abrir el menú de compartir directamente
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'InformaticApp',
+                        text: 'Instalar plataforma educativa en tu pantalla de inicio',
+                        url: window.location.origin + window.location.pathname
+                    });
+                } catch (err) {
+                    // El usuario canceló o el navegador no lo soporta
+                    console.log('Share sheet dismissed', err);
+                }
+            }
             return;
         }
 
