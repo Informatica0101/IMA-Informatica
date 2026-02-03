@@ -64,8 +64,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await fetchApi('USER', 'registerUser', payload);
 
                 if (result.status === 'success') {
-                    alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
-                    window.location.href = 'login.html';
+                    // Login automático tras registro exitoso
+                    const userData = {
+                        userId: result.userId,
+                        nombre: payload.nombre,
+                        grado: payload.grado,
+                        seccion: payload.seccion,
+                        rol: 'Estudiante'
+                    };
+                    localStorage.setItem('currentUser', JSON.stringify(userData));
+                    alert('¡Registro exitoso! Bienvenido.');
+                    window.location.href = 'student-dashboard.html';
                 } else {
                     alert(result.message || 'Error en el registro.');
                 }
