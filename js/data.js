@@ -113,7 +113,7 @@ window.downloadContentData = [
             {
                 name: "Programación",
                 topics: [
-                    { title: "Libro de Programación", file: "II_BTP_A/Programacion/pdf-libro-m2-programacion-ipdf_compress.pdf" }
+                    { title: "Introduccion a programacion", file: "II_BTP_A/Programacion/Programación_2026.pdf" }
                 ]
             }
             /* {
