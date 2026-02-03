@@ -100,6 +100,23 @@ function registerUser(payload) {
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
+  const data = usuariosSheet.getDataRange().getValues();
+
+  // Validación de duplicados (Email y Nombre de Usuario)
+  const lowerEmail = email.toString().toLowerCase().trim();
+  const lowerNombre = nombre.toString().toLowerCase().trim();
+
+  for (let i = 1; i < data.length; i++) {
+    const existingNombre = data[i][1]?.toString().toLowerCase().trim();
+    const existingEmail = data[i][4]?.toString().toLowerCase().trim();
+
+    if (existingEmail === lowerEmail) {
+      return { status: "error", message: "El correo electrónico ya está registrado." };
+    }
+    if (existingNombre === lowerNombre) {
+      return { status: "error", message: "El nombre de usuario ya está registrado." };
+    }
+  }
 
   const userId = "USR-" + new Date().getTime();
   const hashedPassword = Utilities
@@ -125,12 +142,12 @@ function registerUser(payload) {
 }
 
 function loginUser(payload) {
-  logDebug("Iniciando loginUser", { email: payload?.email });
+  logDebug("Iniciando loginUser", { identifier: payload?.identifier });
 
-  const { email, password } = payload || {};
+  const { identifier, password } = payload || {};
 
-  if (!email || !password) {
-    throw new Error("Email y contraseña son requeridos.");
+  if (!identifier || !password) {
+    throw new Error("Email/Usuario y contraseña son requeridos.");
   }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -142,8 +159,13 @@ function loginUser(payload) {
     .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2))
     .join('');
 
+  const lowerIdentifier = identifier.toString().toLowerCase().trim();
+
   for (let i = 1; i < data.length; i++) {
-    if (data[i][4] === email && data[i][5] === hashedPassword) {
+    const existingNombre = data[i][1]?.toString().toLowerCase().trim();
+    const existingEmail = data[i][4]?.toString().toLowerCase().trim();
+
+    if ((existingEmail === lowerIdentifier || existingNombre === lowerIdentifier) && data[i][5] === hashedPassword) {
       return {
         status: "success",
         data: {

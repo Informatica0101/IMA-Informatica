@@ -16,14 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = loginForm.querySelector('button[type="submit"]');
-            const email = e.target.email.value;
+            const identifier = e.target.email.value;
             const password = e.target.password.value;
 
             submitBtn.classList.add('btn-loading');
             submitBtn.disabled = true;
 
             try {
-                const result = await fetchApi('USER', 'loginUser', { email, password });
+                const result = await fetchApi('USER', 'loginUser', { identifier, password });
 
                 if (result.status === 'success' && result.data) {
                     localStorage.setItem('currentUser', JSON.stringify(result.data));
