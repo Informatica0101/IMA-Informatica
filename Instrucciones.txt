@@ -190,8 +190,34 @@ TAREAS
 Despues de esta linea se deben de registrar las nuevas tareas, por realizar o completadas
 
 ________________________________________________________________________________________________
+
+TAREA: [A-37]
+TÍTULO: Actualización de Presentación de Programación y Corrección de UI
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
+- Se actualizó el contenido de la presentación introduccion_programacion.html basándose en Clase 1.txt.
+- Se corrigió la lógica de visibilidad del encabezado y pie de página para ocultarlos después de la portada.
+- Se implementó la navegación por clic en el contenedor de la presentación.
+- Se actualizaron las 10 preguntas del cuestionario para alinearlas con el nuevo contenido.
+- Se reorganizó el flujo lógico de la presentación (Definiciones -> Características -> Ejemplos -> Procesos).
+- Se enriquecieron las definiciones de Algoritmo y Programa utilizando múltiples perspectivas del material fuente.
+- Se integraron diagramas visuales del repositorio para apoyar los conceptos técnicos.
 TAREAS COMPLETADAS (ÁREA PROTEGIDA - NO MODIFICAR)
 ________________________________________________________________________________________________
+
+TAREA: [A-37]
+TÍTULO: Actualización de Presentación de Programación y Corrección de UI
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
+- Se actualizó el contenido de la presentación introduccion_programacion.html basándose en Clase 1.txt.
+- Se corrigió la lógica de visibilidad del encabezado y pie de página para ocultarlos después de la portada.
+- Se implementó la navegación por clic en el contenedor de la presentación.
+- Se actualizaron las 10 preguntas del cuestionario para alinearlas con el nuevo contenido.
+- Se reorganizó el flujo lógico de la presentación (Definiciones -> Características -> Ejemplos -> Procesos).
+- Se enriquecieron las definiciones de Algoritmo y Programa utilizando múltiples perspectivas del material fuente.
+- Se integraron diagramas visuales del repositorio para apoyar los conceptos técnicos.
 
 TAREA: [A-13 a A-33] Mejoras de UI, seguridad de exámenes, navegación jerárquica and refactorización (COMPLETADAS)
 TAREA: [A-32] Habilitar visibilidad de tareas de crédito extra (COMPLETADA)
@@ -200,14 +226,40 @@ TAREA: Optimización visual del Dashboard del Profesor (Tarea 28) (COMPLETADA)
 TAREA: Corrección de estados y visibilidad de crédito extra (COMPLETADA)
 
 ________________________________________________________________________________________________
+
+TAREA: [A-37]
+TÍTULO: Actualización de Presentación de Programación y Corrección de UI
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
+- Se actualizó el contenido de la presentación introduccion_programacion.html basándose en Clase 1.txt.
+- Se corrigió la lógica de visibilidad del encabezado y pie de página para ocultarlos después de la portada.
+- Se implementó la navegación por clic en el contenedor de la presentación.
+- Se actualizaron las 10 preguntas del cuestionario para alinearlas con el nuevo contenido.
+- Se reorganizó el flujo lógico de la presentación (Definiciones -> Características -> Ejemplos -> Procesos).
+- Se enriquecieron las definiciones de Algoritmo y Programa utilizando múltiples perspectivas del material fuente.
+- Se integraron diagramas visuales del repositorio para apoyar los conceptos técnicos.
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
+
+TAREA: [A-37]
+TÍTULO: Actualización de Presentación de Programación y Corrección de UI
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
+- Se actualizó el contenido de la presentación introduccion_programacion.html basándose en Clase 1.txt.
+- Se corrigió la lógica de visibilidad del encabezado y pie de página para ocultarlos después de la portada.
+- Se implementó la navegación por clic en el contenedor de la presentación.
+- Se actualizaron las 10 preguntas del cuestionario para alinearlas con el nuevo contenido.
+- Se reorganizó el flujo lógico de la presentación (Definiciones -> Características -> Ejemplos -> Procesos).
+- Se enriquecieron las definiciones de Algoritmo y Programa utilizando múltiples perspectivas del material fuente.
+- Se integraron diagramas visuales del repositorio para apoyar los conceptos técnicos.
 
 TAREA: [A-36]
 TÍTULO: Unificación de Imágenes y Expansión de Contenido Educativo
 ÁREA: Frontend / Contenido / Activos
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
 - Se unificaron todas las imágenes en el directorio raíz /imagenes/ y se eliminaron carpetas redundantes en subdirectorios.
 - Se normalizaron todas las rutas de imágenes y enlaces a formato relativo (../, ../../) para asegurar portabilidad total en GitHub Pages y entornos locales.
 - Se ampliaron las presentaciones de Programación (Undécimo) y Diseño Web (Duodécimo) a 16 diapositivas de contenido educativo riguroso cada una.
@@ -218,7 +270,7 @@ TAREA: [A-35]
 TÍTULO: Refinamiento de Lógica de Preguntas (T/F y Término Pareado)
 ÁREA: Frontend / Backend / Exámenes
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
 - Corregido envío de valores semánticos ("Verdadero"/"Falso") para preguntas de T/F.
 - Implementado barajado estable (Fisher-Yates) para definiciones en Término Pareado.
 - Agregada validación de definiciones duplicadas en la creación de exámenes.
@@ -228,7 +280,7 @@ TAREA: [A-34]
 TÍTULO: Corrección de Regresión en Módulo de Exámenes
 ÁREA: Frontend / Backend / Exámenes
 PRIORIDAD: CRÍTICA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
 - Se restauró la visibilidad de exámenes en el Dashboard del Profesor mediante la pestaña "Gestión".
 - Se robusteció la visibilidad de exámenes para estudiantes en el backend (grado/sección case-insensitive).
 - Se implementó la lógica completa de "Término Pareado" (auto-mapeo, envío JSON y calificación parcial).
@@ -238,7 +290,7 @@ TAREA: [A-33]
 TÍTULO: Ajuste visual saludo Dashboard Estudiante
 ÁREA: Frontend / UI
 PRIORIDAD: BAJA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
 - Se sincronizó el tamaño de fuente del saludo en student-dashboard.html (text-lg) con el de teacher-dashboard.html.
 
 TAREA: [A-13 a A-30] Refactorización masiva y corrección de seguridad
@@ -255,7 +307,33 @@ ESTADO: COMPLETADAS (PENDIENTE DE REVISIÓN)
 - Centralización de capacidades por rol [A-29].
 
 ________________________________________________________________________________________________
+
+TAREA: [A-37]
+TÍTULO: Actualización de Presentación de Programación y Corrección de UI
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
+- Se actualizó el contenido de la presentación introduccion_programacion.html basándose en Clase 1.txt.
+- Se corrigió la lógica de visibilidad del encabezado y pie de página para ocultarlos después de la portada.
+- Se implementó la navegación por clic en el contenedor de la presentación.
+- Se actualizaron las 10 preguntas del cuestionario para alinearlas con el nuevo contenido.
+- Se reorganizó el flujo lógico de la presentación (Definiciones -> Características -> Ejemplos -> Procesos).
+- Se enriquecieron las definiciones de Algoritmo y Programa utilizando múltiples perspectivas del material fuente.
+- Se integraron diagramas visuales del repositorio para apoyar los conceptos técnicos.
 TAREAS PENDIENTES
 ________________________________________________________________________________________________
+
+TAREA: [A-37]
+TÍTULO: Actualización de Presentación de Programación y Corrección de UI
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
+- Se actualizó el contenido de la presentación introduccion_programacion.html basándose en Clase 1.txt.
+- Se corrigió la lógica de visibilidad del encabezado y pie de página para ocultarlos después de la portada.
+- Se implementó la navegación por clic en el contenedor de la presentación.
+- Se actualizaron las 10 preguntas del cuestionario para alinearlas con el nuevo contenido.
+- Se reorganizó el flujo lógico de la presentación (Definiciones -> Características -> Ejemplos -> Procesos).
+- Se enriquecieron las definiciones de Algoritmo y Programa utilizando múltiples perspectivas del material fuente.
+- Se integraron diagramas visuales del repositorio para apoyar los conceptos técnicos.
 
 (No hay tareas críticas pendientes en este momento)

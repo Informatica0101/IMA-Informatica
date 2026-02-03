@@ -116,3 +116,13 @@ Auditoría - Corrección de Rutas para Portabilidad (GitHub Pages) - 01/02/2026
    - Acción: Se actualizaron las rutas a relativas compatibles con el punto de entrada del juego.
 4. Verificación:
    - Se comprobó mediante screenshots que las imágenes en las presentaciones de "Programación" y "Diseño Web" ahora cargan correctamente tras la normalización.
+
+Archivo: II_BTP_A/Programacion/introduccion_programacion.html
+- Auditoría completa del archivo y del contenido de Clase 1.txt.
+- Hallazgo: La lógica de ocultación de encabezado/pie de página estaba declarada pero no implementada.
+- Hallazgo: La navegación por clic no existía en el código.
+
+Archivo: II_BTP_A/Programacion/introduccion_programacion.html
+- Re-auditoría para mejorar definiciones y flujo lógico.
+- Hallazgo: Los ejemplos estaban intercalados con teoría, dificultando el seguimiento pedagógico.
+- Hallazgo: Las definiciones de Programa de Computadora podían enriquecerse con los conceptos adicionales del texto.
