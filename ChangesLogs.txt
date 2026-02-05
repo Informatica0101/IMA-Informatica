@@ -596,3 +596,23 @@ Cambio: Actualización completa del contenido de las diapositivas y el cuestiona
 Archivo: II_BTP_A/Programacion/introduccion_programacion.html
 Líneas: 182-390
 Cambio: Reorganización completa del flujo de diapositivas para agrupar definiciones de algoritmos antes de los ejemplos. Mejora de las definiciones de Programa de Computadora y Algoritmo. Integración de imágenes del repositorio para ilustrar conceptos técnicos (flujos, sintaxis, lógica).
+
+25/01/2026
+- Archivo: backend/user-service/Code.gs
+  - Implementada lógica de prevención de duplicados en `registerUser` (email y nombre de usuario) mediante comparaciones normalizadas (case-insensitive y trimmed).
+  - Actualizada la función `loginUser` para permitir el inicio de sesión con correo electrónico o nombre de usuario de forma indistinta y sin sensibilidad a mayúsculas.
+- Archivo: js/auth.js
+  - Implementado inicio de sesión automático tras un registro exitoso, redirigiendo directamente al dashboard del estudiante.
+  - Actualizada la lógica de envío de credenciales para usar el nuevo campo `identifier`.
+- Archivo: register.html
+  - Sustituido el campo de texto de "Sección" por un desplegable `<select>` con opciones restringidas (A, B, C) para garantizar la integridad de los datos.
+- Archivo: login.html
+  - Actualizado el campo de entrada de credenciales a `type="text"` para soportar nombres de usuario y correos electrónicos.
+- Archivos HTML (Global):
+  - Implementado soporte completo para iOS PWA: añadidos meta tags `apple-mobile-web-app-*` y `apple-touch-icon` en 9 archivos principales.
+  - Optimizada la interfaz de usuario: reducida la altura de encabezados y pies de página en escritorio, y centrados verticalmente los elementos de navegación para una apariencia más profesional.
+  - Ajustados los márgenes superiores de contenido principal para compensar el nuevo tamaño del encabezado fijo.
+- Archivo: js/config.js
+  - Actualizada la URL del microservicio USER al endpoint de producción definitivo.
+- Archivo: js/ui-common.js
+  - Implementado acceso directo al menú de instalación en iOS mediante la API `navigator.share` en dispositivos Apple.

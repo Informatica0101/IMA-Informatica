@@ -191,6 +191,18 @@ Despues de esta linea se deben de registrar las nuevas tareas, por realizar o co
 
 ________________________________________________________________________________________________
 
+TAREA: [A-38]
+TÍTULO: Prevención de Duplicados y Mejoras Globales de UX/PWA
+ÁREA: Backend / Auth / UI
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA
+- Implementada prevención de duplicados por email y nombre (case-insensitive) en registro.
+- Habilitado login por email o usuario con insensibilidad a mayúsculas.
+- Implementado auto-login tras registro exitoso.
+- Normalizada la entrada de "Sección" a dropdown (A, B, C) en registro.
+- Implementado soporte completo para iOS PWA (meta tags e iconos).
+- Optimizada la alineación y altura de la interfaz (Header/Footer) en toda la plataforma.
+
 TAREA: [A-37]
 TÍTULO: Actualización de Presentación de Programación y Corrección de UI
 ÁREA: Frontend / Contenido

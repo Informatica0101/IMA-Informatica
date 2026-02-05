@@ -1,0 +1,51 @@
+AUDITORÍA DE ARCHIVOS - [A-38]
+===================================================================
+
+FECHA: 25/01/2026
+TAREA: [A-38] Actualización de Lógica de Autenticación, UI y Soporte iOS PWA
+
+-------------------------------------------------------------------
+1. ARCHIVO: backend/user-service/Code.gs
+-------------------------------------------------------------------
+- Estado: Funcional, pero permitía duplicados por discrepancias de caja (Case-sensitive).
+- Hallazgos:
+  · registerUser: No normalizaba strings antes de comparar.
+  · loginUser: Solo aceptaba email como identificador.
+- Riesgos: Duplicidad de cuentas con el mismo correo (ej: User@Email.com vs user@email.com).
+- Acción: Implementar .toLowerCase().trim() en registro (nombre y email) y login (identifier).
+
+-------------------------------------------------------------------
+2. ARCHIVO: js/auth.js
+-------------------------------------------------------------------
+- Estado: Funcional.
+- Hallazgos:
+  · El formulario de login enviaba 'email'.
+  · No había auto-login tras registro.
+- Riesgos: Fricción en la experiencia de usuario (UX).
+- Acción: Cambiar 'email' por 'identifier' y redirigir a dashboard tras registro exitoso guardando datos en localStorage.
+
+-------------------------------------------------------------------
+3. ARCHIVO: login.html
+-------------------------------------------------------------------
+- Estado: UI con desajustes de alineación.
+- Hallazgos:
+  · Input de email era tipo "email" (limita login por usuario).
+  · Header/Footer muy altos.
+- Acción: Cambiar tipo a "text", actualizar labels, ajustar alturas de UI.
+
+-------------------------------------------------------------------
+4. ARCHIVO: register.html
+-------------------------------------------------------------------
+- Estado: Input de Sección manual.
+- Hallazgos:
+  · Sección era un campo de texto (causa inconsistencias).
+  · Falta soporte visual para iOS PWA.
+- Acción: Cambiar a <select> (A, B, C), añadir meta tags de Apple.
+
+-------------------------------------------------------------------
+5. ARCHIVOS HTML (Globales)
+-------------------------------------------------------------------
+- Hallazgos:
+  · Desalineación vertical en el menú de navegación (items-top vs items-center).
+  · Falta de iconos táctiles para Apple.
+- Acción: Aplicar items-center en nav, añadir <link rel="apple-touch-icon">, ajustar mt- de contenedores.

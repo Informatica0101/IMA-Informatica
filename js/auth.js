@@ -16,14 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = loginForm.querySelector('button[type="submit"]');
-            const email = e.target.email.value;
+            const identifier = e.target.email.value;
             const password = e.target.password.value;
 
             submitBtn.classList.add('btn-loading');
             submitBtn.disabled = true;
 
             try {
-                const result = await fetchApi('USER', 'loginUser', { email, password });
+                const result = await fetchApi('USER', 'loginUser', { identifier, password });
 
                 if (result.status === 'success' && result.data) {
                     localStorage.setItem('currentUser', JSON.stringify(result.data));
@@ -64,8 +64,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await fetchApi('USER', 'registerUser', payload);
 
                 if (result.status === 'success') {
-                    alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
-                    window.location.href = 'login.html';
+                    // Login automático tras registro exitoso
+                    const userData = {
+                        userId: result.userId,
+                        nombre: payload.nombre,
+                        grado: payload.grado,
+                        seccion: payload.seccion,
+                        rol: 'Estudiante'
+                    };
+                    localStorage.setItem('currentUser', JSON.stringify(userData));
+                    alert('¡Registro exitoso! Bienvenido.');
+                    window.location.href = 'student-dashboard.html';
                 } else {
                     alert(result.message || 'Error en el registro.');
                 }

@@ -7,13 +7,17 @@
     <link rel="icon" type="image/png" href="IMA-Logo.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="InformaticApp">
+    <link rel="apple-touch-icon" href="IMA-Logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=6">
 </head>
 <body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
 
-    <header id="main-header" class="bg-white shadow-md py-2 md:py-4 px-1 md:px-3 fixed w-full z-50">
+    <header id="main-header" class="bg-white shadow-md py-2 md:py-2 px-1 md:px-3 fixed w-full z-50">
         <div class="container mx-auto flex justify-between items-center">
             <a href="index.html" class="flex items-center space-x-4 transition-transform duration-300 logo-container">
                 <img src="imagenes/logo.png" alt="Logo" width="120" height="auto" class="logo-img transition-transform duration-300">
@@ -23,7 +27,7 @@
         </div>
     </header>
 
-    <main class="mt-[7rem] pb-20 flex-grow">
+    <main class="mt-[6rem] pb-20 flex-grow">
         <div class="container mx-auto px-5 max-w-4xl">
             <div class="dashboard-card text-center mb-10">
                 <h1 class="text-3xl font-extrabold text-gray-800 mb-8">Resumen de Calificación</h1>
@@ -41,9 +45,9 @@
         </div>
     </main>
 
-    <footer class="bg-gray-900 text-white py-6 mt-auto">
+    <footer class="bg-gray-900 text-white py-4 mt-auto">
         <div class="container mx-auto px-5 text-center">
-            <p class="text-lg font-medium mb-6">
+            <p class="text-lg font-medium mb-3">
                 &copy; <span id="current-year"></span> Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
             </p>
             <div class="flex justify-center space-x-8">
@@ -68,11 +72,11 @@
             <div class="space-y-4 text-left mb-6">
                 <div class="flex items-center space-x-3">
                     <span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span>
-                    <span class="text-sm">Pulsa el botón "Compartir" en Safari.</span>
+                    <span class="text-sm">Busca en el menú de compartir la opción:</span>
                 </div>
                 <div class="flex items-center space-x-3">
                     <span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span>
-                    <span class="text-sm">Baja y selecciona "Añadir a la pantalla de inicio".</span>
+                    <span class="text-sm">"Añadir a la pantalla de inicio"</span>
                 </div>
             </div>
             <button id="close-ios-modal" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors">Entendido</button>
