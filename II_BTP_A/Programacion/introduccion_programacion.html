@@ -3,155 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introducción a la Programación</title>
-    <!-- CDN de Tailwind CSS -->
+    <title>Introducción a la Programación - Semana 1</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Estilos base para un diseño consistente */
-        * {
-            box-sizing: border-box;
-        }
-
-        /* Ajuste global para reducir el tamaño base en un 10%. (1rem = 0.9rem) */
-        html {
-            font-size: 90%;
-        }
-
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            width: 100vw;
-            overflow-x: hidden;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Inter', sans-serif;
-            background-color: #f9fafb;
-            color: #374151;
-            justify-content: space-between;
-        }
-
-        #presentation-container {
-            width: 100%;
-            height: calc(100vh - 7rem);
-            position: relative;
-            background-color: #ffffff;
-            border-radius: 1rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto;
-            max-width: 100vw;
-        }
-
-        .slide {
-            width: 100%;
-            height: 100%;
-            padding: 1.8rem;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            overflow-y: auto;
-        }
-        .slide::-webkit-scrollbar {
-            display: none;
-        }
-
-        .slide.active {
-            display: flex;
-            opacity: 1;
-            animation-name: fadeIn;
-            animation-duration: 0.8s;
-            animation-fill-mode: forwards;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(18px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .slide h2, .slide h3 {
-                font-size: 1.4rem;
-            }
-            .slide p, .slide li {
-                font-size: 0.9rem;
-            }
-            .nav-button {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.8rem;
-            }
-        }
-
-        /* Estilos del Cuestionario */
-        .quiz-option-button {
-            transition: background-color 0.3s, transform 0.2s;
-            text-align: left; /* Aseguramos que el texto esté a la izquierda */
-            padding-left: 1.5rem; /* Espaciado interno */
-        }
-
-        .quiz-option-button.correct {
-            background-color: #d1fae5;
-            color: #065f46;
-            border-color: #10b981;
-        }
-
-        .quiz-option-button.incorrect {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border-color: #ef4444;
-        }
-
-        /* Estilo para placeholder de imagen */
-        .image-placeholder {
-            height: 150px;
-            width: 250px;
-            color: #009688;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: 600;
-            border-radius: 8px;
-            margin: 1rem auto;
-            font-size: 0.8rem;
-            text-align: center;
-            padding: 10px;
-        }
-        @media (min-width: 640px) {
-            .image-placeholder {
-                height: 200px;
-                width: 350px;
-                font-size: 1rem;
-            }
-        }
+        * { box-sizing: border-box; }
+        html { font-size: 90%; }
+        html, body { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow-x: hidden; }
+        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #374151; justify-content: space-between; }
+        #presentation-container { width: 100%; height: calc(100vh - 7rem); position: relative; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); overflow: hidden; display: flex; justify-content: center; align-items: center; margin: 0 auto; max-width: 100vw; }
+        .slide { width: 100%; height: 100%; padding: 1.8rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: opacity 0.5s ease-in-out; position: absolute; top: 0; left: 0; opacity: 0; -ms-overflow-style: none; scrollbar-width: none; overflow-y: auto; }
+        .slide::-webkit-scrollbar { display: none; }
+        .slide.active { display: flex; opacity: 1; animation-name: fadeIn; animation-duration: 0.8s; animation-fill-mode: forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) { .slide h2, .slide h3 { font-size: 1.4rem; } .slide p, .slide li { font-size: 0.9rem; } .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
+        .quiz-option-button { transition: background-color 0.3s, transform 0.2s; text-align: left; padding-left: 1.5rem; }
+        .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
+        .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
+        .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
+        .step-box { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.8rem; margin: 0.3rem 0; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .step-number { display: inline-block; background: #3b82f6; color: white; width: 26px; height: 26px; border-radius: 50%; text-align: center; line-height: 26px; margin-right: 10px; font-weight: bold; font-size: 0.9rem; }
+        .example-container { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; padding: 1.2rem; margin: 1rem auto; max-width: 700px; }
+        .feature-card { padding: 0.8rem; border-radius: 8px; margin: 0.5rem; text-align: center; }
     </style>
 </head>
 <body class="antialiased">
-
-    <!-- Header de la página -->
     <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
         <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
             <img src="../../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
@@ -160,289 +36,459 @@
         <nav class="mt-3 sm:mt-0">
             <ul class="flex space-x-2 sm:space-x-3">
                 <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Acerca de</a></li>
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Contacto</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Contenido principal de la presentación -->
     <main class="flex-grow flex justify-center items-center p-3">
         <div id="presentation-container" class="relative">
-
             <!-- Diapositiva 1: Portada -->
             <div id="slide-1" class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-3 sm:mb-7">
-                <h2 class="text-lg sm:text-xl mb-1 sm:mb-3 text-blue-600">Introducción a la Programación</h2>
-                <p class="text-xs sm:text-sm text-gray-600">Módulo II: Lógica de Programación</p>
-                <div class="mt-3 sm:mt-7 text-xs text-gray-500">
+                <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
+                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600">Introducción a la Programación</h2>
+                <p class="text-sm sm:text-base text-gray-600 mb-6">Semana 1: Fundamentos Básicos</p>
+                <div class="text-xs text-gray-500 space-y-1">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 1 de febrero de 2026</p>
-                    <p>Grado: Undécimo de Informática</p>
+                    <p>Fecha: 08 de febrero de 2026</p>
+                    <p>Grado: Undécimo de Informática - Sección "A"</p>
+                    <p class="mt-3 font-semibold text-blue-500">Competencia: Comprender la importancia de la programación</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: 1.2 Definición de lenguaje de programación -->
+            <!-- Diapositiva 2: ¿Qué es Programación? -->
             <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">1.2 Definición de lenguaje de programación</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
-                    Es la combinación de <b>símbolos y reglas</b> que permiten la elaboración de programas con los cuales la computadora puede realizar tareas o resolver problemas de manera eficiente.
-                </p>
-                <div class="image-placeholder mt-5">
-                    <img src="../../imagenes/so_concepto.png" alt="Lenguaje de Programación" class="h-full">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Qué es Programación?</h3>
+                <div class="concept-box">
+                    <p class="font-bold text-lg mb-3">📝 Definición:</p>
+                    <p class="mb-4">La programación es el proceso de crear <span class="font-bold text-blue-600">instrucciones precisas</span> que una computadora puede seguir para realizar tareas específicas.</p>
+                    
+                    <div class="bg-blue-50 p-3 rounded-lg mb-3">
+                        <p class="font-bold mb-1">Del material de estudio:</p>
+                        <p class="italic text-sm">"Un programa de software es una sucesión de instrucciones. Puede ser simple o complicado."</p>
+                    </div>
+                    
+                    <div class="bg-green-50 p-3 rounded-lg">
+                        <p class="font-bold mb-1">💡 En palabras simples:</p>
+                        <p>Programar es como dar una receta de cocina a una computadora: pasos claros para obtener un resultado.</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 3: 2. Algoritmos: Definición y Origen -->
+            <!-- Diapositiva 3: ¿Qué es un Algoritmo? -->
             <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2. Algoritmos</h3>
-                <div class="text-left space-y-4 max-w-3xl mx-auto text-xs sm:text-sm">
-                    <p><b>Definición:</b> Conjunto de instrucciones que la computadora debe seguir para resolver un problema mediante un cálculo bien especificado (relación <b>entrada/salida</b>).</p>
-                    <div class="p-3 bg-blue-50 rounded-lg italic">
-                        "La palabra se deriva del matemático árabe <b>Muhammad Musa Alkhawarizmi</b>, quien en el siglo IX escribió un tratado sobre manipulación de números."
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Qué es un Algoritmo?</h3>
+                
+                <div class="concept-box mb-4">
+                    <p class="font-bold text-lg mb-2">🔍 Definición:</p>
+                    <p>Un algoritmo es un <span class="font-bold">conjunto de instrucciones ordenadas</span> para resolver un problema.</p>
+                </div>
+                
+                <div class="bg-yellow-50 p-4 rounded-lg mb-4 max-w-2xl">
+                    <p class="font-bold mb-2">📚 Origen histórico:</p>
+                    <p>La palabra "algoritmo" viene de <span class="font-bold">Muhammad Musa Alkhawarizmi</span>, matemático árabe del siglo IX.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl">
+                    <div class="bg-white p-4 border rounded-lg shadow-sm">
+                        <p class="font-bold mb-2">💻 Para la computadora:</p>
+                        <p>Transforma <span class="font-bold">entradas</span> en <span class="font-bold">salidas</span> mediante cálculos definidos.</p>
                     </div>
-                    <p>Funciona como una herramienta para transformar datos de entrada en resultados de salida.</p>
+                    <div class="bg-white p-4 border rounded-lg shadow-sm">
+                        <p class="font-bold mb-2">👨‍🏫 Para nosotros:</p>
+                        <p>Es como seguir las instrucciones de un manual paso a paso.</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 4: 2.2 Características de los Algoritmos -->
+            <!-- Diapositiva 4: Característica 1 - Finito -->
             <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2.2 Características de los Algoritmos</h3>
-                <ul class="text-left space-y-3 text-xs sm:text-sm max-w-2xl mx-auto">
-                    <li><b>1. Finito:</b> En tamaño (instrucciones) y tiempo (debe terminar en algún momento).</li>
-                    <li><b>2. Preciso:</b> Debe tener un orden lógico y estricto entre los pasos.</li>
-                    <li><b>3. Definido:</b> No debe ser ambiguo; si se ejecuta con las mismas entradas, el resultado siempre será el mismo.</li>
-                    <li><b>4. General:</b> Debe tolerar cambios que se presenten en la definición del problema.</li>
-                </ul>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Características: Finito</h3>
+                
+                <div class="example-container">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3 flex-shrink-0">1</div>
+                        <div>
+                            <p class="font-bold text-lg mb-2">¿Qué significa "Finito"?</p>
+                            <p>Un algoritmo debe tener un <span class="font-bold">número limitado de pasos</span> y debe <span class="font-bold">terminar en algún momento</span>.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="font-bold mb-2">📝 Ejemplo:</p>
+                        <p>Un algoritmo para "preparar café" no puede tener pasos infinitos. Debe terminar cuando el café esté listo.</p>
+                        
+                        <div class="mt-3 p-3 bg-white border-l-4 border-blue-400 rounded">
+                            <p class="font-semibold">✅ Correcto:</p>
+                            <p class="text-sm">1. Hervir agua<br>2. Poner café<br>3. Verter agua<br>4. Servir</p>
+                        </div>
+                        
+                        <div class="mt-3 p-3 bg-white border-l-4 border-red-400 rounded">
+                            <p class="font-semibold">❌ Incorrecto:</p>
+                            <p class="text-sm">1. Hervir agua<br>2. Poner café<br>3. Verter agua<br>4. Revolver<br>5. Revolver más<br>6. Seguir revolviendo... (nunca termina)</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Diapositiva 5: 2.3 Clasificación de algoritmos -->
+            <!-- Diapositiva 5: Característica 2 - Preciso -->
             <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2.3 Clasificación de algoritmos</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-4xl text-left text-xs sm:text-sm">
-                    <div class="p-3 border rounded-lg bg-blue-50">
-                        <p class="font-bold">Computacional</p>
-                        <p class="text-[11px]">Ejecutado por una computadora (Ej: Cálculo de raíz cuadrada).</p>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Características: Preciso</h3>
+                
+                <div class="example-container">
+                    <div class="flex items-start mb-4">
+                        <div class="bg-green-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3 flex-shrink-0">2</div>
+                        <div>
+                            <p class="font-bold text-lg mb-2">¿Qué significa "Preciso"?</p>
+                            <p>Cada paso debe estar <span class="font-bold">claramente definido</span> sin ambigüedad.</p>
+                        </div>
                     </div>
-                    <div class="p-3 border rounded-lg bg-green-50">
-                        <p class="font-bold">No computacional</p>
-                        <p class="text-[11px]">Realizado por el ser humano (Ej: Instalación de equipo de sonido).</p>
-                    </div>
-                    <div class="p-3 border rounded-lg bg-yellow-50">
-                        <p class="font-bold">Cualitativo</p>
-                        <p class="text-[11px]">No involucra cálculos numéricos (Ej: Instrucciones para actividad física).</p>
-                    </div>
-                    <div class="p-3 border rounded-lg bg-red-50">
-                        <p class="font-bold">Cuantitativo</p>
-                        <p class="text-[11px]">Involucra cálculos numéricos (Ej: Solución de ecuación de 2do grado).</p>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="font-bold mb-2">📝 Comparación:</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-white rounded border-2 border-green-200">
+                                <p class="font-bold text-green-600 mb-2">✅ Preciso:</p>
+                                <p class="text-sm">"Agregar 2 cucharadas de azúcar"</p>
+                            </div>
+                            <div class="p-3 bg-white rounded border-2 border-red-200">
+                                <p class="font-bold text-red-600 mb-2">❌ Impreciso:</p>
+                                <p class="text-sm">"Agregar un poco de azúcar"</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-blue-50 rounded">
+                            <p class="font-bold mb-1">💡 ¿Por qué es importante?</p>
+                            <p class="text-sm">Una computadora no puede adivinar. Necesita instrucciones exactas.</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 6: Algoritmos Cotidianos (I) -->
+            <!-- Diapositiva 6: Características 3 y 4 -->
             <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Ejemplo: Cambiar llanta pinchada</h3>
-                <ol class="text-left text-xs sm:text-sm space-y-1 max-w-2xl mx-auto list-decimal pr-4">
-                    <li>Aflojar los tornillos con la llave inglesa.</li>
-                    <li>Ubicar el gato mecánico en su sitio.</li>
-                    <li>Levantar el gato hasta que la rueda gire libremente.</li>
-                    <li>Quitar los tornillos y la rueda pinchada.</li>
-                    <li>Poner rueda de repuesto y los tornillos.</li>
-                    <li>Bajar el gato hasta que se pueda liberar.</li>
-                    <li>Sacar el gato de su sitio.</li>
-                    <li>Apretar los tornillos con la llave inglesa.</li>
-                </ol>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Más Características</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl">
+                    <div class="bg-white p-4 rounded-lg border-2 border-purple-200 shadow">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">3</div>
+                            <p class="font-bold text-lg">Definido</p>
+                        </div>
+                        <p class="mb-2">Mismas entradas = mismos resultados</p>
+                        <div class="bg-purple-50 p-3 rounded text-sm">
+                            <p class="font-semibold">Ejemplo:</p>
+                            <p>2 + 2 siempre es 4, nunca 5 o 3.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg border-2 border-orange-200 shadow">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-orange-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">4</div>
+                            <p class="font-bold text-lg">General</p>
+                        </div>
+                        <p class="mb-2">Funciona para diferentes casos del mismo problema</p>
+                        <div class="bg-orange-50 p-3 rounded text-sm">
+                            <p class="font-semibold">Ejemplo:</p>
+                            <p>Un algoritmo para sumar debe servir para 1+1, 100+50, etc.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg max-w-2xl">
+                    <p class="font-bold text-center mb-2">💎 Resumen de características</p>
+                    <p class="text-center text-sm">Todo algoritmo debe ser: <span class="font-bold">Finito, Preciso, Definido y General</span></p>
+                </div>
             </div>
 
-            <!-- Diapositiva 7: Algoritmos Cotidianos (II) -->
+            <!-- Diapositiva 7: Ejemplo 1 - Cambiar Llanta (Parte 1) -->
             <div id="slide-7" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Ejemplo: Ir al colegio</h3>
-                <div class="text-left text-[11px] sm:text-xs space-y-1 max-w-3xl mx-auto overflow-y-auto max-h-64 pr-2">
-                    <p>1. Dormir hasta que suene el despertador.</p>
-                    <p>2. Mirar la hora. ¿Hay tiempo suficiente? Si: Bañarse, vestirse, desayunar. Sino: Vestirse.</p>
-                    <p>3. Despedirse de los padres.</p>
-                    <p>4. ¿Hay tiempo suficiente para caminar? Si: Caminar al bus. Sino: Correr al bus.</p>
-                    <p>5. Mientras no pase el bus: Esperar y observar.</p>
-                    <p>6. Tomar el bus. Mientras no llegue al colegio: Seguir en el bus.</p>
-                    <p>7. Bajarse y entrar al colegio.</p>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Cambiar Llanta</h3>
+                
+                <div class="example-container">
+                    <p class="font-bold mb-3">🚗 Situación: Tienes una llanta pinchada y necesitas cambiarla</p>
+                    
+                    <div class="space-y-2 mb-4">
+                        <div class="step-box">
+                            <span class="step-number">1</span> Aflojar tornillos con llave inglesa
+                        </div>
+                        <div class="step-box">
+                            <span class="step-number">2</span> Ubicar gato mecánico en posición correcta
+                        </div>
+                        <div class="step-box">
+                            <span class="step-number">3</span> Levantar gato hasta que rueda gire libre
+                        </div>
+                        <div class="step-box">
+                            <span class="step-number">4</span> Quitar tornillos y rueda pinchada
+                        </div>
+                    </div>
+                    
+                    <div class="bg-yellow-50 p-3 rounded-lg">
+                        <p class="font-bold mb-1">📌 Pausa para analizar:</p>
+                        <p class="text-sm">¿Estos pasos cumplen con las características de un algoritmo?</p>
+                    </div>
+                </div>
+                
+                <div class="mt-4 text-sm text-gray-600">
+                    <p>Próximo: Veremos los pasos finales</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 8: Algoritmo Matemático -->
+            <!-- Diapositiva 8: Ejemplo 1 - Cambiar Llanta (Parte 2) -->
             <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Ejemplo: Área de un triángulo</h3>
-                <div class="bg-gray-100 p-5 rounded-xl shadow-inner max-w-xl mx-auto">
-                    <p class="text-sm font-bold mb-3 text-center">Fórmula: (Base * Altura) / 2</p>
-                    <ol class="text-left text-xs sm:text-sm space-y-2 list-decimal ml-5">
-                        <li>Pedir la base y la altura (B, H).</li>
-                        <li>Multiplicar B y H y dividir entre 2 (A = B * H / 2).</li>
-                        <li>Mostrar el resultado (A).</li>
-                    </ol>
-                </div>
-                <div class="image-placeholder mt-5">
-                    <img src="../../imagenes/condicionalSI.PNG" alt="Lógica Matemática" class="h-full">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Cambiar Llanta (Cont.)</h3>
+                
+                <div class="example-container">
+                    <p class="font-semibold mb-3">Continuación del algoritmo:</p>
+                    
+                    <div class="space-y-2 mb-4">
+                        <div class="step-box">
+                            <span class="step-number">5</span> Colocar rueda de repuesto
+                        </div>
+                        <div class="step-box">
+                            <span class="step-number">6</span> Apretar tornillos inicialmente
+                        </div>
+                        <div class="step-box">
+                            <span class="step-number">7</span> Bajar gato y retirarlo
+                        </div>
+                        <div class="step-box">
+                            <span class="step-number">8</span> Apretar tornillos firmemente
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                        <div class="p-3 bg-green-50 rounded">
+                            <p class="font-bold">✅ Cumple con:</p>
+                            <ul class="text-sm mt-1">
+                                <li>• Finito: 8 pasos</li>
+                                <li>• Preciso: Instrucciones claras</li>
+                                <li>• Definido: Mismo resultado</li>
+                                <li>• General: Sirve para cualquier auto</li>
+                            </ul>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded">
+                            <p class="font-bold">🎯 Tipo de algoritmo:</p>
+                            <p class="text-sm mt-1">No computacional (lo hace una persona)<br>Cualitativo (sin cálculos)</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 9: Clasificación de los lenguajes -->
+            <!-- Diapositiva 9: Ejemplo 2 - Ir al Colegio -->
             <div id="slide-9" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Clasificación de los Lenguajes</h3>
-                <div class="flex flex-col space-y-3 max-w-3xl mx-auto text-left text-xs sm:text-sm">
-                    <div class="p-3 bg-red-50 border-r-4 border-red-500 shadow-sm">
-                        <p class="font-bold">1. Lenguaje máquina:</p>
-                        <p>Entendible directamente por el CPU. Usa código binario (bits 0 y 1).</p>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Ir al Colegio</h3>
+                
+                <div class="example-container">
+                    <p class="font-bold mb-3">📚 Situación: Debes llegar al colegio para clase de programación</p>
+                    
+                    <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                        <div class="step-box">
+                            <span class="step-number">1</span> Dormir hasta que suene el despertador
+                        </div>
+                        <div class="step-box">
+                            <span class="step-number">2</span> Mirar la hora
+                        </div>
+                        <div class="step-box bg-blue-50">
+                            <span class="step-number">3</span> <span class="font-bold">DECISIÓN:</span> ¿Hay tiempo suficiente?
+                            <div class="ml-8 mt-1 text-sm">
+                                <p>• <span class="font-bold">SI:</span> Bañarse, Vestirse, Desayunar</p>
+                                <p>• <span class="font-bold">NO:</span> Vestirse rápido</p>
+                            </div>
+                        </div>
+                        <div class="step-box">
+                            <span class="step-number">4</span> Despedirse de los padres
+                        </div>
+                        <div class="step-box">
+                            <span class="step-number">5</span> Ir a la parada de buses
+                        </div>
+                        <div class="step-box bg-blue-50">
+                            <span class="step-number">6</span> <span class="font-bold">REPETIR:</span> Esperar mientras no pase el bus
+                        </div>
+                        <div class="step-box">
+                            <span class="step-number">7</span> Tomar el bus
+                        </div>
+                        <div class="step-box bg-blue-50">
+                            <span class="step-number">8</span> <span class="font-bold">REPETIR:</span> Seguir en bus mientras no llegue al colegio
+                        </div>
+                        <div class="step-box">
+                            <span class="step-number">9</span> Bajarse y entrar al colegio
+                        </div>
                     </div>
-                    <div class="p-3 bg-yellow-50 border-r-4 border-yellow-500 shadow-sm">
-                        <p class="font-bold">2. Bajo nivel (Ensamblador):</p>
-                        <p>Usa códigos alfabéticos conocidos como mnemotécnicos.</p>
-                    </div>
-                    <div class="p-3 bg-green-50 border-r-4 border-green-500 shadow-sm">
-                        <p class="font-bold">3. Alto nivel:</p>
-                        <p>Semejante al lenguaje humano (inglés). Ej: Basic, C++, Python, Java.</p>
+                    
+                    <div class="mt-4 p-3 bg-purple-50 rounded">
+                        <p class="font-bold text-sm mb-1">💡 Observación importante:</p>
+                        <p class="text-sm">Este algoritmo incluye <span class="font-bold">decisiones</span> (preguntas SI/NO) y <span class="font-bold">repeticiones</span> (hacer algo mientras se cumpla una condición).</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 10: Programa Fuente, Objeto y Traductores -->
+            <!-- Diapositiva 10: Ejemplo 3 - Área de Triángulo -->
             <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Programa Fuente y Objeto</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left text-xs sm:text-sm">
-                    <div class="p-4 bg-blue-100 rounded-lg">
-                        <p class="font-bold mb-2">Programa "Fuente":</p>
-                        <p>Escrito en palabras reconocibles por el humano (el origen del proceso).</p>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Área de Triángulo</h3>
+                
+                <div class="example-container">
+                    <div class="text-center mb-4">
+                        <p class="font-bold text-lg">Fórmula: <span class="text-blue-600">Área = (Base × Altura) ÷ 2</span></p>
                     </div>
-                    <div class="p-4 bg-green-100 rounded-lg">
-                        <p class="font-bold mb-2">Programa "Objeto":</p>
-                        <p>Escrito en órdenes entendibles para la computadora (ceros y unos).</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="font-bold mb-2">📝 Algoritmo en pasos:</p>
+                            <div class="space-y-2">
+                                <div class="step-box">1. INICIO</div>
+                                <div class="step-box">2. Pedir valor de Base (B)</div>
+                                <div class="step-box">3. Pedir valor de Altura (H)</div>
+                                <div class="step-box">4. Calcular: A = B × H ÷ 2</div>
+                                <div class="step-box">5. Mostrar resultado (A)</div>
+                                <div class="step-box">6. FIN</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="font-bold mb-3">🧮 Practiquemos:</p>
+                            
+                            <div class="mb-3">
+                                <label class="block text-sm mb-1">Base: <span id="baseValue" class="font-bold text-blue-600">10</span></label>
+                                <input type="range" id="baseSlider" min="1" max="20" value="10" class="w-full h-2 bg-blue-100 rounded">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="block text-sm mb-1">Altura: <span id="heightValue" class="font-bold text-green-600">8</span></label>
+                                <input type="range" id="heightSlider" min="1" max="20" value="8" class="w-full h-2 bg-green-100 rounded">
+                            </div>
+                            
+                            <div class="p-3 bg-white rounded border-2 border-blue-200 mt-3">
+                                <p class="font-bold">Resultado:</p>
+                                <p id="areaResult" class="text-lg font-bold text-blue-700">Área = (10 × 8) ÷ 2 = 40</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="p-3 bg-green-50 rounded">
+                            <p class="font-bold">✅ Tipo:</p>
+                            <p>Computacional (para computadora)<br>Cuantitativo (usa cálculos)</p>
+                        </div>
+                        <div class="p-3 bg-yellow-50 rounded">
+                            <p class="font-bold">📝 Ejercicio:</p>
+                            <p>Escribe este algoritmo en tu cuaderno con tus palabras.</p>
+                        </div>
                     </div>
                 </div>
-                <p class="text-xs mt-5 text-gray-600 italic">Un <b>Traductor</b> convierte el código fuente a lenguaje máquina instrucción por instrucción.</p>
             </div>
 
-            <!-- Diapositiva 11: El Compilador y Errores -->
+            <!-- Diapositiva 11: Ejercicio Práctico -->
             <div id="slide-11" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">El Compilador y Errores</h3>
-                <p class="text-xs sm:text-sm text-left mb-4">El <b>compilador</b> analiza la gramática y sintaxis. Si no hay errores, enlaza rutinas y genera el lenguaje objeto.</p>
-                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 text-left">
-                    <div class="flex-1 p-3 bg-orange-50 rounded border border-orange-200">
-                        <p class="font-bold text-xs">Errores de Sintaxis</p>
-                        <p class="text-[10px]">Palabras mal escritas, falta de puntos y comas, lazos abiertos.</p>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Tu Turno: Crear un Algoritmo</h3>
+                
+                <div class="example-container">
+                    <div class="text-center mb-4">
+                        <p class="font-bold text-lg">🍞 Problema: Preparar un sándwich de jamón y queso</p>
+                        <p class="text-sm text-gray-600">Materiales: Pan, jamón, queso, mayonesa, plato</p>
                     </div>
-                    <div class="flex-1 p-3 bg-red-50 rounded border border-red-200">
-                        <p class="font-bold text-xs">Errores de Lógica</p>
-                        <p class="text-[10px]">El programa compila bien pero NO resuelve el problema planteado.</p>
+                    
+                    <div class="mb-4">
+                        <p class="font-bold mb-2">Organiza los pasos en el orden correcto:</p>
+                        <div id="sandwichSteps" class="space-y-2">
+                            <div class="step-box draggable" data-order="1">Tomar dos rebanadas de pan</div>
+                            <div class="step-box draggable" data-order="4">Untar mayonesa en una rebanada</div>
+                            <div class="step-box draggable" data-order="2">Colocar jamón sobre una rebanada</div>
+                            <div class="step-box draggable" data-order="5">Colocar la otra rebanada encima</div>
+                            <div class="step-box draggable" data-order="3">Colocar queso sobre el jamón</div>
+                            <div class="step-box draggable" data-order="6">Servir en un plato</div>
+                        </div>
                     </div>
-                </div>
-                <div class="image-placeholder mt-4">
-                    <img src="../../imagenes/sintaxisSI.png" alt="Análisis de Sintaxis" class="h-full">
+                    
+                    <div class="flex justify-center space-x-3">
+                        <button onclick="shuffleSandwichSteps()" class="bg-gray-500 text-white px-4 py-2 rounded text-sm hover:bg-gray-600">
+                            Mezclar Pasos
+                        </button>
+                        <button onclick="checkSandwichOrder()" class="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600">
+                            Verificar Orden
+                        </button>
+                    </div>
+                    
+                    <div id="sandwichFeedback" class="mt-3 text-center font-bold hidden"></div>
+                    
+                    <div class="mt-4 p-3 bg-blue-50 rounded">
+                        <p class="font-bold mb-1">💭 Preguntas para reflexionar:</p>
+                        <p class="text-sm">¿Tu algoritmo cumple con las 4 características? (Finito, Preciso, Definido, General)</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 12: 2.4 Programa de Computadora -->
+            <!-- Diapositiva 12: Cuestionario (Preguntas 1-5) -->
             <div id="slide-12" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2.4 Programa de Computadora</h3>
-                <div class="space-y-4 text-left max-w-3xl mx-auto text-xs sm:text-sm">
-                    <div class="p-3 border-l-4 border-blue-500 bg-gray-50">
-                        <p>1. Serie de pasos ordenados y finitos procesables por computadora para resolver un problema.</p>
-                    </div>
-                    <div class="p-3 border-l-4 border-blue-500 bg-gray-50">
-                        <p>2. Secuencia de instrucciones que ejecutan acciones según los datos procesados.</p>
-                    </div>
-                    <div class="p-3 border-l-4 border-blue-500 bg-gray-50">
-                        <p>3. Expresión de un algoritmo en un lenguaje preciso que entiende la computadora.</p>
-                    </div>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 1)</h3>
+                
+                <div id="quiz-container-1" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
+                    <div id="quiz-question-1" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
+                    <div id="quiz-options-1" class="flex flex-col space-y-2"></div>
+                    <div id="quiz-feedback-1" class="mt-3 text-sm font-bold"></div>
+                </div>
+                
+                <div class="mt-4 text-sm text-gray-500">
+                    <p>Pregunta <span id="question-counter">1</span> de 5</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 13: 2.5 Etapas en la creación de un programa (I) -->
+            <!-- Diapositiva 13: Cuestionario (Preguntas 6-10) -->
             <div id="slide-13" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Etapas del Programa (Pasos 1-3)</h3>
-                <div class="flex flex-col space-y-2 max-w-3xl w-full text-left text-[11px] sm:text-xs">
-                    <div class="p-2 border-l-4 border-indigo-400 bg-gray-50"><b>1. Análisis del problema:</b> Definir qué debe hacer (Entradas, Salidas y Métodos).</div>
-                    <div class="p-2 border-l-4 border-indigo-400 bg-gray-50"><b>2. Diseño del Algoritmo:</b> Definir CÓMO lo hace (Diagrama de flujo o pseudocódigo).</div>
-                    <div class="p-2 border-l-4 border-indigo-400 bg-gray-50"><b>3. Codificación:</b> Transcribir a un lenguaje de programación (Código Fuente).</div>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 2)</h3>
+                
+                <div id="quiz-container-2" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
+                    <div id="quiz-question-2" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
+                    <div id="quiz-options-2" class="flex flex-col space-y-2"></div>
+                    <div id="quiz-feedback-2" class="mt-3 text-sm font-bold"></div>
                 </div>
-                <div class="image-placeholder mt-5">
-                    <img src="../../imagenes/icono_analisis_diseno.png" alt="Fases Iniciales" class="h-full">
+                
+                <div class="mt-4 text-sm text-gray-500">
+                    <p>Pregunta <span id="question-counter-2">6</span> de 10</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 14: 2.5 Etapas en la creación de un programa (II) -->
+            <!-- Diapositiva 14: Resumen y Tarea -->
             <div id="slide-14" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Etapas del Programa (Pasos 4-7)</h3>
-                <div class="flex flex-col space-y-2 max-w-3xl w-full text-left text-[11px] sm:text-xs">
-                    <div class="p-2 border-l-4 border-indigo-600 bg-gray-50"><b>4. Compilación y Ejecución:</b> Pasar de fuente a ejecutable y correrlo.</div>
-                    <div class="p-2 border-l-4 border-indigo-600 bg-gray-50"><b>5. Depuración:</b> Detectar y corregir errores en tiempo de ejecución.</div>
-                    <div class="p-2 border-l-4 border-indigo-600 bg-gray-50"><b>6. Documentación:</b> Interna (comentarios) y Externa (manuales).</div>
-                    <div class="p-2 border-l-4 border-indigo-600 bg-gray-50"><b>7. Entrega y Mantenimiento.</b></div>
-                </div>
-                <div class="image-placeholder mt-5">
-                    <img src="../../imagenes/icono_ejecucion.png" alt="Fases Finales" class="h-full">
-                </div>
-            </div>
-
-            <!-- Diapositiva 15: 2.6 Estrategias para la solución de problemas -->
-            <div id="slide-15" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2.6 Estrategias de solución</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-4xl text-left text-[11px] sm:text-xs">
-                    <div class="p-2 border rounded bg-gray-50"><b>Solución Forzada:</b> La forma más simple y directa.</div>
-                    <div class="p-2 border rounded bg-gray-50"><b>Codiciosos:</b> Menor costo inmediato en cada parte.</div>
-                    <div class="p-2 border rounded bg-gray-50"><b>Vuelta Atrás:</b> Considera sistemáticamente todas las decisiones.</div>
-                    <div class="p-2 border rounded bg-gray-50"><b>Divide y vencerás:</b> Subdivide en subproblemas similares.</div>
-                    <div class="p-2 border rounded bg-gray-50"><b>Programación Dinámica:</b> Combina soluciones intermedias de tabla.</div>
-                    <div class="p-2 border rounded bg-gray-50"><b>Probabilísticas:</b> Usa aleatoriedad (último recurso).</div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 16: 3. Análisis del problema -->
-            <div id="slide-16" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">3. Análisis del problema</h3>
-                <p class="text-xs sm:text-sm text-gray-700 leading-relaxed max-w-3xl mb-5 text-left">
-                    Ayuda al programador a comprender la naturaleza del problema superando estos pasos:
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full text-center text-xs">
-                    <div class="p-3 bg-blue-100 rounded-xl"><b>1. Definición</b><br>con precisión total</div>
-                    <div class="p-3 bg-green-100 rounded-xl"><b>2. Entradas</b><br>Datos de partida</div>
-                    <div class="p-3 bg-yellow-100 rounded-xl"><b>3. Salidas</b><br>Información deseada</div>
-                </div>
-                <div class="image-placeholder mt-5">
-                    <img src="../../imagenes/fujo_datos.jpg" alt="Flujo de Análisis" class="h-full">
-                </div>
-            </div>
-
-            <!-- Diapositiva 17: 4. Diseño y 6. Representación -->
-            <div id="slide-17" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Diseño y Representación</h3>
-                <div class="text-left text-xs sm:text-sm space-y-4 max-w-3xl mx-auto">
-                    <p>El diseño requiere creatividad e <b>inspiración</b>. Un algoritmo debe ser finito, preciso y sin ambigüedad.</p>
-                    <p><b>6. Técnicas de representación:</b> Permiten independizar el algoritmo de la codificación.</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="p-3 border-2 border-dashed border-blue-300 rounded-lg"><b>Pseudocódigo:</b> Lenguaje narrativo técnico.</div>
-                        <div class="p-3 border-2 border-dashed border-green-300 rounded-lg"><b>Diagramas de flujo:</b> Representación gráfica normalizada.</div>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen y Tarea</h3>
+                
+                <div class="max-w-2xl mx-auto">
+                    <div class="bg-white p-4 rounded-lg border-2 border-blue-200 mb-4">
+                        <p class="font-bold text-lg text-center mb-3">✅ Lo aprendido hoy:</p>
+                        
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="p-2 bg-green-100 rounded text-center">
+                                <p class="font-bold">Programación</p>
+                                <p class="text-sm">Dar instrucciones a una computadora</p>
+                            </div>
+                            <div class="p-2 bg-blue-100 rounded text-center">
+                                <p class="font-bold">Algoritmo</p>
+                                <p class="text-sm">Pasos para resolver un problema</p>
+                            </div>
+                            <div class="p-2 bg-yellow-100 rounded text-center">
+                                <p class="font-bold">Características</p>
+                                <p class="text-sm">Finito, Preciso, Definido, General</p>
+                            </div>
+                            <div class="p-2 bg-purple-100 rounded text-center">
+                                <p class="font-bold">Ejemplos</p>
+                                <p class="text-sm">Llanta, Colegio, Triángulo</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-blue-50 to-green-50 p-4 rounded-lg mb-4">
+                        <p class="font-bold text-lg mb-2">📚 Tarea para la próxima clase:</p>
+                        <ol class="list-decimal pl-5 space-y-2">
+                            <li>Escribe 3 algoritmos de tu vida diaria</li>
+                            <li>Identifica sus características (Finito, Preciso, etc.)</li>
+                            <li>Resuelve el ejercicio del área de triángulo en tu cuaderno</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="text-center mt-6">
+                        <p class="font-bold text-blue-600">¡Excelente trabajo hoy!</p>
+                        <p class="text-sm text-gray-500 mt-2">Lic. Pablo Antonio Peña Mancia<br>Instituto María Auxiliadora - Sistema ISEMED</p>
                     </div>
                 </div>
-                <div class="image-placeholder mt-4">
-                    <img src="../../imagenes/sdlc_diagrama_flujo.png" alt="Diagrama de Flujo" class="h-full">
-                </div>
-            </div>
-
-            <!-- Diapositiva 18: Cuestionario -->
-            <div id="slide-18" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¡Cuestionario de Introducción!</h3>
-                <div id="quiz-container" class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-md max-w-3xl w-full text-center">
-                    <div id="quiz-question" class="text-base sm:text-xl font-semibold mb-2 sm:mb-5 text-gray-800"></div>
-                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-3"></div>
-                    <div id="quiz-feedback" class="mt-3 sm:mt-5 text-sm sm:text-base font-bold"></div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 19: Conclusión -->
-            <div id="slide-19" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Conclusión</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
-                    Dominar la creación de algoritmos y conocer las etapas del desarrollo de software son las herramientas fundamentales de todo programador.
-                </p>
-                <p class="text-lg mt-8 font-bold text-blue-600">¡La lógica es el lenguaje universal de la computación!</p>
             </div>
         </div>
 
@@ -451,18 +497,16 @@
             <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
             <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
         </div>
-        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 19</div>
+        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 14</div>
     </main>
 
-    <!-- Pie de página -->
     <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
         <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
             <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Programación I - Primer Parcial</p>
         </div>
     </footer>
 
-    <!-- Scripts para la navegación y la lógica del cuestionario -->
     <script>
         const slides = document.querySelectorAll('.slide');
         const nextButton = document.getElementById('next-btn');
@@ -473,120 +517,269 @@
         let currentSlideIndex = 0;
         let isTransitioning = false;
 
+        // Preguntas del cuestionario divididas en dos partes
         const quizQuestions = [
+            // Parte 1 (preguntas 1-5)
             {
-                question: "1. ¿Qué es un lenguaje de programación?",
-                options: ["Símbolos y reglas para resolver problemas", "Un tipo de hardware", "Una marca de computadora", "Un sistema de cables"],
-                correctAnswer: "Símbolos y reglas para resolver problemas"
+                question: "1. ¿Qué es programar?",
+                options: [
+                    "Reparar computadoras",
+                    "Dar instrucciones precisas a una computadora", 
+                    "Diseñar páginas web",
+                    "Usar programas como Word o Excel"
+                ],
+                correctAnswer: "Dar instrucciones precisas a una computadora"
             },
             {
-                question: "2. ¿Cuál es el origen de la palabra \"algoritmo\"?",
-                options: ["De un matemático griego", "De Muhammad Musa Alkhawarizmi", "De un término inglés", "De un código binario"],
-                correctAnswer: "De Muhammad Musa Alkhawarizmi"
+                question: "2. ¿Qué es un algoritmo?",
+                options: [
+                    "Un tipo de computadora",
+                    "Un error en el programa",
+                    "Una secuencia de pasos para resolver un problema",
+                    "Un lenguaje de programación"
+                ],
+                correctAnswer: "Una secuencia de pasos para resolver un problema"
             },
             {
-                question: "3. ¿Qué es el \"programa fuente\"?",
-                options: ["El programa ya traducido", "Escrito en palabras que reconocemos", "El hardware de entrada", "Un error de lógica"],
-                correctAnswer: "Escrito en palabras que reconocemos"
+                question: "3. ¿De quién deriva la palabra 'algoritmo'?",
+                options: [
+                    "Alan Turing",
+                    "Bill Gates", 
+                    "Muhammad Musa Alkhawarizmi",
+                    "Steve Jobs"
+                ],
+                correctAnswer: "Muhammad Musa Alkhawarizmi"
             },
             {
-                question: "4. ¿Cómo se llama el programa en ceros y unos entendible por la máquina?",
-                options: ["Programa fuente", "Lenguaje objeto", "Pseudocódigo", "Diagrama de flujo"],
-                correctAnswer: "Lenguaje objeto"
+                question: "4. ¿Qué significa que un algoritmo sea 'finito'?",
+                options: [
+                    "Que nunca termina",
+                    "Que tiene un número limitado de pasos",
+                    "Que es muy complejo",
+                    "Que usa muchos recursos"
+                ],
+                correctAnswer: "Que tiene un número limitado de pasos"
             },
             {
-                question: "5. ¿Qué traductor detiene el proceso al encontrar el primer error?",
-                options: ["Compilador", "Traductor", "Depurador", "Ensamblador"],
-                correctAnswer: "Traductor"
+                question: "5. ¿Qué característica garantiza instrucciones claras?",
+                options: [
+                    "Finito",
+                    "Preciso", 
+                    "Definido",
+                    "General"
+                ],
+                correctAnswer: "Preciso"
+            },
+            // Parte 2 (preguntas 6-10)
+            {
+                question: "6. Un algoritmo para 'cambiar llanta' es:",
+                options: [
+                    "Computacional y cuantitativo",
+                    "No computacional y cualitativo",
+                    "Computacional y cualitativo",
+                    "No computacional y cuantitativo"
+                ],
+                correctAnswer: "No computacional y cualitativo"
             },
             {
-                question: "6. ¿Qué característica indica que un algoritmo no debe ser ambiguo?",
-                options: ["Finito", "Definido", "Preciso", "General"],
+                question: "7. ¿Qué fórmula se usa para el área de triángulo?",
+                options: [
+                    "Base + Altura",
+                    "Base × Altura",
+                    "(Base × Altura) ÷ 2",
+                    "Base² × Altura"
+                ],
+                correctAnswer: "(Base × Altura) ÷ 2"
+            },
+            {
+                question: "8. ¿Qué característica asegura mismo resultado con mismas entradas?",
+                options: [
+                    "Finito",
+                    "Preciso",
+                    "Definido",
+                    "General"
+                ],
                 correctAnswer: "Definido"
             },
             {
-                question: "7. ¿Cuál es un ejemplo de algoritmo cualitativo?",
-                options: ["Calcular el área de un círculo", "Instrucciones para una actividad física", "Resolver una ecuación", "Sumar dos números"],
-                correctAnswer: "Instrucciones para una actividad física"
+                question: "9. En 'ir al colegio', ¿qué estructura tiene '¿Hay tiempo?'?",
+                options: [
+                    "Secuencia",
+                    "Decisión (SI/NO)",
+                    "Repetición",
+                    "Inicio"
+                ],
+                correctAnswer: "Decisión (SI/NO)"
             },
             {
-                question: "8. ¿En qué paso se define CÓMO hace el programa la tarea?",
-                options: ["Análisis", "Diseño del Algoritmo", "Codificación", "Depuración"],
-                correctAnswer: "Diseño del Algoritmo"
-            },
-            {
-                question: "9. ¿Qué estrategia subdivide un problema en subproblemas similares?",
-                options: ["Divide y vencerás", "Solución forzada", "Vuelta atrás", "Algoritmos codiciosos"],
-                correctAnswer: "Divide y vencerás"
-            },
-            {
-                question: "10. ¿Qué fase consiste en transcribir el algoritmo a un lenguaje?",
-                options: ["Análisis", "Diseño", "Codificación", "Mantenimiento"],
-                correctAnswer: "Codificación"
+                question: "10. ¿Por qué es importante que un algoritmo sea 'general'?",
+                options: [
+                    "Para que sea más corto",
+                    "Para que funcione en diferentes casos del mismo problema",
+                    "Para que sea más rápido",
+                    "Para que use menos memoria"
+                ],
+                correctAnswer: "Para que funcione en diferentes casos del mismo problema"
             }
         ];
-        let currentQuizQuestionIndex = 0;
 
-        function updateQuizDisplay() {
-            const quizQuestionElement = document.getElementById('quiz-question');
-            const quizOptionsElement = document.getElementById('quiz-options');
-            const quizFeedbackElement = document.getElementById('quiz-feedback');
+        let currentQuizPart1Index = 0;
+        let currentQuizPart2Index = 5;
 
-            if (currentQuizQuestionIndex >= quizQuestions.length) {
-                quizQuestionElement.textContent = "¡Cuestionario completado! ¡Excelente progreso!";
-                quizOptionsElement.innerHTML = '';
-                quizFeedbackElement.textContent = '';
-                return;
+        // Funciones para interactividad
+        function initializeSliders() {
+            const baseSlider = document.getElementById('baseSlider');
+            const heightSlider = document.getElementById('heightSlider');
+            const baseValue = document.getElementById('baseValue');
+            const heightValue = document.getElementById('heightValue');
+            const areaResult = document.getElementById('areaResult');
+            
+            if (baseSlider && heightSlider) {
+                function updateTriangleArea() {
+                    const base = parseInt(baseSlider.value);
+                    const height = parseInt(heightSlider.value);
+                    const area = (base * height) / 2;
+                    
+                    baseValue.textContent = base;
+                    heightValue.textContent = height;
+                    areaResult.textContent = `Área = (${base} × ${height}) ÷ 2 = ${area}`;
+                }
+                
+                baseSlider.addEventListener('input', updateTriangleArea);
+                heightSlider.addEventListener('input', updateTriangleArea);
+                updateTriangleArea();
             }
+        }
+        
+        function shuffleSandwichSteps() {
+            const container = document.getElementById('sandwichSteps');
+            if (!container) return;
+            
+            const steps = Array.from(container.children);
+            steps.sort(() => Math.random() - 0.5);
+            container.innerHTML = '';
+            steps.forEach(step => container.appendChild(step));
+            
+            const feedback = document.getElementById('sandwichFeedback');
+            if (feedback) {
+                feedback.classList.add('hidden');
+            }
+        }
+        
+        function checkSandwichOrder() {
+            const steps = document.querySelectorAll('#sandwichSteps .draggable');
+            let correct = 0;
+            const correctOrder = [1, 2, 3, 4, 5, 6];
+            
+            steps.forEach((step, index) => {
+                const order = parseInt(step.getAttribute('data-order'));
+                if (order === correctOrder[index]) {
+                    step.style.background = '#d1fae5';
+                    correct++;
+                } else {
+                    step.style.background = '#fee2e2';
+                }
+            });
+            
+            const feedback = document.getElementById('sandwichFeedback');
+            if (correct === 6) {
+                feedback.textContent = '¡Perfecto! Orden correcto del sándwich.';
+                feedback.style.color = '#065f46';
+            } else {
+                feedback.textContent = `Tienes ${correct} de 6 correctos. ¡Intenta de nuevo!`;
+                feedback.style.color = '#991b1b';
+            }
+            feedback.classList.remove('hidden');
+        }
 
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            quizQuestionElement.textContent = currentQuestion.question;
-            quizOptionsElement.innerHTML = '';
-            quizFeedbackElement.textContent = '';
-
+        // Funciones para el cuestionario dividido
+        function updateQuizPart1() {
+            if (currentQuizPart1Index >= 5) return;
+            
+            const questionElement = document.getElementById('quiz-question-1');
+            const optionsElement = document.getElementById('quiz-options-1');
+            const feedbackElement = document.getElementById('quiz-feedback-1');
+            const counterElement = document.getElementById('question-counter');
+            
+            const currentQuestion = quizQuestions[currentQuizPart1Index];
+            
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+            feedbackElement.textContent = '';
+            counterElement.textContent = currentQuizPart1Index + 1;
+            
             currentQuestion.options.forEach(option => {
                 const button = document.createElement('button');
                 button.textContent = option;
-                button.className = "quiz-option-button w-full px-5 py-2 rounded-xl border border-blue-400 bg-blue-50 text-blue-700 font-semibold transition-colors duration-200 hover:bg-blue-100 text-sm";
-                button.onclick = () => checkAnswer(option);
-                quizOptionsElement.appendChild(button);
+                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
+                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 1);
+                optionsElement.appendChild(button);
             });
         }
-
-        function checkAnswer(selectedOption) {
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            const quizFeedback = document.getElementById('quiz-feedback');
-            const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
-            const isCorrect = selectedOption === currentQuestion.correctAnswer;
-
-            buttons.forEach(button => {
+        
+        function updateQuizPart2() {
+            if (currentQuizPart2Index >= 10) return;
+            
+            const questionElement = document.getElementById('quiz-question-2');
+            const optionsElement = document.getElementById('quiz-options-2');
+            const feedbackElement = document.getElementById('quiz-feedback-2');
+            const counterElement = document.getElementById('question-counter-2');
+            
+            const currentQuestion = quizQuestions[currentQuizPart2Index];
+            
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+            feedbackElement.textContent = '';
+            counterElement.textContent = currentQuizPart2Index + 1;
+            
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
+                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 2);
+                optionsElement.appendChild(button);
+            });
+        }
+        
+        function checkQuizAnswer(selected, correct, feedbackElement, buttons, part) {
+            const isCorrect = selected === correct;
+            
+            Array.from(buttons).forEach(button => {
                 button.disabled = true;
-                if (button.textContent === currentQuestion.correctAnswer) {
+                if (button.textContent === correct) {
                     button.classList.add('correct');
-                } else if (button.textContent === selectedOption) {
+                } else if (button.textContent === selected) {
                     button.classList.add('incorrect');
                 }
             });
-
+            
             if (isCorrect) {
-                quizFeedback.textContent = '¡Correcto!';
-                quizFeedback.classList.add('text-green-500');
+                feedbackElement.textContent = '¡Correcto!';
+                feedbackElement.style.color = '#065f46';
             } else {
-                quizFeedback.textContent = 'Incorrecto. La respuesta es: ' + currentQuestion.correctAnswer;
-                quizFeedback.classList.add('text-red-500');
+                feedbackElement.textContent = `Incorrecto. La respuesta es: ${correct}`;
+                feedbackElement.style.color = '#991b1b';
             }
-
+            
             setTimeout(() => {
-                currentQuizQuestionIndex++;
-                updateQuizDisplay();
-            }, 2000);
+                if (part === 1) {
+                    currentQuizPart1Index++;
+                    if (currentQuizPart1Index < 5) {
+                        updateQuizPart1();
+                    }
+                } else {
+                    currentQuizPart2Index++;
+                    if (currentQuizPart2Index < 10) {
+                        updateQuizPart2();
+                    }
+                }
+            }, 1500);
         }
 
         function showSlide(index) {
             if (isTransitioning || index < 0 || index >= slides.length) return;
             isTransitioning = true;
 
-            // Ocultar todas las diapositivas
             slides.forEach(s => {
                 s.classList.remove('active');
                 s.style.display = 'none';
@@ -594,7 +787,6 @@
 
             currentSlideIndex = index;
 
-            // Lógica para ocultar/mostrar encabezado y pie de página
             const presentationContainer = document.getElementById('presentation-container');
             if (currentSlideIndex === 0) {
                 header.style.display = 'flex';
@@ -606,10 +798,17 @@
                 presentationContainer.style.height = '100vh';
             }
 
-            // Reiniciar cuestionario si es la diapositiva 18 (índice 17)
-            if (currentSlideIndex === 17) {
-                currentQuizQuestionIndex = 0;
-                updateQuizDisplay();
+            // Inicializar contenido según la diapositiva
+            if (currentSlideIndex === 10) { // Ejercicio sándwich
+                setTimeout(shuffleSandwichSteps, 100);
+            } else if (currentSlideIndex === 9) { // Sliders triángulo
+                setTimeout(initializeSliders, 100);
+            } else if (currentSlideIndex === 11) { // Cuestionario parte 1
+                currentQuizPart1Index = 0;
+                setTimeout(updateQuizPart1, 100);
+            } else if (currentSlideIndex === 12) { // Cuestionario parte 2
+                currentQuizPart2Index = 5;
+                setTimeout(updateQuizPart2, 100);
             }
 
             const activeSlide = slides[currentSlideIndex];
@@ -624,12 +823,12 @@
             }, 10);
         }
 
+        // Event listeners
         nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
         prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
 
-        // Navegación por clic en el contenedor (Lado derecho siguiente, Lado izquierdo anterior)
         document.getElementById('presentation-container').addEventListener('click', (e) => {
-            if (e.target.closest('button') || e.target.closest('a')) return;
+            if (e.target.closest('button') || e.target.closest('a') || e.target.closest('input')) return;
             const rect = e.currentTarget.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             if (clickX > rect.width / 2) {
@@ -639,9 +838,13 @@
             }
         });
 
+        // Inicialización
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('current-year').textContent = new Date().getFullYear();
             showSlide(0);
+            
+            // Preparar ejercicio sándwich
+            shuffleSandwichSteps();
         });
     </script>
 </body>
