@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introducción al Diseño Web</title>
+    <title>Introducción a HTML - Diseño Web I</title>
     <!-- CDN de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts - Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Estilos base para un diseño consistente */
         * {
             box-sizing: border-box;
         }
 
-        /* Ajuste global para reducir el tamaño base en un 10%. (1rem = 0.9rem) */
         html {
             font-size: 90%;
         }
@@ -92,7 +90,6 @@
             }
         }
 
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .slide h2, .slide h3 {
                 font-size: 1.4rem;
@@ -106,46 +103,27 @@
             }
         }
 
-        /* Estilos del Cuestionario */
-        .quiz-option-button {
-            transition: background-color 0.3s, transform 0.2s;
-            text-align: left; /* Aseguramos que el texto esté a la izquierda */
-            padding-left: 1.5rem; /* Espaciado interno */
+        .example-box {
+            background-color: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            text-align: left;
+            font-family: monospace;
+            font-size: 0.9rem;
         }
 
-        .quiz-option-button.correct {
-            background-color: #d1fae5;
-            color: #065f46;
-            border-color: #10b981;
-        }
-
-        .quiz-option-button.incorrect {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border-color: #ef4444;
-        }
-
-        /* Estilo para placeholder de imagen */
-        .image-placeholder {
-            height: 150px;
-            width: 250px;
-            color: #009688;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: 600;
-            border-radius: 8px;
-            margin: 1rem auto;
-            font-size: 0.8rem;
-            text-align: center;
-            padding: 10px;
-        }
-        @media (min-width: 640px) {
-            .image-placeholder {
-                height: 200px;
-                width: 350px;
-                font-size: 1rem;
-            }
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            text-align: left;
+            overflow-x: auto;
+            margin: 1rem 0;
         }
     </style>
 </head>
@@ -155,7 +133,7 @@
     <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
         <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
             <img src="../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
-            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Introducción al Diseño Web</h1>
+            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Introducción a HTML</h1>
         </div>
         <nav class="mt-3 sm:mt-0">
             <ul class="flex space-x-2 sm:space-x-3">
@@ -173,274 +151,389 @@
             <!-- Diapositiva 1: Portada -->
             <div id="slide-1" class="slide active">
                 <img src="../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-3 sm:mb-7">
-                <h2 class="text-lg sm:text-xl mb-1 sm:mb-3 text-blue-600">Diseño Web</h2>
-                <p class="text-xs sm:text-sm text-gray-600">Lenguaje HTML</p>
+                <h2 class="text-lg sm:text-xl mb-1 sm:mb-3 text-blue-600">Diseño Web I</h2>
+                <p class="text-xs sm:text-sm text-gray-600">Introducción a HTML</p>
                 <div class="mt-3 sm:mt-7 text-xs text-gray-500">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 1 de febrero de 2026</p>
-                    <p>Grado: Duodécimo de Informática</p>
+                    <p>Fecha: 08 de febrero de 2026</p>
+                    <p>Grado: III Informática Sección "A"</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: Características del lenguaje HTML -->
+            <!-- Diapositiva 2: ¿Por qué aprender HTML? -->
             <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">1.2 Características del lenguaje HTML</h3>
-                <ul class="text-sm sm:text-lg text-gray-700 text-left space-y-2 max-w-3xl">
-                    <li><b>Distribuido:</b> Información repartida en páginas enlazadas entre sí.</li>
-                    <li><b>Hipertexto:</b> Debe ser fácil navegar por él.</li>
-                    <li><b>Compatible:</b> Con todo tipo de computadoras y sistemas operativos.</li>
-                    <li><b>Dinámico:</b> El proceso de cambiar y actualizar la información debe ser ágil.</li>
-                </ul>
-                <div class="image-placeholder mt-5">
-                    <img src="../imagenes/dw_intro_dinamico.jpg" alt="Características HTML" class="h-full rounded-lg">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¿Por qué aprender HTML?</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
+                    El World Wide Web (WWW) contiene información casi infinita. Las páginas web son la unidad básica donde está almacenada esta información.
+                </p>
+                <div class="bg-blue-50 p-4 rounded-lg max-w-3xl text-left">
+                    <p class="font-bold text-blue-700">Características de las páginas web:</p>
+                    <ul class="mt-2 space-y-2 text-sm">
+                        <li>• Contienen texto, imágenes, animaciones, sonido y video</li>
+                        <li>• Son hipertexto: están unidas entre sí mediante enlaces</li>
+                        <li>• Cada página web que ves está escrita en HTML</li>
+                        <li>• HTML es como un esqueleto que da estructura a cada página</li>
+                    </ul>
                 </div>
+                <p class="text-sm mt-4 text-gray-600 max-w-3xl">
+                    <em>"HTML es el lenguaje de marcado estándar para crear páginas web."</em>
+                </p>
             </div>
 
-            <!-- Diapositiva 3: Qué se necesita -->
+            <!-- Diapositiva 3: Características del lenguaje HTML -->
             <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Qué se necesita</h3>
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Características del lenguaje HTML</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
-                    No es necesario ningún programa especial. El código HTML no es más que texto.
+                    Cuando se diseñó el WWW, se decidió que debía cumplir estas características:
                 </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-5xl text-center">
-                    <div class="bg-gray-50 p-4 rounded-lg shadow">
-                        <p class="font-bold text-gray-700">Editores Básicos</p>
-                        <p class="text-xs">Bloc de notas (Windows), TextEdit (Mac), WordPad.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
+                    <div class="bg-white p-4 rounded-lg shadow border">
+                        <h4 class="font-bold text-blue-600">Distribuido</h4>
+                        <p class="text-sm mt-1">Información repartida en páginas no muy grandes enlazadas entre sí.</p>
                     </div>
-                    <div class="bg-blue-50 p-4 rounded-lg shadow border-b-4 border-blue-400">
-                        <p class="font-bold text-blue-700">Editores Dedicados</p>
-                        <p class="text-xs">Visual Studio Express, VS Code, Sublime Text.</p>
+                    <div class="bg-white p-4 rounded-lg shadow border">
+                        <h4 class="font-bold text-blue-600">Hipertexto</h4>
+                        <p class="text-sm mt-1">Debía ser fácil navegar por él mediante enlaces.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow border">
+                        <h4 class="font-bold text-blue-600">Compatible</h4>
+                        <p class="text-sm mt-1">Con todo tipo de computadoras (PCs, Macintosh, estaciones de trabajo...) y sistemas operativos.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow border">
+                        <h4 class="font-bold text-blue-600">Dinámico</h4>
+                        <p class="text-sm mt-1">El proceso de cambiar y actualizar la información debía ser ágil y rápido.</p>
                     </div>
                 </div>
-                <p class="mt-4 text-xs text-gray-500">Recuerda guardar siempre con extensión .html</p>
+                <p class="mt-4 text-sm text-gray-600 max-w-3xl">
+                    Como respuesta a estos requisitos se creó el <strong>HTML (HyperText Markup Language)</strong> - "Lenguaje hipertexto de marcas".
+                </p>
             </div>
 
             <!-- Diapositiva 4: ¿Qué es HTML? -->
             <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2. ¿Qué es HTML?</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
-                    Significa <b>Hyper Text Markup Language</b> (Lenguaje de marcado de hipertexto).
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¿Qué es HTML?</h3>
+                <div class="example-box max-w-3xl">
+                    <p class="font-bold text-blue-700">HTML significa: <span class="text-lg">Hyper Text Markup Language</span></p>
+                    <p class="mt-2">En español: <strong>Lenguaje de Marcado de Hipertexto</strong></p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 max-w-3xl">
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-green-700">Hipertexto</h4>
+                        <p class="text-sm mt-1">"Texto que contiene enlaces". Cada vez que haces clic en una palabra que te lleva a otra página, estás haciendo clic en un hipertexto.</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-purple-700">Lenguaje de marcado</h4>
+                        <p class="text-sm mt-1">Lenguaje usado para que el texto haga algo más que aparecer en una página: puede convertir texto en imágenes, enlaces, cuadros, listas, y más.</p>
+                    </div>
+                </div>
+                <p class="text-sm mt-4 text-gray-600 max-w-3xl">
+                    HTML convierte un archivo de texto en una página web con diferentes tipos y tamaños de letra, imágenes, animaciones, formularios interactivos, etc.
                 </p>
-                <ul class="text-left space-y-3 max-w-2xl text-sm sm:text-base">
-                    <li><b>Hipertexto:</b> Texto que contiene enlaces a otras páginas.</li>
-                    <li><b>Lenguaje de marcado:</b> Usa etiquetas para convertir texto en imágenes, enlaces, listas y más.</li>
-                </ul>
-                <div class="image-placeholder mt-5">
-                    <img src="../imagenes/html_logo.svg" alt="¿Qué es HTML?" class="h-24 mx-auto">
+            </div>
+
+            <!-- Diapositiva 5: ¿Qué se necesita para crear una página web? -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¿Qué se necesita para crear una página web?</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
+                    Una de las características más importantes para el programador:
+                </p>
+                <div class="bg-yellow-50 p-4 rounded-lg max-w-3xl">
+                    <p class="font-bold text-yellow-700 text-lg">¡NO ES NECESARIO NINGÚN PROGRAMA ESPECIAL!</p>
+                    <p class="text-sm mt-2">El código HTML no es más que texto. Lo único necesario para escribirlo es un editor de texto.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4 max-w-3xl">
+                    <div class="text-center">
+                        <div class="text-3xl">📝</div>
+                        <p class="font-bold mt-2">Bloc de notas</p>
+                        <p class="text-xs">(Windows)</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl">📝</div>
+                        <p class="font-bold mt-2">TextEdit</p>
+                        <p class="text-xs">(Mac)</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl">💻</div>
+                        <p class="font-bold mt-2">WordPad</p>
+                        <p class="text-xs">Editor básico</p>
+                    </div>
+                </div>
+                <div class="example-box max-w-3xl mt-4">
+                    <p class="font-bold">¡Importante!</p>
+                    <p class="text-sm mt-1">Debes guardar el archivo con extensión <code class="bg-gray-200 px-2 py-1 rounded">.html</code> o <code class="bg-gray-200 px-2 py-1 rounded">.htm</code></p>
                 </div>
             </div>
 
-            <!-- Diapositiva 5: Estructura Básica -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Estructura Básica</h3>
+            <!-- Diapositiva 6: Estructura básica de HTML -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Estructura básica de HTML</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
                     Configurando el esqueleto de la página:
                 </p>
-                <div class="bg-gray-900 text-blue-300 p-5 rounded-xl font-mono text-left text-xs max-w-2xl w-full">
-                    <p class="text-gray-500">&lt;!DOCTYPE html&gt;</p>
-                    <p>&lt;html&gt;</p>
-                    <p class="ml-4">...</p>
-                    <p>&lt;/html&gt;</p>
+                <div class="code-block max-w-3xl">
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Título de la página&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        Contenido visible de la página
+    &lt;/body&gt;
+&lt;/html&gt;</pre>
                 </div>
-                <ul class="text-left mt-4 text-sm space-y-1">
-                    <li><code>&lt;!DOCTYPE html&gt;</code>: Dice al navegador el lenguaje.</li>
-                    <li><code>&lt;html&gt;</code>: Comienza el documento.</li>
-                    <li><code>&lt;/html&gt;</code>: Finaliza el documento.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 6: Terminología: Etiquetas -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2.1 Terminología básica: Etiquetas</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
-                    El texto dentro de los símbolos <b>&lt; &gt;</b> se llama etiqueta.
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
-                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                        <p class="font-bold text-blue-800">Etiqueta de inicio</p>
-                        <code>&lt;html&gt;</code>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 max-w-3xl text-sm">
+                    <div class="text-center p-2 bg-blue-50 rounded">
+                        <p class="font-bold text-blue-700">1. &lt;!DOCTYPE html&gt;</p>
+                        <p>Le dice al navegador qué lenguaje está leyendo</p>
                     </div>
-                    <div class="bg-red-50 p-4 rounded-lg border border-red-200">
-                        <p class="font-bold text-red-800">Etiqueta de cierre</p>
-                        <code>&lt;/html&gt;</code>
+                    <div class="text-center p-2 bg-green-50 rounded">
+                        <p class="font-bold text-green-700">2. &lt;html&gt;&lt;/html&gt;</p>
+                        <p>Envuelve todo el documento HTML</p>
+                    </div>
+                    <div class="text-center p-2 bg-purple-50 rounded">
+                        <p class="font-bold text-purple-700">3. &lt;head&gt; y &lt;body&gt;</p>
+                        <p>Dos secciones principales del documento</p>
                     </div>
                 </div>
-                <p class="mt-4 text-sm text-gray-600">Las etiquetas casi siempre vienen de a pares.</p>
             </div>
 
-            <!-- Diapositiva 7: Anidamiento -->
+            <!-- Diapositiva 7: Terminología básica: Etiquetas -->
             <div id="slide-7" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Terminología básica: Etiquetas</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
+                    Para aprender HTML, debemos aprender cómo hablar sobre HTML:
+                </p>
+                <div class="example-box max-w-3xl">
+                    <p class="font-bold">Los símbolos <code>&lt; &gt;</code> se usan mucho en HTML</p>
+                    <p class="mt-2">El texto dentro de <code>&lt; &gt;</code> se llama <strong>etiqueta</strong>.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 max-w-3xl">
+                    <div class="bg-white p-4 rounded-lg shadow border">
+                        <h4 class="font-bold text-green-600">Etiqueta de inicio</h4>
+                        <code class="block mt-2 text-lg bg-gray-100 p-2 rounded">&lt;html&gt;</code>
+                        <p class="text-sm mt-2">Marca el comienzo de un elemento</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow border">
+                        <h4 class="font-bold text-red-600">Etiqueta de cierre</h4>
+                        <code class="block mt-2 text-lg bg-gray-100 p-2 rounded">&lt;/html&gt;</code>
+                        <p class="text-sm mt-2">Marca el final de un elemento</p>
+                    </div>
+                </div>
+                <p class="text-sm mt-4 text-gray-600 max-w-3xl">
+                    Las etiquetas casi siempre vienen de a pares: una etiqueta de inicio y una etiqueta de cierre.
+                </p>
+            </div>
+
+            <!-- Diapositiva 8: Anidamiento de etiquetas -->
+            <div id="slide-8" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Anidamiento de etiquetas</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
-                    Las etiquetas pueden estar unas dentro de otras, como paréntesis.
+                    Las etiquetas pueden anidarse (colocarse unas dentro de otras):
                 </p>
-                <div class="bg-gray-100 p-5 rounded-lg font-mono text-sm max-w-2xl">
-                    &lt;padre&gt;<br>
-                    &nbsp;&nbsp;&lt;hijo&gt;Contenido&lt;/hijo&gt;<br>
-                    &lt;/padre&gt;
+                <div class="code-block max-w-3xl">
+<pre>&lt;primer_a_etiqueta&gt;
+    &lt;segunda_etiqueta&gt;
+        Algún texto
+    &lt;/segunda_etiqueta&gt;
+&lt;/primer_a_etiqueta&gt;</pre>
                 </div>
-                <p class="mt-4 text-sm text-red-500 font-bold">Importante: Se cierran en el orden inverso al que se abrieron.</p>
+                <div class="example-box max-w-3xl mt-4">
+                    <p class="font-bold text-blue-700">Imagina que las etiquetas son como paréntesis</p>
+                    <p class="text-sm mt-2">Cuando abres uno, después tienes que cerrarlo. Las etiquetas también pueden anidarse, así que hay que cerrarlas en el orden correcto.</p>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg max-w-3xl mt-4">
+                    <p class="font-bold text-red-700">Regla importante:</p>
+                    <p class="text-sm mt-1">La última etiqueta que abres debe ser la primera que cierres.</p>
+                </div>
             </div>
 
-            <!-- Diapositiva 8: El Encabezado -->
-            <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">El Encabezado (&lt;head&gt;)</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
-                    Contiene información sobre el archivo HTML que no se ve directamente en la página, como el título y metadatos.
-                </p>
-                <div class="image-placeholder mt-5">
-                    <img src="../imagenes/html_logo.svg" alt="Head section" class="h-24">
-                </div>
-                <p class="text-xs text-gray-500 mt-2">Se ubica entre las etiquetas &lt;html&gt; y antes de &lt;body&gt;.</p>
-            </div>
-
-            <!-- Diapositiva 9: El Título -->
+            <!-- Diapositiva 9: El Encabezado (&lt;head&gt;) -->
             <div id="slide-9" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">El Encabezado (&lt;head&gt;)</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
+                    El archivo HTML siempre consiste de dos partes: el encabezado y el cuerpo.
+                </p>
+                <div class="code-block max-w-3xl">
+<pre>&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Mi página web&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        Contenido visible
+    &lt;/body&gt;
+&lt;/html&gt;</pre>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg max-w-3xl mt-4 text-left">
+                    <p class="font-bold text-blue-700">El encabezado &lt;head&gt; contiene:</p>
+                    <ul class="mt-2 space-y-1 text-sm">
+                        <li>• Información sobre el archivo HTML</li>
+                        <li>• El título de la página (lo que se ve en la pestaña del navegador)</li>
+                        <li>• Metadatos (información sobre la página)</li>
+                        <li>• Enlaces a hojas de estilo y scripts</li>
+                    </ul>
+                </div>
+                <p class="text-sm mt-4 text-gray-600 max-w-3xl">
+                    Todo dentro de nuestro archivo HTML irá en medio de las etiquetas de inicio <code>&lt;html&gt;</code> y de cierre <code>&lt;/html&gt;</code>.
+                </p>
+            </div>
+
+            <!-- Diapositiva 10: El Título (&lt;title&gt;) -->
+            <div id="slide-10" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">El Título (&lt;title&gt;)</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
-                    Es lo que vemos en la barra de títulos del buscador o en la pestaña de la página.
+                    El título es lo que vemos en la barra de títulos del navegador o pestaña de la página.
                 </p>
-                <div class="bg-gray-900 text-green-400 p-5 rounded-xl font-mono text-left text-xs max-w-2xl w-full">
-                    <p>&lt;head&gt;</p>
-                    <p class="ml-4 text-blue-300">&lt;title&gt;Mi página web&lt;/title&gt;</p>
-                    <p>&lt;/head&gt;</p>
+                <div class="code-block max-w-3xl">
+<pre>&lt;head&gt;
+    &lt;title&gt;Mi página web&lt;/title&gt;
+&lt;/head&gt;</pre>
+                </div>
+                <div class="example-box max-w-3xl mt-4">
+                    <p class="font-bold">Cómo agregar un título a tu página:</p>
+                    <ol class="mt-2 space-y-2 text-sm list-decimal pl-5">
+                        <li>Agrega una etiqueta de inicio <code>&lt;head&gt;</code> y una de cierre <code>&lt;/head&gt;</code></li>
+                        <li>En medio, coloca una etiqueta <code>&lt;title&gt;</code> de inicio y una de cierre <code>&lt;/title&gt;</code></li>
+                        <li>Entre las etiquetas <code>&lt;title&gt;</code>, escribe un título para tu página web</li>
+                        <li>Guarda tu trabajo</li>
+                    </ol>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow mt-4 max-w-3xl">
+                    <div class="flex items-center bg-gray-200 p-2 rounded-t">
+                        <div class="flex space-x-1">
+                            <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                            <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                            <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                        </div>
+                        <div class="ml-4 text-xs">Mi página web - Navegador</div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-sm">Esta es una simulación de cómo se vería el título en el navegador</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 10: El Cuerpo -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">El Cuerpo (&lt;body&gt;)</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
-                    Aquí es donde se ingresa el contenido: textos, imágenes y enlaces. Es lo que el usuario verá realmente.
-                </p>
-                <div class="image-placeholder mt-5">
-                    <img src="../imagenes/icono_inicio.png" alt="Body section" class="h-16">
-                </div>
-                <p class="text-xs text-gray-500 mt-2">Va inmediatamente después de cerrar el encabezado &lt;/head&gt;.</p>
-            </div>
-
-            <!-- Diapositiva 11: Párrafos -->
+            <!-- Diapositiva 11: El Cuerpo (&lt;body&gt;) y Párrafos -->
             <div id="slide-11" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2.1 Párrafos (&lt;p&gt;)</h3>
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">El Cuerpo (&lt;body&gt;) y Párrafos</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
-                    Cada párrafo empieza con una etiqueta <code>&lt;p&gt;</code> y termina con <code>&lt;/p&gt;</code>.
+                    El cuerpo es donde se ingresa el contenido que se verá en la página real.
                 </p>
-                <div class="bg-gray-100 p-5 rounded-lg w-full max-w-2xl text-left">
-                    <p class="font-mono text-blue-600">&lt;p&gt;¡Hola mundo!&lt;/p&gt;</p>
-                </div>
-                <div class="mt-5 border p-3 rounded bg-white shadow-sm">
-                    <p class="text-sm">¡Hola mundo!</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Encabezados -->
-            <div id="slide-12" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2.2 Encabezados (h1 a h6)</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
-                    HTML permite tener 6 tamaños de encabezados. <code>&lt;h1&gt;</code> es el más grande y <code>&lt;h6&gt;</code> el más pequeño.
-                </p>
-                <div class="grid grid-cols-2 gap-2 text-left w-full max-w-lg">
-                    <h1 class="text-2xl font-bold">Encabezado 1</h1>
-                    <h2 class="text-xl font-bold">Encabezado 2</h2>
-                    <h3 class="text-lg font-bold">Encabezado 3</h3>
-                    <h4 class="text-base font-bold">Encabezado 4</h4>
-                    <h5 class="text-sm font-bold">Encabezado 5</h5>
-                    <h6 class="text-xs font-bold">Encabezado 6</h6>
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Ejemplo de Código -->
-            <div id="slide-13" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Ejemplo de Código</h3>
-                <div class="bg-gray-900 text-blue-300 p-5 rounded-xl font-mono text-left text-xs max-w-2xl w-full overflow-x-auto">
-                    <pre>
-&lt;body&gt;
-  &lt;h1&gt;Mi Título&lt;/h1&gt;
-  &lt;p&gt;Primer párrafo.&lt;/p&gt;
-  &lt;h3&gt;Subtítulo&lt;/h3&gt;
-  &lt;p&gt;Segundo párrafo.&lt;/p&gt;
+                <div class="code-block max-w-3xl">
+<pre>&lt;body&gt;
+    &lt;p&gt;¡Hola mundo!&lt;/p&gt;
+    &lt;p&gt;Este es mi primer párrafo en HTML.&lt;/p&gt;
 &lt;/body&gt;</pre>
                 </div>
-            </div>
-
-            <!-- Diapositiva 14: Otros elementos -->
-            <div id="slide-14" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Salto de línea y Línea Horizontal</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl">
-                    <div class="bg-white p-4 rounded-lg shadow border-t-4 border-blue-400">
-                        <p class="font-bold">Salto de línea (&lt;br/&gt;)</p>
-                        <p class="text-sm mt-2">Se utiliza para crear espacios entre el texto, como dar Enter.</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow border-t-4 border-gray-400">
-                        <p class="font-bold">Línea Horizontal (&lt;hr/&gt;)</p>
-                        <p class="text-sm mt-2">Se utiliza para separar secciones con una línea visual.</p>
-                    </div>
+                <div class="example-box max-w-3xl mt-4">
+                    <p class="font-bold">Etiqueta &lt;p&gt; para párrafos:</p>
+                    <ul class="mt-2 space-y-1 text-sm">
+                        <li>Cada párrafo empieza con <code>&lt;p&gt;</code> y termina con <code>&lt;/p&gt;</code></li>
+                        <li>Podemos ingresar contenido entre las etiquetas</li>
+                        <li>El cuerpo va después del encabezado</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow mt-4 max-w-3xl text-left">
+                    <p>¡Hola mundo!</p>
+                    <p class="mt-2">Este es mi primer párrafo en HTML.</p>
+                    <p class="text-xs text-gray-500 mt-4">Resultado del código HTML anterior</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 15: Hipervínculos -->
-            <div id="slide-15" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2.3 Hipervínculos (&lt;a&gt;)</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
-                    Para mandar al usuario a otra página usamos vínculos. El atributo <b>href</b> indica el destino.
-                </p>
-                <div class="bg-gray-100 p-4 mt-4 rounded font-mono text-sm">
-                    &lt;a href="http://www.google.com"&gt;Buscador&lt;/a&gt;
-                </div>
-                <div class="mt-5">
-                    <a href="#" class="text-blue-500 underline">Este es un ejemplo de enlace</a>
-                </div>
-            </div>
-
-            <!-- Diapositiva 16: Agregar Imágenes -->
-            <div id="slide-16" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">2.4 Agregar imágenes (&lt;img&gt;)</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
-                    Usamos la etiqueta <code>&lt;img&gt;</code> con el atributo <b>src</b> para indicarle dónde buscar la imagen. No tiene etiqueta de cierre.
-                </p>
-                <div class="bg-gray-100 p-4 mt-4 rounded font-mono text-xs max-w-2xl overflow-x-auto">
-                    &lt;img src="https://upload.wikimedia.org/.../Bandera_Honduras.png" /&gt;
-                </div>
-                <div class="mt-5">
-                    <img src="../imagenes/bandera-de-honduras.png" alt="Bandera" class="h-20 mx-auto">
-                </div>
-            </div>
-
-            <!-- Diapositiva 17: Imágenes como Enlaces -->
-            <div id="slide-17" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">3. Imágenes como Enlaces</h3>
+            <!-- Diapositiva 12: Encabezados (h1 a h6) -->
+            <div id="slide-12" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Encabezados (h1 a h6)</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
-                    Podemos convertir una imagen en un enlace anidando la etiqueta <code>&lt;img&gt;</code> dentro de una etiqueta <code>&lt;a&gt;</code>.
+                    HTML permite tener más de un tamaño de encabezados para organizar el contenido.
                 </p>
-                <div class="bg-gray-900 text-blue-300 p-5 rounded-xl font-mono text-left text-xs max-w-2xl w-full">
-                    <pre>
-&lt;a href="http://www.honduras.com"&gt;
-  &lt;img src="bandera.png" /&gt;
-&lt;/a&gt;</pre>
+                <div class="code-block max-w-3xl">
+<pre>&lt;body&gt;
+    &lt;h1&gt;Título principal (más grande)&lt;/h1&gt;
+    &lt;h2&gt;Subtítulo&lt;/h2&gt;
+    &lt;h3&gt;Encabezado nivel 3&lt;/h3&gt;
+    &lt;h4&gt;Encabezado nivel 4&lt;/h4&gt;
+    &lt;h5&gt;Encabezado nivel 5&lt;/h5&gt;
+    &lt;h6&gt;Encabezado nivel 6 (más pequeño)&lt;/h6&gt;
+&lt;/body&gt;</pre>
+                </div>
+                <div class="w-full max-w-3xl space-y-1 mt-4 text-left">
+                    <h1 class="text-2xl font-bold border-b pb-1">Título principal (h1)</h1>
+                    <h2 class="text-xl font-bold mt-3">Subtítulo (h2)</h2>
+                    <h3 class="text-lg font-bold mt-2">Encabezado nivel 3 (h3)</h3>
+                    <h4 class="text-base font-bold mt-2">Encabezado nivel 4 (h4)</h4>
+                    <h5 class="text-sm font-bold mt-2">Encabezado nivel 5 (h5)</h5>
+                    <h6 class="text-xs font-bold mt-2">Encabezado nivel 6 (h6)</h6>
+                </div>
+                <p class="text-xs mt-4 text-gray-600 max-w-3xl">
+                    Hay seis tamaños de encabezados: <code>&lt;h1&gt;</code> es el más grande y <code>&lt;h6&gt;</code> es el más pequeño.
+                </p>
+            </div>
+
+            <!-- Diapositiva 13: Ejemplo completo -->
+            <div id="slide-13" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Ejemplo completo de página HTML</h3>
+                <div class="code-block max-w-3xl">
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Mi primera página web&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Bienvenidos a mi sitio&lt;/h1&gt;
+    &lt;p&gt;Esta es mi primera página web creada con HTML.&lt;/p&gt;
+    &lt;h2&gt;Acerca de mí&lt;/h2&gt;
+    &lt;p&gt;Estoy aprendiendo diseño web.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+                </div>
+                <div class="example-box max-w-3xl mt-4">
+                    <p class="font-bold">Pasos para crear y ver tu página:</p>
+                    <ol class="mt-2 space-y-1 text-sm list-decimal pl-5">
+                        <li>Abre un editor de texto (Bloc de notas)</li>
+                        <li>Copia el código anterior</li>
+                        <li>Guarda el archivo como <code>mi_pagina.html</code></li>
+                        <li>Abre el archivo en tu navegador web</li>
+                        <li>¡Verás tu primera página web!</li>
+                    </ol>
+                </div>
+                <div class="bg-green-50 p-3 rounded-lg mt-4 max-w-3xl">
+                    <p class="text-sm font-bold text-green-700">Probar en clase:</p>
+                    <p class="text-xs">Crea este archivo ahora mismo en tu computadora</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 18: Cuestionario -->
-            <div id="slide-18" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¡Cuestionario de Diseño Web!</h3>
-                <div id="quiz-container" class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-md max-w-3xl w-full text-center">
-                    <div id="quiz-question" class="text-base sm:text-xl font-semibold mb-2 sm:mb-5 text-gray-800"></div>
-                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-3"></div>
-                    <div id="quiz-feedback" class="mt-3 sm:mt-5 text-sm sm:text-base font-bold"></div>
+            <!-- Diapositiva 14: Resumen y Tarea -->
+            <div id="slide-14" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Resumen - Introducción a HTML</h3>
+                <div class="bg-blue-50 p-4 rounded-lg max-w-3xl text-left">
+                    <ul class="space-y-2 text-sm sm:text-base">
+                        <li>✅ HTML es el lenguaje estándar para crear páginas web</li>
+                        <li>✅ Significa <strong>HyperText Markup Language</strong></li>
+                        <li>✅ Es <strong>distribuido, hipertexto, compatible y dinámico</strong></li>
+                        <li>✅ No necesita programas especiales para crearse</li>
+                        <li>✅ Usa <strong>etiquetas</strong> entre <code>&lt; &gt;</code></li>
+                        <li>✅ Tiene estructura básica: <code>DOCTYPE, html, head, body</code></li>
+                        <li>✅ <code>&lt;title&gt;</code> define el título en la pestaña</li>
+                        <li>✅ <code>&lt;h1&gt;</code> a <code>&lt;h6&gt;</code> son encabezados</li>
+                        <li>✅ <code>&lt;p&gt;</code> define párrafos de texto</li>
+                    </ul>
                 </div>
-            </div>
-
-            <!-- Diapositiva 19: Resumen -->
-            <div id="slide-19" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Resumen</h3>
-                <ul class="text-sm sm:text-lg text-gray-700 text-left space-y-2 max-w-3xl">
-                    <li>1. <b>HTML</b> se usa para darle estructura a los sitios web.</li>
-                    <li>2. Los archivos HTML tienen un encabezado <code>&lt;head&gt;</code> y un cuerpo <code>&lt;body&gt;</code>.</li>
-                    <li>3. Usamos <code>&lt;title&gt;</code> para el nombre de la página.</li>
-                    <li>4. Las etiquetas de encabezado (h1-h6) y párrafos (p) organizan el texto.</li>
-                    <li>5. Los enlaces (a) e imágenes (img) añaden interactividad y contenido visual.</li>
-                </ul>
-                <p class="text-lg mt-8 font-bold text-blue-600">¡Sigue practicando y creando tu propia web!</p>
+                
+                <div class="bg-yellow-50 p-4 rounded-lg max-w-3xl mt-6 border border-yellow-200">
+                    <h4 class="font-bold text-yellow-700">📋 Tarea Asignada:</h4>
+                    <p class="text-sm mt-2 font-bold">Ensayo sobre importancia y características de HTML</p>
+                    <div class="mt-2 text-xs text-gray-700">
+                        <p><strong>Fecha de entrega:</strong> 15/02/2026</p>
+                        <p><strong>Ponderación:</strong> 5%</p>
+                        <p class="mt-2"><strong>Instrucciones:</strong> Escribe un ensayo de 1-2 páginas explicando:</p>
+                        <ul class="mt-1 pl-5 space-y-1">
+                            <li>• ¿Qué es HTML y por qué es importante?</li>
+                            <li>• Características principales del lenguaje HTML</li>
+                            <li>• Elementos básicos de una página HTML</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <p class="text-lg mt-6 font-bold text-blue-600">¡A practicar con HTML!</p>
             </div>
         </div>
 
@@ -449,7 +542,7 @@
             <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
             <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
         </div>
-        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 19</div>
+        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 14</div>
     </main>
 
     <!-- Pie de página -->
@@ -469,106 +562,6 @@
         let currentSlideIndex = 0;
         let isTransitioning = false;
 
-        const quizQuestions = [
-            {
-                question: "1. ¿Qué significan las siglas HTML?",
-                options: ["HyperText Markup Language", "High Tech Modern Logic", "Home Tool Markup List", "Hyperlink Text Main Line"],
-                correctAnswer: "HyperText Markup Language"
-            },
-            {
-                question: "2. ¿Qué etiqueta define el título que aparece en la pestaña del navegador?",
-                options: ["<head>", "<title>", "<body>", "<html>"],
-                correctAnswer: "<title>"
-            },
-            {
-                question: "3. ¿Cuál de estos encabezados es el de mayor tamaño?",
-                options: ["h1", "h3", "h6", "header"],
-                correctAnswer: "h1"
-            },
-            {
-                question: "4. ¿Qué etiqueta se usa para crear párrafos?",
-                options: ["<text>", "<p>", "<div>", "<br>"],
-                correctAnswer: "<p>"
-            },
-            {
-                question: "5. ¿Cuál es el atributo que define la dirección de un enlace en la etiqueta <a>?",
-                options: ["src", "link", "href", "target"],
-                correctAnswer: "href"
-            },
-            {
-                question: "6. ¿Qué etiqueta se usa para insertar imágenes?",
-                options: ["<link>", "<picture>", "<img>", "<a>"],
-                correctAnswer: "<img>"
-            },
-            {
-                question: "7. ¿Cuál es la etiqueta que contiene todo el contenido visible de una página?",
-                options: ["<head>", "<body>", "<html>", "<section>"],
-                correctAnswer: "<body>"
-            },
-            {
-                question: "8. ¿Para qué sirve el anidamiento en HTML?",
-                options: ["Para borrar código", "Para colocar etiquetas dentro de otras", "Para crear errores", "No sirve para nada"],
-                correctAnswer: "Para colocar etiquetas dentro de otras"
-            },
-            {
-                question: "9. ¿Qué función tiene la etiqueta <br/>?",
-                options: ["Crear una línea horizontal", "Crear un salto de línea", "Cerrar el documento", "Insertar una imagen"],
-                correctAnswer: "Crear un salto de línea"
-            },
-            {
-                question: "10. ¿Es necesario un programa de pago para crear archivos HTML?",
-                options: ["Sí, es muy caro", "No, basta con un editor de texto", "Solo en Windows", "Solo en Mac"],
-                correctAnswer: "No, basta con un editor de texto"
-            }
-        ];
-        let currentQuizQuestionIndex = 0;
-
-        function updateQuizDisplay() {
-            const quizQuestionElement = document.getElementById('quiz-question');
-            const quizOptionsElement = document.getElementById('quiz-options');
-            const quizFeedbackElement = document.getElementById('quiz-feedback');
-            if (currentQuizQuestionIndex >= quizQuestions.length) {
-                quizQuestionElement.textContent = "¡Cuestionario completado! ¡Eres un experto!";
-                quizOptionsElement.innerHTML = '';
-                quizFeedbackElement.textContent = '';
-                return;
-            }
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            quizQuestionElement.textContent = currentQuestion.question;
-            quizOptionsElement.innerHTML = '';
-            quizFeedbackElement.textContent = '';
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-5 py-2 rounded-xl border border-blue-400 bg-blue-50 text-blue-700 font-semibold transition-colors duration-200 hover:bg-blue-100 text-sm";
-                button.onclick = () => checkAnswer(option);
-                quizOptionsElement.appendChild(button);
-            });
-        }
-
-        function checkAnswer(selectedOption) {
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            const quizFeedback = document.getElementById('quiz-feedback');
-            const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
-            const isCorrect = selectedOption === currentQuestion.correctAnswer;
-            buttons.forEach(button => {
-                button.disabled = true;
-                if (button.textContent === currentQuestion.correctAnswer) button.classList.add('correct');
-                else if (button.textContent === selectedOption) button.classList.add('incorrect');
-            });
-            if (isCorrect) {
-                quizFeedback.textContent = '¡Correcto!';
-                quizFeedback.classList.add('text-green-500');
-            } else {
-                quizFeedback.textContent = 'Incorrecto. La respuesta es: ' + currentQuestion.correctAnswer;
-                quizFeedback.classList.add('text-red-500');
-            }
-            setTimeout(() => {
-                currentQuizQuestionIndex++;
-                updateQuizDisplay();
-            }, 2000);
-        }
-
         function showSlide(index) {
             if (isTransitioning || index < 0 || index >= slides.length) return;
             isTransitioning = true;
@@ -587,12 +580,15 @@
                 presentationContainer.style.height = 'calc(100vh - 7rem)';
             }
 
-            slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+            slides.forEach(s => { 
+                s.classList.remove('active'); 
+                s.style.display = 'none'; 
+            });
+            
             currentSlideIndex = index;
-            // Quiz is index 17 (18th slide)
-            if (currentSlideIndex === 17) { currentQuizQuestionIndex = 0; updateQuizDisplay(); }
             const activeSlide = slides[currentSlideIndex];
             activeSlide.style.display = 'flex';
+            
             setTimeout(() => {
                 activeSlide.classList.add('active');
                 slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
