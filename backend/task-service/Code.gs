@@ -77,6 +77,7 @@ function getStudentTasks(payload) {
   const tasksData = tareasSheet.getDataRange().getValues().slice(1);
   const entregasData = entregasSheet.getDataRange().getValues().slice(1);
 
+  const seenOriginalTasksForEC = new Set();
   const studentTasks = tasksData.filter(task => {
     // task[6] es gradoAsignado, task[7] es seccionAsignada
     const matchGrado = (task[6] || "").toString().trim().toLowerCase() === (grado || "").toString().trim().toLowerCase();
@@ -87,27 +88,38 @@ function getStudentTasks(payload) {
     if (!matchGrado || !matchSeccion) return false;
 
     if (task[1] === 'Credito Extra') {
-      const asignatura = (task[5] || "").toString().toLowerCase().trim();
-      // Buscamos tareas de la misma asignatura, grado y sección para la validación de rechazo
-      const tasksInAsig = tasksData
-        .filter(t =>
-          (t[5] || "").toString().toLowerCase().trim() === asignatura &&
-          (t[6] || "").toString().trim().toLowerCase() === (grado || "").toString().trim().toLowerCase()
-        )
-        .map(t => t[0]);
+      const originalTaskId = (task[9] || "").toString().trim();
+      if (!originalTaskId || seenOriginalTasksForEC.has(originalTaskId)) return false;
 
-      return entregasData.some(e =>
-        e[2] === userId &&
-        tasksInAsig.includes(e[1]) &&
-        ((e[6] || "").toString().trim().toLowerCase() === 'rechazada' || (e[6] || "").toString().trim().toLowerCase() === 'revisada_rechazada')
-      );
+      const entregaOriginal = entregasData.find(e => e[1] === originalTaskId && e[2] === userId);
+      if (!entregaOriginal) return false;
+
+      const estadoEntrega = (entregaOriginal[6] || "").toString().trim().toLowerCase();
+      const isRejected = (estadoEntrega === 'rechazada' || estadoEntrega === 'revisada_rechazada');
+
+      if (isRejected) {
+        seenOriginalTasksForEC.add(originalTaskId);
+        return true;
+      }
+      return false;
     }
     return true;
   }).map(task => {
     const entrega = entregasData.find(e => e[1] === task[0] && e[2] === userId);
+    let fechaLimite = task[8] ? new Date(task[8]).toISOString() : null;
+
+    // Si es Credito Extra, forzamos que la fecha coincida con la de la tarea rechazada
+    if (task[1] === 'Credito Extra') {
+      const originalTaskId = (task[9] || "").toString().trim();
+      const originalTask = tasksData.find(t => t[0] === originalTaskId);
+      if (originalTask && originalTask[8]) {
+        fechaLimite = new Date(originalTask[8]).toISOString();
+      }
+    }
+
     return {
       tareaId: task[0], tipo: task[1], titulo: task[2], descripcion: task[3], parcial: task[4],
-      asignatura: task[5], fechaLimite: task[8] ? new Date(task[8]).toISOString() : null,
+      asignatura: task[5], fechaLimite: fechaLimite,
       entrega: entrega ? { calificacion: entrega[5], estado: entrega[6], comentario: entrega[7] } : null
     };
   });

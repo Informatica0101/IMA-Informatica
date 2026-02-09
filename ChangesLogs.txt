@@ -16,6 +16,16 @@
 - Archivo: js/perifericos_juego.js
   - Normalización de rutas de imágenes de activos de juego a formato relativo.
 
+02/02/2026
+- Archivo: backend/task-service/Code.gs
+  - Modificada la función getStudentTasks para implementar una lógica de Crédito Extra más estricta:
+    - Vinculación 1:1 mediante tareaOriginalId.
+    - Visibilidad condicionada al estado 'Rechazada' de la tarea original.
+    - Herencia de la fecha límite de la tarea original para asegurar coincidencia.
+- Archivo: js/student.js
+  - Implementada función formatDate(isoString) para estandarizar el formato de fecha a dd/mm/aaaa.
+  - Actualizada la función renderActivities para aplicar el nuevo formato a todas las fechas de entrega (tareas y exámenes).
+
 14/01/2026
 - Archivo: js/teacher.js, Línea(s): 88-95
   - Se implementó código defensivo en la función `fetchTeacherActivity` para prevenir un error crítico de tipo 'TypeError: Cannot read properties of undefined (reading 'map')'. La modificación asegura que si alguna de las llamadas a la API devuelve `undefined`, el código manejará el valor de forma segura en lugar de fallar, mejorando la robustez general del dashboard del profesor.
