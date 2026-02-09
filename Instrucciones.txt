@@ -251,6 +251,17 @@ ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
 - Se reorganizó el flujo lógico de la presentación (Definiciones -> Características -> Ejemplos -> Procesos).
 - Se enriquecieron las definiciones de Algoritmo y Programa utilizando múltiples perspectivas del material fuente.
 - Se integraron diagramas visuales del repositorio para apoyar los conceptos técnicos.
+
+TAREA: [A-39]
+TÍTULO: Refinamiento de Crédito Extra y Formato de Fecha
+ÁREA: Backend / Frontend
+PRIORIDAD: ALTA
+ESTADO: PENDIENTE DE REVISIÓN
+- Implementada lógica 1:1 para tareas de Crédito Extra basada en tareaOriginalId.
+- Visibilidad restringida a alumnos con tareas rechazadas vinculadas.
+- Sincronización automática de fechas entre Crédito Extra y tarea original.
+- Estandarizado formato de fecha a dd/mm/aaaa en el dashboard del estudiante.
+
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
 

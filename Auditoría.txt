@@ -126,3 +126,14 @@ Archivo: II_BTP_A/Programacion/introduccion_programacion.html
 - Re-auditoría para mejorar definiciones y flujo lógico.
 - Hallazgo: Los ejemplos estaban intercalados con teoría, dificultando el seguimiento pedagógico.
 - Hallazgo: Las definiciones de Programa de Computadora podían enriquecerse con los conceptos adicionales del texto.
+
+Auditoría - Lógica de Crédito Extra y Formato de Fecha - 2026-02-02
+--------------------------------------------------
+1. backend/task-service/Code.gs:
+   - Función getStudentTasks: La lógica actual de 'Credito Extra' es demasiado permisiva (basada solo en asignatura).
+   - Necesita vincularse 1:1 con tareaOriginalId (columna J / índice 9).
+   - Necesita heredar la fecha de la tarea original.
+2. js/student.js:
+   - Función renderActivities: Muestra fechaLimite directamente como ISO string.
+   - Requiere helper formatDate para cumplir con el formato dd/mm/aaaa solicitado.
+   - Aplica tanto para tareas como para exámenes.
