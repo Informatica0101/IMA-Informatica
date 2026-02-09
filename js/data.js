@@ -23,8 +23,8 @@ window.presentationData = [
             {
                 name: "Programación",
                 topics: [
-                    { title: "Introducción a la Programación", file: "II_BTP_A/Programacion/introduccion_programacion.html" }
-                    
+                    { title: "Introducción a la Programación", file: "II_BTP_A/Programacion/introduccion_programacion.html" },
+                    { title: "Clasificación y etapas de algoritmos", file: "II_BTP_A/Programacion/clasificacion_etapas_algoritmos.html" }
                 ]
             }
             /* {
@@ -57,7 +57,8 @@ window.presentationData = [
             {
                 name: "Diseño Web",
                 topics: [
-                    { title: "Introducción al Diseño Web", file: "III_BTP_A/introduccion_diseno_web.html" }
+                    { title: "Introducción al Diseño Web", file: "III_BTP_A/introduccion_diseno_web.html" },
+                    { title: "HTML y CSS - Terminología básica", file: "III_BTP_A/terminologia_basica_html_css.html" }
                 ]
             }
             /* {
