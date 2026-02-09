@@ -137,3 +137,9 @@ Auditoría - Lógica de Crédito Extra y Formato de Fecha - 2026-02-02
    - Función renderActivities: Muestra fechaLimite directamente como ISO string.
    - Requiere helper formatDate para cumplir con el formato dd/mm/aaaa solicitado.
    - Aplica tanto para tareas como para exámenes.
+
+Auditoría Final v7 - Mon Feb 02 18:00:00 UTC 2026
+--------------------------------------------------
+1. js/config.js: Actualización de TASK URL a endpoint definitivo proporcionado por el usuario.
+2. sw.js: Bump a v7 and actualización de assets precacheados.
+3. Global: Cache-busting v=7 aplicado en todos los archivos HTML y js/ui-common.js.
