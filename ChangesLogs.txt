@@ -45,6 +45,12 @@
 - Archivo: js/data.js
   - Registradas las nuevas presentaciones en el menú de Cursos.
 
+02/02/2026 (v9 Update)
+- Archivo: js/config.js
+  - Actualizada la URL del microservicio TASK al nuevo endpoint de producción.
+- Archivos: sw.js, *.html, js/ui-common.js
+  - Incremento de la versión de caché a 'v8' para asegurar el despliegue inmediato de la nueva configuración.
+
 14/01/2026
 - Archivo: js/teacher.js, Línea(s): 88-95
   - Se implementó código defensivo en la función `fetchTeacherActivity` para prevenir un error crítico de tipo 'TypeError: Cannot read properties of undefined (reading 'map')'. La modificación asegura que si alguna de las llamadas a la API devuelve `undefined`, el código manejará el valor de forma segura en lugar de fallar, mejorando la robustez general del dashboard del profesor.

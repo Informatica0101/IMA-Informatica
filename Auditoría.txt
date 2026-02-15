@@ -166,3 +166,9 @@ Auditoría Final v8 - Mon Feb 02 20:00:00 UTC 2026
    - II_BTP_A/Programacion/estrategias_solucion_problemas.html: Creada y verificada.
    - III_BTP_A/hipervinculos_imagenes.html: Creada y verificada.
    - Integración en js/data.js confirmada.
+
+Auditoría Final v9 - Mon Feb 02 21:00:00 UTC 2026
+--------------------------------------------------
+1. js/config.js: Actualización de TASK URL a endpoint definitivo proporcionado por el usuario.
+2. sw.js: Bump a v8 and actualización de assets precacheados.
+3. Global: Cache-busting v=8 aplicado en todos los archivos HTML y js/ui-common.js.
