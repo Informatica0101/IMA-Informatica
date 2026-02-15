@@ -70,7 +70,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 allActivities.push(...examsResult.data.map(exam => ({ ...exam, type: 'Examen' })));
             }
 
-            allActivities.sort((a, b) => new Date(a.fechaLimite) - new Date(b.fechaLimite));
+            // Ordenar: No entregadas primero, luego por fecha límite (ascendente)
+            allActivities.sort((a, b) => {
+                const deliveredA = !!a.entrega;
+                const deliveredB = !!b.entrega;
+
+                if (deliveredA !== deliveredB) {
+                    return deliveredA ? 1 : -1; // false (no entregada) viene antes que true
+                }
+
+                return new Date(a.fechaLimite) - new Date(b.fechaLimite);
+            });
+
             renderActivities(allActivities);
 
         } catch (error) {

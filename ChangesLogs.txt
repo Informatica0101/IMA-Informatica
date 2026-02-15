@@ -49,7 +49,11 @@
 - Archivo: js/config.js
   - Actualizada la URL del microservicio TASK al nuevo endpoint de producción.
 - Archivos: sw.js, *.html, js/ui-common.js
-  - Incremento de la versión de caché a 'v8' para asegurar el despliegue inmediato de la nueva configuración.
+  - Incremento de la versión de caché a 'v9' para asegurar el despliegue inmediato de la nueva configuración.
+
+02/02/2026 (v9 Student Dashboard Sorting)
+- Archivo: js/student.js
+  - Se modificó la lógica de ordenamiento de las actividades (tareas y exámenes) para que los ítems no entregados aparezcan al principio de la lista, seguidos por los entregados, ambos subgrupos ordenados por fecha límite ascendente.
 
 14/01/2026
 - Archivo: js/teacher.js, Línea(s): 88-95

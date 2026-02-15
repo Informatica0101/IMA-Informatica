@@ -170,5 +170,6 @@ Auditoría Final v8 - Mon Feb 02 20:00:00 UTC 2026
 Auditoría Final v9 - Mon Feb 02 21:00:00 UTC 2026
 --------------------------------------------------
 1. js/config.js: Actualización de TASK URL a endpoint definitivo proporcionado por el usuario.
-2. sw.js: Bump a v8 and actualización de assets precacheados.
-3. Global: Cache-busting v=8 aplicado en todos los archivos HTML y js/ui-common.js.
+2. sw.js: Bump a v9 and actualización de assets precacheados.
+3. Global: Cache-busting v=9 aplicado en todos los archivos HTML y js/ui-common.js.
+4. js/student.js: Implementada nueva lógica de ordenamiento para mostrar actividades no entregadas primero.
