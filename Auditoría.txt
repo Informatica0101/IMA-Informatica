@@ -143,3 +143,26 @@ Auditoría Final v7 - Mon Feb 02 18:00:00 UTC 2026
 1. js/config.js: Actualización de TASK URL a endpoint definitivo proporcionado por el usuario.
 2. sw.js: Bump a v7 and actualización de assets precacheados.
 3. Global: Cache-busting v=7 aplicado en todos los archivos HTML y js/ui-common.js.
+
+Auditoría - Refinamiento de Crédito Extra y Nuevas Presentaciones - 2026-02-02
+--------------------------------------------------------------------------------
+1. teacher-dashboard.html & js/teacher.js:
+   - El formulario de creación de tarea necesita un selector dinámico para 'Tarea Original' cuando el tipo es 'Credito Extra'.
+   - El selector debe mostrar solo tareas base (no EC) del mismo grado sin EC asignada.
+2. backend/task-service/Code.gs:
+   - Se requiere una nueva acción 'getAllTasks' para proporcionar la lista completa de tareas al profesor para el selector.
+3. Contenido Educativo:
+   - Se deben crear dos nuevas presentaciones para el 22 de febrero:
+     - Programación (Undécimo): "Estrategias de solución de problemas".
+     - Diseño Web (Duodécimo): "Hipervínculos e imágenes".
+   - Deben seguir la plantilla y estar integradas en js/data.js.
+
+Auditoría Final v8 - Mon Feb 02 20:00:00 UTC 2026
+--------------------------------------------------------------------------------
+1. Tarea Original en EC:
+   - Backend: Acción 'getAllTasks' implementada y funcional.
+   - Frontend: Selector dinámico en el formulario de creación de tarea funciona correctamente, filtrando por grado y excluyendo duplicados de EC.
+2. Nuevas Presentaciones:
+   - II_BTP_A/Programacion/estrategias_solucion_problemas.html: Creada y verificada.
+   - III_BTP_A/hipervinculos_imagenes.html: Creada y verificada.
+   - Integración en js/data.js confirmada.

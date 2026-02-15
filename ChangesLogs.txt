@@ -32,6 +32,19 @@
 - Archivos: sw.js, *.html, js/ui-common.js
   - Incremento de la versión de caché a 'v7' para asegurar el despliegue inmediato de la nueva configuración.
 
+02/02/2026 (v8 Update)
+- Archivo: backend/task-service/Code.gs
+  - Implementada acción 'getAllTasks' para retornar el listado completo de tareas del profesor.
+- Archivo: teacher-dashboard.html
+  - Sustituido input de texto por un select para 'Tarea Original' en el formulario de creación de tareas.
+- Archivo: js/teacher.js
+  - Implementada lógica de filtrado dinámico para el selector de 'Tarea Original': filtra por grado, excluye tareas de crédito extra y previene duplicados de vinculación.
+- Archivos de Contenido:
+  - Creada presentación II_BTP_A/Programacion/estrategias_solucion_problemas.html.
+  - Creada presentación III_BTP_A/hipervinculos_imagenes.html.
+- Archivo: js/data.js
+  - Registradas las nuevas presentaciones en el menú de Cursos.
+
 14/01/2026
 - Archivo: js/teacher.js, Línea(s): 88-95
   - Se implementó código defensivo en la función `fetchTeacherActivity` para prevenir un error crítico de tipo 'TypeError: Cannot read properties of undefined (reading 'map')'. La modificación asegura que si alguna de las llamadas a la API devuelve `undefined`, el código manejará el valor de forma segura en lugar de fallar, mejorando la robustez general del dashboard del profesor.

@@ -819,6 +819,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Delegación de Eventos para la Tabla ---
+    // --- Lógica del Formulario de Crear Tarea ---
+    const tipoSelect = document.getElementById('tipo');
+    const creditoExtraFields = document.getElementById('credito-extra-fields');
+    const tareaOriginalSelect = document.getElementById('tareaOriginalId');
+    const gradoAsignadoSelect = document.getElementById('gradoAsignado');
+
+    async function populateOriginalTasks() {
+        if (!tareaOriginalSelect) return;
+        const selectedGrado = gradoAsignadoSelect.value;
+        if (!selectedGrado) {
+            tareaOriginalSelect.innerHTML = '<option value="">Seleccione un grado primero...</option>';
+            return;
+        }
+
+        tareaOriginalSelect.innerHTML = '<option value="">Cargando tareas...</option>';
+        try {
+            const result = await fetchApi('TASK', 'getAllTasks', { profesorId: currentUser.userId });
+            if (result.status === 'success' && result.data) {
+                const allTasks = result.data;
+                const ecTasks = allTasks.filter(t => t.tipo === 'Credito Extra');
+                const linkedOriginalIds = new Set(ecTasks.map(t => t.tareaOriginalId).filter(id => id));
+
+                const validTasks = allTasks.filter(t =>
+                    t.tipo === 'Tarea' &&
+                    t.grado === selectedGrado &&
+                    !linkedOriginalIds.has(t.tareaId)
+                );
+
+                if (validTasks.length === 0) {
+                    tareaOriginalSelect.innerHTML = '<option value="">No hay tareas disponibles para este grado</option>';
+                } else {
+                    tareaOriginalSelect.innerHTML = '<option value="">Seleccione una tarea...</option>' +
+                        validTasks.map(t => `<option value="${t.tareaId}">${t.titulo} (${t.asignatura})</option>`).join('');
+                }
+            } else {
+                throw new Error(result.message || 'Error al obtener tareas');
+            }
+        } catch (error) {
+            console.error(error);
+            tareaOriginalSelect.innerHTML = '<option value="">Error al cargar tareas</option>';
+        }
+    }
+
+    if (tipoSelect) {
+        tipoSelect.addEventListener('change', () => {
+            if (tipoSelect.value === 'Credito Extra') {
+                creditoExtraFields.classList.remove('hidden');
+                populateOriginalTasks();
+            } else {
+                creditoExtraFields.classList.add('hidden');
+            }
+        });
+    }
+
+    if (gradoAsignadoSelect) {
+        gradoAsignadoSelect.addEventListener('change', () => {
+            if (tipoSelect && tipoSelect.value === 'Credito Extra') {
+                populateOriginalTasks();
+            }
+        });
+    }
+
     if (createAssignmentForm) {
         createAssignmentForm.addEventListener('submit', async (e) => {
             e.preventDefault();

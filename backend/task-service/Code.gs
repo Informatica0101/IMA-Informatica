@@ -47,6 +47,7 @@ function doPost(e) {
       case "submitAssignment": response = submitAssignment(payload); break;
       case "gradeSubmission": response = gradeSubmission(payload); break;
       case "getTeacherActivity": response = getTeacherActivity(payload); break;
+      case "getAllTasks": response = getAllTasks(payload); break;
       default:
         response = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
@@ -280,6 +281,35 @@ function getTeacherActivity(payload) {
   submissions.sort((a, b) => b.fecha - a.fecha);
   const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
   return { status: "success", data: formattedActivity };
+}
+
+function getAllTasks(payload) {
+  const { profesorId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const tareasSheet = getSheetOrThrow(ss, "Tareas");
+  const data = tareasSheet.getDataRange().getValues().slice(1);
+
+  const filtered = data.filter(r => {
+    if (profesorId && r[10] && r[10] !== profesorId) return false;
+    return true;
+  });
+
+  return {
+    status: "success",
+    data: filtered.map(r => ({
+      tareaId: r[0],
+      tipo: r[1],
+      titulo: r[2],
+      descripcion: r[3],
+      parcial: r[4],
+      asignatura: r[5],
+      grado: r[6],
+      seccion: r[7],
+      fechaLimite: r[8] ? new Date(r[8]).toISOString() : null,
+      tareaOriginalId: r[9],
+      profesorId: r[10]
+    }))
+  };
 }
 
 function isInTeacherList(value, listString) {

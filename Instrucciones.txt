@@ -262,6 +262,17 @@ ESTADO: PENDIENTE DE REVISIÓN
 - Sincronización automática de fechas entre Crédito Extra y tarea original.
 - Estandarizado formato de fecha a dd/mm/aaaa en el dashboard del estudiante.
 
+TAREA: [A-40]
+TÍTULO: Mejoras en Creación de Tareas y Nuevas Presentaciones
+ÁREA: Backend / Frontend / Contenido
+PRIORIDAD: ALTA
+ESTADO: PENDIENTE DE REVISIÓN
+- Implementado selector dinámico para 'Tarea Original' en creación de Crédito Extra.
+- Filtrado automático de tareas disponibles por grado y duplicidad.
+- Creada presentación de Programación: "Estrategias de solución de problemas".
+- Creada presentación de Diseño Web: "Hipervínculos e imágenes".
+- Integradas nuevas presentaciones en el menú global de cursos.
+
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
 
