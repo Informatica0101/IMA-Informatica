@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis y Diseño de Algoritmos - Programación I</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        html { font-size: 90%; }
+        html, body { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow-x: hidden; }
+        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #374151; justify-content: space-between; }
+        #presentation-container { width: 100%; height: calc(100vh - 7rem); position: relative; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); overflow: hidden; display: flex; justify-content: center; align-items: center; margin: 0 auto; max-width: 100vw; }
+        .slide { width: 100%; height: 100%; padding: 1.8rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: opacity 0.5s ease-in-out; position: absolute; top: 0; left: 0; opacity: 0; -ms-overflow-style: none; scrollbar-width: none; overflow-y: auto; }
+        .slide::-webkit-scrollbar { display: none; }
+        .slide.active { display: flex; opacity: 1; animation-name: fadeIn; animation-duration: 0.8s; animation-fill-mode: forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) { .slide h2, .slide h3 { font-size: 1.4rem; } .slide p, .slide li { font-size: 0.9rem; } .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
+        .quiz-option-button { transition: background-color 0.3s, transform 0.2s; text-align: left; padding-left: 1.5rem; }
+        .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
+        .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
+        .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
+        .step-box { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.8rem; margin: 0.3rem 0; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .step-number { display: inline-block; background: #3b82f6; color: white; width: 26px; height: 26px; border-radius: 50%; text-align: center; line-height: 26px; margin-right: 10px; font-weight: bold; font-size: 0.9rem; }
+    </style>
+</head>
+<body class="antialiased">
+    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
+            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Programación I</h1>
+        </div>
+        <nav class="mt-3 sm:mt-0">
+            <ul class="flex space-x-2 sm:space-x-3">
+                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="flex-grow flex justify-center items-center p-3">
+        <div id="presentation-container" class="relative">
+            <!-- Diapositiva 1: Portada -->
+            <div id="slide-1" class="slide active">
+                <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
+                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Análisis y Diseño de Algoritmos</h2>
+                <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 4: Lenguaje Natural</p>
+                <div class="text-xs text-gray-500 space-y-1">
+                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                    <p>Fecha: 01 de marzo de 2026</p>
+                    <p>Grado: Undécimo de Informática - Sección "A"</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 2: Paso 1 - Análisis -->
+            <div id="slide-2" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Paso 1: Análisis del Problema</h3>
+                <div class="concept-box">
+                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+                        Esta fase requiere una clara definición, donde se contemple exactamente lo que debe hacer el programa y el resultado o solución deseada.
+                    </p>
+                    <div class="mt-4 bg-white p-4 rounded-lg border shadow-sm">
+                        <p class="font-bold text-blue-600 mb-2">❓ Preguntas clave:</p>
+                        <ul class="text-xs sm:text-sm space-y-2 text-left">
+                            <li>📊 ¿Qué cantidad y tipo de datos de entrada se requieren?</li>
+                            <li>📉 ¿Qué cantidad y tipo de salidas se desean?</li>
+                            <li>🧮 ¿Qué métodos y fórmulas se necesitan para procesar los datos?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: Ejemplo de Análisis -->
+            <div id="slide-3" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo de Análisis: Área del Círculo</h3>
+                <div class="space-y-3 max-w-2xl mx-auto">
+                    <div class="step-box">
+                        <span class="step-number">E</span> <strong>Entrada:</strong> Radio del círculo (Número Real).
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">P</span> <strong>Proceso:</strong> Aplicar fórmula Área = π * radio²
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">S</span> <strong>Salida:</strong> Área calculada (Número Real).
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: Paso 2 - Diseño -->
+            <div id="slide-4" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Paso 2: Diseño del Algoritmo</h3>
+                <div class="concept-box text-left">
+                    <p class="text-sm sm:text-base text-gray-700">
+                        En esta etapa se define <strong>cómo</strong> hace el programa la tarea solicitada. Se centra en desarrollar la lógica basándose en el análisis previo.
+                    </p>
+                    <div class="mt-4 p-4 bg-blue-50 border rounded text-xs">
+                        <p class="font-bold text-blue-800">Formas de representación:</p>
+                        <ul class="list-disc ml-5 mt-2">
+                            <li>Lenguaje Natural.</li>
+                            <li>Diagramas de Flujo.</li>
+                            <li>Pseudocódigo.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Lenguaje Natural -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Algoritmos en Lenguaje Natural</h3>
+                <div class="concept-box">
+                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+                        Es la forma de describir los pasos de un algoritmo utilizando nuestro idioma cotidiano (español), sin reglas rígidas de programación.
+                    </p>
+                    <div class="mt-4 bg-green-50 p-4 rounded-lg border border-green-200">
+                        <p class="font-bold text-green-700 mb-2">✅ Ventajas:</p>
+                        <p class="text-xs">Permite expresar la lógica de manera clara y comprensible para cualquier persona antes de empezar a escribir código.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: Ejemplo: Llamada Telefónica -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Hacer una Llamada</h3>
+                <div class="space-y-2 max-w-md mx-auto text-left text-xs sm:text-sm">
+                    <p>1. Inicio.</p>
+                    <p>2. Desbloquear el teléfono.</p>
+                    <p>3. Abrir la aplicación de contactos.</p>
+                    <p>4. Buscar el nombre de la persona.</p>
+                    <p>5. Presionar el botón de llamar.</p>
+                    <p>6. Esperar a que contesten.</p>
+                    <p>7. Hablar y luego colgar.</p>
+                    <p>8. Fin.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Ejemplo: Promedio de Notas -->
+            <div id="slide-7" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Calcular Promedio</h3>
+                <div class="concept-box">
+                    <div class="space-y-2 text-xs sm:text-sm">
+                        <p>1. Pedir la nota del primer parcial.</p>
+                        <p>2. Pedir la nota del segundo parcial.</p>
+                        <p>3. Sumar ambas notas.</p>
+                        <p>4. Dividir el resultado entre 2.</p>
+                        <p>5. Mostrar el promedio final.</p>
+                    </div>
+                    <div class="mt-4 p-2 bg-yellow-50 border italic text-[10px]">
+                        Nota: Este es un algoritmo lineal y sencillo.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Características del Lenguaje Natural -->
+            <div id="slide-8" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Características Clave</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl">
+                    <div class="p-4 bg-white border rounded shadow-sm text-left">
+                        <p class="font-bold text-blue-600 text-xs uppercase">No es ambiguo</p>
+                        <p class="text-[10px] text-gray-500">Cada paso debe ser claro y tener una sola interpretación.</p>
+                    </div>
+                    <div class="p-4 bg-white border rounded shadow-sm text-left">
+                        <p class="font-bold text-blue-600 text-xs uppercase">Finito</p>
+                        <p class="text-[10px] text-gray-500">Debe tener un inicio y un final definido.</p>
+                    </div>
+                    <div class="p-4 bg-white border rounded shadow-sm text-left">
+                        <p class="font-bold text-blue-600 text-xs uppercase">Ordenado</p>
+                        <p class="text-[10px] text-gray-500">Los pasos deben seguir una secuencia lógica temporal.</p>
+                    </div>
+                    <div class="p-4 bg-white border rounded shadow-sm text-left">
+                        <p class="font-bold text-blue-600 text-xs uppercase">Preciso</p>
+                        <p class="text-[10px] text-gray-500">Indica exactamente qué acción realizar en cada momento.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Ejercicio: Comprar en línea -->
+            <div id="slide-9" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio Práctico</h3>
+                <div class="concept-box">
+                    <p class="font-bold mb-3 text-sm text-center">🛒 Situación: Comprar una camisa en línea.</p>
+                    <p class="text-xs text-gray-600 mb-4">Escribe los pasos en lenguaje natural:</p>
+                    <div class="space-y-1 text-left text-[10px] sm:text-xs text-gray-400 italic">
+                        <p>_____________________________________________</p>
+                        <p>_____________________________________________</p>
+                        <p>_____________________________________________</p>
+                    </div>
+                    <p class="mt-4 text-xs font-bold text-blue-700">¡Inténtalo en tu cuaderno!</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Importancia de la Lógica -->
+            <div id="slide-10" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">La Lógica en el Diseño</h3>
+                <div class="concept-box">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        El diseño en lenguaje natural nos ayuda a detectar errores de lógica antes de tocar la computadora.
+                    </p>
+                    <div class="mt-4 p-4 bg-white border rounded shadow-inner text-center">
+                        <p class="font-bold text-sm">"Si no puedes explicarlo paso a paso, no puedes programarlo."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 11: Cuestionario (1-5) -->
+            <div id="slide-11" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 1)</h3>
+                <div id="quiz-container-1" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
+                    <div id="quiz-question-1" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
+                    <div id="quiz-options-1" class="flex flex-col space-y-2"></div>
+                    <div id="quiz-feedback-1" class="mt-3 text-sm font-bold"></div>
+                </div>
+                <div class="mt-4 text-sm text-gray-500">
+                    <p>Pregunta <span id="question-counter">1</span> de 5</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Cuestionario (6-10) -->
+            <div id="slide-12" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 2)</h3>
+                <div id="quiz-container-2" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
+                    <div id="quiz-question-2" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
+                    <div id="quiz-options-2" class="flex flex-col space-y-2"></div>
+                    <div id="quiz-feedback-2" class="mt-3 text-sm font-bold"></div>
+                </div>
+                <div class="mt-4 text-sm text-gray-500">
+                    <p>Pregunta <span id="question-counter-2">6</span> de 10</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 13: Resumen -->
+            <div id="slide-13" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen de la Clase</h3>
+                <div class="max-w-3xl mx-auto grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-blue-50 rounded border text-left">
+                        <p class="font-bold text-sm mb-2 text-blue-700">Análisis:</p>
+                        <ul class="text-[10px] space-y-1">
+                            <li>• Definir el problema.</li>
+                            <li>• Entradas necesarias.</li>
+                            <li>• Salidas esperadas.</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded border text-left">
+                        <p class="font-bold text-sm mb-2 text-green-700">Diseño:</p>
+                        <ul class="text-[10px] space-y-1">
+                            <li>• Definir el CÓMO.</li>
+                            <li>• Lenguaje Natural.</li>
+                            <li>• Lógica secuencial.</li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="mt-8 font-bold text-blue-600">¡La lógica es la base de todo programa!</p>
+            </div>
+
+            <!-- Diapositiva 14: Tarea -->
+            <div id="slide-14" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Asignación (Tarea)</h3>
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-indigo-200 max-w-3xl">
+                    <h4 class="font-bold text-indigo-800 mb-3">📋 Tarea: Algoritmos en Lenguaje Natural</h4>
+                    <div class="text-left space-y-4 text-sm">
+                        <p><strong>Actividad:</strong> Realiza el análisis (Entrada, Proceso, Salida) y el diseño en lenguaje natural para:</p>
+                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                            <li>Algoritmo para calcular el área de un triángulo.</li>
+                            <li>Algoritmo para determinar si un número es mayor que otro.</li>
+                        </ul>
+                        <p class="mt-4 bg-white p-3 rounded border italic text-xs">Presentar de forma ordenada en su cuaderno.</p>
+                        <div class="pt-4 border-t flex justify-between font-bold text-indigo-900">
+                            <span>Fecha: 08/03/2026</span>
+                            <span>Valor: 5%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de navegación -->
+        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
+            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
+            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        </div>
+        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 14</div>
+    </main>
+
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Programación I</p>
+        </div>
+    </footer>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const header = document.getElementById('page-header');
+        const footer = document.getElementById('page-footer');
+        let currentSlideIndex = 0;
+        let isTransitioning = false;
+
+        const quizQuestions = [
+            {
+                question: "1. ¿Cuál es el objetivo principal del análisis del problema?",
+                options: ["Escribir el código", "Comprender la naturaleza del problema", "Instalar el compilador", "Comprar hardware"],
+                correctAnswer: "Comprender la naturaleza del problema"
+            },
+            {
+                question: "2. ¿Qué se define como 'Entrada' en un análisis?",
+                options: ["Los resultados finales", "Los datos necesarios para la resolución", "El monitor de la PC", "La impresora"],
+                correctAnswer: "Los datos necesarios para la resolución"
+            },
+            {
+                question: "3. ¿Qué etapa define el CÓMO se resolverá el problema?",
+                options: ["Análisis", "Diseño", "Codificación", "Mantenimiento"],
+                correctAnswer: "Diseño"
+            },
+            {
+                question: "4. ¿Qué es el Lenguaje Natural en programación?",
+                options: ["Código Binario", "Idioma cotidiano (español)", "Lenguaje C++", "Inglés técnico"],
+                correctAnswer: "Idioma cotidiano (español)"
+            },
+            {
+                question: "5. ¿Cuál es una característica de un buen algoritmo?",
+                options: ["Que sea infinito", "Que sea ambiguo", "Que sea finito", "Que no tenga orden"],
+                correctAnswer: "Que sea finito"
+            },
+            {
+                question: "6. ¿Qué pregunta NO pertenece al análisis del problema?",
+                options: ["¿Qué entradas se requieren?", "¿Qué salidas se desean?", "¿Qué color tendrá el botón?", "¿Qué fórmulas se necesitan?"],
+                correctAnswer: "¿Qué color tendrá el botón?"
+            },
+            {
+                question: "7. ¿Por qué es útil el Lenguaje Natural?",
+                options: ["Para que la computadora lo ejecute", "Para expresar la lógica claramente", "Para ahorrar electricidad", "Para no usar teclado"],
+                correctAnswer: "Para expresar la lógica claramente"
+            },
+            {
+                question: "8. ¿Qué significa que un algoritmo sea 'preciso'?",
+                options: ["Que sea corto", "Que indique exactamente qué acción realizar", "Que use números decimales", "Que sea rápido"],
+                correctAnswer: "Que indique exactamente qué acción realizar"
+            },
+            {
+                question: "9. En el análisis del área de un círculo, ¿qué es el Radio?",
+                options: ["Una salida", "Un proceso", "Una entrada", "Una constante"],
+                correctAnswer: "Una entrada"
+            },
+            {
+                question: "10. ¿Qué sigue después del Diseño del Algoritmo?",
+                options: ["El Análisis", "La Codificación", "Comprar el programa", "Apagar la PC"],
+                correctAnswer: "La Codificación"
+            }
+        ];
+
+        let currentQuizPart1Index = 0;
+        let currentQuizPart2Index = 5;
+
+        function updateQuizPart1() {
+            if (currentQuizPart1Index >= 5) return;
+            const questionElement = document.getElementById('quiz-question-1');
+            const optionsElement = document.getElementById('quiz-options-1');
+            const feedbackElement = document.getElementById('quiz-feedback-1');
+            const counterElement = document.getElementById('question-counter');
+            const currentQuestion = quizQuestions[currentQuizPart1Index];
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+            feedbackElement.textContent = '';
+            counterElement.textContent = currentQuizPart1Index + 1;
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
+                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 1);
+                optionsElement.appendChild(button);
+            });
+        }
+
+        function updateQuizPart2() {
+            if (currentQuizPart2Index >= 10) return;
+            const questionElement = document.getElementById('quiz-question-2');
+            const optionsElement = document.getElementById('quiz-options-2');
+            const feedbackElement = document.getElementById('quiz-feedback-2');
+            const counterElement = document.getElementById('question-counter-2');
+            const currentQuestion = quizQuestions[currentQuizPart2Index];
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+            feedbackElement.textContent = '';
+            counterElement.textContent = currentQuizPart2Index + 1;
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
+                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 2);
+                optionsElement.appendChild(button);
+            });
+        }
+
+        function checkQuizAnswer(selected, correct, feedbackElement, buttons, part) {
+            Array.from(buttons).forEach(button => {
+                button.disabled = true;
+                if (button.textContent === correct) button.classList.add('correct');
+                else if (button.textContent === selected) button.classList.add('incorrect');
+            });
+            if (selected === correct) {
+                feedbackElement.textContent = '¡Correcto!';
+                feedbackElement.style.color = '#065f46';
+            } else {
+                feedbackElement.textContent = `Incorrecto. La respuesta es: ${correct}`;
+                feedbackElement.style.color = '#991b1b';
+            }
+            setTimeout(() => {
+                if (part === 1) {
+                    currentQuizPart1Index++;
+                    if (currentQuizPart1Index < 5) updateQuizPart1();
+                } else {
+                    currentQuizPart2Index++;
+                    if (currentQuizPart2Index < 10) updateQuizPart2();
+                }
+            }, 1500);
+        }
+
+        function showSlide(index) {
+            if (isTransitioning || index < 0 || index >= slides.length) return;
+            isTransitioning = true;
+            const presentationContainer = document.getElementById('presentation-container');
+            if (index > 0) {
+                header.style.display = 'none';
+                footer.style.display = 'none';
+                presentationContainer.style.height = '100vh';
+            } else {
+                header.style.display = 'flex';
+                footer.style.display = 'block';
+                presentationContainer.style.height = 'calc(100vh - 7rem)';
+            }
+            slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+            currentSlideIndex = index;
+            if (currentSlideIndex === 10) { currentQuizPart1Index = 0; setTimeout(updateQuizPart1, 100); }
+            else if (currentSlideIndex === 11) { currentQuizPart2Index = 5; setTimeout(updateQuizPart2, 100); }
+            const activeSlide = slides[currentSlideIndex];
+            activeSlide.style.display = 'flex';
+            setTimeout(() => {
+                activeSlide.classList.add('active');
+                slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+                prevButton.disabled = currentSlideIndex === 0;
+                nextButton.disabled = currentSlideIndex === slides.length - 1;
+                isTransitioning = false;
+            }, 10);
+        }
+
+        nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
+        prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
+
+        const presentationContainer = document.getElementById('presentation-container');
+        presentationContainer.addEventListener('click', (e) => {
+            if (e.target.closest('button') || e.target.closest('a')) return;
+            const rect = presentationContainer.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            if (clickX > rect.width / 2) showSlide(currentSlideIndex + 1);
+            else showSlide(currentSlideIndex - 1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>

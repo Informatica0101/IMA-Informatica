@@ -269,9 +269,20 @@ PRIORIDAD: ALTA
 ESTADO: PENDIENTE DE REVISIÓN
 - Implementado selector dinámico para 'Tarea Original' en creación de Crédito Extra.
 - Filtrado automático de tareas disponibles por grado y duplicidad.
-- Creada presentación de Programación: "Estrategias de solución de problemas".
-- Creada presentación de Diseño Web: "Hipervínculos e imágenes".
-- Integradas nuevas presentaciones en el menú global de cursos.
+- Creada presentación de Programación: "Estrategias de solución de problemas" (22/02).
+- Creada presentación de Diseño Web: "Hipervínculos e imágenes" (22/02).
+- Integradas presentaciones anteriores en el menú global de cursos.
+
+TAREA: [A-41]
+TÍTULO: Presentaciones para el 1 de Marzo y Refinamiento de Dashboard
+ÁREA: Contenido / Frontend
+PRIORIDAD: ALTA
+ESTADO: PENDIENTE DE REVISIÓN
+- Creada presentación de Programación: "Análisis y diseño de algoritmos".
+- Creada presentación de Diseño Web: "Listas y comentarios en HTML".
+- Integradas nuevas presentaciones en js/data.js.
+- Refinada lógica de ordenamiento en el dashboard del estudiante (no entregadas primero).
+- Versión de sistema elevada a v10.
 
 TAREAS PENDIENTES DE REVISIÓN
 ________________________________________________________________________________________________
