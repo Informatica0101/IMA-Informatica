@@ -3,779 +3,1292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de PSeInt Avanzado</title>
+    <title>PSeInt - Simulador de Pseudocódigo</title>
 
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="IMA-Logo.png">
     <link rel="apple-touch-icon" href="IMA-Logo.png">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#f0f0f0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="InformaticApp">
+    <meta name="apple-mobile-web-app-title" content="PSeInt App">
 
     <style>
-        /* Estilos generales */
+        :root {
+            --bg-gray: #f0f0f0;
+            --border-color: #a0a0a0;
+            --header-bg: #e1e1e1;
+            --active-blue: #0066cc;
+            --keyword-blue: #0000ff;
+            --string-maroon: #800000;
+            --comment-gray: #808080;
+            --type-green: #008000;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
-            color: #333;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background-color: var(--bg-gray);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
+            font-size: 13px;
         }
-        
-        /* Cabecera */
-        .header {
-            background: linear-gradient(to right, #2c3e50, #4a6491);
-            color: white;
-            padding: 15px 20px;
+
+        /* Toolbar / Menu */
+        .menu-bar {
+            background-color: var(--header-bg);
+            padding: 2px 10px;
             display: flex;
-            flex-direction: column; /* Stack logo and toolbar vertically on small screens */
-            align-items: flex-start;
-            border-bottom: 3px solid #3498db;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
             gap: 15px;
-            margin-bottom: 15px; /* Space between logo and toolbar */
+            border-bottom: 1px solid var(--border-color);
         }
-        
-        .logo h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
+
+        .menu-item {
+            cursor: pointer;
+            padding: 2px 5px;
         }
-        
-        .logo-icon {
-            font-size: 2rem;
-            background: #3498db;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+
+        .menu-item:hover {
+            background-color: #ccc;
+        }
+
+        .toolbar {
+            background-color: var(--header-bg);
+            padding: 5px 10px;
+            display: flex;
+            gap: 5px;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+        }
+
+        .tool-btn {
+            border: 1px solid transparent;
+            background: transparent;
+            padding: 4px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        /* Barra de herramientas */
-        .toolbar {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap; /* Allow items to wrap */
-            width: 100%; /* Take full width */
-            justify-content: flex-start;
+            border-radius: 3px;
         }
 
-        .menu-container {
+        .tool-btn:hover {
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+        }
+
+        .tool-btn img, .tool-btn span {
+            width: 20px;
+            height: 20px;
+            font-size: 18px;
+        }
+
+        .separator {
+            width: 1px;
+            height: 20px;
+            background-color: var(--border-color);
+            margin: 0 5px;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
             position: relative;
-            display: inline-block;
         }
-        
-        .toolbar-dropdown-btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            font-size: 15px;
-            border-radius: 5px;
-            cursor: pointer;
+
+        /* Side Panels */
+        .side-panel {
+            width: 25px;
+            background-color: var(--header-bg);
+            border-right: 1px solid var(--border-color);
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 5px;
-            transition: all 0.3s;
+            padding-top: 10px;
+            cursor: pointer;
+            z-index: 10;
         }
-        
-        .toolbar-dropdown-btn:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+        .side-panel.right {
+            border-right: none;
+            border-left: 1px solid var(--border-color);
         }
-        
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            background-color: white;
-            min-width: 180px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            border-radius: 5px;
-            z-index: 100;
-            left: 0; /* Align dropdown to the left of its parent button */
-            top: 100%; /* Position below the button */
-            overflow: hidden;
+
+        .vertical-text {
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            white-space: nowrap;
+            color: #444;
+            font-weight: 500;
+            margin-bottom: 30px;
         }
-        
-        .dropdown-menu.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .menu-item {
-            padding: 10px 15px;
-            text-decoration: none;
-            display: block;
-            color: #2c3e50;
-            border-bottom: 1px solid #eee;
-            transition: all 0.2s;
-        }
-        
-        .menu-item:last-child {
-            border-bottom: none;
-        }
-        
-        .menu-item:hover {
-            background-color: #3498db;
-            color: white;
-            padding-left: 20px;
-        }
-        
-        /* Contenido principal */
-        .main-content {
+
+        .expanded-content {
+            width: 220px;
+            background-color: #fff;
+            border-right: 1px solid var(--border-color);
             display: flex;
-            min-height: 600px;
+            flex-direction: column;
+            overflow-y: auto;
         }
-        
-        /* Panel de variables colapsable */
-        .variables-panel {
-            width: 300px;
-            background: #ecf0f1;
-            padding: 20px;
-            border-right: 2px solid #bdc3c7;
+
+        .expanded-content.right {
+            border-right: none;
+            border-left: 1px solid var(--border-color);
         }
-        
-        .panel-title {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: #2c3e50;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #3498db;
+
+        .panel-header {
+            background-color: var(--header-bg);
+            padding: 5px 10px;
+            font-weight: bold;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid var(--border-color);
         }
-        
-        .collapse-btn {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
+
+        .close-btn {
             cursor: pointer;
-            color: #2c3e50;
-        }
-        
-        .variables-section {
-            margin-bottom: 25px;
-            border: 1px solid #bdc3c7;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        
-        .section-header {
-            background: #3498db;
-            color: white;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .section-header:hover {
-            background: #2980b9;
-        }
-        
-        .section-header h3 {
-            font-size: 1.1rem;
-            margin: 0;
-        }
-        
-        .section-content {
-            padding: 15px;
-            background: white;
-            max-height: 500px; /* Default max height for content */
-            overflow: hidden;
-            transition: max-height 0.4s ease, padding 0.4s ease;
-        }
-        
-        .section-content.collapsed {
-            max-height: 0;
-            padding: 0 15px;
-        }
-        
-        .checkbox-group {
-            margin: 10px 0;
-        }
-        
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 16px;
         }
 
-        /* Ayuda en tiempo real */
-        .realtime-help {
-            margin-top: 15px;
-            padding: 10px;
-            background: #e3f2fd;
-            border-radius: 5px;
-            border: 1px solid #bbdefb;
-            font-size: 0.95rem;
-        }
-
-        .realtime-help h4 {
-            color: #1a2a6c;
-            margin-bottom: 8px;
-        }
-
-        .realtime-help p {
-            margin-bottom: 5px;
-        }
-        
-        /* Editor de código */
-        .editor-panel {
+        /* Editor Area */
+        .editor-container {
             flex: 1;
             display: flex;
             flex-direction: column;
+            background-color: #fff;
+            overflow: hidden;
+            position: relative;
         }
-        
-        .editor-header {
-            background: #34495e;
-            color: white;
-            padding: 10px 15px;
+
+        .tabs-bar {
+            height: 25px;
+            background-color: var(--header-bg);
             display: flex;
-            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
         }
-        
-        .filename {
-            font-weight: bold;
-        }
-        
-        .editor-actions button {
-            background: transparent;
-            border: none;
-            color: white;
-            padding: 5px 10px;
+
+        .tab {
+            padding: 3px 15px;
+            background-color: #ddd;
+            border-right: 1px solid var(--border-color);
             cursor: pointer;
-            border-radius: 3px;
-            transition: background 0.3s;
-        }
-        
-        .editor-actions button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .code-editor {
-            flex: 1;
-            padding: 20px;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            line-height: 1.5;
-            border: none;
-            background: #2c3e50;
-            color: #ecf0f1;
-            resize: none;
-            outline: none;
-            white-space: pre;
-            tab-size: 4;
-        }
-        
-        .code-toolbar {
-            background: #95a5a6;
-            padding: 10px;
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
             gap: 10px;
         }
-        
-        .code-btn {
-            padding: 8px 15px;
-            background: #2c3e50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
+
+        .tab.active {
+            background-color: #fff;
+            border-bottom: 1px solid #fff;
+            margin-bottom: -1px;
         }
-        
-        .code-btn:hover {
-            background: #3498db;
-            transform: translateY(-2px);
-        }
-        
-        /* Consola de salida */
-        .console-panel {
-            background: #1a1a1a;
-            color: #00ff00;
-            padding: 20px;
-            height: auto; /* Allow height to adjust */
-            max-height: 250px; /* Max height for desktop to avoid scroll if short */
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            border-top: 3px solid #3498db;
-        }
-        
-        .console-header {
+
+        .editor-view {
+            flex: 1;
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            color: #3498db;
+            position: relative;
+            overflow: hidden;
         }
-        
-        .console-actions button {
-            background: #2c3e50;
-            color: white;
+
+        #lineNumbers {
+            width: 40px;
+            background-color: #f0f0f0;
+            border-right: 1px solid #ddd;
+            padding: 10px 5px;
+            text-align: right;
+            color: #999;
+            font-family: 'Consolas', 'Courier New', monospace;
+            line-height: 1.5;
+            user-select: none;
+        }
+
+        .code-area {
+            flex: 1;
+            position: relative;
+            overflow: auto;
+        }
+
+        #codeEditor, #syntaxHighlight {
+            margin: 0;
+            padding: 10px;
+            width: 100%;
+            height: 100%;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            tab-size: 4;
+            white-space: pre;
+            position: absolute;
+            top: 0;
+            left: 0;
             border: none;
-            padding: 5px 10px;
-            margin-left: 5px;
-            border-radius: 3px;
+            outline: none;
+        }
+
+        #codeEditor {
+            background: transparent;
+            color: transparent;
+            caret-color: black;
+            resize: none;
+            z-index: 2;
+        }
+
+        #syntaxHighlight {
+            background: white;
+            color: black;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Syntax Highlighting Classes */
+        .sh-keyword { color: var(--keyword-blue); font-weight: bold; }
+        .sh-string { color: var(--string-maroon); }
+        .sh-comment { color: var(--comment-gray); font-style: italic; }
+        .sh-type { color: var(--type-green); }
+        .sh-identifier { color: black; }
+        .sh-number { color: #f08000; }
+
+        /* Commands Panel Content */
+        .commands-list {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .command-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            cursor: pointer;
+            text-align: left;
+            border-radius: 4px;
+        }
+
+        .command-btn:hover {
+            background: #eef;
+            border-color: #aaf;
+        }
+
+        .command-icon {
+            width: 32px;
+            height: 20px;
+            background: #eee;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        /* Bottom Area */
+        .bottom-area {
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid var(--border-color);
+            background-color: #fff;
+        }
+
+        .bottom-tabs {
+            display: flex;
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .bottom-tab {
+            padding: 3px 15px;
+            cursor: pointer;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .bottom-tab.active {
+            background-color: #fff;
+        }
+
+        .bottom-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+
+        .console-output {
+            background-color: #000;
+            color: #fff;
+            padding: 10px;
+            min-height: 100%;
+            white-space: pre-wrap;
+        }
+
+        .console-line { margin-bottom: 2px; }
+        .console-prompt { color: #0f0; }
+
+        /* Helpers */
+        .hidden { display: none !important; }
+
+        /* Overlay for input */
+        #inputOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-modal {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            width: 300px;
+        }
+
+        .input-modal input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .input-modal .btns {
+            margin-top: 15px;
+            text-align: right;
+        }
+
+        .input-modal button {
+            padding: 5px 15px;
             cursor: pointer;
         }
-        
-        /* Animaciones */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes slideDown {
-            from { max-height: 0; opacity: 0; }
-            to { max-height: 500px; opacity: 1; }
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
-        }
-        
-        /* Responsive */
-        @media (min-width: 769px) {
-            .header {
-                flex-direction: row; /* Horizontal layout for desktop */
-                justify-content: space-between;
-                align-items: center;
-            }
-            .logo {
-                margin-bottom: 0;
-            }
-            .toolbar {
-                width: auto;
-                justify-content: flex-end; /* Align toolbar to the right */
-                margin-left: auto; /* Push toolbar to the right */
-            }
-        }
 
-        @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
-            
-            .variables-panel {
-                width: 100%;
-                border-right: none;
-                border-bottom: 2px solid #bdc3c7;
-            }
-
-            .console-panel {
-                max-height: 300px; /* Allow more height for mobile but still scroll */
-            }
-
-            .toolbar-dropdown-btn {
-                flex: 1 1 auto; /* Allow buttons to grow and shrink */
-                text-align: center;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="logo">
-                <div class="logo-icon">P</div>
-                <h1>Simulador de PSeInt Avanzado</h1>
+
+    <nav class="menu-bar">
+        <div class="menu-item">Archivo</div>
+        <div class="menu-item">Editar</div>
+        <div class="menu-item">Configurar</div>
+        <div class="menu-item">Ejecutar</div>
+        <div class="menu-item">Ayuda</div>
+    </nav>
+
+    <div class="toolbar">
+        <button class="tool-btn" title="Nuevo" onclick="newProject()"><span>📄</span></button>
+        <button class="tool-btn" title="Abrir"><span>📂</span></button>
+        <button class="tool-btn" title="Guardar"><span>💾</span></button>
+        <button class="tool-btn" title="Guardar como..."><span>💾+</span></button>
+        <div class="separator"></div>
+        <button class="tool-btn"><span>↩️</span></button>
+        <button class="tool-btn"><span>↪️</span></button>
+        <div class="separator"></div>
+        <button class="tool-btn"><span>✂️</span></button>
+        <button class="tool-btn"><span>📋</span></button>
+        <button class="tool-btn"><span>📥</span></button>
+        <div class="separator"></div>
+        <button class="tool-btn" title="Ejecutar" onclick="runAlgorithm()"><span style="color: green;">▶</span></button>
+        <button class="tool-btn" title="Ejecutar paso a paso"><span>👣</span></button>
+        <button class="tool-btn" title="Dibujar diagrama de flujo"><span>📊</span></button>
+    </div>
+
+    <div class="main-layout">
+        <!-- Left Panels -->
+        <div class="side-panel" id="leftPanelToggle" onclick="toggleLeftPanel()">
+            <div class="vertical-text">lista de variables</div>
+            <div class="vertical-text">operadores y funciones</div>
+        </div>
+        <div class="expanded-content hidden" id="leftPanel">
+            <div class="panel-header">
+                <span id="leftPanelTitle">Variables</span>
+                <span class="close-btn" onclick="toggleLeftPanel()">×</span>
             </div>
-            
-            <nav class="toolbar">
-                <div class="menu-container">
-                    <button class="toolbar-dropdown-btn" id="fileMenuBtn">Archivo ▼</button>
-                    <div class="dropdown-menu" id="fileDropdown">
-                        <a href="index.html" class="menu-item">Nuevo Proyecto</a>
-                        <a href="index.html" class="menu-item">Abrir...</a>
-                        <a href="index.html" class="menu-item">Guardar</a>
-                        <a href="index.html" class="menu-item">Guardar como...</a>
-                        <a href="index.html" class="menu-item">Exportar</a>
-                        <a href="index.html" class="menu-item">Imprimir</a>
-                        <a href="index.html" class="menu-item">Salir</a>
-                    </div>
-                </div>
-                
-                <div class="menu-container">
-                    <button class="toolbar-dropdown-btn" id="editMenuBtn">Editar ▼</button>
-                    <div class="dropdown-menu" id="editDropdown">
-                        <a href="index.html" class="menu-item">Deshacer</a>
-                        <a href="index.html" class="menu-item">Rehacer</a>
-                        <a href="index.html" class="menu-item">Cortar</a>
-                        <a href="index.html" class="menu-item">Copiar</a>
-                        <a href="index.html" class="menu-item">Pegar</a>
-                    </div>
-                </div>
+            <div id="leftPanelBody" style="padding: 10px;">
+                <div id="variableList">No hay variables definidas</div>
+            </div>
+        </div>
 
-                <div class="menu-container">
-                    <button class="toolbar-dropdown-btn" id="runMenuBtn">Ejecutar ▼</button>
-                    <div class="dropdown-menu" id="runDropdown">
-                        <a href="index.html" class="menu-item">Ejecutar (F9)</a>
-                        <a href="index.html" class="menu-item">Paso a paso (F8)</a>
-                        <a href="index.html" class="menu-item">Configurar Ejecución</a>
-                    </div>
-                </div>
-
-                <div class="menu-container">
-                    <button class="toolbar-dropdown-btn" id="helpMenuBtn">Ayuda ▼</button>
-                    <div class="dropdown-menu" id="helpDropdown">
-                        <a href="index.html" class="menu-item">Contenido de Ayuda</a>
-                        <a href="index.html" class="menu-item">Acerca de PSeInt</a>
-                    </div>
-                </div>
-            </nav>
-        </header>
-        
-        <div class="main-content">
-            <div class="variables-panel">
-                <div class="panel-title">
-                    Panel de Variables
-                    <button class="collapse-btn" id="collapseAllBtn">⮝</button>
-                </div>
-                
-                <div class="variables-section">
-                    <div class="section-header" data-section="variables">
-                        <h3>Variables</h3>
-                        <span class="collapse-indicator">▼</span>
-                    </div>
-                    <div class="section-content" id="variablesContent">
-                        <div class="checkbox-group">
-                            <label>
-                                <input type="checkbox" checked>
-                                Mostrar variables globales
-                            </label>
-                        </div>
-                        <div class="checkbox-group">
-                            <label>
-                                <input type="checkbox" checked>
-                                Mostrar variables locales
-                            </label>
-                        </div>
-                        <div class="variables-list" id="variablesList">
-                            <div class="variable-item">
-                                <strong>numeros</strong>: Arreglo[5] de Entero
-                                <div class="array-values">[10, 20, 30, 40, 50]</div>
-                            </div>
-                            <div class="variable-item">
-                                <strong>nombres</strong>: Arreglo[3] de Caracter
-                                <div class="array-values">["Ana", "Carlos", "Diana"]</div>
-                            </div>
-                            <div class="variable-item">
-                                <strong>i</strong>: Entero = 0
-                            </div>
-                            <div class="variable-item">
-                                <strong>suma</strong>: Entero = 150
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="variables-section">
-                    <div class="section-header" data-section="functions">
-                        <h3>Funciones</h3>
-                        <span class="collapse-indicator">▼</span>
-                    </div>
-                    <div class="section-content" id="functionsContent">
-                        <div class="checkbox-group">
-                            <label>
-                                <input type="checkbox" checked>
-                                Mostrar funciones definidas
-                            </label>
-                        </div>
-                        <div class="checkbox-group">
-                            <label>
-                                <input type="checkbox" id="quickHelpToggle">
-                                Ayuda Rápida
-                            </label>
-                        </div>
-                        <div class="quick-help" id="quickHelp" style="display: none; margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 5px;">
-                            <h4>Ayuda sobre estructuras básicas</h4>
-                            <p><strong>Escribir:</strong> Muestra un mensaje en consola. <code>Escribir "Hola"</code></p>
-                            <p><strong>Leer:</strong> Permite ingresar un valor. <code>Leer variable</code></p>
-                            <p><strong>Definir:</strong> Declara una variable. <code>Definir num Como Entero</code></p>
-                            <p><strong>Asignación:</strong> <code>variable <- valor</code></p>
-                            <h4>Ayuda sobre arreglos</h4>
-                            <p><strong>Dimensionar:</strong> Crea un arreglo con el tamaño especificado</p>
-                            <p><strong>Sintaxis:</strong> <code>Dimension &lt;nombre&gt;[&lt;tamaño&gt;]</code></p>
-                            <p><strong>Asignar:</strong> <code>&lt;nombre&gt;[&lt;índice&gt;] &lt;- &lt;valor&gt;</code></p>
-                            <p><strong>Recorrer:</strong> Usar estructura Para con índice</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="variables-section">
-                    <div class="section-header" data-section="arrays">
-                        <h3>Arreglos</h3>
-                        <span class="collapse-indicator">▼</span>
-                    </div>
-                    <div class="section-content" id="arraysContent">
-                        <div class="array-info">
-                            <p><strong>Estado actual:</strong> Funcionando correctamente ✓</p>
-                            <p><strong>Arreglos definidos:</strong></p>
-                            <ul class="array-list">
-                                <li><strong>numeros</strong> - Entero[5]</li>
-                                <li><strong>nombres</strong> - Caracter[3]</li>
-                            </ul>
-                        </div>
-                        <div class="array-controls">
-                            <button class="code-btn" id="dimensionBtn">Dimensionar</button>
-                            <button class="code-btn" id="assignBtn">Asignar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="variables-section">
-                    <div class="section-header" data-section="realtimeHelp">
-                        <h3>Ayuda Contextual</h3>
-                        <span class="collapse-indicator">▼</span>
-                    </div>
-                    <div class="section-content" id="realtimeHelpContent">
-                        <div class="realtime-help" id="realtimeSuggestions">
-                            <h4>Sugerencias:</h4>
-                            <p>Empieza escribiendo "Algoritmo" para definir tu programa.</p>
-                            <p>Usa "Escribir" para mostrar mensajes en la consola.</p>
-                            <p>Para definir variables, usa "Definir [nombre] Como [tipo]".</p>
-                        </div>
-                    </div>
+        <!-- Center Area (Editor) -->
+        <div class="editor-container">
+            <div class="tabs-bar">
+                <div class="tab active">
+                    <span id="tabTitle">sin_titulo</span>
+                    <span style="font-size: 10px; margin-left: 5px;">×</span>
                 </div>
             </div>
-            
-            <div class="editor-panel">
-                <div class="editor-header">
-                    <div class="filename">hola_mundo.psc</div>
-                    <div class="editor-actions">
-                        <button id="saveBtn">Guardar</button>
-                        <button id="runBtn">Ejecutar</button>
-                    </div>
-                </div>
-                
-                <textarea class="code-editor" id="codeEditor">Algoritmo HolaMundo
+            <div class="editor-view">
+                <div id="lineNumbers">1</div>
+                <div class="code-area">
+                    <div id="syntaxHighlight"></div>
+                    <textarea id="codeEditor" spellcheck="false" oninput="updateEditor()" onscroll="syncScroll()">Algoritmo sin_titulo
 
-    // Este es un comentario
-    Escribir "Hola Mundo desde PSeInt!"
-    
 FinAlgoritmo</textarea>
-                
-                <div class="code-toolbar">
-                    <button class="code-btn" data-code="Algoritmo MiAlgoritmo\n\nFinAlgoritmo">Algoritmo</button>
-                    <button class="code-btn" data-code="Funcion resultado <- NombreFuncion (parametro)\n    \nFinFuncion">Función</button>
-                    <button class="code-btn" data-code="Si condicion Entonces\n    \nFinSi">Sí...Entonces</button>
-                    <button class="code-btn" data-code="Mientras condicion Hacer\n    \nFinMientras">Mientras</button>
-                    <button class="code-btn" data-code="Para i <- inicio Hasta fin Con Paso paso Hacer\n    \nFinPara">Para</button>
-                    <button class="code-btn" data-code="Segun variable Hacer\n    opcion1:\n        \n    opcion2:\n        \nFinSegun">Según</button>
-                    <button class="code-btn" data-code="Dimension arreglo[10]">Dimensionar</button>
-                    <button class="code-btn" data-code="Definir variable Como Entero">Definir</button>
-                    <button class="code-btn" data-code="Escribir "Mensaje"">Escribir</button>
-                    <button class="code-btn" data-code="Leer variable">Leer</button>
                 </div>
             </div>
         </div>
-        
-        <div class="console-panel">
-            <div class="console-header">
-                <div>Consola de Salida</div>
-                <div class="console-actions">
-                    <button id="clearConsole">Limpiar</button>
-                    <button id="copyConsole">Copiar</button>
-                </div>
+
+        <!-- Right Panels -->
+        <div class="expanded-content right" id="rightPanel">
+            <div class="panel-header">
+                <span>Comandos</span>
+                <span class="close-btn" onclick="toggleRightPanel()">×</span>
             </div>
-            <div id="consoleOutput">
-&gt; Bienvenido al Simulador de PSeInt Avanzado<br>
-&gt; Los arreglos ahora están completamente funcionales<br>
-&gt; Cargando algoritmo...<br>
+            <div class="commands-list">
+                <button class="command-btn" onclick="insertCode('escribir')">
+                    <div class="command-icon" style="color: blue;">'Hola !'</div>
+                    <span>Escribir</span>
+                </button>
+                <button class="command-btn" onclick="insertCode('leer')">
+                    <div class="command-icon" style="color: green;">Dato1</div>
+                    <span>Leer</span>
+                </button>
+                <button class="command-btn" onclick="insertCode('asignar')">
+                    <div class="command-icon">A&larr;B+i</div>
+                    <span>Asignar</span>
+                </button>
+                <button class="command-btn" onclick="insertCode('si')">
+                    <div class="command-icon" style="color: red;">Si...</div>
+                    <span>Si-Entonces</span>
+                </button>
+                <button class="command-btn" onclick="insertCode('segun')">
+                    <div class="command-icon">Segun</div>
+                    <span>Segun</span>
+                </button>
+                <button class="command-btn" onclick="insertCode('mientras')">
+                    <div class="command-icon">Mient...</div>
+                    <span>Mientras</span>
+                </button>
+                <button class="command-btn" onclick="insertCode('repetir')">
+                    <div class="command-icon">Repetir</div>
+                    <span>Repetir</span>
+                </button>
+                <button class="command-btn" onclick="insertCode('para')">
+                    <div class="command-icon">Para</div>
+                    <span>Para</span>
+                </button>
+                <button class="command-btn" onclick="insertCode('funcion')">
+                    <div class="command-icon">SubPr...</div>
+                    <span>Funcion</span>
+                </button>
+            </div>
+        </div>
+        <div class="side-panel right" id="rightPanelToggle" onclick="toggleRightPanel()" style="display:none;">
+            <div class="vertical-text">comandos</div>
+            <div class="vertical-text">ejecución paso a paso</div>
+        </div>
+    </div>
+
+    <div class="bottom-area">
+        <div class="bottom-tabs">
+            <div class="bottom-tab active" onclick="showBottomTab('ayuda')">Ayuda Rápida</div>
+            <div class="bottom-tab" onclick="showBottomTab('consola')">Terminal / Salida</div>
+        </div>
+        <div class="bottom-content" id="bottomAyuda">
+            <div id="quickHelp">
+                Seleccione un comando para ver su descripción aquí.
+            </div>
+        </div>
+        <div class="bottom-content hidden" id="bottomConsola">
+            <div class="console-output" id="consoleOutput">
+                <div class="console-line">*** Ejecución Iniciada. ***</div>
+                <div class="console-line">*** Ejecución Finalizada. ***</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Modal -->
+    <div id="inputOverlay">
+        <div class="input-modal">
+            <div id="inputLabel">Ingrese un valor:</div>
+            <input type="text" id="userInput" onkeypress="handleInputKeyPress(event)">
+            <div class="btns">
+                <button onclick="submitInput()">Aceptar</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Dropdown menu functionality for toolbar
-        const dropdownButtons = document.querySelectorAll('.toolbar-dropdown-btn');
-        
-        dropdownButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const dropdownId = this.id.replace('Btn', 'Dropdown');
-                const dropdownMenu = document.getElementById(dropdownId);
-                
-                // Close any other open dropdowns
-                document.querySelectorAll('.dropdown-menu.show').forEach(openMenu => {
-                    if (openMenu !== dropdownMenu) {
-                        openMenu.classList.remove('show');
-                    }
-                });
+        const editor = document.getElementById('codeEditor');
+        const highlight = document.getElementById('syntaxHighlight');
+        const lineNumbers = document.getElementById('lineNumbers');
 
-                // Toggle the clicked dropdown
-                dropdownMenu.classList.toggle('show');
-            });
-        });
-        
-        // Close dropdowns when clicking outside
-        window.addEventListener('click', function(event) {
-            if (!event.target.closest('.menu-container')) {
-                document.querySelectorAll('.dropdown-menu.show').forEach(openMenu => {
-                    openMenu.classList.remove('show');
-                });
-            }
-        });
+        function toggleLeftPanel() {
+            const panel = document.getElementById('leftPanel');
+            const toggle = document.getElementById('leftPanelToggle');
+            panel.classList.toggle('hidden');
+            toggle.classList.toggle('hidden');
+        }
 
-        // Panel de variables colapsable
-        const sectionHeaders = document.querySelectorAll('.section-header');
-        const collapseAllBtn = document.getElementById('collapseAllBtn');
-        
-        sectionHeaders.forEach(header => {
-            header.addEventListener('click', function() {
-                const sectionId = this.getAttribute('data-section');
-                const content = document.getElementById(`${sectionId}Content`);
-                content.classList.toggle('collapsed');
-                
-                // Actualizar indicador
-                const indicator = this.querySelector('.collapse-indicator');
-                indicator.textContent = content.classList.contains('collapsed') ? '▶' : '▼';
-            });
-        });
-        
-        // Colapsar/expandir todo
-        let allCollapsed = false;
-        collapseAllBtn.addEventListener('click', function() {
-            const allContents = document.querySelectorAll('.section-content');
-            const indicators = document.querySelectorAll('.collapse-indicator');
-            
-            allCollapsed = !allCollapsed;
-            this.textContent = allCollapsed ? '⮟' : '⮝';
-            
-            allContents.forEach(content => {
-                if (allCollapsed) {
-                    content.classList.add('collapsed');
-                } else {
-                    content.classList.remove('collapsed');
-                }
-            });
-            
-            indicators.forEach(indicator => {
-                indicator.textContent = allCollapsed ? '▶' : '▼';
-            });
-        });
-        
-        // Ayuda rápida (remains as a toggle for a specific help section)
-        const quickHelpToggle = document.getElementById('quickHelpToggle');
-        const quickHelp = document.getElementById('quickHelp');
-        
-        quickHelpToggle.addEventListener('change', function() {
-            quickHelp.style.display = this.checked ? 'block' : 'none';
-        });
-        
-        // Botones de código
-        const codeButtons = document.querySelectorAll('.code-btn');
-        const codeEditor = document.getElementById('codeEditor');
-        
-        codeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const codeSnippet = this.getAttribute('data-code');
-                if (codeSnippet) {
-                    // Insertar en la posición actual del cursor
-                    const cursorPos = codeEditor.selectionStart;
-                    const textBefore = codeEditor.value.substring(0, cursorPos);
-                    const textAfter = codeEditor.value.substring(cursorPos);
-                    
-                    codeEditor.value = textBefore + codeSnippet + textAfter;
-                    
-                    // Posicionar cursor después del snippet
-                    const newCursorPos = cursorPos + codeSnippet.length;
-                    codeEditor.setSelectionRange(newCursorPos, newCursorPos);
-                    codeEditor.focus();
-                }
-            });
-        });
-        
-        // Ejecutar código
-        const runBtn = document.getElementById('runBtn');
-        const consoleOutput = document.getElementById('consoleOutput');
-        const clearConsole = document.getElementById('clearConsole');
-        
-        runBtn.addEventListener('click', function() {
-            // Simular ejecución del código
-            const editorContent = codeEditor.value;
-            consoleOutput.innerHTML += '&gt; Ejecutando algoritmo...<br>';
+        function toggleRightPanel() {
+            const panel = document.getElementById('rightPanel');
+            const toggle = document.getElementById('rightPanelToggle');
+            panel.classList.toggle('hidden');
+            toggle.classList.toggle('hidden');
+        }
 
-            // Simple "Hola Mundo" simulation
-            if (editorContent.includes('Escribir "Hola Mundo')) {
-                consoleOutput.innerHTML += '&gt; Hola Mundo desde PSeInt!<br>';
-            } else if (editorContent.includes('Escribir "Recorrido del arreglo \'numeros\'')) {
-                // Keep the old simulation for array example if user puts it back
-                consoleOutput.innerHTML += '&gt; Recorrido del arreglo \'numeros\':<br>';
-                consoleOutput.innerHTML += '&gt; Elemento 0: 10<br>';
-                consoleOutput.innerHTML += '&gt; Elemento 1: 20<br>';
-                consoleOutput.innerHTML += '&gt; Elemento 2: 30<br>';
-                consoleOutput.innerHTML += '&gt; Elemento 3: 40<br>';
-                consoleOutput.innerHTML += '&gt; Elemento 4: 50<br>';
-                consoleOutput.innerHTML += '&gt; La suma de los elementos es: 150<br>';
-                consoleOutput.innerHTML += '&gt; Lista de nombres:<br>';
-                consoleOutput.innerHTML += '&gt; - Ana<br>';
-                consoleOutput.innerHTML += '&gt; - Carlos<br>';
-                consoleOutput.innerHTML += '&gt; - Diana<br>';
+        function showBottomTab(tab) {
+            document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.bottom-content').forEach(c => c.classList.add('hidden'));
+
+            if (tab === 'ayuda') {
+                document.querySelector('.bottom-tab:nth-child(1)').classList.add('active');
+                document.getElementById('bottomAyuda').classList.remove('hidden');
             } else {
-                consoleOutput.innerHTML += '&gt; No se pudo interpretar el código. Intenta con "Hola Mundo".<br>';
+                document.querySelector('.bottom-tab:nth-child(2)').classList.add('active');
+                document.getElementById('bottomConsola').classList.remove('hidden');
+            }
+        }
+
+        function updateEditor() {
+            const code = editor.value;
+            applyHighlighting(code);
+            updateLineNumbers(code);
+            updateTabTitle(code);
+        }
+
+        function updateTabTitle(code) {
+            const match = code.match(/(?:Algoritmo|Proceso)\s+([a-zA-Z0-9_]+)/i);
+            if (match && match[1]) {
+                document.getElementById('tabTitle').textContent = match[1];
+            }
+        }
+
+        function updateLineNumbers(code) {
+            const lines = code.split('\n').length;
+            let nums = '';
+            for (let i = 1; i <= lines; i++) {
+                nums += i + '<br>';
+            }
+            lineNumbers.innerHTML = nums;
+        }
+
+        function syncScroll() {
+            highlight.scrollTop = editor.scrollTop;
+            highlight.scrollLeft = editor.scrollLeft;
+            lineNumbers.scrollTop = editor.scrollTop;
+        }
+
+        function applyHighlighting(code) {
+            const tokenizer = new Tokenizer(code);
+            const tokens = tokenizer.tokenizeRaw(); // Need a raw tokenizer that keeps spaces
+
+            let html = '';
+            tokens.forEach(token => {
+                const escaped = token.value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                switch(token.type) {
+                    case 'KEYWORD': html += `<span class="sh-keyword">${escaped}</span>`; break;
+                    case 'TYPE': html += `<span class="sh-type">${escaped}</span>`; break;
+                    case 'STRING': html += `<span class="sh-string">${token.value.charAt(0)}${escaped.slice(1,-1)}${token.value.slice(-1)}</span>`; break;
+                    case 'COMMENT': html += `<span class="sh-comment">${escaped}</span>`; break;
+                    case 'NUMBER': html += `<span class="sh-number">${escaped}</span>`; break;
+                    case 'WHITESPACE': html += escaped; break;
+                    default: html += escaped;
+                }
+            });
+
+            highlight.innerHTML = html + (code.endsWith('\n') ? ' ' : '');
+        }
+
+        function insertCode(type) {
+            let snippet = '';
+            let help = '';
+            switch(type) {
+                case 'escribir':
+                    snippet = 'Escribir "mensaje";';
+                    help = 'La instrucción <b>Escribir</b> permite mostrar valores al ambiente (pantalla).';
+                    break;
+                case 'leer':
+                    snippet = 'Leer variable;';
+                    help = 'La instrucción <b>Leer</b> permite ingresar información desde el ambiente (teclado).';
+                    break;
+                case 'asignar':
+                    snippet = 'variable <- expresion;';
+                    help = 'La instrucción de <b>Asignación</b> permite almacenar un valor en una variable.';
+                    break;
+                case 'si':
+                    snippet = 'Si condicion Entonces\n\t\nSino\n\t\nFinSi';
+                    help = 'La instrucción <b>Si-Entonces</b> ejecuta una secuencia de instrucciones según una condición lógica.';
+                    break;
+                case 'mientras':
+                    snippet = 'Mientras condicion Hacer\n\t\nFinMientras';
+                    help = 'La instrucción <b>Mientras</b> ejecuta un bloque de instrucciones mientras una condición sea verdadera.';
+                    break;
+                case 'para':
+                    snippet = 'Para variable <- valor_inicial Hasta valor_final Con Paso paso Hacer\n\t\nFinPara';
+                    help = 'La instrucción <b>Para</b> ejecuta una secuencia de instrucciones un número determinado de veces.';
+                    break;
+                // Add more cases as needed
             }
 
-            consoleOutput.innerHTML += '&gt; Ejecución completada<br>';
-            
-            // Desplazar al final de la consola
-            consoleOutput.scrollTop = consoleOutput.scrollHeight;
-        });
-        
-        // Limpiar consola
-        clearConsole.addEventListener('click', function() {
-            consoleOutput.innerHTML = '&gt; Consola limpiada<br>';
-        });
-        
-        // Simulación de arreglos (kept for consistency with the example variables)
-        const arrays = {
-            'numeros': [10, 20, 30, 40, 50],
-            'nombres': ['Ana', 'Carlos', 'Diana']
-        };
-        
-        // Mostrar mensaje inicial en consola
-        setTimeout(() => {
-            consoleOutput.innerHTML += '&gt; Sistema de arreglos inicializado correctamente<br>';
-            consoleOutput.innerHTML += '&gt; Use el botón "Ejecutar" para probar el algoritmo<br>';
-        }, 1000);
+            if (snippet) {
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                const text = editor.value;
+                editor.value = text.substring(0, start) + snippet + text.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + snippet.indexOf('\n') > -1 ? start + snippet.indexOf('\n') + 2 : start + snippet.length;
+                editor.focus();
+                updateEditor();
+            }
 
+            if (help) {
+                document.getElementById('quickHelp').innerHTML = help;
+            }
+        }
+
+        function newProject() {
+            editor.value = "Algoritmo sin_titulo\n\nFinAlgoritmo";
+            updateEditor();
+            clearConsole();
+        }
+
+        function clearConsole() {
+            document.getElementById('consoleOutput').innerHTML = '';
+        }
+
+        function printToConsole(text, isPrompt = false) {
+            const div = document.createElement('div');
+            div.className = 'console-line' + (isPrompt ? ' console-prompt' : '');
+            div.textContent = (isPrompt ? '> ' : '') + text;
+            document.getElementById('consoleOutput').appendChild(div);
+            document.getElementById('bottomConsola').scrollTop = document.getElementById('bottomConsola').scrollHeight;
+        }
+
+        // Interpreter Implementation
+        class Tokenizer {
+            constructor(code) {
+                this.code = code;
+                this.pos = 0;
+                this.tokens = [];
+                this.keywords = new Set([
+                    'algoritmo', 'finalgoritmo', 'proceso', 'finproceso',
+                    'definir', 'como', 'leer', 'escribir',
+                    'si', 'entonces', 'sino', 'finsi',
+                    'mientras', 'hacer', 'finmientras',
+                    'para', 'hasta', 'con', 'paso', 'finpara'
+                ]);
+                this.types = new Set(['entero', 'real', 'logico', 'caracter', 'texto', 'cadena']);
+            }
+
+            tokenizeRaw() {
+                const tokens = [];
+                while (this.pos < this.code.length) {
+                    let char = this.code[this.pos];
+
+                    if (/\s/.test(char)) {
+                        let ws = '';
+                        while (this.pos < this.code.length && /\s/.test(this.code[this.pos])) {
+                            ws += this.code[this.pos++];
+                        }
+                        tokens.push({ type: 'WHITESPACE', value: ws });
+                        continue;
+                    }
+
+                    if (char === '/' && this.code[this.pos + 1] === '/') {
+                        let comment = '';
+                        while (this.pos < this.code.length && this.code[this.pos] !== '\n') {
+                            comment += this.code[this.pos++];
+                        }
+                        tokens.push({ type: 'COMMENT', value: comment });
+                        continue;
+                    }
+
+                    if (/[a-zA-Z_]/.test(char)) {
+                        let id = '';
+                        while (this.pos < this.code.length && /[a-zA-Z0-9_]/.test(this.code[this.pos])) {
+                            id += this.code[this.pos++];
+                        }
+                        const lowerId = id.toLowerCase();
+                        if (this.keywords.has(lowerId)) {
+                            tokens.push({ type: 'KEYWORD', value: id });
+                        } else if (this.types.has(lowerId)) {
+                            tokens.push({ type: 'TYPE', value: id });
+                        } else {
+                            tokens.push({ type: 'IDENTIFIER', value: id });
+                        }
+                        continue;
+                    }
+
+                    if (/[0-9]/.test(char)) {
+                        let num = '';
+                        while (this.pos < this.code.length && /[0-9.]/.test(this.code[this.pos])) {
+                            num += this.code[this.pos++];
+                        }
+                        tokens.push({ type: 'NUMBER', value: num });
+                        continue;
+                    }
+
+                    if (char === '"' || char === "'") {
+                        let quote = char;
+                        let str = quote;
+                        this.pos++;
+                        while (this.pos < this.code.length && this.code[this.pos] !== quote) {
+                            str += this.code[this.pos++];
+                        }
+                        if (this.pos < this.code.length) str += this.code[this.pos++];
+                        tokens.push({ type: 'STRING', value: str });
+                        continue;
+                    }
+
+                    if (char === '<' && this.code[this.pos + 1] === '-') {
+                        tokens.push({ type: 'OPERATOR', value: '<-' });
+                        this.pos += 2;
+                        continue;
+                    }
+
+                    if (/[+\-*/%^=<>!]/.test(char)) {
+                        let op = char;
+                        if ((char === '<' || char === '>' || char === '!') && this.code[this.pos + 1] === '=') {
+                            op += this.code[++this.pos];
+                        }
+                        tokens.push({ type: 'OPERATOR', value: op });
+                        this.pos++;
+                        continue;
+                    }
+
+                    tokens.push({ type: 'OTHER', value: this.code[this.pos++] });
+                }
+                this.pos = 0; // Reset for potential next use
+                return tokens;
+            }
+
+            tokenize() {
+                while (this.pos < this.code.length) {
+                    let char = this.code[this.pos];
+
+                    if (/\s/.test(char)) {
+                        this.pos++;
+                        continue;
+                    }
+
+                    if (char === '/' && this.code[this.pos + 1] === '/') {
+                        while (this.pos < this.code.length && this.code[this.pos] !== '\n') this.pos++;
+                        continue;
+                    }
+
+                    if (/[a-zA-Z_]/.test(char)) {
+                        let id = '';
+                        while (this.pos < this.code.length && /[a-zA-Z0-9_]/.test(this.code[this.pos])) {
+                            id += this.code[this.pos++];
+                        }
+                        if (this.keywords.has(id.toLowerCase())) {
+                            this.tokens.push({ type: 'KEYWORD', value: id.toLowerCase() });
+                        } else {
+                            this.tokens.push({ type: 'IDENTIFIER', value: id });
+                        }
+                        continue;
+                    }
+
+                    if (/[0-9]/.test(char)) {
+                        let num = '';
+                        while (this.pos < this.code.length && /[0-9.]/.test(this.code[this.pos])) {
+                            num += this.code[this.pos++];
+                        }
+                        this.tokens.push({ type: 'NUMBER', value: parseFloat(num) });
+                        continue;
+                    }
+
+                    if (char === '"' || char === "'") {
+                        let quote = char;
+                        let str = '';
+                        this.pos++;
+                        while (this.pos < this.code.length && this.code[this.pos] !== quote) {
+                            str += this.code[this.pos++];
+                        }
+                        this.pos++;
+                        this.tokens.push({ type: 'STRING', value: str });
+                        continue;
+                    }
+
+                    if (char === '<' && this.code[this.pos + 1] === '-') {
+                        this.tokens.push({ type: 'OPERATOR', value: '<-' });
+                        this.pos += 2;
+                        continue;
+                    }
+
+                    if (/[+\-*/%^=<>!]/.test(char)) {
+                        let op = char;
+                        if ((char === '<' || char === '>' || char === '!') && this.code[this.pos + 1] === '=') {
+                            op += this.code[++this.pos];
+                        }
+                        this.tokens.push({ type: 'OPERATOR', value: op });
+                        this.pos++;
+                        continue;
+                    }
+
+                    if (/[(),;[\]]/.test(char)) {
+                        this.tokens.push({ type: 'PUNCTUATION', value: char });
+                        this.pos++;
+                        continue;
+                    }
+
+                    this.pos++; // Skip unknown
+                }
+                return this.tokens;
+            }
+        }
+
+        class Parser {
+            constructor(tokens) {
+                this.tokens = tokens;
+                this.pos = 0;
+            }
+
+            peek() { return this.tokens[this.pos]; }
+            consume() { return this.tokens[this.pos++]; }
+            match(type, value) {
+                const token = this.peek();
+                if (token && token.type === type && (!value || token.value === value)) {
+                    return this.consume();
+                }
+                return null;
+            }
+
+            parse() {
+                const program = [];
+                while (this.pos < this.tokens.length) {
+                    const stmt = this.parseStatement();
+                    if (stmt) program.push(stmt);
+                    else this.pos++;
+                }
+                return program;
+            }
+
+            parseStatement() {
+                const token = this.peek();
+                if (!token) return null;
+
+                if (token.type === 'KEYWORD') {
+                    switch (token.value) {
+                        case 'algoritmo':
+                        case 'proceso':
+                            this.consume();
+                            const name = this.consume().value;
+                            return { type: 'PROCESO_START', name };
+                        case 'finalgoritmo':
+                        case 'finproceso':
+                            this.consume();
+                            return { type: 'PROCESO_END' };
+                        case 'definir':
+                            return this.parseDefinir();
+                        case 'escribir':
+                            return this.parseEscribir();
+                        case 'leer':
+                            return this.parseLeer();
+                        case 'si':
+                            return this.parseSi();
+                        case 'mientras':
+                            return this.parseMientras();
+                        case 'para':
+                            return this.parsePara();
+                        case 'repetir':
+                            return this.parseRepetir();
+                        case 'segun':
+                            return this.parseSegun();
+                    }
+                }
+
+                if (token.type === 'IDENTIFIER') {
+                    return this.parseAssignment();
+                }
+
+                return null;
+            }
+
+            parseDefinir() {
+                this.consume(); // definir
+                const vars = [];
+                vars.push(this.consume().value);
+                while (this.match('PUNCTUATION', ',')) {
+                    vars.push(this.consume().value);
+                }
+                this.match('KEYWORD', 'como');
+                const dataType = this.consume().value;
+                this.match('PUNCTUATION', ';');
+                return { type: 'DEFINIR', variables: vars, dataType };
+            }
+
+            parseEscribir() {
+                this.consume(); // escribir
+                const expressions = [];
+                expressions.push(this.parseExpression());
+                while (this.match('PUNCTUATION', ',')) {
+                    expressions.push(this.parseExpression());
+                }
+                this.match('PUNCTUATION', ';');
+                return { type: 'ESCRIBIR', expressions };
+            }
+
+            parseLeer() {
+                this.consume(); // leer
+                const vars = [];
+                vars.push(this.consume().value);
+                while (this.match('PUNCTUATION', ',')) {
+                    vars.push(this.consume().value);
+                }
+                this.match('PUNCTUATION', ';');
+                return { type: 'LEER', variables: vars };
+            }
+
+            parseSi() {
+                this.consume(); // si
+                const condition = this.parseExpression();
+                this.match('KEYWORD', 'entonces');
+                const thenBranch = [];
+                while (this.peek() && !(this.peek().type === 'KEYWORD' && (this.peek().value === 'sino' || this.peek().value === 'finsi'))) {
+                    thenBranch.push(this.parseStatement());
+                }
+                let elseBranch = [];
+                if (this.match('KEYWORD', 'sino')) {
+                    while (this.peek() && !(this.peek().type === 'KEYWORD' && this.peek().value === 'finsi')) {
+                        elseBranch.push(this.parseStatement());
+                    }
+                }
+                this.match('KEYWORD', 'finsi');
+                return { type: 'SI', condition, thenBranch, elseBranch };
+            }
+
+            parseMientras() {
+                this.consume(); // mientras
+                const condition = this.parseExpression();
+                this.match('KEYWORD', 'hacer');
+                const body = [];
+                while (this.peek() && !(this.peek().type === 'KEYWORD' && this.peek().value === 'finmientras')) {
+                    const stmt = this.parseStatement();
+                    if (stmt) body.push(stmt); else this.pos++;
+                }
+                this.match('KEYWORD', 'finmientras');
+                this.match('PUNCTUATION', ';');
+                return { type: 'MIENTRAS', condition, body };
+            }
+
+            parsePara() {
+                this.consume(); // para
+                const variable = this.consume().value;
+                this.match('OPERATOR', '<-');
+                const startExpr = this.parseExpression();
+                this.match('KEYWORD', 'hasta');
+                const endExpr = this.parseExpression();
+                let stepExpr = { type: 'LITERAL', valueType: 'NUMBER', value: 1 };
+                if (this.match('KEYWORD', 'con')) {
+                    this.match('KEYWORD', 'paso');
+                    stepExpr = this.parseExpression();
+                }
+                this.match('KEYWORD', 'hacer');
+                const body = [];
+                while (this.peek() && !(this.peek().type === 'KEYWORD' && this.peek().value === 'finpara')) {
+                    const stmt = this.parseStatement();
+                    if (stmt) body.push(stmt); else this.pos++;
+                }
+                this.match('KEYWORD', 'finpara');
+                this.match('PUNCTUATION', ';');
+                return { type: 'PARA', variable, startExpr, endExpr, stepExpr, body };
+            }
+
+            parseRepetir() {
+                this.consume(); // repetir
+                const body = [];
+                while (this.peek() && !(this.peek().type === 'KEYWORD' && this.peek().value === 'hasta')) {
+                    const stmt = this.parseStatement();
+                    if (stmt) body.push(stmt); else this.pos++;
+                }
+                this.match('KEYWORD', 'hasta');
+                this.match('KEYWORD', 'que');
+                const condition = this.parseExpression();
+                this.match('PUNCTUATION', ';');
+                return { type: 'REPETIR', body, condition };
+            }
+
+            parseSegun() {
+                this.consume(); // segun
+                const variable = this.consume().value;
+                this.match('KEYWORD', 'hacer');
+                const cases = [];
+                let otherwise = [];
+                while (this.peek() && !(this.peek().type === 'KEYWORD' && this.peek().value === 'finsegun')) {
+                    if (this.match('KEYWORD', 'de')) {
+                        this.match('KEYWORD', 'otro');
+                        this.match('KEYWORD', 'modo');
+                        this.match('PUNCTUATION', ':');
+                        while (this.peek() && !(this.peek().type === 'KEYWORD' && this.peek().value === 'finsegun')) {
+                            const stmt = this.parseStatement();
+                            if (stmt) otherwise.push(stmt); else this.pos++;
+                        }
+                    } else {
+                        const values = [];
+                        values.push(this.parseExpression());
+                        while (this.match('PUNCTUATION', ',')) {
+                            values.push(this.parseExpression());
+                        }
+                        this.match('PUNCTUATION', ':');
+                        const body = [];
+                        // Collect statements until next case or De Otro Modo or FinSegun
+                        while (this.peek() && !(this.peek().type === 'KEYWORD' && (this.peek().value === 'de' || this.peek().value === 'finsegun')) && this.peek().type !== 'NUMBER' && this.peek().type !== 'STRING') {
+                             const stmt = this.parseStatement();
+                             if (stmt) body.push(stmt); else this.pos++;
+                        }
+                        cases.push({ values, body });
+                    }
+                }
+                this.match('KEYWORD', 'finsegun');
+                this.match('PUNCTUATION', ';');
+                return { type: 'SEGUN', variable, cases, otherwise };
+            }
+
+            parseAssignment() {
+                const variable = this.consume().value;
+                if (!this.match('OPERATOR', '<-') && !this.match('OPERATOR', '=')) return null;
+                const expr = this.parseExpression();
+                this.match('PUNCTUATION', ';');
+                return { type: 'ASSIGN', variable, expression: expr };
+            }
+
+            parseExpression() {
+                let left = this.parsePrimary();
+                while (this.peek() && this.peek().type === 'OPERATOR') {
+                    const op = this.consume().value;
+                    const right = this.parsePrimary();
+                    left = { type: 'BINARY_OP', left, op, right };
+                }
+                return left;
+            }
+
+            parsePrimary() {
+                const token = this.consume();
+                if (token.type === 'NUMBER' || token.type === 'STRING' || token.type === 'IDENTIFIER') {
+                    return { type: 'LITERAL', valueType: token.type, value: token.value };
+                }
+                return null;
+            }
+        }
+
+        class Interpreter {
+            constructor(printFn, inputFn, updateVarsFn) {
+                this.variables = {};
+                this.print = printFn;
+                this.input = inputFn;
+                this.updateVars = updateVarsFn;
+                this.isWaitingForInput = false;
+                this.inputVar = null;
+                this.program = [];
+                this.pc = 0;
+            }
+
+            async execute(program) {
+                this.program = program;
+                this.pc = 0;
+                while (this.pc < this.program.length) {
+                    if (this.isWaitingForInput) return;
+                    await this.step();
+                }
+            }
+
+            async step() {
+                const stmt = this.program[this.pc];
+                console.log('Executing:', stmt);
+                switch (stmt.type) {
+                    case 'DEFINIR':
+                        stmt.variables.forEach(v => {
+                            this.variables[v] = { type: stmt.dataType, value: null };
+                        });
+                        break;
+                    case 'ASSIGN':
+                        this.variables[stmt.variable].value = this.evaluate(stmt.expression);
+                        break;
+                    case 'ESCRIBIR':
+                        const out = stmt.expressions.map(e => this.evaluate(e)).join('');
+                        this.print(out);
+                        break;
+                    case 'LEER':
+                        for (const v of stmt.variables) {
+                            const val = await this.input(`Ingrese valor para ${v}:`);
+                            this.variables[v].value = this.castValue(val, this.variables[v].type);
+                        }
+                        break;
+                    case 'SI':
+                        if (this.evaluate(stmt.condition)) {
+                            await this.executeBlock(stmt.thenBranch);
+                        } else {
+                            await this.executeBlock(stmt.elseBranch);
+                        }
+                        break;
+                    case 'MIENTRAS':
+                        while (this.evaluate(stmt.condition)) {
+                            await this.executeBlock(stmt.body);
+                        }
+                        break;
+                    case 'PARA':
+                        const start = this.evaluate(stmt.startExpr);
+                        const end = this.evaluate(stmt.endExpr);
+                        const stepValue = this.evaluate(stmt.stepExpr);
+                        this.variables[stmt.variable].value = start;
+                        while ((stepValue >= 0 && this.variables[stmt.variable].value <= end) || (stepValue < 0 && this.variables[stmt.variable].value >= end)) {
+                            await this.executeBlock(stmt.body);
+                            this.variables[stmt.variable].value += stepValue;
+                            this.updateVars(this.variables);
+                        }
+                        break;
+                    case 'REPETIR':
+                        do {
+                            await this.executeBlock(stmt.body);
+                        } while (!this.evaluate(stmt.condition));
+                        break;
+                    case 'SEGUN':
+                        const val = this.variables[stmt.variable].value;
+                        let matched = false;
+                        for (const c of stmt.cases) {
+                            if (c.values.some(v => this.evaluate(v) === val)) {
+                                await this.executeBlock(c.body);
+                                matched = true;
+                                break;
+                            }
+                        }
+                        if (!matched && stmt.otherwise.length > 0) {
+                            await this.executeBlock(stmt.otherwise);
+                        }
+                        break;
+                }
+                this.pc++;
+                this.updateVars(this.variables);
+            }
+
+            async executeBlock(block) {
+                const oldProgram = this.program;
+                const oldPc = this.pc;
+                this.program = block;
+                this.pc = 0;
+                while (this.pc < this.program.length) {
+                    await this.step();
+                }
+                this.program = oldProgram;
+                this.pc = oldPc;
+            }
+
+            evaluate(expr) {
+                if (expr.type === 'LITERAL') {
+                    if (expr.valueType === 'IDENTIFIER') {
+                        if (this.variables[expr.value]) return this.variables[expr.value].value;
+                        throw new Error(`Variable no definida: ${expr.value}`);
+                    }
+                    return expr.value;
+                }
+                if (expr.type === 'BINARY_OP') {
+                    const left = this.evaluate(expr.left);
+                    const right = this.evaluate(expr.right);
+                    switch (expr.op) {
+                        case '+': return left + right;
+                        case '-': return left - right;
+                        case '*': return left * right;
+                        case '/': return left / right;
+                        case '=': return left === right;
+                        case '<': return left < right;
+                        case '>': return left > right;
+                        case '<=': return left <= right;
+                        case '>=': return left >= right;
+                        case '!=':
+                        case '<>': return left !== right;
+                    }
+                }
+            }
+
+            castValue(val, type) {
+                switch (type.toLowerCase()) {
+                    case 'entero': return parseInt(val);
+                    case 'real': return parseFloat(val);
+                    case 'logico': return val.toLowerCase() === 'verdadero';
+                    default: return val;
+                }
+            }
+        }
+
+        let interpreter;
+        let inputResolver;
+
+        function runAlgorithm() {
+            showBottomTab('consola');
+            clearConsole();
+            printToConsole('*** Ejecución Iniciada. ***');
+
+            const code = editor.value;
+            const tokenizer = new Tokenizer(code);
+            const tokens = tokenizer.tokenize();
+            const parser = new Parser(tokens);
+            const program = parser.parse();
+
+            console.log('Program:', program);
+
+            interpreter = new Interpreter(
+                (text) => printToConsole(text),
+                async (promptText) => {
+                    document.getElementById('inputLabel').textContent = promptText;
+                    document.getElementById('inputOverlay').style.display = 'flex';
+                    document.getElementById('userInput').focus();
+                    return new Promise(resolve => {
+                        inputResolver = resolve;
+                    });
+                },
+                (vars) => {
+                    const list = document.getElementById('variableList');
+                    list.innerHTML = '';
+                    for (const [name, data] of Object.entries(vars)) {
+                        const div = document.createElement('div');
+                        div.style.marginBottom = '5px';
+                        div.innerHTML = `<b>${name}</b>: ${data.type} = ${data.value}`;
+                        list.appendChild(div);
+                    }
+                }
+            );
+
+            interpreter.execute(program).then(() => {
+                printToConsole('*** Ejecución Finalizada. ***');
+            }).catch(e => {
+                printToConsole('ERROR: ' + e.message);
+            });
+        }
+
+        function submitInput() {
+            const val = document.getElementById('userInput').value;
+            document.getElementById('inputOverlay').style.display = 'none';
+            document.getElementById('userInput').value = '';
+            if (inputResolver) {
+                inputResolver(val);
+                inputResolver = null;
+            }
+        }
+
+        function handleInputKeyPress(e) {
+            if (e.key === 'Enter') {
+                submitInput();
+            }
+        }
+
+        // Initialize
+        updateEditor();
+
+        // PWA update logic
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js?v=10')
                     .then(reg => {
-                        console.log('SW registrado', reg);
                         reg.onupdatefound = () => {
                             const installingWorker = reg.installing;
                             installingWorker.onstatechange = () => {
@@ -790,32 +1303,6 @@ FinAlgoritmo</textarea>
                     .catch(err => console.log('SW error', err));
             });
         }
-
-        // Real-time help suggestions (basic keyword detection)
-        const realtimeSuggestions = document.getElementById('realtimeSuggestions');
-        codeEditor.addEventListener('input', function() {
-            const code = codeEditor.value.toLowerCase();
-            let suggestionsHtml = '<h4>Sugerencias:</h4>';
-
-            if (code.includes('algoritmo') && !code.includes('finalgoritmo')) {
-                suggestionsHtml += '<p>¡No olvides cerrar tu algoritmo con <code>FinAlgoritmo</code>!</p>';
-            } else if (code.includes('definir') && !code.includes('como')) {
-                suggestionsHtml += '<p>Recuerda la sintaxis para definir: <code>Definir variable Como Tipo</code></p>';
-            } else if (code.includes('escribir') && !code.includes('"')) {
-                suggestionsHtml += '<p>Usa comillas dobles para cadenas de texto: <code>Escribir "Tu mensaje"</code></p>';
-            } else if (code.includes('dimension') && !code.includes('[')) {
-                suggestionsHtml += '<p>Para dimensionar arreglos, usa corchetes: <code>Dimension arreglo[tamaño]</code></p>';
-            } else if (code.includes('si') && !code.includes('entonces')) {
-                suggestionsHtml += '<p>La estructura condicional es: <code>Si condicion Entonces ... FinSi</code></p>';
-            } else if (code.includes('para') && !code.includes('hacer')) {
-                suggestionsHtml += '<p>La estructura Para es: <code>Para i <- inicio Hasta fin Con Paso paso Hacer ... FinPara</code></p>';
-            } else {
-                suggestionsHtml += '<p>Empieza escribiendo "Algoritmo" para definir tu programa.</p>';
-                suggestionsHtml += '<p>Usa "Escribir" para mostrar mensajes en la consola.</p>';
-                suggestionsHtml += '<p>Para definir variables, usa "Definir [nombre] Como [tipo]".</p>';
-            }
-            realtimeSuggestions.innerHTML = suggestionsHtml;
-        });
     </script>
 </body>
 </html>

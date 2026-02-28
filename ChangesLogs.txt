@@ -665,3 +665,18 @@ Cambio: Reorganización completa del flujo de diapositivas para agrupar definici
   - Actualizada la URL del microservicio USER al endpoint de producción definitivo.
 - Archivo: js/ui-common.js
   - Implementado acceso directo al menú de instalación en iOS mediante la API `navigator.share` en dispositivos Apple.
+
+-------------------------------------------------------------------
+ARCHIVO: pseudocode.html
+-------------------------------------------------------------------
+- Reestructuración completa del HTML para implementar un layout de 3 columnas (Variables/Operadores, Editor, Comandos).
+- Implementación de un tema visual claro (Light Theme) con colores y estilos basados en la interfaz clásica de PSeInt.
+- Integración de una barra de herramientas (Toolbar) con acciones de archivo y ejecución.
+- Implementación de un sistema de resaltado de sintaxis dinámico (Keywords: azul, Strings: maroon, Comentarios: gris).
+- Desarrollo de un Intérprete de Pseudocódigo completo en JavaScript:
+  · Tokenizer: Identifica palabras clave, operadores (incluyendo <-), identificadores y literales.
+  · Parser: Estructura de bloques Algoritmo/Proceso, declaraciones Definir, y sentencias.
+  · Execution Engine: Manejo de estado de variables, evaluación de expresiones aritméticas/lógicas.
+  · Soporte para estructuras de control: Si-Entonces, Mientras, Para, Repetir, Segun.
+  · Sistema de E/S interactivo: Comando Escribir (consola) y Leer (modal de entrada).
+- Sincronización automática de la Lista de Variables con el estado interno del intérprete durante la ejecución.
