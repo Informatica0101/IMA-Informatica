@@ -60,3 +60,15 @@ TAREA: [A-38] Actualización de Lógica de Autenticación, UI y Soporte iOS PWA
   · Los paneles de "Comandos", "Variables" y "Operadores" no están organizados según el estándar de PSeInt.
   · El editor es un textarea básico sin resaltado de sintaxis dinámico ni numeración de líneas.
 - Acción: Rediseñar UI para paridad visual con PSeInt, implementar un intérprete de pseudocódigo real y reestructurar paneles.
+
+-------------------------------------------------------------------
+7. ARCHIVO: pseudocode.html (Audit Complementaria [A-43])
+-------------------------------------------------------------------
+- Estado: Intérprete funcional para lógica básica, pero faltan estructuras avanzadas.
+- Hallazgos:
+  · Los botones de "Abrir" y "Guardar" no tienen funciones de I/O de archivos implementadas.
+  · El Parser/Interpreter no soporta Arreglos (Dimensionamiento ni acceso por índice).
+  · Faltan Funciones y Subprocesos (Definición y Llamadas con parámetros).
+  · No existe lógica para la generación de Diagramas de Flujo (botón sin función).
+  · Faltan operadores avanzados (MOD, RC, ABS, etc.).
+- Acción: Implementar I/O de archivos .psc, soporte para arreglos y funciones, y generador de diagramas de flujo SVG.

@@ -89,14 +89,113 @@ FLUJO PRINCIPAL DE TRABAJO
       -> "TAREAS PENDIENTES DE REVISIÓN"
 
 TAREA: [A-42]
-TÍTULO: Paridad Visual y Lógica con PSeInt Simulator
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
 ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
+TÍTULO: Paridad Visual y Lógica con PSeInt Simulator
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
+ÁREA: Frontend / Lógica / UI
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 PRIORIDAD: MEDIA
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 - Rediseño de UI para imitar la interfaz clásica de PSeInt (Paneles laterales, toolbar superior).
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 - Implementación de Intérprete de Pseudocódigo real (Tokenizer, Parser, Execution Engine).
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 - Soporte para comandos Escribir, Leer (con entrada interactiva), Definir y Asignación (<-).
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 - Sincronización dinámica de la Lista de Variables con el estado de ejecución.
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 
 12. COMMIT
     - Realizar UN SOLO commit por ciclo completo.
@@ -297,14 +396,113 @@ ESTADO: PENDIENTE DE REVISIÓN
 TAREAS PENDIENTES DE REVISIÓN
 
 TAREA: [A-42]
-TÍTULO: Paridad Visual y Lógica con PSeInt Simulator
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
 ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
+TÍTULO: Paridad Visual y Lógica con PSeInt Simulator
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
+ÁREA: Frontend / Lógica / UI
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 PRIORIDAD: MEDIA
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 - Rediseño de UI para imitar la interfaz clásica de PSeInt (Paneles laterales, toolbar superior).
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 - Implementación de Intérprete de Pseudocódigo real (Tokenizer, Parser, Execution Engine).
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 - Soporte para comandos Escribir, Leer (con entrada interactiva), Definir y Asignación (<-).
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 - Sincronización dinámica de la Lista de Variables con el estado de ejecución.
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 ________________________________________________________________________________________________
 
 TAREA: [A-37]
@@ -388,14 +586,113 @@ ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
 TAREAS PENDIENTES
 
 TAREA: [A-42]
-TÍTULO: Paridad Visual y Lógica con PSeInt Simulator
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
 ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
+TÍTULO: Paridad Visual y Lógica con PSeInt Simulator
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
+ÁREA: Frontend / Lógica / UI
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 PRIORIDAD: MEDIA
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 - Rediseño de UI para imitar la interfaz clásica de PSeInt (Paneles laterales, toolbar superior).
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 - Implementación de Intérprete de Pseudocódigo real (Tokenizer, Parser, Execution Engine).
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 - Soporte para comandos Escribir, Leer (con entrada interactiva), Definir y Asignación (<-).
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 - Sincronización dinámica de la Lista de Variables con el estado de ejecución.
+
+TAREA: [A-43]
+TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: ALTA
+ESTADO: EN DESARROLLO
+- Implementación de Abrir/Guardar archivos .psc.
+- Soporte para Arreglos (Dimensionamiento y acceso).
+- Implementación de Funciones y Subprocesos (Ámbito y parámetros).
+- Generación de Diagramas de Flujo SVG desde el código.
+- Soporte para funciones integradas (MOD, RC, ABS, etc.).
 ________________________________________________________________________________________________
 
 TAREA: [A-37]
