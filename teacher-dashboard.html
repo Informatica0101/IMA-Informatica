@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="IMA-Logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=6">
+    <link rel="stylesheet" href="css/style.css?v=10">
 </head>
 <body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
 
@@ -159,8 +159,10 @@
                                 </select>
                             </div>
                             <div id="credito-extra-fields" class="hidden md:col-span-2">
-                                <label for="tareaOriginalId" class="block font-bold text-gray-700 mb-2">ID de Tarea Original Rechazada</label>
-                                <input type="text" id="tareaOriginalId" name="tareaOriginalId" placeholder="TSK-..." class="w-full p-3 border rounded-xl">
+                                <label for="tareaOriginalId" class="block font-bold text-gray-700 mb-2">Seleccionar Tarea Original</label>
+                                <select id="tareaOriginalId" name="tareaOriginalId" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all">
+                                    <option value="">Seleccione una tarea...</option>
+                                </select>
                             </div>
                             <div class="md:col-span-2">
                                 <label for="descripcion" class="block font-bold text-gray-700 mb-2">Descripción</label>
@@ -349,11 +351,11 @@
         </div>
     </div>
 
-    <script src="js/ui-common.js?v=6"></script>
-    <script src="js/data.js?v=6"></script>
-    <script src="js/config.js?v=6"></script>
-    <script src="js/api.js?v=6"></script>
-    <script src="js/teacher.js?v=6"></script>
+    <script src="js/ui-common.js?v=10"></script>
+    <script src="js/data.js?v=10"></script>
+    <script src="js/config.js?v=10"></script>
+    <script src="js/api.js?v=10"></script>
+    <script src="js/teacher.js?v=10"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (window.setupCommonUI) window.setupCommonUI();

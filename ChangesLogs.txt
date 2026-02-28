@@ -16,6 +16,55 @@
 - Archivo: js/perifericos_juego.js
   - Normalización de rutas de imágenes de activos de juego a formato relativo.
 
+02/02/2026
+- Archivo: backend/task-service/Code.gs
+  - Modificada la función getStudentTasks para implementar una lógica de Crédito Extra más estricta:
+    - Vinculación 1:1 mediante tareaOriginalId.
+    - Visibilidad condicionada al estado 'Rechazada' de la tarea original.
+    - Herencia de la fecha límite de la tarea original para asegurar coincidencia.
+- Archivo: js/student.js
+  - Implementada función formatDate(isoString) para estandarizar el formato de fecha a dd/mm/aaaa.
+  - Actualizada la función renderActivities para aplicar el nuevo formato a todas las fechas de entrega (tareas y exámenes).
+
+02/02/2026 (v7 Update)
+- Archivo: js/config.js
+  - Actualizada la URL del microservicio TASK al nuevo endpoint de producción.
+- Archivos: sw.js, *.html, js/ui-common.js
+  - Incremento de la versión de caché a 'v7' para asegurar el despliegue inmediato de la nueva configuración.
+
+02/02/2026 (v8 Update)
+- Archivo: backend/task-service/Code.gs
+  - Implementada acción 'getAllTasks' para retornar el listado completo de tareas del profesor.
+- Archivo: teacher-dashboard.html
+  - Sustituido input de texto por un select para 'Tarea Original' en el formulario de creación de tareas.
+- Archivo: js/teacher.js
+  - Implementada lógica de filtrado dinámico para el selector de 'Tarea Original': filtra por grado, excluye tareas de crédito extra y previene duplicados de vinculación.
+- Archivos de Contenido:
+  - Creada presentación II_BTP_A/Programacion/estrategias_solucion_problemas.html.
+  - Creada presentación III_BTP_A/hipervinculos_imagenes.html.
+- Archivo: js/data.js
+  - Registradas las nuevas presentaciones en el menú de Cursos.
+
+02/02/2026 (v9 Update)
+- Archivo: js/config.js
+  - Actualizada la URL del microservicio TASK al nuevo endpoint de producción.
+- Archivos: sw.js, *.html, js/ui-common.js
+  - Incremento de la versión de caché a 'v9' para asegurar el despliegue inmediato de la nueva configuración.
+
+02/02/2026 (v9 Student Dashboard Sorting)
+- Archivo: js/student.js
+  - Se modificó la lógica de ordenamiento de las actividades (tareas y exámenes) para que los ítems no entregados aparezcan al principio de la lista, seguidos por los entregados, ambos subgrupos ordenados por fecha límite ascendente.
+
+02/02/2026 (v10 New Presentations)
+- Archivo: II_BTP_A/Programacion/analisis_diseno_algoritmos.html
+  - Creada presentación para el tema del 1 de marzo sobre Análisis y Diseño en lenguaje natural.
+- Archivo: III_BTP_A/listas_comentarios_html.html
+  - Creada presentación para el tema del 1 de marzo sobre Listas y Comentarios en HTML.
+- Archivo: js/data.js
+  - Integrados los nuevos temas en el menú de Cursos para Undécimo y Duodécimo.
+- Archivos: sw.js, *.html, js/ui-common.js
+  - Incremento de la versión de caché a 'v10' para asegurar el despliegue de las nuevas presentaciones.
+
 14/01/2026
 - Archivo: js/teacher.js, Línea(s): 88-95
   - Se implementó código defensivo en la función `fetchTeacherActivity` para prevenir un error crítico de tipo 'TypeError: Cannot read properties of undefined (reading 'map')'. La modificación asegura que si alguna de las llamadas a la API devuelve `undefined`, el código manejará el valor de forma segura en lugar de fallar, mejorando la robustez general del dashboard del profesor.

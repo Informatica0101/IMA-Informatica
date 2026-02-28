@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hipervínculos e Imágenes - Diseño Web I</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        html { font-size: 90%; }
+        html, body { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow-x: hidden; }
+        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #374151; justify-content: space-between; }
+        #presentation-container { width: 100%; height: calc(100vh - 7rem); position: relative; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); overflow: hidden; display: flex; justify-content: center; align-items: center; margin: 0 auto; max-width: 100vw; }
+        .slide { width: 100%; height: 100%; padding: 1.8rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: opacity 0.5s ease-in-out; position: absolute; top: 0; left: 0; opacity: 0; -ms-overflow-style: none; scrollbar-width: none; overflow-y: auto; }
+        .slide::-webkit-scrollbar { display: none; }
+        .slide.active { display: flex; opacity: 1; animation-name: fadeIn; animation-duration: 0.8s; animation-fill-mode: forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) { .slide h2, .slide h3 { font-size: 1.4rem; } .slide p, .slide li { font-size: 0.9rem; } .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
+        .quiz-option-button { transition: background-color 0.3s, transform 0.2s; text-align: left; padding-left: 1.5rem; }
+        .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
+        .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
+        .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
+        .code-box { background: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 8px; font-family: monospace; text-align: left; width: 100%; max-width: 500px; margin: 0.5rem 0; overflow-x: auto; }
+        .code-tag { color: #f472b6; }
+        .code-attr { color: #60a5fa; }
+        .code-val { color: #fbbf24; }
+    </style>
+</head>
+<body class="antialiased">
+    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
+            <img src="../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
+            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Diseño Web I</h1>
+        </div>
+        <nav class="mt-3 sm:mt-0">
+            <ul class="flex space-x-2 sm:space-x-3">
+                <li><a href="../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="flex-grow flex justify-center items-center p-3">
+        <div id="presentation-container" class="relative">
+            <!-- Diapositiva 1: Portada -->
+            <div id="slide-1" class="slide active">
+                <img src="../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
+                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Hipervínculos e Imágenes en HTML</h2>
+                <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 3: Enriqueciendo el Contenido</p>
+                <div class="text-xs text-gray-500 space-y-1">
+                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                    <p>Fecha: 22 de febrero de 2026</p>
+                    <p>Grado: Duodécimo de Informática - Sección "A"</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 2: Introducción -->
+            <div id="slide-2" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Qué es el Hipertexto?</h3>
+                <div class="concept-box">
+                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+                        HTML significa <em>HyperText Markup Language</em>. El <strong>Hipertexto</strong> es texto que contiene enlaces a otros documentos.
+                    </p>
+                    <p class="text-sm text-gray-700 mt-4">
+                        Sin enlaces e imágenes, la web sería solo una colección de archivos de texto aislados y aburridos.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: La etiqueta de enlace <a> -->
+            <div id="slide-3" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Creando Enlaces: La etiqueta &lt;a&gt;</h3>
+                <p class="text-sm text-gray-600 mb-4">Se utiliza para crear hipervínculos.</p>
+                <div class="code-box">
+                    &lt;<span class="code-tag">a</span> <span class="code-attr">href</span>=<span class="code-val">"URL"</span>&gt;Texto del enlace&lt;/<span class="code-tag">a</span>&gt;
+                </div>
+                <div class="mt-4 text-left max-w-2xl mx-auto space-y-2 text-xs sm:text-sm">
+                    <p>🔹 <strong>href:</strong> Atributo que indica el destino (Hypertext REFerence).</p>
+                    <p>🔹 <strong>Texto:</strong> Es lo que el usuario ve y donde hace clic.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: Tipos de Enlaces -->
+            <div id="slide-4" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Tipos de Enlaces</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-left">
+                        <h4 class="font-bold text-blue-700 mb-2">Enlaces Externos</h4>
+                        <p class="text-xs">Apuntan a otros sitios web.</p>
+                        <div class="text-[10px] font-mono mt-2 bg-white p-2 border">href="https://google.com"</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 text-left">
+                        <h4 class="font-bold text-purple-700 mb-2">Enlaces Internos</h4>
+                        <p class="text-xs">Navegan entre páginas de tu propio sitio.</p>
+                        <div class="text-[10px] font-mono mt-2 bg-white p-2 border">href="contacto.html"</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Atributo target -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Dónde se abre el enlace?</h3>
+                <div class="concept-box">
+                    <p class="text-sm text-gray-700 mb-4">Usamos el atributo <span class="font-mono font-bold">target</span> para controlar esto:</p>
+                    <ul class="text-xs sm:text-sm space-y-3">
+                        <li>📍 <span class="font-mono">target="_self"</span>: Abre en la misma pestaña (por defecto).</li>
+                        <li>📍 <span class="font-mono">target="_blank"</span>: Abre en una pestaña nueva.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: La etiqueta de imagen <img> -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Insertando Imágenes: &lt;img&gt;</h3>
+                <p class="text-sm text-gray-600 mb-4">Esta etiqueta es <strong>vacía</strong> (no tiene cierre &lt;/img&gt;).</p>
+                <div class="code-box">
+                    &lt;<span class="code-tag">img</span> <span class="code-attr">src</span>=<span class="code-val">"ruta/imagen.jpg"</span> <span class="code-attr">alt</span>=<span class="code-val">"Descripción"</span> /&gt;
+                </div>
+                <div class="mt-4 text-left max-w-2xl mx-auto space-y-2 text-xs sm:text-sm">
+                    <p>🔹 <strong>src:</strong> Fuente o ruta de la imagen (SouRCe).</p>
+                    <p>🔹 <strong>alt:</strong> Texto alternativo (accesibilidad y SEO).</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Rutas de Imágenes -->
+            <div id="slide-7" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Rutas de Imágenes</h3>
+                <div class="concept-box">
+                    <p class="font-bold text-blue-700 text-sm mb-2">1. Ruta Absoluta:</p>
+                    <p class="text-xs mb-3">URL completa de internet (ej. de Wikipedia).</p>
+                    <p class="font-bold text-blue-700 text-sm mb-2">2. Ruta Relativa:</p>
+                    <p class="text-xs">Ubicación dentro de tu propia carpeta de proyecto.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Tamaño de Imágenes -->
+            <div id="slide-8" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ajustando el Tamaño</h3>
+                <p class="text-sm text-gray-600 mb-4">Podemos definir el tamaño directamente en HTML:</p>
+                <div class="code-box">
+                    &lt;<span class="code-tag">img</span> ... <span class="code-attr">width</span>=<span class="code-val">"300"</span> <span class="code-attr">height</span>=<span class="code-val">"200"</span> /&gt;
+                </div>
+                <p class="mt-4 text-[10px] text-red-500 font-bold italic">¡Ojo! Es mejor usar CSS para esto, pero HTML nos saca de apuros.</p>
+            </div>
+
+            <!-- Diapositiva 9: Imagen como Enlace -->
+            <div id="slide-9" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Imagen como Enlace (Anidación)</h3>
+                <p class="text-sm text-gray-700 mb-4">Podemos convertir una imagen en un botón clicable envolviéndola en un &lt;a&gt;.</p>
+                <div class="code-box text-xs">
+                    &lt;<span class="code-tag">a</span> <span class="code-attr">href</span>=<span class="code-val">"index.html"</span>&gt;<br>
+                    &nbsp;&nbsp;&lt;<span class="code-tag">img</span> <span class="code-attr">src</span>=<span class="code-val">"logo.png"</span> /&gt;<br>
+                    &lt;/<span class="code-tag">a</span>&gt;
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Importancia del Texto Alt -->
+            <div id="slide-10" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Por qué usar ALT?</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl">
+                    <div class="p-4 bg-white border rounded shadow-sm">
+                        <p class="text-2xl mb-2">🧑‍🦯</p>
+                        <p class="font-bold text-xs">Accesibilidad</p>
+                        <p class="text-[10px] text-gray-500">Para personas con discapacidad visual que usan lectores de pantalla.</p>
+                    </div>
+                    <div class="p-4 bg-white border rounded shadow-sm">
+                        <p class="text-2xl mb-2">🔍</p>
+                        <p class="font-bold text-xs">SEO (Google)</p>
+                        <p class="text-[10px] text-gray-500">Ayuda a los buscadores a entender de qué trata la imagen.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 11: Cuestionario (1-5) -->
+            <div id="slide-11" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 1)</h3>
+                <div id="quiz-container-1" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
+                    <div id="quiz-question-1" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
+                    <div id="quiz-options-1" class="flex flex-col space-y-2"></div>
+                    <div id="quiz-feedback-1" class="mt-3 text-sm font-bold"></div>
+                </div>
+                <div class="mt-4 text-sm text-gray-500">
+                    <p>Pregunta <span id="question-counter">1</span> de 5</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Cuestionario (6-10) -->
+            <div id="slide-12" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 2)</h3>
+                <div id="quiz-container-2" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
+                    <div id="quiz-question-2" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
+                    <div id="quiz-options-2" class="flex flex-col space-y-2"></div>
+                    <div id="quiz-feedback-2" class="mt-3 text-sm font-bold"></div>
+                </div>
+                <div class="mt-4 text-sm text-gray-500">
+                    <p>Pregunta <span id="question-counter-2">6</span> de 10</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 13: Resumen -->
+            <div id="slide-13" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen de la Clase</h3>
+                <div class="max-w-3xl mx-auto grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-blue-50 rounded border text-left">
+                        <p class="font-bold text-sm mb-2 text-blue-700">Etiquetas:</p>
+                        <ul class="text-[10px] space-y-1">
+                            <li>• &lt;a&gt; para enlaces.</li>
+                            <li>• &lt;img&gt; para imágenes.</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded border text-left">
+                        <p class="font-bold text-sm mb-2 text-green-700">Atributos:</p>
+                        <ul class="text-[10px] space-y-1">
+                            <li>• href (enlaces).</li>
+                            <li>• src y alt (imágenes).</li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="mt-8 font-bold text-blue-600">¡Tu web ahora es interactiva y visual!</p>
+            </div>
+
+            <!-- Diapositiva 14: Tarea -->
+            <div id="slide-14" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Asignación (Tarea)</h3>
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-indigo-200 max-w-3xl">
+                    <h4 class="font-bold text-indigo-800 mb-3">📋 Tarea: Curriculum Vitae Web</h4>
+                    <div class="text-left space-y-4 text-sm">
+                        <p><strong>Actividad:</strong> Diseña una página HTML sobre tu perfil que incluya:</p>
+                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                            <li>Una foto tuya o un avatar usando &lt;img&gt;.</li>
+                            <li>Enlaces externos a tus redes sociales o sitios de interés.</li>
+                            <li>Uso del atributo <span class="font-mono">target="_blank"</span>.</li>
+                            <li>Al menos una imagen que funcione como enlace.</li>
+                        </ul>
+                        <div class="pt-4 border-t flex justify-between font-bold text-indigo-900">
+                            <span>Fecha: 01/03/2026</span>
+                            <span>Valor: 5%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de navegación -->
+        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
+            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
+            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        </div>
+        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 14</div>
+    </main>
+
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
+            <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Diseño Web I</p>
+        </div>
+    </footer>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const header = document.getElementById('page-header');
+        const footer = document.getElementById('page-footer');
+        let currentSlideIndex = 0;
+        let isTransitioning = false;
+
+        const quizQuestions = [
+            {
+                question: "1. ¿Qué etiqueta se usa para crear un enlace?",
+                options: ["<link>", "<a>", "<href>", "<nav>"],
+                correctAnswer: "<a>"
+            },
+            {
+                question: "2. ¿Qué atributo define la dirección de un enlace?",
+                options: ["src", "target", "href", "link"],
+                correctAnswer: "href"
+            },
+            {
+                question: "3. ¿Para qué sirve target='_blank'?",
+                options: ["Para cerrar la página", "Para abrir en pestaña nueva", "Para poner el fondo blanco", "Para borrar el enlace"],
+                correctAnswer: "Para abrir en pestaña nueva"
+            },
+            {
+                question: "4. ¿Qué etiqueta inserta una imagen?",
+                options: ["<picture>", "<figure>", "<img>", "<media>"],
+                correctAnswer: "<img>"
+            },
+            {
+                question: "5. ¿Qué atributo indica la ruta de la imagen?",
+                options: ["href", "src", "path", "alt"],
+                correctAnswer: "src"
+            },
+            {
+                question: "6. ¿Qué atributo describe la imagen para accesibilidad?",
+                options: ["title", "alt", "desc", "label"],
+                correctAnswer: "alt"
+            },
+            {
+                question: "7. ¿La etiqueta <img> requiere etiqueta de cierre?",
+                options: ["Sí", "No", "Solo en Chrome", "A veces"],
+                correctAnswer: "No"
+            },
+            {
+                question: "8. ¿Qué es una ruta absoluta?",
+                options: ["Una carpeta local", "Una URL completa de internet", "El nombre del archivo", "Una ruta secreta"],
+                correctAnswer: "Una URL completa de internet"
+            },
+            {
+                question: "9. ¿Cómo se convierte una imagen en enlace?",
+                options: ["Usando src", "Anidándola dentro de <a>", "Con el atributo link", "No se puede"],
+                correctAnswer: "Anidándola dentro de <a>"
+            },
+            {
+                question: "10. ¿Qué significa HTML?",
+                options: ["HyperText Markup Language", "Home Tool Markup Language", "Hyperlinks Text Mark Language", "Hard Text Modern Language"],
+                correctAnswer: "HyperText Markup Language"
+            }
+        ];
+
+        let currentQuizPart1Index = 0;
+        let currentQuizPart2Index = 5;
+
+        function updateQuizPart1() {
+            if (currentQuizPart1Index >= 5) return;
+            const questionElement = document.getElementById('quiz-question-1');
+            const optionsElement = document.getElementById('quiz-options-1');
+            const feedbackElement = document.getElementById('quiz-feedback-1');
+            const counterElement = document.getElementById('question-counter');
+            const currentQuestion = quizQuestions[currentQuizPart1Index];
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+            feedbackElement.textContent = '';
+            counterElement.textContent = currentQuizPart1Index + 1;
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
+                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 1);
+                optionsElement.appendChild(button);
+            });
+        }
+
+        function updateQuizPart2() {
+            if (currentQuizPart2Index >= 10) return;
+            const questionElement = document.getElementById('quiz-question-2');
+            const optionsElement = document.getElementById('quiz-options-2');
+            const feedbackElement = document.getElementById('quiz-feedback-2');
+            const counterElement = document.getElementById('question-counter-2');
+            const currentQuestion = quizQuestions[currentQuizPart2Index];
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+            feedbackElement.textContent = '';
+            counterElement.textContent = currentQuizPart2Index + 1;
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
+                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 2);
+                optionsElement.appendChild(button);
+            });
+        }
+
+        function checkQuizAnswer(selected, correct, feedbackElement, buttons, part) {
+            Array.from(buttons).forEach(button => {
+                button.disabled = true;
+                if (button.textContent === correct) button.classList.add('correct');
+                else if (button.textContent === selected) button.classList.add('incorrect');
+            });
+            if (selected === correct) {
+                feedbackElement.textContent = '¡Correcto!';
+                feedbackElement.style.color = '#065f46';
+            } else {
+                feedbackElement.textContent = `Incorrecto. La respuesta es: ${correct}`;
+                feedbackElement.style.color = '#991b1b';
+            }
+            setTimeout(() => {
+                if (part === 1) {
+                    currentQuizPart1Index++;
+                    if (currentQuizPart1Index < 5) updateQuizPart1();
+                } else {
+                    currentQuizPart2Index++;
+                    if (currentQuizPart2Index < 10) updateQuizPart2();
+                }
+            }, 1500);
+        }
+
+        function showSlide(index) {
+            if (isTransitioning || index < 0 || index >= slides.length) return;
+            isTransitioning = true;
+            const presentationContainer = document.getElementById('presentation-container');
+            if (index > 0) {
+                header.style.display = 'none';
+                footer.style.display = 'none';
+                presentationContainer.style.height = '100vh';
+            } else {
+                header.style.display = 'flex';
+                footer.style.display = 'block';
+                presentationContainer.style.height = 'calc(100vh - 7rem)';
+            }
+            slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+            currentSlideIndex = index;
+            if (currentSlideIndex === 10) { currentQuizPart1Index = 0; setTimeout(updateQuizPart1, 100); }
+            else if (currentSlideIndex === 11) { currentQuizPart2Index = 5; setTimeout(updateQuizPart2, 100); }
+            const activeSlide = slides[currentSlideIndex];
+            activeSlide.style.display = 'flex';
+            setTimeout(() => {
+                activeSlide.classList.add('active');
+                slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+                prevButton.disabled = currentSlideIndex === 0;
+                nextButton.disabled = currentSlideIndex === slides.length - 1;
+                isTransitioning = false;
+            }, 10);
+        }
+
+        nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
+        prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
+
+        const presentationContainer = document.getElementById('presentation-container');
+        presentationContainer.addEventListener('click', (e) => {
+            if (e.target.closest('button') || e.target.closest('a')) return;
+            const rect = presentationContainer.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            if (clickX > rect.width / 2) showSlide(currentSlideIndex + 1);
+            else showSlide(currentSlideIndex - 1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>

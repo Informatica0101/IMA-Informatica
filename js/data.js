@@ -24,7 +24,9 @@ window.presentationData = [
                 name: "Programación",
                 topics: [
                     { title: "Introducción a la Programación", file: "II_BTP_A/Programacion/introduccion_programacion.html" },
-                    { title: "Clasificación y etapas de algoritmos", file: "II_BTP_A/Programacion/clasificacion_etapas_algoritmos.html" }
+                    { title: "Clasificación y etapas de algoritmos", file: "II_BTP_A/Programacion/clasificacion_etapas_algoritmos.html" },
+                    { title: "Estrategias de solución de problemas", file: "II_BTP_A/Programacion/estrategias_solucion_problemas.html" },
+                    { title: "Análisis y diseño de algoritmos", file: "II_BTP_A/Programacion/analisis_diseno_algoritmos.html" }
                 ]
             }
             /* {
@@ -58,7 +60,9 @@ window.presentationData = [
                 name: "Diseño Web",
                 topics: [
                     { title: "Introducción al Diseño Web", file: "III_BTP_A/introduccion_diseno_web.html" },
-                    { title: "HTML y CSS - Terminología básica", file: "III_BTP_A/terminologia_basica_html_css.html" }
+                    { title: "HTML y CSS - Terminología básica", file: "III_BTP_A/terminologia_basica_html_css.html" },
+                    { title: "Hipervínculos e imágenes", file: "III_BTP_A/hipervinculos_imagenes.html" },
+                    { title: "Listas y comentarios en HTML", file: "III_BTP_A/listas_comentarios_html.html" }
                 ]
             }
             /* {

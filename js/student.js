@@ -35,6 +35,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFolderId = null;
     let activeUploads = 0;
 
+    function formatDate(isoString) {
+        if (!isoString) return 'N/A';
+        try {
+            const date = new Date(isoString);
+            if (isNaN(date.getTime())) return isoString;
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const year = date.getUTCFullYear();
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return isoString;
+        }
+    }
+
     // Función para obtener Tareas y Exámenes
     async function fetchAllActivities() {
         if (!tasksList) return;
@@ -56,7 +70,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 allActivities.push(...examsResult.data.map(exam => ({ ...exam, type: 'Examen' })));
             }
 
-            allActivities.sort((a, b) => new Date(a.fechaLimite) - new Date(b.fechaLimite));
+            // Ordenar: No entregadas primero, luego por fecha límite (ascendente)
+            allActivities.sort((a, b) => {
+                const deliveredA = !!a.entrega;
+                const deliveredB = !!b.entrega;
+
+                if (deliveredA !== deliveredB) {
+                    return deliveredA ? 1 : -1; // false (no entregada) viene antes que true
+                }
+
+                return new Date(a.fechaLimite) - new Date(b.fechaLimite);
+            });
+
             renderActivities(allActivities);
 
         } catch (error) {
@@ -123,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <h3 class="text-lg font-bold">${activity.titulo} <span class="text-xs font-normal text-gray-500">(${activity.type})</span></h3>
                             <p class="text-sm text-gray-500 mb-2"><strong>Asignatura:</strong> ${activity.asignatura || 'No especificada'}</p>
                         </div>
-                        <span class="text-sm font-semibold text-gray-600">${activity.fechaLimite}</span>
+                        <span class="text-sm font-semibold text-gray-600">${formatDate(activity.fechaLimite)}</span>
                     </div>
                     <p class="text-gray-700 mt-2">${activity.descripcion || 'Sin descripción.'}</p>
                     <div class="mt-4">
