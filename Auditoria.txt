@@ -72,3 +72,10 @@ TAREA: [A-38] Actualización de Lógica de Autenticación, UI y Soporte iOS PWA
   · No existe lógica para la generación de Diagramas de Flujo (botón sin función).
   · Faltan operadores avanzados (MOD, RC, ABS, etc.).
 - Acción: Implementar I/O de archivos .psc, soporte para arreglos y funciones, y generador de diagramas de flujo SVG.
+
+AUDITORÍA DE FUNCIONALIDAD PSeInt (25/01/2026)
+=============================================
+1. [H-10] Fallo en Estructura SEGUN: El parser actual de SEGUN no detecta correctamente el fin de un bloque de caso si hay múltiples sentencias, lo que causa que solo se ejecute la primera sentencia del caso o que se salte sentencias importantes.
+2. [H-11] Visualización de Diagramas de Flujo Básica: El generador de diagramas de flujo es puramente lineal y no representa visualmente las ramas de decisión (SI) ni los bucles, lo que limita su utilidad pedagógica.
+3. [H-12] Operadores Multi-carácter: Se detectó que algunos operadores como <> o >= podrían ser interpretados incorrectamente si no se manejan como tokens únicos en el Tokenizer principal (aunque el tokenizeRaw parece manejarlos, hay que asegurar consistencia).
+4. [H-13] Espaciado en ESCRIBIR: PSeInt añade un espacio entre argumentos en Escribir si se usan comas. Actualmente el simulador concatena sin espacios.

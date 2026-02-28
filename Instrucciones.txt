@@ -45,3 +45,13 @@ ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
 - Funciones de edición (Undo/Redo, Cortar/Copiar/Pegar) totalmente operativas.
 
 (Tareas anteriores A-13 a A-37 omitidas para brevedad, ver ChangesLogs.txt para detalles)
+
+TAREA: [A-44]
+TÍTULO: Parche de Estabilidad y Robustez del Intérprete
+ÁREA: Frontend / Lógica
+PRIORIDAD: ALTA
+ESTADO: PENDIENTE
+- Corregir el parser de la estructura SEGUN para manejar múltiples sentencias por caso.
+- Mejorar el Tokenizer para asegurar el manejo correcto de todos los operadores relacionales.
+- Ajustar el comando ESCRIBIR para que coincida con el comportamiento de espaciado de PSeInt.
+- Implementar una mejora visual básica en los diagramas de flujo para nodos de decisión.

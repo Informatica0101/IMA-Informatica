@@ -981,17 +981,38 @@ FinAlgoritmo</textarea>
             defs.appendChild(marker);
             svg.appendChild(defs);
 
-            program.forEach(stmt => {
-                switch(stmt.type) {
-                    case 'PROCESO_START': drawNode(stmt.name, 'start'); break;
-                    case 'PROCESO_END': drawNode('Fin', 'start'); break;
-                    case 'ESCRIBIR': drawNode('Escribir...', 'io'); break;
-                    case 'LEER': drawNode('Leer...', 'io'); break;
-                    case 'ASSIGN': drawNode(stmt.variable + ' <- ...', 'process'); break;
-                    case 'SI': drawNode('¿' + stmt.type + '?', 'decision'); break;
-                    case 'MIENTRAS': drawNode('Mientras...', 'decision'); break;
-                }
-            });
+            const renderBlock = (block) => {
+                block.forEach(stmt => {
+                    switch(stmt.type) {
+                        case 'PROCESO_START': drawNode(stmt.name, 'start'); break;
+                        case 'PROCESO_END': drawNode('Fin', 'start'); break;
+                        case 'ESCRIBIR': drawNode('Escribir...', 'io'); break;
+                        case 'LEER': drawNode('Leer...', 'io'); break;
+                        case 'ASSIGN': drawNode(stmt.variable + ' <- ...', 'process'); break;
+                        case 'SI':
+                            drawNode('¿Si?', 'decision');
+                            renderBlock(stmt.thenBranch);
+                            if (stmt.elseBranch.length > 0) {
+                                renderBlock(stmt.elseBranch);
+                            }
+                            break;
+                        case 'MIENTRAS':
+                            drawNode('¿Mientras?', 'decision');
+                            renderBlock(stmt.body);
+                            break;
+                        case 'PARA':
+                            drawNode('¿Para?', 'decision');
+                            renderBlock(stmt.body);
+                            break;
+                        case 'REPETIR':
+                            renderBlock(stmt.body);
+                            drawNode('¿Hasta?', 'decision');
+                            break;
+                    }
+                });
+            };
+
+            renderBlock(program);
 
             container.appendChild(svg);
             document.getElementById('flowchartOverlay').style.display = 'flex';
@@ -1051,7 +1072,9 @@ FinAlgoritmo</textarea>
                     'mientras', 'hacer', 'finmientras',
                     'para', 'hasta', 'con', 'paso', 'finpara',
                     'dimension', 'mod', 'y', 'o', 'no',
-                    'funcion', 'finfuncion', 'subproceso', 'finsubproceso', 'retorno'
+                    'funcion', 'finfuncion', 'subproceso', 'finsubproceso', 'retorno',
+                    'segun', 'hacer', 'finsegun', 'de', 'otro', 'modo',
+                    'verdadero', 'falso', 'que', 'repetir'
                 ]);
                 this.types = new Set(['entero', 'real', 'logico', 'caracter', 'texto', 'cadena']);
             }
@@ -1086,9 +1109,9 @@ FinAlgoritmo</textarea>
                         }
                         const lowerId = id.toLowerCase();
                         if (this.keywords.has(lowerId)) {
-                            tokens.push({ type: 'KEYWORD', value: id });
+                            this.tokens.push({ type: 'KEYWORD', value: lowerId });
                         } else if (this.types.has(lowerId)) {
-                            tokens.push({ type: 'TYPE', value: id });
+                            this.tokens.push({ type: 'TYPE', value: lowerId });
                         } else {
                             tokens.push({ type: 'IDENTIFIER', value: id });
                         }
@@ -1194,15 +1217,20 @@ FinAlgoritmo</textarea>
 
                     if (/[+\-*/%^=<>!]/.test(char)) {
                         let op = char;
-                        if ((char === '<' || char === '>' || char === '!') && this.code[this.pos + 1] === '=') {
-                            op += this.code[++this.pos];
+                        const next = this.code[this.pos + 1];
+                        if (char === '<' && next === '>') {
+                            op = '<>';
+                            this.pos++;
+                        } else if ((char === '<' || char === '>' || char === '!' || char === '=') && next === '=') {
+                            op += '=';
+                            this.pos++;
                         }
                         this.tokens.push({ type: 'OPERATOR', value: op });
                         this.pos++;
                         continue;
                     }
 
-                    if (/[(),;[\]]/.test(char)) {
+                    if (/[():,;[\]]/.test(char)) {
                         this.tokens.push({ type: 'PUNCTUATION', value: char });
                         this.pos++;
                         continue;
@@ -1241,6 +1269,9 @@ FinAlgoritmo</textarea>
             }
 
             parseStatement() {
+                // Skip semicolons between statements
+                while (this.peek() && this.peek().type === 'PUNCTUATION' && this.peek().value === ';') this.pos++;
+
                 const token = this.peek();
                 if (!token) return null;
 
@@ -1414,7 +1445,7 @@ FinAlgoritmo</textarea>
                         this.match('PUNCTUATION', ':');
                         const body = [];
                         // Collect statements until next case or De Otro Modo or FinSegun
-                        while (this.peek() && !(this.peek().type === 'KEYWORD' && (this.peek().value === 'de' || this.peek().value === 'finsegun')) && this.peek().type !== 'NUMBER' && this.peek().type !== 'STRING') {
+                        while (this.peek() && !this.isEndOfCase()) {
                              const stmt = this.parseStatement();
                              if (stmt) body.push(stmt); else this.pos++;
                         }
@@ -1422,7 +1453,6 @@ FinAlgoritmo</textarea>
                     }
                 }
                 this.match('KEYWORD', 'finsegun');
-                this.match('PUNCTUATION', ';');
                 return { type: 'SEGUN', variable, cases, otherwise };
             }
 
@@ -1489,6 +1519,30 @@ FinAlgoritmo</textarea>
                 return { type: 'ASSIGN', variable, indices, expression: expr };
             }
 
+            isEndOfCase() {
+                let i = 0;
+                const next = () => this.tokens[this.pos + i];
+                // Skip semicolons
+                while (next() && next().type === 'PUNCTUATION' && next().value === ';') i++;
+
+                const t = next();
+                if (!t) return true;
+                if (t.type === 'KEYWORD' && (t.value === 'de' || t.value === 'finsegun')) return true;
+
+                if (['NUMBER', 'STRING', 'IDENTIFIER'].includes(t.type)) {
+                    let j = i + 1;
+                    // Skip multiple values separated by commas
+                    while (this.tokens[this.pos + j]) {
+                        const token = this.tokens[this.pos + j];
+                        if (token.type === 'PUNCTUATION' && token.value === ':') return true;
+                        if (token.type === 'PUNCTUATION' && token.value === ',') { j++; continue; }
+                        if (['NUMBER', 'STRING', 'IDENTIFIER'].includes(token.type)) { j++; continue; }
+                        break;
+                    }
+                }
+                return false;
+            }
+
             parseExpression() {
                 return this.parseLogical();
             }
@@ -1546,6 +1600,9 @@ FinAlgoritmo</textarea>
                 const token = this.consume();
                 if (token.type === 'NUMBER' || token.type === 'STRING') {
                     return { type: 'LITERAL', valueType: token.type, value: token.value };
+                }
+                if (token.type === 'KEYWORD' && (token.value === 'verdadero' || token.value === 'falso')) {
+                    return { type: 'LITERAL', valueType: 'LOGICO', value: token.value === 'verdadero' };
                 }
                 if (token.type === 'IDENTIFIER') {
                     const next = this.peek();
@@ -1630,9 +1687,9 @@ FinAlgoritmo</textarea>
                         }
                         break;
                     case 'ESCRIBIR':
-                        let out = '';
-                        for (const e of stmt.expressions) out += await this.evaluate(e);
-                        this.print(out);
+                        const results = [];
+                        for (const e of stmt.expressions) results.push(await this.evaluate(e));
+                        this.print(results.join(' '));
                         break;
                     case 'LEER':
                         for (const v of stmt.variables) {
