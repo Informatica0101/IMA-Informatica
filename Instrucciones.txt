@@ -88,6 +88,16 @@ FLUJO PRINCIPAL DE TRABAJO
     - Mover la tarea ejecutada a:
       -> "TAREAS PENDIENTES DE REVISIÓN"
 
+TAREA: [A-42]
+TÍTULO: Paridad Visual y Lógica con PSeInt Simulator
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Rediseño de UI para imitar la interfaz clásica de PSeInt (Paneles laterales, toolbar superior).
+- Implementación de Intérprete de Pseudocódigo real (Tokenizer, Parser, Execution Engine).
+- Soporte para comandos Escribir, Leer (con entrada interactiva), Definir y Asignación (<-).
+- Sincronización dinámica de la Lista de Variables con el estado de ejecución.
+
 12. COMMIT
     - Realizar UN SOLO commit por ciclo completo.
     - El commit DEBE reflejar EXACTAMENTE
@@ -285,6 +295,16 @@ ESTADO: PENDIENTE DE REVISIÓN
 - Versión de sistema elevada a v10.
 
 TAREAS PENDIENTES DE REVISIÓN
+
+TAREA: [A-42]
+TÍTULO: Paridad Visual y Lógica con PSeInt Simulator
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Rediseño de UI para imitar la interfaz clásica de PSeInt (Paneles laterales, toolbar superior).
+- Implementación de Intérprete de Pseudocódigo real (Tokenizer, Parser, Execution Engine).
+- Soporte para comandos Escribir, Leer (con entrada interactiva), Definir y Asignación (<-).
+- Sincronización dinámica de la Lista de Variables con el estado de ejecución.
 ________________________________________________________________________________________________
 
 TAREA: [A-37]
@@ -366,6 +386,16 @@ ESTADO: MEJORADA (PENDIENTE DE REVISIÓN)
 - Se enriquecieron las definiciones de Algoritmo y Programa utilizando múltiples perspectivas del material fuente.
 - Se integraron diagramas visuales del repositorio para apoyar los conceptos técnicos.
 TAREAS PENDIENTES
+
+TAREA: [A-42]
+TÍTULO: Paridad Visual y Lógica con PSeInt Simulator
+ÁREA: Frontend / Lógica / UI
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Rediseño de UI para imitar la interfaz clásica de PSeInt (Paneles laterales, toolbar superior).
+- Implementación de Intérprete de Pseudocódigo real (Tokenizer, Parser, Execution Engine).
+- Soporte para comandos Escribir, Leer (con entrada interactiva), Definir y Asignación (<-).
+- Sincronización dinámica de la Lista de Variables con el estado de ejecución.
 ________________________________________________________________________________________________
 
 TAREA: [A-37]

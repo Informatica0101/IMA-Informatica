@@ -49,3 +49,14 @@ TAREA: [A-38] Actualización de Lógica de Autenticación, UI y Soporte iOS PWA
   · Desalineación vertical en el menú de navegación (items-top vs items-center).
   · Falta de iconos táctiles para Apple.
 - Acción: Aplicar items-center en nav, añadir <link rel="apple-touch-icon">, ajustar mt- de contenedores.
+
+-------------------------------------------------------------------
+6. ARCHIVO: pseudocode.html
+-------------------------------------------------------------------
+- Estado: Simulación básica, UI no alineada con PSeInt oficial.
+- Hallazgos:
+  · El layout utiliza un diseño moderno con gradientes y bordes redondeados, muy diferente a la GUI clásica de PSeInt.
+  · La lógica de ejecución en el script integrado es puramente simulativa (hardcoded strings).
+  · Los paneles de "Comandos", "Variables" y "Operadores" no están organizados según el estándar de PSeInt.
+  · El editor es un textarea básico sin resaltado de sintaxis dinámico ni numeración de líneas.
+- Acción: Rediseñar UI para paridad visual con PSeInt, implementar un intérprete de pseudocódigo real y reestructurar paneles.
