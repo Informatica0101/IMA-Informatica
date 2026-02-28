@@ -53,11 +53,56 @@
 
         .menu-item {
             cursor: pointer;
-            padding: 2px 5px;
+            padding: 2px 8px;
+            position: relative;
+            user-select: none;
         }
 
         .menu-item:hover {
             background-color: #ccc;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 180px;
+            box-shadow: 2px 4px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+            top: 100%;
+            left: 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .menu-item:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background-color: #0066cc;
+            color: white;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #ccc;
+            margin: 4px 0;
+        }
+
+        .shortcut {
+            font-size: 11px;
+            color: #666;
+            margin-left: 20px;
+        }
+        .dropdown-item:hover .shortcut {
+            color: #eee;
         }
 
         .toolbar {
@@ -209,15 +254,9 @@
             padding: 10px 5px;
             text-align: right;
             color: #999;
-            font-family: 'Consolas', 'Courier New', monospace;
-            line-height: 1.5;
+            font-family: 'Consolas', 'Monaco', 'Lucida Console', 'Courier New', monospace;
+            line-height: 21px;
             user-select: none;
-        }
-
-        .code-area {
-            flex: 1;
-            position: relative;
-            overflow: auto;
         }
 
         #codeEditor, #syntaxHighlight {
@@ -225,24 +264,33 @@
             padding: 10px;
             width: 100%;
             height: 100%;
-            font-family: 'Consolas', 'Courier New', monospace;
+            font-family: 'Consolas', 'Monaco', 'Lucida Console', 'Courier New', monospace;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 21px; /* Fixed line height for better alignment */
             tab-size: 4;
             white-space: pre;
+            word-wrap: normal;
             position: absolute;
             top: 0;
             left: 0;
             border: none;
             outline: none;
+            box-sizing: border-box;
+            text-rendering: auto;
+            -webkit-font-smoothing: subpixel-antialiased;
+            letter-spacing: normal;
+            word-spacing: normal;
+            font-variant-ligatures: none;
         }
 
         #codeEditor {
             background: transparent;
             color: transparent;
+            -webkit-text-fill-color: transparent;
             caret-color: black;
             resize: none;
             z-index: 2;
+            overflow: auto;
         }
 
         #syntaxHighlight {
@@ -250,6 +298,15 @@
             color: black;
             z-index: 1;
             pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* Ensure scroll alignment */
+        .code-area {
+            flex: 1;
+            position: relative;
+            overflow: auto;
+            background: white;
         }
 
         /* Syntax Highlighting Classes */
@@ -408,11 +465,56 @@
 <body>
 
     <nav class="menu-bar">
-        <div class="menu-item">Archivo</div>
-        <div class="menu-item">Editar</div>
-        <div class="menu-item">Configurar</div>
-        <div class="menu-item">Ejecutar</div>
-        <div class="menu-item">Ayuda</div>
+        <div class="menu-item">
+            Archivo
+            <div class="dropdown-content">
+                <div class="dropdown-item" onclick="newProject()">Nuevo <span class="shortcut">Ctrl+N</span></div>
+                <div class="dropdown-item" onclick="triggerOpenFile()">Abrir... <span class="shortcut">Ctrl+O</span></div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="saveToFile()">Guardar <span class="shortcut">Ctrl+S</span></div>
+                <div class="dropdown-item" onclick="saveToFile()">Guardar como...</div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="window.close()">Salir</div>
+            </div>
+        </div>
+        <div class="menu-item">
+            Editar
+            <div class="dropdown-content">
+                <div class="dropdown-item" onclick="undo()">Deshacer <span class="shortcut">Ctrl+Z</span></div>
+                <div class="dropdown-item" onclick="redo()">Rehacer <span class="shortcut">Ctrl+Y</span></div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="cut()">Cortar <span class="shortcut">Ctrl+X</span></div>
+                <div class="dropdown-item" onclick="copy()">Copiar <span class="shortcut">Ctrl+C</span></div>
+                <div class="dropdown-item" onclick="paste()">Pegar <span class="shortcut">Ctrl+V</span></div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="selectAll()">Seleccionar todo <span class="shortcut">Ctrl+E</span></div>
+            </div>
+        </div>
+        <div class="menu-item">
+            Configurar
+            <div class="dropdown-content">
+                <div class="dropdown-item">Opciones del Lenguaje (Perfiles)...</div>
+                <div class="dropdown-item">Presentación...</div>
+            </div>
+        </div>
+        <div class="menu-item">
+            Ejecutar
+            <div class="dropdown-content">
+                <div class="dropdown-item" onclick="runAlgorithm()">Ejecutar <span class="shortcut">F9</span></div>
+                <div class="dropdown-item" onclick="runStepByStep()">Ejecutar paso a paso <span class="shortcut">F10</span></div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="drawFlowchart()">Ver Diagrama de Flujo <span class="shortcut">F7</span></div>
+            </div>
+        </div>
+        <div class="menu-item">
+            Ayuda
+            <div class="dropdown-content">
+                <div class="dropdown-item">Índice <span class="shortcut">F1</span></div>
+                <div class="dropdown-item">Ejemplos...</div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item">Acerca de PSeInt...</div>
+            </div>
+        </div>
     </nav>
 
     <div class="toolbar">
@@ -422,15 +524,15 @@
         <button class="tool-btn" title="Guardar" onclick="saveToFile()"><span>💾</span></button>
         <button class="tool-btn" title="Guardar como..." onclick="saveToFile()"><span>💾+</span></button>
         <div class="separator"></div>
-        <button class="tool-btn"><span>↩️</span></button>
-        <button class="tool-btn"><span>↪️</span></button>
+        <button class="tool-btn" title="Deshacer" onclick="undo()"><span>↩️</span></button>
+        <button class="tool-btn" title="Rehacer" onclick="redo()"><span>↪️</span></button>
         <div class="separator"></div>
-        <button class="tool-btn"><span>✂️</span></button>
-        <button class="tool-btn"><span>📋</span></button>
-        <button class="tool-btn"><span>📥</span></button>
+        <button class="tool-btn" title="Cortar" onclick="cut()"><span>✂️</span></button>
+        <button class="tool-btn" title="Copiar" onclick="copy()"><span>📋</span></button>
+        <button class="tool-btn" title="Pegar" onclick="paste()"><span>📥</span></button>
         <div class="separator"></div>
         <button class="tool-btn" title="Ejecutar" onclick="runAlgorithm()"><span style="color: green;">▶</span></button>
-        <button class="tool-btn" title="Ejecutar paso a paso"><span>👣</span></button>
+        <button class="tool-btn" title="Ejecutar paso a paso" onclick="runStepByStep()"><span>👣</span></button>
         <button class="tool-btn" title="Dibujar diagrama de flujo" onclick="drawFlowchart()"><span>📊</span></button>
     </div>
 
@@ -639,7 +741,7 @@ FinAlgoritmo</textarea>
                 }
             });
 
-            highlight.innerHTML = html + (code.endsWith('\n') ? ' ' : '');
+            highlight.innerHTML = html + (code.endsWith('\n') ? '\n ' : '');
         }
 
         function insertCode(type) {
@@ -678,7 +780,8 @@ FinAlgoritmo</textarea>
                 const end = editor.selectionEnd;
                 const text = editor.value;
                 editor.value = text.substring(0, start) + snippet + text.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + snippet.indexOf('\n') > -1 ? start + snippet.indexOf('\n') + 2 : start + snippet.length;
+                const nlIndex = snippet.indexOf('\n');
+                editor.selectionStart = editor.selectionEnd = (nlIndex > -1) ? start + nlIndex + 2 : start + snippet.length;
                 editor.focus();
                 updateEditor();
             }
@@ -696,6 +799,93 @@ FinAlgoritmo</textarea>
 
         function triggerOpenFile() {
             document.getElementById('fileInput').click();
+        }
+
+        function undo() { document.execCommand('undo'); }
+        function redo() { document.execCommand('redo'); }
+        async function cut() {
+            const selectedText = editor.value.substring(editor.selectionStart, editor.selectionEnd);
+            if (selectedText) {
+                await navigator.clipboard.writeText(selectedText);
+                const start = editor.selectionStart;
+                editor.value = editor.value.substring(0, start) + editor.value.substring(editor.selectionEnd);
+                editor.selectionStart = editor.selectionEnd = start;
+                updateEditor();
+            }
+        }
+        async function copy() {
+            const selectedText = editor.value.substring(editor.selectionStart, editor.selectionEnd);
+            if (selectedText) await navigator.clipboard.writeText(selectedText);
+        }
+        async function paste() {
+            const text = await navigator.clipboard.readText();
+            const start = editor.selectionStart;
+            editor.value = editor.value.substring(0, start) + text + editor.value.substring(editor.selectionEnd);
+            editor.selectionStart = editor.selectionEnd = start + text.length;
+            updateEditor();
+        }
+        function selectAll() {
+            editor.select();
+        }
+
+        let isStepping = false;
+        let stepPC = 0;
+        let stepProgram = [];
+        let stepInterpreter = null;
+
+        async function runStepByStep() {
+            showBottomTab('consola');
+            clearConsole();
+            printToConsole('*** Iniciando ejecución paso a paso... ***');
+
+            const code = editor.value;
+            const tokenizer = new Tokenizer(code);
+            const tokens = tokenizer.tokenize();
+            const parser = new Parser(tokens);
+            stepProgram = parser.parse();
+
+            stepInterpreter = new Interpreter(
+                (text) => printToConsole(text),
+                async (promptText) => {
+                    document.getElementById('inputLabel').textContent = promptText;
+                    document.getElementById('inputOverlay').style.display = 'flex';
+                    document.getElementById('userInput').focus();
+                    return new Promise(resolve => {
+                        inputResolver = resolve;
+                    });
+                },
+                (vars) => {
+                    const list = document.getElementById('variableList');
+                    list.innerHTML = '';
+                    for (const [name, data] of Object.entries(vars)) {
+                        const div = document.createElement('div');
+                        div.style.marginBottom = '5px';
+                        let valStr = data.value;
+                        if (data.type === 'arreglo') valStr = JSON.stringify(data.value);
+                        div.innerHTML = `<b>${name}</b>: ${data.type} = ${valStr}`;
+                        list.appendChild(div);
+                    }
+                }
+            );
+
+            // Scan functions first
+            for (const stmt of stepProgram) {
+                if (stmt.type === 'FUNCTION_DEF') {
+                    stepInterpreter.functions[stmt.name.toLowerCase()] = stmt;
+                }
+            }
+
+            stepInterpreter.program = stepProgram;
+            stepInterpreter.pc = 0;
+
+            // In a real PSeInt we would highlight the line,
+            // here we'll just run one step and wait for user click on "👣" or "▶" maybe?
+            // Let's implement a simple auto-step with delay for now
+            while (stepInterpreter.pc < stepInterpreter.program.length) {
+                await stepInterpreter.step();
+                await new Promise(r => setTimeout(r, 500)); // 500ms between steps
+            }
+            printToConsole('*** Ejecución Finalizada. ***');
         }
 
         function closeFlowchart() {
@@ -1727,6 +1917,29 @@ FinAlgoritmo</textarea>
 
         // Initialize
         updateEditor();
+
+        // Keyboard shortcuts
+        window.addEventListener('keydown', e => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key.toLowerCase()) {
+                    case 'n': e.preventDefault(); newProject(); break;
+                    case 'o': e.preventDefault(); triggerOpenFile(); break;
+                    case 's': e.preventDefault(); saveToFile(); break;
+                    case 'z': e.preventDefault(); undo(); break;
+                    case 'y': e.preventDefault(); redo(); break;
+                    case 'x': cut(); break; // Default often works but we have custom
+                    case 'c': copy(); break;
+                    case 'v': paste(); break;
+                    case 'e': e.preventDefault(); selectAll(); break;
+                }
+            } else {
+                switch(e.key) {
+                    case 'F9': e.preventDefault(); runAlgorithm(); break;
+                    case 'F10': e.preventDefault(); runStepByStep(); break;
+                    case 'F7': e.preventDefault(); drawFlowchart(); break;
+                }
+            }
+        });
 
         // PWA update logic
         if ('serviceWorker' in navigator) {

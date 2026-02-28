@@ -680,3 +680,14 @@ ARCHIVO: pseudocode.html
   · Soporte para estructuras de control: Si-Entonces, Mientras, Para, Repetir, Segun.
   · Sistema de E/S interactivo: Comando Escribir (consola) y Leer (modal de entrada).
 - Sincronización automática de la Lista de Variables con el estado interno del intérprete durante la ejecución.
+
+25/01/2026 (Rework Completo de Simulador PSeInt)
+- Archivo: pseudocode.html
+  - Implementación de sistema de menús desplegables (Archivo, Editar, Configurar, Ejecutar, Ayuda) con submenús, atajos de teclado y estilos visuales fieles a PSeInt.
+  - Corrección Crítica de Alineación: Se estandarizó el CSS de #codeEditor y #syntaxHighlight (font-family, line-height: 21px, padding, box-sizing) para eliminar el desfase entre el cursor del textarea y el texto resaltado.
+  - Implementación de Funciones de Edición: Se añadieron handlers funcionales para Deshacer, Rehacer, Cortar, Copiar, Pegar y Seleccionar Todo.
+  - Gestión de Archivos: Implementadas funciones de Nuevo Proyecto, Abrir archivo .psc y Guardar/Guardar como mediante Blobs.
+  - Ejecución Paso a Paso: Se implementó un modo de ejecución secuencial con retardos automáticos para simular el rastreo de línea de PSeInt.
+  - Atajos de Teclado Globales: Se mapearon combinaciones de teclas (Ctrl+N, O, S, Z, Y, X, C, V, E y teclas de función F1, F7, F9, F10) a las acciones correspondientes.
+  - Mejora en Inserción de Snippets: Se corrigió un error de precedencia en la función insertCode() que causaba posicionamiento incorrecto del cursor tras insertar bloques multilínea.
+  - Robustecimiento del Intérprete: Se añadió pre-escaneo de funciones (hoisting) y soporte para evaluación asíncrona de expresiones, permitiendo llamadas a funciones y lecturas de datos integradas en expresiones complejas.
