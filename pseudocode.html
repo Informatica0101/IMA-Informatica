@@ -1337,8 +1337,13 @@ FinAlgoritmo</div>
                             str += c;
                             this.updatePos(c);
                         }
-                        if (this.pos < this.code.length) this.updatePos(this.code[this.pos]);
-                        tokens.push({ type: 'STRING', value: str, originalValue: quote + str + quote, startPos, line: startLine, col: startCol });
+                        let closed = false;
+                        if (this.pos < this.code.length) {
+                            this.updatePos(this.code[this.pos]);
+                            closed = true;
+                        }
+                        const originalValue = quote + str + (closed ? quote : '');
+                        tokens.push({ type: 'STRING', value: str, originalValue: originalValue, startPos, line: startLine, col: startCol });
                         continue;
                     }
 
