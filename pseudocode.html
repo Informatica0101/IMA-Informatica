@@ -724,15 +724,16 @@ FinAlgoritmo</div>
                 parser.parse();
                 document.getElementById('quickHelp').innerHTML = '<span style="color: green">✓ No hay errores de sintaxis</span>';
             } catch (e) {
-                const lastToken = tokens[parser.pos] || tokens[tokens.length-1];
-                if (lastToken) {
-                    syntaxErrors.push({
-                        line: lastToken.line,
-                        col: lastToken.col,
-                        message: e.message
-                    });
-                    document.getElementById('quickHelp').innerHTML = `<span style="color: red">✖ Error: ${e.message} (Línea ${lastToken.line})</span>`;
-                }
+                const line = e.line || (tokens[parser.pos] ? tokens[parser.pos].line : (tokens.length > 0 ? tokens[tokens.length-1].line : 1));
+                const col = tokens[parser.pos] ? tokens[parser.pos].col : (tokens.length > 0 ? tokens[tokens.length-1].col : 1);
+
+                syntaxErrors.push({
+                    line: line,
+                    col: col,
+                    message: e.message,
+                    type: e.type || "Sintáctico"
+                });
+                document.getElementById('quickHelp').innerHTML = `<span style="color: red">✖ Error ${e.type || "Sintáctico"}: ${e.message} (Línea ${line})</span>`;
             }
         }
 
@@ -771,8 +772,9 @@ FinAlgoritmo</div>
 
             let html = '';
             tokens.forEach(token => {
-                const escaped = token.value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                const isError = syntaxErrors.some(e => e.line === token.line && token.col >= e.col && token.col < e.col + token.value.length);
+                const valStr = (token.originalValue || token.value).toString();
+                const escaped = valStr.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const isError = syntaxErrors.some(e => e.line === token.line && token.col >= e.col && token.col < e.col + valStr.length);
                 const errorClass = isError ? ' sh-error' : '';
 
                 switch(token.type) {
@@ -945,13 +947,19 @@ FinAlgoritmo</div>
         async function runStepByStep() {
             showBottomTab('consola');
             clearConsole();
-            printToConsole('*** Iniciando ejecución paso a paso... ***');
 
             const code = editor.innerText;
             const tokenizer = new Tokenizer(code);
             const tokens = tokenizer.tokenize();
             const parser = new Parser(tokens);
-            stepProgram = parser.parse();
+            try {
+                stepProgram = parser.parse();
+            } catch (e) {
+                printToConsole(`ERROR ${e.type || "Sintáctico"}: ${e.message} (Línea ${e.line || '?'})`);
+                return;
+            }
+
+            printToConsole('*** Iniciando ejecución paso a paso... ***');
 
             stepInterpreter = new Interpreter(
                 (text) => printToConsole(text),
@@ -1293,11 +1301,16 @@ FinAlgoritmo</div>
                         }
                         const lowerId = id.toLowerCase();
                         if (this.keywords.has(lowerId)) {
+                            // Only treat 'y' and 'o' as keywords if they are operators,
+                            // but in PSeInt they are reserved. To fix the "y <- 10" bug,
+                            // we keep them as keywords but the Parser must handle them if they look like assignments.
+                            // Actually, a better fix is to allow identifiers to be case-insensitive.
                             tokens.push({ type: 'KEYWORD', value: lowerId, originalValue: id, startPos, line: startLine, col: startCol });
                         } else if (this.types.has(lowerId)) {
                             tokens.push({ type: 'TYPE', value: lowerId, originalValue: id, startPos, line: startLine, col: startCol });
                         } else {
-                            tokens.push({ type: 'IDENTIFIER', value: id, startPos, line: startLine, col: startCol });
+                            // Standardize identifiers to lowercase for case-insensitivity
+                            tokens.push({ type: 'IDENTIFIER', value: lowerId, originalValue: id, startPos, line: startLine, col: startCol });
                         }
                         continue;
                     }
@@ -1357,8 +1370,11 @@ FinAlgoritmo</div>
                         continue;
                     }
 
+                    // Report unknown symbols as Lexical Errors
+                    const unknownChar = char;
                     this.pos++;
-                    this.col++; // Skip unknown
+                    this.col++;
+                    tokens.push({ type: 'ERROR', value: unknownChar, startPos, line: startLine, col: startCol, message: `Carácter desconocido: ${unknownChar}` });
                 }
             this.tokens = tokens;
             return tokens;
@@ -1388,8 +1404,13 @@ FinAlgoritmo</div>
             expect(type, value) {
                 const token = this.match(type, value);
                 if (!token) {
-                    const found = this.peek() ? this.peek().value : 'EOF';
-                    throw new Error(`Se esperaba '${value || type}' pero se encontró '${found}'`);
+                    const foundToken = this.peek();
+                    const found = foundToken ? foundToken.value : 'EOF';
+                    const line = foundToken ? foundToken.line : (this.tokens.length > 0 ? this.tokens[this.tokens.length-1].line : 1);
+                    const error = new Error(`Se esperaba '${value || type}' pero se encontró '${found}'`);
+                    error.line = line;
+                    error.type = "Sintáctico";
+                    throw error;
                 }
                 return token;
             }
@@ -1401,7 +1422,17 @@ FinAlgoritmo</div>
                     if (stmt) {
                         program.push(stmt);
                     } else if (this.peek()) {
-                        throw new Error(`Sentencia no reconocida o bloque mal cerrado cerca de '${this.peek().value}'`);
+                        const token = this.peek();
+                        if (token.type === 'ERROR') {
+                            const error = new Error(token.message);
+                            error.line = token.line;
+                            error.type = "Léxico";
+                            throw error;
+                        }
+                        const error = new Error(`Sentencia no reconocida o bloque mal cerrado cerca de '${token.value}'`);
+                        error.line = token.line;
+                        error.type = "Sintáctico";
+                        throw error;
                     } else {
                         this.pos++;
                     }
@@ -1417,54 +1448,73 @@ FinAlgoritmo</div>
                 if (!token) return null;
 
                 // Explicitly check for unclosed blocks when reaching unexpected keywords
-                // Note: finalgoritmo and finproceso are top-level and handled below
                 if (token.type === 'KEYWORD' && ['sino', 'finsi', 'finmientras', 'finpara', 'hasta', 'finsegun', 'finfuncion', 'finsubproceso'].includes(token.value)) {
                     return null;
                 }
 
-                try {
-                    if (token.type === 'KEYWORD') {
-                        switch (token.value) {
-                        case 'algoritmo':
-                        case 'proceso':
-                            this.consume();
-                            const name = this.consume().value;
-                            return { type: 'PROCESO_START', name };
-                        case 'finalgoritmo':
-                        case 'finproceso':
-                            this.consume();
-                            return { type: 'PROCESO_END' };
-                        case 'definir':
-                            return this.parseDefinir();
-                        case 'escribir':
-                            return this.parseEscribir();
-                        case 'leer':
-                            return this.parseLeer();
-                        case 'si':
-                            return this.parseSi();
-                        case 'mientras':
-                            return this.parseMientras();
-                        case 'para':
-                            return this.parsePara();
-                        case 'repetir':
-                            return this.parseRepetir();
-                        case 'segun':
-                            return this.parseSegun();
-                        case 'dimension':
-                            return this.parseDimension();
-                            case 'funcion':
-                            case 'subproceso':
-                                return this.parseFunction();
+                if (token.type === 'KEYWORD') {
+                    switch (token.value) {
+                    case 'algoritmo':
+                    case 'proceso':
+                        this.consume();
+                        const nameToken = this.consume();
+                        return { type: 'PROCESO_START', name: nameToken.value };
+                    case 'finalgoritmo':
+                    case 'finproceso':
+                        this.consume();
+                        return { type: 'PROCESO_END' };
+                    case 'definir':
+                        return this.parseDefinir();
+                    case 'escribir':
+                        return this.parseEscribir();
+                    case 'leer':
+                        return this.parseLeer();
+                    case 'si':
+                        return this.parseSi();
+                    case 'mientras':
+                        return this.parseMientras();
+                    case 'para':
+                        return this.parsePara();
+                    case 'repetir':
+                        return this.parseRepetir();
+                    case 'segun':
+                        return this.parseSegun();
+                    case 'dimension':
+                        return this.parseDimension();
+                    case 'funcion':
+                    case 'subproceso':
+                        return this.parseFunction();
+                    }
+                }
+
+                if (token.type === 'IDENTIFIER' || (token.type === 'KEYWORD' && (token.value === 'y' || token.value === 'o'))) {
+                    // Peek ahead to find if there's an assignment operator to distinguish from standalone call
+                    let lookahead = 1;
+                    let isAssignment = false;
+
+                    if (this.tokens[this.pos + lookahead] && (this.tokens[this.pos+lookahead].value === '(' || this.tokens[this.pos+lookahead].value === '[')) {
+                        let depth = 1;
+                        lookahead++;
+                        while (this.pos + lookahead < this.tokens.length && depth > 0) {
+                            const t = this.tokens[this.pos + lookahead];
+                            if (t.value === '(' || t.value === '[') depth++;
+                            else if (t.value === ')' || t.value === ']') depth--;
+                            lookahead++;
                         }
                     }
 
-                    if (token.type === 'IDENTIFIER') {
-                        return this.parseAssignment();
+                    if (this.tokens[this.pos + lookahead] && (this.tokens[this.pos + lookahead].value === '<-' || this.tokens[this.pos + lookahead].value === '=')) {
+                        isAssignment = true;
                     }
-                } catch (e) {
-                    console.error("Error parsing statement:", e);
-                    this.pos++; // Skip faulty token
-                    return null;
+
+                    if (isAssignment) {
+                        return this.parseAssignment();
+                    } else {
+                        // Standalone call or expression
+                        const expr = this.parseExpression();
+                        this.match('PUNCTUATION', ';');
+                        return { type: 'CALL_STMT', expression: expr };
+                    }
                 }
 
                 return null;
@@ -1666,7 +1716,8 @@ FinAlgoritmo</div>
             }
 
             parseAssignment() {
-                const variable = this.consume().value;
+                const varToken = this.consume();
+                const variable = varToken.value;
                 let indices = null;
                 if (this.peek() && (this.peek().value === '[' || this.peek().value === '(')) {
                     this.consume(); // [ or (
@@ -1709,8 +1760,14 @@ FinAlgoritmo</div>
             }
 
             parseExpression() {
+                const startToken = this.peek();
                 const expr = this.parseLogical();
-                if (!expr) throw new Error("Se esperaba una expresión");
+                if (!expr) {
+                    const error = new Error("Se esperaba una expresión");
+                    error.line = startToken ? startToken.line : 0;
+                    error.type = "Sintáctico";
+                    throw error;
+                }
                 return expr;
             }
 
@@ -1768,8 +1825,16 @@ FinAlgoritmo</div>
             }
 
             parsePrimary() {
-                const token = this.consume();
+                const token = this.peek();
                 if (!token) return null;
+                if (token.type === 'KEYWORD' && (token.value === 'y' || token.value === 'o')) {
+                    // Treat 'y' and 'o' as identifiers if used in an expression where they aren't logic ops
+                    // (Actually the logical ops are handled in parseLogical, so if we are here,
+                    // it might be a variable named 'y')
+                    this.consume();
+                    return { type: 'LITERAL', valueType: 'IDENTIFIER', value: token.value };
+                }
+                this.consume();
                 if (token.type === 'NUMBER' || token.type === 'STRING') {
                     return { type: 'LITERAL', valueType: token.type, value: token.value };
                 }
@@ -1827,8 +1892,19 @@ FinAlgoritmo</div>
             async step() {
                 const stmt = this.program[this.pc];
                 if (!stmt) { this.pc++; return; }
+
+                // Infinite loop protection
+                if (!this._stepCount) this._stepCount = 0;
+                this._stepCount++;
+                if (this._stepCount > 100000) {
+                    throw new Error("Límite de ejecución excedido (posible bucle infinito)");
+                }
+
                 console.log('Executing:', stmt);
                 switch (stmt.type) {
+                    case 'CALL_STMT':
+                        await this.evaluate(stmt.expression);
+                        break;
                     case 'FUNCTION_DEF':
                         this.functions[stmt.name.toLowerCase()] = stmt;
                         break;
@@ -2052,9 +2128,11 @@ FinAlgoritmo</div>
                 let current = arrData.value;
                 for (let i = 0; i < indices.length - 1; i++) {
                     const idx = indices[i] - 1;
+                    if (!current || idx < 0 || idx >= current.length) throw new Error("Índice de arreglo fuera de rango");
                     current = current[idx];
                 }
                 const lastIdx = indices[indices.length - 1] - 1;
+                if (!current || lastIdx < 0 || lastIdx >= current.length) throw new Error("Índice de arreglo fuera de rango");
                 current[lastIdx] = value;
             }
 
@@ -2106,14 +2184,20 @@ FinAlgoritmo</div>
         function runAlgorithm() {
             showBottomTab('consola');
             clearConsole();
-            printToConsole('*** Ejecución Iniciada. ***');
 
             const code = editor.innerText;
             const tokenizer = new Tokenizer(code);
             const tokens = tokenizer.tokenize();
             const parser = new Parser(tokens);
-            const program = parser.parse();
+            let program;
+            try {
+                program = parser.parse();
+            } catch (e) {
+                printToConsole(`ERROR ${e.type || "Sintáctico"}: ${e.message} (Línea ${e.line || '?'})`);
+                return;
+            }
 
+            printToConsole('*** Ejecución Iniciada. ***');
             console.log('Program:', program);
 
             interpreter = new Interpreter(

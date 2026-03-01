@@ -1,0 +1,85 @@
+==================================================
+REPORTE DE REMEDIACIÓN TÉCNICA – pseudocodigo.html
+==================================================
+
+1. LISTA DE ERRORES CORREGIDOS
+------------------------------
+- [Léxico] Omisión silenciosa de símbolos desconocidos.
+- [Léxico/Sintáctico] Conflicto de palabras reservadas ('y', 'o') como identificadores.
+- [Sintáctico] Falta de soporte para llamadas a procedimientos independientes.
+- [Sintáctico] Manejo de errores permisivo (el Parser saltaba sentencias erróneas).
+- [Sintáctico] Sensibilidad a mayúsculas/minúsculas en identificadores.
+- [Semántico] Asignación silente en arreglos fuera de rango.
+- [Seguridad] Bloqueo del navegador por bucles infinitos.
+
+2. CAMBIOS REALIZADOS
+---------------------
+- Tokenizer: Ahora genera un token de tipo 'ERROR' ante caracteres desconocidos en lugar de ignorarlos.
+- Tokenizer: Normalización de todos los IDENTIFIER a minúsculas para lograr insensibilidad a mayúsculas.
+- Parser: Eliminación de bloques try-catch internos en parseStatement para evitar la ejecución de programas mal formados.
+- Parser: Implementación de detección de llamadas a procedimientos independientes mediante un algoritmo de lookahead.
+- Parser: Mejora en parsePrimary para permitir el uso de 'y' y 'o' como variables cuando el contexto no es una operación lógica.
+- Parser: Implementación de excepciones estructuradas que incluyen tipo de error y número de línea.
+- Interpreter: Adición de validaciones de límites en el método setArrayValue.
+- Interpreter: Implementación de un contador de pasos (_stepCount) con un límite de 100,000 para abortar bucles infinitos.
+- UI: Actualización de validateSyntax y runAlgorithm para capturar y mostrar errores estructurados bloqueando la ejecución.
+
+3. CÓDIGO ANTES / DESPUÉS (FRAGMENTOS)
+--------------------------------------
+
+[Detección de errores léxicos]
+ANTES:
+    this.pos++;
+    this.col++; // Skip unknown
+DESPUÉS:
+    const unknownChar = char;
+    this.pos++;
+    this.col++;
+    tokens.push({ type: 'ERROR', value: unknownChar, startPos, line: startLine, col: startCol, message: `Carácter desconocido: ${unknownChar}` });
+
+[Soporte para Procedimientos y Variables 'y'/'o']
+ANTES:
+    if (token.type === 'IDENTIFIER') { return this.parseAssignment(); }
+DESPUÉS:
+    if (token.type === 'IDENTIFIER' || (token.type === 'KEYWORD' && (token.value === 'y' || token.value === 'o'))) {
+        // ... Lógica de lookahead para distinguir asignación de llamada ...
+        if (isAssignment) return this.parseAssignment();
+        else {
+            const expr = this.parseExpression();
+            this.match('PUNCTUATION', ';');
+            return { type: 'CALL_STMT', expression: expr };
+        }
+    }
+
+[Protección contra Bucles Infinitos]
+ANTES:
+    async step() {
+        const stmt = this.program[this.pc];
+DESPUÉS:
+    async step() {
+        const stmt = this.program[this.pc];
+        if (!this._stepCount) this._stepCount = 0;
+        this._stepCount++;
+        if (this._stepCount > 100000) throw new Error("Límite de ejecución excedido (posible bucle infinito)");
+
+4. NUEVAS VALIDACIONES AGREGADAS
+--------------------------------
+- Validación formal de tokens inválidos.
+- Validación de cierre de bloques obligatoria antes de iniciar ejecución.
+- Validación de límites de escritura en arreglos.
+- Límite de seguridad en el tiempo de CPU del intérprete.
+
+5. PRUEBAS SUPERADAS
+--------------------
+✔ Conflict 'y' identifier: FUNCIONA (y <- 10 ya no rompe el parser).
+✔ Standalone Procedure: FUNCIONA (Soporta Saludar("Mundo") sin asignación).
+✔ Case Insensitivity: FUNCIONA (MiVar y mivar son la misma variable).
+✔ Array Bounds Write: FUNCIONA (Lanza error "Índice de arreglo fuera de rango").
+✔ Lexical Error detection: FUNCIONA (Detecta caracteres como '$').
+✔ Syntax Error - unclosed block: FUNCIONA (Se detiene y reporta falta de 'finsi').
+✔ Infinite Loop Protection: FUNCIONA (Aborta tras 100,000 pasos).
+
+6. ERRORES NO RESUELTOS
+-----------------------
+Ninguno de los hallazgos críticos de la auditoría quedó sin resolver. El intérprete es ahora significativamente más robusto y fiel al estándar PSeInt.
+==================================================
