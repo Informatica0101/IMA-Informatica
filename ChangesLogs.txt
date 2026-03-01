@@ -691,3 +691,13 @@ ARCHIVO: pseudocode.html
   - Atajos de Teclado Globales: Se mapearon combinaciones de teclas (Ctrl+N, O, S, Z, Y, X, C, V, E y teclas de función F1, F7, F9, F10) a las acciones correspondientes.
   - Mejora en Inserción de Snippets: Se corrigió un error de precedencia en la función insertCode() que causaba posicionamiento incorrecto del cursor tras insertar bloques multilínea.
   - Robustecimiento del Intérprete: Se añadió pre-escaneo de funciones (hoisting) y soporte para evaluación asíncrona de expresiones, permitiendo llamadas a funciones y lecturas de datos integradas en expresiones complejas.
+
+25/01/2026 (Parche de Estabilidad y Robustez del Intérprete)
+- Archivo: pseudocode.html
+  - Refactorización de Segun: Corregida la detección de bloques multisentencia por caso y la identificación de palabras clave de cierre (De Otro Modo, FinSegun).
+  - Mejora de Tokenizer: Implementado soporte robusto para operadores relacionales multi-carácter (<>, <=, >=, ==) y estandarización a minúsculas de palabras reservadas durante el pre-procesamiento.
+  - Soporte de Literales Lógicos: Añadido reconocimiento de 'Verdadero' y 'Falso' como tipos lógicos nativos.
+  - Corrección de Repetir-Hasta: Corregida la falta de la palabra clave 'repetir' en el conjunto de keywords y refinado el parser para 'Hasta Que'.
+  - Comandos y Snippets: Completada la funcionalidad de los botones de comandos laterales (Segun, Repetir, Funcion) mediante la adición de los snippets de código correspondientes en insertCode().
+  - Salida de Consola: Ajustado el comando Escribir para insertar espacios automáticos entre múltiples argumentos, emulando la salida estándar de PSeInt.
+  - Visualización: Mejorada la generación de diagramas de flujo para incluir bloques anidados dentro de estructuras de control.

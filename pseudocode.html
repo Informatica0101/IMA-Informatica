@@ -539,8 +539,8 @@
     <div class="main-layout">
         <!-- Left Panels -->
         <div class="side-panel" id="leftPanelToggle" onclick="toggleLeftPanel()">
-            <div class="vertical-text">lista de variables</div>
-            <div class="vertical-text">operadores y funciones</div>
+            <div class="vertical-text" onclick="setLeftPanelTab('variables')">lista de variables</div>
+            <div class="vertical-text" onclick="setLeftPanelTab('operadores')">operadores y funciones</div>
         </div>
         <div class="expanded-content hidden" id="leftPanel">
             <div class="panel-header">
@@ -674,6 +674,24 @@ FinAlgoritmo</textarea>
             toggle.classList.toggle('hidden');
         }
 
+        function setLeftPanelTab(tab) {
+            const title = document.getElementById('leftPanelTitle');
+            const body = document.getElementById('leftPanelBody');
+            if (tab === 'variables') {
+                title.textContent = 'Variables';
+                body.innerHTML = '<div id="variableList">No hay variables definidas</div>';
+            } else {
+                title.textContent = 'Operadores y Funciones';
+                body.innerHTML = `
+                    <div style="font-size:12px">
+                        <b>Operadores:</b> + - * / ^ % MOD = < > <= >= <> Y O NO
+                        <br><br>
+                        <b>Funciones:</b> RC ABS LN EXP SEN COS ATAN TRUNC REDON AZAR
+                    </div>
+                `;
+            }
+        }
+
         function toggleRightPanel() {
             const panel = document.getElementById('rightPanel');
             const toggle = document.getElementById('rightPanelToggle');
@@ -772,7 +790,18 @@ FinAlgoritmo</textarea>
                     snippet = 'Para variable <- valor_inicial Hasta valor_final Con Paso paso Hacer\n\t\nFinPara';
                     help = 'La instrucción <b>Para</b> ejecuta una secuencia de instrucciones un número determinado de veces.';
                     break;
-                // Add more cases as needed
+                case 'segun':
+                    snippet = 'Segun variable Hacer\n\topcion1:\n\t\t\n\tDe Otro Modo:\n\t\t\nFinSegun';
+                    help = 'La instrucción <b>Segun</b> permite ejecutar diferentes bloques de instrucciones según el valor de una variable.';
+                    break;
+                case 'repetir':
+                    snippet = 'Repetir\n\t\nHasta Que condicion';
+                    help = 'La instrucción <b>Repetir</b> ejecuta un bloque de instrucciones hasta que una condición sea verdadera.';
+                    break;
+                case 'funcion':
+                    snippet = 'Funcion retorno <- NombreFuncion(argumentos)\n\t\nFinFuncion';
+                    help = 'La instrucción <b>Funcion</b> permite definir un bloque de código reutilizable.';
+                    break;
             }
 
             if (snippet) {
@@ -1109,9 +1138,9 @@ FinAlgoritmo</textarea>
                         }
                         const lowerId = id.toLowerCase();
                         if (this.keywords.has(lowerId)) {
-                            this.tokens.push({ type: 'KEYWORD', value: lowerId });
+                            tokens.push({ type: 'KEYWORD', value: id });
                         } else if (this.types.has(lowerId)) {
-                            this.tokens.push({ type: 'TYPE', value: lowerId });
+                            tokens.push({ type: 'TYPE', value: id });
                         } else {
                             tokens.push({ type: 'IDENTIFIER', value: id });
                         }

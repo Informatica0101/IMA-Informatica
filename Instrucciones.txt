@@ -13,45 +13,23 @@ ESTADO DE LAS TAREAS (RESUMEN)
 [A-37] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-42] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-43] COMPLETADA (PENDIENTE DE REVISIÓN)
+[A-44] COMPLETADA (PENDIENTE DE REVISIÓN)
 
 ------------------------------------------------------------------------------------------------
 
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
 
-TAREA: [A-42]
-TÍTULO: Paridad Visual y Lógica con PSeInt Simulator
-ÁREA: Frontend / Lógica / UI
-PRIORIDAD: MEDIA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
-- Rediseño de UI para imitar la interfaz clásica de PSeInt (Paneles laterales, toolbar superior).
-- Implementación de Intérprete de Pseudocódigo real (Tokenizer, Parser, Execution Engine).
-- Soporte para comandos Escribir, Leer (con entrada interactiva), Definir y Asignación (<-).
-- Sincronización dinámica de la Lista de Variables con el estado de ejecución.
-- Implementación de sistema de menús desplegables (Archivo, Editar, Configurar, Ejecutar, Ayuda) con submenús funcionales.
-- Corrección de alineación del cursor y foco en el editor mediante sincronización de CSS y line-height.
-
-TAREA: [A-43]
-TÍTULO: Funciones Avanzadas, I/O de Archivos y Diagramas de Flujo
-ÁREA: Frontend / Lógica / UI
-PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
-- Implementación de Abrir/Guardar archivos .psc.
-- Soporte para Arreglos (Dimensionamiento y acceso).
-- Implementación de Funciones y Subprocesos (Ámbito y parámetros, hoisting).
-- Generación de Diagramas de Flujo SVG desde el código.
-- Soporte para funciones integradas (MOD, RC, ABS, etc.).
-- Implementación de Ejecución Paso a Paso y Atajos de Teclado Globales.
-- Funciones de edición (Undo/Redo, Cortar/Copiar/Pegar) totalmente operativas.
-
-(Tareas anteriores A-13 a A-37 omitidas para brevedad, ver ChangesLogs.txt para detalles)
-
 TAREA: [A-44]
 TÍTULO: Parche de Estabilidad y Robustez del Intérprete
 ÁREA: Frontend / Lógica
 PRIORIDAD: ALTA
-ESTADO: PENDIENTE
-- Corregir el parser de la estructura SEGUN para manejar múltiples sentencias por caso.
-- Mejorar el Tokenizer para asegurar el manejo correcto de todos los operadores relacionales.
-- Ajustar el comando ESCRIBIR para que coincida con el comportamiento de espaciado de PSeInt.
-- Implementar una mejora visual básica en los diagramas de flujo para nodos de decisión.
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Corregida la detección de bloques multisentencia en la estructura SEGUN.
+- Mejorado el Tokenizer para manejar operadores multi-carácter (<>, <=, >=, ==).
+- Añadido reconocimiento nativo de literales lógicos (Verdadero/Falso).
+- Saneada la inserción de snippets para los comandos Segun, Repetir y Funcion.
+- Ajustado el espaciado automático en el comando Escribir.
+- Implementada recursividad básica en la generación de diagramas de flujo para bloques de control.
+
+(Tareas anteriores A-42 a A-43 ya están listadas en ChangesLogs.txt)

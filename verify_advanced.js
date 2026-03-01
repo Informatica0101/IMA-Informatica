@@ -14,16 +14,16 @@ Algoritmo TestAvanzado
     A[2] <- 200
     Escribir A[1] + A[2]
 
-    Escribir Sumar(300, 300)
+    Escribir sumar(300, 300)
 FinAlgoritmo
 
-Funcion res <- Sumar(a, b)
+Funcion res <- sumar(a, b)
     res <- a + b
 FinFuncion
   `;
 
   await page.evaluate((code) => {
-    document.getElementById('editor').value = code;
+    document.getElementById('codeEditor').value = code;
     runAlgorithm();
   }, advancedPsc);
 
