@@ -53,11 +53,56 @@
 
         .menu-item {
             cursor: pointer;
-            padding: 2px 5px;
+            padding: 2px 8px;
+            position: relative;
+            user-select: none;
         }
 
         .menu-item:hover {
             background-color: #ccc;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 180px;
+            box-shadow: 2px 4px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+            top: 100%;
+            left: 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .menu-item:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background-color: #0066cc;
+            color: white;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #ccc;
+            margin: 4px 0;
+        }
+
+        .shortcut {
+            font-size: 11px;
+            color: #666;
+            margin-left: 20px;
+        }
+        .dropdown-item:hover .shortcut {
+            color: #eee;
         }
 
         .toolbar {
@@ -209,47 +254,44 @@
             padding: 10px 5px;
             text-align: right;
             color: #999;
-            font-family: 'Consolas', 'Courier New', monospace;
-            line-height: 1.5;
+            font-family: 'Consolas', 'Monaco', 'Lucida Console', 'Courier New', monospace;
+            line-height: 21px;
             user-select: none;
         }
 
-        .code-area {
-            flex: 1;
-            position: relative;
-            overflow: auto;
-        }
-
-        #codeEditor, #syntaxHighlight {
+        #codeEditor {
             margin: 0;
             padding: 10px;
             width: 100%;
             height: 100%;
-            font-family: 'Consolas', 'Courier New', monospace;
+            font-family: 'Consolas', 'Monaco', 'Lucida Console', 'Courier New', monospace;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 21px;
             tab-size: 4;
             white-space: pre;
+            word-wrap: normal;
             position: absolute;
             top: 0;
             left: 0;
             border: none;
             outline: none;
-        }
-
-        #codeEditor {
-            background: transparent;
-            color: transparent;
-            caret-color: black;
-            resize: none;
-            z-index: 2;
-        }
-
-        #syntaxHighlight {
+            box-sizing: border-box;
             background: white;
             color: black;
-            z-index: 1;
-            pointer-events: none;
+            overflow: auto;
+            text-rendering: auto;
+            -webkit-font-smoothing: subpixel-antialiased;
+            letter-spacing: normal;
+            word-spacing: normal;
+            font-variant-ligatures: none;
+        }
+
+        /* Ensure scroll alignment */
+        .code-area {
+            flex: 1;
+            position: relative;
+            overflow: auto;
+            background: white;
         }
 
         /* Syntax Highlighting Classes */
@@ -259,6 +301,7 @@
         .sh-type { color: var(--type-green); }
         .sh-identifier { color: black; }
         .sh-number { color: #f08000; }
+        .sh-error { text-decoration: underline wavy red; }
 
         /* Commands Panel Content */
         .commands-list {
@@ -344,7 +387,7 @@
         .hidden { display: none !important; }
 
         /* Overlay for input */
-        #inputOverlay {
+        #inputOverlay, #flowchartOverlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -357,12 +400,33 @@
             justify-content: center;
         }
 
-        .input-modal {
+        #flowchartOverlay {
+            background: rgba(0,0,0,0.8);
+        }
+
+        .input-modal, .flowchart-modal {
             background: white;
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             width: 300px;
+        }
+
+        .flowchart-modal {
+            width: 90%;
+            height: 90%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #flowchartContainer {
+            flex: 1;
+            overflow: auto;
+            background: #fdfdfd;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
         }
 
         .input-modal input {
@@ -387,36 +451,82 @@
 <body>
 
     <nav class="menu-bar">
-        <div class="menu-item">Archivo</div>
-        <div class="menu-item">Editar</div>
-        <div class="menu-item">Configurar</div>
-        <div class="menu-item">Ejecutar</div>
-        <div class="menu-item">Ayuda</div>
+        <div class="menu-item">
+            Archivo
+            <div class="dropdown-content">
+                <div class="dropdown-item" onclick="newProject()">Nuevo <span class="shortcut">Ctrl+N</span></div>
+                <div class="dropdown-item" onclick="triggerOpenFile()">Abrir... <span class="shortcut">Ctrl+O</span></div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="saveToFile()">Guardar <span class="shortcut">Ctrl+S</span></div>
+                <div class="dropdown-item" onclick="saveToFile()">Guardar como...</div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="window.close()">Salir</div>
+            </div>
+        </div>
+        <div class="menu-item">
+            Editar
+            <div class="dropdown-content">
+                <div class="dropdown-item" onclick="undo()">Deshacer <span class="shortcut">Ctrl+Z</span></div>
+                <div class="dropdown-item" onclick="redo()">Rehacer <span class="shortcut">Ctrl+Y</span></div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="cut()">Cortar <span class="shortcut">Ctrl+X</span></div>
+                <div class="dropdown-item" onclick="copy()">Copiar <span class="shortcut">Ctrl+C</span></div>
+                <div class="dropdown-item" onclick="paste()">Pegar <span class="shortcut">Ctrl+V</span></div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="selectAll()">Seleccionar todo <span class="shortcut">Ctrl+E</span></div>
+            </div>
+        </div>
+        <div class="menu-item">
+            Configurar
+            <div class="dropdown-content">
+                <div class="dropdown-item">Opciones del Lenguaje (Perfiles)...</div>
+                <div class="dropdown-item">Presentación...</div>
+            </div>
+        </div>
+        <div class="menu-item">
+            Ejecutar
+            <div class="dropdown-content">
+                <div class="dropdown-item" onclick="runAlgorithm()">Ejecutar <span class="shortcut">F9</span></div>
+                <div class="dropdown-item" onclick="runStepByStep()">Ejecutar paso a paso <span class="shortcut">F10</span></div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="drawFlowchart()">Ver Diagrama de Flujo <span class="shortcut">F7</span></div>
+            </div>
+        </div>
+        <div class="menu-item">
+            Ayuda
+            <div class="dropdown-content">
+                <div class="dropdown-item">Índice <span class="shortcut">F1</span></div>
+                <div class="dropdown-item">Ejemplos...</div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item">Acerca de PSeInt...</div>
+            </div>
+        </div>
     </nav>
 
     <div class="toolbar">
         <button class="tool-btn" title="Nuevo" onclick="newProject()"><span>📄</span></button>
-        <button class="tool-btn" title="Abrir"><span>📂</span></button>
-        <button class="tool-btn" title="Guardar"><span>💾</span></button>
-        <button class="tool-btn" title="Guardar como..."><span>💾+</span></button>
+        <button class="tool-btn" title="Abrir" onclick="triggerOpenFile()"><span>📂</span></button>
+        <input type="file" id="fileInput" accept=".psc" style="display:none" onchange="loadFromFile(event)">
+        <button class="tool-btn" title="Guardar" onclick="saveToFile()"><span>💾</span></button>
+        <button class="tool-btn" title="Guardar como..." onclick="saveToFile()"><span>💾+</span></button>
         <div class="separator"></div>
-        <button class="tool-btn"><span>↩️</span></button>
-        <button class="tool-btn"><span>↪️</span></button>
+        <button class="tool-btn" title="Deshacer" onclick="undo()"><span>↩️</span></button>
+        <button class="tool-btn" title="Rehacer" onclick="redo()"><span>↪️</span></button>
         <div class="separator"></div>
-        <button class="tool-btn"><span>✂️</span></button>
-        <button class="tool-btn"><span>📋</span></button>
-        <button class="tool-btn"><span>📥</span></button>
+        <button class="tool-btn" title="Cortar" onclick="cut()"><span>✂️</span></button>
+        <button class="tool-btn" title="Copiar" onclick="copy()"><span>📋</span></button>
+        <button class="tool-btn" title="Pegar" onclick="paste()"><span>📥</span></button>
         <div class="separator"></div>
         <button class="tool-btn" title="Ejecutar" onclick="runAlgorithm()"><span style="color: green;">▶</span></button>
-        <button class="tool-btn" title="Ejecutar paso a paso"><span>👣</span></button>
-        <button class="tool-btn" title="Dibujar diagrama de flujo"><span>📊</span></button>
+        <button class="tool-btn" title="Ejecutar paso a paso" onclick="runStepByStep()"><span>👣</span></button>
+        <button class="tool-btn" title="Dibujar diagrama de flujo" onclick="drawFlowchart()"><span>📊</span></button>
     </div>
 
     <div class="main-layout">
         <!-- Left Panels -->
         <div class="side-panel" id="leftPanelToggle" onclick="toggleLeftPanel()">
-            <div class="vertical-text">lista de variables</div>
-            <div class="vertical-text">operadores y funciones</div>
+            <div class="vertical-text" onclick="setLeftPanelTab('variables')">lista de variables</div>
+            <div class="vertical-text" onclick="setLeftPanelTab('operadores')">operadores y funciones</div>
         </div>
         <div class="expanded-content hidden" id="leftPanel">
             <div class="panel-header">
@@ -424,7 +534,16 @@
                 <span class="close-btn" onclick="toggleLeftPanel()">×</span>
             </div>
             <div id="leftPanelBody" style="padding: 10px;">
-                <div id="variableList">No hay variables definidas</div>
+                <div id="tabVariables">
+                    <div id="variableList">No hay variables definidas</div>
+                </div>
+                <div id="tabOperadores" class="hidden">
+                    <div style="font-size:12px">
+                        <b>Operadores:</b> + - * / ^ % MOD = < > <= >= <> Y O NO
+                        <br><br>
+                        <b>Funciones:</b> RC ABS LN EXP SEN COS ATAN TRUNC REDON AZAR
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -439,10 +558,9 @@
             <div class="editor-view">
                 <div id="lineNumbers">1</div>
                 <div class="code-area">
-                    <div id="syntaxHighlight"></div>
-                    <textarea id="codeEditor" spellcheck="false" oninput="updateEditor()" onscroll="syncScroll()">Algoritmo sin_titulo
+                    <div id="codeEditor" contenteditable="plaintext-only" spellcheck="false" oninput="updateEditor()" onscroll="syncScroll()">Algoritmo sin_titulo
 
-FinAlgoritmo</textarea>
+FinAlgoritmo</div>
                 </div>
             </div>
         </div>
@@ -516,6 +634,17 @@ FinAlgoritmo</textarea>
         </div>
     </div>
 
+    <!-- Flowchart Modal -->
+    <div id="flowchartOverlay">
+        <div class="flowchart-modal">
+            <div class="panel-header">
+                <span>Diagrama de Flujo</span>
+                <span class="close-btn" onclick="closeFlowchart()">×</span>
+            </div>
+            <div id="flowchartContainer"></div>
+        </div>
+    </div>
+
     <!-- Input Modal -->
     <div id="inputOverlay">
         <div class="input-modal">
@@ -539,6 +668,22 @@ FinAlgoritmo</textarea>
             toggle.classList.toggle('hidden');
         }
 
+        function setLeftPanelTab(tab) {
+            const title = document.getElementById('leftPanelTitle');
+            const tabV = document.getElementById('tabVariables');
+            const tabO = document.getElementById('tabOperadores');
+
+            if (tab === 'variables') {
+                title.textContent = 'Variables';
+                tabV.classList.remove('hidden');
+                tabO.classList.add('hidden');
+            } else {
+                title.textContent = 'Operadores y Funciones';
+                tabV.classList.add('hidden');
+                tabO.classList.remove('hidden');
+            }
+        }
+
         function toggleRightPanel() {
             const panel = document.getElementById('rightPanel');
             const toggle = document.getElementById('rightPanelToggle');
@@ -559,11 +704,36 @@ FinAlgoritmo</textarea>
             }
         }
 
+        let syntaxErrors = [];
+
         function updateEditor() {
-            const code = editor.value;
+            const code = editor.innerText;
+            validateSyntax(code);
             applyHighlighting(code);
             updateLineNumbers(code);
             updateTabTitle(code);
+        }
+
+        function validateSyntax(code) {
+            syntaxErrors = [];
+            const tokenizer = new Tokenizer(code);
+            const tokens = tokenizer.tokenize();
+            const parser = new Parser(tokens);
+
+            try {
+                parser.parse();
+                document.getElementById('quickHelp').innerHTML = '<span style="color: green">✓ No hay errores de sintaxis</span>';
+            } catch (e) {
+                const lastToken = tokens[parser.pos] || tokens[tokens.length-1];
+                if (lastToken) {
+                    syntaxErrors.push({
+                        line: lastToken.line,
+                        col: lastToken.col,
+                        message: e.message
+                    });
+                    document.getElementById('quickHelp').innerHTML = `<span style="color: red">✖ Error: ${e.message} (Línea ${lastToken.line})</span>`;
+                }
+            }
         }
 
         function updateTabTitle(code) {
@@ -583,30 +753,86 @@ FinAlgoritmo</textarea>
         }
 
         function syncScroll() {
-            highlight.scrollTop = editor.scrollTop;
-            highlight.scrollLeft = editor.scrollLeft;
             lineNumbers.scrollTop = editor.scrollTop;
         }
 
         function applyHighlighting(code) {
+            const selection = window.getSelection();
+            if (selection.rangeCount === 0) return;
+
+            const range = selection.getRangeAt(0);
+            const preSelectionRange = range.cloneRange();
+            preSelectionRange.selectNodeContents(editor);
+            preSelectionRange.setEnd(range.startContainer, range.startOffset);
+            const start = preSelectionRange.toString().length;
+
             const tokenizer = new Tokenizer(code);
-            const tokens = tokenizer.tokenizeRaw(); // Need a raw tokenizer that keeps spaces
+            const tokens = tokenizer.tokenizeRaw();
 
             let html = '';
             tokens.forEach(token => {
                 const escaped = token.value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const isError = syntaxErrors.some(e => e.line === token.line && token.col >= e.col && token.col < e.col + token.value.length);
+                const errorClass = isError ? ' sh-error' : '';
+
                 switch(token.type) {
-                    case 'KEYWORD': html += `<span class="sh-keyword">${escaped}</span>`; break;
-                    case 'TYPE': html += `<span class="sh-type">${escaped}</span>`; break;
-                    case 'STRING': html += `<span class="sh-string">${token.value.charAt(0)}${escaped.slice(1,-1)}${token.value.slice(-1)}</span>`; break;
-                    case 'COMMENT': html += `<span class="sh-comment">${escaped}</span>`; break;
-                    case 'NUMBER': html += `<span class="sh-number">${escaped}</span>`; break;
-                    case 'WHITESPACE': html += escaped; break;
+                    case 'KEYWORD': html += `<span class="sh-keyword${errorClass}">${escaped}</span>`; break;
+                    case 'TYPE': html += `<span class="sh-type${errorClass}">${escaped}</span>`; break;
+                    case 'STRING': html += `<span class="sh-string${errorClass}">${escaped}</span>`; break;
+                    case 'COMMENT': html += `<span class="sh-comment${errorClass}">${escaped}</span>`; break;
+                    case 'NUMBER': html += `<span class="sh-number${errorClass}">${escaped}</span>`; break;
+                    case 'IDENTIFIER': html += `<span class="sh-identifier${errorClass}">${escaped}</span>`; break;
                     default: html += escaped;
                 }
             });
 
-            highlight.innerHTML = html + (code.endsWith('\n') ? ' ' : '');
+            editor.innerHTML = html;
+
+            // Restore selection
+            restoreSelection(editor, start);
+        }
+
+        function restoreSelection(container, start) {
+            let charIndex = 0;
+            const range = document.createRange();
+            range.setStart(container, 0);
+            range.collapse(true);
+            const nodeStack = [container];
+            let node, foundStart = false, stop = false;
+
+            while (!stop && (node = nodeStack.pop())) {
+                if (node.nodeType === 3) {
+                    const nextCharIndex = charIndex + node.length;
+                    if (!foundStart && start >= charIndex && start <= nextCharIndex) {
+                        range.setStart(node, start - charIndex);
+                        range.setEnd(node, start - charIndex);
+                        foundStart = true;
+                        stop = true;
+                    }
+                    charIndex = nextCharIndex;
+                } else {
+                    let i = node.childNodes.length;
+                    while (i--) {
+                        nodeStack.push(node.childNodes[i]);
+                    }
+                }
+            }
+
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
+        function getCursorPosition(element) {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const preSelectionRange = range.cloneRange();
+                preSelectionRange.selectNodeContents(element);
+                preSelectionRange.setEnd(range.startContainer, range.startOffset);
+                return preSelectionRange.toString().length;
+            }
+            return 0;
         }
 
         function insertCode(type) {
@@ -637,17 +863,29 @@ FinAlgoritmo</textarea>
                     snippet = 'Para variable <- valor_inicial Hasta valor_final Con Paso paso Hacer\n\t\nFinPara';
                     help = 'La instrucción <b>Para</b> ejecuta una secuencia de instrucciones un número determinado de veces.';
                     break;
-                // Add more cases as needed
+                case 'segun':
+                    snippet = 'Segun variable Hacer\n\topcion1:\n\t\t\n\tDe Otro Modo:\n\t\t\nFinSegun';
+                    help = 'La instrucción <b>Segun</b> permite ejecutar diferentes bloques de instrucciones según el valor de una variable.';
+                    break;
+                case 'repetir':
+                    snippet = 'Repetir\n\t\nHasta Que condicion';
+                    help = 'La instrucción <b>Repetir</b> ejecuta un bloque de instrucciones hasta que una condición sea verdadera.';
+                    break;
+                case 'funcion':
+                    snippet = 'Funcion retorno <- NombreFuncion(argumentos)\n\t\nFinFuncion';
+                    help = 'La instrucción <b>Funcion</b> permite definir un bloque de código reutilizable.';
+                    break;
             }
 
             if (snippet) {
-                const start = editor.selectionStart;
-                const end = editor.selectionEnd;
-                const text = editor.value;
-                editor.value = text.substring(0, start) + snippet + text.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + snippet.indexOf('\n') > -1 ? start + snippet.indexOf('\n') + 2 : start + snippet.length;
+                const start = getCursorPosition(editor);
+                const text = editor.innerText;
+                editor.innerText = text.substring(0, start) + snippet + text.substring(start);
+                const nlIndex = snippet.indexOf('\n');
+                const newPos = (nlIndex > -1) ? start + nlIndex + 2 : start + snippet.length;
                 editor.focus();
                 updateEditor();
+                restoreSelection(editor, newPos);
             }
 
             if (help) {
@@ -656,9 +894,267 @@ FinAlgoritmo</textarea>
         }
 
         function newProject() {
-            editor.value = "Algoritmo sin_titulo\n\nFinAlgoritmo";
+            editor.innerText = "Algoritmo sin_titulo\n\nFinAlgoritmo";
             updateEditor();
             clearConsole();
+        }
+
+        function triggerOpenFile() {
+            document.getElementById('fileInput').click();
+        }
+
+        function undo() { document.execCommand('undo'); }
+        function redo() { document.execCommand('redo'); }
+        async function cut() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const selectedText = selection.toString();
+                await navigator.clipboard.writeText(selectedText);
+                document.execCommand('delete');
+                updateEditor();
+            }
+        }
+        async function copy() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const selectedText = selection.toString();
+                await navigator.clipboard.writeText(selectedText);
+            }
+        }
+        async function paste() {
+            const text = await navigator.clipboard.readText();
+            const start = getCursorPosition(editor);
+            const content = editor.innerText;
+            editor.innerText = content.substring(0, start) + text + content.substring(start);
+            updateEditor();
+            restoreSelection(editor, start + text.length);
+        }
+        function selectAll() {
+            const range = document.createRange();
+            range.selectNodeContents(editor);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        let isStepping = false;
+        let stepPC = 0;
+        let stepProgram = [];
+        let stepInterpreter = null;
+
+        async function runStepByStep() {
+            showBottomTab('consola');
+            clearConsole();
+            printToConsole('*** Iniciando ejecución paso a paso... ***');
+
+            const code = editor.innerText;
+            const tokenizer = new Tokenizer(code);
+            const tokens = tokenizer.tokenize();
+            const parser = new Parser(tokens);
+            stepProgram = parser.parse();
+
+            stepInterpreter = new Interpreter(
+                (text) => printToConsole(text),
+                async (promptText) => {
+                    document.getElementById('inputLabel').textContent = promptText;
+                    document.getElementById('inputOverlay').style.display = 'flex';
+                    document.getElementById('userInput').focus();
+                    return new Promise(resolve => {
+                        inputResolver = resolve;
+                    });
+                },
+                (vars) => {
+                    const list = document.getElementById('variableList');
+                    if (!list) return;
+                    list.innerHTML = '';
+                    for (const [name, data] of Object.entries(vars)) {
+                        const div = document.createElement('div');
+                        div.style.marginBottom = '5px';
+                        let valStr = data.value;
+                        if (data.type === 'arreglo') valStr = JSON.stringify(data.value);
+                        div.innerHTML = `<b>${name}</b>: ${data.type} = ${valStr}`;
+                        list.appendChild(div);
+                    }
+                }
+            );
+
+            // Scan functions first
+            for (const stmt of stepProgram) {
+                if (stmt.type === 'FUNCTION_DEF') {
+                    stepInterpreter.functions[stmt.name.toLowerCase()] = stmt;
+                }
+            }
+
+            stepInterpreter.program = stepProgram;
+            stepInterpreter.pc = 0;
+
+            // In a real PSeInt we would highlight the line,
+            // here we'll just run one step and wait for user click on "👣" or "▶" maybe?
+            // Let's implement a simple auto-step with delay for now
+            while (stepInterpreter.pc < stepInterpreter.program.length) {
+                await stepInterpreter.step();
+                await new Promise(r => setTimeout(r, 500)); // 500ms between steps
+            }
+            printToConsole('*** Ejecución Finalizada. ***');
+        }
+
+        function closeFlowchart() {
+            document.getElementById('flowchartOverlay').style.display = 'none';
+        }
+
+        function drawFlowchart() {
+            const code = editor.innerText;
+            const tokenizer = new Tokenizer(code);
+            const tokens = tokenizer.tokenize();
+            const parser = new Parser(tokens);
+            const program = parser.parse();
+
+            const container = document.getElementById('flowchartContainer');
+            container.innerHTML = '';
+
+            let y = 20;
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("width", "100%");
+            svg.setAttribute("height", "2000");
+
+            const drawNode = (text, type, cx = 150) => {
+                const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                let shape;
+                if (type === 'process') {
+                    shape = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    shape.setAttribute("x", cx - 70);
+                    shape.setAttribute("y", y);
+                    shape.setAttribute("width", "140");
+                    shape.setAttribute("height", "40");
+                    shape.setAttribute("fill", "#e1f5fe");
+                    shape.setAttribute("stroke", "#01579b");
+                } else if (type === 'io') {
+                    shape = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                    const points = `${cx-80},${y+40} ${cx-50},${y} ${cx+80},${y} ${cx+50},${y+40}`;
+                    shape.setAttribute("points", points);
+                    shape.setAttribute("fill", "#fff3e0");
+                    shape.setAttribute("stroke", "#e65100");
+                } else if (type === 'decision') {
+                    shape = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                    const points = `${cx},${y} ${cx+80},${y+30} ${cx},${y+60} ${cx-80},${y+30}`;
+                    shape.setAttribute("points", points);
+                    shape.setAttribute("fill", "#fce4ec");
+                    shape.setAttribute("stroke", "#880e4f");
+                } else {
+                    shape = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+                    shape.setAttribute("cx", cx);
+                    shape.setAttribute("cy", y + 20);
+                    shape.setAttribute("rx", "70");
+                    shape.setAttribute("ry", "20");
+                    shape.setAttribute("fill", "#f3e5f5");
+                    shape.setAttribute("stroke", "#4a148c");
+                }
+
+                const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                txt.setAttribute("x", cx);
+                txt.setAttribute("y", y + (type === 'decision' ? 35 : 25));
+                txt.setAttribute("text-anchor", "middle");
+                txt.setAttribute("font-size", "12");
+                txt.textContent = text.length > 20 ? text.substring(0, 17) + '...' : text;
+
+                group.appendChild(shape);
+                group.appendChild(txt);
+                svg.appendChild(group);
+
+                const lastY = y + (type === 'decision' ? 60 : 40);
+
+                // Draw arrow to next
+                const arrow = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                arrow.setAttribute("x1", cx);
+                arrow.setAttribute("y1", lastY);
+                arrow.setAttribute("x2", cx);
+                arrow.setAttribute("y2", lastY + 20);
+                arrow.setAttribute("stroke", "#333");
+                arrow.setAttribute("marker-end", "url(#arrowhead)");
+                svg.appendChild(arrow);
+
+                y = lastY + 20;
+            };
+
+            // Add marker for arrowheads
+            const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+            const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+            marker.setAttribute("id", "arrowhead");
+            marker.setAttribute("markerWidth", "10");
+            marker.setAttribute("markerHeight", "7");
+            marker.setAttribute("refX", "0");
+            marker.setAttribute("refY", "3.5");
+            marker.setAttribute("orient", "auto");
+            const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            polygon.setAttribute("points", "0 0, 10 3.5, 0 7");
+            marker.appendChild(polygon);
+            defs.appendChild(marker);
+            svg.appendChild(defs);
+
+            const renderBlock = (block) => {
+                block.forEach(stmt => {
+                    switch(stmt.type) {
+                        case 'PROCESO_START': drawNode(stmt.name, 'start'); break;
+                        case 'PROCESO_END': drawNode('Fin', 'start'); break;
+                        case 'ESCRIBIR': drawNode('Escribir...', 'io'); break;
+                        case 'LEER': drawNode('Leer...', 'io'); break;
+                        case 'ASSIGN': drawNode(stmt.variable + ' <- ...', 'process'); break;
+                        case 'SI':
+                            drawNode('¿Si?', 'decision');
+                            renderBlock(stmt.thenBranch);
+                            if (stmt.elseBranch.length > 0) {
+                                renderBlock(stmt.elseBranch);
+                            }
+                            break;
+                        case 'MIENTRAS':
+                            drawNode('¿Mientras?', 'decision');
+                            renderBlock(stmt.body);
+                            break;
+                        case 'PARA':
+                            drawNode('¿Para?', 'decision');
+                            renderBlock(stmt.body);
+                            break;
+                        case 'REPETIR':
+                            renderBlock(stmt.body);
+                            drawNode('¿Hasta?', 'decision');
+                            break;
+                    }
+                });
+            };
+
+            renderBlock(program);
+
+            container.appendChild(svg);
+            document.getElementById('flowchartOverlay').style.display = 'flex';
+        }
+
+        function loadFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                editor.innerText = e.target.result;
+                updateEditor();
+                clearConsole();
+                event.target.value = ''; // Reset input
+            };
+            reader.readAsText(file);
+        }
+
+        function saveToFile() {
+            const code = editor.innerText;
+            const match = code.match(/(?:Algoritmo|Proceso)\s+([a-zA-Z0-9_]+)/i);
+            const filename = (match && match[1] ? match[1] : 'sin_titulo') + '.psc';
+
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         function clearConsole() {
@@ -678,172 +1174,194 @@ FinAlgoritmo</textarea>
             constructor(code) {
                 this.code = code;
                 this.pos = 0;
+                this.line = 1;
+                this.col = 1;
                 this.tokens = [];
                 this.keywords = new Set([
                     'algoritmo', 'finalgoritmo', 'proceso', 'finproceso',
                     'definir', 'como', 'leer', 'escribir',
                     'si', 'entonces', 'sino', 'finsi',
                     'mientras', 'hacer', 'finmientras',
-                    'para', 'hasta', 'con', 'paso', 'finpara'
+                    'para', 'hasta', 'con', 'paso', 'finpara',
+                    'dimension', 'mod', 'y', 'o', 'no',
+                    'funcion', 'finfuncion', 'subproceso', 'finsubproceso', 'retorno',
+                    'segun', 'hacer', 'finsegun', 'de', 'otro', 'modo',
+                    'verdadero', 'falso', 'que', 'repetir'
                 ]);
                 this.types = new Set(['entero', 'real', 'logico', 'caracter', 'texto', 'cadena']);
             }
 
+            updatePos(c) {
+                this.pos++;
+                if (c === '\n') {
+                    this.line++;
+                    this.col = 1;
+                } else {
+                    this.col++;
+                }
+            }
+
             tokenizeRaw() {
+                const oldCode = this.code;
+                const tokens = this.tokenize();
+                this.code = oldCode;
+                this.reset();
+
+                // For highlighting we actually need spaces and comments
+                const rawTokens = [];
+                let pos = 0;
+                let line = 1;
+                let col = 1;
+
+                while (pos < this.code.length) {
+                    const startLine = line;
+                    const startCol = col;
+                    let char = this.code[pos];
+
+                    if (/\s/.test(char)) {
+                        let ws = '';
+                        while (pos < this.code.length && /\s/.test(this.code[pos])) {
+                            const c = this.code[pos++];
+                            ws += c;
+                            if (c === '\n') { line++; col = 1; } else { col++; }
+                        }
+                        rawTokens.push({ type: 'WHITESPACE', value: ws, line: startLine, col: startCol });
+                        continue;
+                    }
+
+                    if (char === '/' && this.code[pos + 1] === '/') {
+                        let comment = '';
+                        while (pos < this.code.length && this.code[pos] !== '\n') {
+                            comment += this.code[pos++];
+                            col++;
+                        }
+                        rawTokens.push({ type: 'COMMENT', value: comment, line: startLine, col: startCol });
+                        continue;
+                    }
+
+                    // Find if any logic token matches here
+                    const token = tokens.find(t => t.startPos === pos);
+                    if (token) {
+                        rawTokens.push(token);
+                        pos += (token.originalValue || token.value).toString().length;
+                        // update line/col based on value
+                        const val = (token.originalValue || token.value).toString();
+                        for (const c of val) {
+                            if (c === '\n') { line++; col = 1; } else { col++; }
+                        }
+                    } else {
+                        rawTokens.push({ type: 'OTHER', value: char, line: startLine, col: startCol });
+                        pos++; col++;
+                    }
+                }
+                return rawTokens;
+            }
+
+            reset() {
+                this.pos = 0;
+                this.line = 1;
+                this.col = 1;
+            }
+
+            tokenize() {
                 const tokens = [];
                 while (this.pos < this.code.length) {
                     let char = this.code[this.pos];
 
                     if (/\s/.test(char)) {
-                        let ws = '';
-                        while (this.pos < this.code.length && /\s/.test(this.code[this.pos])) {
-                            ws += this.code[this.pos++];
-                        }
-                        tokens.push({ type: 'WHITESPACE', value: ws });
+                        this.updatePos(char);
                         continue;
                     }
 
                     if (char === '/' && this.code[this.pos + 1] === '/') {
-                        let comment = '';
                         while (this.pos < this.code.length && this.code[this.pos] !== '\n') {
-                            comment += this.code[this.pos++];
+                            this.updatePos(this.code[this.pos]);
                         }
-                        tokens.push({ type: 'COMMENT', value: comment });
                         continue;
                     }
 
+                    const startLine = this.line;
+                    const startCol = this.col;
+
                     if (/[a-zA-Z_]/.test(char)) {
                         let id = '';
+                        const startPos = this.pos;
                         while (this.pos < this.code.length && /[a-zA-Z0-9_]/.test(this.code[this.pos])) {
-                            id += this.code[this.pos++];
+                            const c = this.code[this.pos];
+                            id += c;
+                            this.updatePos(c);
                         }
                         const lowerId = id.toLowerCase();
                         if (this.keywords.has(lowerId)) {
-                            tokens.push({ type: 'KEYWORD', value: id });
+                            tokens.push({ type: 'KEYWORD', value: lowerId, originalValue: id, startPos, line: startLine, col: startCol });
                         } else if (this.types.has(lowerId)) {
-                            tokens.push({ type: 'TYPE', value: id });
+                            tokens.push({ type: 'TYPE', value: lowerId, originalValue: id, startPos, line: startLine, col: startCol });
                         } else {
-                            tokens.push({ type: 'IDENTIFIER', value: id });
+                            tokens.push({ type: 'IDENTIFIER', value: id, startPos, line: startLine, col: startCol });
                         }
                         continue;
                     }
 
                     if (/[0-9]/.test(char)) {
                         let num = '';
+                        const startPos = this.pos;
                         while (this.pos < this.code.length && /[0-9.]/.test(this.code[this.pos])) {
-                            num += this.code[this.pos++];
+                            const c = this.code[this.pos];
+                            num += c;
+                            this.updatePos(c);
                         }
-                        tokens.push({ type: 'NUMBER', value: num });
-                        continue;
-                    }
-
-                    if (char === '"' || char === "'") {
-                        let quote = char;
-                        let str = quote;
-                        this.pos++;
-                        while (this.pos < this.code.length && this.code[this.pos] !== quote) {
-                            str += this.code[this.pos++];
-                        }
-                        if (this.pos < this.code.length) str += this.code[this.pos++];
-                        tokens.push({ type: 'STRING', value: str });
-                        continue;
-                    }
-
-                    if (char === '<' && this.code[this.pos + 1] === '-') {
-                        tokens.push({ type: 'OPERATOR', value: '<-' });
-                        this.pos += 2;
-                        continue;
-                    }
-
-                    if (/[+\-*/%^=<>!]/.test(char)) {
-                        let op = char;
-                        if ((char === '<' || char === '>' || char === '!') && this.code[this.pos + 1] === '=') {
-                            op += this.code[++this.pos];
-                        }
-                        tokens.push({ type: 'OPERATOR', value: op });
-                        this.pos++;
-                        continue;
-                    }
-
-                    tokens.push({ type: 'OTHER', value: this.code[this.pos++] });
-                }
-                this.pos = 0; // Reset for potential next use
-                return tokens;
-            }
-
-            tokenize() {
-                while (this.pos < this.code.length) {
-                    let char = this.code[this.pos];
-
-                    if (/\s/.test(char)) {
-                        this.pos++;
-                        continue;
-                    }
-
-                    if (char === '/' && this.code[this.pos + 1] === '/') {
-                        while (this.pos < this.code.length && this.code[this.pos] !== '\n') this.pos++;
-                        continue;
-                    }
-
-                    if (/[a-zA-Z_]/.test(char)) {
-                        let id = '';
-                        while (this.pos < this.code.length && /[a-zA-Z0-9_]/.test(this.code[this.pos])) {
-                            id += this.code[this.pos++];
-                        }
-                        if (this.keywords.has(id.toLowerCase())) {
-                            this.tokens.push({ type: 'KEYWORD', value: id.toLowerCase() });
-                        } else {
-                            this.tokens.push({ type: 'IDENTIFIER', value: id });
-                        }
-                        continue;
-                    }
-
-                    if (/[0-9]/.test(char)) {
-                        let num = '';
-                        while (this.pos < this.code.length && /[0-9.]/.test(this.code[this.pos])) {
-                            num += this.code[this.pos++];
-                        }
-                        this.tokens.push({ type: 'NUMBER', value: parseFloat(num) });
+                        tokens.push({ type: 'NUMBER', value: parseFloat(num), originalValue: num, startPos, line: startLine, col: startCol });
                         continue;
                     }
 
                     if (char === '"' || char === "'") {
                         let quote = char;
                         let str = '';
-                        this.pos++;
+                        const startPos = this.pos;
+                        this.updatePos(char);
                         while (this.pos < this.code.length && this.code[this.pos] !== quote) {
-                            str += this.code[this.pos++];
+                            const c = this.code[this.pos];
+                            str += c;
+                            this.updatePos(c);
                         }
-                        this.pos++;
-                        this.tokens.push({ type: 'STRING', value: str });
+                        if (this.pos < this.code.length) this.updatePos(this.code[this.pos]);
+                        tokens.push({ type: 'STRING', value: str, originalValue: quote + str + quote, startPos, line: startLine, col: startCol });
                         continue;
                     }
 
+                    const startPos = this.pos;
                     if (char === '<' && this.code[this.pos + 1] === '-') {
-                        this.tokens.push({ type: 'OPERATOR', value: '<-' });
-                        this.pos += 2;
+                        this.updatePos('<'); this.updatePos('-');
+                        tokens.push({ type: 'OPERATOR', value: '<-', startPos, line: startLine, col: startCol });
                         continue;
                     }
 
                     if (/[+\-*/%^=<>!]/.test(char)) {
                         let op = char;
-                        if ((char === '<' || char === '>' || char === '!') && this.code[this.pos + 1] === '=') {
-                            op += this.code[++this.pos];
+                        this.updatePos(char);
+                        const next = this.code[this.pos];
+                        if (char === '<' && next === '>') {
+                            op = '<>';
+                            this.updatePos(next);
+                        } else if ((char === '<' || char === '>' || char === '!' || char === '=') && next === '=') {
+                            op += '=';
+                            this.updatePos(next);
                         }
-                        this.tokens.push({ type: 'OPERATOR', value: op });
-                        this.pos++;
+                        tokens.push({ type: 'OPERATOR', value: op, startPos, line: startLine, col: startCol });
                         continue;
                     }
 
-                    if (/[(),;[\]]/.test(char)) {
-                        this.tokens.push({ type: 'PUNCTUATION', value: char });
-                        this.pos++;
+                    if (/[():,;[\]]/.test(char)) {
+                        this.updatePos(char);
+                        tokens.push({ type: 'PUNCTUATION', value: char, startPos, line: startLine, col: startCol });
                         continue;
                     }
 
-                    this.pos++; // Skip unknown
+                    this.pos++;
+                    this.col++; // Skip unknown
                 }
-                return this.tokens;
+            this.tokens = tokens;
+            return tokens;
             }
         }
 
@@ -854,7 +1372,11 @@ FinAlgoritmo</textarea>
             }
 
             peek() { return this.tokens[this.pos]; }
-            consume() { return this.tokens[this.pos++]; }
+            consume() {
+                const token = this.tokens[this.pos++];
+                if (!token) return { type: 'EOF', value: '', line: 0, col: 0 };
+                return token;
+            }
             match(type, value) {
                 const token = this.peek();
                 if (token && token.type === type && (!value || token.value === value)) {
@@ -863,22 +1385,46 @@ FinAlgoritmo</textarea>
                 return null;
             }
 
+            expect(type, value) {
+                const token = this.match(type, value);
+                if (!token) {
+                    const found = this.peek() ? this.peek().value : 'EOF';
+                    throw new Error(`Se esperaba '${value || type}' pero se encontró '${found}'`);
+                }
+                return token;
+            }
+
             parse() {
                 const program = [];
                 while (this.pos < this.tokens.length) {
                     const stmt = this.parseStatement();
-                    if (stmt) program.push(stmt);
-                    else this.pos++;
+                    if (stmt) {
+                        program.push(stmt);
+                    } else if (this.peek()) {
+                        throw new Error(`Sentencia no reconocida o bloque mal cerrado cerca de '${this.peek().value}'`);
+                    } else {
+                        this.pos++;
+                    }
                 }
                 return program;
             }
 
             parseStatement() {
+                // Skip semicolons between statements
+                while (this.peek() && this.peek().type === 'PUNCTUATION' && this.peek().value === ';') this.pos++;
+
                 const token = this.peek();
                 if (!token) return null;
 
-                if (token.type === 'KEYWORD') {
-                    switch (token.value) {
+                // Explicitly check for unclosed blocks when reaching unexpected keywords
+                // Note: finalgoritmo and finproceso are top-level and handled below
+                if (token.type === 'KEYWORD' && ['sino', 'finsi', 'finmientras', 'finpara', 'hasta', 'finsegun', 'finfuncion', 'finsubproceso'].includes(token.value)) {
+                    return null;
+                }
+
+                try {
+                    if (token.type === 'KEYWORD') {
+                        switch (token.value) {
                         case 'algoritmo':
                         case 'proceso':
                             this.consume();
@@ -904,11 +1450,21 @@ FinAlgoritmo</textarea>
                             return this.parseRepetir();
                         case 'segun':
                             return this.parseSegun();
+                        case 'dimension':
+                            return this.parseDimension();
+                            case 'funcion':
+                            case 'subproceso':
+                                return this.parseFunction();
+                        }
                     }
-                }
 
-                if (token.type === 'IDENTIFIER') {
-                    return this.parseAssignment();
+                    if (token.type === 'IDENTIFIER') {
+                        return this.parseAssignment();
+                    }
+                } catch (e) {
+                    console.error("Error parsing statement:", e);
+                    this.pos++; // Skip faulty token
+                    return null;
                 }
 
                 return null;
@@ -921,7 +1477,7 @@ FinAlgoritmo</textarea>
                 while (this.match('PUNCTUATION', ',')) {
                     vars.push(this.consume().value);
                 }
-                this.match('KEYWORD', 'como');
+                this.expect('KEYWORD', 'como');
                 const dataType = this.consume().value;
                 this.match('PUNCTUATION', ';');
                 return { type: 'DEFINIR', variables: vars, dataType };
@@ -952,31 +1508,33 @@ FinAlgoritmo</textarea>
             parseSi() {
                 this.consume(); // si
                 const condition = this.parseExpression();
-                this.match('KEYWORD', 'entonces');
+                this.expect('KEYWORD', 'entonces');
                 const thenBranch = [];
                 while (this.peek() && !(this.peek().type === 'KEYWORD' && (this.peek().value === 'sino' || this.peek().value === 'finsi'))) {
-                    thenBranch.push(this.parseStatement());
+                    const s = this.parseStatement();
+                    if (s) thenBranch.push(s); else break;
                 }
                 let elseBranch = [];
                 if (this.match('KEYWORD', 'sino')) {
                     while (this.peek() && !(this.peek().type === 'KEYWORD' && this.peek().value === 'finsi')) {
-                        elseBranch.push(this.parseStatement());
+                        const s = this.parseStatement();
+                        if (s) elseBranch.push(s); else break;
                     }
                 }
-                this.match('KEYWORD', 'finsi');
+                this.expect('KEYWORD', 'finsi');
                 return { type: 'SI', condition, thenBranch, elseBranch };
             }
 
             parseMientras() {
                 this.consume(); // mientras
                 const condition = this.parseExpression();
-                this.match('KEYWORD', 'hacer');
+                this.expect('KEYWORD', 'hacer');
                 const body = [];
                 while (this.peek() && !(this.peek().type === 'KEYWORD' && this.peek().value === 'finmientras')) {
                     const stmt = this.parseStatement();
-                    if (stmt) body.push(stmt); else this.pos++;
+                    if (stmt) body.push(stmt); else break;
                 }
-                this.match('KEYWORD', 'finmientras');
+                this.expect('KEYWORD', 'finmientras');
                 this.match('PUNCTUATION', ';');
                 return { type: 'MIENTRAS', condition, body };
             }
@@ -984,22 +1542,24 @@ FinAlgoritmo</textarea>
             parsePara() {
                 this.consume(); // para
                 const variable = this.consume().value;
-                this.match('OPERATOR', '<-');
+                if (!this.match('OPERATOR', '<-') && !this.match('OPERATOR', '=')) {
+                    throw new Error("Se esperaba '<-' o '=' en el ciclo Para");
+                }
                 const startExpr = this.parseExpression();
-                this.match('KEYWORD', 'hasta');
+                this.expect('KEYWORD', 'hasta');
                 const endExpr = this.parseExpression();
                 let stepExpr = { type: 'LITERAL', valueType: 'NUMBER', value: 1 };
                 if (this.match('KEYWORD', 'con')) {
-                    this.match('KEYWORD', 'paso');
+                    this.expect('KEYWORD', 'paso');
                     stepExpr = this.parseExpression();
                 }
-                this.match('KEYWORD', 'hacer');
+                this.expect('KEYWORD', 'hacer');
                 const body = [];
                 while (this.peek() && !(this.peek().type === 'KEYWORD' && this.peek().value === 'finpara')) {
                     const stmt = this.parseStatement();
-                    if (stmt) body.push(stmt); else this.pos++;
+                    if (stmt) body.push(stmt); else break;
                 }
-                this.match('KEYWORD', 'finpara');
+                this.expect('KEYWORD', 'finpara');
                 this.match('PUNCTUATION', ';');
                 return { type: 'PARA', variable, startExpr, endExpr, stepExpr, body };
             }
@@ -1009,10 +1569,10 @@ FinAlgoritmo</textarea>
                 const body = [];
                 while (this.peek() && !(this.peek().type === 'KEYWORD' && this.peek().value === 'hasta')) {
                     const stmt = this.parseStatement();
-                    if (stmt) body.push(stmt); else this.pos++;
+                    if (stmt) body.push(stmt); else break;
                 }
-                this.match('KEYWORD', 'hasta');
-                this.match('KEYWORD', 'que');
+                this.expect('KEYWORD', 'hasta');
+                this.expect('KEYWORD', 'que');
                 const condition = this.parseExpression();
                 this.match('PUNCTUATION', ';');
                 return { type: 'REPETIR', body, condition };
@@ -1021,17 +1581,17 @@ FinAlgoritmo</textarea>
             parseSegun() {
                 this.consume(); // segun
                 const variable = this.consume().value;
-                this.match('KEYWORD', 'hacer');
+                this.expect('KEYWORD', 'hacer');
                 const cases = [];
                 let otherwise = [];
                 while (this.peek() && !(this.peek().type === 'KEYWORD' && this.peek().value === 'finsegun')) {
                     if (this.match('KEYWORD', 'de')) {
-                        this.match('KEYWORD', 'otro');
-                        this.match('KEYWORD', 'modo');
+                        this.expect('KEYWORD', 'otro');
+                        this.expect('KEYWORD', 'modo');
                         this.match('PUNCTUATION', ':');
                         while (this.peek() && !(this.peek().type === 'KEYWORD' && this.peek().value === 'finsegun')) {
                             const stmt = this.parseStatement();
-                            if (stmt) otherwise.push(stmt); else this.pos++;
+                            if (stmt) otherwise.push(stmt); else break;
                         }
                     } else {
                         const values = [];
@@ -1042,39 +1602,191 @@ FinAlgoritmo</textarea>
                         this.match('PUNCTUATION', ':');
                         const body = [];
                         // Collect statements until next case or De Otro Modo or FinSegun
-                        while (this.peek() && !(this.peek().type === 'KEYWORD' && (this.peek().value === 'de' || this.peek().value === 'finsegun')) && this.peek().type !== 'NUMBER' && this.peek().type !== 'STRING') {
+                        while (this.peek() && !this.isEndOfCase()) {
                              const stmt = this.parseStatement();
-                             if (stmt) body.push(stmt); else this.pos++;
+                             if (stmt) body.push(stmt); else break;
                         }
                         cases.push({ values, body });
                     }
                 }
-                this.match('KEYWORD', 'finsegun');
-                this.match('PUNCTUATION', ';');
+                this.expect('KEYWORD', 'finsegun');
                 return { type: 'SEGUN', variable, cases, otherwise };
+            }
+
+            parseFunction() {
+                this.consume(); // funcion or subproceso
+                let returnVar = null;
+                let name = this.consume().value;
+                if (this.peek() && this.peek().type === 'OPERATOR' && this.peek().value === '<-') {
+                    this.consume();
+                    returnVar = name;
+                    name = this.consume().value;
+                }
+                this.match('PUNCTUATION', '(');
+                const params = [];
+                if (!this.match('PUNCTUATION', ')')) {
+                    params.push(this.consume().value);
+                    while (this.match('PUNCTUATION', ',')) {
+                        params.push(this.consume().value);
+                    }
+                    this.expect('PUNCTUATION', ')');
+                }
+                const body = [];
+                while (this.peek() && !(this.peek().type === 'KEYWORD' && (this.peek().value === 'finfuncion' || this.peek().value === 'finsubproceso'))) {
+                    const stmt = this.parseStatement();
+                    if (stmt) body.push(stmt); else break;
+                }
+                if (!this.match('KEYWORD', 'finfuncion') && !this.match('KEYWORD', 'finsubproceso')) {
+                    throw new Error("Se esperaba 'FinFuncion' o 'FinSubproceso' para cerrar el bloque");
+                }
+                return { type: 'FUNCTION_DEF', name, returnVar, params, body };
+            }
+
+            parseDimension() {
+                this.consume(); // dimension
+                const arrays = [];
+                do {
+                    const name = this.consume().value;
+                    const dims = [];
+                    // Support both [ ] and ( ) for dimensions
+                    if (!this.match('PUNCTUATION', '[') && !this.match('PUNCTUATION', '(')) {
+                         throw new Error("Se esperaba '[' o '(' para definir dimensiones");
+                    }
+                    dims.push(this.parseExpression());
+                    while (this.match('PUNCTUATION', ',')) {
+                        dims.push(this.parseExpression());
+                    }
+                    if (!this.match('PUNCTUATION', ']') && !this.match('PUNCTUATION', ')')) {
+                         throw new Error("Se esperaba ']' o ')' para cerrar dimensiones");
+                    }
+                    arrays.push({ name, dims });
+                } while (this.match('PUNCTUATION', ','));
+                this.match('PUNCTUATION', ';');
+                return { type: 'DIMENSION', arrays };
             }
 
             parseAssignment() {
                 const variable = this.consume().value;
+                let indices = null;
+                if (this.peek() && (this.peek().value === '[' || this.peek().value === '(')) {
+                    this.consume(); // [ or (
+                    indices = [this.parseExpression()];
+                    while (this.match('PUNCTUATION', ',')) {
+                        indices.push(this.parseExpression());
+                    }
+                    if (!this.match('PUNCTUATION', ']') && !this.match('PUNCTUATION', ')')) {
+                         throw new Error("Se esperaba ']' o ')' para cerrar índices");
+                    }
+                }
                 if (!this.match('OPERATOR', '<-') && !this.match('OPERATOR', '=')) return null;
                 const expr = this.parseExpression();
                 this.match('PUNCTUATION', ';');
-                return { type: 'ASSIGN', variable, expression: expr };
+                return { type: 'ASSIGN', variable, indices, expression: expr };
+            }
+
+            isEndOfCase() {
+                let i = 0;
+                const next = () => this.tokens[this.pos + i];
+                // Skip semicolons
+                while (next() && next().type === 'PUNCTUATION' && next().value === ';') i++;
+
+                const t = next();
+                if (!t) return true;
+                if (t.type === 'KEYWORD' && (t.value === 'de' || t.value === 'finsegun')) return true;
+
+                if (['NUMBER', 'STRING', 'IDENTIFIER'].includes(t.type)) {
+                    let j = i + 1;
+                    // Skip multiple values separated by commas
+                    while (this.tokens[this.pos + j]) {
+                        const token = this.tokens[this.pos + j];
+                        if (token.type === 'PUNCTUATION' && token.value === ':') return true;
+                        if (token.type === 'PUNCTUATION' && token.value === ',') { j++; continue; }
+                        if (['NUMBER', 'STRING', 'IDENTIFIER'].includes(token.type)) { j++; continue; }
+                        break;
+                    }
+                }
+                return false;
             }
 
             parseExpression() {
-                let left = this.parsePrimary();
-                while (this.peek() && this.peek().type === 'OPERATOR') {
+                const expr = this.parseLogical();
+                if (!expr) throw new Error("Se esperaba una expresión");
+                return expr;
+            }
+
+            parseLogical() {
+                let left = this.parseComparison();
+                if (!left) return null;
+                while (this.peek() && this.peek().type === 'KEYWORD' && (this.peek().value === 'y' || this.peek().value === 'o')) {
                     const op = this.consume().value;
-                    const right = this.parsePrimary();
+                    const right = this.parseComparison();
                     left = { type: 'BINARY_OP', left, op, right };
                 }
                 return left;
             }
 
+            parseComparison() {
+                let left = this.parseAddition();
+                if (!left) return null;
+                while (this.peek() && this.peek().type === 'OPERATOR' && ['=', '<', '>', '<=', '>=', '<>', '!='].includes(this.peek().value)) {
+                    const op = this.consume().value;
+                    const right = this.parseAddition();
+                    left = { type: 'BINARY_OP', left, op, right };
+                }
+                return left;
+            }
+
+            parseAddition() {
+                let left = this.parseMultiplication();
+                if (!left) return null;
+                while (this.peek() && this.peek().type === 'OPERATOR' && (this.peek().value === '+' || this.peek().value === '-')) {
+                    const op = this.consume().value;
+                    const right = this.parseMultiplication();
+                    left = { type: 'BINARY_OP', left, op, right };
+                }
+                return left;
+            }
+
+            parseMultiplication() {
+                let left = this.parseUnary();
+                if (!left) return null;
+                while ((this.peek() && this.peek().type === 'OPERATOR' && ['*', '/', '^', '%'].includes(this.peek().value)) || (this.peek() && this.peek().type === 'KEYWORD' && this.peek().value === 'mod')) {
+                    const op = this.consume().value;
+                    const right = this.parseUnary();
+                    left = { type: 'BINARY_OP', left, op, right };
+                }
+                return left;
+            }
+
+            parseUnary() {
+                if (this.match('KEYWORD', 'no') || this.match('OPERATOR', '-')) {
+                    const op = this.tokens[this.pos - 1].value;
+                    const operand = this.parseUnary();
+                    return { type: 'UNARY_OP', op, operand };
+                }
+                return this.parsePrimary();
+            }
+
             parsePrimary() {
                 const token = this.consume();
-                if (token.type === 'NUMBER' || token.type === 'STRING' || token.type === 'IDENTIFIER') {
+                if (!token) return null;
+                if (token.type === 'NUMBER' || token.type === 'STRING') {
+                    return { type: 'LITERAL', valueType: token.type, value: token.value };
+                }
+                if (token.type === 'KEYWORD' && (token.value === 'verdadero' || token.value === 'falso')) {
+                    return { type: 'LITERAL', valueType: 'LOGICO', value: token.value === 'verdadero' };
+                }
+                if (token.type === 'IDENTIFIER') {
+                    const next = this.peek();
+                    if (next && (next.value === '(' || next.value === '[')) {
+                        this.consume(); // ( or [
+                        const args = [this.parseExpression()];
+                        while (this.match('PUNCTUATION', ',')) {
+                            args.push(this.parseExpression());
+                        }
+                        this.match('PUNCTUATION', ')') || this.match('PUNCTUATION', ']');
+                        return { type: 'CALL_OR_ACCESS', name: token.value, args };
+                    }
                     return { type: 'LITERAL', valueType: token.type, value: token.value };
                 }
                 return null;
@@ -1083,7 +1795,9 @@ FinAlgoritmo</textarea>
 
         class Interpreter {
             constructor(printFn, inputFn, updateVarsFn) {
-                this.variables = {};
+                this.globalVars = {};
+                this.variables = this.globalVars;
+                this.functions = {};
                 this.print = printFn;
                 this.input = inputFn;
                 this.updateVars = updateVarsFn;
@@ -1091,9 +1805,17 @@ FinAlgoritmo</textarea>
                 this.inputVar = null;
                 this.program = [];
                 this.pc = 0;
+                this.stack = [];
             }
 
             async execute(program) {
+                // First pass: scan for functions
+                for (const stmt of program) {
+                    if (stmt.type === 'FUNCTION_DEF') {
+                        this.functions[stmt.name.toLowerCase()] = stmt;
+                    }
+                }
+
                 this.program = program;
                 this.pc = 0;
                 while (this.pc < this.program.length) {
@@ -1104,42 +1826,71 @@ FinAlgoritmo</textarea>
 
             async step() {
                 const stmt = this.program[this.pc];
+                if (!stmt) { this.pc++; return; }
                 console.log('Executing:', stmt);
                 switch (stmt.type) {
+                    case 'FUNCTION_DEF':
+                        this.functions[stmt.name.toLowerCase()] = stmt;
+                        break;
                     case 'DEFINIR':
                         stmt.variables.forEach(v => {
                             this.variables[v] = { type: stmt.dataType, value: null };
                         });
                         break;
+                    case 'DIMENSION':
+                        for (const arr of stmt.arrays) {
+                            const dims = [];
+                            for (const d of arr.dims) dims.push(await this.evaluate(d));
+                            this.variables[arr.name] = { type: 'arreglo', value: this.createArray(dims), dims };
+                        }
+                        break;
                     case 'ASSIGN':
-                        this.variables[stmt.variable].value = this.evaluate(stmt.expression);
+                        const value = await this.evaluate(stmt.expression);
+                        if (stmt.indices) {
+                            const indices = [];
+                            for (const i of stmt.indices) indices.push(await this.evaluate(i));
+                            this.setArrayValue(this.variables[stmt.variable], indices, value);
+                        } else {
+                            if (!this.variables[stmt.variable]) {
+                                this.variables[stmt.variable] = { type: 'auto', value: value };
+                            } else {
+                                this.variables[stmt.variable].value = value;
+                            }
+                        }
                         break;
                     case 'ESCRIBIR':
-                        const out = stmt.expressions.map(e => this.evaluate(e)).join('');
-                        this.print(out);
+                        const results = [];
+                        for (const e of stmt.expressions) results.push(await this.evaluate(e));
+                        this.print(results.join(' '));
                         break;
                     case 'LEER':
                         for (const v of stmt.variables) {
                             const val = await this.input(`Ingrese valor para ${v}:`);
-                            this.variables[v].value = this.castValue(val, this.variables[v].type);
+                            if (val === null) throw new Error("Ejecución cancelada por el usuario");
+                            if (!this.variables[v]) {
+                                this.variables[v] = { type: 'auto', value: this.castValue(val, 'auto') };
+                            } else {
+                                this.variables[v].value = this.castValue(val, this.variables[v].type);
+                            }
                         }
                         break;
                     case 'SI':
-                        if (this.evaluate(stmt.condition)) {
+                        if (await this.evaluate(stmt.condition)) {
                             await this.executeBlock(stmt.thenBranch);
                         } else {
                             await this.executeBlock(stmt.elseBranch);
                         }
                         break;
                     case 'MIENTRAS':
-                        while (this.evaluate(stmt.condition)) {
+                        while (await this.evaluate(stmt.condition)) {
                             await this.executeBlock(stmt.body);
                         }
                         break;
                     case 'PARA':
-                        const start = this.evaluate(stmt.startExpr);
-                        const end = this.evaluate(stmt.endExpr);
-                        const stepValue = this.evaluate(stmt.stepExpr);
+                        const start = await this.evaluate(stmt.startExpr);
+                        const end = await this.evaluate(stmt.endExpr);
+                        const stepValue = await this.evaluate(stmt.stepExpr);
+                        if (!this.variables[stmt.variable]) this.variables[stmt.variable] = { type: 'auto', value: start };
                         this.variables[stmt.variable].value = start;
                         while ((stepValue >= 0 && this.variables[stmt.variable].value <= end) || (stepValue < 0 && this.variables[stmt.variable].value >= end)) {
                             await this.executeBlock(stmt.body);
@@ -1150,13 +1901,20 @@ FinAlgoritmo</textarea>
                     case 'REPETIR':
                         do {
                             await this.executeBlock(stmt.body);
-                        } while (!this.evaluate(stmt.condition));
+                        } while (!await this.evaluate(stmt.condition));
                         break;
                     case 'SEGUN':
                         const val = this.variables[stmt.variable].value;
                         let matched = false;
                         for (const c of stmt.cases) {
-                            if (c.values.some(v => this.evaluate(v) === val)) {
+                            let matchFound = false;
+                            for (const v of c.values) {
+                                if (await this.evaluate(v) === val) {
+                                    matchFound = true;
+                                    break;
+                                }
+                            }
+                            if (matchFound) {
                                 await this.executeBlock(c.body);
                                 matched = true;
                                 break;
@@ -1183,22 +1941,59 @@ FinAlgoritmo</textarea>
                 this.pc = oldPc;
             }
 
-            evaluate(expr) {
+            async evaluate(expr) {
+                if (!expr) throw new Error("Error en expresión: El nodo es nulo");
+                if (expr.type === 'UNARY_OP') {
+                    const val = await this.evaluate(expr.operand);
+                    if (expr.op.toLowerCase() === 'no') return !val;
+                    if (expr.op === '-') return -val;
+                }
                 if (expr.type === 'LITERAL') {
                     if (expr.valueType === 'IDENTIFIER') {
-                        if (this.variables[expr.value]) return this.variables[expr.value].value;
+                        const varData = this.variables[expr.value];
+                        if (varData) {
+                            if (varData.value === null) {
+                                throw new Error(`Variable no inicializada: ${expr.value}`);
+                            }
+                            return varData.value;
+                        }
                         throw new Error(`Variable no definida: ${expr.value}`);
                     }
                     return expr.value;
                 }
+                if (expr.type === 'CALL_OR_ACCESS') {
+                    const args = [];
+                    for (const a of expr.args) args.push(await this.evaluate(a));
+                    const builtIn = this.getBuiltIn(expr.name.toLowerCase(), args);
+                    if (builtIn !== undefined) return builtIn;
+
+                    const arr = this.variables[expr.name];
+                    if (arr && arr.type === 'arreglo') {
+                        return this.getArrayValue(arr, args);
+                    }
+
+                    const func = this.functions[expr.name] || this.functions[expr.name.toLowerCase()];
+                    if (func) {
+                        return await this.callFunction(func, args);
+                    }
+                    throw new Error(`Función o arreglo no definido: ${expr.name}`);
+                }
                 if (expr.type === 'BINARY_OP') {
-                    const left = this.evaluate(expr.left);
-                    const right = this.evaluate(expr.right);
-                    switch (expr.op) {
+                    const left = await this.evaluate(expr.left);
+                    const right = await this.evaluate(expr.right);
+                    const op = expr.op.toLowerCase();
+                    switch (op) {
                         case '+': return left + right;
                         case '-': return left - right;
                         case '*': return left * right;
-                        case '/': return left / right;
+                        case '/':
+                            if (right === 0) throw new Error("Error en división: División por cero");
+                            return left / right;
+                        case '^': return Math.pow(left, right);
+                        case 'mod':
+                        case '%':
+                            if (right === 0) throw new Error("Error en operación MOD: División por cero");
+                            return left % right;
                         case '=': return left === right;
                         case '<': return left < right;
                         case '>': return left > right;
@@ -1206,17 +2001,102 @@ FinAlgoritmo</textarea>
                         case '>=': return left >= right;
                         case '!=':
                         case '<>': return left !== right;
+                        case 'y':
+                        case '&': return left && right;
+                        case 'o':
+                        case '|': return left || right;
                     }
                 }
             }
 
-            castValue(val, type) {
-                switch (type.toLowerCase()) {
-                    case 'entero': return parseInt(val);
-                    case 'real': return parseFloat(val);
-                    case 'logico': return val.toLowerCase() === 'verdadero';
-                    default: return val;
+            getBuiltIn(name, args) {
+                switch (name) {
+                    case 'rc': return Math.sqrt(args[0]);
+                    case 'abs': return Math.abs(args[0]);
+                    case 'ln': return Math.log(args[0]);
+                    case 'exp': return Math.exp(args[0]);
+                    case 'sen': return Math.sin(args[0]);
+                    case 'cos': return Math.cos(args[0]);
+                    case 'atan': return Math.atan(args[0]);
+                    case 'trunc': return Math.trunc(args[0]);
+                    case 'redon': return Math.round(args[0]);
+                    case 'azar': return Math.floor(Math.random() * args[0]);
                 }
+                return undefined;
+            }
+
+            createArray(dims) {
+                if (dims.length === 0) return null;
+                const size = dims[0];
+                const rest = dims.slice(1);
+                const arr = new Array(size);
+                if (rest.length > 0) {
+                    for (let i = 0; i < size; i++) arr[i] = this.createArray(rest);
+                } else {
+                    for (let i = 0; i < size; i++) arr[i] = 0;
+                }
+                return arr;
+            }
+
+            getArrayValue(arrData, indices) {
+                let current = arrData.value;
+                for (let i = 0; i < indices.length; i++) {
+                    const idx = indices[i] - 1;
+                    if (idx < 0 || idx >= current.length) throw new Error("Índice de arreglo fuera de rango");
+                    current = current[idx];
+                }
+                return current;
+            }
+
+            setArrayValue(arrData, indices, value) {
+                let current = arrData.value;
+                for (let i = 0; i < indices.length - 1; i++) {
+                    const idx = indices[i] - 1;
+                    current = current[idx];
+                }
+                const lastIdx = indices[indices.length - 1] - 1;
+                current[lastIdx] = value;
+            }
+
+            async callFunction(func, args) {
+                const oldVars = this.variables;
+                const newVars = {};
+                func.params.forEach((p, i) => {
+                    newVars[p] = { type: 'auto', value: args[i] };
+                });
+                if (func.returnVar) {
+                    newVars[func.returnVar] = { type: 'auto', value: null };
+                }
+
+                this.variables = newVars;
+                const oldProgram = this.program;
+                const oldPc = this.pc;
+
+                this.program = func.body;
+                this.pc = 0;
+                while (this.pc < this.program.length) {
+                    await this.step();
+                }
+
+                const result = func.returnVar ? this.variables[func.returnVar].value : null;
+                this.variables = oldVars;
+                this.program = oldProgram;
+                this.pc = oldPc;
+                return result;
+            }
+
+            castValue(val, type) {
+                if (!type) return val;
+                const t = type.toLowerCase();
+                if (t === 'entero') return parseInt(val) || 0;
+                if (t === 'real') return parseFloat(val) || 0.0;
+                if (t === 'logico') return val.toLowerCase() === 'verdadero';
+                if (t === 'auto') {
+                    if (/^-?\d+$/.test(val)) return parseInt(val);
+                    if (/^-?\d*\.\d+$/.test(val)) return parseFloat(val);
+                    if (val.toLowerCase() === 'verdadero' || val.toLowerCase() === 'falso') return val.toLowerCase() === 'verdadero';
+                }
+                return val;
             }
         }
 
@@ -1228,7 +2108,7 @@ FinAlgoritmo</textarea>
             clearConsole();
             printToConsole('*** Ejecución Iniciada. ***');
 
-            const code = editor.value;
+            const code = editor.innerText;
             const tokenizer = new Tokenizer(code);
             const tokens = tokenizer.tokenize();
             const parser = new Parser(tokens);
@@ -1248,11 +2128,14 @@ FinAlgoritmo</textarea>
                 },
                 (vars) => {
                     const list = document.getElementById('variableList');
+                    if (!list) return;
                     list.innerHTML = '';
                     for (const [name, data] of Object.entries(vars)) {
                         const div = document.createElement('div');
                         div.style.marginBottom = '5px';
-                        div.innerHTML = `<b>${name}</b>: ${data.type} = ${data.value}`;
+                        let valStr = data.value;
+                        if (data.type === 'arreglo') valStr = JSON.stringify(data.value);
+                        div.innerHTML = `<b>${name}</b>: ${data.type} = ${valStr}`;
                         list.appendChild(div);
                     }
                 }
@@ -1261,6 +2144,7 @@ FinAlgoritmo</textarea>
             interpreter.execute(program).then(() => {
                 printToConsole('*** Ejecución Finalizada. ***');
             }).catch(e => {
+                console.error(e);
                 printToConsole('ERROR: ' + e.message);
             });
         }
@@ -1283,6 +2167,29 @@ FinAlgoritmo</textarea>
 
         // Initialize
         updateEditor();
+
+        // Keyboard shortcuts
+        window.addEventListener('keydown', e => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key.toLowerCase()) {
+                    case 'n': e.preventDefault(); newProject(); break;
+                    case 'o': e.preventDefault(); triggerOpenFile(); break;
+                    case 's': e.preventDefault(); saveToFile(); break;
+                    case 'z': e.preventDefault(); undo(); break;
+                    case 'y': e.preventDefault(); redo(); break;
+                    case 'x': cut(); break; // Default often works but we have custom
+                    case 'c': copy(); break;
+                    case 'v': paste(); break;
+                    case 'e': e.preventDefault(); selectAll(); break;
+                }
+            } else {
+                switch(e.key) {
+                    case 'F9': e.preventDefault(); runAlgorithm(); break;
+                    case 'F10': e.preventDefault(); runStepByStep(); break;
+                    case 'F7': e.preventDefault(); drawFlowchart(); break;
+                }
+            }
+        });
 
         // PWA update logic
         if ('serviceWorker' in navigator) {

@@ -60,3 +60,24 @@ TAREA: [A-38] Actualización de Lógica de Autenticación, UI y Soporte iOS PWA
   · Los paneles de "Comandos", "Variables" y "Operadores" no están organizados según el estándar de PSeInt.
   · El editor es un textarea básico sin resaltado de sintaxis dinámico ni numeración de líneas.
 - Acción: Rediseñar UI para paridad visual con PSeInt, implementar un intérprete de pseudocódigo real y reestructurar paneles.
+
+-------------------------------------------------------------------
+7. ARCHIVO: pseudocode.html (Audit Complementaria [A-43])
+-------------------------------------------------------------------
+- Estado: Intérprete funcional para lógica básica, pero faltan estructuras avanzadas.
+- Hallazgos:
+  · Los botones de "Abrir" y "Guardar" no tienen funciones de I/O de archivos implementadas.
+  · El Parser/Interpreter no soporta Arreglos (Dimensionamiento ni acceso por índice).
+  · Faltan Funciones y Subprocesos (Definición y Llamadas con parámetros).
+  · No existe lógica para la generación de Diagramas de Flujo (botón sin función).
+  · Faltan operadores avanzados (MOD, RC, ABS, etc.).
+- Acción: Implementar I/O de archivos .psc, soporte para arreglos y funciones, y generador de diagramas de flujo SVG.
+
+AUDITORÍA DE FUNCIONALIDAD PSeInt (25/01/2026)
+=============================================
+1. [H-10] Fallo en Estructura SEGUN: SOLUCIONADO. El parser de SEGUN ahora detecta correctamente múltiples sentencias por caso y se detiene en el siguiente caso o fin del bloque.
+2. [H-11] Visualización de Diagramas de Flujo: MEJORADO. Se implementó recursividad básica para representar bloques anidados dentro de estructuras de control (SI, PARA, MIENTRAS, REPETIR).
+3. [H-12] Operadores Multi-carácter: SOLUCIONADO. El Tokenizer maneja correctamente tokens de múltiples caracteres (<-, <>, <=, >=, ==).
+4. [H-13] Espaciado en ESCRIBIR: SOLUCIONADO. Se añadió el espaciado automático de un espacio entre argumentos de salida.
+5. [H-14] Estabilidad del Editor: SOLUCIONADO. Se reemplazó el sistema de textarea/div por un único elemento contenteditable="plaintext-only", eliminando problemas de ghosting de texto y desincronización del cursor.
+6. [H-15] Seguridad en Tiempo de Ejecución: SOLUCIONADO. Se añadieron protecciones contra división por cero y el uso de variables no inicializadas.

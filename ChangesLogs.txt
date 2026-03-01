@@ -680,3 +680,30 @@ ARCHIVO: pseudocode.html
   · Soporte para estructuras de control: Si-Entonces, Mientras, Para, Repetir, Segun.
   · Sistema de E/S interactivo: Comando Escribir (consola) y Leer (modal de entrada).
 - Sincronización automática de la Lista de Variables con el estado interno del intérprete durante la ejecución.
+
+25/01/2026 (Rework Completo de Simulador PSeInt)
+- Archivo: pseudocode.html
+  - Implementación de sistema de menús desplegables (Archivo, Editar, Configurar, Ejecutar, Ayuda) con submenús, atajos de teclado y estilos visuales fieles a PSeInt.
+  - Corrección Crítica de Alineación: Se estandarizó el CSS de #codeEditor y #syntaxHighlight (font-family, line-height: 21px, padding, box-sizing) para eliminar el desfase entre el cursor del textarea y el texto resaltado.
+  - Implementación de Funciones de Edición: Se añadieron handlers funcionales para Deshacer, Rehacer, Cortar, Copiar, Pegar y Seleccionar Todo.
+  - Gestión de Archivos: Implementadas funciones de Nuevo Proyecto, Abrir archivo .psc y Guardar/Guardar como mediante Blobs.
+  - Ejecución Paso a Paso: Se implementó un modo de ejecución secuencial con retardos automáticos para simular el rastreo de línea de PSeInt.
+  - Atajos de Teclado Globales: Se mapearon combinaciones de teclas (Ctrl+N, O, S, Z, Y, X, C, V, E y teclas de función F1, F7, F9, F10) a las acciones correspondientes.
+  - Mejora en Inserción de Snippets: Se corrigió un error de precedencia en la función insertCode() que causaba posicionamiento incorrecto del cursor tras insertar bloques multilínea.
+  - Robustecimiento del Intérprete: Se añadió pre-escaneo de funciones (hoisting) y soporte para evaluación asíncrona de expresiones, permitiendo llamadas a funciones y lecturas de datos integradas en expresiones complejas.
+
+25/01/2026 (Rework Masivo y Estabilización de Simulador PSeInt)
+- Archivo: pseudocode.html
+  - Rediseño de UI: Implementación de layout de 3 columnas y tema claro fiel a la GUI oficial de PSeInt.
+  - Reemplazo de Editor: Sustitución de textarea/overlay por un elemento contenteditable="plaintext-only", solucionando definitivamente el ghosting de texto y la desincronización del cursor.
+  - Intérprete Robusto:
+    - Tokenizer: Soporte para operadores multi-carácter (<- , <=, >=, <>) y normalización case-insensitive.
+    - Parser: Implementada detección de errores en tiempo real con subrayado ondulado rojo y mensajes en el panel de ayuda.
+    - Manejo de Bloques: Corregida la detección de fin de bloque en SEGUN, SI, PARA y MIENTRAS para permitir múltiples sentencias anidadas sin fallos de sincronización.
+  - Seguridad y Funcionalidad:
+    - Añadidas protecciones contra división por cero y uso de variables no inicializadas.
+    - Implementada lógica de Arreglos con base 1 (PSeInt standard).
+    - Estandarizado el comando ESCRIBIR para añadir espacios automáticos entre argumentos.
+    - Soporte completo para funciones/subprocesos con hoisting.
+  - Generador de Diagramas: Implementado renderizado recursivo para representar correctamente ramas de decisión y bucles en formato SVG.
+  - Atajos y Menús: Mapeados todos los comandos clásicos (F9 para Ejecutar, F10 Paso a Paso, Ctrl+S para Guardar, etc.).
