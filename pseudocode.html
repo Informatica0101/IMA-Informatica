@@ -548,7 +548,16 @@
                 <span class="close-btn" onclick="toggleLeftPanel()">×</span>
             </div>
             <div id="leftPanelBody" style="padding: 10px;">
-                <div id="variableList">No hay variables definidas</div>
+                <div id="tabVariables">
+                    <div id="variableList">No hay variables definidas</div>
+                </div>
+                <div id="tabOperadores" class="hidden">
+                    <div style="font-size:12px">
+                        <b>Operadores:</b> + - * / ^ % MOD = < > <= >= <> Y O NO
+                        <br><br>
+                        <b>Funciones:</b> RC ABS LN EXP SEN COS ATAN TRUNC REDON AZAR
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -676,19 +685,17 @@ FinAlgoritmo</textarea>
 
         function setLeftPanelTab(tab) {
             const title = document.getElementById('leftPanelTitle');
-            const body = document.getElementById('leftPanelBody');
+            const tabV = document.getElementById('tabVariables');
+            const tabO = document.getElementById('tabOperadores');
+
             if (tab === 'variables') {
                 title.textContent = 'Variables';
-                body.innerHTML = '<div id="variableList">No hay variables definidas</div>';
+                tabV.classList.remove('hidden');
+                tabO.classList.add('hidden');
             } else {
                 title.textContent = 'Operadores y Funciones';
-                body.innerHTML = `
-                    <div style="font-size:12px">
-                        <b>Operadores:</b> + - * / ^ % MOD = < > <= >= <> Y O NO
-                        <br><br>
-                        <b>Funciones:</b> RC ABS LN EXP SEN COS ATAN TRUNC REDON AZAR
-                    </div>
-                `;
+                tabV.classList.add('hidden');
+                tabO.classList.remove('hidden');
             }
         }
 
@@ -885,6 +892,7 @@ FinAlgoritmo</textarea>
                 },
                 (vars) => {
                     const list = document.getElementById('variableList');
+                    if (!list) return;
                     list.innerHTML = '';
                     for (const [name, data] of Object.entries(vars)) {
                         const div = document.createElement('div');
@@ -1965,6 +1973,7 @@ FinAlgoritmo</textarea>
                 },
                 (vars) => {
                     const list = document.getElementById('variableList');
+                    if (!list) return;
                     list.innerHTML = '';
                     for (const [name, data] of Object.entries(vars)) {
                         const div = document.createElement('div');
