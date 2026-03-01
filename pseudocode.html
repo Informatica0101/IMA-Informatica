@@ -724,15 +724,16 @@ FinAlgoritmo</div>
                 parser.parse();
                 document.getElementById('quickHelp').innerHTML = '<span style="color: green">✓ No hay errores de sintaxis</span>';
             } catch (e) {
-                const lastToken = tokens[parser.pos] || tokens[tokens.length-1];
-                if (lastToken) {
-                    syntaxErrors.push({
-                        line: lastToken.line,
-                        col: lastToken.col,
-                        message: e.message
-                    });
-                    document.getElementById('quickHelp').innerHTML = `<span style="color: red">✖ Error: ${e.message} (Línea ${lastToken.line})</span>`;
-                }
+                const line = e.line || (tokens[parser.pos] ? tokens[parser.pos].line : (tokens.length > 0 ? tokens[tokens.length-1].line : 1));
+                const col = tokens[parser.pos] ? tokens[parser.pos].col : (tokens.length > 0 ? tokens[tokens.length-1].col : 1);
+
+                syntaxErrors.push({
+                    line: line,
+                    col: col,
+                    message: e.message,
+                    type: e.type || "Sintáctico"
+                });
+                document.getElementById('quickHelp').innerHTML = `<span style="color: red">✖ Error ${e.type || "Sintáctico"}: ${e.message} (Línea ${line})</span>`;
             }
         }
 
@@ -771,8 +772,9 @@ FinAlgoritmo</div>
 
             let html = '';
             tokens.forEach(token => {
-                const escaped = token.value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                const isError = syntaxErrors.some(e => e.line === token.line && token.col >= e.col && token.col < e.col + token.value.length);
+                const valStr = (token.originalValue || token.value).toString();
+                const escaped = valStr.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const isError = syntaxErrors.some(e => e.line === token.line && token.col >= e.col && token.col < e.col + valStr.length);
                 const errorClass = isError ? ' sh-error' : '';
 
                 switch(token.type) {
@@ -945,13 +947,19 @@ FinAlgoritmo</div>
         async function runStepByStep() {
             showBottomTab('consola');
             clearConsole();
-            printToConsole('*** Iniciando ejecución paso a paso... ***');
 
             const code = editor.innerText;
             const tokenizer = new Tokenizer(code);
             const tokens = tokenizer.tokenize();
             const parser = new Parser(tokens);
-            stepProgram = parser.parse();
+            try {
+                stepProgram = parser.parse();
+            } catch (e) {
+                printToConsole(`ERROR ${e.type || "Sintáctico"}: ${e.message} (Línea ${e.line || '?'})`);
+                return;
+            }
+
+            printToConsole('*** Iniciando ejecución paso a paso... ***');
 
             stepInterpreter = new Interpreter(
                 (text) => printToConsole(text),
@@ -1007,122 +1015,209 @@ FinAlgoritmo</div>
             const tokenizer = new Tokenizer(code);
             const tokens = tokenizer.tokenize();
             const parser = new Parser(tokens);
-            const program = parser.parse();
+            let program;
+            try {
+                program = parser.parse();
+            } catch (e) {
+                alert(`Error al generar diagrama: ${e.message}`);
+                return;
+            }
 
             const container = document.getElementById('flowchartContainer');
             container.innerHTML = '';
 
-            let y = 20;
             const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            svg.setAttribute("width", "100%");
-            svg.setAttribute("height", "2000");
+            const svgNS = "http://www.w3.org/2000/svg";
 
-            const drawNode = (text, type, cx = 150) => {
-                const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                let shape;
-                if (type === 'process') {
-                    shape = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                    shape.setAttribute("x", cx - 70);
-                    shape.setAttribute("y", y);
-                    shape.setAttribute("width", "140");
-                    shape.setAttribute("height", "40");
-                    shape.setAttribute("fill", "#e1f5fe");
-                    shape.setAttribute("stroke", "#01579b");
-                } else if (type === 'io') {
-                    shape = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-                    const points = `${cx-80},${y+40} ${cx-50},${y} ${cx+80},${y} ${cx+50},${y+40}`;
-                    shape.setAttribute("points", points);
-                    shape.setAttribute("fill", "#fff3e0");
-                    shape.setAttribute("stroke", "#e65100");
-                } else if (type === 'decision') {
-                    shape = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-                    const points = `${cx},${y} ${cx+80},${y+30} ${cx},${y+60} ${cx-80},${y+30}`;
-                    shape.setAttribute("points", points);
-                    shape.setAttribute("fill", "#fce4ec");
-                    shape.setAttribute("stroke", "#880e4f");
-                } else {
-                    shape = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
-                    shape.setAttribute("cx", cx);
-                    shape.setAttribute("cy", y + 20);
-                    shape.setAttribute("rx", "70");
-                    shape.setAttribute("ry", "20");
-                    shape.setAttribute("fill", "#f3e5f5");
-                    shape.setAttribute("stroke", "#4a148c");
+            const NODE_W = 140;
+            const NODE_H = 40;
+            const DECISION_H = 60;
+            const GAP_Y = 30;
+            const GAP_X = 40;
+
+            const measure = (node) => {
+                if (Array.isArray(node)) {
+                    let h = 0, w = NODE_W;
+                    node.forEach(s => {
+                        const m = measure(s);
+                        h += m.h + GAP_Y;
+                        w = Math.max(w, m.w);
+                    });
+                    return { w, h: Math.max(0, h - GAP_Y) };
                 }
 
-                const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                txt.setAttribute("x", cx);
-                txt.setAttribute("y", y + (type === 'decision' ? 35 : 25));
-                txt.setAttribute("text-anchor", "middle");
-                txt.setAttribute("font-size", "12");
-                txt.textContent = text.length > 20 ? text.substring(0, 17) + '...' : text;
+                switch(node.type) {
+                    case 'SI':
+                        const thenM = measure(node.thenBranch);
+                        const elseM = measure(node.elseBranch);
+                        return {
+                            w: thenM.w + elseM.w + GAP_X,
+                            h: DECISION_H + Math.max(thenM.h, elseM.h) + GAP_Y + 20 // 20 for merge point
+                        };
+                    case 'MIENTRAS':
+                    case 'PARA':
+                        const bodyM = measure(node.body);
+                        return {
+                            w: bodyM.w + GAP_X * 2,
+                            h: DECISION_H + bodyM.h + GAP_Y + 20
+                        };
+                    case 'REPETIR':
+                        const repBodyM = measure(node.body);
+                        return {
+                            w: repBodyM.w + GAP_X * 2,
+                            h: repBodyM.h + DECISION_H + GAP_Y + 20
+                        };
+                    case 'FUNCTION_DEF':
+                        return measure(node.body);
+                    default:
+                        return { w: NODE_W, h: NODE_H };
+                }
+            };
+
+            const drawLine = (x1, y1, x2, y2) => {
+                const line = document.createElementNS(svgNS, "line");
+                line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+                line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+                line.setAttribute("stroke", "#333");
+                line.setAttribute("marker-end", "url(#arrowhead)");
+                svg.appendChild(line);
+            };
+
+            const drawPath = (d) => {
+                const path = document.createElementNS(svgNS, "path");
+                path.setAttribute("d", d);
+                path.setAttribute("stroke", "#333");
+                path.setAttribute("fill", "none");
+                path.setAttribute("marker-end", "url(#arrowhead)");
+                svg.appendChild(path);
+            };
+
+            const drawShape = (text, type, cx, cy) => {
+                const group = document.createElementNS(svgNS, "g");
+                let shape;
+                if (type === 'process') {
+                    shape = document.createElementNS(svgNS, "rect");
+                    shape.setAttribute("x", cx - NODE_W/2); shape.setAttribute("y", cy);
+                    shape.setAttribute("width", NODE_W); shape.setAttribute("height", NODE_H);
+                    shape.setAttribute("fill", "#e1f5fe"); shape.setAttribute("stroke", "#01579b");
+                } else if (type === 'io') {
+                    shape = document.createElementNS(svgNS, "polygon");
+                    const points = `${cx-NODE_W/2-10},${cy+NODE_H} ${cx-NODE_W/2+10},${cy} ${cx+NODE_W/2+10},${cy} ${cx+NODE_W/2-10},${cy+NODE_H}`;
+                    shape.setAttribute("points", points);
+                    shape.setAttribute("fill", "#fff3e0"); shape.setAttribute("stroke", "#e65100");
+                } else if (type === 'decision') {
+                    shape = document.createElementNS(svgNS, "polygon");
+                    const points = `${cx},${cy} ${cx+NODE_W/2+10},${cy+DECISION_H/2} ${cx},${cy+DECISION_H} ${cx-NODE_W/2-10},${cy+DECISION_H/2}`;
+                    shape.setAttribute("points", points);
+                    shape.setAttribute("fill", "#fce4ec"); shape.setAttribute("stroke", "#880e4f");
+                } else {
+                    shape = document.createElementNS(svgNS, "ellipse");
+                    shape.setAttribute("cx", cx); shape.setAttribute("cy", cy + NODE_H/2);
+                    shape.setAttribute("rx", NODE_W/2); shape.setAttribute("ry", NODE_H/2);
+                    shape.setAttribute("fill", "#f3e5f5"); shape.setAttribute("stroke", "#4a148c");
+                }
+
+                const txt = document.createElementNS(svgNS, "text");
+                txt.setAttribute("x", cx); txt.setAttribute("y", cy + (type === 'decision' ? DECISION_H/2 + 5 : NODE_H/2 + 5));
+                txt.setAttribute("text-anchor", "middle"); txt.setAttribute("font-size", "11");
+                txt.textContent = text.length > 22 ? text.substring(0, 19) + '...' : text;
 
                 group.appendChild(shape);
                 group.appendChild(txt);
                 svg.appendChild(group);
-
-                const lastY = y + (type === 'decision' ? 60 : 40);
-
-                // Draw arrow to next
-                const arrow = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                arrow.setAttribute("x1", cx);
-                arrow.setAttribute("y1", lastY);
-                arrow.setAttribute("x2", cx);
-                arrow.setAttribute("y2", lastY + 20);
-                arrow.setAttribute("stroke", "#333");
-                arrow.setAttribute("marker-end", "url(#arrowhead)");
-                svg.appendChild(arrow);
-
-                y = lastY + 20;
             };
 
-            // Add marker for arrowheads
-            const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-            const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+            const render = (node, cx, cy) => {
+                if (Array.isArray(node)) {
+                    let curY = cy;
+                    node.forEach((s, i) => {
+                        const m = measure(s);
+                        render(s, cx, curY);
+                        if (i < node.length - 1) {
+                            const nextM = measure(node[i+1]);
+                            const fromY = curY + (s.type === 'SI' || s.type === 'MIENTRAS' || s.type === 'PARA' || s.type === 'REPETIR' ? measure(s).h : NODE_H);
+                            drawLine(cx, fromY, cx, curY + m.h + GAP_Y);
+                        }
+                        curY += m.h + GAP_Y;
+                    });
+                    return;
+                }
+
+                const m = measure(node);
+                switch(node.type) {
+                    case 'PROCESO_START': drawShape(node.name, 'start', cx, cy); break;
+                    case 'PROCESO_END': drawShape('FinAlgoritmo', 'start', cx, cy); break;
+                    case 'ESCRIBIR': drawShape('Escribir...', 'io', cx, cy); break;
+                    case 'LEER': drawShape('Leer...', 'io', cx, cy); break;
+                    case 'ASSIGN': drawShape(node.variable + ' <- ...', 'process', cx, cy); break;
+                    case 'CALL_STMT': drawShape(node.expression.name + '()', 'process', cx, cy); break;
+                    case 'SI':
+                        drawShape('¿Si?', 'decision', cx, cy);
+                        const thenM = measure(node.thenBranch);
+                        const elseM = measure(node.elseBranch);
+                        const leftX = cx - (thenM.w / 2) - GAP_X/2;
+                        const rightX = cx + (elseM.w / 2) + GAP_X/2;
+                        const branchY = cy + DECISION_H + GAP_Y;
+
+                        // Lines to branches
+                        drawPath(`M ${cx-NODE_W/2-10} ${cy+DECISION_H/2} L ${leftX} ${cy+DECISION_H/2} L ${leftX} ${branchY}`);
+                        drawPath(`M ${cx+NODE_W/2+10} ${cy+DECISION_H/2} L ${rightX} ${cy+DECISION_H/2} L ${rightX} ${branchY}`);
+
+                        render(node.thenBranch, leftX, branchY);
+                        render(node.elseBranch, rightX, branchY);
+
+                        // Merge point
+                        const mergeY = cy + m.h;
+                        drawPath(`M ${leftX} ${branchY + thenM.h} L ${leftX} ${mergeY} L ${cx} ${mergeY}`);
+                        drawPath(`M ${rightX} ${branchY + elseM.h} L ${rightX} ${mergeY} L ${cx} ${mergeY}`);
+                        break;
+                    case 'MIENTRAS':
+                    case 'PARA':
+                        drawShape(node.type === 'PARA' ? '¿Para?' : '¿Mientras?', 'decision', cx, cy);
+                        const bM = measure(node.body);
+                        const bY = cy + DECISION_H + GAP_Y;
+                        drawLine(cx, cy + DECISION_H, cx, bY);
+                        render(node.body, cx, bY);
+                        // Return arrow
+                        const retX = cx - bM.w/2 - GAP_X;
+                        drawPath(`M ${cx} ${bY + bM.h} L ${retX} ${bY + bM.h} L ${retX} ${cy + DECISION_H/2} L ${cx - NODE_W/2 - 10} ${cy + DECISION_H/2}`);
+                        // Exit arrow
+                        drawPath(`M ${cx + NODE_W/2 + 10} ${cy + DECISION_H/2} L ${cx + bM.w/2 + GAP_X} ${cy + DECISION_H/2} L ${cx + bM.w/2 + GAP_X} ${cy + m.h} L ${cx} ${cy + m.h}`);
+                        break;
+                    case 'REPETIR':
+                        render(node.body, cx, cy);
+                        const rbM = measure(node.body);
+                        const condY = cy + rbM.h + GAP_Y;
+                        drawShape('¿Hasta?', 'decision', cx, condY);
+                        drawLine(cx, cy + rbM.h, cx, condY);
+                        // Return arrow
+                        const rretX = cx - rbM.w/2 - GAP_X;
+                        drawPath(`M ${cx - NODE_W/2 - 10} ${condY + DECISION_H/2} L ${rretX} ${condY + DECISION_H/2} L ${rretX} ${cy} L ${cx} ${cy}`);
+                        break;
+                    case 'FUNCTION_DEF':
+                        render(node.body, cx, cy);
+                        break;
+                }
+            };
+
+            // Setup Markers
+            const defs = document.createElementNS(svgNS, "defs");
+            const marker = document.createElementNS(svgNS, "marker");
             marker.setAttribute("id", "arrowhead");
-            marker.setAttribute("markerWidth", "10");
-            marker.setAttribute("markerHeight", "7");
-            marker.setAttribute("refX", "0");
-            marker.setAttribute("refY", "3.5");
+            marker.setAttribute("markerWidth", "10"); marker.setAttribute("markerHeight", "7");
+            marker.setAttribute("refX", "9"); marker.setAttribute("refY", "3.5");
             marker.setAttribute("orient", "auto");
-            const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            const polygon = document.createElementNS(svgNS, "polygon");
             polygon.setAttribute("points", "0 0, 10 3.5, 0 7");
             marker.appendChild(polygon);
             defs.appendChild(marker);
             svg.appendChild(defs);
 
-            const renderBlock = (block) => {
-                block.forEach(stmt => {
-                    switch(stmt.type) {
-                        case 'PROCESO_START': drawNode(stmt.name, 'start'); break;
-                        case 'PROCESO_END': drawNode('Fin', 'start'); break;
-                        case 'ESCRIBIR': drawNode('Escribir...', 'io'); break;
-                        case 'LEER': drawNode('Leer...', 'io'); break;
-                        case 'ASSIGN': drawNode(stmt.variable + ' <- ...', 'process'); break;
-                        case 'SI':
-                            drawNode('¿Si?', 'decision');
-                            renderBlock(stmt.thenBranch);
-                            if (stmt.elseBranch.length > 0) {
-                                renderBlock(stmt.elseBranch);
-                            }
-                            break;
-                        case 'MIENTRAS':
-                            drawNode('¿Mientras?', 'decision');
-                            renderBlock(stmt.body);
-                            break;
-                        case 'PARA':
-                            drawNode('¿Para?', 'decision');
-                            renderBlock(stmt.body);
-                            break;
-                        case 'REPETIR':
-                            renderBlock(stmt.body);
-                            drawNode('¿Hasta?', 'decision');
-                            break;
-                    }
-                });
-            };
+            const totalM = measure(program);
+            svg.setAttribute("width", Math.max(800, totalM.w + 200));
+            svg.setAttribute("height", totalM.h + 100);
 
-            renderBlock(program);
+            render(program, Math.max(400, totalM.w / 2 + 100), 20);
 
             container.appendChild(svg);
             document.getElementById('flowchartOverlay').style.display = 'flex';
@@ -1293,11 +1388,16 @@ FinAlgoritmo</div>
                         }
                         const lowerId = id.toLowerCase();
                         if (this.keywords.has(lowerId)) {
+                            // Only treat 'y' and 'o' as keywords if they are operators,
+                            // but in PSeInt they are reserved. To fix the "y <- 10" bug,
+                            // we keep them as keywords but the Parser must handle them if they look like assignments.
+                            // Actually, a better fix is to allow identifiers to be case-insensitive.
                             tokens.push({ type: 'KEYWORD', value: lowerId, originalValue: id, startPos, line: startLine, col: startCol });
                         } else if (this.types.has(lowerId)) {
                             tokens.push({ type: 'TYPE', value: lowerId, originalValue: id, startPos, line: startLine, col: startCol });
                         } else {
-                            tokens.push({ type: 'IDENTIFIER', value: id, startPos, line: startLine, col: startCol });
+                            // Standardize identifiers to lowercase for case-insensitivity
+                            tokens.push({ type: 'IDENTIFIER', value: lowerId, originalValue: id, startPos, line: startLine, col: startCol });
                         }
                         continue;
                     }
@@ -1324,8 +1424,13 @@ FinAlgoritmo</div>
                             str += c;
                             this.updatePos(c);
                         }
-                        if (this.pos < this.code.length) this.updatePos(this.code[this.pos]);
-                        tokens.push({ type: 'STRING', value: str, originalValue: quote + str + quote, startPos, line: startLine, col: startCol });
+                        let closed = false;
+                        if (this.pos < this.code.length) {
+                            this.updatePos(this.code[this.pos]);
+                            closed = true;
+                        }
+                        const originalValue = quote + str + (closed ? quote : '');
+                        tokens.push({ type: 'STRING', value: str, originalValue: originalValue, startPos, line: startLine, col: startCol });
                         continue;
                     }
 
@@ -1357,8 +1462,11 @@ FinAlgoritmo</div>
                         continue;
                     }
 
+                    // Report unknown symbols as Lexical Errors
+                    const unknownChar = char;
                     this.pos++;
-                    this.col++; // Skip unknown
+                    this.col++;
+                    tokens.push({ type: 'ERROR', value: unknownChar, startPos, line: startLine, col: startCol, message: `Carácter desconocido: ${unknownChar}` });
                 }
             this.tokens = tokens;
             return tokens;
@@ -1388,8 +1496,13 @@ FinAlgoritmo</div>
             expect(type, value) {
                 const token = this.match(type, value);
                 if (!token) {
-                    const found = this.peek() ? this.peek().value : 'EOF';
-                    throw new Error(`Se esperaba '${value || type}' pero se encontró '${found}'`);
+                    const foundToken = this.peek();
+                    const found = foundToken ? foundToken.value : 'EOF';
+                    const line = foundToken ? foundToken.line : (this.tokens.length > 0 ? this.tokens[this.tokens.length-1].line : 1);
+                    const error = new Error(`Se esperaba '${value || type}' pero se encontró '${found}'`);
+                    error.line = line;
+                    error.type = "Sintáctico";
+                    throw error;
                 }
                 return token;
             }
@@ -1401,7 +1514,17 @@ FinAlgoritmo</div>
                     if (stmt) {
                         program.push(stmt);
                     } else if (this.peek()) {
-                        throw new Error(`Sentencia no reconocida o bloque mal cerrado cerca de '${this.peek().value}'`);
+                        const token = this.peek();
+                        if (token.type === 'ERROR') {
+                            const error = new Error(token.message);
+                            error.line = token.line;
+                            error.type = "Léxico";
+                            throw error;
+                        }
+                        const error = new Error(`Sentencia no reconocida o bloque mal cerrado cerca de '${token.value}'`);
+                        error.line = token.line;
+                        error.type = "Sintáctico";
+                        throw error;
                     } else {
                         this.pos++;
                     }
@@ -1417,54 +1540,73 @@ FinAlgoritmo</div>
                 if (!token) return null;
 
                 // Explicitly check for unclosed blocks when reaching unexpected keywords
-                // Note: finalgoritmo and finproceso are top-level and handled below
                 if (token.type === 'KEYWORD' && ['sino', 'finsi', 'finmientras', 'finpara', 'hasta', 'finsegun', 'finfuncion', 'finsubproceso'].includes(token.value)) {
                     return null;
                 }
 
-                try {
-                    if (token.type === 'KEYWORD') {
-                        switch (token.value) {
-                        case 'algoritmo':
-                        case 'proceso':
-                            this.consume();
-                            const name = this.consume().value;
-                            return { type: 'PROCESO_START', name };
-                        case 'finalgoritmo':
-                        case 'finproceso':
-                            this.consume();
-                            return { type: 'PROCESO_END' };
-                        case 'definir':
-                            return this.parseDefinir();
-                        case 'escribir':
-                            return this.parseEscribir();
-                        case 'leer':
-                            return this.parseLeer();
-                        case 'si':
-                            return this.parseSi();
-                        case 'mientras':
-                            return this.parseMientras();
-                        case 'para':
-                            return this.parsePara();
-                        case 'repetir':
-                            return this.parseRepetir();
-                        case 'segun':
-                            return this.parseSegun();
-                        case 'dimension':
-                            return this.parseDimension();
-                            case 'funcion':
-                            case 'subproceso':
-                                return this.parseFunction();
+                if (token.type === 'KEYWORD') {
+                    switch (token.value) {
+                    case 'algoritmo':
+                    case 'proceso':
+                        this.consume();
+                        const nameToken = this.consume();
+                        return { type: 'PROCESO_START', name: nameToken.value };
+                    case 'finalgoritmo':
+                    case 'finproceso':
+                        this.consume();
+                        return { type: 'PROCESO_END' };
+                    case 'definir':
+                        return this.parseDefinir();
+                    case 'escribir':
+                        return this.parseEscribir();
+                    case 'leer':
+                        return this.parseLeer();
+                    case 'si':
+                        return this.parseSi();
+                    case 'mientras':
+                        return this.parseMientras();
+                    case 'para':
+                        return this.parsePara();
+                    case 'repetir':
+                        return this.parseRepetir();
+                    case 'segun':
+                        return this.parseSegun();
+                    case 'dimension':
+                        return this.parseDimension();
+                    case 'funcion':
+                    case 'subproceso':
+                        return this.parseFunction();
+                    }
+                }
+
+                if (token.type === 'IDENTIFIER' || (token.type === 'KEYWORD' && (token.value === 'y' || token.value === 'o'))) {
+                    // Peek ahead to find if there's an assignment operator to distinguish from standalone call
+                    let lookahead = 1;
+                    let isAssignment = false;
+
+                    if (this.tokens[this.pos + lookahead] && (this.tokens[this.pos+lookahead].value === '(' || this.tokens[this.pos+lookahead].value === '[')) {
+                        let depth = 1;
+                        lookahead++;
+                        while (this.pos + lookahead < this.tokens.length && depth > 0) {
+                            const t = this.tokens[this.pos + lookahead];
+                            if (t.value === '(' || t.value === '[') depth++;
+                            else if (t.value === ')' || t.value === ']') depth--;
+                            lookahead++;
                         }
                     }
 
-                    if (token.type === 'IDENTIFIER') {
-                        return this.parseAssignment();
+                    if (this.tokens[this.pos + lookahead] && (this.tokens[this.pos + lookahead].value === '<-' || this.tokens[this.pos + lookahead].value === '=')) {
+                        isAssignment = true;
                     }
-                } catch (e) {
-                    console.error("Error parsing statement:", e);
-                    this.pos++; // Skip faulty token
-                    return null;
+
+                    if (isAssignment) {
+                        return this.parseAssignment();
+                    } else {
+                        // Standalone call or expression
+                        const expr = this.parseExpression();
+                        this.match('PUNCTUATION', ';');
+                        return { type: 'CALL_STMT', expression: expr };
+                    }
                 }
 
                 return null;
@@ -1666,7 +1808,8 @@ FinAlgoritmo</div>
             }
 
             parseAssignment() {
-                const variable = this.consume().value;
+                const varToken = this.consume();
+                const variable = varToken.value;
                 let indices = null;
                 if (this.peek() && (this.peek().value === '[' || this.peek().value === '(')) {
                     this.consume(); // [ or (
@@ -1709,8 +1852,14 @@ FinAlgoritmo</div>
             }
 
             parseExpression() {
+                const startToken = this.peek();
                 const expr = this.parseLogical();
-                if (!expr) throw new Error("Se esperaba una expresión");
+                if (!expr) {
+                    const error = new Error("Se esperaba una expresión");
+                    error.line = startToken ? startToken.line : 0;
+                    error.type = "Sintáctico";
+                    throw error;
+                }
                 return expr;
             }
 
@@ -1768,8 +1917,16 @@ FinAlgoritmo</div>
             }
 
             parsePrimary() {
-                const token = this.consume();
+                const token = this.peek();
                 if (!token) return null;
+                if (token.type === 'KEYWORD' && (token.value === 'y' || token.value === 'o')) {
+                    // Treat 'y' and 'o' as identifiers if used in an expression where they aren't logic ops
+                    // (Actually the logical ops are handled in parseLogical, so if we are here,
+                    // it might be a variable named 'y')
+                    this.consume();
+                    return { type: 'LITERAL', valueType: 'IDENTIFIER', value: token.value };
+                }
+                this.consume();
                 if (token.type === 'NUMBER' || token.type === 'STRING') {
                     return { type: 'LITERAL', valueType: token.type, value: token.value };
                 }
@@ -1827,8 +1984,19 @@ FinAlgoritmo</div>
             async step() {
                 const stmt = this.program[this.pc];
                 if (!stmt) { this.pc++; return; }
+
+                // Infinite loop protection
+                if (!this._stepCount) this._stepCount = 0;
+                this._stepCount++;
+                if (this._stepCount > 100000) {
+                    throw new Error("Límite de ejecución excedido (posible bucle infinito)");
+                }
+
                 console.log('Executing:', stmt);
                 switch (stmt.type) {
+                    case 'CALL_STMT':
+                        await this.evaluate(stmt.expression);
+                        break;
                     case 'FUNCTION_DEF':
                         this.functions[stmt.name.toLowerCase()] = stmt;
                         break;
@@ -2052,9 +2220,11 @@ FinAlgoritmo</div>
                 let current = arrData.value;
                 for (let i = 0; i < indices.length - 1; i++) {
                     const idx = indices[i] - 1;
+                    if (!current || idx < 0 || idx >= current.length) throw new Error("Índice de arreglo fuera de rango");
                     current = current[idx];
                 }
                 const lastIdx = indices[indices.length - 1] - 1;
+                if (!current || lastIdx < 0 || lastIdx >= current.length) throw new Error("Índice de arreglo fuera de rango");
                 current[lastIdx] = value;
             }
 
@@ -2106,14 +2276,20 @@ FinAlgoritmo</div>
         function runAlgorithm() {
             showBottomTab('consola');
             clearConsole();
-            printToConsole('*** Ejecución Iniciada. ***');
 
             const code = editor.innerText;
             const tokenizer = new Tokenizer(code);
             const tokens = tokenizer.tokenize();
             const parser = new Parser(tokens);
-            const program = parser.parse();
+            let program;
+            try {
+                program = parser.parse();
+            } catch (e) {
+                printToConsole(`ERROR ${e.type || "Sintáctico"}: ${e.message} (Línea ${e.line || '?'})`);
+                return;
+            }
 
+            printToConsole('*** Ejecución Iniciada. ***');
             console.log('Program:', program);
 
             interpreter = new Interpreter(
