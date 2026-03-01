@@ -1,0 +1,29 @@
+REPORTE DE MEJORA DEL MOTOR DE DIAGRAMAS – FASE 3
+
+1. DESCRIPCIÓN DEL NUEVO MODELO:
+   Se ha reemplazado el renderizado lineal por un generador de grafos basado en el AST (Abstract Syntax Tree). El nuevo motor separa la fase de medición de la fase de renderizado, permitiendo calcular el espacio necesario para ramificaciones y bucles antes de dibujar.
+
+2. CAMBIOS REALIZADOS:
+   - Eliminación de la función lineal 'drawNode'.
+   - Implementación de 'measure(node)': Calcula recursivamente ancho (w) y alto (h) de cada bloque.
+   - Implementación de 'render(node, cx, cy)': Dibuja los nodos y sus conexiones utilizando coordenadas absolutas calculadas.
+   - Soporte para 'CALL_STMT': Visualización de llamadas a procedimientos.
+   - Sistema de 'drawPath' para dibujar flechas complejas (bifurcaciones y retornos).
+
+3. ALGORITMO DE LAYOUT:
+   - El layout utiliza un enfoque de "Top-Down recursive distribution".
+   - Para los 'SI', el ancho total se divide entre las dos ramas, centrando el nodo de decisión sobre el hueco entre ellas.
+   - Para los bucles, se reserva un margen lateral (GAP_X) para las flechas de retorno que vuelven a la parte superior del nodo de decisión.
+   - El tamaño del SVG se calcula dinámicamente según el resultado de 'measure' del programa completo.
+
+4. EJEMPLOS ANTES/DESPUÉS:
+   - ANTES: Un SI-SINO se dibujaba como una lista: [Decisión] -> [True] -> [False] -> [Siguiente].
+   - DESPUÉS: Bifurcación real en Y: [Decisión] abre dos caminos laterales que luego convergen en un punto de unión central.
+   - ANTES: Un bucle era una secuencia: [Decisión] -> [Cuerpo] -> [Siguiente].
+   - DESPUÉS: Ciclo visual: [Decisión] -> [Cuerpo] -> [Flecha de retorno al lateral de Decisión].
+
+5. CONFIRMACIÓN VISUAL:
+   ✔ SI simple con SINO: Bifurcación clara.
+   ✔ MIENTRAS / PARA: Retorno visual al rombo de decisión.
+   ✔ REPETIR HASTA: Condición al final con retorno al inicio del cuerpo.
+   ✔ Anidamiento: El layout se expande horizontalmente para evitar superposiciones.
