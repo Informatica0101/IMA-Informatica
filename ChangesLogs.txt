@@ -692,12 +692,18 @@ ARCHIVO: pseudocode.html
   - Mejora en Inserción de Snippets: Se corrigió un error de precedencia en la función insertCode() que causaba posicionamiento incorrecto del cursor tras insertar bloques multilínea.
   - Robustecimiento del Intérprete: Se añadió pre-escaneo de funciones (hoisting) y soporte para evaluación asíncrona de expresiones, permitiendo llamadas a funciones y lecturas de datos integradas en expresiones complejas.
 
-25/01/2026 (Parche de Estabilidad y Robustez del Intérprete)
+25/01/2026 (Rework Masivo y Estabilización de Simulador PSeInt)
 - Archivo: pseudocode.html
-  - Refactorización de Segun: Corregida la detección de bloques multisentencia por caso y la identificación de palabras clave de cierre (De Otro Modo, FinSegun).
-  - Mejora de Tokenizer: Implementado soporte robusto para operadores relacionales multi-carácter (<>, <=, >=, ==) y estandarización a minúsculas de palabras reservadas durante el pre-procesamiento.
-  - Soporte de Literales Lógicos: Añadido reconocimiento de 'Verdadero' y 'Falso' como tipos lógicos nativos.
-  - Corrección de Repetir-Hasta: Corregida la falta de la palabra clave 'repetir' en el conjunto de keywords y refinado el parser para 'Hasta Que'.
-  - Comandos y Snippets: Completada la funcionalidad de los botones de comandos laterales (Segun, Repetir, Funcion) mediante la adición de los snippets de código correspondientes en insertCode().
-  - Salida de Consola: Ajustado el comando Escribir para insertar espacios automáticos entre múltiples argumentos, emulando la salida estándar de PSeInt.
-  - Visualización: Mejorada la generación de diagramas de flujo para incluir bloques anidados dentro de estructuras de control.
+  - Rediseño de UI: Implementación de layout de 3 columnas y tema claro fiel a la GUI oficial de PSeInt.
+  - Reemplazo de Editor: Sustitución de textarea/overlay por un elemento contenteditable="plaintext-only", solucionando definitivamente el ghosting de texto y la desincronización del cursor.
+  - Intérprete Robusto:
+    - Tokenizer: Soporte para operadores multi-carácter (<- , <=, >=, <>) y normalización case-insensitive.
+    - Parser: Implementada detección de errores en tiempo real con subrayado ondulado rojo y mensajes en el panel de ayuda.
+    - Manejo de Bloques: Corregida la detección de fin de bloque en SEGUN, SI, PARA y MIENTRAS para permitir múltiples sentencias anidadas sin fallos de sincronización.
+  - Seguridad y Funcionalidad:
+    - Añadidas protecciones contra división por cero y uso de variables no inicializadas.
+    - Implementada lógica de Arreglos con base 1 (PSeInt standard).
+    - Estandarizado el comando ESCRIBIR para añadir espacios automáticos entre argumentos.
+    - Soporte completo para funciones/subprocesos con hoisting.
+  - Generador de Diagramas: Implementado renderizado recursivo para representar correctamente ramas de decisión y bucles en formato SVG.
+  - Atajos y Menús: Mapeados todos los comandos clásicos (F9 para Ejecutar, F10 Paso a Paso, Ctrl+S para Guardar, etc.).
