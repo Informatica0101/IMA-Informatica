@@ -27,7 +27,8 @@ window.presentationData = [
                     { title: "Clasificación y etapas de algoritmos", file: "II_BTP_A/Programacion/clasificacion_etapas_algoritmos.html" },
                     { title: "Estrategias de solución de problemas", file: "II_BTP_A/Programacion/estrategias_solucion_problemas.html" },
                     { title: "Análisis y diseño de algoritmos", file: "II_BTP_A/Programacion/analisis_diseno_algoritmos.html" },
-                    { title: "Programación y representación", file: "II_BTP_A/Programacion/programacion_representacion.html" }
+                    { title: "Programación y representación", file: "II_BTP_A/Programacion/programacion_representacion.html" },
+                    { title: "Pseudocódigo y ordenación simbólica", file: "II_BTP_A/Programacion/pseudocodigo_ordenacion.html" }
                 ]
             }
             /* {
@@ -64,7 +65,8 @@ window.presentationData = [
                     { title: "HTML y CSS - Terminología básica", file: "III_BTP_A/terminologia_basica_html_css.html" },
                     { title: "Hipervínculos e imágenes", file: "III_BTP_A/hipervinculos_imagenes.html" },
                     { title: "Listas y comentarios en HTML", file: "III_BTP_A/listas_comentarios_html.html" },
-                    { title: "Fuentes y color de fondo", file: "III_BTP_A/fuentes_color_fondo.html" }
+                    { title: "Fuentes y color de fondo", file: "III_BTP_A/fuentes_color_fondo.html" },
+                    { title: "Alineación y formato de texto", file: "III_BTP_A/alineacion_formato_texto.html" }
                 ]
             }
             /* {
@@ -120,7 +122,8 @@ window.downloadContentData = [
             {
                 name: "Programación",
                 topics: [
-                    { title: "Introduccion a programacion", file: "II_BTP_A/Programacion/Programación_2026.pdf" }
+                    { title: "Introduccion a programacion", file: "II_BTP_A/Programacion/Programación_2026.pdf" },
+                    { title: "Pseudocódigo y ordenación simbólica", file: "II_BTP_A/Programacion/pseudocodigo_ordenacion.html" }
                 ]
             }
             /* {
@@ -160,7 +163,8 @@ window.downloadContentData = [
             {
                 name: "Diseño Web",
                 topics: [
-                    { title: "Introduccion a Html", file: "III_BTP_A/introducción a HTML.pdf" }
+                    { title: "Introduccion a Html", file: "III_BTP_A/introducción a HTML.pdf" },
+                    { title: "Alineación y formato de texto", file: "III_BTP_A/alineacion_formato_texto.html" }
                 ]
             }
             /* {

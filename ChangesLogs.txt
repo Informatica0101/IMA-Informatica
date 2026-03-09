@@ -1,3 +1,16 @@
+09/03/2026
+- Archivos: Presentaciones HTML (Global, ~48 archivos)
+  - Implementación de un sistema unificado de pantalla completa mediante la API Fullscreen.
+  - Eliminación de la lógica obsoleta que ocultaba el encabezado/pie de página basándose en el índice de la diapositiva, permitiendo que sean visibles en transiciones normales.
+- Archivos: Presentaciones 2026 (Global)
+  - Implementación de navegación por teclado (flechas izquierda/derecha) y gestos táctiles (swipe) para una experiencia tipo carrusel en dispositivos móviles.
+- Archivo: II_BTP_A/Programacion/pseudocodigo_ordenacion.html
+  - Creada nueva presentación para la semana del 15 de marzo sobre "Pseudocódigo y ordenación simbólica".
+- Archivo: III_BTP_A/alineacion_formato_texto.html
+  - Creada nueva presentación para la semana del 15 de marzo sobre "Alineación y formato de texto en HTML".
+- Archivo: js/data.js
+  - Integración de las nuevas presentaciones en el menú de navegación y en la sección de descargas del dashboard.
+
 01/02/2026
 - Archivo: II_BTP_A/Programacion/introduccion_programacion.html
   - Ampliación masiva de contenido a 16 diapositivas educativas (Lógica, Fases de Desarrollo, Algoritmos, Traductores, etc.).
@@ -345,7 +358,7 @@ Archivo: js/teacher.js
 20/01/2026
 - Archivo: backend/task-service/Code.gs
   Líneas: 93, 218
-  Cambio: Se modificaron las funciones `getStudentTasks` y `getTeacherActivity` para enviar fechas en formato ISO (`.toISOString()`), eliminando el uso de `.toLocaleString()` que causaba errores de parseo en el frontend.
+  Cambio: Se modificaron las funciones `getStudentTasks` and `getTeacherActivity` para enviar fechas en formato ISO (`.toISOString()`), eliminando el uso de `.toLocaleString()` que causaba errores de parseo en el frontend.
 
 - Archivo: backend/exam-service/Code.gs
   Líneas: 143, 247, 300

@@ -411,15 +411,7 @@
             if (isTransitioning || index < 0 || index >= slides.length) return;
             isTransitioning = true;
             const presentationContainer = document.getElementById('presentation-container');
-            if (index > 0) {
-                header.style.display = 'none';
-                footer.style.display = 'none';
-                presentationContainer.style.height = '100vh';
-            } else {
-                header.style.display = 'flex';
-                footer.style.display = 'block';
-                presentationContainer.style.height = 'calc(100vh - 7rem)';
-            }
+
             slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
             currentSlideIndex = index;
             if (currentSlideIndex === 10) { currentQuizPart1Index = 0; setTimeout(updateQuizPart1, 100); }
@@ -449,8 +441,48 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('current-year').textContent = new Date().getFullYear();
-            showSlide(0);
+            showSlide(0); handleFullscreenChange();
         });
-    </script>
+
+    function handleFullscreenChange() {
+        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
+        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
+        const container = document.getElementById('presentation-container');
+
+        if (isFS) {
+            if (header) header.style.setProperty('display', 'none', 'important');
+            if (footer) footer.style.setProperty('display', 'none', 'important');
+            if (container) container.style.setProperty('height', '100vh', 'important');
+        } else {
+            if (header) header.style.display = '';
+            if (footer) footer.style.display = '';
+            if (container) container.style.height = '';
+        }
+    }
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    // Navigation improvements (2026)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
+        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
+    });
+
+    (function() {
+        const container = document.getElementById('presentation-container');
+        if (!container) return;
+        let tsX = 0;
+        container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
+        container.addEventListener('touchend', e => {
+            let teX = e.changedTouches[0].screenX;
+            if (tsX - teX > 50) typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
+            if (teX - tsX > 50) typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
+        }, {passive: true});
+    })();
+
+</script>
 </body>
 </html>
