@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clasificación y Etapas de Algoritmos - Programación I</title>
+    <title>Alineación y Formato de Texto - Diseño Web I</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -21,19 +21,21 @@
         .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
         .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
         .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
-        .step-box { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.8rem; margin: 0.3rem 0; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .step-number { display: inline-block; background: #3b82f6; color: white; width: 26px; height: 26px; border-radius: 50%; text-align: center; line-height: 26px; margin-right: 10px; font-weight: bold; font-size: 0.9rem; }
+        .code-box { background: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 8px; font-family: monospace; text-align: left; width: 100%; max-width: 500px; margin: 0.5rem 0; overflow-x: auto; }
+        .code-tag { color: #f472b6; }
+        .code-attr { color: #fbbf24; }
+        .code-val { color: #34d399; }
     </style>
 </head>
 <body class="antialiased">
     <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
         <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
-            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Programación I</h1>
+            <img src="../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
+            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Diseño Web I</h1>
         </div>
         <nav class="mt-3 sm:mt-0">
             <ul class="flex space-x-2 sm:space-x-3">
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
+                <li><a href="../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
             </ul>
         </nav>
     </header>
@@ -42,164 +44,148 @@
         <div id="presentation-container" class="relative">
             <!-- Diapositiva 1: Portada -->
             <div id="slide-1" class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
-                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Clasificación y Etapas de Algoritmos</h2>
-                <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 2: Metodología de Solución</p>
+                <img src="../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
+                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Alineación y Formato de Texto</h2>
+                <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 6: Perfeccionando el Contenido</p>
                 <div class="text-xs text-gray-500 space-y-1">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 15 de febrero de 2026</p>
-                    <p>Grado: Undécimo de Informática - Sección "A"</p>
+                    <p>Fecha: 15 de marzo de 2026</p>
+                    <p>Grado: Duodécimo de Informática - Sección "A"</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: ¿Por qué clasificar los algoritmos? -->
+            <!-- Diapositiva 2: Alineación de Texto -->
             <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Por qué clasificar los algoritmos?</h3>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Alineación de Texto</h3>
                 <div class="concept-box">
-                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
-                        Existen muchas formas de resolver un mismo problema. Clasificar los algoritmos nos ayuda a elegir la <strong>estrategia más eficiente</strong> según la situación.
+                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed text-left">
+                        La propiedad CSS <span class="font-bold">text-align</span> se utiliza para establecer la alineación horizontal de un texto.
                     </p>
-                    <div class="mt-4 bg-white p-4 rounded-lg border shadow-sm">
-                        <p class="font-bold text-blue-600 mb-2">💡 Una estrategia adecuada permite:</p>
-                        <ul class="text-xs sm:text-sm space-y-2">
-                            <li>🚀 Ahorrar tiempo de ejecución.</li>
-                            <li>💾 Usar menos memoria de la computadora.</li>
-                            <li>🛠️ Facilitar el mantenimiento del código.</li>
-                        </ul>
+                    <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+                        <div class="p-2 border bg-white text-left">left (Izquierda)</div>
+                        <div class="p-2 border bg-white text-center">center (Centro)</div>
+                        <div class="p-2 border bg-white text-right">right (Derecha)</div>
+                        <div class="p-2 border bg-white text-justify">justify (Justificado)</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 3: Estrategias Simples -->
+            <!-- Diapositiva 3: Ejemplo de Alineación -->
             <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Estrategias Simples</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-100 text-left">
-                        <h4 class="font-bold text-red-700 mb-2">Fuerza Bruta</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Resuelve el problema de la forma más simple y directa, probando todas las opciones posibles.</p>
-                        <p class="text-[10px] mt-2 italic text-red-600">Ejemplo: Probar todas las llaves de un llavero hasta abrir la puerta.</p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-xl border border-green-100 text-left">
-                        <h4 class="font-bold text-green-700 mb-2">Algoritmos Codiciosos</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Toman la mejor decisión en cada paso local, esperando llegar a la solución global óptima.</p>
-                        <p class="text-[10px] mt-2 italic text-green-600">Ejemplo: Dar el cambio usando la moneda de mayor valor disponible.</p>
-                    </div>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Atributo Style</h3>
+                <div class="code-box">
+                    &lt;<span class="code-tag">h1</span> <span class="code-attr">style</span>=<span class="code-val">"text-align: center;"</span>&gt;Título centrado&lt;/<span class="code-tag">h1</span>&gt;<br>
+                    &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"text-align: justify;"</span>&gt;Texto justificado...&lt;/<span class="code-tag">p</span>&gt;
+                </div>
+                <div class="mt-4 p-4 bg-gray-50 border rounded w-full max-w-md">
+                    <p style="text-align: center;" class="text-xs font-bold">ESTE ES UN TÍTULO CENTRADO</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 4: Estrategias Avanzadas -->
+            <!-- Diapositiva 4: Formato de Texto (Negrita e Italica) -->
             <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Estrategias Avanzadas</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
-                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 text-left">
-                        <h4 class="font-bold text-purple-700 mb-2">Divide y Vencerás</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Subdivide un problema en subproblemas más pequeños del mismo tipo, los resuelve y combina los resultados.</p>
-                        <p class="text-[10px] mt-2 italic text-purple-600">Ejemplo: Buscar una palabra en un diccionario abriendo por la mitad.</p>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Formato: Negrita e Itálica</h3>
+                <p class="text-sm text-gray-600 mb-4">Podemos usar etiquetas HTML o propiedades CSS:</p>
+                <div class="grid grid-cols-2 gap-4 w-full max-w-2xl">
+                    <div class="p-3 bg-white border rounded">
+                        <p class="font-bold text-xs mb-2">Negrita</p>
+                        <p class="text-[10px]">&lt;b&gt; o &lt;strong&gt;</p>
+                        <p class="text-[10px]">CSS: font-weight: bold;</p>
                     </div>
-                    <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100 text-left">
-                        <h4 class="font-bold text-yellow-700 mb-2">Vuelta Atrás (Backtracking)</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Explora caminos de solución y, si encuentra que no sirven, retrocede al paso anterior para probar otra opción.</p>
-                        <p class="text-[10px] mt-2 italic text-yellow-600">Ejemplo: Resolver un laberinto regresando cuando llegas a un callejón sin salida.</p>
+                    <div class="p-3 bg-white border rounded">
+                        <p class="font-bold text-xs mb-2">Cursiva (Itálica)</p>
+                        <p class="text-[10px]">&lt;i&gt; o &lt;em&gt;</p>
+                        <p class="text-[10px]">CSS: font-style: italic;</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 5: Otros Tipos -->
+            <!-- Diapositiva 5: Subrayado y Tachado -->
             <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Programación Dinámica y Probabilísticos</h3>
-                <div class="concept-box">
-                    <div class="mb-4">
-                        <p class="font-bold text-blue-700 mb-1">📊 Programación Dinámica:</p>
-                        <p class="text-xs sm:text-sm">Similar a "Divide y Vencerás", pero guarda los resultados de subproblemas ya resueltos en una tabla para no repetirlos.</p>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg border">
-                        <p class="font-bold text-gray-700 mb-1">🎲 Algoritmos Probabilísticos:</p>
-                        <p class="text-xs sm:text-sm">Introducen el azar en su lógica. Se usan cuando el problema es tan grande que una búsqueda exacta tardaría demasiado.</p>
-                    </div>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Decoración de Texto</h3>
+                <p class="text-sm text-gray-600 mb-4">Usamos la propiedad <span class="font-bold">text-decoration</span>.</p>
+                <div class="code-box">
+                    &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"text-decoration: underline;"</span>&gt;Subrayado&lt;/<span class="code-tag">p</span>&gt;<br>
+                    &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"text-decoration: line-through;"</span>&gt;Tachado&lt;/<span class="code-tag">p</span>&gt;
+                </div>
+                <div class="mt-4 flex space-x-4">
+                    <span class="underline">Texto Subrayado</span>
+                    <span class="line-through">Texto Tachado</span>
                 </div>
             </div>
 
-            <!-- Diapositiva 6: Etapa 1 - Análisis del Problema -->
+            <!-- Diapositiva 6: Transformación de Texto -->
             <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etapa 1: Análisis del Problema</h3>
-                <p class="text-sm text-gray-600 mb-4">Consiste en comprender qué es lo que el programa debe hacer.</p>
-                <div class="space-y-3 max-w-2xl mx-auto">
-                    <div class="step-box">
-                        <span class="step-number">1</span> <strong>Definir el problema:</strong> Entenderlo con total precisión.
-                    </div>
-                    <div class="step-box">
-                        <span class="step-number">2</span> <strong>Especificar Entradas:</strong> ¿Qué datos necesito para empezar?
-                    </div>
-                    <div class="step-box">
-                        <span class="step-number">3</span> <strong>Especificar Salidas:</strong> ¿Qué resultado debe mostrar el programa?
-                    </div>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Mayúsculas y Minúsculas</h3>
+                <p class="text-sm text-gray-600 mb-4">La propiedad <span class="font-bold">text-transform</span>.</p>
+                <div class="space-y-2 text-left max-w-sm mx-auto">
+                    <div class="p-2 border bg-white text-xs uppercase">uppercase (TODO MAYÚSCULAS)</div>
+                    <div class="p-2 border bg-white text-xs lowercase">LOWERCASE (todo minúsculas)</div>
+                    <div class="p-2 border bg-white text-xs capitalize">capitalize (primeras letras mayúsculas)</div>
                 </div>
             </div>
 
-            <!-- Diapositiva 7: Etapa 2 - Diseño del Algoritmo -->
+            <!-- Diapositiva 7: Espaciado entre líneas -->
             <div id="slide-7" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etapa 2: Diseño del Algoritmo</h3>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Interlineado (Line-height)</h3>
                 <div class="concept-box">
-                    <p class="font-bold text-lg mb-2 text-blue-700">¿Cómo lo vamos a resolver?</p>
-                    <ul class="text-sm space-y-3">
-                        <li>📍 <strong>Diseño Descendente (Top-Down):</strong> Dividir el problema en módulos más simples.</li>
-                        <li>📍 <strong>Refinamiento por pasos:</strong> Describir primero los pasos generales y luego detallarlos poco a poco.</li>
-                    </ul>
-                    <div class="mt-4 p-3 bg-white border rounded italic text-xs text-center">
-                        "Un problema complejo se resuelve mejor si se divide en partes pequeñas."
+                    <p class="text-sm text-gray-700 leading-relaxed text-left">
+                        La propiedad <span class="font-bold">line-height</span> establece la distancia entre las líneas de un párrafo, mejorando la legibilidad.
+                    </p>
+                    <div class="code-box mt-3">
+                        style="line-height: 1.5;"
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 8: Etapa 3 - Programación (Codificación) -->
+            <!-- Diapositiva 8: Etiquetas de Formato HTML5 -->
             <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etapa 3: Programación (Codificación)</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl">
-                    <div class="p-4 bg-white border rounded shadow-sm text-center">
-                        <div class="text-2xl mb-2">💻</div>
-                        <p class="font-bold text-xs uppercase">Codificación</p>
-                        <p class="text-[10px] text-gray-500">Traducir el algoritmo a un lenguaje (como PSeInt o C++).</p>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etiquetas Semánticas de Texto</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
+                    <div class="p-2 border text-left text-[10px]">
+                        <strong>&lt;mark&gt;</strong>: Texto resaltado (amarillo).
                     </div>
-                    <div class="p-4 bg-white border rounded shadow-sm text-center">
-                        <div class="text-2xl mb-2">⚙️</div>
-                        <p class="font-bold text-xs uppercase">Ejecución</p>
-                        <p class="text-[10px] text-gray-500">Poner a funcionar el programa en la computadora.</p>
+                    <div class="p-2 border text-left text-[10px]">
+                        <strong>&lt;small&gt;</strong>: Texto más pequeño.
                     </div>
-                    <div class="p-4 bg-white border rounded shadow-sm text-center">
-                        <div class="text-2xl mb-2">✅</div>
-                        <p class="font-bold text-xs uppercase">Comprobación</p>
-                        <p class="text-[10px] text-gray-500">Verificar que los resultados sean los esperados.</p>
+                    <div class="p-2 border text-left text-[10px]">
+                        <strong>&lt;del&gt;</strong>: Texto eliminado (tachado).
+                    </div>
+                    <div class="p-2 border text-left text-[10px]">
+                        <strong>&lt;ins&gt;</strong>: Texto insertado (subrayado).
+                    </div>
+                    <div class="p-2 border text-left text-[10px]">
+                        <strong>&lt;sub&gt;</strong>: Subíndice (H<sub>2</sub>O).
+                    </div>
+                    <div class="p-2 border text-left text-[10px]">
+                        <strong>&lt;sup&gt;</strong>: Superíndice (x<sup>2</sup>).
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 9: Técnicas de Representación -->
+            <!-- Diapositiva 9: Ejercicio Práctico -->
             <div id="slide-9" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Técnicas de Representación</h3>
-                <p class="text-sm text-gray-700 mb-6">Antes de programar, usamos estas herramientas para planear:</p>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl">
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Lenguaje Natural</div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Pseudocódigo</div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Diagramas de Flujo</div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Fórmulas</div>
-                </div>
-                <div class="mt-8 p-4 bg-gray-50 rounded-lg max-w-2xl text-left border-l-4 border-gray-400">
-                    <p class="text-xs"><strong>Ejemplo de Lenguaje Natural:</strong><br>"Inicio -> Ir al cine -> Comprar entrada -> Ver película -> Salir -> Regresar -> Fin"</p>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio: Perfeccionando el Estilo</h3>
+                <div class="concept-box">
+                    <p class="font-bold mb-3 text-sm">Crea un archivo HTML y aplica:</p>
+                    <ul class="list-decimal ml-8 text-xs space-y-2">
+                        <li>Un título (h1) centrado y en mayúsculas.</li>
+                        <li>Un párrafo justificado con un interlineado de 1.6.</li>
+                        <li>Usa &lt;mark&gt; para resaltar una palabra importante.</li>
+                        <li>Aplica subrayado a un enlace o frase clave.</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Diapositiva 10: Ejercicio Práctico -->
+            <!-- Diapositiva 10: Importancia de la Legibilidad -->
             <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio: Identificar Etapas</h3>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Diseño para Leer</h3>
                 <div class="concept-box">
-                    <p class="font-bold mb-3">🛠️ Situación: Necesitas un programa para calcular el promedio de 3 notas.</p>
-                    <div class="space-y-2">
-                        <p class="text-xs"><strong>A. Análisis:</strong> ¿Qué datos pido? (Nota 1, 2, 3) ¿Qué entrego? (Promedio)</p>
-                        <p class="text-xs"><strong>B. Diseño:</strong> Promedio = (N1 + N2 + N3) / 3</p>
-                        <p class="text-xs"><strong>C. Codificación:</strong> Escribir el código en PSeInt.</p>
-                    </div>
-                    <div class="mt-4 p-4 bg-blue-600 text-white rounded-lg text-center text-sm font-bold">
-                        ¡Ahora piensa tú en las etapas para un programa que calcule el área de un cuadrado!
+                    <p class="text-sm text-gray-700 leading-relaxed text-center">
+                        El formato y la alineación no son solo estética; guían el ojo del usuario a través del contenido.
+                    </p>
+                    <div class="mt-4 p-4 bg-white border border-yellow-200 rounded shadow-inner text-center">
+                        <p class="font-bold text-sm text-yellow-700">"El buen diseño es invisible hasta que falta."</p>
                     </div>
                 </div>
             </div>
@@ -235,40 +221,34 @@
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen de la Clase</h3>
                 <div class="max-w-3xl mx-auto grid grid-cols-2 gap-4">
                     <div class="p-4 bg-blue-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-blue-700">Clasificación:</p>
+                        <p class="font-bold text-sm mb-2 text-blue-700">Alineación:</p>
                         <ul class="text-[10px] space-y-1">
-                            <li>• Fuerza Bruta</li>
-                            <li>• Codiciosos</li>
-                            <li>• Divide y Vencerás</li>
-                            <li>• Dinámica</li>
+                            <li>• text-align: left, center, right, justify.</li>
                         </ul>
                     </div>
                     <div class="p-4 bg-green-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-green-700">Etapas:</p>
+                        <p class="font-bold text-sm mb-2 text-green-700">Formato:</p>
                         <ul class="text-[10px] space-y-1">
-                            <li>• 1. Análisis</li>
-                            <li>• 2. Diseño</li>
-                            <li>• 3. Programación</li>
+                            <li>• text-decoration, text-transform.</li>
+                            <li>• line-height, mark, sub/sup.</li>
                         </ul>
                     </div>
                 </div>
-                <p class="mt-8 font-bold text-blue-600">¡Sigue el proceso y serás un gran programador!</p>
             </div>
 
             <!-- Diapositiva 14: Tarea -->
             <div id="slide-14" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Asignación (Tarea)</h3>
                 <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-indigo-200 max-w-3xl">
-                    <h4 class="font-bold text-indigo-800 mb-3">📋 Tarea: Mapa Conceptual de Algoritmos</h4>
+                    <h4 class="font-bold text-indigo-800 mb-3">📋 Guía de Estudio #6</h4>
                     <div class="text-left space-y-4 text-sm">
-                        <p><strong>Actividad:</strong> Elabora en tu cuaderno un cuadro conceptual o mapa mental que incluya:</p>
+                        <p><strong>Actividad:</strong> Responder la guía de estudio proporcionada en clase sobre formato y alineación de texto en HTML/CSS.</p>
                         <ul class="list-disc pl-5 space-y-1 text-gray-700">
-                            <li>Los tipos de algoritmos vistos en clase (Fuerza Bruta, Codiciosos, etc.).</li>
-                            <li>Las 3 etapas de desarrollo (Análisis, Diseño, Programación) con una breve descripción de cada una.</li>
+                            <li>Investiga qué es el espaciado entre letras (letter-spacing).</li>
+                            <li>Diferencia entre etiquetas &lt;b&gt; y &lt;strong&gt;.</li>
                         </ul>
-                        <p class="mt-4 bg-white p-3 rounded border italic text-xs">"Debe ser claro, ordenado y usar colores para distinguir las secciones."</p>
                         <div class="pt-4 border-t flex justify-between font-bold text-indigo-900">
-                            <span>Fecha: 22/02/2026</span>
+                            <span>Fecha: 22/03/2026</span>
                             <span>Valor: 5%</span>
                         </div>
                     </div>
@@ -286,8 +266,8 @@
 
     <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
         <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
-            <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Programación I</p>
+            <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Diseño Web I</p>
         </div>
     </footer>
 
@@ -303,54 +283,54 @@
 
         const quizQuestions = [
             {
-                question: "1. ¿Cuál es la primera etapa para desarrollar un algoritmo?",
-                options: ["Codificación", "Diseño", "Análisis", "Prueba"],
-                correctAnswer: "Análisis"
+                question: "1. ¿Qué propiedad CSS alinea el texto horizontalmente?",
+                options: ["text-style", "text-align", "font-align", "text-position"],
+                correctAnswer: "text-align"
             },
             {
-                question: "2. ¿Qué técnica divide un problema complejo en subproblemas?",
-                options: ["Fuerza Bruta", "Divide y Vencerás", "Probabilístico", "Codicioso"],
-                correctAnswer: "Divide y Vencerás"
+                question: "2. ¿Qué valor centra el texto?",
+                options: ["middle", "center", "justify", "right"],
+                correctAnswer: "center"
             },
             {
-                question: "3. ¿Cómo se llaman los algoritmos que prueban todas las soluciones?",
-                options: ["Fuerza Bruta", "Divide y Vencerás", "Vuelta Atrás", "Dinámica"],
-                correctAnswer: "Fuerza Bruta"
+                question: "3. ¿Qué propiedad CSS se usa para el interlineado?",
+                options: ["line-space", "text-space", "line-height", "text-height"],
+                correctAnswer: "line-height"
             },
             {
-                question: "4. ¿Qué algoritmos toman la mejor decisión local en cada paso?",
-                options: ["Fuerza Bruta", "Divide y Vencerás", "Codiciosos", "Probabilísticos"],
-                correctAnswer: "Codiciosos"
+                question: "4. ¿Qué valor de text-decoration tacha el texto?",
+                options: ["underline", "overline", "line-through", "none"],
+                correctAnswer: "line-through"
             },
             {
-                question: "5. ¿Qué etapa consiste en traducir el algoritmo a un lenguaje?",
-                options: ["Análisis", "Diseño", "Codificación", "Refinamiento"],
-                correctAnswer: "Codificación"
+                question: "5. ¿Qué etiqueta HTML resalta texto con un fondo?",
+                options: ["<mark>", "<highlight>", "<bg>", "<color>"],
+                correctAnswer: "<mark>"
             },
             {
-                question: "6. ¿Qué técnica de representación usa lenguaje natural?",
-                options: ["Pseudocódigo", "Diagrama de Flujo", "Lenguaje Natural", "Fórmulas"],
-                correctAnswer: "Lenguaje Natural"
+                question: "6. ¿Qué propiedad convierte todo a mayúsculas?",
+                options: ["text-transform", "font-caps", "text-upper", "font-style"],
+                correctAnswer: "text-transform"
             },
             {
-                question: "7. ¿Cuál es el objetivo de la etapa de Diseño?",
-                options: ["Comprar la computadora", "Planear cómo resolver el problema", "Instalar el sistema", "Definir las entradas"],
-                correctAnswer: "Planear cómo resolver el problema"
+                question: "7. ¿Qué etiqueta se usa para superíndices (ej: x²)?",
+                options: ["<sub>", "<sup2>", "<sup>", "<up>"],
+                correctAnswer: "<sup>"
             },
             {
-                question: "8. ¿Qué algoritmos guardan resultados para evitar duplicados?",
-                options: ["Fuerza Bruta", "Vuelta Atrás", "Programación Dinámica", "Codiciosos"],
-                correctAnswer: "Programación Dinámica"
+                question: "8. ¿Qué valor de text-align estira el texto en los bordes?",
+                options: ["right", "left", "center", "justify"],
+                correctAnswer: "justify"
             },
             {
-                question: "9. ¿Cómo se llama al refinamiento progresivo de un algoritmo?",
-                options: ["Codificación", "Refinamiento por pasos", "Análisis", "Ejecución"],
-                correctAnswer: "Refinamiento por pasos"
+                question: "9. ¿Cómo se aplica cursiva en CSS?",
+                options: ["font-style: italic;", "text-style: italic;", "font-weight: italic;", "text-font: italic;"],
+                correctAnswer: "font-style: italic;"
             },
             {
-                question: "10. ¿En qué etapa se definen las entradas y salidas?",
-                options: ["Análisis", "Diseño", "Codificación", "Pruebas"],
-                correctAnswer: "Análisis"
+                question: "10. ¿Qué hace 'text-transform: capitalize'?",
+                options: ["Todo en mayúsculas", "Todo en minúsculas", "Primeras letras en mayúsculas", "Nada"],
+                correctAnswer: "Primeras letras en mayúsculas"
             }
         ];
 

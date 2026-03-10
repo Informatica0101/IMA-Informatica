@@ -982,6 +982,28 @@
                 }
             });
         });
-    </script>
+
+    function handleFullscreenChange() {
+        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
+        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
+        const container = document.getElementById('presentation-container');
+
+        if (isFS) {
+            if (header) header.style.setProperty('display', 'none', 'important');
+            if (footer) footer.style.setProperty('display', 'none', 'important');
+            if (container) container.style.setProperty('height', '100vh', 'important');
+        } else {
+            if (header) header.style.display = '';
+            if (footer) footer.style.display = '';
+            if (container) container.style.height = '';
+        }
+    }
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+</script>
 </body>
 </html>

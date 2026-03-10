@@ -14,11 +14,22 @@ ESTADO DE LAS TAREAS (RESUMEN)
 [A-42] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-43] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-44] COMPLETADA (PENDIENTE DE REVISIÓN)
+[A-45] PENDIENTE DE REVISIÓN
 
 ------------------------------------------------------------------------------------------------
 
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
+
+TAREA: [A-45]
+TÍTULO: Mejora de Navegación, Fullscreen y Generación de Presentaciones (Marzo 15)
+ÁREA: Frontend / Contenido
+PRIORIDAD: ALTA
+ESTADO: PENDIENTE DE REVISIÓN
+- Corregida la función de pantalla completa en todas las presentaciones (~48 archivos) usando la API Fullscreen nativa para evitar ocultar el encabezado/pie de página incorrectamente.
+- Implementada navegación por flechas de teclado y gestos swipe (carousel) en todas las presentaciones de 2026.
+- Generadas nuevas presentaciones para la semana del 15 de marzo de 2026: "Pseudocódigo y ordenación simbólica" (Programación I) y "Alineación y formato de texto" (Diseño Web I).
+- Actualizado js/data.js para integrar el nuevo contenido en el dashboard.
 
 TAREA: [A-44]
 TÍTULO: Parche de Estabilidad y Robustez del Intérprete

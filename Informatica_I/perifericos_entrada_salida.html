@@ -1292,7 +1292,7 @@
         document.addEventListener('fullscreenchange', handleFullscreenChange);
 
         // --- Initialize on DOMContentLoaded ---
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => { handleFullscreenChange();
             // Set current year in footer
             const currentYearSpan = document.getElementById('current-year');
             if (currentYearSpan) { // Added a check to prevent TypeError if element is not found
@@ -1398,7 +1398,7 @@
         });
 
         // Initialize the first question when the slide becomes active
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => { handleFullscreenChange();
             // ... existing DOMContentLoaded logic ...
 
             // Observe slide changes to load questions
