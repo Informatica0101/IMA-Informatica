@@ -1,142 +1,475 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Propiedades CSS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Propiedades CSS - Diseño Web II</title>
+    <!-- CDN de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-<style>
-body{
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
+        header, footer {
+            position: sticky;
+            z-index: 50;
+        }
 
-table{
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 30px;
-}
+        main {
+            flex-grow: 1;
+            padding: 2rem 1rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
 
-th, td{
-    border: 1px solid black;
-    padding: 8px;
-}
+        article {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            line-height: 1.8;
+        }
 
-th{
-    background-color: lightgray;
-}
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #1e3a8a;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
 
-h1{
-    text-align: center;
-}
+        h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #60a5fa;
+            padding-bottom: 0.5rem;
+        }
 
-h2{
-    color: darkblue;
-}
-</style>
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #374151;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
 
+        .preview-box {
+            background-color: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 150px;
+            overflow: auto;
+        }
+
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .property-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .property-table th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .property-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .value-pill {
+            background-color: #e2e8f0;
+            color: #475569;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.75rem; }
+            article { padding: 1.5rem; }
+            .property-table { display: block; overflow-x: auto; }
+        }
+    </style>
 </head>
-
 <body>
 
-<h1>Tabla de Propiedades CSS</h1>
+    <!-- Navegación de Escritorio -->
+    <header id="main-header" class="bg-white shadow-md py-4 px-6 top-0 z-50 hidden md:block">
+        <div class="container mx-auto flex items-center justify-between">
+            <a href="../../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
+                <img src="../../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
+            </a>
+            <span class="font-extrabold text-2xl text-center flex-grow">Propiedades CSS</span>
+            <nav class="flex space-x-6">
+                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300"> Regresar a Inicio</a>
+            </nav>
+        </div>
+    </header>
 
-<h2>Propiedades para Texto</h2>
+    <!-- Navegación Móvil -->
+    <header id="mobile-header" class="bg-white shadow-md py-4 px-4 flex justify-between items-center md:hidden">
+        <a href="../../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
+            <img src="../../imagenes/logo.png" alt="Logo ISEMED" style="width: 150px; height: auto;">
+        </a>
+        <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+        <div id="mobile-menu" class="fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 p-6 flex flex-col transform translate-x-full transition-transform duration-300">
+            <button id="close-mobile-menu" class="self-end text-gray-600 hover:text-indigo-600 focus:outline-none mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <nav class="flex flex-col space-y-4">
+                <a href="../../index.html" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Inicio</a>
+            </nav>
+        </div>
+    </header>
 
-<table>
-<tr>
-<th>Propiedad</th>
-<th>Función</th>
-<th>Opciones / Valores</th>
-<th>Ejemplo</th>
-</tr>
+    <main>
+        <article>
+            <h1>Guía Completa de Propiedades CSS</h1>
+            <p class="text-xl text-gray-600 text-center mb-8">Domina los estilos fundamentales para crear interfaces web profesionales y modernas.</p>
 
-<tr><td>color</td><td>Color del texto</td><td>red, blue, green, #000000</td><td>color: blue;</td></tr>
+            <section id="introduccion">
+                <h2>1. Introducción a las Propiedades</h2>
+                <p>Las propiedades CSS son los atributos que definen el aspecto visual de un elemento HTML. Cada propiedad acepta uno o más valores que determinan cómo se renderizará el elemento en el navegador.</p>
+                <div class="code-block">
+selector {<br>
+&nbsp;&nbsp;propiedad: valor;<br>
+}
+                </div>
+            </section>
 
-<tr><td>font-size</td><td>Tamaño del texto</td><td>px, em, rem, %</td><td>font-size: 20px;</td></tr>
+            <section id="texto-tipografia">
+                <h2>2. Texto y Tipografía</h2>
+                <p>Estas propiedades controlan la apariencia del contenido textual, desde el color y tamaño hasta el espaciado y estilo de la fuente.</p>
 
-<tr><td>font-family</td><td>Tipo de fuente</td><td>Arial, Verdana, Times New Roman, cursive</td><td>font-family: Arial;</td></tr>
+                <table class="property-table">
+                    <thead>
+                        <tr>
+                            <th>Propiedad</th>
+                            <th>Descripción</th>
+                            <th>Valores Comunes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>color</code></td>
+                            <td>Define el color del texto.</td>
+                            <td><span class="value-pill">nombre</span>, <span class="value-pill">hex</span>, <span class="value-pill">rgb()</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>font-size</code></td>
+                            <td>Ajusta el tamaño de la letra.</td>
+                            <td><span class="value-pill">px</span>, <span class="value-pill">rem</span>, <span class="value-pill">em</span>, <span class="value-pill">%</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>font-weight</code></td>
+                            <td>Define el grosor de la letra.</td>
+                            <td><span class="value-pill">normal</span>, <span class="value-pill">bold</span>, <span class="value-pill">100-900</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>text-align</code></td>
+                            <td>Alinea el texto horizontalmente.</td>
+                            <td><span class="value-pill">left</span>, <span class="value-pill">center</span>, <span class="value-pill">right</span>, <span class="value-pill">justify</span></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-<tr><td>font-weight</td><td>Grosor de la fuente</td><td>normal, bold, lighter, 100-900</td><td>font-weight: bold;</td></tr>
+                <h3 class="text-lg">Visualización:</h3>
+                <div class="preview-box">
+                    <p style="color: #1e40af; font-size: 1.5rem; font-weight: 800; text-align: center;">Este texto tiene color azul, es de 1.5rem y está centrado.</p>
+                </div>
+                <div class="code-block">
+p {<br>
+&nbsp;&nbsp;color: #1e40af;<br>
+&nbsp;&nbsp;font-size: 1.5rem;<br>
+&nbsp;&nbsp;font-weight: 800;<br>
+&nbsp;&nbsp;text-align: center;<br>
+}
+                </div>
+            </section>
 
-<tr><td>font-style</td><td>Estilo de la fuente</td><td>normal, italic, oblique</td><td>font-style: italic;</td></tr>
+            <section id="modelo-caja">
+                <h2>3. Modelo de Caja (Box Model)</h2>
+                <p>El modelo de caja es la base del diseño web. Cada elemento es una caja rectangular compuesta por contenido, relleno (padding), borde y margen.</p>
 
-<tr><td>letter-spacing</td><td>Espacio entre letras</td><td>px, em, normal</td><td>letter-spacing: 2px;</td></tr>
+                <table class="property-table">
+                    <thead>
+                        <tr>
+                            <th>Propiedad</th>
+                            <th>Descripción</th>
+                            <th>Valores Comunes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>width / height</code></td>
+                            <td>Ancho y alto del elemento.</td>
+                            <td><span class="value-pill">px</span>, <span class="value-pill">%</span>, <span class="value-pill">vh/vw</span>, <span class="value-pill">auto</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>padding</code></td>
+                            <td>Espacio interno (entre contenido y borde).</td>
+                            <td><span class="value-pill">px</span>, <span class="value-pill">rem</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>margin</code></td>
+                            <td>Espacio externo (entre elementos).</td>
+                            <td><span class="value-pill">px</span>, <span class="value-pill">auto</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>border</code></td>
+                            <td>Línea que rodea el padding.</td>
+                            <td><span class="value-pill">1px solid black</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>box-sizing</code></td>
+                            <td>Cómo se calcula el tamaño total.</td>
+                            <td><span class="value-pill">border-box</span>, <span class="value-pill">content-box</span></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-<tr><td>line-height</td><td>Espacio entre líneas</td><td>normal, número, px, %</td><td>line-height: 1.5;</td></tr>
+                <h3 class="text-lg">Visualización:</h3>
+                <div class="preview-box">
+                    <div style="background-color: #dbeafe; border: 4px solid #3b82f6; padding: 20px; margin: 10px; width: 200px; text-align: center; border-radius: 8px;">
+                        Caja con Padding y Borde
+                    </div>
+                </div>
+                <div class="code-block">
+div {<br>
+&nbsp;&nbsp;width: 200px;<br>
+&nbsp;&nbsp;padding: 20px;<br>
+&nbsp;&nbsp;border: 4px solid #3b82f6;<br>
+&nbsp;&nbsp;margin: 10px;<br>
+&nbsp;&nbsp;background-color: #dbeafe;<br>
+}
+                </div>
+            </section>
 
-<tr><td>text-transform</td><td>Cambia mayúsculas/minúsculas</td><td>uppercase, lowercase, capitalize</td><td>text-transform: uppercase;</td></tr>
+            <section id="diseno-moderno">
+                <h2>4. Diseño Moderno (Flexbox y Grid)</h2>
+                <p>Estas propiedades permiten crear layouts complejos y responsivos de forma mucho más sencilla que los métodos tradicionales.</p>
 
-<tr><td>text-shadow</td><td>Sombra del texto</td><td>x y blur color</td><td>text-shadow: 2px 2px 5px gray;</td></tr>
+                <h3>Flexbox (Unidimensional)</h3>
+                <table class="property-table">
+                    <thead>
+                        <tr>
+                            <th>Propiedad</th>
+                            <th>Descripción</th>
+                            <th>Valores Comunes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>display: flex</code></td>
+                            <td>Activa el contenedor flexible.</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td><code>justify-content</code></td>
+                            <td>Alineación en el eje principal.</td>
+                            <td><span class="value-pill">center</span>, <span class="value-pill">space-between</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>align-items</code></td>
+                            <td>Alineación en el eje cruzado.</td>
+                            <td><span class="value-pill">center</span>, <span class="value-pill">stretch</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>flex-direction</code></td>
+                            <td>Dirección de los elementos.</td>
+                            <td><span class="value-pill">row</span>, <span class="value-pill">column</span></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-</table>
+                <h3 class="text-lg">Visualización Flexbox:</h3>
+                <div class="preview-box">
+                    <div style="display: flex; justify-content: space-around; width: 100%; background-color: #f1f5f9; padding: 10px; border-radius: 8px;">
+                        <div style="background-color: #ef4444; color: white; padding: 10px; border-radius: 4px;">1</div>
+                        <div style="background-color: #10b981; color: white; padding: 10px; border-radius: 4px;">2</div>
+                        <div style="background-color: #3b82f6; color: white; padding: 10px; border-radius: 4px;">3</div>
+                    </div>
+                </div>
 
-<h2>Formato del Texto y Contenido</h2>
+                <h3>Grid (Bidimensional)</h3>
+                <table class="property-table">
+                    <thead>
+                        <tr>
+                            <th>Propiedad</th>
+                            <th>Descripción</th>
+                            <th>Valores Comunes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>display: grid</code></td>
+                            <td>Activa el contenedor de rejilla.</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td><code>grid-template-columns</code></td>
+                            <td>Define el número y tamaño de columnas.</td>
+                            <td><span class="value-pill">repeat(3, 1fr)</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>gap</code></td>
+                            <td>Espacio entre filas y columnas.</td>
+                            <td><span class="value-pill">10px</span>, <span class="value-pill">1rem</span></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-<table>
-<tr>
-<th>Propiedad</th>
-<th>Función</th>
-<th>Opciones / Valores</th>
-<th>Ejemplo</th>
-</tr>
+                <h3 class="text-lg">Visualización Grid:</h3>
+                <div class="preview-box">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%;">
+                        <div style="background-color: #6366f1; color: white; padding: 15px; text-align: center; border-radius: 4px;">A</div>
+                        <div style="background-color: #6366f1; color: white; padding: 15px; text-align: center; border-radius: 4px;">B</div>
+                        <div style="background-color: #6366f1; color: white; padding: 15px; text-align: center; border-radius: 4px;">C</div>
+                        <div style="background-color: #6366f1; color: white; padding: 15px; text-align: center; border-radius: 4px;">D</div>
+                        <div style="background-color: #6366f1; color: white; padding: 15px; text-align: center; border-radius: 4px;">E</div>
+                        <div style="background-color: #6366f1; color: white; padding: 15px; text-align: center; border-radius: 4px;">F</div>
+                    </div>
+                </div>
+                <div class="code-block">
+.contenedor-grid {<br>
+&nbsp;&nbsp;display: grid;<br>
+&nbsp;&nbsp;grid-template-columns: repeat(3, 1fr);<br>
+&nbsp;&nbsp;gap: 10px;<br>
+}
+                </div>
+            </section>
 
-<tr><td>text-align</td><td>Alineación del texto</td><td>left, right, center, justify</td><td>text-align: center;</td></tr>
+            <section id="posicionamiento-efectos">
+                <h2>5. Posicionamiento y Efectos</h2>
+                <p>Controlan dónde se ubican los elementos y cómo interactúan visualmente con el usuario a través de transparencias, sombras y transformaciones.</p>
 
-<tr><td>text-decoration</td><td>Decoración del texto</td><td>none, underline, overline, line-through</td><td>text-decoration: underline;</td></tr>
+                <table class="property-table">
+                    <thead>
+                        <tr>
+                            <th>Propiedad</th>
+                            <th>Descripción</th>
+                            <th>Valores Comunes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>position</code></td>
+                            <td>Tipo de posicionamiento del elemento.</td>
+                            <td><span class="value-pill">relative</span>, <span class="value-pill">absolute</span>, <span class="value-pill">fixed</span>, <span class="value-pill">sticky</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>opacity</code></td>
+                            <td>Nivel de transparencia.</td>
+                            <td><span class="value-pill">0.0</span> a <span class="value-pill">1.0</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>box-shadow</code></td>
+                            <td>Añade sombra a la caja.</td>
+                            <td><span class="value-pill">x y blur color</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>cursor</code></td>
+                            <td>Cambia el puntero del ratón.</td>
+                            <td><span class="value-pill">pointer</span>, <span class="value-pill">not-allowed</span></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-<tr><td>background-color</td><td>Color de fondo</td><td>color, rgb(), hex</td><td>background-color: yellow;</td></tr>
+                <h3 class="text-lg">Visualización:</h3>
+                <div class="preview-box">
+                    <div style="background-color: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        Pásame el mouse (Sombra y Escala)
+                    </div>
+                </div>
+                <div class="code-block">
+.tarjeta {<br>
+&nbsp;&nbsp;background-color: white;<br>
+&nbsp;&nbsp;padding: 20px;<br>
+&nbsp;&nbsp;border-radius: 12px;<br>
+&nbsp;&nbsp;box-shadow: 0 10px 25px rgba(0,0,0,0.2);<br>
+&nbsp;&nbsp;cursor: pointer;<br>
+&nbsp;&nbsp;transition: transform 0.3s;<br>
+}<br>
+.tarjeta:hover {<br>
+&nbsp;&nbsp;transform: scale(1.1);<br>
+}
+                </div>
+            </section>
 
-<tr><td>border</td><td>Borde del elemento</td><td>solid, dotted, dashed, double</td><td>border: 1px solid black;</td></tr>
+        </article>
+    </main>
 
-<tr><td>border-radius</td><td>Bordes redondeados</td><td>px, %</td><td>border-radius: 10px;</td></tr>
+    <!-- Pie de Página -->
+    <footer id="main-footer" class="bg-gray-900 text-gray-300 py-6 px-6 mt-8">
+        <div class="container mx-auto text-center text-sm">
+            <p class="flex items-center justify-center">
+                &copy;&nbsp;<span id="current-year"></span>&nbsp;Instituto María Auxiliadora - Área de Informática ISEMED. Todos los derechos reservados.
+                <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" style="width: 50px; height: auto; margin-left: 0.5rem;">
+            </p>
+        </div>
+    </footer>
 
-<tr><td>padding</td><td>Espacio interno</td><td>px, em, %</td><td>padding: 10px;</td></tr>
+    <script>
+        // Lógica del Menú Móvil
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
 
-<tr><td>margin</td><td>Espacio externo</td><td>px, em, auto</td><td>margin: 20px;</td></tr>
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('translate-x-full');
+            mobileMenuOverlay.classList.toggle('hidden');
+        }
 
-<tr><td>width</td><td>Ancho del elemento</td><td>px, %, auto</td><td>width: 300px;</td></tr>
+        if(mobileMenuButton) mobileMenuButton.addEventListener('click', toggleMobileMenu);
+        if(closeMobileMenuButton) closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
+        if(mobileMenuOverlay) mobileMenuOverlay.addEventListener('click', toggleMobileMenu);
 
-<tr><td>height</td><td>Altura del elemento</td><td>px, %, auto</td><td>height: 200px;</td></tr>
-
-<tr><td>display</td><td>Forma en que se muestra</td><td>block, inline, inline-block, none</td><td>display: block;</td></tr>
-
-<tr><td>position</td><td>Tipo de posicionamiento</td><td>static, relative, absolute, fixed</td><td>position: relative;</td></tr>
-
-<tr><td>overflow</td><td>Controla contenido sobrante</td><td>hidden, scroll, auto, visible</td><td>overflow: hidden;</td></tr>
-
-<tr><td>opacity</td><td>Transparencia</td><td>0 – 1</td><td>opacity: 0.7;</td></tr>
-
-<tr><td>box-shadow</td><td>Sombra del elemento</td><td>x y blur color</td><td>box-shadow: 2px 2px 5px gray;</td></tr>
-
-</table>
-
-<h2>Propiedades para Imágenes</h2>
-
-<table>
-<tr>
-<th>Propiedad</th>
-<th>Función</th>
-<th>Opciones / Valores</th>
-<th>Ejemplo</th>
-</tr>
-
-<tr><td>width</td><td>Ancho de la imagen</td><td>px, %, auto</td><td>width: 300px;</td></tr>
-
-<tr><td>height</td><td>Altura de la imagen</td><td>px, %, auto</td><td>height: 200px;</td></tr>
-
-<tr><td>object-fit</td><td>Ajusta la imagen al contenedor</td><td>cover, contain, fill, none</td><td>object-fit: cover;</td></tr>
-
-<tr><td>border</td><td>Borde de la imagen</td><td>solid, dotted, dashed</td><td>border: 2px solid black;</td></tr>
-
-<tr><td>border-radius</td><td>Redondea esquinas</td><td>px, %</td><td>border-radius: 15px;</td></tr>
-
-<tr><td>opacity</td><td>Transparencia</td><td>0 – 1</td><td>opacity: 0.8;</td></tr>
-
-<tr><td>box-shadow</td><td>Sombra de la imagen</td><td>x y blur color</td><td>box-shadow: 3px 3px 6px gray;</td></tr>
-
-<tr><td>filter</td><td>Efectos visuales</td><td>blur(), grayscale(), brightness()</td><td>filter: grayscale(100%);</td></tr>
-
-</table>
-
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentYearSpan = document.getElementById('current-year');
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
 </body>
 </html>

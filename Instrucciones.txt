@@ -21,6 +21,15 @@ ESTADO DE LAS TAREAS (RESUMEN)
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
 
+TAREA: [A-46]
+TÍTULO: Guía de Propiedades CSS y Actualización de Artículos
+ÁREA: Frontend / Contenido
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Reescritura completa de III_BTP_A/dw_II/propiedades_css.html con Tailwind CSS y estilo estandarizado.
+- Adición de contenido teórico y ejemplos prácticos (previsualizaciones) para Flexbox, Grid y Modelo de Caja.
+- Integración del artículo en el menú de Recursos Adicionales en js/data.js.
+
 TAREA: [A-45]
 TÍTULO: Mejora de Navegación, Fullscreen y Generación de Presentaciones (Marzo 15)
 ÁREA: Frontend / Contenido
