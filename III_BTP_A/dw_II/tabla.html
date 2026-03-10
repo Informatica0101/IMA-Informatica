@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Propiedades CSS</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+th, td{
+    border: 1px solid black;
+    padding: 8px;
+}
+
+th{
+    background-color: lightgray;
+}
+
+h1{
+    text-align: center;
+}
+
+h2{
+    color: darkblue;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Tabla de Propiedades CSS</h1>
+
+<h2>Propiedades para Texto</h2>
+
+<table>
+<tr>
+<th>Propiedad</th>
+<th>Función</th>
+<th>Opciones / Valores</th>
+<th>Ejemplo</th>
+</tr>
+
+<tr><td>color</td><td>Color del texto</td><td>red, blue, green, #000000</td><td>color: blue;</td></tr>
+
+<tr><td>font-size</td><td>Tamaño del texto</td><td>px, em, rem, %</td><td>font-size: 20px;</td></tr>
+
+<tr><td>font-family</td><td>Tipo de fuente</td><td>Arial, Verdana, Times New Roman, cursive</td><td>font-family: Arial;</td></tr>
+
+<tr><td>font-weight</td><td>Grosor de la fuente</td><td>normal, bold, lighter, 100-900</td><td>font-weight: bold;</td></tr>
+
+<tr><td>font-style</td><td>Estilo de la fuente</td><td>normal, italic, oblique</td><td>font-style: italic;</td></tr>
+
+<tr><td>letter-spacing</td><td>Espacio entre letras</td><td>px, em, normal</td><td>letter-spacing: 2px;</td></tr>
+
+<tr><td>line-height</td><td>Espacio entre líneas</td><td>normal, número, px, %</td><td>line-height: 1.5;</td></tr>
+
+<tr><td>text-transform</td><td>Cambia mayúsculas/minúsculas</td><td>uppercase, lowercase, capitalize</td><td>text-transform: uppercase;</td></tr>
+
+<tr><td>text-shadow</td><td>Sombra del texto</td><td>x y blur color</td><td>text-shadow: 2px 2px 5px gray;</td></tr>
+
+</table>
+
+<h2>Formato del Texto y Contenido</h2>
+
+<table>
+<tr>
+<th>Propiedad</th>
+<th>Función</th>
+<th>Opciones / Valores</th>
+<th>Ejemplo</th>
+</tr>
+
+<tr><td>text-align</td><td>Alineación del texto</td><td>left, right, center, justify</td><td>text-align: center;</td></tr>
+
+<tr><td>text-decoration</td><td>Decoración del texto</td><td>none, underline, overline, line-through</td><td>text-decoration: underline;</td></tr>
+
+<tr><td>background-color</td><td>Color de fondo</td><td>color, rgb(), hex</td><td>background-color: yellow;</td></tr>
+
+<tr><td>border</td><td>Borde del elemento</td><td>solid, dotted, dashed, double</td><td>border: 1px solid black;</td></tr>
+
+<tr><td>border-radius</td><td>Bordes redondeados</td><td>px, %</td><td>border-radius: 10px;</td></tr>
+
+<tr><td>padding</td><td>Espacio interno</td><td>px, em, %</td><td>padding: 10px;</td></tr>
+
+<tr><td>margin</td><td>Espacio externo</td><td>px, em, auto</td><td>margin: 20px;</td></tr>
+
+<tr><td>width</td><td>Ancho del elemento</td><td>px, %, auto</td><td>width: 300px;</td></tr>
+
+<tr><td>height</td><td>Altura del elemento</td><td>px, %, auto</td><td>height: 200px;</td></tr>
+
+<tr><td>display</td><td>Forma en que se muestra</td><td>block, inline, inline-block, none</td><td>display: block;</td></tr>
+
+<tr><td>position</td><td>Tipo de posicionamiento</td><td>static, relative, absolute, fixed</td><td>position: relative;</td></tr>
+
+<tr><td>overflow</td><td>Controla contenido sobrante</td><td>hidden, scroll, auto, visible</td><td>overflow: hidden;</td></tr>
+
+<tr><td>opacity</td><td>Transparencia</td><td>0 – 1</td><td>opacity: 0.7;</td></tr>
+
+<tr><td>box-shadow</td><td>Sombra del elemento</td><td>x y blur color</td><td>box-shadow: 2px 2px 5px gray;</td></tr>
+
+</table>
+
+<h2>Propiedades para Imágenes</h2>
+
+<table>
+<tr>
+<th>Propiedad</th>
+<th>Función</th>
+<th>Opciones / Valores</th>
+<th>Ejemplo</th>
+</tr>
+
+<tr><td>width</td><td>Ancho de la imagen</td><td>px, %, auto</td><td>width: 300px;</td></tr>
+
+<tr><td>height</td><td>Altura de la imagen</td><td>px, %, auto</td><td>height: 200px;</td></tr>
+
+<tr><td>object-fit</td><td>Ajusta la imagen al contenedor</td><td>cover, contain, fill, none</td><td>object-fit: cover;</td></tr>
+
+<tr><td>border</td><td>Borde de la imagen</td><td>solid, dotted, dashed</td><td>border: 2px solid black;</td></tr>
+
+<tr><td>border-radius</td><td>Redondea esquinas</td><td>px, %</td><td>border-radius: 15px;</td></tr>
+
+<tr><td>opacity</td><td>Transparencia</td><td>0 – 1</td><td>opacity: 0.8;</td></tr>
+
+<tr><td>box-shadow</td><td>Sombra de la imagen</td><td>x y blur color</td><td>box-shadow: 3px 3px 6px gray;</td></tr>
+
+<tr><td>filter</td><td>Efectos visuales</td><td>blur(), grayscale(), brightness()</td><td>filter: grayscale(100%);</td></tr>
+
+</table>
+
+</body>
+</html>
