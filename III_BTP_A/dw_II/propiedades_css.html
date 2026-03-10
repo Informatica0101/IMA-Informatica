@@ -60,7 +60,7 @@
         h3 {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #374151;
+            color: #2563eb;
             margin-top: 2rem;
             margin-bottom: 1rem;
         }
@@ -69,31 +69,31 @@
             background-color: #f8fafc;
             border: 2px dashed #cbd5e1;
             border-radius: 0.75rem;
-            padding: 2rem;
-            margin: 1.5rem 0;
+            padding: 1.5rem;
+            margin: 1rem 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 150px;
-            overflow: auto;
+            min-height: 120px;
+            overflow: hidden;
         }
 
         .code-block {
             background-color: #1e293b;
             color: #e2e8f0;
-            padding: 1.25rem;
+            padding: 1rem;
             border-radius: 0.5rem;
             font-family: monospace;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             overflow-x: auto;
-            margin: 1rem 0;
+            margin: 0.5rem 0 1.5rem 0;
         }
 
         .property-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 1.5rem 0;
-            font-size: 0.95rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
         }
 
         .property-table th {
@@ -101,22 +101,22 @@
             color: #475569;
             font-weight: 600;
             text-align: left;
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 0.8rem;
             border-bottom: 2px solid #e2e8f0;
         }
 
         .property-table td {
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 0.8rem;
             border-bottom: 1px solid #f1f5f9;
         }
 
         .value-pill {
             background-color: #e2e8f0;
             color: #475569;
-            padding: 0.1rem 0.4rem;
-            border-radius: 0.25rem;
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.2rem;
             font-family: monospace;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         @media (max-width: 768px) {
@@ -163,276 +163,238 @@
 
     <main>
         <article>
-            <h1>Guía Completa de Propiedades CSS</h1>
-            <p class="text-xl text-gray-600 text-center mb-8">Domina los estilos fundamentales para crear interfaces web profesionales y modernas.</p>
+            <h1>Diccionario de Propiedades CSS</h1>
+            <p class="text-xl text-gray-600 text-center mb-8">Una guía completa con más de 40 propiedades esenciales, explicaciones y ejemplos interactivos.</p>
 
-            <section id="introduccion">
-                <h2>1. Introducción a las Propiedades</h2>
-                <p>Las propiedades CSS son los atributos que definen el aspecto visual de un elemento HTML. Cada propiedad acepta uno o más valores que determinan cómo se renderizará el elemento en el navegador.</p>
-                <div class="code-block">
-selector {<br>
-&nbsp;&nbsp;propiedad: valor;<br>
-}
-                </div>
-            </section>
+            <!-- SECCIÓN 1: TEXTO Y TIPOGRAFÍA -->
+            <section id="texto-y-tipografia">
+                <h2>1. Texto y Tipografía</h2>
+                <p>Propiedades fundamentales para dar formato al contenido escrito de tu sitio web.</p>
 
-            <section id="texto-tipografia">
-                <h2>2. Texto y Tipografía</h2>
-                <p>Estas propiedades controlan la apariencia del contenido textual, desde el color y tamaño hasta el espaciado y estilo de la fuente.</p>
-
+                <h3>color, font-size, font-family</h3>
+                <p>Define el color, tamaño y la familia de fuente del texto.</p>
                 <table class="property-table">
-                    <thead>
-                        <tr>
-                            <th>Propiedad</th>
-                            <th>Descripción</th>
-                            <th>Valores Comunes</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Propiedad</th><th>Descripción</th><th>Valores</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td><code>color</code></td>
-                            <td>Define el color del texto.</td>
-                            <td><span class="value-pill">nombre</span>, <span class="value-pill">hex</span>, <span class="value-pill">rgb()</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>font-size</code></td>
-                            <td>Ajusta el tamaño de la letra.</td>
-                            <td><span class="value-pill">px</span>, <span class="value-pill">rem</span>, <span class="value-pill">em</span>, <span class="value-pill">%</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>font-weight</code></td>
-                            <td>Define el grosor de la letra.</td>
-                            <td><span class="value-pill">normal</span>, <span class="value-pill">bold</span>, <span class="value-pill">100-900</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>text-align</code></td>
-                            <td>Alinea el texto horizontalmente.</td>
-                            <td><span class="value-pill">left</span>, <span class="value-pill">center</span>, <span class="value-pill">right</span>, <span class="value-pill">justify</span></td>
-                        </tr>
+                        <tr><td><code>color</code></td><td>Color del texto.</td><td><span class="value-pill">blue</span>, <span class="value-pill">#ff0000</span>, <span class="value-pill">rgb()</span></td></tr>
+                        <tr><td><code>font-size</code></td><td>Tamaño de la fuente.</td><td><span class="value-pill">px</span>, <span class="value-pill">rem</span>, <span class="value-pill">em</span>, <span class="value-pill">%</span></td></tr>
+                        <tr><td><code>font-family</code></td><td>Tipo de letra.</td><td><span class="value-pill">Arial</span>, <span class="value-pill">serif</span>, <span class="value-pill">sans-serif</span></td></tr>
                     </tbody>
                 </table>
-
-                <h3 class="text-lg">Visualización:</h3>
                 <div class="preview-box">
-                    <p style="color: #1e40af; font-size: 1.5rem; font-weight: 800; text-align: center;">Este texto tiene color azul, es de 1.5rem y está centrado.</p>
+                    <p style="color: #ef4444; font-size: 1.25rem; font-family: 'Courier New', monospace;">Texto en rojo, 1.25rem y fuente monospace.</p>
                 </div>
-                <div class="code-block">
-p {<br>
-&nbsp;&nbsp;color: #1e40af;<br>
-&nbsp;&nbsp;font-size: 1.5rem;<br>
-&nbsp;&nbsp;font-weight: 800;<br>
-&nbsp;&nbsp;text-align: center;<br>
-}
-                </div>
-            </section>
+                <div class="code-block">p { color: #ef4444; font-size: 1.25rem; font-family: monospace; }</div>
 
-            <section id="modelo-caja">
-                <h2>3. Modelo de Caja (Box Model)</h2>
-                <p>El modelo de caja es la base del diseño web. Cada elemento es una caja rectangular compuesta por contenido, relleno (padding), borde y margen.</p>
-
+                <h3>font-weight, font-style, line-height, letter-spacing</h3>
+                <p>Controla el grosor, estilo (itálica), altura de línea y espacio entre letras.</p>
                 <table class="property-table">
-                    <thead>
-                        <tr>
-                            <th>Propiedad</th>
-                            <th>Descripción</th>
-                            <th>Valores Comunes</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Propiedad</th><th>Descripción</th><th>Valores</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td><code>width / height</code></td>
-                            <td>Ancho y alto del elemento.</td>
-                            <td><span class="value-pill">px</span>, <span class="value-pill">%</span>, <span class="value-pill">vh/vw</span>, <span class="value-pill">auto</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>padding</code></td>
-                            <td>Espacio interno (entre contenido y borde).</td>
-                            <td><span class="value-pill">px</span>, <span class="value-pill">rem</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>margin</code></td>
-                            <td>Espacio externo (entre elementos).</td>
-                            <td><span class="value-pill">px</span>, <span class="value-pill">auto</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>border</code></td>
-                            <td>Línea que rodea el padding.</td>
-                            <td><span class="value-pill">1px solid black</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>box-sizing</code></td>
-                            <td>Cómo se calcula el tamaño total.</td>
-                            <td><span class="value-pill">border-box</span>, <span class="value-pill">content-box</span></td>
-                        </tr>
+                        <tr><td><code>font-weight</code></td><td>Grosor de la letra.</td><td><span class="value-pill">bold</span>, <span class="value-pill">normal</span>, <span class="value-pill">100-900</span></td></tr>
+                        <tr><td><code>font-style</code></td><td>Estilo de la fuente.</td><td><span class="value-pill">normal</span>, <span class="value-pill">italic</span>, <span class="value-pill">oblique</span></td></tr>
+                        <tr><td><code>line-height</code></td><td>Espacio entre líneas.</td><td><span class="value-pill">1.5</span>, <span class="value-pill">32px</span>, <span class="value-pill">150%</span></td></tr>
+                        <tr><td><code>letter-spacing</code></td><td>Espacio entre caracteres.</td><td><span class="value-pill">2px</span>, <span class="value-pill">0.1em</span>, <span class="value-pill">normal</span></td></tr>
                     </tbody>
                 </table>
-
-                <h3 class="text-lg">Visualización:</h3>
                 <div class="preview-box">
-                    <div style="background-color: #dbeafe; border: 4px solid #3b82f6; padding: 20px; margin: 10px; width: 200px; text-align: center; border-radius: 8px;">
-                        Caja con Padding y Borde
+                    <p style="font-weight: 900; font-style: italic; line-height: 2; letter-spacing: 5px;">TEXTO EXPANDIDO E ITÁLICO</p>
+                </div>
+                <div class="code-block">p { font-weight: 900; font-style: italic; line-height: 2; letter-spacing: 5px; }</div>
+
+                <h3>text-align, text-decoration, text-transform, text-shadow</h3>
+                <p>Alineación, decoraciones (subrayado), transformación (mayúsculas) y sombras.</p>
+                <table class="property-table">
+                    <thead><tr><th>Propiedad</th><th>Descripción</th><th>Valores</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>text-align</code></td><td>Alineación horizontal.</td><td><span class="value-pill">left</span>, <span class="value-pill">center</span>, <span class="value-pill">right</span>, <span class="value-pill">justify</span></td></tr>
+                        <tr><td><code>text-decoration</code></td><td>Líneas decorativas.</td><td><span class="value-pill">none</span>, <span class="value-pill">underline</span>, <span class="value-pill">line-through</span></td></tr>
+                        <tr><td><code>text-transform</code></td><td>Cambio de mayúsculas.</td><td><span class="value-pill">uppercase</span>, <span class="value-pill">lowercase</span>, <span class="value-pill">capitalize</span></td></tr>
+                        <tr><td><code>text-shadow</code></td><td>Sombra del texto.</td><td><span class="value-pill">2px 2px 4px #000</span></td></tr>
+                    </tbody>
+                </table>
+                <div class="preview-box">
+                    <p style="text-align: center; text-decoration: underline; text-transform: uppercase; text-shadow: 2px 2px 5px rgba(0,0,0,0.3); font-weight: bold;">Título con Sombra y Subrayado</p>
+                </div>
+                <div class="code-block">p { text-align: center; text-decoration: underline; text-transform: uppercase; text-shadow: 2px 2px 5px gray; }</div>
+            </section>
+
+            <!-- SECCIÓN 2: FONDOS Y COLORES -->
+            <section id="fondos-y-colores">
+                <h2>2. Fondos y Colores</h2>
+                <p>Propiedades para controlar el fondo de los elementos.</p>
+
+                <h3>background-color, background-image, background-size</h3>
+                <table class="property-table">
+                    <thead><tr><th>Propiedad</th><th>Descripción</th><th>Valores</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>background-color</code></td><td>Color de fondo.</td><td><span class="value-pill">transparent</span>, <span class="value-pill">hex</span>, <span class="value-pill">rgba()</span></td></tr>
+                        <tr><td><code>background-image</code></td><td>Imagen de fondo.</td><td><span class="value-pill">url('img.jpg')</span>, <span class="value-pill">linear-gradient()</span></td></tr>
+                        <tr><td><code>background-size</code></td><td>Tamaño de la imagen.</td><td><span class="value-pill">cover</span>, <span class="value-pill">contain</span>, <span class="value-pill">100% 100%</span></td></tr>
+                    </tbody>
+                </table>
+                <div class="preview-box">
+                    <div style="width: 100%; height: 80px; background: linear-gradient(90deg, #3b82f6, #10b981); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        Fondo con Degradado
                     </div>
                 </div>
-                <div class="code-block">
-div {<br>
-&nbsp;&nbsp;width: 200px;<br>
-&nbsp;&nbsp;padding: 20px;<br>
-&nbsp;&nbsp;border: 4px solid #3b82f6;<br>
-&nbsp;&nbsp;margin: 10px;<br>
-&nbsp;&nbsp;background-color: #dbeafe;<br>
-}
+                <div class="code-block">div { background: linear-gradient(90deg, #3b82f6, #10b981); }</div>
+
+                <h3>background-position, background-repeat</h3>
+                <table class="property-table">
+                    <thead><tr><th>Propiedad</th><th>Descripción</th><th>Valores</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>background-position</code></td><td>Posición de la imagen.</td><td><span class="value-pill">center</span>, <span class="value-pill">top right</span>, <span class="value-pill">50% 50%</span></td></tr>
+                        <tr><td><code>background-repeat</code></td><td>Repetición de imagen.</td><td><span class="value-pill">no-repeat</span>, <span class="value-pill">repeat-x</span>, <span class="value-pill">repeat-y</span></td></tr>
+                    </tbody>
+                </table>
+                <div class="preview-box" style="background-image: url('../../imagenes/logo.png'); background-repeat: repeat-x; background-size: 50px; background-position: center; min-height: 80px;">
                 </div>
+                <div class="code-block">div { background-image: url('logo.png'); background-repeat: repeat-x; background-size: 50px; }</div>
             </section>
 
+            <!-- SECCIÓN 3: MODELO DE CAJA -->
+            <section id="modelo-de-caja">
+                <h2>3. Modelo de Caja (Dimensiones y Espaciado)</h2>
+                <p>Propiedades que definen el tamaño, bordes y márgenes de los elementos.</p>
+
+                <h3>width, height, padding, margin</h3>
+                <table class="property-table">
+                    <thead><tr><th>Propiedad</th><th>Descripción</th><th>Valores</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>width / height</code></td><td>Ancho y alto.</td><td><span class="value-pill">px</span>, <span class="value-pill">%</span>, <span class="value-pill">auto</span>, <span class="value-pill">100vh</span></td></tr>
+                        <tr><td><code>padding</code></td><td>Espacio interno.</td><td><span class="value-pill">10px</span> (todos), <span class="value-pill">5px 10px</span> (v h)</td></tr>
+                        <tr><td><code>margin</code></td><td>Espacio externo.</td><td><span class="value-pill">20px</span>, <span class="value-pill">auto</span> (centra)</td></tr>
+                    </tbody>
+                </table>
+                <div class="preview-box">
+                    <div style="background-color: #fef08a; border: 2px solid #eab308; padding: 30px; margin: 10px;">Caja con padding de 30px</div>
+                </div>
+                <div class="code-block">div { padding: 30px; margin: 10px; background-color: #fef08a; border: 2px solid #eab308; }</div>
+
+                <h3>border, border-radius, box-sizing, outline</h3>
+                <table class="property-table">
+                    <thead><tr><th>Propiedad</th><th>Descripción</th><th>Valores</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>border</code></td><td>Borde del elemento.</td><td><span class="value-pill">2px solid blue</span>, <span class="value-pill">dashed</span></td></tr>
+                        <tr><td><code>border-radius</code></td><td>Redondeo de esquinas.</td><td><span class="value-pill">8px</span>, <span class="value-pill">50%</span> (círculo)</td></tr>
+                        <tr><td><code>box-sizing</code></td><td>Cálculo del tamaño.</td><td><span class="value-pill">border-box</span>, <span class="value-pill">content-box</span></td></tr>
+                        <tr><td><code>outline</code></td><td>Línea externa al borde.</td><td><span class="value-pill">3px solid red</span></td></tr>
+                    </tbody>
+                </table>
+                <div class="preview-box">
+                    <div style="width: 80px; height: 80px; background-color: #3b82f6; border-radius: 50%; border: 4px solid #1e3a8a; outline: 3px solid #93c5fd;"></div>
+                </div>
+                <div class="code-block">div { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #1e3a8a; outline: 3px solid #93c5fd; }</div>
+            </section>
+
+            <!-- SECCIÓN 4: DISEÑO MODERNO -->
             <section id="diseno-moderno">
                 <h2>4. Diseño Moderno (Flexbox y Grid)</h2>
-                <p>Estas propiedades permiten crear layouts complejos y responsivos de forma mucho más sencilla que los métodos tradicionales.</p>
+                <p>Las herramientas más potentes para crear layouts dinámicos.</p>
 
-                <h3>Flexbox (Unidimensional)</h3>
+                <h3>display, justify-content, align-items, flex-direction, flex-wrap</h3>
                 <table class="property-table">
-                    <thead>
-                        <tr>
-                            <th>Propiedad</th>
-                            <th>Descripción</th>
-                            <th>Valores Comunes</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Propiedad</th><th>Descripción</th><th>Valores</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td><code>display: flex</code></td>
-                            <td>Activa el contenedor flexible.</td>
-                            <td>-</td>
-                        </tr>
-                        <tr>
-                            <td><code>justify-content</code></td>
-                            <td>Alineación en el eje principal.</td>
-                            <td><span class="value-pill">center</span>, <span class="value-pill">space-between</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>align-items</code></td>
-                            <td>Alineación en el eje cruzado.</td>
-                            <td><span class="value-pill">center</span>, <span class="value-pill">stretch</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>flex-direction</code></td>
-                            <td>Dirección de los elementos.</td>
-                            <td><span class="value-pill">row</span>, <span class="value-pill">column</span></td>
-                        </tr>
+                        <tr><td><code>display: flex</code></td><td>Activa Flexbox.</td><td>-</td></tr>
+                        <tr><td><code>justify-content</code></td><td>Alineación horizontal.</td><td><span class="value-pill">center</span>, <span class="value-pill">space-between</span>, <span class="value-pill">end</span></td></tr>
+                        <tr><td><code>align-items</code></td><td>Alineación vertical.</td><td><span class="value-pill">center</span>, <span class="value-pill">stretch</span>, <span class="value-pill">start</span></td></tr>
+                        <tr><td><code>flex-direction</code></td><td>Dirección de flujo.</td><td><span class="value-pill">row</span>, <span class="value-pill">column</span></td></tr>
+                        <tr><td><code>flex-wrap</code></td><td>Salto de línea.</td><td><span class="value-pill">wrap</span>, <span class="value-pill">nowrap</span></td></tr>
                     </tbody>
                 </table>
-
-                <h3 class="text-lg">Visualización Flexbox:</h3>
                 <div class="preview-box">
-                    <div style="display: flex; justify-content: space-around; width: 100%; background-color: #f1f5f9; padding: 10px; border-radius: 8px;">
-                        <div style="background-color: #ef4444; color: white; padding: 10px; border-radius: 4px;">1</div>
-                        <div style="background-color: #10b981; color: white; padding: 10px; border-radius: 4px;">2</div>
-                        <div style="background-color: #3b82f6; color: white; padding: 10px; border-radius: 4px;">3</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; border: 1px solid #ccc; padding: 10px;">
+                        <div style="width: 40px; height: 40px; background: red;"></div>
+                        <div style="width: 40px; height: 40px; background: green;"></div>
+                        <div style="width: 40px; height: 40px; background: blue;"></div>
                     </div>
                 </div>
+                <div class="code-block">.container { display: flex; justify-content: space-between; align-items: center; }</div>
 
-                <h3>Grid (Bidimensional)</h3>
+                <h3>display: grid, grid-template-columns/rows, gap, grid-column</h3>
                 <table class="property-table">
-                    <thead>
-                        <tr>
-                            <th>Propiedad</th>
-                            <th>Descripción</th>
-                            <th>Valores Comunes</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Propiedad</th><th>Descripción</th><th>Valores</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td><code>display: grid</code></td>
-                            <td>Activa el contenedor de rejilla.</td>
-                            <td>-</td>
-                        </tr>
-                        <tr>
-                            <td><code>grid-template-columns</code></td>
-                            <td>Define el número y tamaño de columnas.</td>
-                            <td><span class="value-pill">repeat(3, 1fr)</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>gap</code></td>
-                            <td>Espacio entre filas y columnas.</td>
-                            <td><span class="value-pill">10px</span>, <span class="value-pill">1rem</span></td>
-                        </tr>
+                        <tr><td><code>display: grid</code></td><td>Activa Grid.</td><td>-</td></tr>
+                        <tr><td><code>grid-template-columns</code></td><td>Columnas.</td><td><span class="value-pill">repeat(3, 1fr)</span>, <span class="value-pill">200px 1fr</span></td></tr>
+                        <tr><td><code>gap</code></td><td>Espacio entre celdas.</td><td><span class="value-pill">10px</span>, <span class="value-pill">1rem</span></td></tr>
+                        <tr><td><code>grid-column</code></td><td>Espacio que ocupa.</td><td><span class="value-pill">span 2</span>, <span class="value-pill">1 / 3</span></td></tr>
                     </tbody>
                 </table>
-
-                <h3 class="text-lg">Visualización Grid:</h3>
                 <div class="preview-box">
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%;">
-                        <div style="background-color: #6366f1; color: white; padding: 15px; text-align: center; border-radius: 4px;">A</div>
-                        <div style="background-color: #6366f1; color: white; padding: 15px; text-align: center; border-radius: 4px;">B</div>
-                        <div style="background-color: #6366f1; color: white; padding: 15px; text-align: center; border-radius: 4px;">C</div>
-                        <div style="background-color: #6366f1; color: white; padding: 15px; text-align: center; border-radius: 4px;">D</div>
-                        <div style="background-color: #6366f1; color: white; padding: 15px; text-align: center; border-radius: 4px;">E</div>
-                        <div style="background-color: #6366f1; color: white; padding: 15px; text-align: center; border-radius: 4px;">F</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;">
+                        <div style="grid-column: span 2; background: #ddd; text-align: center;">Cabecera (span 2)</div>
+                        <div style="background: #bbb; height: 40px;"></div>
+                        <div style="background: #bbb; height: 40px;"></div>
                     </div>
                 </div>
-                <div class="code-block">
-.contenedor-grid {<br>
-&nbsp;&nbsp;display: grid;<br>
-&nbsp;&nbsp;grid-template-columns: repeat(3, 1fr);<br>
-&nbsp;&nbsp;gap: 10px;<br>
-}
-                </div>
+                <div class="code-block">.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }<br>.item { grid-column: span 2; }</div>
             </section>
 
-            <section id="posicionamiento-efectos">
-                <h2>5. Posicionamiento y Efectos</h2>
-                <p>Controlan dónde se ubican los elementos y cómo interactúan visualmente con el usuario a través de transparencias, sombras y transformaciones.</p>
+            <!-- SECCIÓN 5: POSICIONAMIENTO -->
+            <section id="posicionamiento">
+                <h2>5. Posicionamiento y Visibilidad</h2>
+                <p>Determina cómo se ubican los elementos en el flujo del documento.</p>
 
+                <h3>position, z-index, top/right/bottom/left</h3>
                 <table class="property-table">
-                    <thead>
-                        <tr>
-                            <th>Propiedad</th>
-                            <th>Descripción</th>
-                            <th>Valores Comunes</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Propiedad</th><th>Descripción</th><th>Valores</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td><code>position</code></td>
-                            <td>Tipo de posicionamiento del elemento.</td>
-                            <td><span class="value-pill">relative</span>, <span class="value-pill">absolute</span>, <span class="value-pill">fixed</span>, <span class="value-pill">sticky</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>opacity</code></td>
-                            <td>Nivel de transparencia.</td>
-                            <td><span class="value-pill">0.0</span> a <span class="value-pill">1.0</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>box-shadow</code></td>
-                            <td>Añade sombra a la caja.</td>
-                            <td><span class="value-pill">x y blur color</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>cursor</code></td>
-                            <td>Cambia el puntero del ratón.</td>
-                            <td><span class="value-pill">pointer</span>, <span class="value-pill">not-allowed</span></td>
-                        </tr>
+                        <tr><td><code>position</code></td><td>Tipo de ubicación.</td><td><span class="value-pill">relative</span>, <span class="value-pill">absolute</span>, <span class="value-pill">fixed</span>, <span class="value-pill">sticky</span></td></tr>
+                        <tr><td><code>z-index</code></td><td>Orden de apilado.</td><td><span class="value-pill">1</span>, <span class="value-pill">999</span>, <span class="value-pill">-1</span></td></tr>
+                        <tr><td><code>top / bottom...</code></td><td>Coordenadas.</td><td><span class="value-pill">0</span>, <span class="value-pill">50px</span>, <span class="value-pill">10%</span></td></tr>
                     </tbody>
                 </table>
+                <div class="preview-box" style="position: relative; height: 100px;">
+                    <div style="position: absolute; top: 10px; left: 10px; background: rgba(255,0,0,0.5); padding: 10px; z-index: 2;">Z-index 2</div>
+                    <div style="position: absolute; top: 30px; left: 30px; background: rgba(0,0,255,0.5); padding: 10px; z-index: 1;">Z-index 1</div>
+                </div>
+                <div class="code-block">.caja { position: absolute; top: 10px; left: 10px; z-index: 2; }</div>
 
-                <h3 class="text-lg">Visualización:</h3>
+                <h3>overflow, visibility, opacity, object-fit</h3>
+                <table class="property-table">
+                    <thead><tr><th>Propiedad</th><th>Descripción</th><th>Valores</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>overflow</code></td><td>Contenido excedente.</td><td><span class="value-pill">hidden</span>, <span class="value-pill">scroll</span>, <span class="value-pill">auto</span></td></tr>
+                        <tr><td><code>visibility</code></td><td>Visibilidad.</td><td><span class="value-pill">visible</span>, <span class="value-pill">hidden</span></td></tr>
+                        <tr><td><code>opacity</code></td><td>Transparencia.</td><td><span class="value-pill">0.0</span> (invisible) a <span class="value-pill">1.0</span></td></tr>
+                        <tr><td><code>object-fit</code></td><td>Ajuste de imágenes.</td><td><span class="value-pill">cover</span>, <span class="value-pill">contain</span>, <span class="value-pill">fill</span></td></tr>
+                    </tbody>
+                </table>
                 <div class="preview-box">
-                    <div style="background-color: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                        Pásame el mouse (Sombra y Escala)
+                    <img src="../../imagenes/logo.png" style="width: 100px; height: 100px; object-fit: contain; border: 1px solid #ccc; opacity: 0.6;" alt="Imagen con opacity 0.6">
+                </div>
+                <div class="code-block">img { width: 100px; height: 100px; object-fit: contain; opacity: 0.6; }</div>
+            </section>
+
+            <!-- SECCIÓN 6: EFECTOS -->
+            <section id="efectos">
+                <h2>6. Efectos, Transformaciones e Interactividad</h2>
+                <p>Propiedades para añadir dinamismo y acabados visuales.</p>
+
+                <h3>box-shadow, transform, transition, filter, cursor</h3>
+                <table class="property-table">
+                    <thead><tr><th>Propiedad</th><th>Descripción</th><th>Valores</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>box-shadow</code></td><td>Sombra de caja.</td><td><span class="value-pill">0 4px 10px #000</span></td></tr>
+                        <tr><td><code>transform</code></td><td>Modificar forma.</td><td><span class="value-pill">rotate(45deg)</span>, <span class="value-pill">scale(1.2)</span></td></tr>
+                        <tr><td><code>transition</code></td><td>Animación suave.</td><td><span class="value-pill">all 0.3s ease</span></td></tr>
+                        <tr><td><code>filter</code></td><td>Efectos visuales.</td><td><span class="value-pill">blur(5px)</span>, <span class="value-pill">grayscale(1)</span></td></tr>
+                        <tr><td><code>cursor</code></td><td>Tipo de puntero.</td><td><span class="value-pill">pointer</span>, <span class="value-pill">crosshair</span>, <span class="value-pill">grab</span></td></tr>
+                    </tbody>
+                </table>
+                <div class="preview-box">
+                    <div style="width: 100px; height: 50px; background: #6366f1; border-radius: 8px; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4); transform: rotate(-5deg); filter: contrast(1.2); cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.1) rotate(0deg)'" onmouseout="this.style.transform='scale(1) rotate(-5deg)'">
+                        HOVER ME
                     </div>
                 </div>
-                <div class="code-block">
-.tarjeta {<br>
-&nbsp;&nbsp;background-color: white;<br>
-&nbsp;&nbsp;padding: 20px;<br>
-&nbsp;&nbsp;border-radius: 12px;<br>
-&nbsp;&nbsp;box-shadow: 0 10px 25px rgba(0,0,0,0.2);<br>
-&nbsp;&nbsp;cursor: pointer;<br>
-&nbsp;&nbsp;transition: transform 0.3s;<br>
-}<br>
-.tarjeta:hover {<br>
-&nbsp;&nbsp;transform: scale(1.1);<br>
-}
-                </div>
+                <div class="code-block">div {<br>
+&nbsp;&nbsp;box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);<br>
+&nbsp;&nbsp;transform: rotate(-5deg);<br>
+&nbsp;&nbsp;transition: all 0.3s;<br>
+}</div>
             </section>
 
         </article>
