@@ -21,6 +21,16 @@ ESTADO DE LAS TAREAS (RESUMEN)
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
 
+TAREA: [REDISEÑO DE PRODUCTO]
+TÍTULO: Rediseño Integral de Frontend (Senior Product Engineer)
+ÁREA: UI / UX / Frontend / PWA
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Implementación de un Design System institucional serio (Tokens, Componentes, Grid).
+- Rediseño total de la Landing Page, Dashboards, Auth y Evaluación.
+- Actualización de branding institucional y PWA.
+- Mejora de usabilidad y jerarquía visual en todo el producto.
+
 TAREA: [A-47]
 TÍTULO: Rediseño Dashboard Profesor (Estilo Califik)
 ÁREA: Frontend / Backend / Reportes

@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const questionText = question.texto;
         let options = question.opciones || {};
 
-        // Manejar el caso donde las opciones lleguen como string JSON (defensivo)
         if (typeof options === 'string') {
             try { options = JSON.parse(options); } catch (e) { options = {}; }
         }
@@ -87,40 +86,45 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'opcion_multiple':
             case 'verdadero_falso':
                 optionsHtml = Object.entries(options).map(([key, value]) => {
-                    // Tarea 1: Enviar valor semántico para Verdadero/Falso
                     const inputValue = (questionType === 'verdadero_falso') ? value : key;
                     return `
-                        <label class="block p-2 rounded hover:bg-gray-100">
-                            <input type="radio" name="question_${questionId}" value="${inputValue}" class="mr-2">
-                            ${value}
+                        <label class="flex items-center p-3 rounded-lg border border-slate-100 hover:border-slate-300 hover:bg-slate-50 transition-all cursor-pointer group">
+                            <input type="radio" name="question_${questionId}" value="${inputValue}" class="w-4 h-4 text-[#1e3a8a] focus:ring-[#1e3a8a] border-slate-300">
+                            <span class="ml-3 text-sm text-slate-700 font-medium group-hover:text-slate-900">${value}</span>
                         </label>
                     `;
                 }).join('');
                 break;
             case 'completacion':
             case 'respuesta_breve':
-                optionsHtml = `<input type="text" name="question_${questionId}" class="w-full p-2 border rounded" placeholder="Escribe tu respuesta aquí">`;
+                optionsHtml = `<input type="text" name="question_${questionId}" class="form-input-academic w-full" placeholder="Escribe tu respuesta aquí...">`;
                 break;
             case 'termino_pareado':
                 if (options.concepts && options.definitions) {
-                    // Tarea 2: Barajado robusto de definiciones sin duplicados
                     const indexedDefinitions = options.definitions.map((def, idx) => ({ def, idx }));
                     const shuffledDefinitions = shuffleArray(indexedDefinitions);
                     optionsHtml = `
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
-                                <h4 class="font-bold mb-2">Conceptos</h4>
-                                <ul class="list-decimal list-inside space-y-2">
-                                    ${options.concepts.map(concept => `<li class="p-2 bg-gray-100 rounded">${concept}</li>`).join('')}
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Conceptos</h4>
+                                <ul class="space-y-3">
+                                    ${options.concepts.map((concept, i) => `
+                                        <li class="p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm text-slate-700 font-medium flex gap-3">
+                                            <span class="text-[#1e3a8a] font-bold">${i + 1}.</span>
+                                            ${concept}
+                                        </li>
+                                    `).join('')}
                                 </ul>
                             </div>
                             <div>
-                                <h4 class="font-bold mb-2">Definiciones</h4>
-                                <div class="space-y-2">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Definiciones</h4>
+                                <div class="space-y-3">
                                     ${shuffledDefinitions.map((item, i) => `
-                                        <div class="flex items-center">
-                                            <input type="text" name="question_${questionId}_${i}" data-original-index="${item.idx}" class="w-12 p-1 border rounded mr-3 text-center" placeholder="#">
-                                            <span>${item.def}</span>
+                                        <div class="flex items-start gap-3">
+                                            <input type="text" name="question_${questionId}_${i}" data-original-index="${item.idx}"
+                                                class="w-10 h-10 border border-slate-200 rounded-lg text-center text-sm font-bold text-[#1e3a8a] focus:ring-2 focus:ring-blue-100 focus:border-[#1e3a8a] shrink-0"
+                                                placeholder="#">
+                                            <span class="text-sm text-slate-600 leading-relaxed pt-2">${item.def}</span>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -132,8 +136,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return `
-            <div class="p-6 border-b question-block" data-question-id="${questionId}" data-question-type="${questionType}">
-                <p class="font-semibold text-lg mb-4">${index + 1}. ${questionText}</p>
+            <div class="card-academic p-8 question-block" data-question-id="${questionId}" data-question-type="${questionType}">
+                <div class="flex gap-4 mb-6">
+                    <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-[#1e3a8a] font-bold text-sm shrink-0">${index + 1}</span>
+                    <p class="font-bold text-slate-800 text-lg leading-snug">${questionText}</p>
+                </div>
                 <div class="space-y-3">
                     ${optionsHtml}
                 </div>

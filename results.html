@@ -17,27 +17,29 @@
 </head>
 <body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
 
-    <header id="main-header" class="bg-white shadow-md py-2 md:py-2 px-1 md:px-3 fixed w-full z-50">
+    <header id="main-header" class="bg-white border-b border-slate-200 py-3 px-4 fixed w-full z-50">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="index.html" class="flex items-center space-x-4 transition-transform duration-300 logo-container">
-                <img src="imagenes/logo.png" alt="Logo" width="120" height="auto" class="logo-img transition-transform duration-300">
-                <span class="text-2xl font-bold text-blue-800 hidden sm:inline">Area de Informatica</span>
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="imagenes/logo.png" alt="Logo IMA" class="h-10 w-auto">
+                <div class="flex flex-col">
+                    <span class="text-sm font-bold text-[#1e3a8a] leading-tight uppercase tracking-tighter">Instituto Maria Auxiliadora</span>
+                    <span class="text-[10px] font-medium text-slate-500 uppercase tracking-widest">Área de Informática</span>
+                </div>
             </a>
-            <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="120" height="auto" class="hidden lg:block">
         </div>
     </header>
 
     <main class="mt-[6rem] pb-20 flex-grow">
-        <div class="container mx-auto px-5 max-w-4xl">
-            <div class="dashboard-card text-center mb-10">
-                <h1 class="text-3xl font-extrabold text-gray-800 mb-8">Resumen de Calificación</h1>
+        <div class="container mx-auto px-4 max-w-3xl">
+            <div class="card-academic p-8 md:p-12 text-center">
+                <h1 class="text-2xl font-bold text-slate-800 uppercase tracking-tight mb-8">Resumen de Calificación</h1>
 
                 <div id="results-container" class="min-h-[200px] flex flex-col justify-center items-center">
-                    <div class="animate-pulse text-gray-400 font-medium text-lg">Cargando resultados...</div>
+                    <div class="animate-spin rounded-full h-12 w-12 border-2 border-slate-200 border-t-[#1e3a8a]"></div>
                 </div>
 
-                <div class="mt-12 pt-8 border-t border-gray-100">
-                    <a href="student-dashboard.html" class="inline-block bg-blue-600 text-white font-extrabold py-4 px-10 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
+                <div class="mt-12 pt-8 border-t border-slate-100">
+                    <a href="student-dashboard.html" class="btn-academic inline-flex px-12 py-4">
                         Volver al Dashboard
                     </a>
                 </div>

@@ -50,12 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
         targetSection.classList.remove('hidden');
         allNavLinks.forEach(link => {
             if (link) {
-                link.classList.remove('bg-blue-600', 'text-white');
-                link.classList.add('bg-white', 'text-gray-700');
+                link.classList.remove('bg-primary', 'text-white');
+                link.classList.add('text-gray-500', 'hover:bg-gray-50', 'hover:text-primary');
             }
         });
-        navElement.classList.add('bg-blue-600', 'text-white');
-        navElement.classList.remove('bg-white', 'text-gray-700');
+        navElement.classList.add('bg-primary', 'text-white');
+        navElement.classList.remove('text-gray-500', 'hover:bg-gray-50', 'hover:text-primary');
     }
 
     navDashboard.addEventListener('click', () => {
@@ -145,14 +145,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const tbody = document.getElementById('tasks-management-table-body');
         tbody.innerHTML = allTasksExams.map((item, idx) => `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.openTaskDetail(${idx})">
-                <td class="p-4 font-bold text-blue-700">${item.titulo}</td>
+                <td class="p-4 font-bold text-primary">${item.titulo}</td>
                 <td class="p-4">${item.asignatura}</td>
-                <td class="p-4 text-xs">${item.grado} - ${item.seccion || 'Todas'}</td>
-                <td class="p-4 text-xs font-medium ${new Date(item.fechaLimite) < new Date() ? 'text-red-500' : 'text-gray-600'}">
+                <td class="p-4 text-xs font-semibold text-gray-500">${item.grado} - ${item.seccion || 'Todas'}</td>
+                <td class="p-4 text-xs font-bold ${new Date(item.fechaLimite) < new Date() ? 'text-danger' : 'text-gray-600'}">
                     ${new Date(item.fechaLimite).toLocaleDateString()}
                 </td>
                 <td class="p-4 text-right">
-                    <button class="bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-100 transition-colors">
+                    <button class="btn-academic btn-secondary !py-1 !px-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     </button>
                 </td>
@@ -362,17 +362,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         currentFilteredItems = alumnosGlobal;
         dashboardTableHead.innerHTML = `
-            <tr class="bg-gray-50 border-b border-gray-100">
-                <th class="p-4 text-left font-bold text-gray-600">Alumno</th>
-                <th class="p-4 text-left font-bold text-gray-600">Grado/Secc</th>
-                <th class="p-4 text-right font-bold text-gray-600">Acción</th>
+            <tr>
+                <th>Nombre del Alumno</th>
+                <th>Grado / Sección</th>
+                <th class="text-right">Acción</th>
             </tr>`;
-        if (alumnosGlobal.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-500">No se encontraron alumnos.</td></tr>'; return; }
+        if (alumnosGlobal.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-400 italic">No se encontraron coincidencias para su búsqueda.</td></tr>'; return; }
         submissionsTableBody.innerHTML = alumnosGlobal.map((a, idx) => `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
-                <td class="p-4 font-bold text-blue-700">${a.nombre}</td>
-                <td class="p-4 text-sm text-gray-500">${a.grado} - ${a.seccion || 'N/A'}</td>
-                <td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver detalles &rsaquo;</span></td>
+                <td class="p-4 font-bold text-primary">${a.nombre}</td>
+                <td class="p-4 text-sm font-semibold text-gray-500">${a.grado} - ${a.seccion || 'N/A'}</td>
+                <td class="p-4 text-right"><span class="text-primary font-bold text-xs uppercase tracking-widest">Ver expediente &rsaquo;</span></td>
             </tr>`).join('');
     }
 
@@ -382,9 +382,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fGrado) grados = grados.filter(g => g === fGrado);
         const filtered = grados.filter(g => g.toLowerCase().includes(search));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-600">Grado</th><th class="p-4 text-right font-bold text-gray-600">Acción</th></tr>`;
-        if (filtered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-8 text-gray-500">No hay grados.</td></tr>'; return; }
-        submissionsTableBody.innerHTML = filtered.map((grado, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${grado}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Secciones &rsaquo;</span></td></tr>`).join('');
+        dashboardTableHead.innerHTML = `<tr><th>Grado Académico</th><th class="text-right">Acción</th></tr>`;
+        if (filtered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-8 text-gray-400 italic">No se encontraron grados activos.</td></tr>'; return; }
+        submissionsTableBody.innerHTML = filtered.map((grado, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${grado}</td><td class="p-4 text-right"><span class="text-primary font-bold text-xs uppercase tracking-widest">Navegar Secciones &rsaquo;</span></td></tr>`).join('');
     }
 
     function renderSecciones(grado, search) {
@@ -393,15 +393,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fSeccion) secciones = secciones.filter(s => s === fSeccion);
         const filtered = secciones.filter(s => s.toLowerCase().includes(search));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-600">Sección</th><th class="p-4 text-right font-bold text-gray-600">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${seccion}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
+        dashboardTableHead.innerHTML = `<tr><th>Sección</th><th class="text-right">Acción</th></tr>`;
+        submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">Sección ${seccion}</td><td class="p-4 text-right"><span class="text-primary font-bold text-xs uppercase tracking-widest">Listar Estudiantes &rsaquo;</span></td></tr>`).join('');
     }
 
     function renderAlumnos(grado, seccion, search) {
         const current = navStack[navStack.length - 1];
         const students = current.data.students || [];
 
-        // Enriquecer alumnos con status de actividad
         const studentsWithStatus = students.map(s => {
             const studentActivity = allActivityRaw.filter(i => i.alumnoId === s.userId);
             let hasPending = false;
@@ -417,28 +416,28 @@ document.addEventListener('DOMContentLoaded', () => {
         currentFilteredItems = filtered;
 
         dashboardTableHead.innerHTML = `
-            <tr class="bg-gray-50 border-b border-gray-100">
-                <th class="p-4 text-left font-bold text-gray-600">Nombre del Alumno</th>
-                <th class="p-4 text-left font-bold text-gray-600">Estado</th>
-                <th class="p-4 text-right font-bold text-gray-600">Acción</th>
+            <tr>
+                <th>Nombre Completo</th>
+                <th>Estado de Cumplimiento</th>
+                <th class="text-right">Acción</th>
             </tr>`;
 
         if (filtered.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-500">No hay alumnos inscritos en esta sección.</td></tr>';
+            submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-400 italic">No hay alumnos registrados en esta sección.</td></tr>';
             return;
         }
 
         submissionsTableBody.innerHTML = filtered.map((s, idx) => {
             const statusHtml = s.hasPending
-                ? '<span class="text-yellow-600 font-bold">Pendiente</span>'
-                : '<span class="text-green-600 font-bold">Al día</span>';
+                ? '<span class="status-badge badge-warning">Actividad Pendiente</span>'
+                : '<span class="status-badge badge-success">Sin pendientes</span>';
 
             return `
                 <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
-                    <td class="p-4 font-bold text-blue-700">${s.nombre}</td>
-                    <td class="p-4 text-sm">${statusHtml}</td>
+                    <td class="p-4 font-bold text-primary">${s.nombre}</td>
+                    <td class="p-4">${statusHtml}</td>
                     <td class="p-4 text-right">
-                        <span class="text-blue-600 font-bold text-sm">Ver detalles &rsaquo;</span>
+                        <span class="text-primary font-bold text-xs uppercase tracking-widest">Abrir Detalles &rsaquo;</span>
                     </td>
                 </tr>`;
         }).join('');
@@ -457,29 +456,41 @@ document.addEventListener('DOMContentLoaded', () => {
             return itemEstado === fEstado;
         });
         currentFilteredItems = finalFiltered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-600">Actividad</th><th class="p-4 text-left font-bold text-gray-600">Estado</th><th class="p-4 text-left font-bold text-gray-600">Archivo</th><th class="p-4 text-left font-bold text-gray-600">Calificación</th><th class="p-4 text-right font-bold text-gray-600">Acción</th></tr>`;
-        if (finalFiltered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-500">Sin entregas.</td></tr>'; return; }
+        dashboardTableHead.innerHTML = `
+            <tr>
+                <th>Asignación / Materia</th>
+                <th>Estado</th>
+                <th>Recurso</th>
+                <th>Nota</th>
+                <th class="text-right">Acciones</th>
+            </tr>`;
+        if (finalFiltered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-400 italic">No se encontraron registros de entrega para este filtro.</td></tr>'; return; }
         submissionsTableBody.innerHTML = finalFiltered.map((item, idx) => {
-            let statusClass = 'bg-gray-100 text-gray-600'; let statusText = 'Pendiente';
-            if (item.estado === 'Completada' || item.estado === 'Revisada') { statusText = 'Completada'; statusClass = 'bg-green-100 text-green-700'; }
-            else if (item.estado === 'Rechazada') { statusText = 'Rechazada'; statusClass = 'bg-red-100 text-red-700'; }
-            else if (item.fileId || item.respuestas || item.entregaId) { statusText = 'Por calificar'; statusClass = 'bg-yellow-100 text-yellow-700'; }
+            let badgeClass = 'badge-info'; let statusText = 'Pendiente';
+            if (item.estado === 'Completada' || item.estado === 'Revisada') { statusText = 'Completada'; badgeClass = 'badge-success'; }
+            else if (item.estado === 'Rechazada') { statusText = 'Rechazada'; badgeClass = 'badge-danger'; }
+            else if (item.fileId || item.respuestas || item.entregaId) { statusText = 'Por calificar'; badgeClass = 'badge-warning'; }
 
-            let fileHtml = 'N/A';
+            let fileHtml = '<span class="text-gray-300 font-bold text-[10px]">VACÍO</span>';
             if (item.fileId) {
                 const fId = extractDriveId(item.fileId);
-                fileHtml = `<a href="https://drive.google.com/uc?id=${fId}" target="_blank" class="text-blue-600 font-bold hover:underline">Ver</a>`;
+                fileHtml = `<a href="https://drive.google.com/uc?id=${fId}" target="_blank" class="text-primary font-black hover:underline text-xs">VER ARCHIVO</a>`;
             }
 
             return `
                 <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="p-4"><div class="font-bold text-gray-800">${item.titulo}</div><div class="text-[10px] text-gray-400 uppercase">${item.asignatura} | ${item.tipo}</div></td>
-                    <td class="p-4"><span class="px-2 py-1 rounded-full text-[10px] font-bold ${statusClass}">${statusText}</span></td>
+                    <td class="p-4">
+                        <div class="font-bold text-gray-800">${item.titulo}</div>
+                        <div class="text-[9px] font-black text-gray-400 uppercase tracking-tighter">${item.asignatura} | ${item.tipo}</div>
+                    </td>
+                    <td class="p-4"><span class="status-badge ${badgeClass}">${statusText}</span></td>
                     <td class="p-4">${fileHtml}</td>
-                    <td class="p-4 font-bold text-gray-700">${item.calificacion || '-'}</td>
-                    <td class="p-4 text-right space-x-2">
-                        <button class="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors grade-btn" data-index="${idx}">Calificar</button>
-                        <button class="bg-red-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-index="${idx}">Eliminar</button>
+                    <td class="p-4 font-black text-primary">${item.calificacion || '-'}</td>
+                    <td class="p-4 text-right">
+                        <div class="flex justify-end space-x-1">
+                            <button class="btn-academic btn-primary !py-1.5 !px-3 !text-[10px] grade-btn" data-index="${idx}">CALIFICAR</button>
+                            <button class="btn-academic btn-secondary !py-1.5 !px-3 !text-[10px] !text-danger !border-danger/20 delete-submission-btn" data-index="${idx}">ELIMINAR</button>
+                        </div>
                     </td>
                 </tr>`;
         }).join('');

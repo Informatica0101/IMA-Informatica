@@ -37,3 +37,12 @@ Archivo: backend/exam-service/Code.gs
 -------------------------------------
 - Necesita: updateExam(payload), deleteExam(payload).
 
+AUDITORÍA DE REDISEÑO DE PRODUCTO (IMA INFORMATICA PWA)
+======================================================
+- Hallazgo: Interfaz con diseño inconsistente ("blobs" decorativos, degradados genéricos).
+- Hallazgo: Falta de sistema de diseño (design tokens).
+- Hallazgo: Componentes (botones, tarjetas, tablas) no reutilizables.
+- Hallazgo: Branding institucional ausente en páginas de autenticación y dashboards.
+- Hallazgo: PWA (manifest/meta tags) con colores inconsistentes.
+- Hallazgo: Simulador PSeInt (pseudocode.html) con UI "legacy".
+- Hallazgo: Exámenes y Resultados con layouts de ancho excesivo y jerarquía tipográfica pobre.

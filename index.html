@@ -6,7 +6,7 @@
     <title>Area de Informatica</title>
     <link rel="icon" type="image/png" href="IMA-Logo.png">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#1e3a8a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="InformaticApp">
@@ -20,186 +20,204 @@
 </head>
 <body class="font-inter antialiased text-gray-900 min-h-screen flex flex-col">
 
-    <header id="main-header" class="bg-white shadow-md py-2 md:py-2 px-1 md:px-3 fixed w-full z-50">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="index.html" class="flex items-center space-x-4 transition-transform duration-300 logo-container">
-                <img src="imagenes/logo.png" alt="Logo" width="120" height="auto" class="logo-img transition-transform duration-300">
-                <span class="text-2xl font-bold text-blue-800 hidden sm:inline">Area de Informatica</span>
-            </a>
-
-            <nav class="hidden md:flex space-x-6 items-center">
-                <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Inicio</a>
-                <a href="login.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Portal</a>
-                <div class="relative group">
-                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
-                        Cursos <span class="ml-1 text-xs">&#9662;</span>
-                    </button>
-                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
-                        <div id="desktop-grades-menu"></div>
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand -->
+                <a href="index.html" class="flex items-center space-x-3">
+                    <img src="imagenes/logo.png" alt="IMA Logo" class="h-10 w-auto">
+                    <div class="flex flex-col">
+                        <span class="text-primary font-bold text-lg leading-tight uppercase tracking-tight">Instituto Maria Auxiliadora</span>
+                        <span class="text-gray-500 text-xs font-semibold uppercase tracking-widest">Área de Informática</span>
                     </div>
-                </div>
-                <div class="relative group">
-                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
-                        Recursos Adicionales <span class="ml-1 text-xs">&#9662;</span>
-                    </button>
-                    <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
-                        <div id="desktop-additional-resources-menu"></div>
+                </a>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden lg:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-600 hover:text-primary font-bold text-sm uppercase tracking-wider transition-colors">Inicio</a>
+                    <a href="login.html" class="text-gray-600 hover:text-primary font-bold text-sm uppercase tracking-wider transition-colors">Portal Académico</a>
+
+                    <div class="relative group">
+                        <button class="flex items-center space-x-1 text-gray-600 group-hover:text-primary font-bold text-sm uppercase tracking-wider transition-colors py-4">
+                            <span>Currículo</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="absolute left-0 mt-0 w-56 bg-white border border-gray-200 rounded-b-lg shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <div id="desktop-grades-menu"></div>
+                        </div>
                     </div>
+
+                    <div class="relative group">
+                        <button class="flex items-center space-x-1 text-gray-600 group-hover:text-primary font-bold text-sm uppercase tracking-wider transition-colors py-4">
+                            <span>Recursos</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="absolute left-0 mt-0 w-64 bg-white border border-gray-200 rounded-b-lg shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <div id="desktop-additional-resources-menu"></div>
+                        </div>
+                    </div>
+
+                    <a href="pseudocode.html" target="_blank" class="text-gray-600 hover:text-primary font-bold text-sm uppercase tracking-wider transition-colors">PSeInt Online</a>
+                </nav>
+
+                <!-- Right Utility -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <img src="imagenes/bandera-de-honduras.png" alt="HN" class="h-6 w-auto opacity-80">
+                    <a href="login.html" class="btn-academic btn-primary px-6 py-2">ACCESO</a>
                 </div>
-                <a href="pseudocode.html" target="_blank" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Pseudocódigo</a>
-                <a href="https://wa.me/50488422786" target="_blank" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Contacto</a>
-            </nav>
 
-            <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="120" height="auto" class="hidden lg:block">
-
-            <div class="md:hidden">
-                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none p-2">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path id="mobile-menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
+                <!-- Mobile Trigger -->
+                <button id="mobile-menu-button" class="lg:hidden p-2 text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path id="mobile-menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
             </div>
         </div>
 
-        <div id="mobile-menu-overlay" class="hidden">
-            <button id="mobile-menu-close-button" class="absolute top-4 right-6 text-gray-700 focus:outline-none z-50">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50 bg-white flex flex-col pt-20">
+            <button id="mobile-menu-close-button" class="absolute top-4 right-4 p-2 text-gray-600">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
-            <nav class="flex flex-col mt-16 w-full h-full">
-                <a href="index.html" class="mobile-nav-link" onclick="closeMobileMenu()">Inicio</a>
-                <a href="login.html" class="mobile-nav-link" onclick="closeMobileMenu()">Portal</a>
 
-                <div class="w-full">
-                    <button id="mobile-courses-toggle" class="mobile-nav-link justify-between">
-                        <span>Cursos</span>
-                        <span id="mobile-courses-arrow" class="transform transition-transform duration-300">&#9656;</span>
+            <nav class="flex flex-col">
+                <a href="index.html" class="px-6 py-4 text-gray-700 font-bold border-b border-gray-100">INICIO</a>
+                <a href="login.html" class="px-6 py-4 text-gray-700 font-bold border-b border-gray-100">PORTAL ACADÉMICO</a>
+
+                <div class="border-b border-gray-100">
+                    <button id="mobile-courses-toggle" class="w-full px-6 py-4 flex items-center justify-between text-gray-700 font-bold">
+                        <span>CURRÍCULO</span>
+                        <svg id="mobile-courses-arrow" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
-                    <div id="mobile-grades-container" class="mobile-menu-item-container hidden-height">
+                    <div id="mobile-grades-container" class="bg-gray-50 hidden-height">
                         <div id="mobile-grades-menu"></div>
                     </div>
                 </div>
 
-                <div class="w-full">
-                    <button id="mobile-additional-resources-toggle" class="mobile-nav-link justify-between">
-                        <span>Recursos Adicionales</span>
-                        <span id="mobile-additional-resources-arrow" class="transform transition-transform duration-300">&#9656;</span>
+                <div class="border-b border-gray-100">
+                    <button id="mobile-additional-resources-toggle" class="w-full px-6 py-4 flex items-center justify-between text-gray-700 font-bold">
+                        <span>RECURSOS</span>
+                        <svg id="mobile-additional-resources-arrow" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
-                    <div id="mobile-additional-resources-container" class="mobile-menu-item-container hidden-height">
+                    <div id="mobile-additional-resources-container" class="bg-gray-50 hidden-height">
                         <div id="mobile-additional-resources-menu"></div>
                     </div>
                 </div>
 
-                <a href="pseudocode.html" target="_blank" class="mobile-nav-link" onclick="closeMobileMenu()">Pseudocódigo</a>
-                <a href="https://wa.me/50488422786" target="_blank" class="mobile-nav-link" onclick="closeMobileMenu()">Contacto</a>
-                <button id="pwa-install-button-mobile" class="mobile-nav-link text-blue-600 font-bold hidden">
-                    <span class="flex items-center">
-                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Instalar Aplicación
-                    </span>
-                </button>
+                <a href="pseudocode.html" target="_blank" class="px-6 py-4 text-gray-700 font-bold border-b border-gray-100">PSEINT ONLINE</a>
             </nav>
+
+            <div class="mt-auto p-6 bg-gray-50 flex items-center justify-between">
+                <img src="imagenes/bandera-de-honduras.png" alt="HN" class="h-6 w-auto">
+                <a href="login.html" class="btn-academic btn-primary w-full ml-4">INICIAR SESIÓN</a>
+            </div>
         </div>
     </header>
 
-    <main class="mt-[5rem] md:mt-[5rem] flex-grow">
-        <section class="relative bg-gradient-to-r from-blue-600 to-purple-700 text-white flex items-center justify-center py-12 md:py-16 min-h-[150px]">
-            <div class="container mx-auto px-5 text-center z-10">
-                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 animate-fade-in-up">
-                    Bienvenidos
-                </h1>
-                <p class="text-lg md:text-xl max-w-2xl mx-auto opacity-90 animate-fade-in-up animation-delay-2000">
-                    Aquí formamos corazones con alegría, fe, esperanza... y tecnologia
-                </p>
-            </div>
-            <div class="absolute inset-0 overflow-hidden pointer-events-none">
-                <div class="absolute w-52 h-52 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob top-8 left-8"></div>
-                <div class="absolute w-56 h-56 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000 bottom-16 right-16"></div>
-                <div class="absolute w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000 top-32 right-8"></div>
+    <main class="mt-16 flex-grow">
+        <!-- Academic Hero -->
+        <section class="bg-primary py-16 md:py-24 text-white">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+                        Plataforma Académica Digital
+                    </h1>
+                    <p class="text-lg md:text-xl text-blue-100 mb-10 leading-relaxed font-medium">
+                        Área de Informática - Instituto Maria Auxiliadora.
+                        Un espacio diseñado para la excelencia académica y la formación técnica continua.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="login.html" class="btn-academic btn-primary bg-white text-primary px-8 py-3 text-base shadow-lg">ACCEDER AL PORTAL</a>
+                        <a href="#main-content-sections" class="btn-academic btn-secondary bg-transparent border-white text-white hover:bg-white hover:text-primary px-8 py-3 text-base">EXPLORAR CONTENIDO</a>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <section class="py-12 md:py-20 bg-gray-50">
-            <div class="container mx-auto px-5 text-center">
-                <h2 id="main-content-title" class="text-3xl md:text-4xl font-bold text-gray-800 mb-12">
-                    Contenido y Actividades
-                </h2>
+        <!-- Main Content -->
+        <section class="py-16 md:py-20">
+            <div class="container mx-auto px-4">
+                <div class="mb-12 border-b border-gray-200 pb-4">
+                    <h2 id="main-content-title" class="text-2xl md:text-3xl font-bold text-gray-800">
+                        Recursos Educativos y Actividades
+                    </h2>
+                </div>
 
-                <div id="main-content-sections" class="flex flex-col lg:flex-row justify-center items-stretch gap-4">
-                    <div id="download-section" class="w-full lg:w-1/2 max-w-2xl bg-white p-8 rounded-3xl shadow-xl border border-gray-100 transition-all duration-300 hover:shadow-2xl">
-                        <h3 class="text-2xl font-bold text-gray-800 mb-8 flex items-center justify-center">
-                            <span class="mr-3">📂</span> Contenido de Clases
-                        </h3>
-                        <div id="content-back-button-container" class="text-left mb-6 hidden">
-                            <button id="content-back-button" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-200 bg-blue-50 px-4 py-2 rounded-lg">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                                Volver
+                <div id="main-content-sections" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Class Content Card -->
+                    <div id="download-section" class="card-academic">
+                        <div class="flex items-center space-x-3 mb-8">
+                            <div class="bg-info-light p-3 rounded-lg text-info">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">Contenido de Clases</h3>
+                        </div>
+
+                        <div id="content-back-button-container" class="mb-6 hidden">
+                            <button id="content-back-button" class="btn-academic btn-secondary px-4 py-2 text-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                                Volver al Nivel Anterior
                             </button>
                         </div>
 
-                        <div id="content-display-area" class="min-h-[200px] flex flex-col justify-center items-center">
-                            </div>
+                        <div id="content-display-area" class="min-h-[300px]">
+                            <!-- Dynamically loaded -->
+                        </div>
                     </div>
 
-                    <div id="activity-section" class="w-full lg:w-1/2 max-w-2xl bg-white p-8 rounded-3xl shadow-xl border border-gray-100 transition-all duration-300 hover:shadow-2xl">
-                        <h3 class="text-2xl font-bold text-gray-800 mb-8 flex items-center justify-center">
-                            <span class="mr-3">🎮</span> Actividades
-                        </h3>
+                    <!-- Interactive Activities Card -->
+                    <div id="activity-section" class="card-academic">
+                        <div class="flex items-center space-x-3 mb-8">
+                            <div class="bg-success-light p-3 rounded-lg text-success">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">Prácticas Interactivas</h3>
+                        </div>
 
-                        <div id="initial-activity-menu" class="flex flex-col items-center justify-center min-h-[300px]">
-                            <button id="show-activities-button" class="px-10 py-5 rounded-2xl font-bold text-xl
-                                        bg-purple-600 text-white hover:bg-purple-700
-                                        transition-all duration-300 ease-in-out
-                                        shadow-lg hover:shadow-xl transform hover:-translate-y-1
-                                        focus:outline-none focus:ring-4 focus:ring-purple-300">
-                                Ver Actividades Prácticas
+                        <div id="initial-activity-menu" class="flex flex-col items-center justify-center min-h-[300px] border-2 border-dashed border-gray-100 rounded-xl">
+                            <button id="show-activities-button" class="btn-academic btn-primary px-10 py-4 text-lg">
+                                VER CATÁLOGO DE ACTIVIDADES
                             </button>
                         </div>
 
-                        <div id="game-list-menu" class="hidden flex-col items-center justify-center min-h-[300px] animate-fade-in-down">
-                            <h4 class="text-xl font-semibold text-gray-700 mb-8">Selecciona una actividad:</h4>
-                            <div class="grid grid-cols-1 gap-4 w-full max-w-sm">
-                                <button id="select-peripherals-game-button" class="px-6 py-4 rounded-2xl font-semibold text-lg
-                                            bg-blue-500 text-white hover:bg-blue-600
-                                            transition-all duration-300 ease-in-out
-                                            shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300">
+                        <div id="game-list-menu" class="hidden flex-col min-h-[300px]">
+                            <p class="text-gray-500 font-bold text-xs uppercase tracking-widest mb-6">Seleccione una práctica:</p>
+                            <div class="grid grid-cols-1 gap-3">
+                                <button id="select-peripherals-game-button" class="btn-academic btn-secondary justify-start px-6 py-4 text-left">
+                                    <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mr-4 text-xs font-bold">01</span>
                                     Periféricos Entrada/Salida
                                 </button>
-                                <button id="select-webmaster-quiz-button" class="px-6 py-4 rounded-2xl font-semibold text-lg
-                                            bg-teal-500 text-white hover:bg-teal-600
-                                            transition-all duration-300 ease-in-out
-                                            shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-teal-300">
+                                <button id="select-webmaster-quiz-button" class="btn-academic btn-secondary justify-start px-6 py-4 text-left">
+                                    <span class="w-8 h-8 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center mr-4 text-xs font-bold">02</span>
                                     WebMaster Quiz
                                 </button>
-                                <button id="select-dexterity-game-button" class="px-6 py-4 rounded-2xl font-semibold text-lg
-                                            bg-orange-500 text-white hover:bg-orange-600
-                                            transition-all duration-300 ease-in-out
-                                            shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-orange-300">
+                                <button id="select-dexterity-game-button" class="btn-academic btn-secondary justify-start px-6 py-4 text-left">
+                                    <span class="w-8 h-8 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mr-4 text-xs font-bold">03</span>
                                     Destreza en el Teclado
                                 </button>
                             </div>
-                            <button id="back-to-main-activities-button" class="mt-10 px-8 py-3 rounded-xl font-semibold text-base
-                                        bg-gray-600 text-white hover:bg-gray-700
-                                        transition-all duration-300 ease-in-out
-                                        shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300">
+                            <button id="back-to-main-activities-button" class="mt-8 text-gray-400 hover:text-gray-600 text-sm font-bold uppercase tracking-widest flex items-center justify-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                                 Volver
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div id="dynamically-loaded-game-container" class="hidden max-w-4xl mx-auto bg-white p-8 rounded-3xl shadow-2xl border border-gray-100 mt-12 animate-fade-in-up">
-                    </div>
+                <div id="dynamically-loaded-game-container" class="hidden card-academic mt-8">
+                    <!-- Game content -->
+                </div>
             </div>
         </section>
-        <section class="py-12 bg-gray-100">
-            <div class="container mx-auto px-5 text-center">
-                <div id="access-section" class="max-w-2xl mx-auto bg-white p-8 rounded-3xl shadow-xl border border-gray-100 transition-all duration-300 hover:shadow-2xl">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center justify-center">
-                        <span class="mr-3">🔐</span> Acceso al Sistema
-                    </h3>
-                    <p class="text-gray-600 mb-8">Ingresa a tu plataforma para gestionar tareas, exámenes y ver tu progreso educativo.</p>
+
+        <!-- Access Section -->
+        <section class="py-16 bg-gray-100 border-t border-gray-200">
+            <div class="container mx-auto px-4 text-center">
+                <div class="max-w-2xl mx-auto">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Acceso Reservado</h3>
+                    <p class="text-gray-600 mb-10 leading-relaxed">
+                        El portal académico es exclusivo para estudiantes y docentes registrados.
+                        Desde aquí podrá gestionar sus asignaciones y realizar sus evaluaciones.
+                    </p>
                     <div id="access-button-container" class="flex justify-center">
                         <!-- El botón se renderiza dinámicamente -->
                     </div>

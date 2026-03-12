@@ -6,6 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.getElementById('student-name').textContent = currentUser.nombre;
+    if (document.getElementById('student-grado-display')) {
+        document.getElementById('student-grado-display').textContent = currentUser.grado || 'N/A';
+    }
+    if (document.getElementById('student-seccion-display')) {
+        document.getElementById('student-seccion-display').textContent = currentUser.seccion || 'N/A';
+    }
     const tasksList = document.getElementById('tasks-list');
     const logoutButton = document.getElementById('logout-button');
 
@@ -91,77 +97,106 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderActivities(activities) {
         if (!activities || activities.length === 0) {
-            tasksList.innerHTML = '<p class="text-gray-500">No hay actividades pendientes.</p>';
+            tasksList.innerHTML = `
+                <div class="col-span-full py-16 text-center bg-white rounded-xl border border-dashed border-gray-200">
+                    <p class="text-gray-400 font-medium italic">No se encontraron actividades registradas.</p>
+                </div>`;
             return;
         }
+
         tasksList.innerHTML = activities.map(activity => {
             let feedbackHtml = '';
             let actionButtonHtml = '';
+            let statusBadgeHtml = '';
 
-            if (activity.type === 'Tarea' || activity.type === 'Credito Extra') {
-                if (activity.entrega) {
-                    const status = activity.entrega.estado;
-                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
-                    const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+            if (activity.entrega) {
+                const status = activity.entrega.estado;
+                let badgeClass = 'badge-info';
+                if (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') badgeClass = 'badge-success';
+                else if (status === 'Rechazada') badgeClass = 'badge-danger';
+                else if (status === 'Pendiente') badgeClass = 'badge-warning';
 
-                    feedbackHtml = `
-                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="font-bold text-md">Estado de tu Entrega:</h4>
-                                    <p class="font-semibold ${statusColor}">${displayStatus}</p>
+                const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+                statusBadgeHtml = `<span class="status-badge ${badgeClass}">${displayStatus}</span>`;
+
+                feedbackHtml = `
+                    <div class="mt-6 pt-6 border-t border-gray-100">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Resultado de Entrega</h4>
+                            <button class="text-danger font-bold text-[10px] uppercase tracking-tighter hover:underline delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">
+                                ELIMINAR ENTREGA
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            ${activity.entrega.calificacion !== undefined ? `
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <span class="block text-[10px] font-bold text-gray-400 uppercase">Nota</span>
+                                    <span class="text-lg font-black text-primary">${activity.entrega.calificacion}/100</span>
                                 </div>
-                                <button class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>
+                            ` : ''}
+                            <div class="bg-gray-50 p-3 rounded-lg ${activity.entrega.calificacion === undefined ? 'col-span-2' : ''}">
+                                <span class="block text-[10px] font-bold text-gray-400 uppercase">Estado Final</span>
+                                <span class="text-sm font-bold text-gray-700">${displayStatus}</span>
                             </div>
-                            ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
-                            ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
-                        </div>`;
-                } else {
-                    actionButtonHtml = `<button class="bg-blue-500 text-white px-4 py-2 rounded-lg open-submission-modal"
-                        data-task-id="${activity.tareaId}"
-                        data-task-title="${activity.titulo}"
-                        data-parcial="${activity.parcial || ''}"
-                        data-asignatura="${activity.asignatura || ''}">Entregar Tarea</button>`;
-                }
-            } else if (activity.type === 'Examen') {
-                if (activity.entrega) {
-                    const status = activity.entrega.estado;
-                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
-                    const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+                        </div>
+                        ${activity.entrega.comentario ? `
+                            <div class="mt-4 p-3 bg-blue-50 border-l-4 border-primary rounded-r-lg">
+                                <span class="block text-[10px] font-bold text-primary uppercase mb-1">Retroalimentación del Docente</span>
+                                <p class="text-xs text-gray-700 leading-relaxed italic">"${activity.entrega.comentario}"</p>
+                            </div>
+                        ` : ''}
+                    </div>`;
+            } else {
+                statusBadgeHtml = `<span class="status-badge badge-warning">Pendiente</span>`;
 
-                    feedbackHtml = `
-                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="font-bold text-md">Estado de tu Examen:</h4>
-                                    <p class="font-semibold ${statusColor}">${displayStatus}</p>
-                                </div>
-                                <button class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>
-                            </div>
-                            ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
-                            ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
-                        </div>`;
-                } else {
+                if (activity.type === 'Examen') {
                     const estado = activity.estado || 'Inactivo';
                     if (estado === 'Activo') {
-                        actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="bg-purple-500 text-white px-4 py-2 rounded-lg">Realizar Examen</a>`;
+                        actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="btn-academic btn-primary w-full py-3 shadow-md">INICIAR EVALUACIÓN</a>`;
                     } else {
-                        actionButtonHtml = `<button class="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed" disabled>${estado}</button>`;
+                        actionButtonHtml = `<button class="btn-academic btn-secondary w-full py-3 opacity-50 cursor-not-allowed" disabled>EVALUACIÓN NO DISPONIBLE</button>`;
                     }
+                } else {
+                    actionButtonHtml = `
+                        <button class="btn-academic btn-primary w-full py-3 shadow-md open-submission-modal"
+                            data-task-id="${activity.tareaId}"
+                            data-task-title="${activity.titulo}"
+                            data-parcial="${activity.parcial || ''}"
+                            data-asignatura="${activity.asignatura || ''}">
+                            REALIZAR ENTREGA
+                        </button>`;
                 }
             }
 
             return `
-                <div class="dashboard-card">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-lg font-bold">${activity.titulo} <span class="text-xs font-normal text-gray-500">(${activity.type})</span></h3>
-                            <p class="text-sm text-gray-500 mb-2"><strong>Asignatura:</strong> ${activity.asignatura || 'No especificada'}</p>
-                        </div>
-                        <span class="text-sm font-semibold text-gray-600">${formatDate(activity.fechaLimite)}</span>
+                <div class="card-academic flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-primary bg-primary-light px-2 py-1 rounded">
+                            ${activity.type}
+                        </span>
+                        ${statusBadgeHtml}
                     </div>
-                    <p class="text-gray-700 mt-2">${activity.descripcion || 'Sin descripción.'}</p>
-                    <div class="mt-4">
+
+                    <div class="flex-grow">
+                        <h3 class="text-lg font-bold text-gray-800 leading-tight mb-1">${activity.titulo}</h3>
+                        <div class="flex items-center text-gray-400 text-[11px] font-bold uppercase tracking-wider mb-4">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            ${activity.asignatura || 'General'}
+                        </div>
+                        <p class="text-sm text-gray-600 line-clamp-3 mb-6">${activity.descripcion || 'No se proporcionaron detalles adicionales para esta asignación.'}</p>
+                    </div>
+
+                    <div class="mt-auto">
+                        <div class="flex items-center justify-between mb-6 p-3 bg-gray-50 rounded-lg">
+                            <div class="flex flex-col">
+                                <span class="text-[9px] font-bold text-gray-400 uppercase">Fecha Límite</span>
+                                <span class="text-xs font-bold text-gray-700">${formatDate(activity.fechaLimite)}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[9px] font-bold text-gray-400 uppercase">Valor</span>
+                                <span class="text-xs font-bold text-primary">${activity.puntajeMaximo || 10} pts</span>
+                            </div>
+                        </div>
                         ${actionButtonHtml}
                     </div>
                     ${feedbackHtml}

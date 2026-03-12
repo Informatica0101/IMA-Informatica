@@ -749,3 +749,32 @@ MODIFICACIONES:
 - Backend (USER-SVC): Añadida acción 'getStudentsByGradoSeccion' con normalización de texto para reportes robustos.
 - Frontend (js/teacher.js, js/student.js): Refactorización total de la lógica de navegación y gestión de estados.
 - js/config.js: Actualizadas las URLs de los microservicios TASK y EXAM con los nuevos endpoints finales proporcionados.
+
+12/03/2026
+TAREA: [REDISEÑO DE PRODUCTO]
+TÍTULO: Rediseño Integral - Senior Product Engineer
+ÁREA: UI / UX / Frontend / PWA
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA
+
+MODIFICACIONES:
+- Archivo: css/style.css
+  - Implementación de Design System completo: tokens CSS para colores semánticos (Primary: #1e3a8a), tipografía (Inter), y espaciado.
+  - Creación de componentes académicos: .card-academic, .academic-table, .btn-academic, .status-badge, .form-input-academic.
+  - Eliminación de estilos decorativos "IA type" y blobs.
+- Archivo: index.html
+  - Rediseño de la Landing Page: sustituida Hero section de marketing por un encabezado institucional serio.
+  - Reorganización de recursos en una cuadrícula profesional de tarjetas.
+- Archivos: login.html, register.html
+  - Refactorización de las páginas de autenticación con el nuevo sistema de diseño académico.
+- Archivos: student-dashboard.html, teacher-dashboard.html
+  - Aplicación del sistema de diseño a los módulos principales de alumnos y docentes.
+  - Sincronización de clases CSS en js/student.js y js/teacher.js para mantener consistencia dinámica.
+- Archivo: pseudocode.html
+  - Evolución de la interfaz del simulador PSeInt: nuevo layout profesional, toolbar refinado y panel de comandos con el sistema de diseño actualizado.
+- Archivos: exam.html, results.html
+  - Rediseño de la interfaz de evaluación: centrada para legibilidad, anchos controlados y feedback visual mejorado en resultados.
+- Archivo: manifest.json
+  - Sincronización de branding institucional (theme_color: #1e3a8a).
+- Archivos: js/ui-common.js, js/index-ui.js
+  - Ajuste de lógica de UI para soportar los nuevos componentes y navegación estandarizada.

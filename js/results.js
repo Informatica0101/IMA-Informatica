@@ -54,63 +54,78 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderResultsDirect(calificacion, resultados, preguntas) {
-        let detailsHtml = '<div class="space-y-4">';
+        let detailsHtml = '<div class="space-y-4 text-left">';
         resultados.forEach((res, index) => {
-            // (A-27) Validación de existencia del objeto pregunta
             const pregunta = (preguntas || []).find(p => p.preguntaId === res.preguntaId);
-            const bgColor = res.esCorrecta ? 'bg-green-100' : 'bg-red-100';
-            const borderColor = res.esCorrecta ? 'border-green-500' : 'border-red-500';
+            const bgColor = res.esCorrecta ? 'bg-emerald-50' : 'bg-rose-50';
+            const borderColor = res.esCorrecta ? 'border-emerald-100' : 'border-rose-100';
+            const textColor = res.esCorrecta ? 'text-emerald-700' : 'text-rose-700';
             const textoPregunta = pregunta && pregunta.textoPregunta ? pregunta.textoPregunta : 'Pregunta no encontrada';
 
             detailsHtml += `
-                <div class="p-4 rounded border ${borderColor} ${bgColor}">
-                    <p class="font-bold">${index + 1}. ${textoPregunta}</p>
-                    <p class="text-sm">Tu respuesta: <span class="font-mono">${res.respuestaEstudiante || 'No respondida'}</span> ${res.esCorrecta ? '✅' : '❌'}</p>
+                <div class="p-4 rounded-xl border ${borderColor} ${bgColor}">
+                    <p class="font-bold text-slate-800 mb-2">${index + 1}. ${textoPregunta}</p>
+                    <p class="text-sm ${textColor} font-medium">
+                        Tu respuesta: <span class="font-bold underline">${res.respuestaEstudiante || 'No respondida'}</span>
+                        ${res.esCorrecta ? '— Correcto' : '— Incorrecto'}
+                    </p>
                 </div>
             `;
         });
         detailsHtml += '</div>';
 
         resultsContainer.innerHTML = `
-            <p class="text-4xl font-bold text-center mb-6 text-blue-600">Calificación: ${calificacion}%</p>
-            <hr class="my-6">
-            <h3 class="text-xl font-bold mb-4">Detalle de Respuestas</h3>
-            ${detailsHtml}
+            <div class="mb-8">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">Calificación Obtenida</span>
+                <p class="text-6xl font-black text-[#1e3a8a] tabular-nums">${calificacion}%</p>
+            </div>
+            <div class="w-full">
+                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-tight mb-4 text-left border-b border-slate-100 pb-2">Detalle de Respuestas</h3>
+                ${detailsHtml}
+            </div>
         `;
     }
 
     function renderResults(data) {
         const { calificacionTotal, resultadosDetallados, examenTitulo } = data;
 
-        let detailsHtml = '<div class="space-y-4">';
+        let detailsHtml = '<div class="space-y-4 text-left">';
         resultadosDetallados.forEach((item, index) => {
-            const bgColor = item.esCorrecta ? 'bg-green-100' : (parseFloat(item.score) > 0 ? 'bg-yellow-50' : 'bg-red-100');
-            const borderColor = item.esCorrecta ? 'border-green-500' : (parseFloat(item.score) > 0 ? 'border-yellow-500' : 'border-red-500');
+            const isPartial = parseFloat(item.score) > 0 && !item.esCorrecta;
+            const bgColor = item.esCorrecta ? 'bg-emerald-50' : (isPartial ? 'bg-amber-50' : 'bg-rose-50');
+            const borderColor = item.esCorrecta ? 'border-emerald-100' : (isPartial ? 'border-amber-100' : 'border-rose-100');
+            const textColor = item.esCorrecta ? 'text-emerald-700' : (isPartial ? 'text-amber-700' : 'text-rose-700');
 
             let displayAnswer = item.respuestaEstudiante;
             if (item.tipo === 'termino_pareado') {
                 try {
                     const sMap = JSON.parse(item.respuestaEstudiante || "{}");
-                    displayAnswer = Object.entries(sMap).map(([idx, concept]) => `Definición ${parseInt(idx)+1} → Concepto ${concept}`).join(', ');
+                    displayAnswer = Object.entries(sMap).map(([idx, concept]) => `Def ${parseInt(idx)+1} → Concepto ${concept}`).join(', ');
                 } catch(e) {}
             }
 
             detailsHtml += `
-                <div class="p-4 rounded border ${borderColor} ${bgColor}">
-                    <p class="font-semibold">Pregunta ${index + 1}: ${item.texto}</p>
-                    <p>Respuesta: <span class="font-mono">${displayAnswer || 'No respondida'}</span></p>
-                    <p>Puntaje: <span class="font-bold">${item.score}</span></p>
+                <div class="p-4 rounded-xl border ${borderColor} ${bgColor}">
+                    <p class="font-bold text-slate-800 mb-2">${index + 1}. ${item.texto}</p>
+                    <p class="text-sm ${textColor} font-medium mb-1">
+                        Respuesta: <span class="font-bold underline">${displayAnswer || 'No respondida'}</span>
+                    </p>
+                    <p class="text-[10px] uppercase tracking-widest font-bold opacity-70">Puntaje: ${item.score}</p>
                 </div>
             `;
         });
         detailsHtml += '</div>';
 
         resultsContainer.innerHTML = `
-            <h2 class="text-2xl font-bold text-center mb-2">Examen: ${examenTitulo}</h2>
-            <p class="text-4xl font-bold text-center mb-6 text-blue-600">Calificación Final: ${calificacionTotal}%</p>
-            <hr class="my-6">
-            <h3 class="text-xl font-bold mb-4">Detalle de Respuestas</h3>
-            ${detailsHtml}
+            <div class="mb-8">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">${examenTitulo}</span>
+                <p class="text-6xl font-black text-[#1e3a8a] tabular-nums">${calificacionTotal}%</p>
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mt-2">Calificación Final</span>
+            </div>
+            <div class="w-full">
+                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-tight mb-4 text-left border-b border-slate-100 pb-2">Revisión de la Evaluación</h3>
+                ${detailsHtml}
+            </div>
         `;
     }
 

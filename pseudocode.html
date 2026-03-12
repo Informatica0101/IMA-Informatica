@@ -14,64 +14,69 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="PSeInt App">
 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=11">
+
     <style>
         :root {
-            --bg-gray: #f0f0f0;
-            --border-color: #a0a0a0;
-            --header-bg: #e1e1e1;
-            --active-blue: #0066cc;
-            --keyword-blue: #0000ff;
-            --string-maroon: #800000;
-            --comment-gray: #808080;
-            --type-green: #008000;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            --keyword-blue: #1e40af;
+            --string-maroon: #991b1b;
+            --comment-gray: #64748b;
+            --type-green: #15803d;
+            --number-orange: #c2410c;
         }
 
         body {
-            background-color: var(--bg-gray);
             height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             font-size: 13px;
+            background-color: #f8fafc;
         }
 
         /* Toolbar / Menu */
         .menu-bar {
-            background-color: var(--header-bg);
-            padding: 2px 10px;
+            background-color: #f1f5f9;
+            padding: 0 16px;
             display: flex;
-            gap: 15px;
-            border-bottom: 1px solid var(--border-color);
+            gap: 4px;
+            border-bottom: 1px solid #e2e8f0;
+            height: 32px;
+            align-items: center;
         }
 
         .menu-item {
             cursor: pointer;
-            padding: 2px 8px;
+            padding: 4px 12px;
             position: relative;
             user-select: none;
+            font-weight: 600;
+            color: #475569;
+            border-radius: 6px;
+            font-size: 12px;
+            transition: all 0.15s ease;
         }
 
         .menu-item:hover {
-            background-color: #ccc;
+            background-color: #e2e8f0;
+            color: #1e3a8a;
         }
 
         .dropdown-content {
             display: none;
             position: absolute;
-            background-color: #f1f1f1;
-            min-width: 180px;
-            box-shadow: 2px 4px 8px rgba(0,0,0,0.2);
+            background-color: white;
+            min-width: 220px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             z-index: 1000;
             top: 100%;
             left: 0;
-            border: 1px solid var(--border-color);
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 6px;
+            margin-top: 4px;
         }
 
         .menu-item:hover .dropdown-content {
@@ -79,68 +84,69 @@
         }
 
         .dropdown-item {
-            padding: 6px 12px;
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-radius: 6px;
+            font-weight: 500;
+            color: #1e293b;
+            transition: all 0.15s ease;
         }
 
         .dropdown-item:hover {
-            background-color: #0066cc;
-            color: white;
+            background-color: #eff6ff;
+            color: #1e40af;
         }
 
         .dropdown-divider {
             height: 1px;
-            background-color: #ccc;
+            background-color: #f1f5f9;
             margin: 4px 0;
         }
 
         .shortcut {
-            font-size: 11px;
-            color: #666;
+            font-size: 10px;
+            color: #94a3b8;
             margin-left: 20px;
-        }
-        .dropdown-item:hover .shortcut {
-            color: #eee;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         }
 
         .toolbar {
-            background-color: var(--header-bg);
-            padding: 5px 10px;
+            background-color: white;
+            padding: 8px 16px;
             display: flex;
-            gap: 5px;
-            border-bottom: 1px solid var(--border-color);
+            gap: 8px;
+            border-bottom: 1px solid #e2e8f0;
             align-items: center;
+            height: 48px;
         }
 
         .tool-btn {
-            border: 1px solid transparent;
-            background: transparent;
-            padding: 4px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            height: 32px;
+            width: 32px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 3px;
+            border-radius: 8px;
+            transition: all 0.15s ease;
+            font-size: 16px;
         }
 
         .tool-btn:hover {
-            border: 1px solid var(--border-color);
-            background-color: #fff;
-        }
-
-        .tool-btn img, .tool-btn span {
-            width: 20px;
-            height: 20px;
-            font-size: 18px;
+            border-color: #1e3a8a;
+            background-color: #eff6ff;
+            color: #1e3a8a;
         }
 
         .separator {
             width: 1px;
-            height: 20px;
-            background-color: var(--border-color);
-            margin: 0 5px;
+            height: 24px;
+            background-color: #e2e8f0;
+            margin: 0 4px;
         }
 
         /* Main Layout */
@@ -153,58 +159,66 @@
 
         /* Side Panels */
         .side-panel {
-            width: 25px;
-            background-color: var(--header-bg);
-            border-right: 1px solid var(--border-color);
+            width: 32px;
+            background-color: #f1f5f9;
+            border-right: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 10px;
+            padding-top: 16px;
             cursor: pointer;
             z-index: 10;
         }
 
         .side-panel.right {
             border-right: none;
-            border-left: 1px solid var(--border-color);
+            border-left: 1px solid #e2e8f0;
         }
 
         .vertical-text {
             writing-mode: vertical-lr;
             transform: rotate(180deg);
             white-space: nowrap;
-            color: #444;
-            font-weight: 500;
-            margin-bottom: 30px;
+            color: #64748b;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 10px;
+            margin-bottom: 40px;
         }
 
         .expanded-content {
-            width: 220px;
-            background-color: #fff;
-            border-right: 1px solid var(--border-color);
+            width: 260px;
+            background-color: white;
+            border-right: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
         .expanded-content.right {
             border-right: none;
-            border-left: 1px solid var(--border-color);
+            border-left: 1px solid #e2e8f0;
         }
 
         .panel-header {
-            background-color: var(--header-bg);
-            padding: 5px 10px;
-            font-weight: bold;
+            background-color: #f8fafc;
+            padding: 10px 16px;
+            font-weight: 800;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #475569;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .close-btn {
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
+            color: #94a3b8;
         }
 
         /* Editor Area */
@@ -212,31 +226,35 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            background-color: #fff;
+            background-color: white;
             overflow: hidden;
             position: relative;
         }
 
         .tabs-bar {
-            height: 25px;
-            background-color: var(--header-bg);
+            height: 32px;
+            background-color: #f1f5f9;
             display: flex;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .tab {
-            padding: 3px 15px;
-            background-color: #ddd;
-            border-right: 1px solid var(--border-color);
+            padding: 0 20px;
+            background-color: #e2e8f0;
+            border-right: 1px solid #cbd5e1;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #64748b;
         }
 
         .tab.active {
-            background-color: #fff;
-            border-bottom: 1px solid #fff;
+            background-color: white;
+            color: #1e3a8a;
+            border-bottom: 1px solid white;
             margin-bottom: -1px;
         }
 
@@ -248,23 +266,24 @@
         }
 
         #lineNumbers {
-            width: 40px;
-            background-color: #f0f0f0;
-            border-right: 1px solid #ddd;
-            padding: 10px 5px;
+            width: 48px;
+            background-color: #f8fafc;
+            border-right: 1px solid #e2e8f0;
+            padding: 12px 8px;
             text-align: right;
-            color: #999;
-            font-family: 'Consolas', 'Monaco', 'Lucida Console', 'Courier New', monospace;
+            color: #94a3b8;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
             line-height: 21px;
             user-select: none;
+            font-size: 12px;
         }
 
         #codeEditor {
             margin: 0;
-            padding: 10px;
+            padding: 12px 16px;
             width: 100%;
             height: 100%;
-            font-family: 'Consolas', 'Monaco', 'Lucida Console', 'Courier New', monospace;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
             font-size: 14px;
             line-height: 21px;
             tab-size: 4;
@@ -277,16 +296,11 @@
             outline: none;
             box-sizing: border-box;
             background: white;
-            color: black;
+            color: #1e293b;
             overflow: auto;
-            text-rendering: auto;
-            -webkit-font-smoothing: subpixel-antialiased;
-            letter-spacing: normal;
-            word-spacing: normal;
-            font-variant-ligatures: none;
+            text-rendering: optimizeLegibility;
         }
 
-        /* Ensure scroll alignment */
         .code-area {
             flex: 1;
             position: relative;
@@ -294,156 +308,192 @@
             background: white;
         }
 
-        /* Syntax Highlighting Classes */
-        .sh-keyword { color: var(--keyword-blue); font-weight: bold; }
+        /* Syntax Highlighting */
+        .sh-keyword { color: var(--keyword-blue); font-weight: 700; }
         .sh-string { color: var(--string-maroon); }
         .sh-comment { color: var(--comment-gray); font-style: italic; }
-        .sh-type { color: var(--type-green); }
-        .sh-identifier { color: black; }
-        .sh-number { color: #f08000; }
-        .sh-error { text-decoration: underline wavy red; }
+        .sh-type { color: var(--type-green); font-weight: 600; }
+        .sh-number { color: var(--number-orange); font-weight: 600; }
+        .sh-error { text-decoration: underline wavy #ef4444; }
 
-        /* Commands Panel Content */
+        /* Commands Panel */
         .commands-list {
-            padding: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 8px;
         }
 
         .command-btn {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 5px;
-            border: 1px solid #ddd;
-            background: #f9f9f9;
+            gap: 12px;
+            padding: 8px 12px;
+            border: 1px solid #f1f5f9;
+            background: #f8fafc;
             cursor: pointer;
             text-align: left;
-            border-radius: 4px;
+            border-radius: 8px;
+            transition: all 0.15s ease;
         }
 
         .command-btn:hover {
-            background: #eef;
-            border-color: #aaf;
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            transform: translateX(4px);
         }
 
         .command-icon {
-            width: 32px;
-            height: 20px;
-            background: #eee;
-            border: 1px solid #ccc;
+            width: 36px;
+            height: 24px;
+            background: white;
+            border: 1px solid #e2e8f0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
+            font-size: 9px;
+            font-weight: 800;
+            border-radius: 4px;
+            color: #64748b;
         }
 
         /* Bottom Area */
         .bottom-area {
-            height: 180px;
+            height: 200px;
             display: flex;
             flex-direction: column;
-            border-top: 1px solid var(--border-color);
-            background-color: #fff;
+            border-top: 1px solid #e2e8f0;
+            background-color: white;
         }
 
         .bottom-tabs {
             display: flex;
-            background-color: var(--header-bg);
-            border-bottom: 1px solid var(--border-color);
+            background-color: #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
+            height: 32px;
         }
 
         .bottom-tab {
-            padding: 3px 15px;
+            padding: 0 16px;
             cursor: pointer;
-            border-right: 1px solid var(--border-color);
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
         }
 
         .bottom-tab.active {
-            background-color: #fff;
+            background-color: white;
+            color: #1e3a8a;
         }
 
         .bottom-content {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
-            font-family: 'Consolas', 'Courier New', monospace;
+            padding: 0;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         }
 
         .console-output {
-            background-color: #000;
-            color: #fff;
-            padding: 10px;
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 16px;
             min-height: 100%;
             white-space: pre-wrap;
+            font-size: 13px;
+            line-height: 1.6;
         }
 
-        .console-line { margin-bottom: 2px; }
-        .console-prompt { color: #0f0; }
+        .console-prompt { color: #4ade80; font-weight: 700; }
 
-        /* Helpers */
-        .hidden { display: none !important; }
+        #quickHelp {
+            padding: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #334155;
+        }
 
-        /* Overlay for input */
+        /* Modals */
         #inputOverlay, #flowchartOverlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.3);
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
             z-index: 1000;
             display: none;
             align-items: center;
             justify-content: center;
         }
 
-        #flowchartOverlay {
-            background: rgba(0,0,0,0.8);
+        .input-modal {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: 340px;
         }
 
-        .input-modal, .flowchart-modal {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            width: 300px;
+        .input-modal input {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .input-modal input:focus {
+            border-color: #1e3a8a;
+            ring: 2px;
+            ring-color: #dbeafe;
         }
 
         .flowchart-modal {
+            background: white;
             width: 90%;
             height: 90%;
             display: flex;
             flex-direction: column;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
         #flowchartContainer {
             flex: 1;
             overflow: auto;
-            background: #fdfdfd;
-            border: 1px solid #ddd;
+            background: #f8fafc;
             display: flex;
             justify-content: center;
-            padding: 20px;
-        }
-
-        .input-modal input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 10px;
-            border: 1px solid #ccc;
+            padding: 40px;
         }
 
         .input-modal .btns {
-            margin-top: 15px;
+            margin-top: 20px;
             text-align: right;
         }
 
         .input-modal button {
-            padding: 5px 15px;
+            background-color: #1e3a8a;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
             cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .input-modal button:hover {
+            background-color: #1e40af;
         }
 
     </style>

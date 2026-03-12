@@ -1,11 +1,11 @@
 {
-  "name": "InformaticApp",
-  "short_name": "InformaticApp",
-  "description": "Plataforma Educativa del Área de Informática",
+  "name": "IMA Informatica PWA",
+  "short_name": "IMA Informatica",
+  "description": "Portal Académico Digital del Área de Informática - Instituto Maria Auxiliadora",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "background_color": "#f8fafc",
+  "theme_color": "#1e3a8a",
   "icons": [
     {
       "src": "IMA-Logo.png",
