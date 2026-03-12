@@ -188,21 +188,24 @@
                 dateEl.textContent = new Date().toLocaleDateString('es-HN', options);
             }
 
-            // Student.js doesn't handle modal closing via Bootstrap buttons automatically for IDs
-            const submissionModal = new bootstrap.Modal(document.getElementById('submission-modal'));
+            const submissionModalEl = document.getElementById('submission-modal');
+            const submissionModal = new bootstrap.Modal(submissionModalEl);
 
             window.showSubmissionModal = () => submissionModal.show();
             window.hideSubmissionModal = () => submissionModal.hide();
 
-            // Patch for student.js openSubmissionModal call
-            const observer = new MutationObserver(() => {
-                document.querySelectorAll('.open-submission-modal').forEach(btn => {
-                   if(!btn.onclick) {
-                       btn.onclick = () => window.showSubmissionModal();
-                   }
-                });
+            submissionModalEl.addEventListener('show.bs.modal', () => {
+                submissionModalEl.classList.remove('hidden');
             });
-            observer.observe(document.body, { childList: true, subtree: true });
+            submissionModalEl.addEventListener('hidden.bs.modal', () => {
+                submissionModalEl.classList.add('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.open-submission-modal')) {
+                    window.showSubmissionModal();
+                }
+            });
         });
     </script>
 

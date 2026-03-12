@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderActivities(activities) {
         if (!activities || activities.length === 0) {
-            tasksList.innerHTML = '<p class="text-gray-500">No hay actividades pendientes.</p>';
+            tasksList.innerHTML = '<div class="col-12 text-center py-5 text-muted">No hay actividades pendientes.</div>';
             return;
         }
         tasksList.innerHTML = activities.map(activity => {
@@ -101,8 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (activity.type === 'Tarea' || activity.type === 'Credito Extra') {
                 if (activity.entrega) {
                     const status = activity.entrega.estado;
-                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
                     const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+                    const badgeClass = status === 'Rechazada' ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success';
 
                     feedbackHtml = `
                         <div class="mt-4 p-3 bg-light rounded-3 border">
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </button>
                             </div>
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <span class="badge ${status === 'Rechazada' ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'} rounded-pill px-3">
+                                <span class="badge ${badgeClass} rounded-pill px-3">
                                     ${displayStatus}
                                 </span>
                                 ${activity.entrega.calificacion ? `<span class="fw-bold text-dark fs-5 ms-auto">${activity.entrega.calificacion}/100</span>` : ''}
@@ -132,8 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (activity.type === 'Examen') {
                 if (activity.entrega) {
                     const status = activity.entrega.estado;
-                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
                     const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+                    const badgeClass = status === 'Rechazada' ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success';
 
                     feedbackHtml = `
                         <div class="mt-4 p-3 bg-light rounded-3 border">
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </button>
                             </div>
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <span class="badge ${status === 'Rechazada' ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'} rounded-pill px-3">
+                                <span class="badge ${badgeClass} rounded-pill px-3">
                                     ${displayStatus}
                                 </span>
                                 ${activity.entrega.calificacion ? `<span class="fw-bold text-dark fs-5 ms-auto">${activity.entrega.calificacion}/100</span>` : ''}
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     const estado = activity.estado || 'Inactivo';
                     if (estado === 'Activo') {
-                        actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="btn btn-purple w-100 rounded-3 text-white fw-bold" style="background-color: #8b5cf6;">
+                        actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="btn w-100 rounded-3 text-white fw-bold shadow-sm" style="background-color: #8b5cf6;">
                             <i class="fa-solid fa-play me-2"></i> Iniciar Examen
                         </a>`;
                     } else {
@@ -164,13 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const isExamen = activity.type === 'Examen';
-            const cardBorder = isExamen ? 'border-purple-200' : 'border-blue-200';
+            const cardBorderColor = isExamen ? '#e9d5ff' : '#bfdbfe';
             const icon = isExamen ? 'fa-pen-to-square' : 'fa-file-lines';
-            const iconColor = isExamen ? 'text-purple-500' : 'text-blue-500';
+            const iconColor = isExamen ? 'text-purple' : 'text-primary';
 
             return `
                 <div class="col-md-6 col-lg-4">
-                    <div class="card-ima h-100 p-4 border-start border-4 ${cardBorder}">
+                    <div class="card-ima h-100 p-4 border-start border-4" style="border-left-color: ${cardBorderColor} !important;">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div class="bg-light p-2 rounded-3">
                                 <i class="fa-solid ${icon} ${iconColor} fs-4"></i>
@@ -181,11 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
 
                         <h3 class="h5 fw-bold mb-1">${activity.titulo}</h3>
-                        <p class="text-primary small fw-bold mb-3 text-uppercase" style="letter-spacing: 0.5px;">
-                            ${activity.asignatura || 'Informática'}
-                        </p>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <p class="text-primary small fw-bold mb-0 text-uppercase" style="letter-spacing: 0.5px;">
+                                ${activity.asignatura || 'Informática'}
+                            </p>
+                            <span class="text-muted expansion-hint" style="font-size: 0.7rem;"><i class="fa-solid fa-maximize"></i></span>
+                        </div>
 
-                        <p class="text-muted small mb-4 text-truncate-2" style="height: 2.8rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                        <p class="text-muted small mb-4 text-truncate-2">
                             ${activity.descripcion || 'Sin descripción adicional disponible.'}
                         </p>
 
@@ -214,14 +217,14 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.value = '';
         updateConfirmButtonState();
 
-        submissionModal.classList.remove('hidden');
+        if (window.showSubmissionModal) window.showSubmissionModal();
     }
 
     function closeSubmissionModal() {
         if (activeUploads > 0) {
             if (!confirm('Hay una subida en progreso. ¿Estás seguro de cerrar el modal?')) return;
         }
-        submissionModal.classList.add('hidden');
+        if (window.hideSubmissionModal) window.hideSubmissionModal();
         submissionForm.reset();
     }
 
@@ -238,14 +241,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (tasksList) {
         tasksList.addEventListener('click', async (e) => {
-            if (e.target && e.target.classList.contains('open-submission-modal')) {
-                const ds = e.target.dataset;
+            const openBtn = e.target.closest('.open-submission-modal');
+            if (openBtn) {
+                const ds = openBtn.dataset;
                 openSubmissionModal(ds.taskId, ds.taskTitle, ds.parcial, ds.asignatura);
+                return;
             }
 
-            if (e.target && e.target.classList.contains('delete-submission-btn')) {
-                const type = e.target.dataset.type;
-                const entregaId = e.target.dataset.entregaId;
+            const deleteBtn = e.target.closest('.delete-submission-btn');
+            if (deleteBtn) {
+                const type = deleteBtn.dataset.type;
+                const entregaId = deleteBtn.dataset.entregaId;
 
                 if (confirm('Al eliminar tu entrega es posible que pierdas la calificar de tu tarea si ya fue revisada.')) {
                     e.target.disabled = true;
@@ -266,6 +272,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         e.target.textContent = 'Eliminar Entrega';
                     }
                 }
+                return;
+            }
+
+            // Expansión de carta si no se hizo clic en un botón de acción
+            const card = e.target.closest('.card-ima');
+            if (card) {
+                card.classList.toggle('is-expanded');
             }
         });
     }
@@ -306,13 +319,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentFileName = currentFile.name;
 
             const li = document.createElement('li');
-            li.className = 'flex items-center justify-between text-sm text-gray-700 bg-white p-2 rounded border shadow-sm';
+            li.className = 'list-group-item d-flex align-items-center justify-content-between py-2 px-3 bg-white border-0 shadow-sm mb-2 rounded-3';
             li.innerHTML = `
-                <div class="flex items-center space-x-2 truncate">
-                    <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <span class="truncate">${currentFileName}</span>
+                <div class="d-flex align-items-center gap-2 overflow-hidden">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                    <span class="text-truncate small fw-medium">${currentFileName}</span>
                 </div>
-                <span class="text-xs text-blue-500 font-medium">Subiendo...</span>
+                <span class="badge bg-primary-subtle text-primary rounded-pill px-2" style="font-size: 0.65rem;">SUBIENDO...</span>
             `;
             uploadedFilesList.appendChild(li);
             uploadedFilesContainer.classList.remove('hidden');
@@ -351,31 +364,35 @@ document.addEventListener('DOMContentLoaded', () => {
                         currentFolderId = uploadedData.folderId;
 
                         li.innerHTML = `
-                            <div class="flex items-center space-x-2 truncate">
-                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                <span class="truncate">${currentFileName}</span>
+                            <div class="d-flex align-items-center gap-2 overflow-hidden">
+                                <i class="fa-solid fa-check text-success fs-6"></i>
+                                <span class="text-truncate small fw-medium">${currentFileName}</span>
                             </div>
-                            <div class="flex items-center space-x-3">
-                                <span class="text-xs text-green-600 font-medium">Listo</span>
-                                <button type="button" class="text-red-500 hover:text-red-700 remove-file-btn" data-file-id="${uploadedData.fileId}">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-success-subtle text-success rounded-pill px-2" style="font-size: 0.65rem;">LISTO</span>
+                                <button type="button" class="btn btn-link text-danger p-0 border-0 remove-file-btn" data-file-id="${uploadedData.fileId}">
+                                    <i class="fa-solid fa-xmark fs-6"></i>
                                 </button>
                             </div>
                         `;
                     } else {
                         li.innerHTML = `
-                            <div class="flex items-center space-x-2 truncate">
-                                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                <span class="truncate text-red-600">${currentFileName}</span>
+                            <div class="d-flex align-items-center gap-2 overflow-hidden text-danger">
+                                <i class="fa-solid fa-circle-exclamation fs-6"></i>
+                                <span class="text-truncate small fw-medium">${currentFileName}</span>
                             </div>
-                            <span class="text-xs text-red-600 font-medium">Error</span>
+                            <span class="badge bg-danger-subtle text-danger rounded-pill px-2" style="font-size: 0.65rem;">ERROR</span>
                         `;
                         alert('Error al subir ' + currentFileName + ': ' + result.message);
                     }
                 } catch (error) {
                     acceptFileBtn.disabled = false;
                     acceptFileBtn.classList.remove('btn-loading');
-                    li.innerHTML = `<span class="text-red-600">Error: ${currentFileName}</span>`;
+                    li.innerHTML = `
+                        <div class="d-flex align-items-center gap-2 text-danger">
+                            <i class="fa-solid fa-wifi-slash fs-6"></i>
+                            <span class="small fw-bold">Error de conexión: ${currentFileName}</span>
+                        </div>`;
                     alert('Error de conexión al subir ' + currentFileName + ': ' + error.message);
                 } finally {
                     activeUploads--;

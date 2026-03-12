@@ -335,6 +335,129 @@
         </div>
     </div>
 
+    <!-- Task Details Modal -->
+    <div id="task-details-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold">Detalles de la Actividad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-4">
+                        <h3 id="detail-titulo" class="fw-bold text-primary"></h3>
+                        <p id="detail-descripcion" class="text-muted"></p>
+                    </div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-6 col-md-3">
+                            <label class="small fw-bold text-muted text-uppercase">Materia</label>
+                            <div id="detail-asignatura" class="fw-bold"></div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="small fw-bold text-muted text-uppercase">Parcial</label>
+                            <div id="detail-parcial" class="fw-bold"></div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="small fw-bold text-muted text-uppercase">Grado</label>
+                            <div id="detail-grado" class="fw-bold"></div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="small fw-bold text-muted text-uppercase">Sección</label>
+                            <div id="detail-seccion" class="fw-bold"></div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="small fw-bold text-muted text-uppercase">Fecha Límite</label>
+                            <div id="detail-fecha" class="fw-bold"></div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="small fw-bold text-muted text-uppercase">Puntaje</label>
+                            <div id="detail-puntaje" class="fw-bold"></div>
+                        </div>
+                    </div>
+                    <div id="detail-archivo-container" class="hidden mb-4">
+                        <label class="small fw-bold text-muted text-uppercase d-block mb-2">Archivo Adjunto</label>
+                        <a id="detail-archivo-link" href="#" target="_blank" class="btn btn-light rounded-pill px-4">
+                            <i class="fa-solid fa-paperclip me-2"></i> Ver documento
+                        </a>
+                    </div>
+                    <div class="d-flex gap-2 pt-4 border-top">
+                        <button id="edit-task-btn" class="btn btn-primary px-4 rounded-pill">Editar</button>
+                        <button id="delete-task-btn" class="btn btn-outline-danger px-4 rounded-pill">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Task Modal -->
+    <div id="edit-task-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold">Editar Actividad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="edit-assignment-form">
+                        <input type="hidden" id="edit-id">
+                        <input type="hidden" id="edit-tipo-orig">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Título</label>
+                                <input type="text" id="edit-titulo" class="form-control bg-light" required>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Descripción</label>
+                                <textarea id="edit-descripcion" rows="3" class="form-control bg-light"></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Asignatura</label>
+                                <input type="text" id="edit-asignatura" class="form-control bg-light" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Parcial</label>
+                                <select id="edit-parcial" class="form-select bg-light">
+                                    <option value="Primer Parcial">Primer Parcial</option>
+                                    <option value="Segundo Parcial">Segundo Parcial</option>
+                                    <option value="Tercer Parcial">Tercer Parcial</option>
+                                    <option value="Cuarto Parcial">Cuarto Parcial</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Fecha Límite</label>
+                                <input type="date" id="edit-fecha" class="form-control bg-light" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Grado</label>
+                                <input type="text" id="edit-grado" class="form-control bg-light" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Sección</label>
+                                <input type="text" id="edit-seccion" class="form-control bg-light">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Puntaje %</label>
+                                <input type="number" id="edit-puntaje" class="form-control bg-light">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">URL Archivo/Guía</label>
+                                <input type="text" id="edit-archivo" class="form-control bg-light">
+                            </div>
+                            <div id="edit-exam-only-fields" class="col-md-4 hidden">
+                                <label class="form-label fw-bold">Tiempo (min)</label>
+                                <input type="number" id="edit-tiempo" class="form-control bg-light">
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 pt-4 mt-4 border-top">
+                            <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary px-4 rounded-pill">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="grade-modal" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 p-2 shadow-lg">
@@ -379,31 +502,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             if (window.setupCommonUI) window.setupCommonUI();
             if (window.renderCommonNav) window.renderCommonNav();
-
-            const navItems = [
-                { id: 'nav-dashboard', section: 'section-dashboard' },
-                { id: 'nav-gestion', section: 'section-gestion' },
-                { id: 'nav-reportes', section: 'section-reportes' },
-                { id: 'nav-crear', section: 'section-crear' },
-                { id: 'nav-crear-examen', section: 'section-crear-examen' }
-            ];
-
-            navItems.forEach(item => {
-                const btn = document.getElementById(item.id);
-                if (!btn) return;
-                btn.addEventListener('click', () => {
-                    navItems.forEach(i => {
-                        const b = document.getElementById(i.id);
-                        const s = document.getElementById(i.section);
-                        b.classList.remove('active', 'bg-primary', 'text-white');
-                        b.classList.add('bg-white', 'text-dark');
-                        s.classList.add('hidden');
-                    });
-                    btn.classList.add('active', 'bg-primary', 'text-white');
-                    btn.classList.remove('bg-white', 'text-dark');
-                    document.getElementById(item.section).classList.remove('hidden');
-                });
-            });
         });
     </script>
 </body>

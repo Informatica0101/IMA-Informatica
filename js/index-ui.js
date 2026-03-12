@@ -60,12 +60,15 @@ document.addEventListener('DOMContentLoaded', () => {
         contentBackButtonContainer.classList.add('hidden');
         contentDisplayArea.innerHTML = '';
         const gridDiv = document.createElement('div');
-        gridDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg';
+        gridDiv.className = 'row g-3 w-100 max-w-lg';
         window.downloadContentData.forEach(gradeData => {
-            gridDiv.appendChild(createCustomButton(gradeData.grade, () => {
+            const col = document.createElement('div');
+            col.className = 'col-md-4';
+            col.appendChild(createCustomButton(gradeData.grade, () => {
                 selectedGradeData = gradeData;
                 animateContentTransition(renderDownloadSubjects);
-            }, 'w-full'));
+            }, 'w-100'));
+            gridDiv.appendChild(col);
         });
         contentDisplayArea.appendChild(gridDiv);
         currentContentView = 'grades';
@@ -76,12 +79,15 @@ document.addEventListener('DOMContentLoaded', () => {
         contentBackButtonContainer.classList.remove('hidden');
         contentDisplayArea.innerHTML = '';
         const gridDiv = document.createElement('div');
-        gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg';
+        gridDiv.className = 'row g-3 w-100 max-w-lg';
         selectedGradeData.subjects.forEach(subjectData => {
-            gridDiv.appendChild(createCustomButton(subjectData.name, () => {
+            const col = document.createElement('div');
+            col.className = 'col-md-6';
+            col.appendChild(createCustomButton(subjectData.name, () => {
                 selectedSubjectData = subjectData;
                 animateContentTransition(renderDownloadTopics);
-            }, 'w-full'));
+            }, 'w-100'));
+            gridDiv.appendChild(col);
         });
         contentDisplayArea.appendChild(gridDiv);
         currentContentView = 'subjects';
@@ -92,12 +98,12 @@ document.addEventListener('DOMContentLoaded', () => {
         contentBackButtonContainer.classList.remove('hidden');
         contentDisplayArea.innerHTML = '';
         const gridDiv = document.createElement('div');
-        gridDiv.className = 'grid grid-cols-1 gap-3 w-full max-w-lg';
+        gridDiv.className = 'd-flex flex-column gap-3 w-100 max-w-lg';
         selectedSubjectData.topics.forEach(topic => {
             const link = document.createElement('a');
             link.href = topic.file;
             link.target = '_blank';
-            link.className = 'btn btn-success w-100 py-3 rounded-3 shadow-sm mb-2 d-flex align-items-center justify-content-center gap-2 fw-bold';
+            link.className = 'btn btn-success w-100 py-3 rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2 fw-bold';
             link.innerHTML = `
                 <i class="fa-solid fa-file-pdf"></i>
                 <span>${topic.title}</span>
@@ -128,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showMainContentSections() {
         if (!mainContentSections) return;
         mainContentSections.classList.remove('hidden');
-        mainContentSections.classList.add('flex');
+        mainContentSections.classList.add('d-flex');
         dynamicallyLoadedGameContainer.classList.add('hidden');
         mainContentTitle.textContent = 'Contenido y Actividades';
         renderInitialActivityButton();
@@ -138,13 +144,16 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadGame(gameId, htmlPath, jsPath, initFnName, title) {
         const mainHeader = document.getElementById('main-header');
         if (mainHeader) mainHeader.classList.add('header-hidden');
-        mainContentSections.classList.add('hidden');
-        mainContentSections.classList.remove('flex');
-        dynamicallyLoadedGameContainer.classList.remove('hidden');
-        mainContentTitle.textContent = title;
+        if (mainContentSections) {
+            mainContentSections.classList.add('hidden');
+            mainContentSections.classList.remove('d-flex');
+        }
+        if (dynamicallyLoadedGameContainer) dynamicallyLoadedGameContainer.classList.remove('hidden');
+        if (mainContentTitle) mainContentTitle.textContent = title;
 
         try {
             const htmlResponse = await fetch(htmlPath);
+            if (!htmlResponse.ok) throw new Error('Network response was not ok');
             dynamicallyLoadedGameContainer.innerHTML = await htmlResponse.text();
 
             const script = document.createElement('script');
@@ -157,8 +166,14 @@ document.addEventListener('DOMContentLoaded', () => {
             dynamicallyLoadedGameContainer.appendChild(script);
         } catch (error) {
             console.error(`Error loading game ${gameId}:`, error);
-            dynamicallyLoadedGameContainer.innerHTML = '<p class="text-red-500 p-8 text-center">Error al cargar el juego. Por favor, inténtalo de nuevo.</p>';
-            dynamicallyLoadedGameContainer.appendChild(createCustomButton('Volver al Inicio', showMainContentSections, 'mt-4 mx-auto block'));
+            dynamicallyLoadedGameContainer.innerHTML = `
+                <div class="p-5 text-center">
+                    <i class="fa-solid fa-triangle-exclamation text-danger fs-1 mb-3"></i>
+                    <p class="text-danger fw-bold">No se pudo cargar el recurso solicitado.</p>
+                    <button class="btn btn-primary rounded-pill px-4 mt-3" onclick="window.returnToMainContent()">
+                        <i class="fa-solid fa-arrow-left me-2"></i> Volver al Inicio
+                    </button>
+                </div>`;
         }
     }
 
@@ -181,16 +196,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderInitialActivityButton() {
         if (!initialActivityMenu) return;
         initialActivityMenu.classList.remove('hidden');
-        initialActivityMenu.classList.add('flex');
+        initialActivityMenu.classList.add('d-flex');
         gameListMenu.classList.add('hidden');
-        gameListMenu.classList.remove('flex');
+        gameListMenu.classList.remove('d-flex');
     }
 
     function renderActivityList() {
         initialActivityMenu.classList.add('hidden');
-        initialActivityMenu.classList.remove('flex');
+        initialActivityMenu.classList.remove('d-flex');
         gameListMenu.classList.remove('hidden');
-        gameListMenu.classList.add('flex');
+        gameListMenu.classList.add('d-flex');
         mainContentTitle.textContent = 'Actividades';
     }
 

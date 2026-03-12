@@ -53,6 +53,13 @@ window.setupCommonUI = function() {
             const isOpening = mobileMenuOverlay.classList.contains('hidden');
             mobileMenuOverlay.classList.toggle('hidden');
             mobileMenuOverlay.classList.toggle('mobile-menu-overlay');
+
+            // Toggle icon if using Font Awesome
+            const menuBtnIcon = mobileMenuButton ? mobileMenuButton.querySelector('i') : null;
+            if (menuBtnIcon) {
+                menuBtnIcon.className = isOpening ? 'fa-solid fa-xmark fs-3' : 'fa-solid fa-bars fs-3';
+            }
+
             if (mobileMenuIcon) {
                 mobileMenuIcon.setAttribute('d', isOpening ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16');
             }
@@ -62,6 +69,10 @@ window.setupCommonUI = function() {
         window.closeMobileMenu = function() {
             mobileMenuOverlay.classList.add('hidden');
             mobileMenuOverlay.classList.remove('mobile-menu-overlay');
+
+            const menuBtnIcon = mobileMenuButton ? mobileMenuButton.querySelector('i') : null;
+            if (menuBtnIcon) menuBtnIcon.className = 'fa-solid fa-bars fs-3';
+
             if (mobileMenuIcon) mobileMenuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
             resetMobileMenuState();
         }
@@ -281,8 +292,8 @@ window.renderMobileNav = function() {
     mobileGradesMenu.innerHTML = '';
     window.presentationData.forEach(gradeData => {
         const gradeToggle = document.createElement('button');
-        gradeToggle.className = 'mobile-nav-link justify-between bg-white';
-        gradeToggle.innerHTML = `${gradeData.grade} <span class="transform transition-transform duration-300">&#9656;</span>`;
+        gradeToggle.className = 'mobile-nav-link d-flex justify-content-between align-items-center bg-white border-0 w-100';
+        gradeToggle.innerHTML = `<span>${gradeData.grade}</span> <i class="fa-solid fa-chevron-right transition-transform small"></i>`;
         mobileGradesMenu.appendChild(gradeToggle);
 
         const subjectsContainer = document.createElement('div');
@@ -290,33 +301,34 @@ window.renderMobileNav = function() {
         mobileGradesMenu.appendChild(subjectsContainer);
 
         gradeToggle.addEventListener('click', () => {
+            const isOpening = subjectsContainer.classList.contains('hidden-height');
             subjectsContainer.classList.toggle('hidden-height');
             subjectsContainer.classList.toggle('visible-height');
-            const arrow = gradeToggle.querySelector('span');
+            const arrow = gradeToggle.querySelector('.fa-chevron-right');
             if (arrow) arrow.classList.toggle('rotate-90');
         });
 
         gradeData.subjects.forEach(subjectData => {
             const subjectToggle = document.createElement('button');
-            subjectToggle.className = 'w-full text-gray-700 font-medium text-left px-8 py-3 flex justify-between items-center bg-gray-50 border-b border-gray-100';
-            subjectToggle.innerHTML = `${subjectData.name} <span class="transform transition-transform duration-300">&#9656;</span>`;
+            subjectToggle.className = 'w-100 text-dark fw-medium text-start px-4 py-3 d-flex justify-content-between align-items-center bg-light border-bottom border-0';
+            subjectToggle.innerHTML = `<span>${subjectData.name}</span> <i class="fa-solid fa-chevron-right transition-transform small"></i>`;
             subjectsContainer.appendChild(subjectToggle);
 
             const topicsContainer = document.createElement('div');
-            topicsContainer.className = 'mobile-menu-item-container hidden-height bg-gray-100';
+            topicsContainer.className = 'mobile-menu-item-container hidden-height bg-white';
             subjectsContainer.appendChild(topicsContainer);
 
             subjectToggle.addEventListener('click', () => {
                 topicsContainer.classList.toggle('hidden-height');
                 topicsContainer.classList.toggle('visible-height');
-                const arrow = subjectToggle.querySelector('span');
+                const arrow = subjectToggle.querySelector('.fa-chevron-right');
                 if (arrow) arrow.classList.toggle('rotate-90');
             });
 
             subjectData.topics.forEach(topic => {
                 const topicLink = document.createElement('a');
                 topicLink.href = topic.file;
-                topicLink.className = 'block px-12 py-3 text-gray-600 text-sm border-b border-gray-200';
+                topicLink.className = 'd-block px-5 py-2 text-secondary text-decoration-none border-bottom small';
                 topicLink.textContent = topic.title;
                 topicLink.onclick = () => { if(window.closeMobileMenu) window.closeMobileMenu(); };
                 topicsContainer.appendChild(topicLink);
@@ -329,8 +341,8 @@ window.renderMobileNav = function() {
         mobileAdditionalMenu.innerHTML = '';
         window.additionalResourcesData.forEach(cat => {
             const catToggle = document.createElement('button');
-            catToggle.className = 'mobile-nav-link justify-between bg-white';
-            catToggle.innerHTML = `${cat.category} <span class="transform transition-transform duration-300">&#9656;</span>`;
+            catToggle.className = 'mobile-nav-link d-flex justify-content-between align-items-center bg-white border-0 w-100';
+            catToggle.innerHTML = `<span>${cat.category}</span> <i class="fa-solid fa-chevron-right transition-transform small"></i>`;
             mobileAdditionalMenu.appendChild(catToggle);
 
             const itemsContainer = document.createElement('div');
@@ -340,13 +352,13 @@ window.renderMobileNav = function() {
             catToggle.addEventListener('click', () => {
                 itemsContainer.classList.toggle('hidden-height');
                 itemsContainer.classList.toggle('visible-height');
-                const arrow = catToggle.querySelector('span');
+                const arrow = catToggle.querySelector('.fa-chevron-right');
                 if (arrow) arrow.classList.toggle('rotate-90');
             });
 
             cat.items.forEach(item => {
                 const itemLink = document.createElement('a');
-                itemLink.className = 'block px-8 py-3 text-gray-700 font-medium bg-gray-50 border-b border-gray-100';
+                itemLink.className = 'd-block px-4 py-3 text-dark fw-medium bg-light border-bottom text-decoration-none';
                 itemLink.textContent = item.title;
                 if (item.action) {
                     itemLink.href = '#';
@@ -386,20 +398,20 @@ window.renderCommonNav = function() {
         desktopGradesMenu.innerHTML = '';
         window.presentationData.forEach(gradeData => {
             const li = document.createElement('li');
-            li.className = 'dropend group';
+            li.className = 'dropend';
             li.innerHTML = `
-                <button class="dropdown-item d-flex justify-content-between align-items-center py-2 px-3 fw-medium" type="button">
-                    ${gradeData.grade} <i class="fa-solid fa-chevron-right ms-3" style="font-size: 0.7rem;"></i>
+                <button class="dropdown-item d-flex justify-content-between align-items-center" type="button">
+                    ${gradeData.grade} <i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.7rem;"></i>
                 </button>
-                <ul class="dropdown-menu shadow-lg border-0">
+                <ul class="dropdown-menu shadow">
                     ${gradeData.subjects.map(subject => `
-                        <li class="dropend group">
-                            <button class="dropdown-item d-flex justify-content-between align-items-center py-2 px-3 text-secondary" type="button">
-                                ${subject.name} <i class="fa-solid fa-chevron-right ms-3" style="font-size: 0.7rem;"></i>
+                        <li class="dropend">
+                            <button class="dropdown-item d-flex justify-content-between align-items-center" type="button">
+                                ${subject.name} <i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.7rem;"></i>
                             </button>
-                            <ul class="dropdown-menu shadow-lg border-0">
+                            <ul class="dropdown-menu shadow">
                                 ${subject.topics.map(topic => `
-                                    <li><a class="dropdown-item py-2 px-3 small" href="${topic.file}">${topic.title}</a></li>
+                                    <li><a class="dropdown-item small" href="${topic.file}">${topic.title}</a></li>
                                 `).join('')}
                             </ul>
                         </li>
@@ -414,14 +426,14 @@ window.renderCommonNav = function() {
         desktopAdditionalMenu.innerHTML = '';
         window.additionalResourcesData.forEach(cat => {
             const li = document.createElement('li');
-            li.className = 'dropend group';
+            li.className = 'dropend';
             li.innerHTML = `
-                <button class="dropdown-item d-flex justify-content-between align-items-center py-2 px-3 fw-medium" type="button">
-                    ${cat.category} <i class="fa-solid fa-chevron-right ms-3" style="font-size: 0.7rem;"></i>
+                <button class="dropdown-item d-flex justify-content-between align-items-center" type="button">
+                    ${cat.category} <i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.7rem;"></i>
                 </button>
-                <ul class="dropdown-menu shadow-lg border-0" style="min-width: 250px;">
+                <ul class="dropdown-menu shadow" style="min-width: 220px;">
                     ${cat.items.map(item => `
-                        <li><a class="dropdown-item py-2 px-3 small text-wrap" href="${item.action ? '#' : item.file}" ${item.action ? `onclick="handleHeaderAction('${item.action}')"` : 'target="_blank"'}>${item.title}</a></li>
+                        <li><a class="dropdown-item small text-wrap" href="${item.action ? '#' : item.file}" ${item.action ? `onclick="handleHeaderAction('${item.action}')"` : 'target="_blank"'}>${item.title}</a></li>
                     `).join('')}
                 </ul>
             `;

@@ -50,28 +50,39 @@ document.addEventListener('DOMContentLoaded', () => {
         targetSection.classList.remove('hidden');
         allNavLinks.forEach(link => {
             if (link) {
-                link.classList.remove('bg-blue-600', 'text-white');
-                link.classList.add('bg-white', 'text-gray-700');
+                link.classList.remove('active', 'bg-primary', 'text-white');
+                link.classList.add('bg-white', 'text-dark');
             }
         });
-        navElement.classList.add('bg-blue-600', 'text-white');
-        navElement.classList.remove('bg-white', 'text-gray-700');
+        navElement.classList.add('active', 'bg-primary', 'text-white');
+        navElement.classList.remove('bg-white', 'text-dark');
     }
 
-    navDashboard.addEventListener('click', () => {
-        navigateTo(sectionDashboard, navDashboard);
-        navStack = [{ level: 'Grados', data: null }];
-        fetchTeacherActivity();
-    });
-    navGestion.addEventListener('click', () => {
-        navigateTo(sectionGestion, navGestion);
-        fetchManagementData();
-    });
-    navReportes.addEventListener('click', () => {
-        navigateTo(sectionReportes, navReportes);
-    });
-    navCrear.addEventListener('click', () => navigateTo(sectionCrear, navCrear));
-    navCrearExamen.addEventListener('click', () => navigateTo(sectionCrearExamen, navCrearExamen));
+    if (navDashboard) {
+        navDashboard.addEventListener('click', () => {
+            navigateTo(sectionDashboard, navDashboard);
+            navStack = [{ level: 'Grados', data: null }];
+            fetchTeacherActivity();
+        });
+    }
+    if (navGestion) {
+        navGestion.addEventListener('click', () => {
+            navigateTo(sectionGestion, navGestion);
+            fetchManagementData();
+        });
+    }
+    if (navReportes) {
+        navReportes.addEventListener('click', () => {
+            navigateTo(sectionReportes, navReportes);
+        });
+    }
+    if (navCrear) {
+        navCrear.addEventListener('click', () => navigateTo(sectionCrear, navCrear));
+    }
+    if (navCrearExamen) {
+        navCrearExamen.addEventListener('click', () => navigateTo(sectionCrearExamen, navCrearExamen));
+    }
+
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('currentUser');
         window.location.href = 'login.html';
@@ -165,32 +176,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     }
 
+    const taskDetailsModalEl = document.getElementById('task-details-modal');
+    const taskDetailsModal = (taskDetailsModalEl && typeof bootstrap !== 'undefined') ? new bootstrap.Modal(taskDetailsModalEl) : null;
+
     window.openTaskDetail = (idx) => {
         const item = allTasksExams[idx];
-        document.getElementById('detail-titulo').textContent = item.titulo;
-        document.getElementById('detail-descripcion').textContent = item.descripcion || 'Sin descripción.';
-        document.getElementById('detail-asignatura').textContent = item.asignatura;
-        document.getElementById('detail-parcial').textContent = item.parcial || 'N/A';
-        document.getElementById('detail-grado').textContent = item.grado;
-        document.getElementById('detail-seccion').textContent = item.seccion || 'Todas';
-        document.getElementById('detail-fecha').textContent = new Date(item.fechaLimite).toLocaleDateString();
-        document.getElementById('detail-puntaje').textContent = (item.puntaje || 100) + '%';
+        if (!item) return;
+
+        const setText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+
+        setText('detail-titulo', item.titulo);
+        setText('detail-descripcion', item.descripcion || 'Sin descripción.');
+        setText('detail-asignatura', item.asignatura);
+        setText('detail-parcial', item.parcial || 'N/A');
+        setText('detail-grado', item.grado);
+        setText('detail-seccion', item.seccion || 'Todas');
+        setText('detail-fecha', item.fechaLimite ? new Date(item.fechaLimite).toLocaleDateString() : 'N/A');
+        setText('detail-puntaje', (item.puntaje || 100) + '%');
 
         const fileContainer = document.getElementById('detail-archivo-container');
         const fileLink = document.getElementById('detail-archivo-link');
-        if (item.archivoUrl) {
-            fileContainer.classList.remove('hidden');
-            fileLink.href = item.archivoUrl;
-        } else {
-            fileContainer.classList.add('hidden');
+        if (fileContainer && fileLink) {
+            if (item.archivoUrl) {
+                fileContainer.classList.remove('hidden');
+                fileLink.href = item.archivoUrl;
+            } else {
+                fileContainer.classList.add('hidden');
+            }
         }
 
-        document.getElementById('task-details-modal').dataset.currentIndex = idx;
-        document.getElementById('task-details-modal').classList.remove('hidden');
-    };
-
-    document.getElementById('close-task-modal-btn').onclick = () => {
-        document.getElementById('task-details-modal').classList.add('hidden');
+        if (taskDetailsModalEl) taskDetailsModalEl.dataset.currentIndex = idx;
+        if (taskDetailsModal) taskDetailsModal.show();
     };
 
     document.getElementById('edit-task-btn').onclick = () => {
@@ -367,17 +383,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         currentFilteredItems = alumnosGlobal;
         dashboardTableHead.innerHTML = `
-            <tr class="bg-gray-50 border-b border-gray-100">
-                <th class="p-4 text-left font-bold text-gray-600">Alumno</th>
-                <th class="p-4 text-left font-bold text-gray-600">Grado/Secc</th>
-                <th class="p-4 text-right font-bold text-gray-600">Acción</th>
+            <tr>
+                <th>Alumno</th>
+                <th>Grado/Secc</th>
+                <th class="text-end">Acción</th>
             </tr>`;
-        if (alumnosGlobal.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-500">No se encontraron alumnos.</td></tr>'; return; }
+        if (alumnosGlobal.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-4 text-muted">No se encontraron alumnos.</td></tr>'; return; }
         submissionsTableBody.innerHTML = alumnosGlobal.map((a, idx) => `
-            <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
-                <td class="p-4 font-bold text-blue-700">${a.nombre}</td>
-                <td class="p-4 text-sm text-gray-500">${a.grado} - ${a.seccion || 'N/A'}</td>
-                <td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver detalles &rsaquo;</span></td>
+            <tr class="nav-btn cursor-pointer" data-index="${idx}">
+                <td class="fw-bold text-primary">${a.nombre}</td>
+                <td class="text-muted small">${a.grado} - ${a.seccion || 'N/A'}</td>
+                <td class="text-end"><span class="btn btn-sm btn-light rounded-pill px-3">Ver detalles &rsaquo;</span></td>
             </tr>`).join('');
     }
 
@@ -387,9 +403,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fGrado) grados = grados.filter(g => g === fGrado);
         const filtered = grados.filter(g => g.toLowerCase().includes(search));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-600">Grado</th><th class="p-4 text-right font-bold text-gray-600">Acción</th></tr>`;
-        if (filtered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-8 text-gray-500">No hay grados.</td></tr>'; return; }
-        submissionsTableBody.innerHTML = filtered.map((grado, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${grado}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Secciones &rsaquo;</span></td></tr>`).join('');
+        dashboardTableHead.innerHTML = `<tr><th>Grado</th><th class="text-end">Acción</th></tr>`;
+        if (filtered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-4 text-muted">No hay grados.</td></tr>'; return; }
+        submissionsTableBody.innerHTML = filtered.map((grado, idx) => `
+            <tr class="nav-btn cursor-pointer" data-index="${idx}">
+                <td class="fw-bold text-dark">${grado}</td>
+                <td class="text-end"><span class="btn btn-sm btn-light rounded-pill px-3">Ver Secciones &rsaquo;</span></td>
+            </tr>`).join('');
     }
 
     function renderSecciones(grado, search) {
@@ -398,8 +418,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fSeccion) secciones = secciones.filter(s => s === fSeccion);
         const filtered = secciones.filter(s => s.toLowerCase().includes(search));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-600">Sección</th><th class="p-4 text-right font-bold text-gray-600">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${seccion}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
+        dashboardTableHead.innerHTML = `<tr><th>Sección</th><th class="text-end">Acción</th></tr>`;
+        submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `
+            <tr class="nav-btn cursor-pointer" data-index="${idx}">
+                <td class="fw-bold text-dark">${seccion}</td>
+                <td class="text-end"><span class="btn btn-sm btn-light rounded-pill px-3">Ver Alumnos &rsaquo;</span></td>
+            </tr>`).join('');
     }
 
     function renderAlumnos(grado, seccion, search) {
@@ -422,14 +446,14 @@ document.addEventListener('DOMContentLoaded', () => {
         currentFilteredItems = filtered;
 
         dashboardTableHead.innerHTML = `
-            <tr class="bg-gray-50 border-b border-gray-100">
-                <th class="p-4 text-left font-bold text-gray-600">Nombre del Alumno</th>
-                <th class="p-4 text-left font-bold text-gray-600">Estado</th>
-                <th class="p-4 text-right font-bold text-gray-600">Acción</th>
+            <tr>
+                <th>Nombre del Alumno</th>
+                <th>Estado</th>
+                <th class="text-end">Acción</th>
             </tr>`;
 
         if (filtered.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-500">No hay alumnos inscritos en esta sección.</td></tr>';
+            submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-4 text-muted">No hay alumnos inscritos en esta sección.</td></tr>';
             return;
         }
 
@@ -438,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const badgeClass = s.hasPending ? 'bg-warning-subtle text-warning' : 'bg-success-subtle text-success';
 
             return `
-                <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
+                <tr class="nav-btn cursor-pointer" data-index="${idx}">
                     <td class="fw-bold text-dark">${s.nombre}</td>
                     <td><span class="badge ${badgeClass} rounded-pill px-3">${statusLabel}</span></td>
                     <td class="text-end">
@@ -463,37 +487,50 @@ document.addEventListener('DOMContentLoaded', () => {
             return itemEstado === fEstado;
         });
         currentFilteredItems = finalFiltered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-600">Actividad</th><th class="p-4 text-left font-bold text-gray-600">Estado</th><th class="p-4 text-left font-bold text-gray-600">Archivo</th><th class="p-4 text-left font-bold text-gray-600">Calificación</th><th class="p-4 text-right font-bold text-gray-600">Acción</th></tr>`;
-        if (finalFiltered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-500">Sin entregas.</td></tr>'; return; }
+        dashboardTableHead.innerHTML = `<tr><th>Actividad</th><th>Estado</th><th>Detalles/Archivo</th><th>Calificación</th><th class="text-end">Acción</th></tr>`;
+        if (finalFiltered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-muted">Sin entregas registradas.</td></tr>'; return; }
         submissionsTableBody.innerHTML = finalFiltered.map((item, idx) => {
-            let statusClass = 'bg-gray-100 text-gray-600'; let statusText = 'Pendiente';
-            if (item.estado === 'Completada' || item.estado === 'Revisada') { statusText = 'Completada'; statusClass = 'bg-green-100 text-green-700'; }
-            else if (item.estado === 'Rechazada') { statusText = 'Rechazada'; statusClass = 'bg-red-100 text-red-700'; }
-            else if (item.fileId || item.respuestas || item.entregaId) { statusText = 'Por calificar'; statusClass = 'bg-yellow-100 text-yellow-700'; }
+            let statusText = 'Pendiente';
+            if (item.estado === 'Completada' || item.estado === 'Revisada') { statusText = 'Completada'; }
+            else if (item.estado === 'Rechazada') { statusText = 'Rechazada'; }
+            else if (item.fileId || item.respuestas || item.entregaId) { statusText = 'Por calificar'; }
 
-            let fileHtml = 'N/A';
+            let detailHtml = '<span class="text-muted small">Sin archivos</span>';
             if (item.fileId) {
                 const fId = extractDriveId(item.fileId);
-                fileHtml = `<a href="https://drive.google.com/uc?id=${fId}" target="_blank" class="text-blue-600 font-bold hover:underline">Ver</a>`;
+                const isFolder = item.mimeType === 'folder';
+                const driveUrl = isFolder
+                    ? `https://drive.google.com/drive/folders/${fId}`
+                    : `https://drive.google.com/uc?id=${fId}`;
+
+                detailHtml = `<a href="${driveUrl}" target="_blank" class="btn btn-sm btn-link text-primary fw-bold p-0 d-block text-start">
+                    <i class="fa-solid ${isFolder ? 'fa-folder-open' : 'fa-file-lines'} me-1"></i> Ver Entrega
+                </a>`;
+            }
+
+            if (item.comentario) {
+                detailHtml += `<div class="text-muted italic small mt-1" style="line-height: 1.2; font-size: 0.7rem;" title="${item.comentario}">
+                    <i class="fa-solid fa-comment-dots me-1"></i> ${item.comentario}
+                </div>`;
             }
 
             const badgeClass = statusText === 'Completada' ? 'bg-success-subtle text-success' : (statusText === 'Por calificar' ? 'bg-info-subtle text-info' : 'bg-warning-subtle text-warning');
 
             return `
-                <tr class="hover:bg-gray-50 transition-colors">
+                <tr>
                     <td>
                         <div class="fw-bold text-dark">${item.titulo}</div>
                         <div class="small text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">${item.asignatura} | ${item.tipo}</div>
                     </td>
                     <td><span class="badge ${badgeClass} rounded-pill px-3">${statusText}</span></td>
-                    <td>${fileHtml}</td>
-                    <td class="fw-bold text-primary">${item.calificacion || '-'}</td>
+                    <td>${detailHtml}</td>
+                    <td class="fw-bold text-primary fs-5">${item.calificacion || '-'}</td>
                     <td class="text-end">
-                        <div class="btn-group">
-                            <button class="btn btn-primary btn-sm rounded-pill px-3 grade-btn me-2" data-index="${idx}">
-                                <i class="fa-solid fa-pen-to-square me-1"></i> Calificar
+                        <div class="d-flex justify-content-end gap-2">
+                            <button class="btn btn-primary btn-sm rounded-pill px-3 grade-btn" data-index="${idx}">
+                                <i class="fa-solid fa-pen-to-square"></i> Calificar
                             </button>
-                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3 delete-submission-btn" data-index="${idx}">
+                            <button class="btn btn-outline-danger btn-sm rounded-circle delete-submission-btn" data-index="${idx}" style="width: 32px; height: 32px; padding: 0;">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -511,35 +548,45 @@ document.addEventListener('DOMContentLoaded', () => {
     if (submissionsTableBody) {
         submissionsTableBody.addEventListener('click', async (e) => {
             const target = e.target;
-            if (target.classList.contains('grade-btn')) {
-                const idx = target.dataset.index;
+
+            const gradeBtn = target.closest('.grade-btn');
+            if (gradeBtn) {
+                const idx = gradeBtn.dataset.index;
                 const item = currentFilteredItems[idx];
                 if (saveGradeBtn) saveGradeBtn.dataset.type = item.tipo;
                 openGradeModal(item);
                 return;
             }
-            if (target.classList.contains('delete-submission-btn')) {
-                const idx = target.dataset.index;
+
+            const deleteSubBtn = target.closest('.delete-submission-btn');
+            if (deleteSubBtn) {
+                const idx = deleteSubBtn.dataset.index;
                 const item = currentFilteredItems[idx];
                 if (confirm(`¿Eliminar entrega de "${item.titulo}"?`)) {
-                    target.disabled = true; target.textContent = "...";
+                    deleteSubBtn.disabled = true;
                     try {
                         const service = item.tipo === 'Tarea' ? 'TASK' : 'EXAM';
                         const action = item.tipo === 'Tarea' ? 'deleteSubmission' : 'deleteExamSubmission';
                         const res = await fetchApi(service, action, { entregaId: item.entregaId });
-                        if (res.status === 'success') { alert(res.message); fetchTeacherActivity(); }
-                        else throw new Error(res.message);
-                    } catch (error) { alert("Error: " + error.message); target.disabled = false; target.textContent = "Eliminar"; }
+                        if (res.status === 'success') {
+                            alert(res.message);
+                            fetchTeacherActivity();
+                        } else throw new Error(res.message);
+                    } catch (error) {
+                        alert("Error: " + error.message);
+                        deleteSubBtn.disabled = false;
+                    }
                 }
                 return;
             }
+
             const navBtn = target.closest('.nav-btn');
             if (navBtn) {
                 const idx = navBtn.dataset.index;
                 const item = currentFilteredItems[idx];
                 const current = navStack[navStack.length - 1];
 
-                if (dashboardLevelTitle.textContent === "Resultados de Búsqueda Global") {
+                if (dashboardLevelTitle && dashboardLevelTitle.textContent === "Resultados de Búsqueda Global") {
                     await pushNav('Detalles', { alumnoId: item.id, alumnoNombre: item.nombre, grado: item.grado, seccion: item.seccion });
                     return;
                 }
@@ -603,34 +650,55 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Calificación Modal ---
-    const gradeModal = document.getElementById('grade-modal');
+    const gradeModalEl = document.getElementById('grade-modal');
+    const gradeModal = gradeModalEl ? new bootstrap.Modal(gradeModalEl) : null;
     const saveGradeBtn = document.getElementById('save-grade-btn');
-    const cancelGradeBtn = document.getElementById('cancel-grade-btn');
     let currentEditingEntregaId = null;
+
     function openGradeModal(entrega) {
         currentEditingEntregaId = entrega.entregaId;
         document.getElementById('student-name-modal').textContent = entrega.alumnoNombre;
         const flm = document.getElementById('file-link-modal');
-        if (entrega.tipo === 'Examen') { flm.href = `results.html?entregaExamenId=${entrega.entregaId}`; flm.textContent = "Ver Respuestas"; }
-        else if (entrega.fileId) { flm.href = `https://drive.google.com/uc?id=${extractDriveId(entrega.fileId)}`; flm.textContent = "Ver Archivo"; }
-        else { flm.href = '#'; flm.textContent = "N/A"; }
+        if (entrega.tipo === 'Examen') {
+            flm.href = `results.html?entregaExamenId=${entrega.entregaId}`;
+            flm.textContent = "Ver Respuestas";
+        } else if (entrega.fileId) {
+            flm.href = `https://drive.google.com/uc?id=${extractDriveId(entrega.fileId)}`;
+            flm.textContent = "Ver Archivo";
+        } else {
+            flm.href = '#';
+            flm.textContent = "N/A";
+        }
         document.getElementById('calificacion').value = entrega.calificacion || '';
         document.getElementById('estado').value = (entrega.estado === 'Revisada' ? 'Completada' : (entrega.estado || 'Completada'));
         document.getElementById('comentario').value = entrega.comentario || '';
-        gradeModal.classList.remove('hidden');
+        if (gradeModal) gradeModal.show();
     }
-    cancelGradeBtn.onclick = () => gradeModal.classList.add('hidden');
-    saveGradeBtn.onclick = async () => {
-        const type = saveGradeBtn.dataset.type;
-        const payload = { entregaId: currentEditingEntregaId, calificacion: document.getElementById('calificacion').value, estado: document.getElementById('estado').value, comentario: document.getElementById('comentario').value };
-        saveGradeBtn.classList.add('btn-loading');
-        try {
-            const res = await fetchApi(type === 'Tarea' ? 'TASK' : 'EXAM', type === 'Tarea' ? 'gradeSubmission' : 'gradeExamSubmission', payload);
-            if (res.status === 'success') { alert('Guardado.'); gradeModal.classList.add('hidden'); fetchTeacherActivity(); }
-            else throw new Error(res.message);
-        } catch (error) { alert('Error: ' + error.message); }
-        finally { saveGradeBtn.classList.remove('btn-loading'); }
-    };
+
+    if (saveGradeBtn) {
+        saveGradeBtn.onclick = async () => {
+            const type = saveGradeBtn.dataset.type;
+            const payload = {
+                entregaId: currentEditingEntregaId,
+                calificacion: document.getElementById('calificacion').value,
+                estado: document.getElementById('estado').value,
+                comentario: document.getElementById('comentario').value
+            };
+            saveGradeBtn.classList.add('btn-loading');
+            try {
+                const res = await fetchApi(type === 'Tarea' ? 'TASK' : 'EXAM', type === 'Tarea' ? 'gradeSubmission' : 'gradeExamSubmission', payload);
+                if (res.status === 'success') {
+                    alert('Guardado.');
+                    if (gradeModal) gradeModal.hide();
+                    fetchTeacherActivity();
+                } else throw new Error(res.message);
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                saveGradeBtn.classList.remove('btn-loading');
+            }
+        };
+    }
 
     // --- CRUD Forms ---
     if (createAssignmentForm) createAssignmentForm.onsubmit = async (e) => {

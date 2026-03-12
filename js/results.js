@@ -54,22 +54,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderResultsDirect(calificacion, resultados, preguntas) {
-        let detailsHtml = '<div class="d-grid gap-3">';
+        let detailsHtml = '<div class="d-flex flex-column gap-3">';
         resultados.forEach((res, index) => {
             const pregunta = (preguntas || []).find(p => p.preguntaId === res.preguntaId);
             const borderClass = res.esCorrecta ? 'border-success' : 'border-danger';
-            const bgClass = res.esCorrecta ? 'bg-success-subtle' : 'bg-danger-subtle';
+            const badgeClass = res.esCorrecta ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger';
             const textoPregunta = pregunta && pregunta.textoPregunta ? pregunta.textoPregunta : 'Pregunta no encontrada';
 
             detailsHtml += `
-                <div class="p-4 rounded-4 border-start border-4 ${borderClass} ${bgClass}">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="badge bg-white text-dark border small fw-bold">P${index + 1}</span>
-                        <i class="fa-solid ${res.esCorrecta ? 'fa-circle-check text-success' : 'fa-circle-xmark text-danger'} fs-5"></i>
+                <div class="card-ima p-4 border-start border-4" style="border-left-color: ${res.esCorrecta ? 'var(--ima-green)' : 'var(--ima-red)'} !important;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge ${badgeClass} rounded-pill px-3">Pregunta ${index + 1}</span>
+                        <i class="fa-solid ${res.esCorrecta ? 'fa-circle-check text-success' : 'fa-circle-xmark text-danger'} fs-4"></i>
                     </div>
-                    <p class="fw-bold mb-2 text-dark">${textoPregunta}</p>
-                    <div class="small">
-                        <span class="text-muted">Tu respuesta:</span>
+                    <p class="fw-bold mb-3 text-dark">${textoPregunta}</p>
+                    <div class="p-3 bg-light rounded-3 border">
+                        <span class="text-muted small d-block text-uppercase fw-bold mb-1" style="font-size: 0.65rem;">Tu respuesta:</span>
                         <span class="fw-bold ${res.esCorrecta ? 'text-success' : 'text-danger'}">${res.respuestaEstudiante || 'No respondida'}</span>
                     </div>
                 </div>
@@ -78,15 +78,16 @@ document.addEventListener('DOMContentLoaded', () => {
         detailsHtml += '</div>';
 
         resultsContainer.innerHTML = `
-            <div class="mb-5">
-                <div class="display-1 fw-black text-primary mb-0" style="font-weight: 900;">${calificacion}<span class="fs-2 text-muted">/100</span></div>
-                <div class="h5 fw-bold text-secondary text-uppercase tracking-wider">Calificación Obtenida</div>
+            <div class="text-center mb-5">
+                <div class="display-3 fw-bold text-primary mb-1">${calificacion}<span class="fs-4 text-muted">/100</span></div>
+                <div class="h6 fw-bold text-secondary text-uppercase mb-0" style="letter-spacing: 2px;">Puntaje Obtenido</div>
             </div>
 
-            <div class="text-start mx-auto" style="max-width: 700px;">
-                <h3 class="h5 fw-bold text-dark mb-4 border-bottom pb-2">
-                    <i class="fa-solid fa-clipboard-check text-primary me-2"></i> Detalle de Respuestas
-                </h3>
+            <div class="text-start mx-auto" style="max-width: 800px;">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="bg-primary p-2 rounded-3"><i class="fa-solid fa-list-check text-white"></i></div>
+                    <h3 class="h5 fw-bold mb-0">Revisión de la Evaluación</h3>
+                </div>
                 ${detailsHtml}
             </div>
         `;
@@ -95,12 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderResults(data) {
         const { calificacionTotal, resultadosDetallados, examenTitulo } = data;
 
-        let detailsHtml = '<div class="d-grid gap-3">';
+        let detailsHtml = '<div class="d-flex flex-column gap-3">';
         resultadosDetallados.forEach((item, index) => {
             const isCorrect = item.esCorrecta;
             const isPartial = !isCorrect && parseFloat(item.score) > 0;
-            const borderClass = isCorrect ? 'border-success' : (isPartial ? 'border-warning' : 'border-danger');
-            const bgClass = isCorrect ? 'bg-success-subtle' : (isPartial ? 'bg-warning-subtle' : 'bg-danger-subtle');
+            const borderLeftColor = isCorrect ? 'var(--ima-green)' : (isPartial ? 'var(--ima-orange)' : 'var(--ima-red)');
+            const badgeClass = isCorrect ? 'bg-success-subtle text-success' : (isPartial ? 'bg-warning-subtle text-warning' : 'bg-danger-subtle text-danger');
 
             let displayAnswer = item.respuestaEstudiante;
             if (item.tipo === 'termino_pareado') {
@@ -111,17 +112,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             detailsHtml += `
-                <div class="p-4 rounded-4 border-start border-4 ${borderClass} ${bgClass}">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="badge bg-white text-dark border small fw-bold">P${index + 1}</span>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="fw-bold small text-dark">${item.score} pts</span>
-                            <i class="fa-solid ${isCorrect ? 'fa-circle-check text-success' : (isPartial ? 'fa-circle-exclamation text-warning' : 'fa-circle-xmark text-danger')} fs-5"></i>
+                <div class="card-ima p-4 border-start border-4" style="border-left-color: ${borderLeftColor} !important;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge ${badgeClass} rounded-pill px-3">Pregunta ${index + 1}</span>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="fw-bold text-dark">${item.score} pts</span>
+                            <i class="fa-solid ${isCorrect ? 'fa-circle-check text-success' : (isPartial ? 'fa-circle-exclamation text-warning' : 'fa-circle-xmark text-danger')} fs-4"></i>
                         </div>
                     </div>
-                    <p class="fw-bold mb-2 text-dark small">${item.texto}</p>
-                    <div class="small">
-                        <span class="text-muted">Respuesta registrada:</span>
+                    <p class="fw-bold mb-3 text-dark small">${item.texto}</p>
+                    <div class="p-3 bg-light rounded-3 border">
+                        <span class="text-muted small d-block text-uppercase fw-bold mb-1" style="font-size: 0.65rem;">Respuesta registrada:</span>
                         <span class="fw-bold ${isCorrect ? 'text-success' : (isPartial ? 'text-warning-emphasis' : 'text-danger')}">${displayAnswer || 'No respondida'}</span>
                     </div>
                 </div>
@@ -130,16 +131,17 @@ document.addEventListener('DOMContentLoaded', () => {
         detailsHtml += '</div>';
 
         resultsContainer.innerHTML = `
-            <div class="mb-5">
-                <div class="h6 fw-bold text-secondary text-uppercase tracking-widest mb-1">Evaluación Finalizada</div>
-                <div class="h3 fw-bold text-dark mb-4" style="font-family: 'Poppins';">${examenTitulo}</div>
-                <div class="display-1 fw-black text-primary mb-0" style="font-weight: 900;">${calificacionTotal}<span class="fs-2 text-muted">/100</span></div>
+            <div class="text-center mb-5">
+                <div class="h6 fw-bold text-secondary text-uppercase mb-2" style="letter-spacing: 3px;">Evaluación Finalizada</div>
+                <h2 class="h3 fw-bold text-dark mb-4" style="font-family: 'Poppins';">${examenTitulo}</h2>
+                <div class="display-3 fw-bold text-primary mb-1">${calificacionTotal}<span class="fs-4 text-muted">/100</span></div>
             </div>
 
-            <div class="text-start mx-auto" style="max-width: 700px;">
-                <h3 class="h5 fw-bold text-dark mb-4 border-bottom pb-2">
-                    <i class="fa-solid fa-list-ul text-primary me-2"></i> Desglose de Puntaje
-                </h3>
+            <div class="text-start mx-auto" style="max-width: 800px;">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="bg-primary p-2 rounded-3"><i class="fa-solid fa-list-ul text-white"></i></div>
+                    <h3 class="h5 fw-bold mb-0">Desglose de Puntaje</h3>
+                </div>
                 ${detailsHtml}
             </div>
         `;
