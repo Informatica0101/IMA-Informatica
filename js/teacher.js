@@ -143,21 +143,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderManagementTable() {
         const tbody = document.getElementById('tasks-management-table-body');
-        tbody.innerHTML = allTasksExams.map((item, idx) => `
+        tbody.innerHTML = allTasksExams.map((item, idx) => {
+            const date = new Date(item.fechaLimite);
+            const isOverdue = date < new Date();
+            const dateClass = isOverdue ? 'text-danger fw-bold' : 'text-secondary';
+
+            return `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.openTaskDetail(${idx})">
-                <td class="p-4 font-bold text-blue-700">${item.titulo}</td>
-                <td class="p-4">${item.asignatura}</td>
-                <td class="p-4 text-xs">${item.grado} - ${item.seccion || 'Todas'}</td>
-                <td class="p-4 text-xs font-medium ${new Date(item.fechaLimite) < new Date() ? 'text-red-500' : 'text-gray-600'}">
-                    ${new Date(item.fechaLimite).toLocaleDateString()}
+                <td class="fw-bold text-dark">${item.titulo}</td>
+                <td class="text-primary small fw-bold">${item.asignatura}</td>
+                <td class="text-muted small">${item.grado} - ${item.seccion || 'Todas'}</td>
+                <td class="${dateClass} small">
+                    <i class="fa-regular fa-calendar-clock me-1"></i> ${date.toLocaleDateString()}
                 </td>
-                <td class="p-4 text-right">
-                    <button class="bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-100 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                <td class="text-end">
+                    <button class="btn btn-light btn-sm rounded-circle shadow-sm">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
                     </button>
                 </td>
-            </tr>
-        `).join('');
+            </tr>`;
+        }).join('');
     }
 
     window.openTaskDetail = (idx) => {
@@ -429,16 +434,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         submissionsTableBody.innerHTML = filtered.map((s, idx) => {
-            const statusHtml = s.hasPending
-                ? '<span class="text-yellow-600 font-bold">Pendiente</span>'
-                : '<span class="text-green-600 font-bold">Al día</span>';
+            const statusLabel = s.hasPending ? 'Pendiente' : 'Al día';
+            const badgeClass = s.hasPending ? 'bg-warning-subtle text-warning' : 'bg-success-subtle text-success';
 
             return `
                 <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
-                    <td class="p-4 font-bold text-blue-700">${s.nombre}</td>
-                    <td class="p-4 text-sm">${statusHtml}</td>
-                    <td class="p-4 text-right">
-                        <span class="text-blue-600 font-bold text-sm">Ver detalles &rsaquo;</span>
+                    <td class="fw-bold text-dark">${s.nombre}</td>
+                    <td><span class="badge ${badgeClass} rounded-pill px-3">${statusLabel}</span></td>
+                    <td class="text-end">
+                        <button class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                            <i class="fa-solid fa-eye me-1"></i> Ver Actividad
+                        </button>
                     </td>
                 </tr>`;
         }).join('');
@@ -471,15 +477,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 fileHtml = `<a href="https://drive.google.com/uc?id=${fId}" target="_blank" class="text-blue-600 font-bold hover:underline">Ver</a>`;
             }
 
+            const badgeClass = statusText === 'Completada' ? 'bg-success-subtle text-success' : (statusText === 'Por calificar' ? 'bg-info-subtle text-info' : 'bg-warning-subtle text-warning');
+
             return `
                 <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="p-4"><div class="font-bold text-gray-800">${item.titulo}</div><div class="text-[10px] text-gray-400 uppercase">${item.asignatura} | ${item.tipo}</div></td>
-                    <td class="p-4"><span class="px-2 py-1 rounded-full text-[10px] font-bold ${statusClass}">${statusText}</span></td>
-                    <td class="p-4">${fileHtml}</td>
-                    <td class="p-4 font-bold text-gray-700">${item.calificacion || '-'}</td>
-                    <td class="p-4 text-right space-x-2">
-                        <button class="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors grade-btn" data-index="${idx}">Calificar</button>
-                        <button class="bg-red-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-index="${idx}">Eliminar</button>
+                    <td>
+                        <div class="fw-bold text-dark">${item.titulo}</div>
+                        <div class="small text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">${item.asignatura} | ${item.tipo}</div>
+                    </td>
+                    <td><span class="badge ${badgeClass} rounded-pill px-3">${statusText}</span></td>
+                    <td>${fileHtml}</td>
+                    <td class="fw-bold text-primary">${item.calificacion || '-'}</td>
+                    <td class="text-end">
+                        <div class="btn-group">
+                            <button class="btn btn-primary btn-sm rounded-pill px-3 grade-btn me-2" data-index="${idx}">
+                                <i class="fa-solid fa-pen-to-square me-1"></i> Calificar
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3 delete-submission-btn" data-index="${idx}">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>`;
         }).join('');

@@ -385,47 +385,47 @@ window.renderCommonNav = function() {
     if (desktopGradesMenu) {
         desktopGradesMenu.innerHTML = '';
         window.presentationData.forEach(gradeData => {
-            const gradeDiv = document.createElement('div');
-            gradeDiv.className = 'relative group/grade';
-            gradeDiv.innerHTML = `
-                <button class="block w-full text-left px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
-                    ${gradeData.grade} <span class="float-right text-xs mt-1">&#9656;</span>
+            const li = document.createElement('li');
+            li.className = 'dropend group';
+            li.innerHTML = `
+                <button class="dropdown-item d-flex justify-content-between align-items-center py-2 px-3 fw-medium" type="button">
+                    ${gradeData.grade} <i class="fa-solid fa-chevron-right ms-3" style="font-size: 0.7rem;"></i>
                 </button>
-                <div class="absolute left-full top-0 mt-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/grade:scale-100 origin-left border border-gray-100">
+                <ul class="dropdown-menu shadow-lg border-0">
                     ${gradeData.subjects.map(subject => `
-                        <div class="relative group/subject">
-                            <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 focus:outline-none">
-                                ${subject.name} <span class="float-right text-xs mt-1">&#9656;</span>
+                        <li class="dropend group">
+                            <button class="dropdown-item d-flex justify-content-between align-items-center py-2 px-3 text-secondary" type="button">
+                                ${subject.name} <i class="fa-solid fa-chevron-right ms-3" style="font-size: 0.7rem;"></i>
                             </button>
-                            <div class="absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/subject:opacity-100 group-hover/subject:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/subject:scale-100 origin-left border border-gray-100">
+                            <ul class="dropdown-menu shadow-lg border-0">
                                 ${subject.topics.map(topic => `
-                                    <a href="${topic.file}" class="block px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 text-sm">${topic.title}</a>
+                                    <li><a class="dropdown-item py-2 px-3 small" href="${topic.file}">${topic.title}</a></li>
                                 `).join('')}
-                            </div>
-                        </div>
+                            </ul>
+                        </li>
                     `).join('')}
-                </div>
+                </ul>
             `;
-            desktopGradesMenu.appendChild(gradeDiv);
+            desktopGradesMenu.appendChild(li);
         });
     }
 
     if (desktopAdditionalMenu) {
         desktopAdditionalMenu.innerHTML = '';
         window.additionalResourcesData.forEach(cat => {
-            const catDiv = document.createElement('div');
-            catDiv.className = 'relative group/resource-cat';
-            catDiv.innerHTML = `
-                <button class="block w-full text-left px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
-                    ${cat.category} <span class="float-right text-xs mt-1">&#9656;</span>
+            const li = document.createElement('li');
+            li.className = 'dropend group';
+            li.innerHTML = `
+                <button class="dropdown-item d-flex justify-content-between align-items-center py-2 px-3 fw-medium" type="button">
+                    ${cat.category} <i class="fa-solid fa-chevron-right ms-3" style="font-size: 0.7rem;"></i>
                 </button>
-                <div class="absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/resource-cat:opacity-100 group-hover/resource-cat:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/resource-cat:scale-100 origin-left border border-gray-100">
+                <ul class="dropdown-menu shadow-lg border-0" style="min-width: 250px;">
                     ${cat.items.map(item => `
-                        <a href="${item.action ? '#' : item.file}" ${item.action ? `onclick="handleHeaderAction('${item.action}')"` : 'target="_blank"'} class="block px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 text-sm">${item.title}</a>
+                        <li><a class="dropdown-item py-2 px-3 small text-wrap" href="${item.action ? '#' : item.file}" ${item.action ? `onclick="handleHeaderAction('${item.action}')"` : 'target="_blank"'}>${item.title}</a></li>
                     `).join('')}
-                </div>
+                </ul>
             `;
-            desktopAdditionalMenu.appendChild(catDiv);
+            desktopAdditionalMenu.appendChild(li);
         });
     }
 };

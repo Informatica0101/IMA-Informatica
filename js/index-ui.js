@@ -30,14 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const button = document.createElement('button');
         button.textContent = text;
         button.onclick = onClickHandler;
-        button.className = `
-            px-5 py-2.5 rounded-xl font-semibold text-base
-            bg-blue-600 text-white hover:bg-blue-700
-            transition-all duration-300 ease-in-out
-            shadow-lg hover:shadow-xl transform hover:-translate-y-1
-            focus:outline-none focus:ring-4 focus:ring-blue-300
-            ${className}
-        `;
+        button.className = `btn btn-ima-primary px-4 py-2 rounded-3 shadow-sm ${className}`;
         return button;
     }
 
@@ -104,16 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const link = document.createElement('a');
             link.href = topic.file;
             link.target = '_blank';
-            link.className = `
-                flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl font-semibold text-base
-                bg-green-600 text-white hover:bg-green-700
-                transition-all duration-300 ease-in-out
-                shadow-lg hover:shadow-xl transform hover:-translate-y-1
-                focus:outline-none focus:ring-4 focus:ring-green-300 w-full
-            `;
+            link.className = 'btn btn-success w-100 py-3 rounded-3 shadow-sm mb-2 d-flex align-items-center justify-content-center gap-2 fw-bold';
             link.innerHTML = `
+                <i class="fa-solid fa-file-pdf"></i>
                 <span>${topic.title}</span>
-                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l3-3m-3 3l-3-3m0 6h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
             `;
             gridDiv.appendChild(link);
         });
@@ -290,13 +277,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentUser) {
             const portalBtn = document.createElement('a');
             portalBtn.href = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
-            portalBtn.className = 'px-10 py-5 rounded-2xl font-bold text-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
-            portalBtn.textContent = 'Ir al Portal';
+            portalBtn.className = 'btn btn-ima-primary px-5 py-3 fs-5 rounded-4 shadow';
+            portalBtn.innerHTML = '<i class="fa-solid fa-gauge-high me-2"></i> Ir al Portal Académico';
             accessButtonContainer.appendChild(portalBtn);
         } else {
             const loginBtn = document.createElement('button');
-            loginBtn.className = 'px-10 py-5 rounded-2xl font-bold text-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
-            loginBtn.textContent = 'Iniciar Sesión';
+            loginBtn.className = 'btn btn-ima-primary px-5 py-3 fs-5 rounded-4 shadow';
+            loginBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket me-2"></i> Iniciar Sesión';
             loginBtn.addEventListener("click", openModal);
             accessButtonContainer.appendChild(loginBtn);
         }
