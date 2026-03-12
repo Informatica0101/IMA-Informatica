@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (originalQuestions.length > 0) {
                     questionsContainer.innerHTML = originalQuestions.map(renderQuestion).join('');
                 } else {
-                    questionsContainer.innerHTML = '<p class="text-gray-500">Este examen no tiene preguntas actualmente.</p>';
+                    questionsContainer.innerHTML = '<p class="text-secondary">Este examen no tiene preguntas actualmente.</p>';
                     const submitBtn = document.querySelector('button[type="submit"]');
                     if (submitBtn) submitBtn.style.display = 'none';
                 }
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else { throw new Error(result.message); }
         } catch (error) {
-            questionsContainer.innerHTML = `<p class="text-red-500 text-center py-10 font-bold">Error al cargar el examen: ${error.message}</p>`;
+            questionsContainer.innerHTML = `<p class="text-danger text-center py-10 font-bold">Error al cargar el examen: ${error.message}</p>`;
             // Si falla la carga, mostramos un botón de reintento o volvemos
             if (startBtn) {
                 startBtn.textContent = "Volver al Dashboard";
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const indexedDefinitions = options.definitions.map((def, idx) => ({ def, idx }));
                     const shuffledDefinitions = shuffleArray(indexedDefinitions);
                     optionsHtml = `
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="row g-4">
                             <div>
                                 <h4 class="font-bold mb-2">Conceptos</h4>
                                 <ul class="list-decimal list-inside space-y-2">
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
             timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
             if (timeRemaining <= 60) {
-                timerEl.classList.add('text-red-600', 'animate-pulse');
+                timerEl.classList.add('text-danger', 'animate-pulse');
             }
         };
 

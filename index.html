@@ -62,7 +62,7 @@
         </div>
 
         <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu-overlay" class="hidden">
+        <div id="mobile-menu-overlay" class="d-none">
             <div class="p-4 d-flex justify-content-between align-items-center border-bottom">
                 <img src="imagenes/logo.png" width="80" alt="Logo">
                 <button id="mobile-menu-close-button" class="btn btn-light rounded-circle">
@@ -78,7 +78,7 @@
                         <span>Cursos</span>
                         <i id="mobile-courses-arrow" class="fa-solid fa-chevron-right transition-transform" style="font-size: 0.8rem;"></i>
                     </button>
-                    <div id="mobile-grades-container" class="mobile-menu-item-container hidden-height bg-light">
+                    <div id="mobile-grades-container" class="mobile-menu-item-container d-none-height bg-light">
                         <div id="mobile-grades-menu"></div>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                         <span>Recursos Adicionales</span>
                         <i id="mobile-additional-resources-arrow" class="fa-solid fa-chevron-right transition-transform" style="font-size: 0.8rem;"></i>
                     </button>
-                    <div id="mobile-additional-resources-container" class="mobile-menu-item-container hidden-height bg-light">
+                    <div id="mobile-additional-resources-container" class="mobile-menu-item-container d-none-height bg-light">
                         <div id="mobile-additional-resources-menu"></div>
                     </div>
                 </div>
@@ -133,7 +133,7 @@
                                 <i class="fa-solid fa-folder-open text-primary"></i> Contenido de Clases
                             </h3>
 
-                            <div id="content-back-button-container" class="mb-2 hidden">
+                            <div id="content-back-button-container" class="mb-2 d-none">
                                 <button id="content-back-button" class="btn btn-light btn-xs d-inline-flex align-items-center gap-1 py-1 px-2">
                                     <i class="fa-solid fa-arrow-left" style="font-size: 0.7rem;"></i> <span style="font-size: 0.75rem;">Volver</span>
                                 </button>
@@ -152,7 +152,7 @@
                                 <i class="fa-solid fa-gamepad text-success"></i> Actividades Prácticas
                             </h3>
 
-                            <div id="initial-activity-menu" class="hidden flex-column justify-content-center align-items-center h-100" style="min-height: 200px;">
+                            <div id="initial-activity-menu" class="d-none flex-column justify-content-center align-items-center h-100" style="min-height: 200px;">
                                 <button id="show-activities-button" class="btn btn-ima-accent px-3 py-2 rounded-3 fs-6 w-100 shadow-sm">
                                     <i class="fa-solid fa-play me-2"></i> Explorar Actividades
                                 </button>
@@ -180,7 +180,7 @@
                 </div>
 
                 <!-- Contenedor para Juegos Cargados Dinámicamente -->
-                <div id="dynamically-loaded-game-container" class="hidden mt-4">
+                <div id="dynamically-loaded-game-container" class="d-none mt-4">
                     <div class="card-ima p-0 overflow-hidden shadow-lg border-primary border-2">
                         <!-- El juego se carga aquí -->
                     </div>

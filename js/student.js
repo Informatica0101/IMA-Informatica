@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para obtener Tareas y Exámenes
     async function fetchAllActivities() {
         if (!tasksList) return;
-        tasksList.innerHTML = '<p class="text-gray-500">Cargando actividades...</p>';
+        tasksList.innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border spinner-border-sm text-primary me-2"></div><span class="text-secondary">Cargando actividades...</span></div>';
         try {
             const payload = { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion };
 
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderActivities(allActivities);
 
         } catch (error) {
-            tasksList.innerHTML = `<p class="text-red-500">Error al cargar actividades: ${error.message}</p>`;
+            tasksList.innerHTML = `<div class="col-12 text-center py-4 text-danger small">Error al cargar actividades: ${error.message}</div>`;
         }
     }
 
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return `
                 <div class="col-md-6 col-lg-4">
-                    <div class="card-ima h-100 p-4 border-start border-4" style="border-left-color: ${cardBorderColor} !important;">
+                    <div class="card-ima h-100 border-start border-4" style="border-left-color: ${cardBorderColor} !important;">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div class="bg-light p-2 rounded-3">
                                 <i class="fa-solid ${icon} ${iconColor} fs-4"></i>
@@ -212,8 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentFolderId = null;
 
         uploadedFilesList.innerHTML = '';
-        uploadedFilesContainer.classList.add('hidden');
-        filePreviewContainer.classList.add('hidden');
+        uploadedFilesContainer.classList.add('d-none');
+        filePreviewContainer.classList.add('d-none');
         fileInput.value = '';
         updateConfirmButtonState();
 
@@ -232,10 +232,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirmSubmissionBtn) return;
         if (uploadedFiles.length > 0 && activeUploads === 0) {
             confirmSubmissionBtn.disabled = false;
-            confirmSubmissionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            confirmSubmissionBtn.classList.remove('opacity-50');
         } else {
             confirmSubmissionBtn.disabled = true;
-            confirmSubmissionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            confirmSubmissionBtn.classList.add('opacity-50');
         }
     }
 
@@ -305,21 +305,21 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) {
-                filePreviewContainer.classList.add('hidden');
+                filePreviewContainer.classList.add('d-none');
                 return;
             }
-            filePreviewContainer.classList.remove('hidden');
+            filePreviewContainer.classList.remove('d-none');
             if (file.type.startsWith('image/')) {
-                imagePreview.classList.remove('hidden');
-                fileInfoPreview.classList.add('hidden');
+                imagePreview.classList.remove('d-none');
+                fileInfoPreview.classList.add('d-none');
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     imagePreview.querySelector('img').src = e.target.result;
                 };
                 reader.readAsDataURL(file);
             } else {
-                imagePreview.classList.add('hidden');
-                fileInfoPreview.classList.remove('hidden');
+                imagePreview.classList.add('d-none');
+                fileInfoPreview.classList.remove('d-none');
                 fileInfoPreview.textContent = `Archivo seleccionado: ${file.name}`;
             }
         });
@@ -346,9 +346,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="badge bg-primary-subtle text-primary rounded-pill px-2" style="font-size: 0.65rem;">SUBIENDO...</span>
             `;
             uploadedFilesList.appendChild(li);
-            uploadedFilesContainer.classList.remove('hidden');
+            uploadedFilesContainer.classList.remove('d-none');
 
-            filePreviewContainer.classList.add('hidden');
+            filePreviewContainer.classList.add('d-none');
             fileInput.value = '';
 
             activeUploads++;
@@ -444,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 uploadedFiles = uploadedFiles.filter(f => f.fileId !== fileId);
                 li.remove();
                 if (uploadedFiles.length === 0) {
-                    uploadedFilesContainer.classList.add('hidden');
+                    uploadedFilesContainer.classList.add('d-none');
                 }
                 updateConfirmButtonState();
             }

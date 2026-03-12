@@ -50,8 +50,8 @@ window.setupCommonUI = function() {
     // --- Mobile Menu Logic ---
     if (mobileMenuOverlay) {
         function toggleMobileMenu() {
-            const isOpening = mobileMenuOverlay.classList.contains('hidden');
-            mobileMenuOverlay.classList.toggle('hidden');
+            const isOpening = mobileMenuOverlay.classList.contains('d-none');
+            mobileMenuOverlay.classList.toggle('d-none');
             mobileMenuOverlay.classList.toggle('mobile-menu-overlay');
 
             // Toggle icon if using Font Awesome
@@ -67,7 +67,7 @@ window.setupCommonUI = function() {
         }
 
         window.closeMobileMenu = function() {
-            mobileMenuOverlay.classList.add('hidden');
+            mobileMenuOverlay.classList.add('d-none');
             mobileMenuOverlay.classList.remove('mobile-menu-overlay');
 
             const menuBtnIcon = mobileMenuButton ? mobileMenuButton.querySelector('i') : null;
@@ -90,7 +90,7 @@ window.setupCommonUI = function() {
         if (mobileMenuCloseButton) mobileMenuCloseButton.addEventListener('click', toggleMobileMenu);
 
         document.addEventListener('mousedown', (e) => {
-            if (!mobileMenuOverlay.classList.contains('hidden') &&
+            if (!mobileMenuOverlay.classList.contains('d-none') &&
                 !mobileMenuOverlay.contains(e.target) &&
                 !mobileMenuButton.contains(e.target)) {
                 closeMobileMenu();
@@ -172,8 +172,8 @@ function setupPWALogic() {
 
         // iOS always shows the button if not standalone (manual instructions)
         if (isIOS) {
-            if (installBtnMobile) installBtnMobile.classList.remove("hidden");
-            if (installBtnFooter) installBtnFooter.classList.remove("hidden");
+            if (installBtnMobile) installBtnMobile.classList.remove('d-none');
+            if (installBtnFooter) installBtnFooter.classList.remove('d-none');
         }
     }
 
@@ -187,8 +187,8 @@ function setupPWALogic() {
         deferredPrompt = e;
         // Show the buttons now that we know we can prompt
         if (!isStandalone) {
-            if (installBtnMobile) installBtnMobile.classList.remove("hidden");
-            if (installBtnFooter) installBtnFooter.classList.remove("hidden");
+            if (installBtnMobile) installBtnMobile.classList.remove('d-none');
+            if (installBtnFooter) installBtnFooter.classList.remove('d-none');
         }
     });
 
@@ -218,8 +218,8 @@ function setupPWALogic() {
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === "accepted") {
-                if (installBtnMobile) installBtnMobile.classList.add("hidden");
-                if (installBtnFooter) installBtnFooter.classList.add("hidden");
+                if (installBtnMobile) installBtnMobile.classList.add('d-none');
+                if (installBtnFooter) installBtnFooter.classList.add('d-none');
                 deferredPrompt = null;
             }
         } else {

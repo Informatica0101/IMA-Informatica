@@ -300,7 +300,7 @@ function endGame() {
                     gameHistoryList.appendChild(listItem);
                 });
             } else {
-                gameHistoryList.innerHTML = '<li class="text-sm text-gray-500">No hay historial de juegos.</li>';
+                gameHistoryList.innerHTML = '<li class="text-sm text-secondary">No hay historial de juegos.</li>';
             }
         }
     }
@@ -326,7 +326,7 @@ function resetGame() {
     if (localGameStorage) {
         if (totalAttemptsDisplay) totalAttemptsDisplay.textContent = localGameStorage.getTotalAttempts('peripheralsGame');
         if (bestScoreDisplay) bestScoreDisplay.textContent = localGameStorage.getBestScore('peripheralsGame');
-        if (gameHistoryList) gameHistoryList.innerHTML = '<li class="text-sm text-gray-500">No hay historial de juegos.</li>'; // Clear history on reset
+        if (gameHistoryList) gameHistoryList.innerHTML = '<li class="text-sm text-secondary">No hay historial de juegos.</li>'; // Clear history on reset
     }
     // Also reset correct/incorrect answers display on reset
     if (correctAnswersDisplay) correctAnswersDisplay.textContent = 0;

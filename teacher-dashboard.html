@@ -44,7 +44,7 @@
         </div>
 
         <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu-overlay" class="hidden">
+        <div id="mobile-menu-overlay" class="d-none">
             <div class="p-4 d-flex justify-content-between align-items-center border-bottom">
                 <img src="imagenes/logo.png" width="80" alt="Logo">
                 <button id="mobile-menu-close-button" class="btn btn-light rounded-circle">
@@ -99,6 +99,9 @@
 
             <!-- Section: Dashboard (Entregas) -->
             <section id="section-dashboard" class="animate-fade-in-up">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h4 fw-bold mb-0 text-dark" id="dashboard-level-title" style="font-family: 'Poppins';">Grados</h2>
+                </div>
                 <div class="card-ima mb-3 p-3">
                     <div class="row g-2 align-items-end">
                         <div class="col-md-3">
@@ -149,7 +152,7 @@
             </section>
 
             <!-- Section: Gestión -->
-            <section id="section-gestion" class="hidden animate-fade-in-up">
+            <section id="section-gestion" class="d-none animate-fade-in-up">
                 <h2 class="h4 fw-bold mb-4" style="font-family: 'Poppins';">Gestión de Tareas y Exámenes</h2>
                 <div class="table-ima-container">
                     <div class="table-responsive">
@@ -170,7 +173,7 @@
             </section>
 
             <!-- Section: Reportes -->
-            <section id="section-reportes" class="hidden animate-fade-in-up">
+            <section id="section-reportes" class="d-none animate-fade-in-up">
                 <h2 class="h4 fw-bold mb-4" style="font-family: 'Poppins';">Generar Reporte Consolidado (Excel)</h2>
                 <div class="card-ima mx-auto" style="max-width: 700px;">
                     <p class="text-muted mb-4">El reporte incluirá todas las asignaturas del grado y sección seleccionados.</p>
@@ -208,7 +211,7 @@
             </section>
 
             <!-- Section: Crear Tarea -->
-            <section id="section-crear" class="hidden animate-fade-in-up">
+            <section id="section-crear" class="d-none animate-fade-in-up">
                 <h2 class="h4 fw-bold mb-4" style="font-family: 'Poppins';">Crear Nueva Asignación</h2>
                 <div class="card-ima">
                     <form id="create-assignment-form">
@@ -270,7 +273,7 @@
             </section>
 
             <!-- Section: Crear Examen -->
-            <section id="section-crear-examen" class="hidden animate-fade-in-up">
+            <section id="section-crear-examen" class="d-none animate-fade-in-up">
                 <h2 class="h4 fw-bold mb-4" style="font-family: 'Poppins';">Generador de Exámenes Online</h2>
                 <div class="card-ima">
                     <form id="create-exam-form">
@@ -374,7 +377,7 @@
                             <div id="detail-puntaje" class="fw-bold"></div>
                         </div>
                     </div>
-                    <div id="detail-archivo-container" class="hidden mb-4">
+                    <div id="detail-archivo-container" class="d-none mb-4">
                         <label class="small fw-bold text-muted text-uppercase d-block mb-2">Archivo Adjunto</label>
                         <a id="detail-archivo-link" href="#" target="_blank" class="btn btn-light rounded-pill px-4">
                             <i class="fa-solid fa-paperclip me-2"></i> Ver documento
@@ -443,7 +446,7 @@
                                 <label class="form-label fw-bold">URL Archivo/Guía</label>
                                 <input type="text" id="edit-archivo" class="form-control bg-light">
                             </div>
-                            <div id="edit-exam-only-fields" class="col-md-4 hidden">
+                            <div id="edit-exam-only-fields" class="col-md-4 d-none">
                                 <label class="form-label fw-bold">Tiempo (min)</label>
                                 <input type="number" id="edit-tiempo" class="form-control bg-light">
                             </div>
