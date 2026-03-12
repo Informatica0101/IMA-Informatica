@@ -5,21 +5,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    document.getElementById('student-name').textContent = currentUser.nombre;
+    if (document.getElementById('student-name')) {
+        document.getElementById('student-name').textContent = currentUser.nombre;
+    }
     const tasksList = document.getElementById('tasks-list');
-    const logoutButton = document.getElementById('logout-button');
-
-    logoutButton.addEventListener('click', () => {
-        localStorage.removeItem('currentUser');
-        window.location.href = 'login.html';
-    });
 
     // --- Elementos del Modal ---
     const submissionModal = document.getElementById('submission-modal');
+    let submissionModalInstance = null;
+    if (submissionModal) {
+        submissionModalInstance = new bootstrap.Modal(submissionModal);
+    }
+
     const modalTaskTitle = document.getElementById('modal-task-title');
     const submissionForm = document.getElementById('submission-form');
     const fileInput = document.getElementById('file-input');
-    const cancelSubmissionBtn = document.getElementById('cancel-submission-btn');
     const filePreviewContainer = document.getElementById('file-preview-container');
     const imagePreview = document.getElementById('image-preview');
     const fileInfoPreview = document.getElementById('file-info-preview');
@@ -52,7 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para obtener Tareas y Exámenes
     async function fetchAllActivities() {
         if (!tasksList) return;
-        tasksList.innerHTML = '<p class="text-gray-500">Cargando actividades...</p>';
+        tasksList.innerHTML = `
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2 text-muted">Cargando actividades...</p>
+            </div>`;
         try {
             const payload = { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion };
 
@@ -63,35 +67,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const allActivities = [];
             if (tasksResult.status === 'success' && tasksResult.data) {
-                // Conservar el tipo original (Tarea o Credito Extra)
                 allActivities.push(...tasksResult.data.map(task => ({ ...task, type: task.tipo || 'Tarea' })));
             }
             if (examsResult.status === 'success' && examsResult.data) {
                 allActivities.push(...examsResult.data.map(exam => ({ ...exam, type: 'Examen' })));
             }
 
-            // Ordenar: No entregadas primero, luego por fecha límite (ascendente)
             allActivities.sort((a, b) => {
                 const deliveredA = !!a.entrega;
                 const deliveredB = !!b.entrega;
-
-                if (deliveredA !== deliveredB) {
-                    return deliveredA ? 1 : -1; // false (no entregada) viene antes que true
-                }
-
+                if (deliveredA !== deliveredB) return deliveredA ? 1 : -1;
                 return new Date(a.fechaLimite) - new Date(b.fechaLimite);
             });
 
             renderActivities(allActivities);
-
         } catch (error) {
-            tasksList.innerHTML = `<p class="text-red-500">Error al cargar actividades: ${error.message}</p>`;
+            tasksList.innerHTML = `<div class="col-12 alert alert-danger">Error al cargar actividades: ${error.message}</div>`;
         }
     }
 
     function renderActivities(activities) {
         if (!activities || activities.length === 0) {
-            tasksList.innerHTML = '<p class="text-gray-500">No hay actividades pendientes.</p>';
+            tasksList.innerHTML = '<div class="col-12 text-center py-5"><p class="text-muted">No hay actividades pendientes.</p></div>';
             return;
         }
         tasksList.innerHTML = activities.map(activity => {
@@ -101,70 +98,66 @@ document.addEventListener('DOMContentLoaded', () => {
             if (activity.type === 'Tarea' || activity.type === 'Credito Extra') {
                 if (activity.entrega) {
                     const status = activity.entrega.estado;
-                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    const statusBadge = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'bg-success' : (status === 'Rechazada' ? 'bg-danger' : 'bg-warning text-dark');
                     const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
 
                     feedbackHtml = `
-                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="font-bold text-md">Estado de tu Entrega:</h4>
-                                    <p class="font-semibold ${statusColor}">${displayStatus}</p>
-                                </div>
-                                <button class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>
+                        <div class="mt-3 p-3 bg-light rounded-3 border">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge ${statusBadge}">${displayStatus}</span>
+                                <button class="btn btn-sm btn-outline-danger delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">
+                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                </button>
                             </div>
-                            ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
-                            ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
+                            ${activity.entrega.calificacion ? `<p class="mb-1 small"><strong>Nota:</strong> ${activity.entrega.calificacion}/100</p>` : ''}
+                            ${activity.entrega.comentario ? `<p class="mb-0 small text-muted italic">"${activity.entrega.comentario}"</p>` : ''}
                         </div>`;
                 } else {
-                    actionButtonHtml = `<button class="bg-blue-500 text-white px-4 py-2 rounded-lg open-submission-modal"
+                    actionButtonHtml = `<button class="btn btn-ima-primary w-100 open-submission-modal"
                         data-task-id="${activity.tareaId}"
                         data-task-title="${activity.titulo}"
                         data-parcial="${activity.parcial || ''}"
-                        data-asignatura="${activity.asignatura || ''}">Entregar Tarea</button>`;
+                        data-asignatura="${activity.asignatura || ''}">
+                        <i class="fas fa-upload me-2"></i> Entregar Tarea
+                    </button>`;
                 }
             } else if (activity.type === 'Examen') {
                 if (activity.entrega) {
                     const status = activity.entrega.estado;
-                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
-                    const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
-
+                    const statusBadge = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'bg-success' : (status === 'Rechazada' ? 'bg-danger' : 'bg-warning text-dark');
                     feedbackHtml = `
-                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="font-bold text-md">Estado de tu Examen:</h4>
-                                    <p class="font-semibold ${statusColor}">${displayStatus}</p>
-                                </div>
-                                <button class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>
-                            </div>
-                            ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
-                            ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
+                        <div class="mt-3 p-3 bg-light rounded-3 border text-center">
+                            <span class="badge ${statusBadge} mb-2">${status === 'Revisada' ? 'Completada' : status}</span>
+                            <p class="small mb-0">Calificación: <strong>${activity.entrega.calificacion || 'Pendiente'}</strong></p>
+                            <button class="btn btn-link btn-sm text-danger mt-2 delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar</button>
                         </div>`;
                 } else {
                     const estado = activity.estado || 'Inactivo';
                     if (estado === 'Activo') {
-                        actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="bg-purple-500 text-white px-4 py-2 rounded-lg">Realizar Examen</a>`;
+                        actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="btn btn-primary w-100 bg-purple-600 border-0 shadow-sm">
+                            <i class="fas fa-edit me-2"></i> Realizar Examen
+                        </a>`;
                     } else {
-                        actionButtonHtml = `<button class="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed" disabled>${estado}</button>`;
+                        actionButtonHtml = `<button class="btn btn-secondary w-100" disabled>${estado}</button>`;
                     }
                 }
             }
 
             return `
-                <div class="dashboard-card">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-lg font-bold">${activity.titulo} <span class="text-xs font-normal text-gray-500">(${activity.type})</span></h3>
-                            <p class="text-sm text-gray-500 mb-2"><strong>Asignatura:</strong> ${activity.asignatura || 'No especificada'}</p>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card-ima h-100 p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3">${activity.type}</span>
+                            <small class="text-muted fw-bold"><i class="far fa-calendar-alt me-1"></i> ${formatDate(activity.fechaLimite)}</small>
                         </div>
-                        <span class="text-sm font-semibold text-gray-600">${formatDate(activity.fechaLimite)}</span>
+                        <h5 class="fw-bold mb-1">${activity.titulo}</h5>
+                        <p class="text-primary small mb-3"><strong>${activity.asignatura || 'General'}</strong></p>
+                        <p class="text-muted small flex-grow-1">${activity.descripcion || 'Sin descripción adicional.'}</p>
+                        <div class="mt-3">
+                            ${actionButtonHtml}
+                        </div>
+                        ${feedbackHtml}
                     </div>
-                    <p class="text-gray-700 mt-2">${activity.descripcion || 'Sin descripción.'}</p>
-                    <div class="mt-4">
-                        ${actionButtonHtml}
-                    </div>
-                    ${feedbackHtml}
                 </div>
             `;
         }).join('');
@@ -185,56 +178,48 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.value = '';
         updateConfirmButtonState();
 
-        submissionModal.classList.remove('hidden');
+        if (submissionModalInstance) submissionModalInstance.show();
     }
 
     function closeSubmissionModal() {
         if (activeUploads > 0) {
-            if (!confirm('Hay una subida en progreso. ¿Estás seguro de cerrar el modal?')) return;
+            if (!confirm('Hay una subida en progreso. ¿Deseas cerrar el modal?')) return;
         }
-        submissionModal.classList.add('hidden');
+        if (submissionModalInstance) submissionModalInstance.hide();
         submissionForm.reset();
     }
 
     function updateConfirmButtonState() {
         if (!confirmSubmissionBtn) return;
-        if (uploadedFiles.length > 0 && activeUploads === 0) {
-            confirmSubmissionBtn.disabled = false;
-            confirmSubmissionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        } else {
-            confirmSubmissionBtn.disabled = true;
-            confirmSubmissionBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
+        confirmSubmissionBtn.disabled = !(uploadedFiles.length > 0 && activeUploads === 0);
     }
 
     if (tasksList) {
         tasksList.addEventListener('click', async (e) => {
-            if (e.target && e.target.classList.contains('open-submission-modal')) {
-                const ds = e.target.dataset;
+            const target = e.target.closest('.open-submission-modal') || e.target;
+            if (target.classList.contains('open-submission-modal')) {
+                const ds = target.dataset;
                 openSubmissionModal(ds.taskId, ds.taskTitle, ds.parcial, ds.asignatura);
             }
 
-            if (e.target && e.target.classList.contains('delete-submission-btn')) {
-                const type = e.target.dataset.type;
-                const entregaId = e.target.dataset.entregaId;
+            if (target.classList.contains('delete-submission-btn') || target.closest('.delete-submission-btn')) {
+                const btn = target.closest('.delete-submission-btn');
+                const { type, entregaId } = btn.dataset;
 
                 if (confirm('Al eliminar tu entrega es posible que pierdas la calificar de tu tarea si ya fue revisada.')) {
-                    e.target.disabled = true;
-                    e.target.textContent = 'Eliminando...';
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
                     try {
                         const service = type === 'Examen' ? 'EXAM' : 'TASK';
                         const action = type === 'Examen' ? 'deleteExamSubmission' : 'deleteSubmission';
                         const result = await fetchApi(service, action, { entregaId });
                         if (result.status === 'success') {
-                            alert('Entrega eliminada correctamente.');
                             fetchAllActivities();
-                        } else {
-                            throw new Error(result.message);
-                        }
+                        } else throw new Error(result.message);
                     } catch (error) {
-                        alert('Error al eliminar entrega: ' + error.message);
-                        e.target.disabled = false;
-                        e.target.textContent = 'Eliminar Entrega';
+                        alert('Error: ' + error.message);
+                        btn.disabled = false;
+                        btn.textContent = 'Eliminar';
                     }
                 }
             }
@@ -244,23 +229,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fileInput) {
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (!file) {
-                filePreviewContainer.classList.add('hidden');
-                return;
-            }
+            if (!file) { filePreviewContainer.classList.add('hidden'); return; }
             filePreviewContainer.classList.remove('hidden');
             if (file.type.startsWith('image/')) {
                 imagePreview.classList.remove('hidden');
                 fileInfoPreview.classList.add('hidden');
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.querySelector('img').src = e.target.result;
-                };
+                reader.onload = (e) => imagePreview.querySelector('img').src = e.target.result;
                 reader.readAsDataURL(file);
             } else {
                 imagePreview.classList.add('hidden');
                 fileInfoPreview.classList.remove('hidden');
-                fileInfoPreview.textContent = `Archivo seleccionado: ${file.name}`;
+                fileInfoPreview.textContent = file.name;
             }
         });
     }
@@ -273,21 +253,11 @@ document.addEventListener('DOMContentLoaded', () => {
             acceptFileBtn.disabled = true;
             acceptFileBtn.classList.add('btn-loading');
 
-            const currentFile = file;
-            const currentFileName = currentFile.name;
-
             const li = document.createElement('li');
-            li.className = 'flex items-center justify-between text-sm text-gray-700 bg-white p-2 rounded border shadow-sm';
-            li.innerHTML = `
-                <div class="flex items-center space-x-2 truncate">
-                    <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <span class="truncate">${currentFileName}</span>
-                </div>
-                <span class="text-xs text-blue-500 font-medium">Subiendo...</span>
-            `;
+            li.className = 'list-group-item d-flex justify-content-between align-items-center small';
+            li.innerHTML = `<span class="text-truncate" style="max-width: 150px;">${file.name}</span><span class="badge bg-info">Subiendo...</span>`;
             uploadedFilesList.appendChild(li);
             uploadedFilesContainer.classList.remove('hidden');
-
             filePreviewContainer.classList.add('hidden');
             fileInput.value = '';
 
@@ -296,94 +266,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const reader = new FileReader();
             reader.onloadend = async () => {
-                const fileData = reader.result;
-                const payload = {
-                    userId: currentUser.userId,
-                    tareaId: currentTaskId,
-                    fileName: currentFileName,
-                    fileData: fileData,
-                    parcial: currentTaskParcial,
-                    asignatura: currentTaskAsignatura
-                };
-
                 try {
-                    const result = await fetchApi('TASK', 'uploadFile', payload);
-
-                    acceptFileBtn.disabled = false;
-                    acceptFileBtn.classList.remove('btn-loading');
-
+                    const result = await fetchApi('TASK', 'uploadFile', {
+                        userId: currentUser.userId, tareaId: currentTaskId,
+                        fileName: file.name, fileData: reader.result,
+                        parcial: currentTaskParcial, asignatura: currentTaskAsignatura
+                    });
                     if (result.status === 'success') {
-                        const uploadedData = result.data;
-                        uploadedFiles.push({
-                            fileId: uploadedData.fileId,
-                            fileName: currentFileName,
-                            mimeType: uploadedData.mimeType
-                        });
-                        currentFolderId = uploadedData.folderId;
-
+                        uploadedFiles.push({ fileId: result.data.fileId, fileName: file.name, mimeType: result.data.mimeType });
+                        currentFolderId = result.data.folderId;
                         li.innerHTML = `
-                            <div class="flex items-center space-x-2 truncate">
-                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                <span class="truncate">${currentFileName}</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <span class="text-xs text-green-600 font-medium">Listo</span>
-                                <button type="button" class="text-red-500 hover:text-red-700 remove-file-btn" data-file-id="${uploadedData.fileId}">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </button>
-                            </div>
-                        `;
-                    } else {
-                        li.innerHTML = `
-                            <div class="flex items-center space-x-2 truncate">
-                                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                <span class="truncate text-red-600">${currentFileName}</span>
-                            </div>
-                            <span class="text-xs text-red-600 font-medium">Error</span>
-                        `;
-                        alert('Error al subir ' + currentFileName + ': ' + result.message);
-                    }
+                            <span class="text-truncate" style="max-width: 150px;"><i class="fas fa-check-circle text-success me-1"></i> ${file.name}</span>
+                            <button type="button" class="btn btn-sm btn-link text-danger remove-file-btn" data-file-id="${result.data.fileId}"><i class="fas fa-times"></i></button>`;
+                    } else throw new Error(result.message);
                 } catch (error) {
-                    acceptFileBtn.disabled = false;
-                    acceptFileBtn.classList.remove('btn-loading');
-                    li.innerHTML = `<span class="text-red-600">Error: ${currentFileName}</span>`;
-                    alert('Error de conexión al subir ' + currentFileName + ': ' + error.message);
+                    li.innerHTML = `<span class="text-danger">Error: ${file.name}</span>`;
+                    alert('Error: ' + error.message);
                 } finally {
                     activeUploads--;
+                    acceptFileBtn.disabled = false;
+                    acceptFileBtn.classList.remove('btn-loading');
                     updateConfirmButtonState();
                 }
             };
-            reader.readAsDataURL(currentFile);
+            reader.readAsDataURL(file);
         });
     }
-
-    if (cancelSubmissionBtn) cancelSubmissionBtn.addEventListener('click', closeSubmissionModal);
 
     if (uploadedFilesList) {
         uploadedFilesList.addEventListener('click', async (e) => {
             const btn = e.target.closest('.remove-file-btn');
-            if (btn) {
-                const fileId = btn.dataset.fileId;
-                const li = btn.closest('li');
-
-                // (A-30) Eliminar archivo remoto
-                btn.disabled = true;
-                li.style.opacity = '0.5';
-
-                try {
-                    // Se intenta eliminar de Drive pero no bloqueamos si falla la red
-                    await fetchApi('TASK', 'deleteFile', { fileId });
-                } catch (error) {
-                    console.error("Error al eliminar archivo remoto:", error);
-                }
-
-                uploadedFiles = uploadedFiles.filter(f => f.fileId !== fileId);
-                li.remove();
-                if (uploadedFiles.length === 0) {
-                    uploadedFilesContainer.classList.add('hidden');
-                }
-                updateConfirmButtonState();
-            }
+            if (!btn) return;
+            const fileId = btn.dataset.fileId;
+            const li = btn.closest('li');
+            li.style.opacity = '0.5';
+            try { await fetchApi('TASK', 'deleteFile', { fileId }); } catch (e) {}
+            uploadedFiles = uploadedFiles.filter(f => f.fileId !== fileId);
+            li.remove();
+            if (uploadedFiles.length === 0) uploadedFilesContainer.classList.add('hidden');
+            updateConfirmButtonState();
         });
     }
 
@@ -391,36 +312,21 @@ document.addEventListener('DOMContentLoaded', () => {
         submissionForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (uploadedFiles.length === 0 || activeUploads > 0) return;
-
             confirmSubmissionBtn.disabled = true;
             confirmSubmissionBtn.classList.add('btn-loading');
-
             try {
-                let finalFileId = uploadedFiles[0].fileId;
-                let finalMimeType = uploadedFiles[0].mimeType;
-
-                if (uploadedFiles.length > 1) {
-                    finalFileId = currentFolderId;
-                    finalMimeType = 'folder';
-                }
-
-                const payload = {
-                    userId: currentUser.userId,
-                    tareaId: currentTaskId,
-                    fileId: finalFileId,
-                    mimeType: finalMimeType
-                };
-
-                const result = await fetchApi('TASK', 'submitAssignment', payload);
-                if (result.status === 'success') {
-                    alert('¡Tarea entregada exitosamente!');
+                const res = await fetchApi('TASK', 'submitAssignment', {
+                    userId: currentUser.userId, tareaId: currentTaskId,
+                    fileId: uploadedFiles.length > 1 ? currentFolderId : uploadedFiles[0].fileId,
+                    mimeType: uploadedFiles.length > 1 ? 'folder' : uploadedFiles[0].mimeType
+                });
+                if (res.status === 'success') {
+                    alert('¡Tarea entregada!');
                     closeSubmissionModal();
                     fetchAllActivities();
-                } else {
-                    throw new Error(result.message);
-                }
+                } else throw new Error(res.message);
             } catch (error) {
-                alert(`Error al finalizar la entrega: ${error.message}`);
+                alert(`Error: ${error.message}`);
             } finally {
                 confirmSubmissionBtn.disabled = false;
                 confirmSubmissionBtn.classList.remove('btn-loading');

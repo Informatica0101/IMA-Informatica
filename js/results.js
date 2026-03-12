@@ -1,117 +1,65 @@
 document.addEventListener('DOMContentLoaded', () => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser) {
-        window.location.href = 'login.html';
-        return;
-    }
+    if (!currentUser) { window.location.href = 'login.html'; return; }
 
-    // Validar acceso (Profesores siempre, estudiantes solo si es su resultado)
     const resultsContainer = document.getElementById('results-container');
     const urlParams = new URLSearchParams(window.location.search);
     const entregaExamenId = urlParams.get('entregaExamenId');
-    const calificacionParam = urlParams.get('calificacion');
 
     async function loadResults() {
-        // Caso A: Datos pasados directamente por URL (Legacy/Instantáneo) (A-26)
-        if (calificacionParam) {
-            try {
-                const rawResultados = urlParams.get('resultados');
-                const rawPreguntas = urlParams.get('preguntas');
-
-                if (!rawResultados || !rawPreguntas) {
-                    throw new Error("Faltan parámetros de resultados o preguntas en la URL.");
-                }
-
-                const resultados = JSON.parse(decodeURIComponent(rawResultados));
-                const preguntas = JSON.parse(decodeURIComponent(rawPreguntas));
-                renderResultsDirect(calificacionParam, resultados, preguntas);
-                return;
-            } catch (e) {
-                console.error("Error al procesar parámetros de URL:", e);
-                resultsContainer.innerHTML = `<p class="text-red-500">Error al cargar resultados directos: ${e.message}</p>`;
-                return;
-            }
-        }
-
-        // Caso B: Fetch desde API por entregaId
         if (!entregaExamenId) {
-            resultsContainer.innerHTML = '<p class="text-red-500">No se proporcionó un ID de entrega de examen.</p>';
+            resultsContainer.innerHTML = '<div class="alert alert-warning">No se proporcionó un ID de entrega.</div>';
             return;
         }
 
         try {
             const result = await fetchApi('EXAM', 'getExamResult', { entregaExamenId, userId: currentUser.userId });
-
             if (result.status === 'success' && result.data) {
                 renderResults(result.data);
-            } else {
-                // Si el estudiante intenta ver un examen que no es suyo, el backend debería denegarlo
-                throw new Error(result.message || 'No se pudieron cargar los resultados.');
-            }
+            } else throw new Error(result.message);
         } catch (error) {
-            resultsContainer.innerHTML = `<p class="text-red-500">Error al cargar los resultados: ${error.message}</p>`;
+            resultsContainer.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
         }
-    }
-
-    function renderResultsDirect(calificacion, resultados, preguntas) {
-        let detailsHtml = '<div class="space-y-4">';
-        resultados.forEach((res, index) => {
-            // (A-27) Validación de existencia del objeto pregunta
-            const pregunta = (preguntas || []).find(p => p.preguntaId === res.preguntaId);
-            const bgColor = res.esCorrecta ? 'bg-green-100' : 'bg-red-100';
-            const borderColor = res.esCorrecta ? 'border-green-500' : 'border-red-500';
-            const textoPregunta = pregunta && pregunta.textoPregunta ? pregunta.textoPregunta : 'Pregunta no encontrada';
-
-            detailsHtml += `
-                <div class="p-4 rounded border ${borderColor} ${bgColor}">
-                    <p class="font-bold">${index + 1}. ${textoPregunta}</p>
-                    <p class="text-sm">Tu respuesta: <span class="font-mono">${res.respuestaEstudiante || 'No respondida'}</span> ${res.esCorrecta ? '✅' : '❌'}</p>
-                </div>
-            `;
-        });
-        detailsHtml += '</div>';
-
-        resultsContainer.innerHTML = `
-            <p class="text-4xl font-bold text-center mb-6 text-blue-600">Calificación: ${calificacion}%</p>
-            <hr class="my-6">
-            <h3 class="text-xl font-bold mb-4">Detalle de Respuestas</h3>
-            ${detailsHtml}
-        `;
     }
 
     function renderResults(data) {
         const { calificacionTotal, resultadosDetallados, examenTitulo } = data;
 
-        let detailsHtml = '<div class="space-y-4">';
+        let detailsHtml = '';
         resultadosDetallados.forEach((item, index) => {
-            const bgColor = item.esCorrecta ? 'bg-green-100' : (parseFloat(item.score) > 0 ? 'bg-yellow-50' : 'bg-red-100');
-            const borderColor = item.esCorrecta ? 'border-green-500' : (parseFloat(item.score) > 0 ? 'border-yellow-500' : 'border-red-500');
-
-            let displayAnswer = item.respuestaEstudiante;
-            if (item.tipo === 'termino_pareado') {
-                try {
-                    const sMap = JSON.parse(item.respuestaEstudiante || "{}");
-                    displayAnswer = Object.entries(sMap).map(([idx, concept]) => `Definición ${parseInt(idx)+1} → Concepto ${concept}`).join(', ');
-                } catch(e) {}
-            }
+            const statusClass = item.esCorrecta ? 'border-success' : (parseFloat(item.score) > 0 ? 'border-warning' : 'border-danger');
+            const icon = item.esCorrecta ? 'fa-check-circle text-success' : (parseFloat(item.score) > 0 ? 'fa-exclamation-circle text-warning' : 'fa-times-circle text-danger');
 
             detailsHtml += `
-                <div class="p-4 rounded border ${borderColor} ${bgColor}">
-                    <p class="font-semibold">Pregunta ${index + 1}: ${item.texto}</p>
-                    <p>Respuesta: <span class="font-mono">${displayAnswer || 'No respondida'}</span></p>
-                    <p>Puntaje: <span class="font-bold">${item.score}</span></p>
-                </div>
-            `;
+                <div class="card-ima p-3 mb-3 border-start border-4 ${statusClass}">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="fw-bold mb-1">Pregunta ${index + 1}</h6>
+                        <i class="fas ${icon} fs-5"></i>
+                    </div>
+                    <p class="small text-dark mb-2">${item.texto}</p>
+                    <div class="bg-light p-2 rounded small">
+                        <p class="mb-0"><strong>Respuesta:</strong> <span class="text-primary">${item.respuestaEstudiante || 'Sin respuesta'}</span></p>
+                        <p class="mb-0"><strong>Puntaje:</strong> ${item.score}</p>
+                    </div>
+                </div>`;
         });
-        detailsHtml += '</div>';
 
         resultsContainer.innerHTML = `
-            <h2 class="text-2xl font-bold text-center mb-2">Examen: ${examenTitulo}</h2>
-            <p class="text-4xl font-bold text-center mb-6 text-blue-600">Calificación Final: ${calificacionTotal}%</p>
-            <hr class="my-6">
-            <h3 class="text-xl font-bold mb-4">Detalle de Respuestas</h3>
-            ${detailsHtml}
-        `;
+            <div class="text-center mb-5 animate-fade-in-up">
+                <span class="badge bg-primary rounded-pill px-3 mb-2">Resultados de Examen</span>
+                <h2 class="fw-bold">${examenTitulo}</h2>
+                <div class="display-4 fw-bold text-primary mt-3">${calificacionTotal}%</div>
+                <p class="text-muted">Calificación Obtenida</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h5 class="fw-bold mb-4"><i class="fas fa-list-check me-2"></i>Desglose de Respuestas</h5>
+                    ${detailsHtml}
+                    <div class="text-center mt-5">
+                        <a href="index.html" class="btn btn-outline-primary px-4 rounded-pill">Volver al Inicio</a>
+                    </div>
+                </div>
+            </div>`;
     }
 
     loadResults();
