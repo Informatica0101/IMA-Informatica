@@ -720,3 +720,12 @@ ARCHIVO: pseudocode.html
     - Soporte completo para funciones/subprocesos con hoisting.
   - Generador de Diagramas: Implementado renderizado recursivo para representar correctamente ramas de decisión y bucles en formato SVG.
   - Atajos y Menús: Mapeados todos los comandos clásicos (F9 para Ejecutar, F10 Paso a Paso, Ctrl+S para Guardar, etc.).
+
+FECHA: 10/03/2026
+ARCHIVO: III_BTP_A/dw_II/propiedades_css.html
+LÍNEAS: 1-130 (Reescritura completa)
+DESCRIPCIÓN: Reestructuración total del artículo para cumplir con los estándares visuales de la plataforma. Se integró Tailwind CSS, la fuente Inter, y se añadieron secciones detalladas sobre Texto, Modelo de Caja, Flexbox, Grid y Efectos Visuales. Se incluyeron tablas de tipos de valores y cuadros de previsualización interactivos mediante estilos inline para cada categoría.
+
+ARCHIVO: js/data.js
+LÍNEAS: 89
+DESCRIPCIÓN: Inserción del nuevo artículo "Propiedades CSS" en la lista de Recursos Adicionales bajo la categoría "Artículos".

@@ -86,7 +86,8 @@ window.additionalResourcesData = [
         items: [
             { title: "Destreza en el teclado", file: "II_BTP_A/Ofimatica_I/articulo-destreza.html" },
             // { title: "Línea de tiempo de la computación", file: "Informatica_I/articulo_lineadetiempo.html" },
-            { title: "Evolución de Suites Informáticas", file: "II_BTP_A/Ofimatica_I/articulo-evolucion-suite.html" }
+            { title: "Evolución de Suites Informáticas", file: "II_BTP_A/Ofimatica_I/articulo-evolucion-suite.html" },
+            { title: "Propiedades CSS", file: "III_BTP_A/dw_II/propiedades_css.html" }
         ]
     },
     {

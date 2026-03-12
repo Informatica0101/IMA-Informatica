@@ -1,0 +1,29 @@
+AUDITORÍA DE REGRESIÓN - PROYECTO INFORMÁTICA
+===========================================
+
+ARCHIVO: III_BTP_A/dw_II/propiedades_css.html
+-------------------------------------------
+Hallazgos:
+- El nuevo diseño eliminó propiedades que estaban en la versión original.
+- Propiedades originales a recuperar:
+    1. font-family
+    2. font-style
+    3. letter-spacing
+    4. line-height
+    5. text-transform
+    6. text-shadow
+    7. text-decoration
+    8. background-color
+    9. overflow
+    10. object-fit
+    11. filter
+- Propiedades nuevas a añadir para completar la guía (+40 en total):
+    - Texto: font-variant, text-indent, word-spacing, white-space.
+    - Fondo: background-image, background-size, background-position, background-repeat.
+    - Modelo de Caja/Bordes: outline, box-sizing (ya está).
+    - Posicionamiento: z-index, top, right, bottom, left, visibility.
+    - Flexbox avanzado: flex-wrap, flex-grow, flex-shrink.
+    - Grid avanzado: grid-column, grid-row, gap (ya está).
+    - Interactividad y Efectos: cursor (ya está), pointer-events, transform, transition, scroll-behavior.
+
+ACCIÓN: Reincorporar las 25 originales y añadir al menos 15 más para superar las 40 requeridas.
