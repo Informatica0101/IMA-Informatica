@@ -69,6 +69,7 @@ function doPost(e) {
       case "getExamResult": result = getExamResult(payload); break;
       case "updateExam": result = updateExam(payload); break;
       case "deleteExam": result = deleteExam(payload); break;
+      case "deleteExamSubmission": result = deleteExamSubmission(payload); break;
       default:
         result = { status: "error", message: `Acción no válida: ${action}` };
     }
@@ -444,6 +445,7 @@ function getTeacherExamActivity(payload) {
       entregaId: entrega[0],
       examenId: entrega[1],
       titulo: examen[1], // Examen ya verificado arriba
+      alumnoId: entrega[2], // Columna C: userId
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
       grado: usuario ? usuario[2] : "N/A",
       seccion: usuario ? usuario[3] : "N/A",
@@ -485,4 +487,17 @@ function gradeExamSubmission(payload) {
     return { status: "success", message: "Examen calificado." };
   }
   throw new Error("Entrega de examen no encontrada.");
+}
+
+function deleteExamSubmission(payload) {
+  const { entregaId } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const entregasSheet = getSheetOrThrow(ss, "EntregasExamen");
+  const data = entregasSheet.getDataRange().getValues();
+  const rowIndex = data.findIndex(row => row[0] === entregaId);
+
+  if (rowIndex === -1) throw new Error("Entrega no encontrada.");
+
+  entregasSheet.deleteRow(rowIndex + 1);
+  return { status: "success", message: "Entrega de examen eliminada correctamente." };
 }

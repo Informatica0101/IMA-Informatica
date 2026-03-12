@@ -106,8 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     feedbackHtml = `
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                            <h4 class="font-bold text-md">Estado de tu Entrega:</h4>
-                            <p class="font-semibold ${statusColor}">${displayStatus}</p>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-bold text-md">Estado de tu Entrega:</h4>
+                                    <p class="font-semibold ${statusColor}">${displayStatus}</p>
+                                </div>
+                                <button class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>
+                            </div>
                             ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
                             ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
                         </div>`;
@@ -126,8 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     feedbackHtml = `
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                            <h4 class="font-bold text-md">Estado de tu Examen:</h4>
-                            <p class="font-semibold ${statusColor}">${displayStatus}</p>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-bold text-md">Estado de tu Examen:</h4>
+                                    <p class="font-semibold ${statusColor}">${displayStatus}</p>
+                                </div>
+                                <button class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>
+                            </div>
                             ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
                             ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
                         </div>`;
@@ -198,10 +208,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (tasksList) {
-        tasksList.addEventListener('click', (e) => {
+        tasksList.addEventListener('click', async (e) => {
             if (e.target && e.target.classList.contains('open-submission-modal')) {
                 const ds = e.target.dataset;
                 openSubmissionModal(ds.taskId, ds.taskTitle, ds.parcial, ds.asignatura);
+            }
+
+            if (e.target && e.target.classList.contains('delete-submission-btn')) {
+                const type = e.target.dataset.type;
+                const entregaId = e.target.dataset.entregaId;
+
+                if (confirm('¿Estás seguro de eliminar tu entrega? Esta acción borrará permanentemente tu archivo de Drive.')) {
+                    e.target.disabled = true;
+                    e.target.textContent = 'Eliminando...';
+                    try {
+                        const service = type === 'Examen' ? 'EXAM' : 'TASK';
+                        const action = type === 'Examen' ? 'deleteExamSubmission' : 'deleteSubmission';
+                        const result = await fetchApi(service, action, { entregaId });
+                        if (result.status === 'success') {
+                            alert('Entrega eliminada correctamente.');
+                            fetchAllActivities();
+                        } else {
+                            throw new Error(result.message);
+                        }
+                    } catch (error) {
+                        alert('Error al eliminar entrega: ' + error.message);
+                        e.target.disabled = false;
+                        e.target.textContent = 'Eliminar Entrega';
+                    }
+                }
             }
         });
     }

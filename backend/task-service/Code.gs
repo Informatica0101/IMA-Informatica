@@ -50,6 +50,7 @@ function doPost(e) {
       case "getAllTasks": response = getAllTasks(payload); break;
       case "updateTask": response = updateTask(payload); break;
       case "deleteTask": response = deleteTask(payload); break;
+      case "deleteSubmission": response = deleteSubmission(payload); break;
       default:
         response = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
@@ -279,6 +280,30 @@ function gradeSubmission(payload) {
   throw new Error("Entrega no encontrada.");
 }
 
+function deleteSubmission(payload) {
+  const { entregaId } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const entregasSheet = getSheetOrThrow(ss, "Entregas");
+  const data = entregasSheet.getDataRange().getValues();
+  const rowIndex = data.findIndex(row => row[0] === entregaId);
+
+  if (rowIndex === -1) throw new Error("Entrega no encontrada.");
+
+  const fileId = data[rowIndex][4]; // Columna E: fileId
+  if (fileId) {
+    try {
+      const file = DriveApp.getFileById(fileId);
+      file.setTrashed(true);
+    } catch (e) {
+      logDebug("Error al borrar archivo de Drive:", e.message);
+      // No lanzamos error para permitir borrar el registro si el archivo ya no existe
+    }
+  }
+
+  entregasSheet.deleteRow(rowIndex + 1);
+  return { status: "success", message: "Entrega eliminada correctamente." };
+}
+
 function getTeacherActivity(payload) {
   const { profesorId, grado, seccion } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -315,6 +340,7 @@ function getTeacherActivity(payload) {
       tipo: 'Tarea',
       entregaId: entrega[0],
       titulo: tarea[2], // Tarea ya verificada arriba
+      alumnoId: entrega[2], // Columna C: userId
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
       grado: usuario ? usuario[2] : "N/A",
       seccion: usuario ? usuario[3] : "N/A",
