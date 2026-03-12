@@ -14,10 +14,10 @@ const SERVICE_URLS = {
   USER: 'https://script.google.com/macros/s/AKfycbx4iO9-5XFU-VPWAx6hkUNzDxeaL9TDUxY-K5iMIh3gXn5ckZ9UAeiWeQ5bY7b2aFlk/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
-  TASK: 'https://script.google.com/macros/s/AKfycbxZg12QFgJh9QxIcSNmWqgWO3xItmEBP_ejSzidfCBmogqfSBtCA3jiPDh33SL4DC4/exec',
+  TASK: 'https://script.google.com/macros/s/AKfycbz1e8-QU6XrbhIqThzHYQTWUHb5rJUivqfXX79fMVAfoh1Y3quT7owRp9Ix04F1azQ/exec',
 
   // Pega aquí la URL del despliegue del microservicio de exámenes.
-  EXAM: 'https://script.google.com/macros/s/AKfycbxpO5Y-aXXUkatVEfby7USZhW9n_vwOZjOD8vSl7QanqkMUFXM2v4jkj6-5AFjOf-8/exec'
+  EXAM: 'https://script.google.com/macros/s/AKfycbyZKka25CJWqTU_KeEiCptF5MW8d-ypsbif7TG7IFYI8qQTUp76jpQm2Z2DUA8oZ43S/exec'
 };
 
 // --- URL del sitio para CORS (si es necesario ajustarlo en el backend) ---
