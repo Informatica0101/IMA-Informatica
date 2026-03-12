@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const type = e.target.dataset.type;
                 const entregaId = e.target.dataset.entregaId;
 
-                if (confirm('¿Estás seguro de eliminar tu entrega? Esta acción borrará permanentemente tu archivo de Drive.')) {
+                if (confirm('Al eliminar tu entrega es posible que pierdas la calificar de tu tarea si ya fue revisada.')) {
                     e.target.disabled = true;
                     e.target.textContent = 'Eliminando...';
                     try {

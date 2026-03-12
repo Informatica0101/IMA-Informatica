@@ -103,12 +103,12 @@
                 <p class="text-lg text-gray-600 font-medium">Bienvenido, <span id="teacher-name" class="text-blue-600 font-bold"></span>.</p>
             </div>
 
-            <nav class="flex flex-wrap gap-4 mb-6">
-                <button id="nav-dashboard" class="px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md bg-blue-600 text-white">Dashboard</button>
-                <button id="nav-gestion" class="px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Gestión de Tareas</button>
-                <button id="nav-reportes" class="px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Reportes Excel</button>
-                <button id="nav-crear" class="px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Tarea</button>
-                <button id="nav-crear-examen" class="px-6 py-3 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Examen</button>
+            <nav class="flex flex-nowrap overflow-x-auto gap-2 md:gap-4 mb-6 pb-2 scroll-horizontal-clean">
+                <button id="nav-dashboard" class="flex-none px-4 py-2 text-sm md:px-6 md:py-3 md:text-base rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-blue-600 text-white">Dashboard</button>
+                <button id="nav-gestion" class="flex-none px-4 py-2 text-sm md:px-6 md:py-3 md:text-base rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Gestión de Tareas</button>
+                <button id="nav-reportes" class="flex-none px-4 py-2 text-sm md:px-6 md:py-3 md:text-base rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Reportes Excel</button>
+                <button id="nav-crear" class="flex-none px-4 py-2 text-sm md:px-6 md:py-3 md:text-base rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Tarea</button>
+                <button id="nav-crear-examen" class="flex-none px-4 py-2 text-sm md:px-6 md:py-3 md:text-base rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Examen</button>
             </nav>
 
             <!-- Sección de Dashboard (Entregas) -->
@@ -356,10 +356,10 @@
 
     <!-- Modal de Calificación -->
     <div id="grade-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[60] backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md mx-4 animate-fade-in-up">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Calificar Entrega</h2>
+        <div class="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-md mx-4 animate-fade-in-up">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Calificar Entrega</h2>
 
-            <div class="space-y-4 mb-8">
+            <div class="space-y-3 mb-6 text-sm">
                 <div class="flex justify-between">
                     <span class="text-gray-500 font-medium">Alumno:</span>
                     <span id="student-name-modal" class="font-bold text-gray-800"></span>
@@ -437,9 +437,9 @@
 
     <!-- Modal de Detalles de Tarea -->
     <div id="task-details-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[60] backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-lg mx-4 animate-fade-in-up max-h-[90vh] overflow-y-auto">
-            <h2 id="detail-titulo" class="text-2xl font-bold text-gray-800 mb-4">Detalles de Tarea</h2>
-            <div class="space-y-4 mb-8 text-sm">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-lg mx-4 animate-fade-in-up max-h-[90vh] overflow-y-auto">
+            <h2 id="detail-titulo" class="text-xl font-bold text-gray-800 mb-3">Detalles de Tarea</h2>
+            <div class="space-y-3 mb-6 text-sm">
                 <p class="text-gray-600" id="detail-descripcion"></p>
                 <div class="grid grid-cols-2 gap-4">
                     <div><span class="block text-gray-400 font-bold uppercase text-[10px]">Materia</span> <span id="detail-asignatura" class="font-medium"></span></div>
@@ -464,8 +464,8 @@
 
     <!-- Modal de Edición de Tarea -->
     <div id="edit-task-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[70] backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-2xl mx-4 animate-fade-in-up max-h-[90vh] overflow-y-auto">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Editar Asignación</h2>
+        <div class="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 animate-fade-in-up max-h-[90vh] overflow-y-auto">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Editar Asignación</h2>
             <form id="edit-assignment-form">
                 <input type="hidden" id="edit-id">
                 <input type="hidden" id="edit-tipo-orig">

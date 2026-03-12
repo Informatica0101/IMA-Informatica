@@ -88,8 +88,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Lógica de Navegación Jerárquica ---
-    function pushNav(level, data) {
+    async function pushNav(level, data) {
         if (studentSearchInput) studentSearchInput.value = '';
+
+        if (level === 'Alumnos') {
+            // Cargamos la lista real de alumnos inscritos para este grado y sección
+            try {
+                const res = await fetchApi('USER', 'getStudentsByGradoSeccion', { grado: data.grado, seccion: data.seccion });
+                data.students = res.data || [];
+            } catch (e) {
+                console.error("Error al cargar alumnos:", e);
+                data.students = [];
+            }
+        }
+
         navStack.push({ level, data });
         renderCurrentLevel();
     }
@@ -386,17 +398,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderAlumnos(grado, seccion, search) {
-        const alumnosMap = {};
-        allActivityRaw.filter(i => i.grado === grado && i.seccion === seccion).forEach(item => {
-            if (!item.alumnoNombre || !item.alumnoId) return;
-            if (!alumnosMap[item.alumnoId]) alumnosMap[item.alumnoId] = { id: item.alumnoId, nombre: item.alumnoNombre, total: 0 };
-            alumnosMap[item.alumnoId].total++;
+        const current = navStack[navStack.length - 1];
+        const students = current.data.students || [];
+
+        // Enriquecer alumnos con status de actividad
+        const studentsWithStatus = students.map(s => {
+            const studentActivity = allActivityRaw.filter(i => i.alumnoId === s.userId);
+            let hasPending = false;
+            studentActivity.forEach(item => {
+                const isDelivered = !!(item.fileId || item.respuestas || item.entregaId);
+                const isGraded = (item.estado === 'Completada' || item.estado === 'Revisada' || item.estado === 'Rechazada');
+                if (isDelivered && !isGraded) hasPending = true;
+            });
+            return { ...s, hasPending };
         });
-        const alumnos = Object.values(alumnosMap).filter(a => a.nombre.toLowerCase().includes(search));
-        currentFilteredItems = alumnos;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-600">ID Alumno</th><th class="p-4 text-left font-bold text-gray-600">Nombre</th><th class="p-4 text-left font-bold text-gray-600">Entregas</th><th class="p-4 text-right font-bold text-gray-600">Acción</th></tr>`;
-        if (alumnos.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="4" class="text-center p-8 text-gray-500">No hay alumnos.</td></tr>'; return; }
-        submissionsTableBody.innerHTML = alumnos.map((a, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 text-xs font-mono text-gray-500">${a.id}</td><td class="p-4 font-bold text-blue-700">${a.nombre}</td><td class="p-4 text-sm text-gray-600">${a.total} ítems</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver detalles &rsaquo;</span></td></tr>`).join('');
+
+        const filtered = studentsWithStatus.filter(s => s.nombre.toLowerCase().includes(search));
+        currentFilteredItems = filtered;
+
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-4 text-left font-bold text-gray-600">Nombre del Alumno</th>
+                <th class="p-4 text-left font-bold text-gray-600">Estado</th>
+                <th class="p-4 text-right font-bold text-gray-600">Acción</th>
+            </tr>`;
+
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-500">No hay alumnos inscritos en esta sección.</td></tr>';
+            return;
+        }
+
+        submissionsTableBody.innerHTML = filtered.map((s, idx) => {
+            const statusHtml = s.hasPending
+                ? '<span class="text-yellow-600 font-bold">Pendiente</span>'
+                : '<span class="text-green-600 font-bold">Al día</span>';
+
+            return `
+                <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
+                    <td class="p-4 font-bold text-blue-700">${s.nombre}</td>
+                    <td class="p-4 text-sm">${statusHtml}</td>
+                    <td class="p-4 text-right">
+                        <span class="text-blue-600 font-bold text-sm">Ver detalles &rsaquo;</span>
+                    </td>
+                </tr>`;
+        }).join('');
     }
 
     function renderDetallesAlumno(alumnoId, grado, seccion, search) {
@@ -476,12 +521,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const idx = navBtn.dataset.index;
                 const item = currentFilteredItems[idx];
                 const current = navStack[navStack.length - 1];
-                if (current.level === 'Grados') pushNav('Secciones', { grado: item });
-                else if (current.level === 'Secciones') pushNav('Alumnos', { grado: current.data.grado, seccion: item });
-                else if (current.level === 'Alumnos') pushNav('Detalles', { alumnoId: item.id, alumnoNombre: item.nombre, grado: current.data.grado, seccion: current.data.seccion });
-                else if (navStack.length > 1 && dashboardLevelTitle.textContent === "Resultados de Búsqueda Global") {
-                    pushNav('Detalles', { alumnoId: item.id, alumnoNombre: item.nombre, grado: item.grado, seccion: item.seccion });
+
+                if (dashboardLevelTitle.textContent === "Resultados de Búsqueda Global") {
+                    await pushNav('Detalles', { alumnoId: item.id, alumnoNombre: item.nombre, grado: item.grado, seccion: item.seccion });
+                    return;
                 }
+
+                if (current.level === 'Grados') await pushNav('Secciones', { grado: item });
+                else if (current.level === 'Secciones') await pushNav('Alumnos', { grado: current.data.grado, seccion: item });
+                else if (current.level === 'Alumnos') await pushNav('Detalles', { alumnoId: item.userId, alumnoNombre: item.nombre, grado: current.data.grado, seccion: current.data.seccion });
             }
         });
     }
