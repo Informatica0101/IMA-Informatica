@@ -8,10 +8,11 @@ Archivo: teacher-dashboard.html
 - Las secciones son #section-dashboard, #section-crear, #section-crear-examen.
 - El dashboard actual usa una tabla con #dashboard-table-head y #submissions-table-body.
 - Los modales son #image-lightbox-modal y #grade-modal.
-- Hallazgos UX: Los botones de navegación se ven un poco amontonados. Se requiere una organización más limpia tipo Califik.
-- Tarea: Añadir secciones para Gestión de Tareas y Reportes.
-- Tarea: Añadir modales de edición.
-- Tarea: Añadir script de XLSX (SheetJS).
+- Hallazgos UX: Los botones de navegación se ven un poco amontonados. Se requiere una organización más limpia tipo Califik. (SOLUCIONADO: Se implementó scroll horizontal y reducción de paddings).
+- Tarea: Añadir secciones para Gestión de Tareas y Reportes. (COMPLETADO)
+- Tarea: Añadir modales de edición. (COMPLETADO)
+- Tarea: Añadir script de XLSX (SheetJS). (COMPLETADO)
+- Hallazgo Estético: Los encabezados de las tablas carecían de jerarquía visual. (SOLUCIONADO: Se aplicó estilo uppercase, letter-spacing y text-xs).
 
 Archivo: js/teacher.js
 ----------------------
@@ -19,9 +20,10 @@ Archivo: js/teacher.js
 - La navegación es jerárquica (Grados -> Secciones -> Asignaturas -> Alumnos -> Detalles).
 - La búsqueda es global o local según el nivel.
 - Hay lógica para calificar tareas y exámenes.
-- Tarea: Refactorizar el dashboard para que sea una tabla plana con filtros.
-- Tarea: Implementar Gestión de Tareas (CRUD).
-- Tarea: Implementar lógica de Reporte Excel (Módulo 3).
+- Tarea: Refactorizar el dashboard para que sea una tabla plana con filtros. (COMPLETADO)
+- Tarea: Implementar Gestión de Tareas (CRUD). (COMPLETADO)
+- Tarea: Implementar lógica de Reporte Excel (Módulo 3). (COMPLETADO)
+- Hallazgo Lógico: Existía una condición de carrera al navegar rápidamente y el nivel "Asignaturas" se omitía en ciertos flujos. (SOLUCIONADO: Se añadió guardas isNavigating y se forzó el nivel Asignaturas en el navStack).
 
 Archivo: backend/task-service/Code.gs
 -------------------------------------

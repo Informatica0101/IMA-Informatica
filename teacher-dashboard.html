@@ -103,12 +103,12 @@
                 <p class="text-lg text-gray-600 font-medium">Bienvenido, <span id="teacher-name" class="text-blue-600 font-bold"></span>.</p>
             </div>
 
-            <nav class="flex flex-nowrap overflow-x-auto gap-2 md:gap-4 mb-6 pb-2 scroll-horizontal-clean">
-                <button id="nav-dashboard" class="flex-none px-4 py-2 text-sm md:px-6 md:py-3 md:text-base rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-blue-600 text-white">Dashboard</button>
-                <button id="nav-gestion" class="flex-none px-4 py-2 text-sm md:px-6 md:py-3 md:text-base rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Gestión de Tareas</button>
-                <button id="nav-reportes" class="flex-none px-4 py-2 text-sm md:px-6 md:py-3 md:text-base rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Reportes Excel</button>
-                <button id="nav-crear" class="flex-none px-4 py-2 text-sm md:px-6 md:py-3 md:text-base rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Tarea</button>
-                <button id="nav-crear-examen" class="flex-none px-4 py-2 text-sm md:px-6 md:py-3 md:text-base rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Examen</button>
+            <nav class="flex flex-nowrap overflow-x-auto gap-2 md:gap-3 mb-6 pb-2 scroll-horizontal-clean">
+                <button id="nav-dashboard" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-blue-600 text-white">Dashboard</button>
+                <button id="nav-gestion" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Gestión de Tareas</button>
+                <button id="nav-reportes" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Reportes Excel</button>
+                <button id="nav-crear" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Tarea</button>
+                <button id="nav-crear-examen" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Examen</button>
             </nav>
 
             <!-- Sección de Dashboard (Entregas) -->
@@ -169,11 +169,11 @@
                     <table class="w-full">
                         <thead class="bg-gray-50 border-b border-gray-100">
                             <tr>
-                                <th class="p-4 text-left font-bold text-gray-600">Título</th>
-                                <th class="p-4 text-left font-bold text-gray-600">Materia</th>
-                                <th class="p-4 text-left font-bold text-gray-600">Grado/Secc</th>
-                                <th class="p-4 text-left font-bold text-gray-600">Fecha Límite</th>
-                                <th class="p-4 text-right font-bold text-gray-600">Acciones</th>
+                                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Título</th>
+                                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Materia</th>
+                                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado/Secc</th>
+                                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Fecha Límite</th>
+                                <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tasks-management-table-body" class="divide-y divide-gray-100 text-sm">
@@ -537,38 +537,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             if (window.setupCommonUI) window.setupCommonUI();
             if (window.renderCommonNav) window.renderCommonNav();
-
-            const navItems = [
-                { id: 'nav-dashboard', section: 'section-dashboard' },
-                { id: 'nav-gestion', section: 'section-gestion' },
-                { id: 'nav-reportes', section: 'section-reportes' },
-                { id: 'nav-crear', section: 'section-crear' },
-                { id: 'nav-crear-examen', section: 'section-crear-examen' }
-            ];
-
-            const navButtons = navItems.map(item => document.getElementById(item.id));
-            const sections = navItems.map(item => document.getElementById(item.section));
-
-            navItems.forEach((item, index) => {
-                const btn = document.getElementById(item.id);
-                if (!btn) return;
-                btn.addEventListener('click', () => {
-                    // Update buttons
-                    navButtons.forEach(b => {
-                        if (b) {
-                            b.classList.remove('bg-blue-600', 'text-white');
-                            b.classList.add('bg-white', 'text-gray-700');
-                        }
-                    });
-                    btn.classList.remove('bg-white', 'text-gray-700');
-                    btn.classList.add('bg-blue-600', 'text-white');
-
-                    // Update sections
-                    sections.forEach(s => { if (s) s.classList.add('hidden'); });
-                    const targetSection = document.getElementById(item.section);
-                    if (targetSection) targetSection.classList.remove('hidden');
-                });
-            });
         });
     </script>
 </body>
