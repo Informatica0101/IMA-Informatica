@@ -241,44 +241,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (tasksList) {
         tasksList.addEventListener('click', async (e) => {
-            const openBtn = e.target.closest('.open-submission-modal');
-            if (openBtn) {
-                const ds = openBtn.dataset;
-                openSubmissionModal(ds.taskId, ds.taskTitle, ds.parcial, ds.asignatura);
-                return;
-            }
+            const target = e.target;
 
-            const deleteBtn = e.target.closest('.delete-submission-btn');
-            if (deleteBtn) {
-                const type = deleteBtn.dataset.type;
-                const entregaId = deleteBtn.dataset.entregaId;
-
-                if (confirm('Al eliminar tu entrega es posible que pierdas la calificar de tu tarea si ya fue revisada.')) {
-                    e.target.disabled = true;
-                    e.target.textContent = 'Eliminando...';
-                    try {
-                        const service = type === 'Examen' ? 'EXAM' : 'TASK';
-                        const action = type === 'Examen' ? 'deleteExamSubmission' : 'deleteSubmission';
-                        const result = await fetchApi(service, action, { entregaId });
-                        if (result.status === 'success') {
-                            alert('Entrega eliminada correctamente.');
-                            fetchAllActivities();
-                        } else {
-                            throw new Error(result.message);
-                        }
-                    } catch (error) {
-                        alert('Error al eliminar entrega: ' + error.message);
-                        e.target.disabled = false;
-                        e.target.textContent = 'Eliminar Entrega';
-                    }
+            // Si el clic fue en un botón o enlace de acción, no procesar expansión
+            const actionElement = target.closest('button, a');
+            if (actionElement) {
+                const openBtn = actionElement.closest('.open-submission-modal');
+                if (openBtn) {
+                    const ds = openBtn.dataset;
+                    openSubmissionModal(ds.taskId, ds.taskTitle, ds.parcial, ds.asignatura);
+                    return;
                 }
+
+                const deleteBtn = actionElement.closest('.delete-submission-btn');
+                if (deleteBtn) {
+                    const type = deleteBtn.dataset.type;
+                    const entregaId = deleteBtn.dataset.entregaId;
+
+                    if (confirm('Al eliminar tu entrega es posible que pierdas la calificar de tu tarea si ya fue revisada.')) {
+                        deleteBtn.disabled = true;
+                        const originalHtml = deleteBtn.innerHTML;
+                        deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                        try {
+                            const service = type === 'Examen' ? 'EXAM' : 'TASK';
+                            const action = type === 'Examen' ? 'deleteExamSubmission' : 'deleteSubmission';
+                            const result = await fetchApi(service, action, { entregaId });
+                            if (result.status === 'success') {
+                                alert('Entrega eliminada correctamente.');
+                                fetchAllActivities();
+                            } else {
+                                throw new Error(result.message);
+                            }
+                        } catch (error) {
+                            alert('Error al eliminar entrega: ' + error.message);
+                            deleteBtn.disabled = false;
+                            deleteBtn.innerHTML = originalHtml;
+                        }
+                    }
+                    return;
+                }
+                // Si es otro botón o link (como "Iniciar Examen"), dejar que el navegador lo maneje
                 return;
             }
 
-            // Expansión de carta si no se hizo clic en un botón de acción
-            const card = e.target.closest('.card-ima');
+            // Expansión de carta (solo una a la vez)
+            const card = target.closest('.card-ima');
             if (card) {
-                card.classList.toggle('is-expanded');
+                const wasExpanded = card.classList.contains('is-expanded');
+
+                // Colapsar todas las tarjetas de la lista
+                const allCards = tasksList.querySelectorAll('.card-ima');
+                allCards.forEach(c => {
+                    if (c !== card) c.classList.remove('is-expanded');
+                });
+
+                // Toggle para la tarjeta actual
+                card.classList.toggle('is-expanded', !wasExpanded);
             }
         });
     }

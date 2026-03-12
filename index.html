@@ -105,12 +105,12 @@
 
     <main style="margin-top: 85px;">
         <!-- Hero Section -->
-        <section class="position-relative py-5 overflow-hidden" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
-            <div class="container position-relative z-1 text-center py-5">
-                <h1 class="display-3 text-white mb-4 animate-fade-in-up">
+        <section class="position-relative py-4 overflow-hidden" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
+            <div class="container position-relative z-1 text-center py-4">
+                <h1 class="display-4 text-white mb-3 animate-fade-in-up">
                     Educación Tecnológica <br> con Propósito
                 </h1>
-                <p class="lead text-white opacity-75 mb-0 animate-fade-in-up" style="max-width: 700px; margin: 0 auto;">
+                <p class="text-white opacity-75 mb-0 animate-fade-in-up small" style="max-width: 700px; margin: 0 auto;">
                     Formamos corazones con alegría, fe, esperanza... y tecnología.
                 </p>
             </div>
@@ -121,57 +121,57 @@
         </section>
 
         <!-- Main Content -->
-        <section class="py-5">
+        <section class="py-4">
             <div class="container">
-                <h2 id="main-content-title" class="text-center mb-5 fw-bold" style="font-family: 'Poppins';">Plataforma de Aprendizaje</h2>
+                <h2 id="main-content-title" class="text-center mb-4 fw-bold" style="font-family: 'Poppins';">Plataforma de Aprendizaje</h2>
 
-                <div id="main-content-sections" class="row g-4 justify-content-center">
+                <div id="main-content-sections" class="row g-2 justify-content-center">
                     <!-- Contenido de Clases -->
-                    <div class="col-lg-6">
-                        <div id="download-section" class="card-ima h-100">
-                            <h3 class="h4 mb-4 d-flex align-items-center gap-3">
+                    <div class="col-lg-5">
+                        <div id="download-section" class="card-ima h-100 p-3">
+                            <h3 class="h6 mb-2 d-flex align-items-center gap-2">
                                 <i class="fa-solid fa-folder-open text-primary"></i> Contenido de Clases
                             </h3>
 
-                            <div id="content-back-button-container" class="mb-4 d-none">
-                                <button id="content-back-button" class="btn btn-light d-inline-flex align-items-center gap-2">
-                                    <i class="fa-solid fa-arrow-left"></i> Volver
+                            <div id="content-back-button-container" class="mb-2 hidden">
+                                <button id="content-back-button" class="btn btn-light btn-xs d-inline-flex align-items-center gap-1 py-1 px-2">
+                                    <i class="fa-solid fa-arrow-left" style="font-size: 0.7rem;"></i> <span style="font-size: 0.75rem;">Volver</span>
                                 </button>
                             </div>
 
-                            <div id="content-display-area" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 300px;">
+                            <div id="content-display-area" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 200px;">
                                 <!-- Dinámico -->
                             </div>
                         </div>
                     </div>
 
                     <!-- Actividades -->
-                    <div class="col-lg-6">
-                        <div id="activity-section" class="card-ima h-100">
-                            <h3 class="h4 mb-4 d-flex align-items-center gap-3">
+                    <div class="col-lg-5">
+                        <div id="activity-section" class="card-ima h-100 p-3">
+                            <h3 class="h6 mb-2 d-flex align-items-center gap-2">
                                 <i class="fa-solid fa-gamepad text-success"></i> Actividades Prácticas
                             </h3>
 
-                            <div id="initial-activity-menu" class="d-flex flex-column justify-content-center align-items-center h-100" style="min-height: 300px;">
-                                <button id="show-activities-button" class="btn btn-ima-accent px-5 py-4 rounded-4 fs-5 w-100 shadow-sm">
+                            <div id="initial-activity-menu" class="hidden flex-column justify-content-center align-items-center h-100" style="min-height: 200px;">
+                                <button id="show-activities-button" class="btn btn-ima-accent px-3 py-2 rounded-3 fs-6 w-100 shadow-sm">
                                     <i class="fa-solid fa-play me-2"></i> Explorar Actividades
                                 </button>
                             </div>
 
-                            <div id="game-list-menu" class="d-none flex-column align-items-center">
-                                <p class="text-muted mb-4">Selecciona un desafío interactivo:</p>
-                                <div class="d-grid gap-3 w-100" style="max-width: 400px;">
-                                    <button id="select-peripherals-game-button" class="btn btn-outline-primary py-3 fw-bold rounded-3">
+                            <div id="game-list-menu" class="d-flex flex-column align-items-center">
+                                <p class="text-muted mb-2 small">Selecciona un desafío interactivo:</p>
+                                <div class="d-grid gap-2 w-100" style="max-width: 350px;">
+                                    <button id="select-peripherals-game-button" class="btn btn-outline-primary py-2 fw-bold rounded-2 small shadow-sm">
                                         Periféricos Entrada/Salida
                                     </button>
-                                    <button id="select-webmaster-quiz-button" class="btn btn-outline-info py-3 fw-bold rounded-3">
+                                    <button id="select-webmaster-quiz-button" class="btn btn-outline-info py-2 fw-bold rounded-2 small shadow-sm">
                                         WebMaster Quiz
                                     </button>
-                                    <button id="select-dexterity-game-button" class="btn btn-outline-warning py-3 fw-bold rounded-3">
+                                    <button id="select-dexterity-game-button" class="btn btn-outline-warning py-2 fw-bold rounded-2 small shadow-sm">
                                         Destreza en el Teclado
                                     </button>
                                 </div>
-                                <button id="back-to-main-activities-button" class="btn btn-link text-secondary mt-4">
+                                <button id="back-to-main-activities-button" class="btn btn-link btn-sm text-secondary mt-2 py-0">
                                     Volver al menú principal
                                 </button>
                             </div>
@@ -180,7 +180,7 @@
                 </div>
 
                 <!-- Contenedor para Juegos Cargados Dinámicamente -->
-                <div id="dynamically-loaded-game-container" class="d-none mt-5">
+                <div id="dynamically-loaded-game-container" class="hidden mt-4">
                     <div class="card-ima p-0 overflow-hidden shadow-lg border-primary border-2">
                         <!-- El juego se carga aquí -->
                     </div>
@@ -189,13 +189,13 @@
         </section>
 
         <!-- Access Section -->
-        <section class="py-5 bg-white border-top border-bottom">
+        <section class="py-4 bg-white border-top border-bottom">
             <div class="container text-center">
                 <div id="access-section" class="mx-auto" style="max-width: 600px;">
-                    <i class="fa-solid fa-shield-halved text-primary fs-1 mb-4"></i>
-                    <h3 class="fw-bold mb-3">Acceso al Portal Académico</h3>
-                    <p class="text-muted mb-5">Ingresa para gestionar tus tareas, realizar exámenes y consultar tu progreso educativo de forma segura.</p>
-                    <div id="access-button-container" class="d-flex justify-content-center gap-3">
+                    <i class="fa-solid fa-shield-halved text-primary fs-2 mb-3"></i>
+                    <h3 class="fw-bold mb-2">Acceso al Portal Académico</h3>
+                    <p class="text-muted mb-4 small">Ingresa para gestionar tus tareas, realizar exámenes y consultar tu progreso educativo de forma segura.</p>
+                    <div id="access-button-container" class="d-flex justify-content-center gap-2">
                         <!-- El botón se renderiza dinámicamente -->
                     </div>
                 </div>
@@ -226,27 +226,27 @@
     <div id="login-modal" class="modal fade" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow-lg">
-                <div class="modal-body p-5">
-                    <div class="text-center mb-5">
-                        <div class="bg-primary-subtle d-inline-block p-3 rounded-circle mb-3">
-                            <i class="fa-solid fa-user-lock text-primary fs-2"></i>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="bg-primary-subtle d-inline-block p-2 rounded-circle mb-2">
+                            <i class="fa-solid fa-user-lock text-primary fs-4"></i>
                         </div>
-                        <h3 class="fw-bold">Iniciar Sesión</h3>
-                        <p class="text-muted">Elige cómo deseas acceder al portal</p>
+                        <h4 class="fw-bold">Iniciar Sesión</h4>
+                        <p class="text-muted small">Elige cómo deseas acceder al portal</p>
                     </div>
 
-                    <div class="d-grid gap-3">
-                        <a href="login.html" class="btn btn-primary py-3 fw-bold rounded-3">
+                    <div class="d-grid gap-2">
+                        <a href="login.html" class="btn btn-primary py-2 fw-bold rounded-3">
                             <i class="fa-solid fa-right-to-bracket me-2"></i> Acceder al Portal
                         </a>
-                        <a href="register.html" class="btn btn-light py-3 fw-bold rounded-3">
+                        <a href="register.html" class="btn btn-light py-2 fw-bold rounded-3">
                             Crear una Cuenta
                         </a>
                     </div>
 
-                    <div class="mt-4 pt-4 border-top text-center">
+                    <div class="mt-3 pt-3 border-top text-center">
                         <p class="small text-muted mb-0">Si eres profesor, contacta al administrador para habilitar tu rol.</p>
-                        <button type="button" class="btn btn-link text-secondary mt-3" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-link btn-sm text-secondary mt-2" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
             </div>

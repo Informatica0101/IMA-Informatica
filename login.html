@@ -72,40 +72,40 @@
         </div>
     </header>
 
-    <main class="flex-grow-1 d-flex align-items-center justify-content-center py-5" style="margin-top: 85px; min-height: calc(100vh - 150px);">
+    <main class="flex-grow-1 d-flex align-items-center justify-content-center py-4" style="margin-top: 85px; min-height: calc(100vh - 150px);">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-5">
-                    <div class="card-ima p-4 p-md-5">
-                        <div class="text-center mb-5">
-                            <div class="bg-primary-subtle d-inline-block p-4 rounded-circle mb-4">
-                                <i class="fa-solid fa-shield-halved text-primary fs-1"></i>
+                    <div class="card-ima p-3 p-md-4">
+                        <div class="text-center mb-4">
+                            <div class="bg-primary-subtle d-inline-block p-3 rounded-circle mb-3">
+                                <i class="fa-solid fa-shield-halved text-primary fs-2"></i>
                             </div>
-                            <h2 class="fw-bold h3 mb-2" style="font-family: 'Poppins';">Bienvenido al Portal</h2>
-                            <p class="text-muted">Ingresa tus credenciales para continuar</p>
+                            <h2 class="fw-bold h4 mb-1" style="font-family: 'Poppins';">Bienvenido al Portal</h2>
+                            <p class="text-muted small">Ingresa tus credenciales para continuar</p>
                         </div>
 
                         <form id="login-form">
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-bold text-secondary small text-uppercase" style="font-size: 0.65rem;">Correo o Usuario</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-light border-end-0 rounded-start-2"><i class="fa-solid fa-user text-muted"></i></span>
+                                    <input type="text" id="email" class="form-control bg-light border-start-0 rounded-end-2" placeholder="nombre@ejemplo.com" required>
+                                </div>
+                            </div>
                             <div class="mb-4">
-                                <label for="email" class="form-label fw-bold text-secondary small text-uppercase">Correo o Usuario</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0 rounded-start-3"><i class="fa-solid fa-user text-muted"></i></span>
-                                    <input type="text" id="email" class="form-control form-control-lg bg-light border-start-0 rounded-end-3" placeholder="nombre@ejemplo.com" required>
+                                <label for="password" class="form-label fw-bold text-secondary small text-uppercase" style="font-size: 0.65rem;">Contraseña</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-light border-end-0 rounded-start-2"><i class="fa-solid fa-lock text-muted"></i></span>
+                                    <input type="password" id="password" class="form-control bg-light border-start-0 rounded-end-2" placeholder="••••••••" required>
                                 </div>
                             </div>
-                            <div class="mb-5">
-                                <label for="password" class="form-label fw-bold text-secondary small text-uppercase">Contraseña</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0 rounded-start-3"><i class="fa-solid fa-lock text-muted"></i></span>
-                                    <input type="password" id="password" class="form-control form-control-lg bg-light border-start-0 rounded-end-3" placeholder="••••••••" required>
-                                </div>
-                            </div>
-                            <button type="submit" id="login-submit-btn" class="btn btn-ima-primary w-100 py-3 fs-5 rounded-3 mb-4 shadow-sm">
+                            <button type="submit" id="login-submit-btn" class="btn btn-ima-primary w-100 py-2 fw-bold rounded-2 mb-3 shadow-sm">
                                 Entrar al Portal
                             </button>
                         </form>
 
-                        <div class="text-center border-top pt-4">
+                        <div class="text-center border-top pt-3">
                             <p class="text-muted mb-0">¿No tienes una cuenta aún?</p>
                             <a href="register.html" class="fw-bold text-primary text-decoration-none">Regístrate como Estudiante</a>
                         </div>

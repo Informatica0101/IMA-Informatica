@@ -65,6 +65,19 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchTeacherActivity();
         });
     }
+
+    // Inicialización explícita
+    async function initDashboard() {
+        if (navDashboard && sectionDashboard) {
+            navigateTo(sectionDashboard, navDashboard);
+            navStack = [{ level: 'Grados', data: null }];
+            // Aseguramos que el contenedor de carga se vea
+            if (submissionsTableBody) {
+                submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-5">Cargando actividad...</td></tr>';
+            }
+            await fetchTeacherActivity();
+        }
+    }
     if (navGestion) {
         navGestion.addEventListener('click', () => {
             navigateTo(sectionGestion, navGestion);
@@ -133,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchManagementData() {
         const tbody = document.getElementById('tasks-management-table-body');
         if (!tbody) return;
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center p-4">Cargando...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center p-3">Cargando...</td></tr>';
         try {
             const [tasksRes, examsRes] = await Promise.all([
                 fetchApi('TASK', 'getAllTasks', { profesorId: currentUser.userId }),
@@ -148,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             renderManagementTable();
         } catch (error) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-500">Error: ${error.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center p-3 text-danger">Error: ${error.message}</td></tr>`;
         }
     }
 
@@ -160,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dateClass = isOverdue ? 'text-danger fw-bold' : 'text-secondary';
 
             return `
-            <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.openTaskDetail(${idx})">
+            <tr class="transition-colors cursor-pointer" onclick="window.openTaskDetail(${idx})">
                 <td class="fw-bold text-dark">${item.titulo}</td>
                 <td class="text-primary small fw-bold">${item.asignatura}</td>
                 <td class="text-muted small">${item.grado} - ${item.seccion || 'Todas'}</td>
@@ -316,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- MÓDULO 2: Gestión de Entregas (Navegación Jerárquica) ---
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
-        submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8">Cargando actividad...</td></tr>';
+        submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-5">Cargando actividad...</td></tr>';
         try {
             const payload = { profesorId: currentUser.userId };
             const [taskSubmissions, examSubmissions] = await Promise.all([
@@ -331,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             renderCurrentLevel();
         } catch (error) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500">Error: ${error.message}</td></tr>`;
+            submissionsTableBody.innerHTML = `<tr><td colspan="6" class="text-center p-5 text-danger">Error: ${error.message}</td></tr>`;
         }
     }
 
@@ -404,9 +417,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = grados.filter(g => g.toLowerCase().includes(search));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr><th>Grado</th><th class="text-end">Acción</th></tr>`;
-        if (filtered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-4 text-muted">No hay grados.</td></tr>'; return; }
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-5 text-muted">No hay grados registrados con actividad.</td></tr>';
+            return;
+        }
         submissionsTableBody.innerHTML = filtered.map((grado, idx) => `
-            <tr class="nav-btn cursor-pointer" data-index="${idx}">
+            <tr class="nav-btn cursor-pointer" data-level="Grados" data-value="${grado}" data-index="${idx}">
                 <td class="fw-bold text-dark">${grado}</td>
                 <td class="text-end"><span class="btn btn-sm btn-light rounded-pill px-3">Ver Secciones &rsaquo;</span></td>
             </tr>`).join('');
@@ -419,8 +435,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = secciones.filter(s => s.toLowerCase().includes(search));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr><th>Sección</th><th class="text-end">Acción</th></tr>`;
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-5 text-muted">No hay secciones con actividad en este grado.</td></tr>';
+            return;
+        }
         submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `
-            <tr class="nav-btn cursor-pointer" data-index="${idx}">
+            <tr class="nav-btn cursor-pointer" data-level="Secciones" data-value="${seccion}" data-index="${idx}">
                 <td class="fw-bold text-dark">${seccion}</td>
                 <td class="text-end"><span class="btn btn-sm btn-light rounded-pill px-3">Ver Alumnos &rsaquo;</span></td>
             </tr>`).join('');
@@ -462,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const badgeClass = s.hasPending ? 'bg-warning-subtle text-warning' : 'bg-success-subtle text-success';
 
             return `
-                <tr class="nav-btn cursor-pointer" data-index="${idx}">
+                <tr class="nav-btn cursor-pointer" data-level="Alumnos" data-index="${idx}">
                     <td class="fw-bold text-dark">${s.nombre}</td>
                     <td><span class="badge ${badgeClass} rounded-pill px-3">${statusLabel}</span></td>
                     <td class="text-end">
@@ -509,7 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (item.comentario) {
-                detailHtml += `<div class="text-muted italic small mt-1" style="line-height: 1.2; font-size: 0.7rem;" title="${item.comentario}">
+                detailHtml += `<div class="text-muted fst-italic small mt-1" style="line-height: 1.2; font-size: 0.7rem;" title="${item.comentario}">
                     <i class="fa-solid fa-comment-dots me-1"></i> ${item.comentario}
                 </div>`;
             }
@@ -582,7 +602,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const navBtn = target.closest('.nav-btn');
             if (navBtn) {
-                const idx = navBtn.dataset.index;
+                e.preventDefault();
+                const idx = parseInt(navBtn.dataset.index);
+                const val = navBtn.dataset.value;
                 const item = currentFilteredItems[idx];
                 const current = navStack[navStack.length - 1];
 
@@ -591,9 +613,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                if (current.level === 'Grados') await pushNav('Secciones', { grado: item });
-                else if (current.level === 'Secciones') await pushNav('Alumnos', { grado: current.data.grado, seccion: item });
-                else if (current.level === 'Alumnos') await pushNav('Detalles', { alumnoId: item.userId, alumnoNombre: item.nombre, grado: current.data.grado, seccion: current.data.seccion });
+                // Navegación Jerárquica Reforzada
+                if (current.level === 'Grados') {
+                    const selectedGrado = val || (typeof item === 'string' ? item : item.grado);
+                    await pushNav('Secciones', { grado: selectedGrado });
+                } else if (current.level === 'Secciones') {
+                    const selectedSeccion = val || (typeof item === 'string' ? item : item.seccion);
+                    await pushNav('Alumnos', { grado: current.data.grado, seccion: selectedSeccion });
+                } else if (current.level === 'Alumnos') {
+                    await pushNav('Detalles', {
+                        alumnoId: item.userId || item.id,
+                        alumnoNombre: item.nombre,
+                        grado: current.data.grado,
+                        seccion: current.data.seccion
+                    });
+                }
             }
         });
     }
@@ -715,10 +749,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let qCounter = 0;
     if (addQuestionBtn) addQuestionBtn.onclick = () => {
         qCounter++; const node = document.createElement('div');
-        node.innerHTML = `<div class="question-block border p-4 rounded-lg" data-question-id="${qCounter}"><div class="flex justify-between items-center mb-4"><h4 class="font-bold">Pregunta ${qCounter}</h4><button type="button" class="text-red-500 remove-question-btn">Eliminar</button></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block font-medium mb-1">Tipo</label><select class="w-full p-2 border rounded question-type-select"><option value="opcion_multiple">Opción Múltiple</option><option value="verdadero_falso">Verdadero/Falso</option><option value="completacion">Completación</option></select></div><div class="md:col-span-2"><label class="block font-medium mb-1">Texto</label><input type="text" class="w-full p-2 border rounded question-text"></div><div class="md:col-span-2 options-container"></div><div><label class="block font-medium mb-1">Respuesta</label><input type="text" class="w-full p-2 border rounded correct-answer"></div></div></div>`;
+        node.innerHTML = `<div class="question-block border p-4 rounded-3 mb-3" data-question-id="${qCounter}"><div class="d-flex justify-content-between align-items-center mb-4"><h4 class="fw-bold">Pregunta ${qCounter}</h4><button type="button" class="btn btn-sm btn-outline-danger remove-question-btn">Eliminar</button></div><div class="row g-3"><div class="col-md-6"><label class="form-label fw-medium">Tipo</label><select class="form-select question-type-select"><option value="opcion_multiple">Opción Múltiple</option><option value="verdadero_falso">Verdadero/Falso</option><option value="completacion">Completación</option></select></div><div class="col-md-12"><label class="form-label fw-medium">Texto</label><input type="text" class="form-control question-text"></div><div class="col-md-12 options-container"></div><div class="col-md-12"><label class="form-label fw-medium">Respuesta Correcta</label><input type="text" class="form-control correct-answer"></div></div></div>`;
         questionsContainer.appendChild(node);
         const ts = node.querySelector('.question-type-select'); const oc = node.querySelector('.options-container');
-        const setOpts = (val) => oc.innerHTML = val === 'opcion_multiple' ? '<label class="block text-xs">Opciones (A,B,C)</label><input type="text" class="w-full p-2 border rounded question-options">' : (val === 'verdadero_falso' ? '<input type="text" value="Verdadero,Falso" readonly class="w-full p-2 border rounded bg-gray-100 question-options">' : '');
+        const setOpts = (val) => oc.innerHTML = val === 'opcion_multiple' ? '<label class="form-label small text-muted">Opciones (separadas por coma: A,B,C)</label><input type="text" class="form-control question-options">' : (val === 'verdadero_falso' ? '<input type="text" value="Verdadero,Falso" readonly class="form-control bg-light question-options">' : '');
         setOpts(ts.value); ts.onchange = (e) => setOpts(e.target.value);
     };
     if (questionsContainer) questionsContainer.onclick = (e) => { if (e.target.classList.contains('remove-question-btn')) e.target.closest('.question-block').remove(); };
@@ -741,5 +775,5 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { alert(error.message); } finally { btn.classList.remove('btn-loading'); }
     };
 
-    fetchTeacherActivity();
+    initDashboard();
 });

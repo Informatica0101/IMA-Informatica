@@ -137,7 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
         mainContentSections.classList.add('d-flex');
         dynamicallyLoadedGameContainer.classList.add('hidden');
         mainContentTitle.textContent = 'Contenido y Actividades';
-        renderInitialActivityButton();
+        // (A-32) Mostrar lista de actividades directamente por solicitud del usuario
+        renderActivityList();
         window.scrollTo({ top: mainContentTitle.offsetTop - 100, behavior: 'smooth' });
     }
 
@@ -234,7 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     renderInitialContentButton();
-    renderInitialActivityButton();
+    // (A-32) Mostrar lista de actividades directamente por solicitud del usuario
+    renderActivityList();
 
     // --- Handle Action from URL (A-28) ---
     function processUrlAction() {

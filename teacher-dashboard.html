@@ -58,21 +58,21 @@
         </div>
     </header>
 
-    <main class="py-5" style="margin-top: 85px;">
+    <main class="py-4" style="margin-top: 85px;">
         <div class="container">
             <!-- Header Welcome -->
-            <div class="row mb-5">
+            <div class="row mb-4">
                 <div class="col-md-8">
-                    <h1 class="display-6 fw-bold text-dark" style="font-family: 'Poppins';">Panel del Docente</h1>
-                    <p class="lead text-secondary mb-0">Bienvenido, <span id="teacher-name" class="text-primary fw-bold">...</span>.</p>
+                    <h1 class="h2 fw-bold text-dark" style="font-family: 'Poppins';">Panel del Docente</h1>
+                    <p class="text-secondary mb-0">Bienvenido, <span id="teacher-name" class="text-primary fw-bold">...</span>.</p>
                 </div>
             </div>
 
             <!-- Navigation Tabs -->
-            <ul class="nav nav-pills gap-2 mb-5 flex-nowrap overflow-auto pb-2" id="teacher-nav" role="tablist">
+            <ul class="nav nav-pills gap-2 mb-4 flex-nowrap overflow-auto pb-1" id="teacher-nav" role="tablist">
                 <li class="nav-item">
-                    <button class="nav-link active fw-bold rounded-pill px-4" id="nav-dashboard" data-section="section-dashboard">
-                        <i class="fa-solid fa-chart-line me-2"></i> Entregas
+                    <button class="nav-link active fw-bold rounded-pill px-3 py-2 small" id="nav-dashboard" data-section="section-dashboard">
+                        <i class="fa-solid fa-chart-line me-1"></i> Entregas
                     </button>
                 </li>
                 <li class="nav-item">
@@ -99,11 +99,11 @@
 
             <!-- Section: Dashboard (Entregas) -->
             <section id="section-dashboard" class="animate-fade-in-up">
-                <div class="card-ima mb-4">
-                    <div class="row g-3 align-items-end">
+                <div class="card-ima mb-3 p-3">
+                    <div class="row g-2 align-items-end">
                         <div class="col-md-3">
-                            <label class="form-label small fw-bold text-uppercase text-muted">Grado</label>
-                            <select id="filter-grado" class="form-select border-0 bg-light rounded-3">
+                            <label class="form-label small fw-bold text-uppercase text-muted mb-1" style="font-size: 0.65rem;">Grado</label>
+                            <select id="filter-grado" class="form-select form-select-sm border-0 bg-light rounded-2">
                                 <option value="">Todos</option>
                                 <option value="Décimo">Décimo</option>
                                 <option value="Undécimo">Undécimo</option>

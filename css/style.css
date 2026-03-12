@@ -12,9 +12,9 @@
     --ima-gray-600: #6c757d;
     --ima-gray-800: #343a40;
     --ima-gray-900: #212529;
-    --ima-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --ima-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --ima-radius: 1rem;
+    --ima-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+    --ima-shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --ima-radius: 0.5rem;
 }
 
 /* Global scale */
@@ -35,6 +35,7 @@ body {
     display: flex;
     flex-direction: column;
     background-color: var(--ima-gray-100);
+    line-height: 1.4;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -85,14 +86,14 @@ h1, h2, h3, h4, h5, h6 {
 .card-ima {
     background: white;
     border-radius: var(--ima-radius);
-    padding: 2rem;
+    padding: 0.75rem;
     box-shadow: var(--ima-shadow);
     border: 1px solid var(--ima-gray-200);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-ima:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     box-shadow: var(--ima-shadow-lg);
 }
 
@@ -101,8 +102,8 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--ima-blue);
     color: white;
     font-weight: 600;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.75rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 0.35rem;
     border: none;
     transition: all 0.2s ease;
     text-decoration: none;
@@ -110,6 +111,7 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    font-size: 0.85rem;
 }
 
 .btn-ima-primary:hover {
@@ -123,8 +125,8 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--ima-orange);
     color: white;
     font-weight: 600;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.75rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 0.35rem;
     border: none;
     transition: all 0.2s ease;
     text-decoration: none;
@@ -132,6 +134,7 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    font-size: 0.85rem;
 }
 
 .btn-ima-accent:hover {
@@ -251,7 +254,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Dashboard Tables */
 .table-ima-container {
     background: white;
-    border-radius: var(--ima-radius);
+    border-radius: 0.5rem;
     overflow: hidden;
     box-shadow: var(--ima-shadow);
     border: 1px solid var(--ima-gray-200);
@@ -273,15 +276,16 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     letter-spacing: 0.05em;
     color: var(--ima-gray-600);
-    padding: 1rem;
+    padding: 0.75rem;
 }
 
 .table-ima td {
-    padding: 1rem;
+    padding: 0.5rem 0.75rem;
     vertical-align: middle;
+    font-size: 0.85rem;
 }
 
 /* Loading States */
@@ -331,8 +335,15 @@ footer {
     transition: all 0.3s ease;
 }
 
+.card-ima {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .card-ima.is-expanded {
     transform: scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    border-color: var(--ima-blue) !important;
     z-index: 10;
 }
 
@@ -341,13 +352,17 @@ footer {
     height: auto !important;
 }
 
-.card-ima {
-    cursor: pointer;
+.card-ima.is-expanded .expansion-hint i {
+    transform: rotate(180deg);
+}
+
+.expansion-hint i {
+    transition: transform 0.3s ease;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .card-ima { padding: 1.5rem; }
+    .card-ima { padding: 1rem; }
     html { font-size: 14px; }
 
     #main-header .logo-container img {
