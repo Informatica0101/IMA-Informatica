@@ -67,6 +67,8 @@ function doPost(e) {
       case "gradeExamSubmission": result = gradeExamSubmission(payload); break;
       case "getStudentExams": result = getStudentExams(payload); break;
       case "getExamResult": result = getExamResult(payload); break;
+      case "updateExam": result = updateExam(payload); break;
+      case "deleteExam": result = deleteExam(payload); break;
       default:
         result = { status: "error", message: `Acción no válida: ${action}` };
     }
@@ -127,6 +129,57 @@ function updateExamStatus({ examenId, estado }) {
     }
   }
   throw new Error("Examen no encontrado");
+}
+
+function updateExam(payload) {
+  const { examenId, titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tiempoLimite } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "Examenes");
+  const data = sheet.getDataRange().getValues();
+  const rowIndex = data.findIndex(r => r[0] === examenId);
+
+  if (rowIndex === -1) throw new Error("Examen no encontrado.");
+
+  const row = rowIndex + 1;
+  if (titulo !== undefined) sheet.getRange(row, 2).setValue(titulo);
+  if (asignatura !== undefined) sheet.getRange(row, 3).setValue(asignatura);
+  if (gradoAsignado !== undefined) sheet.getRange(row, 4).setValue(gradoAsignado);
+  if (seccionAsignada !== undefined) sheet.getRange(row, 5).setValue(seccionAsignada);
+  if (fechaLimite !== undefined) sheet.getRange(row, 6).setValue(fechaLimite);
+  if (tiempoLimite !== undefined) sheet.getRange(row, 7).setValue(tiempoLimite);
+
+  return { status: "success", message: "Examen actualizado." };
+}
+
+function deleteExam(payload) {
+  const { examenId } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const examenesSheet = getSheetOrThrow(ss, "Examenes");
+  const entregasSheet = getSheetOrThrow(ss, "EntregasExamen");
+  const preguntasSheet = getSheetOrThrow(ss, "PreguntasExamen");
+
+  const examenesData = examenesSheet.getDataRange().getValues();
+  const rowIndex = examenesData.findIndex(r => r[0] === examenId);
+  if (rowIndex === -1) throw new Error("Examen no encontrado.");
+
+  const entregasData = entregasSheet.getDataRange().getValues();
+  const hasSubmissions = entregasData.some(r => r[1] === examenId);
+
+  if (hasSubmissions) {
+    examenesSheet.getRange(rowIndex + 1, 8).setValue("Inactivo");
+    return { status: "success", message: "Examen desactivado (existen entregas)." };
+  } else {
+    // Eliminar preguntas
+    const preguntasData = preguntasSheet.getDataRange().getValues();
+    for (let i = preguntasData.length - 1; i >= 1; i--) {
+      if (preguntasData[i][1] === examenId) {
+        preguntasSheet.deleteRow(i + 1);
+      }
+    }
+    // Eliminar examen
+    examenesSheet.deleteRow(rowIndex + 1);
+    return { status: "success", message: "Examen eliminado." };
+  }
 }
 
 function getAllExams(payload) {

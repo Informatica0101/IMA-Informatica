@@ -16,11 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Elementos de Navegación y Secciones ---
     const navDashboard = document.getElementById('nav-dashboard');
+    const navGestion = document.getElementById('nav-gestion');
+    const navReportes = document.getElementById('nav-reportes');
     const navCrear = document.getElementById('nav-crear');
     const navCrearExamen = document.getElementById('nav-crear-examen');
+
     const sectionDashboard = document.getElementById('section-dashboard');
+    const sectionGestion = document.getElementById('section-gestion');
+    const sectionReportes = document.getElementById('section-reportes');
     const sectionCrear = document.getElementById('section-crear');
     const sectionCrearExamen = document.getElementById('section-crear-examen');
+
     const createAssignmentForm = document.getElementById('create-assignment-form');
     const createExamForm = document.getElementById('create-exam-form');
     const logoutButton = document.getElementById('logout-button');
@@ -37,25 +43,33 @@ document.addEventListener('DOMContentLoaded', () => {
     let studentSort = { field: 'nombre', direction: 'asc' };
     let navStack = [{ level: 'Grados', data: null }]; // Stack de navegación
 
-    const allSections = [sectionDashboard, sectionCrear, sectionCrearExamen];
-    const allNavLinks = [navDashboard, navCrear, navCrearExamen];
+    const allSections = [sectionDashboard, sectionGestion, sectionReportes, sectionCrear, sectionCrearExamen];
+    const allNavLinks = [navDashboard, navGestion, navReportes, navCrear, navCrearExamen];
 
     // --- Lógica de Navegación ---
     function navigateTo(targetSection, navElement) {
-        allSections.forEach(section => section.classList.add('hidden'));
+        allSections.forEach(section => section && section.classList.add('hidden'));
         targetSection.classList.remove('hidden');
         allNavLinks.forEach(link => {
-            link.classList.remove('bg-gray-700', 'text-white');
-            link.classList.add('text-gray-700');
+            if (link) {
+                link.classList.remove('bg-blue-600', 'text-white');
+                link.classList.add('bg-white', 'text-gray-700');
+            }
         });
-        navElement.classList.add('bg-gray-700', 'text-white');
-        navElement.classList.remove('text-gray-700');
+        navElement.classList.add('bg-blue-600', 'text-white');
+        navElement.classList.remove('bg-white', 'text-gray-700');
     }
 
     navDashboard.addEventListener('click', () => {
         navigateTo(sectionDashboard, navDashboard);
-        navStack = [{ level: 'Grados', data: null }];
         fetchTeacherActivity();
+    });
+    navGestion.addEventListener('click', () => {
+        navigateTo(sectionGestion, navGestion);
+        fetchManagementData();
+    });
+    navReportes.addEventListener('click', () => {
+        navigateTo(sectionReportes, navReportes);
     });
     navCrear.addEventListener('click', () => navigateTo(sectionCrear, navCrear));
     navCrearExamen.addEventListener('click', () => navigateTo(sectionCrearExamen, navCrearExamen));
@@ -111,10 +125,186 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (backNavBtn) backNavBtn.addEventListener('click', popNav);
 
-    // --- Carga de Actividad del Profesor ---
+    // --- Gestión de Tareas y Exámenes ---
+    let allTasksExams = [];
+
+    async function fetchManagementData() {
+        const tbody = document.getElementById('tasks-management-table-body');
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center p-4">Cargando...</td></tr>';
+        try {
+            const [tasksRes, examsRes] = await Promise.all([
+                fetchApi('TASK', 'getAllTasks', { profesorId: currentUser.userId }),
+                fetchApi('EXAM', 'getAllExams', { profesorId: currentUser.userId })
+            ]);
+
+            const tasks = (tasksRes.data || []).map(t => ({ ...t, tipoReal: 'Tarea' }));
+            const exams = (examsRes.data || []).map(e => ({ ...e, tipoReal: 'Examen' }));
+
+            allTasksExams = [...tasks, ...exams].filter(item => item.estado !== 'Inactiva');
+            allTasksExams.sort((a, b) => new Date(b.fechaLimite) - new Date(a.fechaLimite));
+
+            renderManagementTable();
+        } catch (error) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-500">Error: ${error.message}</td></tr>`;
+        }
+    }
+
+    function renderManagementTable() {
+        const tbody = document.getElementById('tasks-management-table-body');
+        tbody.innerHTML = allTasksExams.map((item, idx) => `
+            <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.openTaskDetail(${idx})">
+                <td class="p-4 font-bold text-blue-700">${item.titulo}</td>
+                <td class="p-4">${item.asignatura}</td>
+                <td class="p-4 text-xs">${item.grado} - ${item.seccion || 'Todas'}</td>
+                <td class="p-4 text-xs font-medium ${new Date(item.fechaLimite) < new Date() ? 'text-red-500' : 'text-gray-600'}">
+                    ${new Date(item.fechaLimite).toLocaleDateString()}
+                </td>
+                <td class="p-4 text-right">
+                    <button class="bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-100 transition-colors" onclick="event.stopPropagation(); window.openTaskDetail(${idx})">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    window.openTaskDetail = (idx) => {
+        const item = allTasksExams[idx];
+        document.getElementById('detail-titulo').textContent = item.titulo;
+        document.getElementById('detail-descripcion').textContent = item.descripcion || 'Sin descripción.';
+        document.getElementById('detail-asignatura').textContent = item.asignatura;
+        document.getElementById('detail-parcial').textContent = item.parcial || 'N/A';
+        document.getElementById('detail-grado').textContent = item.grado;
+        document.getElementById('detail-seccion').textContent = item.seccion || 'Todas';
+        document.getElementById('detail-fecha').textContent = new Date(item.fechaLimite).toLocaleDateString();
+        document.getElementById('detail-puntaje').textContent = (item.puntaje || 100) + '%';
+
+        const fileContainer = document.getElementById('detail-archivo-container');
+        const fileLink = document.getElementById('detail-archivo-link');
+        if (item.archivoUrl) {
+            fileContainer.classList.remove('hidden');
+            fileLink.href = item.archivoUrl;
+        } else {
+            fileContainer.classList.add('hidden');
+        }
+
+        document.getElementById('task-details-modal').dataset.currentIndex = idx;
+        document.getElementById('task-details-modal').classList.remove('hidden');
+    };
+
+    document.getElementById('close-task-modal-btn').onclick = () => {
+        document.getElementById('task-details-modal').classList.add('hidden');
+    };
+
+    document.getElementById('edit-task-btn').onclick = () => {
+        const idx = document.getElementById('task-details-modal').dataset.currentIndex;
+        const item = allTasksExams[idx];
+
+        document.getElementById('edit-id').value = item.tareaId || item.examenId;
+        document.getElementById('edit-tipo-orig').value = item.tipoReal;
+        document.getElementById('edit-titulo').value = item.titulo;
+        document.getElementById('edit-descripcion').value = item.descripcion || '';
+        document.getElementById('edit-asignatura').value = item.asignatura;
+        document.getElementById('edit-parcial').value = item.parcial || 'Primer Parcial';
+        document.getElementById('edit-grado').value = item.grado;
+        document.getElementById('edit-seccion').value = item.seccion || '';
+        document.getElementById('edit-fecha').value = item.fechaLimite ? item.fechaLimite.split('T')[0] : '';
+        document.getElementById('edit-puntaje').value = item.puntaje || 100;
+        document.getElementById('edit-archivo').value = item.archivoUrl || '';
+
+        const examFields = document.getElementById('edit-exam-only-fields');
+        if (item.tipoReal === 'Examen') {
+            examFields.classList.remove('hidden');
+            document.getElementById('edit-tiempo').value = item.tiempoLimite || '';
+        } else {
+            examFields.classList.add('hidden');
+        }
+
+        document.getElementById('task-details-modal').classList.add('hidden');
+        document.getElementById('edit-task-modal').classList.remove('hidden');
+    };
+
+    document.getElementById('cancel-edit-btn').onclick = () => {
+        document.getElementById('edit-task-modal').classList.add('hidden');
+    };
+
+    document.getElementById('edit-assignment-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const tipo = document.getElementById('edit-tipo-orig').value;
+        const payload = {
+            titulo: document.getElementById('edit-titulo').value,
+            descripcion: document.getElementById('edit-descripcion').value,
+            asignatura: document.getElementById('edit-asignatura').value,
+            parcial: document.getElementById('edit-parcial').value,
+            gradoAsignado: document.getElementById('edit-grado').value,
+            seccionAsignada: document.getElementById('edit-seccion').value,
+            fechaLimite: document.getElementById('edit-fecha').value,
+            puntaje: document.getElementById('edit-puntaje').value,
+            archivoUrl: document.getElementById('edit-archivo').value
+        };
+
+        if (tipo === 'Tarea') {
+            payload.tareaId = document.getElementById('edit-id').value;
+        } else {
+            payload.examenId = document.getElementById('edit-id').value;
+            payload.tiempoLimite = document.getElementById('edit-tiempo').value;
+        }
+
+        submitBtn.classList.add('btn-loading');
+        submitBtn.disabled = true;
+        try {
+            const service = tipo === 'Tarea' ? 'TASK' : 'EXAM';
+            const action = tipo === 'Tarea' ? 'updateTask' : 'updateExam';
+            const res = await fetchApi(service, action, payload);
+            if (res.status === 'success') {
+                alert('Actualizado correctamente.');
+                document.getElementById('edit-task-modal').classList.add('hidden');
+                fetchManagementData();
+            } else throw new Error(res.message);
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            submitBtn.classList.remove('btn-loading');
+            submitBtn.disabled = false;
+        }
+    };
+
+    document.getElementById('delete-task-btn').onclick = async () => {
+        const idx = document.getElementById('task-details-modal').dataset.currentIndex;
+        const item = allTasksExams[idx];
+        const tipo = item.tipoReal;
+
+        if (confirm(`¿Está seguro de eliminar esta ${tipo}?`)) {
+            const btn = document.getElementById('delete-task-btn');
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+
+            try {
+                const service = tipo === 'Tarea' ? 'TASK' : 'EXAM';
+                const action = tipo === 'Tarea' ? 'deleteTask' : 'deleteExam';
+                const payload = tipo === 'Tarea' ? { tareaId: item.tareaId } : { examenId: item.examenId };
+
+                const res = await fetchApi(service, action, payload);
+                if (res.status === 'success') {
+                    alert(res.message);
+                    document.getElementById('task-details-modal').classList.add('hidden');
+                    fetchManagementData();
+                } else throw new Error(res.message);
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                btn.classList.remove('btn-loading');
+                btn.disabled = false;
+            }
+        }
+    };
+
+    // --- Carga de Actividad del Profesor (Dashboard de Entregas) ---
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
-        submissionsTableBody.innerHTML = '<tr><td colspan="10" class="text-center p-1.5">Cargando actividad...</td></tr>';
+        submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8">Cargando actividad...</td></tr>';
         try {
             const payload = {
                 profesorId: currentUser.userId,
@@ -122,78 +312,204 @@ document.addEventListener('DOMContentLoaded', () => {
                 seccion: currentUser.seccion
             };
 
-            const [taskSubmissions, examSubmissions, allExams] = await Promise.all([
+            const [taskSubmissions, examSubmissions] = await Promise.all([
                 fetchApi('TASK', 'getTeacherActivity', payload),
-                fetchApi('EXAM', 'getTeacherExamActivity', payload),
-                fetchApi('EXAM', 'getAllExams', { profesorId: currentUser.userId })
+                fetchApi('EXAM', 'getTeacherExamActivity', payload)
             ]);
 
-            const submissions = [
-                ...(((taskSubmissions || {}).data || [])).map(s => ({ ...s, tipo: 'Tarea' })),
-                ...(((examSubmissions || {}).data || [])).map(s => ({ ...s, tipo: 'Examen' }))
+            allActivityRaw = [
+                ...((taskSubmissions.data || [])).map(s => ({ ...s, tipo: 'Tarea' })),
+                ...((examSubmissions.data || [])).map(s => ({ ...s, tipo: 'Examen' }))
             ];
-            const submittedExamIds = new Set((((examSubmissions || {}).data || [])).map(s => s.examenId));
-            const examsWithoutSubmissions = (((allExams || {}).data || []))
-                .filter(exam => !submittedExamIds.has(exam.examenId))
-                .map(exam => ({ ...exam, tipo: 'Examen' }));
 
-            allActivityRaw = [...submissions, ...examsWithoutSubmissions].map(item => ({
-                ...item,
-                grado: item.grado || item.gradoAsignado,
-                seccion: item.seccion || item.seccionAsignada
-            }));
-            renderCurrentLevel();
+            renderSubmissionsTable();
         } catch (error) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="10" class="text-center p-1.5 text-red-500">Error al cargar actividad: ${error.message}</td></tr>`;
+            submissionsTableBody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500">Error: ${error.message}</td></tr>`;
         }
     }
 
-    function renderCurrentLevel() {
-        const current = navStack[navStack.length - 1];
+    function renderSubmissionsTable() {
+        if (!submissionsTableBody) return;
 
-        // Limpiar scroll horizontal clean si no estamos en Detalles
-        const tableContainer = document.querySelector('.table-container');
-        if (tableContainer && current.level !== 'Detalles') {
-            tableContainer.classList.remove('scroll-horizontal-clean');
-        }
+        const fGrado = document.getElementById('filter-grado').value;
+        const fSeccion = document.getElementById('filter-seccion').value;
+        const fAsignatura = document.getElementById('filter-asignatura').value.toLowerCase();
+        const fEstado = document.getElementById('filter-estado').value;
+        const search = studentSearchInput.value.toLowerCase();
 
-        let title = current.level;
-        if (current.level === 'Secciones') title = `Secciones - ${current.data.grado}`;
-        else if (current.level === 'Asignaturas') title = `Asignaturas - ${current.data.grado} ${current.data.seccion}`;
-        else if (current.level === 'Alumnos') title = `Alumnos - ${current.data.asignatura}`;
-        else if (current.level === 'Exámenes') title = `Exámenes - ${current.data.asignatura}`;
-        else if (current.level === 'Detalles') title = `Actividades - ${current.data.alumnoNombre}`;
+        const filtered = allActivityRaw.filter(item => {
+            const matchGrado = !fGrado || item.grado === fGrado;
+            const matchSeccion = !fSeccion || item.seccion === fSeccion;
+            const matchAsignatura = !fAsignatura || item.asignatura.toLowerCase().includes(fAsignatura);
+            const matchSearch = !search || item.alumnoNombre.toLowerCase().includes(search);
 
-        if (dashboardLevelTitle) dashboardLevelTitle.textContent = title;
-        if (backNavBtn) {
-            if (navStack.length > 1) backNavBtn.classList.remove('hidden');
-            else backNavBtn.classList.add('hidden');
-        }
+            let itemEstado = 'Pendiente';
+            if (item.estado === 'Completada' || item.estado === 'Revisada') itemEstado = 'Completada';
+            else if (item.estado === 'Rechazada') itemEstado = 'Rechazada';
+            else if (item.fileId || item.respuestas || item.entregaId) itemEstado = 'Por calificar';
 
-        // Mostrar/Ocultar filtro de pendientes solo en el nivel de Alumnos
-        if (pendingFilterContainer) {
-            if (current.level === 'Alumnos') pendingFilterContainer.classList.remove('hidden');
-            else pendingFilterContainer.classList.add('hidden');
-        }
+            const matchEstado = !fEstado || itemEstado === fEstado;
 
-        const searchTerm = (studentSearchInput ? studentSearchInput.value : '').trim().toLowerCase();
+            return matchGrado && matchSeccion && matchAsignatura && matchSearch && matchEstado;
+        });
 
-        // (A-31) Priorizar búsqueda global si hay texto y no estamos en detalles profundos
-        if (searchTerm !== '' && current.level !== 'Detalles') {
-            renderGlobalSearch(searchTerm);
+        currentFilteredItems = filtered;
+
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-gray-500">No se encontraron entregas.</td></tr>';
             return;
         }
 
-        // Determinar qué renderizar según el nivel
-        switch (current.level) {
-            case 'Grados': renderGrados(searchTerm); break;
-            case 'Secciones': renderSecciones(current.data.grado, searchTerm); break;
-            case 'Asignaturas': renderAsignaturas(current.data.grado, current.data.seccion, searchTerm); break;
-            case 'Alumnos': renderAlumnos(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
-            case 'Exámenes': renderExamenesGestion(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
-            case 'Detalles': renderDetalles(current.data.alumnoNombre, current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
-        }
+        submissionsTableBody.innerHTML = filtered.map((item, idx) => {
+            let statusClass = 'bg-gray-100 text-gray-600';
+            let statusText = 'Pendiente';
+
+            if (item.estado === 'Completada' || item.estado === 'Revisada') {
+                statusText = 'Completada';
+                statusClass = 'bg-green-100 text-green-700';
+            } else if (item.estado === 'Rechazada') {
+                statusText = 'Rechazada';
+                statusClass = 'bg-red-100 text-red-700';
+            } else if (item.fileId || item.respuestas || item.entregaId) {
+                statusText = 'Por calificar';
+                statusClass = 'bg-yellow-100 text-yellow-700';
+            }
+
+            return `
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4">
+                        <div class="font-bold text-gray-800">${item.alumnoNombre}</div>
+                        <div class="text-[10px] text-gray-400 uppercase">${item.asignatura}</div>
+                    </td>
+                    <td class="p-4">
+                        <div class="font-medium text-gray-700">${item.titulo}</div>
+                        <div class="text-[10px] text-blue-500 font-bold">${item.tipo}</div>
+                    </td>
+                    <td class="p-4 text-xs text-gray-600">${item.grado} - ${item.seccion || 'N/A'}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded-full text-[10px] font-bold ${statusClass}">${statusText}</span>
+                    </td>
+                    <td class="p-4 text-xs text-gray-500">${new Date(item.fecha).toLocaleDateString()}</td>
+                    <td class="p-4 text-right">
+                        <button class="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors grade-btn" data-index="${idx}">
+                            Calificar
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     }
+
+    // Event listeners para filtros
+    ['filter-grado', 'filter-seccion', 'filter-asignatura', 'filter-estado'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('change', renderSubmissionsTable);
+            if (id === 'filter-asignatura') {
+                el.addEventListener('input', renderSubmissionsTable);
+            }
+        }
+    });
+
+    // --- Módulo 3: Exportación a Excel ---
+    document.getElementById('export-excel-btn').addEventListener('click', async () => {
+        const grado = document.getElementById('report-grado').value;
+        const seccion = document.getElementById('report-seccion').value;
+        const parcial = document.getElementById('report-parcial').value;
+        const btn = document.getElementById('export-excel-btn');
+
+        btn.disabled = true;
+        btn.innerHTML = '<span>Generando Reporte...</span>';
+
+        try {
+            // 1. Obtener alumnos inscritos
+            const studentsRes = await fetchApi('USER', 'getStudentsByGradoSeccion', { grado, seccion });
+            const students = studentsRes.data || [];
+
+            if (students.length === 0) {
+                alert('No hay alumnos inscritos en este grado y sección.');
+                return;
+            }
+
+            // 2. Obtener TODAS las tareas y exámenes para este profesor
+            const [tasksRes, examsRes] = await Promise.all([
+                fetchApi('TASK', 'getAllTasks', { profesorId: currentUser.userId }),
+                fetchApi('EXAM', 'getAllExams', { profesorId: currentUser.userId })
+            ]);
+
+            const allTasks = (tasksRes.data || []).filter(t => t.grado === grado && (!t.seccion || t.seccion === seccion) && t.parcial === parcial);
+            const allExams = (examsRes.data || []).filter(e => e.grado === grado && (!e.seccion || e.seccion === seccion || e.seccion === 'Todas'));
+
+            // 3. Obtener todas las entregas para calcular puntajes
+            const [taskSubRes, examSubRes] = await Promise.all([
+                fetchApi('TASK', 'getTeacherActivity', { profesorId: currentUser.userId, grado, seccion }),
+                fetchApi('EXAM', 'getTeacherExamActivity', { profesorId: currentUser.userId, grado, seccion })
+            ]);
+
+            const taskSubmissions = taskSubRes.data || [];
+            const examSubmissions = examSubRes.data || [];
+
+            // 4. Organizar por materia
+            const subjects = [...new Set([...allTasks.map(t => t.asignatura), ...allExams.map(e => e.asignatura)])];
+
+            const wb = XLSX.utils.book_new();
+
+            subjects.forEach(subject => {
+                const subTasks = allTasks.filter(t => t.asignatura === subject);
+                const subExams = allExams.filter(e => e.asignatura === subject);
+
+                const headers = ['ID Usuario', 'Nombre del Alumno'];
+                subTasks.forEach(t => headers.push(t.titulo));
+                subExams.forEach((e, i) => headers.push(`Examen ${i + 1}: ${e.titulo}`));
+                headers.push('TOTAL DE PUNTOS');
+
+                const data = students.map(student => {
+                    const row = [student.userId, student.nombre];
+                    let total = 0;
+
+                    // Puntajes de tareas
+                    subTasks.forEach(task => {
+                        const sub = taskSubmissions.find(s => s.alumnoNombre === student.nombre && s.titulo === task.titulo);
+                        const points = sub ? parseFloat(sub.calificacion || 0) : 0;
+                        row.push(points);
+                        total += points;
+                    });
+
+                    // Puntajes de exámenes
+                    subExams.forEach(exam => {
+                        const sub = examSubmissions.find(s => s.alumnoNombre === student.nombre && s.titulo === exam.titulo);
+                        const points = sub ? parseFloat(sub.calificacion || 0) : 0;
+                        row.push(points);
+                        total += points;
+                    });
+
+                    row.push(total);
+                    return row;
+                });
+
+                const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
+                XLSX.utils.book_append_sheet(wb, ws, subject.substring(0, 31)); // Limitar nombre de hoja a 31 chars
+            });
+
+            // 5. Descargar archivo
+            const parcialNumMap = {
+                'Primer Parcial': '1',
+                'Segundo Parcial': '2',
+                'Tercer Parcial': '3',
+                'Cuarto Parcial': '4'
+            };
+            const pNum = parcialNumMap[parcial] || parcial;
+            const normalizedGrado = grado.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const fileName = `${normalizedGrado}_seccion_${seccion}_parcial_${pNum}.xls`;
+            XLSX.writeFile(wb, fileName);
+
+        } catch (error) {
+            alert('Error al generar reporte: ' + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span>EXPORTAR REPORTE EXCEL</span>';
+        }
+    });
 
     function renderGlobalSearch(search) {
         if (dashboardLevelTitle) dashboardLevelTitle.textContent = "Resultados de Búsqueda Global";
@@ -585,136 +901,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (studentSearchInput) {
-        studentSearchInput.addEventListener('input', () => renderCurrentLevel());
+        studentSearchInput.addEventListener('input', () => renderSubmissionsTable());
     }
 
-    if (onlyPendingFilter) {
-        onlyPendingFilter.addEventListener('change', () => renderCurrentLevel());
-    }
-
-    if (dashboardTableHead) {
-        dashboardTableHead.addEventListener('click', (e) => {
-            const sortBtn = e.target.closest('.sort-student');
-            if (sortBtn) {
-                const field = sortBtn.dataset.field;
-                if (studentSort.field === field) {
-                    studentSort.direction = studentSort.direction === 'asc' ? 'desc' : 'asc';
-                } else {
-                    studentSort.field = field;
-                    studentSort.direction = 'asc';
-                }
-                renderCurrentLevel();
-                return;
-            }
-
-            const tabBtn = e.target.closest('.alumno-tab-btn');
-            if (tabBtn) {
-                const tab = tabBtn.dataset.tab;
-                const current = navStack[navStack.length - 1];
-                if (tab === 'gestion') {
-                    pushNav('Exámenes', { ...current.data, tab: 'gestion' });
-                } else {
-                    current.data.tab = tab;
-                    renderCurrentLevel();
-                }
-            }
-        });
-    }
-
-    // --- Delegación de Eventos para la Tabla ---
     if (submissionsTableBody) {
-        submissionsTableBody.addEventListener('click', async (e) => {
-            const target = e.target;
-
-            // Priorizar acciones de botones para evitar navegación accidental
-            if (target.closest('.grade-task-btn') || target.closest('.grade-exam-btn') ||
-                target.closest('.activate-exam-btn') || target.closest('.lock-exam-btn') ||
-                target.closest('.view-file-link')) {
-
-                // Procesar acciones
-                if (target.classList.contains('view-file-link')) {
-                    e.preventDefault();
-                    openLightbox(target.dataset.fileId, target.dataset.title);
-                }
-                if (target.classList.contains('grade-task-btn')) {
-                    if (saveGradeBtn) saveGradeBtn.dataset.type = 'Tarea';
-                    openGradeModal(currentFilteredItems[target.dataset.index]);
-                }
-                if (target.classList.contains('grade-exam-btn')) {
-                    if (saveGradeBtn) saveGradeBtn.dataset.type = 'Examen';
-                    openGradeModal(currentFilteredItems[target.dataset.index]);
-                }
-                if (target.classList.contains('activate-exam-btn')) {
-                    const examenId = target.dataset.examenId;
-                    if (confirm("¿Activar este examen para todos los alumnos asignados?")) {
-                        target.classList.add('btn-loading');
-                        target.disabled = true;
-                        try {
-                            const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Activo' });
-                            if (result.status === 'success') {
-                                alert('Examen activado.');
-                                fetchTeacherActivity();
-                            } else { throw new Error(result.message); }
-                        } catch (error) {
-                            alert(`Error: ${error.message}`);
-                            target.classList.remove('btn-loading');
-                            target.disabled = false;
-                        }
-                    }
-                }
-                if (target.classList.contains('lock-exam-btn')) {
-                    const examenId = target.dataset.examenId;
-                    if (confirm("¿Bloquear este examen? Nadie más podrá realizarlo.")) {
-                        target.classList.add('btn-loading');
-                        target.disabled = true;
-                        try {
-                            const result = await fetchApi('EXAM', 'updateExamStatus', { examenId, estado: 'Bloqueado' });
-                            if (result.status === 'success') {
-                                alert('Examen bloqueado.');
-                                fetchTeacherActivity();
-                            } else { throw new Error(result.message); }
-                        } catch (error) {
-                            alert(`Error: ${error.message}`);
-                            target.classList.remove('btn-loading');
-                            target.disabled = false;
-                        }
-                    }
-                }
-                return; // Evitar que el clic en el botón active la navegación de la fila
-            }
-
-
-            // Navegación de jerarquía
-            const navBtn = target.closest('.nav-btn');
-            if (navBtn) {
-                const idx = navBtn.dataset.index;
+        submissionsTableBody.addEventListener('click', (e) => {
+            if (e.target.classList.contains('grade-btn')) {
+                const idx = e.target.dataset.index;
                 const item = currentFilteredItems[idx];
-                const current = navStack[navStack.length - 1];
-                const searchTerm = (studentSearchInput ? studentSearchInput.value : '').trim();
-
-                // (A-31) Manejar clic en resultados de búsqueda global
-                if (searchTerm !== '' && current.level !== 'Detalles') {
-                    const alumnoNombre = item.nombre;
-                    pushNav('Detalles', {
-                        alumnoNombre,
-                        grado: item.grado,
-                        seccion: item.seccion,
-                        asignatura: item.asignatura
-                    });
-                    return;
-                }
-
-                if (current.level === 'Grados') {
-                    pushNav('Secciones', { grado: item });
-                } else if (current.level === 'Secciones') {
-                    pushNav('Asignaturas', { grado: current.data.grado, seccion: item });
-                } else if (current.level === 'Asignaturas') {
-                    pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: item, tab: 'tareas' });
-                } else if (current.level === 'Alumnos') {
-                    // Si estamos en la pestaña de exámenes, item es la entrega, si no es el objeto alumno
-                    const alumnoNombre = item.alumnoNombre || item.nombre;
-                    pushNav('Detalles', { alumnoNombre, grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura });
-                }
+                if (saveGradeBtn) saveGradeBtn.dataset.type = item.tipo;
+                openGradeModal(item);
             }
         });
     }

@@ -67,6 +67,10 @@ function doPost(e) {
         result = loginUser(payload);
         break;
 
+      case "getStudentsByGradoSeccion":
+        result = getStudentsByGradoSeccion(payload);
+        break;
+
       default:
         result = {
           status: "error",
@@ -183,4 +187,25 @@ function loginUser(payload) {
     status: "error",
     message: "Credenciales incorrectas"
   };
+}
+
+function getStudentsByGradoSeccion(payload) {
+  const { grado, seccion } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
+  const data = usuariosSheet.getDataRange().getValues().slice(1);
+
+  const students = data.filter(r => {
+    const isStudent = r[6] === 'Estudiante';
+    const matchGrado = r[2] === grado;
+    const matchSeccion = !seccion || r[3] === seccion;
+    return isStudent && matchGrado && matchSeccion;
+  }).map(r => ({
+    userId: r[0],
+    nombre: r[1],
+    grado: r[2],
+    seccion: r[3]
+  }));
+
+  return { status: "success", data: students };
 }

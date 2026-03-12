@@ -48,6 +48,8 @@ function doPost(e) {
       case "gradeSubmission": response = gradeSubmission(payload); break;
       case "getTeacherActivity": response = getTeacherActivity(payload); break;
       case "getAllTasks": response = getAllTasks(payload); break;
+      case "updateTask": response = updateTask(payload); break;
+      case "deleteTask": response = deleteTask(payload); break;
       default:
         response = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
@@ -62,12 +64,60 @@ function doPost(e) {
 
 // --- LÓGICA DEL SERVICIO ---
 function createTask(payload) {
-  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId, profesorId } = payload;
+  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId, profesorId, puntaje, archivoUrl } = payload;
   const tareaId = "TSK-" + new Date().getTime();
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
-  tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId || '', profesorId || '']);
+  // Columnas: 0:tareaId, 1:tipo, 2:titulo, 3:descripcion, 4:parcial, 5:asignatura, 6:grado, 7:seccion, 8:fecha, 9:originalId, 10:profesorId, 11:estado, 12:puntaje, 13:archivoUrl
+  tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId || '', profesorId || '', 'Activa', puntaje || 100, archivoUrl || '']);
   return { status: "success", message: "Tarea creada." };
+}
+
+function updateTask(payload) {
+  const { tareaId, titulo, descripcion, fechaLimite, parcial, asignatura, gradoAsignado, seccionAsignada, puntaje, archivoUrl } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "Tareas");
+  const data = sheet.getDataRange().getValues();
+  const rowIndex = data.findIndex(r => r[0] === tareaId);
+
+  if (rowIndex === -1) throw new Error("Tarea no encontrada.");
+
+  const row = rowIndex + 1;
+  if (titulo !== undefined) sheet.getRange(row, 3).setValue(titulo);
+  if (descripcion !== undefined) sheet.getRange(row, 4).setValue(descripcion);
+  if (parcial !== undefined) sheet.getRange(row, 5).setValue(parcial);
+  if (asignatura !== undefined) sheet.getRange(row, 6).setValue(asignatura);
+  if (gradoAsignado !== undefined) sheet.getRange(row, 7).setValue(gradoAsignado);
+  if (seccionAsignada !== undefined) sheet.getRange(row, 8).setValue(seccionAsignada);
+  if (fechaLimite !== undefined) sheet.getRange(row, 9).setValue(fechaLimite);
+  if (puntaje !== undefined) sheet.getRange(row, 13).setValue(puntaje);
+  if (archivoUrl !== undefined) sheet.getRange(row, 14).setValue(archivoUrl);
+
+  return { status: "success", message: "Tarea actualizada." };
+}
+
+function deleteTask(payload) {
+  const { tareaId } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const tareasSheet = getSheetOrThrow(ss, "Tareas");
+  const entregasSheet = getSheetOrThrow(ss, "Entregas");
+
+  const tareasData = tareasSheet.getDataRange().getValues();
+  const rowIndex = tareasData.findIndex(r => r[0] === tareaId);
+  if (rowIndex === -1) throw new Error("Tarea no encontrada.");
+
+  const entregasData = entregasSheet.getDataRange().getValues();
+  const hasSubmissions = entregasData.some(r => r[1] === tareaId);
+
+  if (hasSubmissions) {
+    // Marcar como inactiva
+    tareasSheet.getRange(rowIndex + 1, 12).setValue("Inactiva");
+    return { status: "success", message: "Tarea marcada como inactiva (existen entregas)." };
+  } else {
+    // Eliminar fila
+    tareasSheet.deleteRow(rowIndex + 1);
+    return { status: "success", message: "Tarea eliminada." };
+  }
 }
 
 function getStudentTasks(payload) {
@@ -307,7 +357,10 @@ function getAllTasks(payload) {
       seccion: r[7],
       fechaLimite: r[8] ? new Date(r[8]).toISOString() : null,
       tareaOriginalId: r[9],
-      profesorId: r[10]
+      profesorId: r[10],
+      estado: r[11] || 'Activa',
+      puntaje: r[12] || 100,
+      archivoUrl: r[13] || ''
     }))
   };
 }

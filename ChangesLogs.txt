@@ -729,3 +729,19 @@ DESCRIPCIÓN: Reestructuración total del artículo para cumplir con los estánd
 ARCHIVO: js/data.js
 LÍNEAS: 89
 DESCRIPCIÓN: Inserción del nuevo artículo "Propiedades CSS" en la lista de Recursos Adicionales bajo la categoría "Artículos".
+
+TAREA: [A-47]
+TÍTULO: Rediseño Dashboard Profesor (Estilo Califik)
+ÁREA: Frontend / Backend / Reportes
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA
+
+MODIFICACIONES:
+- Rediseñado teacher-dashboard.html con navegación por pestañas (Dashboard, Gestión, Reportes).
+- Implementada Sección "Gestión de Tareas" para CRUD de asignaciones.
+- Implementada Sección "Reportes Excel" usando la librería SheetJS (XLSX).
+- Refactorizada la tabla de "Entregas" para usar filtros planos (Grado, Sección, Materia, Estado).
+- Backend (TASK-SVC): Añadidas acciones 'updateTask' y 'deleteTask'; actualizadas columnas para 'estado', 'puntajeMaximo' y 'archivoUrl'.
+- Backend (EXAM-SVC): Añadidas acciones 'updateExam' y 'deleteExam'.
+- Backend (USER-SVC): Añadida acción 'getStudentsByGradoSeccion' para reportes consolidados.
+- Frontend (js/teacher.js): Implementada lógica de agregación de datos para reportes multi-hoja y gestión reactiva de la UI.
