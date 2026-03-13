@@ -749,4 +749,4 @@ MODIFICACIONES:
 - Backend (EXAM-SVC): Añadidas acciones 'updateExam', 'deleteExam' y 'deleteExamSubmission'.
 - Backend (USER-SVC): Añadida acción 'getStudentsByGradoSeccion' con normalización de texto para reportes robustos.
 - Frontend (js/teacher.js, js/student.js): Refactorización total de la lógica de navegación y gestión de estados.
-- js/config.js: Actualizadas las URLs de los microservicios TASK y EXAM con los nuevos endpoints finales proporcionados.
+- js/config.js: Actualizadas las URLs de los microservicios TASK y EXAM con los nuevos endpoints finales proporcionados. Se aplicó una nueva implementación del servicio de tareas: https://script.google.com/macros/s/AKfycbwKlOEB1WZAcgm9G7yD27YCEu5u7MjBbH9v839g7mpelaxmDEDouRgU1Ex1LAf-Bl4/exec.
