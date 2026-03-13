@@ -14,6 +14,14 @@ Archivo: teacher-dashboard.html
 - Tarea: Añadir script de XLSX (SheetJS). (COMPLETADO)
 - Hallazgo Estético: Los encabezados de las tablas carecían de jerarquía visual. (SOLUCIONADO: Se aplicó estilo uppercase, letter-spacing y text-xs).
 
+Archivo: css/style.css
+----------------------
+- Auditoría UI Refinement (10/03/2026):
+  - Botones: Se detectó que el padding vertical y el border-radius de 1rem (Bootstrap default) restaban profesionalismo. (SOLUCIONADO: Reducido a 0.4rem y 6px).
+  - Tipografía: Las listas de tareas y tablas tenían una fuente ligeramente pequeña para lectura prolongada. (SOLUCIONADO: Incrementado el tamaño en un nivel).
+  - Cards: Las descripciones largas de tareas rompían el grid al crecer infinitamente. (SOLUCIONADO: Implementado max-height: 350px con overflow-y: auto).
+  - Scroll: El scroll nativo del navegador era demasiado intrusivo para scrolls internos de componentes. (SOLUCIONADO: Implementada scrollbar minimalista).
+
 Archivo: js/teacher.js
 ----------------------
 - Utiliza fetchApi para interactuar con los microservicios.

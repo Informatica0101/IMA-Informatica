@@ -301,3 +301,112 @@ select,
 textarea {
     min-height: 44px;
 }
+
+/* ==================================================
+   PRECISION UI REFINEMENT
+   ================================================== */
+
+/* Tarea 1 & 4 - Compact & Professional Buttons */
+.open-submission-modal,
+.delete-submission-btn,
+.grade-btn,
+.nav-btn,
+#nav-dashboard,
+#nav-gestion,
+#nav-reportes,
+#nav-crear,
+#nav-crear-examen,
+.btn-ima-primary {
+    padding: 0.4rem 1rem !important;
+    margin: 0.2rem 0 !important;
+    border-radius: 6px !important;
+    font-size: 0.85rem !important;
+    min-height: auto !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+/* Subtle Gradient for Primary Buttons (Blue to soft gray/lighter blue) */
+.open-submission-modal,
+.grade-btn,
+#nav-dashboard.bg-blue-600,
+.bg-blue-600.text-white {
+    background: linear-gradient(180deg, #2563eb 0%, #f3f4f6 250%) !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    color: white !important;
+}
+
+.open-submission-modal:hover,
+.grade-btn:hover,
+#nav-dashboard.bg-blue-600:hover {
+    background: linear-gradient(180deg, #1d4ed8 0%, #e5e7eb 250%) !important;
+    transform: none !important;
+}
+
+/* Secondary/Neutral buttons */
+.delete-submission-btn,
+.bg-white.text-gray-700 {
+    background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%) !important;
+    color: #374151 !important;
+    border: 1px solid #d1d5db !important;
+}
+
+.delete-submission-btn {
+    background: linear-gradient(180deg, #ef4444 0%, #f3f4f6 250%) !important;
+    color: white !important;
+}
+
+/* Tarea 2 - Typography Enhancement */
+.assignment-card h3 {
+    font-size: 1.1rem !important;
+    line-height: 1.4 !important;
+}
+
+.table-container td,
+.table-container th {
+    font-size: 0.95rem !important;
+}
+
+.table-container th {
+    font-size: 0.75rem !important; /* Slightly larger but keeps the header style */
+}
+
+span.rounded-full {
+    font-size: 0.75rem !important;
+    padding: 0.2rem 0.6rem !important;
+}
+
+/* Tarea 3 - Internal Scroll for Assignment Cards */
+.assignment-card.is-expanded .assignment-content {
+    max-height: 350px !important;
+    overflow-y: auto !important;
+    padding-right: 0.5rem;
+}
+
+/* Tarea 5 - Aesthetic Scrollbar (Minimalist) */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #bbb;
+}
+
+/* Firefox support */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #ccc #f1f1f1;
+}

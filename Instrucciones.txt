@@ -21,6 +21,17 @@ ESTADO DE LAS TAREAS (RESUMEN)
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
 
+TAREA: [A-48]
+TÍTULO: Refinamiento de UI de Precisión (Dashboards)
+ÁREA: UI/UX / Frontend
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Implementada compactación de botones con gradientes profesionales y border-radius de 6px.
+- Aumentada la jerarquía tipográfica en listas y tablas para mejor legibilidad.
+- Implementado scroll interno en tarjetas de asignación expandidas (max-height: 350px).
+- Estilizada scrollbar minimalista para componentes internos.
+- Verificada la consistencia visual entre Student y Teacher Dashboard.
+
 TAREA: [A-47]
 TÍTULO: Rediseño Dashboard Profesor (Estilo Califik) y Refinamiento Estudiante
 ÁREA: Frontend / Backend / Reportes
