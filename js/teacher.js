@@ -510,11 +510,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderDetallesAlumno(alumnoId, grado, seccion, asignatura, search) {
         const fEstado = document.getElementById('filter-estado').value;
+        const isGlobalSearch = (asignatura === 'Búsqueda Global');
+
         const filtered = allActivityRaw.filter(i =>
             i.alumnoId === alumnoId &&
-            i.grado === grado &&
-            i.seccion === seccion &&
-            i.asignatura === asignatura &&
+            (isGlobalSearch || (i.grado === grado && i.seccion === seccion && i.asignatura === asignatura)) &&
             i.titulo.toLowerCase().includes(search)
         );
         // Ordenar por fecha más reciente primero
