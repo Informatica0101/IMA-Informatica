@@ -743,7 +743,8 @@ MODIFICACIONES:
 - Módulo 1 (Gestión): Implementado CRUD completo para Tareas y Exámenes, incluyendo edición de metadatos y borrado lógico/físico.
 - Módulo 2 (Entregas): Refactorizada la tabla de entregas con filtros avanzados (Grado, Sección, Materia, Estado) y búsqueda global de alumnos.
 - Módulo 3 (Excel): Implementada exportación a Excel multi-hoja (una por materia) usando SheetJS, con mapeo por ID de usuario para evitar errores de duplicidad.
-- Funcionalidad "Eliminar Entrega": Añadida tanto para profesor como para estudiante, con limpieza física del archivo en Google Drive mediante la API de DriveApp.
+- Funcionalidad "Eliminar Entrega": Implementada para profesor y estudiante. Restringida en el dashboard del estudiante a tareas con estado "Pendiente". Se actualizó el mensaje de advertencia a: "ATENCIÓN: Al eliminar tu entrega podrías perder la nota de calificación".
+- Privacidad de Entregas: Se restringió el acceso del estudiante a sus propios archivos/imágenes entregados; el enlace "Ver mi entrega" desaparece una vez que la tarea ha sido revisada por el docente.
 - Backend (TASK-SVC): Añadidas acciones 'updateTask', 'deleteTask' y 'deleteSubmission'.
 - Backend (EXAM-SVC): Añadidas acciones 'updateExam', 'deleteExam' y 'deleteExamSubmission'.
 - Backend (USER-SVC): Añadida acción 'getStudentsByGradoSeccion' con normalización de texto para reportes robustos.

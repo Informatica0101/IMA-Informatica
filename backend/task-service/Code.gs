@@ -172,7 +172,14 @@ function getStudentTasks(payload) {
     return {
       tareaId: task[0], tipo: task[1], titulo: task[2], descripcion: task[3], parcial: task[4],
       asignatura: task[5], fechaLimite: fechaLimite,
-      entrega: entrega ? { calificacion: entrega[5], estado: entrega[6], comentario: entrega[7] } : null
+      entrega: entrega ? {
+        entregaId: entrega[0],
+        calificacion: entrega[5],
+        estado: entrega[6],
+        comentario: entrega[7],
+        fileId: entrega[4],
+        mimeType: entrega[8]
+      } : null
     };
   });
   return { status: "success", data: studentTasks.reverse() };
