@@ -745,6 +745,8 @@ MODIFICACIONES:
 - Módulo 3 (Excel): Implementada exportación a Excel multi-hoja (una por materia) usando SheetJS, con mapeo por ID de usuario para evitar errores de duplicidad.
 - Funcionalidad "Eliminar Entrega": Implementada para profesor y estudiante. Restringida en el dashboard del estudiante a tareas con estado "Pendiente". Se actualizó el mensaje de advertencia a: "ATENCIÓN: Al eliminar tu entrega podrías perder la nota de calificación".
 - Privacidad de Entregas: Se restringió el acceso del estudiante a sus propios archivos/imágenes entregados; el enlace "Ver mi entrega" desaparece una vez que la tarea ha sido revisada por el docente.
+- Ordenamiento dinámico: Implementada lógica de ordenamiento en la lista de alumnos por nombre y estado. Los detalles de actividad del alumno ahora se muestran con las entregas más recientes primero.
+- Tarjetas Expandibles: Las asignaciones en el dashboard del estudiante se transformaron en tarjetas interactivas expandibles. Se implementó una lógica exclusiva donde al expandir una tarea se contraen las demás, optimizando el espacio visual.
 - Backend (TASK-SVC): Añadidas acciones 'updateTask', 'deleteTask' y 'deleteSubmission'.
 - Backend (EXAM-SVC): Añadidas acciones 'updateExam', 'deleteExam' y 'deleteExamSubmission'.
 - Backend (USER-SVC): Añadida acción 'getStudentsByGradoSeccion' con normalización de texto para reportes robustos.

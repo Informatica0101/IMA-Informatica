@@ -24,6 +24,8 @@ Archivo: js/teacher.js
 - Tarea: Implementar Gestión de Tareas (CRUD). (COMPLETADO)
 - Tarea: Implementar lógica de Reporte Excel (Módulo 3). (COMPLETADO)
 - Hallazgo Lógico: Existía una condición de carrera al navegar rápidamente y el nivel "Asignaturas" se omitía en ciertos flujos. (SOLUCIONADO: Se añadió guardas isNavigating y se forzó el nivel Asignaturas en el navStack).
+- Hallazgo UX: El dashboard del estudiante se volvía muy largo con muchas tareas. (SOLUCIONADO: Se implementaron tarjetas expandibles con lógica exclusiva).
+- Hallazgo Navegación: La lista de alumnos era difícil de navegar sin ordenamiento. (SOLUCIONADO: Se añadió ordenamiento por Nombre y Estado).
 
 Archivo: backend/task-service/Code.gs
 -------------------------------------

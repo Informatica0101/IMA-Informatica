@@ -22,7 +22,7 @@ TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
 
 TAREA: [A-47]
-TÍTULO: Rediseño Dashboard Profesor (Estilo Califik)
+TÍTULO: Rediseño Dashboard Profesor (Estilo Califik) y Refinamiento Estudiante
 ÁREA: Frontend / Backend / Reportes
 PRIORIDAD: ALTA
 ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
@@ -30,6 +30,8 @@ ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
 - Implementación de CRUD para tareas y exámenes en la nueva sección de Gestión.
 - Generación de reportes Excel consolidados por parcial, grado y sección (una hoja por materia).
 - Refactorización de la tabla de entregas con filtros avanzados en tiempo real.
+- Implementación de ordenamiento dinámico por Nombre y Estado en la lista de alumnos.
+- Transformación de asignaciones del estudiante en tarjetas expandibles con lógica de colapso automático.
 
 TAREA: [A-46]
 TÍTULO: Guía de Propiedades CSS y Actualización de Artículos

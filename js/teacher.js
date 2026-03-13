@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFilteredItems = [];
     let navStack = [{ level: 'Grados', data: null }];
     let isNavigating = false;
+    let studentSort = { column: 'nombre', direction: 'asc' };
 
     const allSections = [sectionDashboard, sectionGestion, sectionReportes, sectionCrear, sectionCrearExamen];
     const allNavLinks = [navDashboard, navGestion, navReportes, navCrear, navCrearExamen];
@@ -450,16 +451,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isGraded = (item.estado === 'Completada' || item.estado === 'Revisada' || item.estado === 'Rechazada');
                 if (isDelivered && !isGraded) hasPending = true;
             });
-            return { ...s, hasPending };
+            return { ...s, hasPending, statusText: hasPending ? 'Pendiente' : 'Al día' };
         });
 
-        const filtered = studentsWithStatus.filter(s => s.nombre.toLowerCase().includes(search));
+        let filtered = studentsWithStatus.filter(s => s.nombre.toLowerCase().includes(search));
+
+        // Aplicar ordenamiento
+        filtered.sort((a, b) => {
+            let valA = a[studentSort.column];
+            let valB = b[studentSort.column];
+            if (studentSort.column === 'statusText') {
+                valA = a.hasPending ? 'A_Pendiente' : 'B_AlDia';
+                valB = b.hasPending ? 'A_Pendiente' : 'B_AlDia';
+            }
+            if (valA < valB) return studentSort.direction === 'asc' ? -1 : 1;
+            if (valA > valB) return studentSort.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
         currentFilteredItems = filtered;
+
+        const sortIcon = (col) => {
+            if (studentSort.column !== col) return '↕';
+            return studentSort.direction === 'asc' ? '↑' : '↓';
+        };
 
         dashboardTableHead.innerHTML = `
             <tr class="bg-gray-50 border-b border-gray-100">
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Nombre del Alumno</th>
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Estado</th>
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer hover:bg-gray-100 sort-btn" data-sort="nombre">
+                    Nombre del Alumno ${sortIcon('nombre')}
+                </th>
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer hover:bg-gray-100 sort-btn" data-sort="statusText">
+                    Estado ${sortIcon('statusText')}
+                </th>
                 <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th>
             </tr>`;
 
@@ -493,6 +517,9 @@ document.addEventListener('DOMContentLoaded', () => {
             i.asignatura === asignatura &&
             i.titulo.toLowerCase().includes(search)
         );
+        // Ordenar por fecha más reciente primero
+        filtered.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
         const finalFiltered = filtered.filter(item => {
             if (!fEstado) return true;
             let itemEstado = 'Pendiente';
@@ -537,6 +564,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     const asigFilter = document.getElementById('filter-asignatura');
     if (asigFilter) asigFilter.addEventListener('input', () => renderCurrentLevel());
+
+    if (dashboardTableHead) {
+        dashboardTableHead.addEventListener('click', (e) => {
+            const sortBtn = e.target.closest('.sort-btn');
+            if (sortBtn) {
+                const column = sortBtn.dataset.sort;
+                if (studentSort.column === column) {
+                    studentSort.direction = studentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    studentSort.column = column;
+                    studentSort.direction = 'asc';
+                }
+                renderCurrentLevel();
+            }
+        });
+    }
 
     if (submissionsTableBody) {
         submissionsTableBody.addEventListener('click', async (e) => {

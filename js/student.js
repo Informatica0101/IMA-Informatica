@@ -172,19 +172,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             return `
-                <div class="dashboard-card">
+                <div class="dashboard-card assignment-card cursor-pointer group" data-task-id="${activity.tareaId || activity.examenId}">
                     <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-lg font-bold">${activity.titulo} <span class="text-xs font-normal text-gray-500">(${activity.type})</span></h3>
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-bold group-hover:text-blue-600 transition-colors">${activity.titulo} <span class="text-xs font-normal text-gray-500">(${activity.type})</span></h3>
                             <p class="text-sm text-gray-500 mb-2"><strong>Asignatura:</strong> ${activity.asignatura || 'No especificada'}</p>
                         </div>
-                        <span class="text-sm font-semibold text-gray-600">${formatDate(activity.fechaLimite)}</span>
+                        <div class="flex flex-col items-end">
+                            <span class="text-sm font-semibold text-gray-600">${formatDate(activity.fechaLimite)}</span>
+                            <svg class="w-5 h-5 text-gray-400 transform group-[.is-expanded]:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
                     </div>
-                    <p class="text-gray-700 mt-2">${activity.descripcion || 'Sin descripción.'}</p>
-                    <div class="mt-4">
-                        ${actionButtonHtml}
+                    <div class="assignment-content overflow-hidden max-h-0 transition-all duration-500 ease-in-out group-[.is-expanded]:max-h-[1000px]">
+                        <div class="pt-4 border-t border-gray-100 mt-2">
+                            <p class="text-gray-700 font-medium mb-4">${activity.descripcion || 'Sin descripción.'}</p>
+                            <div class="mt-4">
+                                ${actionButtonHtml}
+                            </div>
+                            ${feedbackHtml}
+                        </div>
                     </div>
-                    ${feedbackHtml}
                 </div>
             `;
         }).join('');
@@ -229,6 +236,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (tasksList) {
         tasksList.addEventListener('click', async (e) => {
+            const assignmentCard = e.target.closest('.assignment-card');
+            const isButton = e.target.closest('button, a');
+
+            if (assignmentCard && !isButton) {
+                const alreadyExpanded = assignmentCard.classList.contains('is-expanded');
+                // Collapse all
+                document.querySelectorAll('.assignment-card').forEach(card => card.classList.remove('is-expanded'));
+                // Toggle if not already expanded
+                if (!alreadyExpanded) assignmentCard.classList.add('is-expanded');
+                return;
+            }
+
             if (e.target && e.target.classList.contains('open-submission-modal')) {
                 const ds = e.target.dataset;
                 openSubmissionModal(ds.taskId, ds.taskTitle, ds.parcial, ds.asignatura);

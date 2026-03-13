@@ -173,6 +173,17 @@ body {
 }
 
 /* Dashboard Specific Styles */
+.assignment-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #f3f4f6;
+}
+
+.assignment-card.is-expanded {
+    border-color: #3b82f6;
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-2px);
+}
+
 .table-container {
     width: 100%;
     overflow-x: auto;
