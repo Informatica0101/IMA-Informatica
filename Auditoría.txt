@@ -26,6 +26,7 @@ Archivo: js/teacher.js
 - Hallazgo Lógico: Existía una condición de carrera al navegar rápidamente y el nivel "Asignaturas" se omitía en ciertos flujos. (SOLUCIONADO: Se añadió guardas isNavigating y se forzó el nivel Asignaturas en el navStack).
 - Hallazgo UX: El dashboard del estudiante se volvía muy largo con muchas tareas. (SOLUCIONADO: Se implementaron tarjetas expandibles con lógica exclusiva).
 - Hallazgo Navegación: La lista de alumnos era difícil de navegar sin ordenamiento. (SOLUCIONADO: Se añadió ordenamiento por Nombre y Estado).
+- Hallazgo Ordenamiento Estudiante: El orden de tareas no era intuitivo para ver lo nuevo. (SOLUCIONADO: Se implementó ordenamiento descendente agrupado por estado).
 
 Archivo: backend/task-service/Code.gs
 -------------------------------------

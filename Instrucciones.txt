@@ -32,6 +32,7 @@ ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
 - Refactorización de la tabla de entregas con filtros avanzados en tiempo real.
 - Implementación de ordenamiento dinámico por Nombre y Estado en la lista de alumnos.
 - Transformación de asignaciones del estudiante en tarjetas expandibles con lógica de colapso automático.
+- Refinamiento del orden de tareas para el alumno: tareas no revisadas arriba, ordenadas de más reciente a más antigua.
 
 TAREA: [A-46]
 TÍTULO: Guía de Propiedades CSS y Actualización de Artículos

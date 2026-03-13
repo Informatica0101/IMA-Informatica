@@ -70,16 +70,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 allActivities.push(...examsResult.data.map(exam => ({ ...exam, type: 'Examen' })));
             }
 
-            // Ordenar: No entregadas primero, luego por fecha límite (ascendente)
+            // Ordenar: No revisadas primero, luego por fecha límite (descendente - más reciente arriba)
             allActivities.sort((a, b) => {
-                const deliveredA = !!a.entrega;
-                const deliveredB = !!b.entrega;
+                const isReviewed = (act) => {
+                    if (!act.entrega) return false;
+                    const s = act.entrega.estado;
+                    return (s === 'Completada' || s === 'Revisada' || s === 'Finalizado' || s === 'Rechazada');
+                };
 
-                if (deliveredA !== deliveredB) {
-                    return deliveredA ? 1 : -1; // false (no entregada) viene antes que true
+                const revA = isReviewed(a);
+                const revB = isReviewed(b);
+
+                // sin revisar (false) viene antes que calificadas (true)
+                if (revA !== revB) {
+                    return revA ? 1 : -1;
                 }
 
-                return new Date(a.fechaLimite) - new Date(b.fechaLimite);
+                // Dentro del mismo grupo, fecha más reciente primero (descendente)
+                return new Date(b.fechaLimite) - new Date(a.fechaLimite);
             });
 
             renderActivities(allActivities);
