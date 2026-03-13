@@ -306,7 +306,7 @@ textarea {
    PRECISION UI REFINEMENT
    ================================================== */
 
-/* Tarea 1 & 4 - Compact & Professional Buttons */
+/* Tarea 1 & 4 - Compact & Professional Buttons & Selects */
 .open-submission-modal,
 .delete-submission-btn,
 .grade-btn,
@@ -316,7 +316,12 @@ textarea {
 #nav-reportes,
 #nav-crear,
 #nav-crear-examen,
-.btn-ima-primary {
+.btn-ima-primary,
+select.p-2.border.rounded-xl,
+#filters-container select,
+#report-grado,
+#report-seccion,
+#report-parcial {
     padding: 0.4rem 1rem !important;
     margin: 0.2rem 0 !important;
     border-radius: 6px !important;
@@ -324,8 +329,9 @@ textarea {
     min-height: auto !important;
     text-transform: none !important;
     letter-spacing: normal !important;
-    border: 1px solid rgba(0,0,0,0.1) !important;
+    border: 1px solid #d1d5db !important;
     transition: all 0.2s ease-in-out !important;
+    background-color: white !important;
 }
 
 /* Subtle Gradient for Primary Buttons (Blue to soft gray/lighter blue) */
@@ -359,6 +365,15 @@ textarea {
 }
 
 /* Tarea 2 - Typography Enhancement */
+footer p {
+    font-size: 0.8rem !important;
+}
+
+footer a,
+footer button {
+    font-size: 0.75rem !important;
+}
+
 .assignment-card h3 {
     font-size: 1.1rem !important;
     line-height: 1.4 !important;
