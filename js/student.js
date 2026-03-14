@@ -70,16 +70,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 allActivities.push(...examsResult.data.map(exam => ({ ...exam, type: 'Examen' })));
             }
 
-            // Ordenar: No entregadas primero, luego por fecha límite (ascendente)
+            // Ordenar: No revisadas primero, luego por fecha límite (descendente - más reciente arriba)
             allActivities.sort((a, b) => {
-                const deliveredA = !!a.entrega;
-                const deliveredB = !!b.entrega;
+                const isReviewed = (act) => {
+                    if (!act.entrega) return false;
+                    const s = act.entrega.estado;
+                    return (s === 'Completada' || s === 'Revisada' || s === 'Finalizado' || s === 'Rechazada');
+                };
 
-                if (deliveredA !== deliveredB) {
-                    return deliveredA ? 1 : -1; // false (no entregada) viene antes que true
+                const revA = isReviewed(a);
+                const revB = isReviewed(b);
+
+                // sin revisar (false) viene antes que calificadas (true)
+                if (revA !== revB) {
+                    return revA ? 1 : -1;
                 }
 
-                return new Date(a.fechaLimite) - new Date(b.fechaLimite);
+                // Dentro del mismo grupo, fecha más reciente primero (descendente)
+                return new Date(b.fechaLimite) - new Date(a.fechaLimite);
             });
 
             renderActivities(allActivities);
@@ -101,13 +109,33 @@ document.addEventListener('DOMContentLoaded', () => {
             if (activity.type === 'Tarea' || activity.type === 'Credito Extra') {
                 if (activity.entrega) {
                     const status = activity.entrega.estado;
+                    const isPending = (status === 'Pendiente' || !status);
                     const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
                     const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
 
+                    let fileLinkHtml = '';
+                    if (isPending && activity.entrega.fileId) {
+                        const fileId = activity.entrega.fileId;
+                        const url = activity.entrega.mimeType === 'folder'
+                            ? `https://drive.google.com/drive/folders/${fileId}`
+                            : `https://drive.google.com/uc?id=${fileId}`;
+                        fileLinkHtml = `<div class="mt-2"><a href="${url}" target="_blank" class="text-blue-600 font-bold hover:underline text-sm flex items-center space-x-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg><span>Ver mi entrega</span></a></div>`;
+                    }
+
+                    const deleteBtnHtml = isPending
+                        ? `<button class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
+                        : '';
+
                     feedbackHtml = `
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                            <h4 class="font-bold text-md">Estado de tu Entrega:</h4>
-                            <p class="font-semibold ${statusColor}">${displayStatus}</p>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-bold text-md">Estado de tu Entrega:</h4>
+                                    <p class="font-semibold ${statusColor}">${displayStatus}</p>
+                                    ${fileLinkHtml}
+                                </div>
+                                ${deleteBtnHtml}
+                            </div>
                             ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
                             ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
                         </div>`;
@@ -121,13 +149,23 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (activity.type === 'Examen') {
                 if (activity.entrega) {
                     const status = activity.entrega.estado;
+                    const isPending = (status === 'Pendiente' || !status);
                     const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
                     const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
 
+                    const deleteBtnHtml = isPending
+                        ? `<button class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
+                        : '';
+
                     feedbackHtml = `
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                            <h4 class="font-bold text-md">Estado de tu Examen:</h4>
-                            <p class="font-semibold ${statusColor}">${displayStatus}</p>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-bold text-md">Estado de tu Examen:</h4>
+                                    <p class="font-semibold ${statusColor}">${displayStatus}</p>
+                                </div>
+                                ${deleteBtnHtml}
+                            </div>
                             ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
                             ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
                         </div>`;
@@ -142,19 +180,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             return `
-                <div class="dashboard-card">
+                <div class="dashboard-card assignment-card cursor-pointer group" data-task-id="${activity.tareaId || activity.examenId}">
                     <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-lg font-bold">${activity.titulo} <span class="text-xs font-normal text-gray-500">(${activity.type})</span></h3>
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-bold group-hover:text-blue-600 transition-colors">${activity.titulo} <span class="text-xs font-normal text-gray-500">(${activity.type})</span></h3>
                             <p class="text-sm text-gray-500 mb-2"><strong>Asignatura:</strong> ${activity.asignatura || 'No especificada'}</p>
                         </div>
-                        <span class="text-sm font-semibold text-gray-600">${formatDate(activity.fechaLimite)}</span>
+                        <div class="flex flex-col items-end">
+                            <span class="text-sm font-semibold text-gray-600">${formatDate(activity.fechaLimite)}</span>
+                            <svg class="w-5 h-5 text-gray-400 transform group-[.is-expanded]:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
                     </div>
-                    <p class="text-gray-700 mt-2">${activity.descripcion || 'Sin descripción.'}</p>
-                    <div class="mt-4">
-                        ${actionButtonHtml}
+                    <div class="assignment-content overflow-hidden max-h-0 transition-all duration-500 ease-in-out group-[.is-expanded]:max-h-[1000px]">
+                        <div class="pt-4 border-t border-gray-100 mt-2">
+                            <p class="text-gray-700 font-medium mb-4">${activity.descripcion || 'Sin descripción.'}</p>
+                            <div class="mt-4">
+                                ${actionButtonHtml}
+                            </div>
+                            ${feedbackHtml}
+                        </div>
                     </div>
-                    ${feedbackHtml}
                 </div>
             `;
         }).join('');
@@ -198,10 +243,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (tasksList) {
-        tasksList.addEventListener('click', (e) => {
+        tasksList.addEventListener('click', async (e) => {
+            const assignmentCard = e.target.closest('.assignment-card');
+            const isButton = e.target.closest('button, a');
+
+            if (assignmentCard && !isButton) {
+                const alreadyExpanded = assignmentCard.classList.contains('is-expanded');
+                // Collapse all
+                document.querySelectorAll('.assignment-card').forEach(card => card.classList.remove('is-expanded'));
+                // Toggle if not already expanded
+                if (!alreadyExpanded) assignmentCard.classList.add('is-expanded');
+                return;
+            }
+
             if (e.target && e.target.classList.contains('open-submission-modal')) {
                 const ds = e.target.dataset;
                 openSubmissionModal(ds.taskId, ds.taskTitle, ds.parcial, ds.asignatura);
+            }
+
+            if (e.target && e.target.classList.contains('delete-submission-btn')) {
+                const type = e.target.dataset.type;
+                const entregaId = e.target.dataset.entregaId;
+
+                if (confirm('ATENCIÓN: Al eliminar tu entrega podrías perder la nota de calificación')) {
+                    e.target.disabled = true;
+                    e.target.textContent = 'Eliminando...';
+                    try {
+                        const service = type === 'Examen' ? 'EXAM' : 'TASK';
+                        const action = type === 'Examen' ? 'deleteExamSubmission' : 'deleteSubmission';
+                        const result = await fetchApi(service, action, { entregaId });
+                        if (result.status === 'success') {
+                            alert('Entrega eliminada correctamente.');
+                            fetchAllActivities();
+                        } else {
+                            throw new Error(result.message);
+                        }
+                    } catch (error) {
+                        alert('Error al eliminar entrega: ' + error.message);
+                        e.target.disabled = false;
+                        e.target.textContent = 'Eliminar Entrega';
+                    }
+                }
             }
         });
     }

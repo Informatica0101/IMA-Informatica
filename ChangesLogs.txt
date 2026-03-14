@@ -82,6 +82,14 @@
 - Archivo: js/teacher.js, Línea(s): 88-95
   - Se implementó código defensivo en la función `fetchTeacherActivity` para prevenir un error crítico de tipo 'TypeError: Cannot read properties of undefined (reading 'map')'. La modificación asegura que si alguna de las llamadas a la API devuelve `undefined`, el código manejará el valor de forma segura en lugar de fallar, mejorando la robustez general del dashboard del profesor.
 
+10/03/2026
+- Archivo: css/style.css, Línea(s): 305-412
+  - Implementación de refinamientos visuales de precisión (Precision UI Refinement).
+  - Tarea 1 & 4: Compactación de botones (.open-submission-modal, .delete-submission-btn, .grade-btn, .nav-btn) con reducción de padding a 0.4rem, border-radius a 6px y aplicación de gradientes sutiles (azul institucional a gris tecnológico) para un aspecto más profesional.
+  - Tarea 2: Aumento de tipografía en listas de tareas (.assignment-card h3), tablas (.table-container td) y badges (span.rounded-full) para mejorar la legibilidad.
+  - Tarea 3: Implementación de scroll interno vertical (max-height: 350px) en el contenido de tarjetas de asignación expandidas para manejar descripciones largas sin romper el layout.
+  - Tarea 5: Personalización estética de barras de desplazamiento (scrollbar) con estilo minimalista y profesional.
+
 
 14/01/2026
 - Archivo: js/teacher.js, Línea(s): 90, 129
@@ -729,3 +737,26 @@ DESCRIPCIÓN: Reestructuración total del artículo para cumplir con los estánd
 ARCHIVO: js/data.js
 LÍNEAS: 89
 DESCRIPCIÓN: Inserción del nuevo artículo "Propiedades CSS" en la lista de Recursos Adicionales bajo la categoría "Artículos".
+
+10/03/2026
+TAREA: [A-47]
+TÍTULO: Rediseño Dashboard Profesor (Estilo Califik)
+ÁREA: Frontend / Backend / Reportes
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA
+
+MODIFICACIONES:
+- Rediseñado teacher-dashboard.html siguiendo el estilo Califik con navegación por pestañas y diseño responsivo.
+- Implementada navegación jerárquica estricta: Grado -> Sección -> Lista de Alumnos -> Detalles de Actividad.
+- Módulo 1 (Gestión): Implementado CRUD completo para Tareas y Exámenes, incluyendo edición de metadatos y borrado lógico/físico.
+- Módulo 2 (Entregas): Refactorizada la tabla de entregas con filtros avanzados (Grado, Sección, Materia, Estado) y búsqueda global de alumnos.
+- Módulo 3 (Excel): Implementada exportación a Excel multi-hoja (una por materia) usando SheetJS, con mapeo por ID de usuario para evitar errores de duplicidad.
+- Funcionalidad "Eliminar Entrega": Implementada para profesor y estudiante. Restringida en el dashboard del estudiante a tareas con estado "Pendiente". Se actualizó el mensaje de advertencia a: "ATENCIÓN: Al eliminar tu entrega podrías perder la nota de calificación".
+- Privacidad de Entregas: Se restringió el acceso del estudiante a sus propios archivos/imágenes entregados; el enlace "Ver mi entrega" desaparece una vez que la tarea ha sido revisada por el docente.
+- Ordenamiento dinámico: Implementada lógica de ordenamiento en la lista de alumnos por nombre y estado. Los detalles de actividad del alumno ahora se muestran con las entregas más recientes primero. En el dashboard del estudiante, las tareas se agrupan por estado (No revisadas primero) y se ordenan por fecha límite descendente (más reciente arriba).
+- Tarjetas Expandibles: Las asignaciones en el dashboard del estudiante se transformaron en tarjetas interactivas expandibles. Se implementó una lógica exclusiva donde al expandir una tarea se contraen las demás, optimizando el espacio visual.
+- Backend (TASK-SVC): Añadidas acciones 'updateTask', 'deleteTask' y 'deleteSubmission'.
+- Backend (EXAM-SVC): Añadidas acciones 'updateExam', 'deleteExam' y 'deleteExamSubmission'.
+- Backend (USER-SVC): Añadida acción 'getStudentsByGradoSeccion' con normalización de texto para reportes robustos.
+- Frontend (js/teacher.js, js/student.js): Refactorización total de la lógica de navegación y gestión de estados.
+- js/config.js: Actualizadas las URLs de los microservicios TASK y EXAM con los nuevos endpoints finales proporcionados. Se aplicó una nueva implementación del servicio de tareas: https://script.google.com/macros/s/AKfycbwKlOEB1WZAcgm9G7yD27YCEu5u7MjBbH9v839g7mpelaxmDEDouRgU1Ex1LAf-Bl4/exec.

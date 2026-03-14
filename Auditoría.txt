@@ -1,29 +1,52 @@
-AUDITORÍA DE REGRESIÓN - PROYECTO INFORMÁTICA
-===========================================
+AUDITORÍA DETALLADA - DASHBOARD PROFESOR (ESTILO CALIFIK)
+=========================================================
 
-ARCHIVO: III_BTP_A/dw_II/propiedades_css.html
--------------------------------------------
-Hallazgos:
-- El nuevo diseño eliminó propiedades que estaban en la versión original.
-- Propiedades originales a recuperar:
-    1. font-family
-    2. font-style
-    3. letter-spacing
-    4. line-height
-    5. text-transform
-    6. text-shadow
-    7. text-decoration
-    8. background-color
-    9. overflow
-    10. object-fit
-    11. filter
-- Propiedades nuevas a añadir para completar la guía (+40 en total):
-    - Texto: font-variant, text-indent, word-spacing, white-space.
-    - Fondo: background-image, background-size, background-position, background-repeat.
-    - Modelo de Caja/Bordes: outline, box-sizing (ya está).
-    - Posicionamiento: z-index, top, right, bottom, left, visibility.
-    - Flexbox avanzado: flex-wrap, flex-grow, flex-shrink.
-    - Grid avanzado: grid-column, grid-row, gap (ya está).
-    - Interactividad y Efectos: cursor (ya está), pointer-events, transform, transition, scroll-behavior.
+Archivo: teacher-dashboard.html
+-------------------------------
+- El header actual es estándar y está bien.
+- El main tiene botones de navegación (#nav-dashboard, #nav-crear, #nav-crear-examen).
+- Las secciones son #section-dashboard, #section-crear, #section-crear-examen.
+- El dashboard actual usa una tabla con #dashboard-table-head y #submissions-table-body.
+- Los modales son #image-lightbox-modal y #grade-modal.
+- Hallazgos UX: Los botones de navegación se ven un poco amontonados. Se requiere una organización más limpia tipo Califik. (SOLUCIONADO: Se implementó scroll horizontal y reducción de paddings).
+- Tarea: Añadir secciones para Gestión de Tareas y Reportes. (COMPLETADO)
+- Tarea: Añadir modales de edición. (COMPLETADO)
+- Tarea: Añadir script de XLSX (SheetJS). (COMPLETADO)
+- Hallazgo Estético: Los encabezados de las tablas carecían de jerarquía visual. (SOLUCIONADO: Se aplicó estilo uppercase, letter-spacing y text-xs).
 
-ACCIÓN: Reincorporar las 25 originales y añadir al menos 15 más para superar las 40 requeridas.
+Archivo: css/style.css
+----------------------
+- Auditoría UI Refinement (10/03/2026):
+  - Botones: Se detectó que el padding vertical y el border-radius de 1rem (Bootstrap default) restaban profesionalismo. (SOLUCIONADO: Reducido a 0.4rem y 6px).
+  - Tipografía: Las listas de tareas y tablas tenían una fuente ligeramente pequeña para lectura prolongada. (SOLUCIONADO: Incrementado el tamaño en un nivel).
+  - Cards: Las descripciones largas de tareas rompían el grid al crecer infinitamente. (SOLUCIONADO: Implementado max-height: 350px con overflow-y: auto).
+  - Scroll: El scroll nativo del navegador era demasiado intrusivo para scrolls internos de componentes. (SOLUCIONADO: Implementada scrollbar minimalista).
+
+Archivo: js/teacher.js
+----------------------
+- Utiliza fetchApi para interactuar con los microservicios.
+- La navegación es jerárquica (Grados -> Secciones -> Asignaturas -> Alumnos -> Detalles).
+- La búsqueda es global o local según el nivel.
+- Hay lógica para calificar tareas y exámenes.
+- Tarea: Refactorizar el dashboard para que sea una tabla plana con filtros. (COMPLETADO)
+- Tarea: Implementar Gestión de Tareas (CRUD). (COMPLETADO)
+- Tarea: Implementar lógica de Reporte Excel (Módulo 3). (COMPLETADO)
+- Hallazgo Lógico: Existía una condición de carrera al navegar rápidamente y el nivel "Asignaturas" se omitía en ciertos flujos. (SOLUCIONADO: Se añadió guardas isNavigating y se forzó el nivel Asignaturas en el navStack).
+- Hallazgo UX: El dashboard del estudiante se volvía muy largo con muchas tareas. (SOLUCIONADO: Se implementaron tarjetas expandibles con lógica exclusiva).
+- Hallazgo Navegación: La lista de alumnos era difícil de navegar sin ordenamiento. (SOLUCIONADO: Se añadió ordenamiento por Nombre y Estado).
+- Hallazgo Ordenamiento Estudiante: El orden de tareas no era intuitivo para ver lo nuevo. (SOLUCIONADO: Se implementó ordenamiento descendente agrupado por estado).
+
+Archivo: backend/task-service/Code.gs
+-------------------------------------
+- Necesita: updateTask(payload), deleteTask(payload).
+- La hoja "Tareas" debe ser actualizada para soportar 'Inactiva'.
+- createTask debe inicializar el estado (opcional pero recomendado para consistencia).
+
+Archivo: backend/user-service/Code.gs
+-------------------------------------
+- Necesita: getUsersByGradoSeccion(payload) para el reporte de Excel.
+
+Archivo: backend/exam-service/Code.gs
+-------------------------------------
+- Necesita: updateExam(payload), deleteExam(payload).
+
