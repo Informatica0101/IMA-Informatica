@@ -16,7 +16,12 @@
         .slide::-webkit-scrollbar { display: none; }
         .slide.active { display: flex; opacity: 1; animation-name: fadeIn; animation-duration: 0.8s; animation-fill-mode: forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { .slide h2, .slide h3 { font-size: 1.4rem; } .slide p, .slide li { font-size: 0.9rem; } .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
+
+        /* Escalado de fuente base (AUMENTADO 50%) */
+        .slide h2 { font-size: clamp(2rem, 8vw, 3rem); }
+        .slide h3 { font-size: clamp(1.5rem, 6vw, 2.25rem); }
+        .slide p, .slide li { font-size: clamp(1.1rem, 4vw, 1.5rem); }
+@media (max-width: 768px) { .slide h2, .slide h3 { font-size: 1.8rem; } .slide p, .slide li { font-size: 1.2rem; } .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
         .quiz-option-button { transition: background-color 0.3s, transform 0.2s; text-align: left; padding-left: 1.5rem; }
         .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
         .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
@@ -423,20 +428,29 @@
             showSlide(0); handleFullscreenChange();
         });
 
-    function handleFullscreenChange() {
+            function handleFullscreenChange() {
         const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
-        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
-        const container = document.getElementById('presentation-container');
+        const uiElements = document.querySelectorAll('header, footer, [id*="header"], [id*="footer"], .logo-fixed, .xp-taskbar, .nav-buttons, .mobile-nav-buttons, .mobile-menu-overlay, #slide-counter, .xp-desktop-icons');
+        const container = document.getElementById('presentation-container') || document.querySelector('.presentation-container');
 
         if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
+            uiElements.forEach(el => el.style.setProperty('display', 'none', 'important'));
+            if (container) {
+                container.style.setProperty('height', '100vh', 'important');
+                container.style.setProperty('width', '100vw', 'important');
+                container.style.setProperty('max-width', '100vw', 'important');
+                container.style.setProperty('margin', '0', 'important');
+                container.style.setProperty('border-radius', '0', 'important');
+            }
         } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
+            uiElements.forEach(el => el.style.display = '');
+            if (container) {
+                container.style.height = '';
+                container.style.width = '';
+                container.style.maxWidth = '';
+                container.style.margin = '';
+                container.style.borderRadius = '';
+            }
         }
     }
     document.addEventListener('fullscreenchange', handleFullscreenChange);

@@ -760,3 +760,11 @@ MODIFICACIONES:
 - Backend (USER-SVC): Añadida acción 'getStudentsByGradoSeccion' con normalización de texto para reportes robustos.
 - Frontend (js/teacher.js, js/student.js): Refactorización total de la lógica de navegación y gestión de estados.
 - js/config.js: Actualizadas las URLs de los microservicios TASK y EXAM con los nuevos endpoints finales proporcionados. Se aplicó una nueva implementación del servicio de tareas: https://script.google.com/macros/s/AKfycbwKlOEB1WZAcgm9G7yD27YCEu5u7MjBbH9v839g7mpelaxmDEDouRgU1Ex1LAf-Bl4/exec.
+[A-45] MEJORA DE NAVEGACIÓN, FULLSCREEN Y FUENTES EN PRESENTACIONES
+------------------------------------------------------------------
+- Normalizada la función 'handleFullscreenChange' en ~50 archivos HTML para ocultar exhaustivamente todos los elementos de UI (encabezados, pies de página, logos fijos, barras de tareas XP, etc.) al entrar en pantalla completa.
+- Implementado el escalado dinámico del contenedor de presentación para ocupar el 100% del viewport en modo fullscreen.
+- Aumentado el tamaño de fuente base en un 50% en todas las diapositivas para mejorar la legibilidad.
+- Utilizadas funciones CSS 'clamp()' para asegurar que el aumento del 50% no cause desbordamiento en pantallas pequeñas, manteniendo la responsividad.
+- Actualizadas las media queries en archivos HTML y CSS (estilos1.css, estilos.css, etc.) para reflejar el incremento de fuentes en dispositivos móviles.
+- Verificado el comportamiento mediante scripts de automatización Playwright y auditoría visual.

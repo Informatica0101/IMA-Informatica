@@ -227,7 +227,7 @@ body {
     z-index: 2;
 }
 .slide h2 {
-    font-size: 2.2rem;
+    font-size: clamp(1.8rem, 6vw, 3.3rem);
     font-weight: 700;
     color: #1856b6;
     margin-bottom: 1rem;
@@ -241,7 +241,7 @@ body {
     font-family: Tahoma, Verdana, Arial, sans-serif;
 }
 .slide h3 {
-    font-size: 1.5rem;
+    font-size: clamp(1.4rem, 4vw, 2.25rem);
     font-weight: 600;
     color: #2563eb;
     margin-bottom: 0.75rem;
@@ -252,7 +252,7 @@ body {
     font-family: Tahoma, Verdana, Arial, sans-serif;
 }
 .slide p, .slide ul, .slide ol {
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 3vw, 1.65rem);
     color: #222;
     line-height: 1.6;
     margin-bottom: 1rem;
