@@ -101,7 +101,8 @@ body {
     transform: none;
 }
 
-.slide h2 { font-size: clamp(2.2rem, 8vw, 3.3rem);
+.slide h2 {
+    font-size: 2.2rem;
     font-weight: 700;
     color: #2c3e50;
     margin-bottom: 1.2rem;
@@ -113,7 +114,8 @@ body {
     padding-right: 8px;
 }
 
-.slide h3 { font-size: clamp(1.5rem, 6vw, 2.25rem);
+.slide h3 {
+    font-size: 1.5rem;
     font-weight: 600;
     color: #3498db;
     margin-bottom: 1rem;
@@ -122,7 +124,8 @@ body {
     overflow-wrap: break-word;
 }
 
-.slide p, .slide ul, .slide ol { font-size: clamp(1.15rem, 4vw, 1.725rem);
+.slide p, .slide ul, .slide ol {
+    font-size: 1.15rem;
     color: #555;
     line-height: 1.7;
     margin-bottom: 1rem;
@@ -202,8 +205,12 @@ body {
         max-width: 95%;
         max-height: 180px;
     }
-    .slide h2 { font-size: 2.25rem; }
-    .slide h3 { font-size: 1.65rem; }
+    .slide h2 {
+        font-size: 1.5rem;
+    }
+    .slide h3 {
+        font-size: 1.1rem;
+    }
 }
 
 * {

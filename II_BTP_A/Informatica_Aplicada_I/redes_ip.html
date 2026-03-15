@@ -274,7 +274,7 @@
                 height: 90vh; /* **ALTURA:** Ajuste de altura en pantallas muy pequeñas (90% del viewport) */
             }
             .slide h1 { font-size: 1.8em; }
-            .slide h2 { font-size: clamp(1.8rem, 8vw, 2.4rem); }
+            .slide h2 { font-size: 1.6em; }
             .slide h3 { font-size: 1.1em; }
             .slide p, .slide ul, .slide ol { font-size: 0.85em; }
             .slide img { max-width: 95%; } /* **ANCHO:** Imágenes un poco más pequeñas */
@@ -1004,29 +1004,20 @@
             }
         });
 
-            function handleFullscreenChange() {
+    function handleFullscreenChange() {
         const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        const uiElements = document.querySelectorAll('header, footer, [id*="header"], [id*="footer"], .logo-fixed, .xp-taskbar, .nav-buttons, .mobile-nav-buttons, .mobile-menu-overlay, #slide-counter, .xp-desktop-icons');
-        const container = document.getElementById('presentation-container') || document.querySelector('.presentation-container');
+        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
+        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
+        const container = document.getElementById('presentation-container');
 
         if (isFS) {
-            uiElements.forEach(el => el.style.setProperty('display', 'none', 'important'));
-            if (container) {
-                container.style.setProperty('height', '100vh', 'important');
-                container.style.setProperty('width', '100vw', 'important');
-                container.style.setProperty('max-width', '100vw', 'important');
-                container.style.setProperty('margin', '0', 'important');
-                container.style.setProperty('border-radius', '0', 'important');
-            }
+            if (header) header.style.setProperty('display', 'none', 'important');
+            if (footer) footer.style.setProperty('display', 'none', 'important');
+            if (container) container.style.setProperty('height', '100vh', 'important');
         } else {
-            uiElements.forEach(el => el.style.display = '');
-            if (container) {
-                container.style.height = '';
-                container.style.width = '';
-                container.style.maxWidth = '';
-                container.style.margin = '';
-                container.style.borderRadius = '';
-            }
+            if (header) header.style.display = '';
+            if (footer) footer.style.display = '';
+            if (container) container.style.height = '';
         }
     }
     document.addEventListener('fullscreenchange', handleFullscreenChange);

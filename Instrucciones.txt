@@ -55,14 +55,14 @@ ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
 - Integración del artículo en el menú de Recursos Adicionales en js/data.js.
 
 TAREA: [A-45]
-TÍTULO: Mejora de Navegación, Fullscreen y Escalado de Fuentes
+TÍTULO: Mejora de Navegación, Fullscreen y Generación de Presentaciones (Marzo 15)
 ÁREA: Frontend / Contenido
 PRIORIDAD: ALTA
 ESTADO: PENDIENTE DE REVISIÓN
-- Corregida la función de pantalla completa en todas las presentaciones (~50 archivos) para ocultar exhaustivamente encabezados, pies de página y elementos fijos (XP Taskbar, logos).
-- Implementado el escalado dinámico del contenedor de presentación al 100% del viewport en modo fullscreen.
-- Aumentado el tamaño de las letras dentro de los slides en un 50% usando funciones 'clamp()' para evitar desbordamientos.
-- Actualizadas media queries en HTML y CSS para soportar fuentes más grandes en dispositivos móviles.
+- Corregida la función de pantalla completa en todas las presentaciones (~48 archivos) usando la API Fullscreen nativa para evitar ocultar el encabezado/pie de página incorrectamente.
+- Implementada navegación por flechas de teclado y gestos swipe (carousel) en todas las presentaciones de 2026.
+- Generadas nuevas presentaciones para la semana del 15 de marzo de 2026: "Pseudocódigo y ordenación simbólica" (Programación I) y "Alineación y formato de texto" (Diseño Web I).
+- Actualizado js/data.js para integrar el nuevo contenido en el dashboard.
 
 TAREA: [A-44]
 TÍTULO: Parche de Estabilidad y Robustez del Intérprete

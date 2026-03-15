@@ -176,10 +176,11 @@
         }
 
         /* Ajustes de tamaño de texto para escalar con el font-size de html (REDUCIDO 20%) */
-        .slide h1 { font-size: clamp(2rem, 10vw, 3rem); } /* 2.5em * 0.8 = 2em */
-        .slide h2 { font-size: clamp(1.8rem, 8vw, 2.4rem); }   /* 2em * 0.8 = 1.6em */
-        .slide h3 { font-size: clamp(1.4rem, 6vw, 1.8rem); } /* 1.5em * 0.8 = 1.2em */
-        .slide p, .slide ul, .slide ol { font-size: clamp(1rem, 4vw, 1.2rem); /* 1em * 0.8 = 0.8em */
+        .slide h1 { font-size: 2em; } /* 2.5em * 0.8 = 2em */
+        .slide h2 { font-size: 1.6em; }   /* 2em * 0.8 = 1.6em */
+        .slide h3 { font-size: 1.2em; } /* 1.5em * 0.8 = 1.2em */
+        .slide p, .slide ul, .slide ol {
+            font-size: 0.8em; /* 1em * 0.8 = 0.8em */
             max-width: 800px; /* Limita el ancho del texto para legibilidad */
             margin: 0 auto;
         }
@@ -430,10 +431,10 @@
 
         /* Media queries para ajustes finos en pantallas más pequeñas */
         @media (max-width: 768px) {
-            .slide h1 { font-size: 2.64em; } /* 2.2em * 0.8 */
-            .slide h2 { font-size: 2.16em; }   /* 1.8em * 0.8 */
-            .slide h3 { font-size: 1.56em; } /* 1.3em * 0.8 */
-            .slide p, .slide ul, .slide ol { font-size: 1.14em; } /* 0.95em * 0.8 */
+            .slide h1 { font-size: 1.76em; } /* 2.2em * 0.8 */
+            .slide h2 { font-size: 1.44em; }   /* 1.8em * 0.8 */
+            .slide h3 { font-size: 1.04em; } /* 1.3em * 0.8 */
+            .slide p, .slide ul, .slide ol { font-size: 0.76em; } /* 0.95em * 0.8 */
             .slide img { max-width: 90%; }
 
             /* Ajustes para el layout lateral en pantallas medianas */
@@ -471,10 +472,10 @@
         }
 
         @media (max-width: 480px) {
-            .slide h1 { font-size: 2.16em; } /* 1.8em * 0.8 */
-            .slide h2 { font-size: 1.92em; }   /* 1.6em * 0.8 */
-            .slide h3 { font-size: 1.32em; } /* 1.1em * 0.8 */
-            .slide p, .slide ul, .slide ol { font-size: 1.02em; } /* 0.85em * 0.8 */
+            .slide h1 { font-size: 1.44em; } /* 1.8em * 0.8 */
+            .slide h2 { font-size: 1.28em; }   /* 1.6em * 0.8 */
+            .slide h3 { font-size: 0.88em; } /* 1.1em * 0.8 */
+            .slide p, .slide ul, .slide ol { font-size: 0.68em; } /* 0.85em * 0.8 */
             .slide img { max-width: 95%; }
             .slide-content-area { padding: 0.5rem; }
 
@@ -1637,29 +1638,20 @@
             }
         });
 
-            function handleFullscreenChange() {
+    function handleFullscreenChange() {
         const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        const uiElements = document.querySelectorAll('header, footer, [id*="header"], [id*="footer"], .logo-fixed, .xp-taskbar, .nav-buttons, .mobile-nav-buttons, .mobile-menu-overlay, #slide-counter, .xp-desktop-icons');
-        const container = document.getElementById('presentation-container') || document.querySelector('.presentation-container');
+        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
+        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
+        const container = document.getElementById('presentation-container');
 
         if (isFS) {
-            uiElements.forEach(el => el.style.setProperty('display', 'none', 'important'));
-            if (container) {
-                container.style.setProperty('height', '100vh', 'important');
-                container.style.setProperty('width', '100vw', 'important');
-                container.style.setProperty('max-width', '100vw', 'important');
-                container.style.setProperty('margin', '0', 'important');
-                container.style.setProperty('border-radius', '0', 'important');
-            }
+            if (header) header.style.setProperty('display', 'none', 'important');
+            if (footer) footer.style.setProperty('display', 'none', 'important');
+            if (container) container.style.setProperty('height', '100vh', 'important');
         } else {
-            uiElements.forEach(el => el.style.display = '');
-            if (container) {
-                container.style.height = '';
-                container.style.width = '';
-                container.style.maxWidth = '';
-                container.style.margin = '';
-                container.style.borderRadius = '';
-            }
+            if (header) header.style.display = '';
+            if (footer) footer.style.display = '';
+            if (container) container.style.height = '';
         }
     }
     document.addEventListener('fullscreenchange', handleFullscreenChange);

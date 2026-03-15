@@ -91,13 +91,15 @@
         }
 
 
-        /* Escalado de fuente base (AUMENTADO 50%) */
-        .slide h2 { font-size: clamp(2rem, 8vw, 3rem); }
-        .slide h3 { font-size: clamp(1.5rem, 6vw, 2.25rem); }
-        .slide p, .slide li { font-size: clamp(1.1rem, 4vw, 1.5rem); }
+
+        /* Escalado de fuente base (AUMENTADO 50%) y mejora de interlineado */
+        .slide h2 { font-size: clamp(2.2rem, 9vw, 3.5rem) !important; line-height: 1.4 !important; margin-bottom: 1.5rem !important; }
+        .slide h3 { font-size: clamp(1.7rem, 7vw, 2.6rem) !important; line-height: 1.4 !important; margin-bottom: 1.2rem !important; }
+        .slide p, .slide li { font-size: clamp(1.2rem, 4.5vw, 1.8rem) !important; line-height: 1.6 !important; margin-bottom: 1.2rem !important; }
+        .slide img { max-height: 55vh; object-fit: contain; margin: 1rem auto; }
 @media (max-width: 768px) {
-            .slide h2, .slide h3 { font-size: 1.8rem; }
-            .slide p, .slide li { font-size: 1.2rem; }
+            .slide h2, .slide h3 { font-size: 2rem !important; line-height: 1.3 !important; }
+            .slide p, .slide li { font-size: 1.3rem !important; line-height: 1.5 !important; }
             .nav-button {
                 padding: 0.4rem 0.8rem;
                 font-size: 0.8rem;
@@ -611,13 +613,25 @@
             showSlide(0); handleFullscreenChange();
         });
 
-            function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        const uiElements = document.querySelectorAll('header, footer, [id*="header"], [id*="footer"], .logo-fixed, .xp-taskbar, .nav-buttons, .mobile-nav-buttons, .mobile-menu-overlay, #slide-counter, .xp-desktop-icons');
-        const container = document.getElementById('presentation-container') || document.querySelector('.presentation-container');
+                function handleFullscreenChange() {
+        const isFS = !!(document.fullscreenElement ||
+                      document.webkitFullscreenElement ||
+                      document.mozFullScreenElement ||
+                      document.msFullscreenElement ||
+                      (window.innerHeight >= screen.height - 10));
+
+        const uiElements = document.querySelectorAll('header, footer, [id*="header"], [id*="footer"], .logo-fixed, .xp-taskbar, .nav-buttons, .mobile-nav-buttons');
+        const container = document.getElementById('presentation-container');
+
+        uiElements.forEach(el => {
+            if (isFS) {
+                el.style.setProperty('display', 'none', 'important');
+            } else {
+                el.style.display = '';
+            }
+        });
 
         if (isFS) {
-            uiElements.forEach(el => el.style.setProperty('display', 'none', 'important'));
             if (container) {
                 container.style.setProperty('height', '100vh', 'important');
                 container.style.setProperty('width', '100vw', 'important');
@@ -625,21 +639,25 @@
                 container.style.setProperty('margin', '0', 'important');
                 container.style.setProperty('border-radius', '0', 'important');
             }
+            document.body.style.overflow = 'hidden';
         } else {
-            uiElements.forEach(el => el.style.display = '');
             if (container) {
                 container.style.height = '';
                 container.style.width = '';
                 container.style.maxWidth = '';
-                container.style.margin = '';
                 container.style.borderRadius = '';
+                container.style.margin = '';
             }
+            document.body.style.overflow = '';
         }
     }
+
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+    window.addEventListener('resize', handleFullscreenChange);
+
 
     // Navigation improvements (2026)
     document.addEventListener('keydown', (e) => {

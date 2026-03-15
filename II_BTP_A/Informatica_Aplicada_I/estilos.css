@@ -225,7 +225,8 @@ body {
     position: relative;
     z-index: 2;
 }
-.slide h2 { font-size: clamp(2.2rem, 8vw, 3.3rem);
+.slide h2 {
+    font-size: 2.2rem;
     font-weight: 700;
     color: #1856b6;
     margin-bottom: 1rem;
@@ -238,7 +239,8 @@ body {
     text-shadow: 1px 1px 0 #fff, 0 1px 0 #b6d0e2;
     font-family: Tahoma, Verdana, Arial, sans-serif;
 }
-.slide h3 { font-size: clamp(1.5rem, 6vw, 2.25rem);
+.slide h3 {
+    font-size: 1.5rem;
     font-weight: 600;
     color: #2563eb;
     margin-bottom: 0.75rem;
@@ -248,7 +250,8 @@ body {
     text-shadow: 1px 1px 0 #fff;
     font-family: Tahoma, Verdana, Arial, sans-serif;
 }
-.slide p, .slide ul, .slide ol { font-size: clamp(1.1rem, 4vw, 1.65rem);
+.slide p, .slide ul, .slide ol {
+    font-size: 1.1rem;
     color: #222;
     line-height: 1.6;
     margin-bottom: 1rem;

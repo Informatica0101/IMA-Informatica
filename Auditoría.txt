@@ -1,83 +1,52 @@
-AUDITORÍA DE ARCHIVOS - PRESENTACIONES
-=======================================
+AUDITORÍA DETALLADA - DASHBOARD PROFESOR (ESTILO CALIFIK)
+=========================================================
 
-Archivo: Informatica_I/medidas_navegacion_extensiones.html
-- Encabezados/Pies: Usa #main-header, #mobile-header, #main-footer.
-- Lógica FS: handleFullscreenChange() intenta ocultar pero usa selectores individuales.
-- Fuentes actuales: h1: 2em, h2: 1.6em, h3: 1.2em, p/ul/ol: 0.8em.
+Archivo: teacher-dashboard.html
+-------------------------------
+- El header actual es estándar y está bien.
+- El main tiene botones de navegación (#nav-dashboard, #nav-crear, #nav-crear-examen).
+- Las secciones son #section-dashboard, #section-crear, #section-crear-examen.
+- El dashboard actual usa una tabla con #dashboard-table-head y #submissions-table-body.
+- Los modales son #image-lightbox-modal y #grade-modal.
+- Hallazgos UX: Los botones de navegación se ven un poco amontonados. Se requiere una organización más limpia tipo Califik. (SOLUCIONADO: Se implementó scroll horizontal y reducción de paddings).
+- Tarea: Añadir secciones para Gestión de Tareas y Reportes. (COMPLETADO)
+- Tarea: Añadir modales de edición. (COMPLETADO)
+- Tarea: Añadir script de XLSX (SheetJS). (COMPLETADO)
+- Hallazgo Estético: Los encabezados de las tablas carecían de jerarquía visual. (SOLUCIONADO: Se aplicó estilo uppercase, letter-spacing y text-xs).
 
-Archivo: Informatica_I/Partes_Computadora.html
-- Encabezados/Pies: Usa .xp-taskbar, .logo-fixed. (Carga estilos1.css)
-- Lógica FS: handleFullscreenChange() presente pero incompleta para elementos XP.
-- Fuentes actuales (estilos1.css): h2: 2.2rem, h3: 1.5rem, p/ul/ol: 1.1rem.
+Archivo: css/style.css
+----------------------
+- Auditoría UI Refinement (10/03/2026):
+  - Botones: Se detectó que el padding vertical y el border-radius de 1rem (Bootstrap default) restaban profesionalismo. (SOLUCIONADO: Reducido a 0.4rem y 6px).
+  - Tipografía: Las listas de tareas y tablas tenían una fuente ligeramente pequeña para lectura prolongada. (SOLUCIONADO: Incrementado el tamaño en un nivel).
+  - Cards: Las descripciones largas de tareas rompían el grid al crecer infinitamente. (SOLUCIONADO: Implementado max-height: 350px con overflow-y: auto).
+  - Scroll: El scroll nativo del navegador era demasiado intrusivo para scrolls internos de componentes. (SOLUCIONADO: Implementada scrollbar minimalista).
 
-Archivo: Informatica_I/hojas_calculo.html
-- Encabezados/Pies: Usa #page-header, #page-footer.
-- Lógica FS: Usa body.is-fullscreen CSS y handleFullscreenChange() JS.
-- Fuentes actuales: @media (max-width: 768px) reduce h2/h3 a 1.4rem, p/li a 0.9rem. Base no especificada explícitamente en rem para todos.
+Archivo: js/teacher.js
+----------------------
+- Utiliza fetchApi para interactuar con los microservicios.
+- La navegación es jerárquica (Grados -> Secciones -> Asignaturas -> Alumnos -> Detalles).
+- La búsqueda es global o local según el nivel.
+- Hay lógica para calificar tareas y exámenes.
+- Tarea: Refactorizar el dashboard para que sea una tabla plana con filtros. (COMPLETADO)
+- Tarea: Implementar Gestión de Tareas (CRUD). (COMPLETADO)
+- Tarea: Implementar lógica de Reporte Excel (Módulo 3). (COMPLETADO)
+- Hallazgo Lógico: Existía una condición de carrera al navegar rápidamente y el nivel "Asignaturas" se omitía en ciertos flujos. (SOLUCIONADO: Se añadió guardas isNavigating y se forzó el nivel Asignaturas en el navStack).
+- Hallazgo UX: El dashboard del estudiante se volvía muy largo con muchas tareas. (SOLUCIONADO: Se implementaron tarjetas expandibles con lógica exclusiva).
+- Hallazgo Navegación: La lista de alumnos era difícil de navegar sin ordenamiento. (SOLUCIONADO: Se añadió ordenamiento por Nombre y Estado).
+- Hallazgo Ordenamiento Estudiante: El orden de tareas no era intuitivo para ver lo nuevo. (SOLUCIONADO: Se implementó ordenamiento descendente agrupado por estado).
 
-Archivo: III_BTP_A/dw_II/fundamentos_js.html
-- Encabezados/Pies: Usa .logo-fixed.
-- Lógica FS: handleFullscreenChange() básica.
-- Fuentes actuales: h2: 2.2rem, h3: 1.6rem, p/ul/ol: 1.05rem.
+Archivo: backend/task-service/Code.gs
+-------------------------------------
+- Necesita: updateTask(payload), deleteTask(payload).
+- La hoja "Tareas" debe ser actualizada para soportar 'Inactiva'.
+- createTask debe inicializar el estado (opcional pero recomendado para consistencia).
 
-Archivo: II_BTP_A/Programacion/introduccion_programacion.html
-- Encabezados/Pies: Usa #page-header, #page-footer.
-- Lógica FS: handleFullscreenChange() básica.
-- Fuentes actuales: h2/h3: 1.4rem (mobile), p/li: 0.9rem (mobile).
+Archivo: backend/user-service/Code.gs
+-------------------------------------
+- Necesita: getUsersByGradoSeccion(payload) para el reporte de Excel.
 
-Hallazgos Generales:
-- La lógica de pantalla completa no es exhaustiva; a menudo olvida logos fijos o barras de tareas específicas.
-- El uso de .style.display = 'none' es inconsistente entre archivos.
-- Las fuentes son pequeñas en móviles, dificultando la lectura en modo presentación.
-./Auditoría.txt
-./III_BTP_A/alineacion_formato_texto.html
-./III_BTP_A/fuentes_color_fondo.html
-./III_BTP_A/terminologia_basica_html_css.html
-./III_BTP_A/dw_II/fundamentos_js.html
-./III_BTP_A/dw_II/backend_frontend.html
-./III_BTP_A/dw_II/eventos_javascript.html
-./III_BTP_A/dw_II/DOM.html
-./III_BTP_A/dw_II/tablas_columnas.html
-./III_BTP_A/listas_comentarios_html.html
-./III_BTP_A/hipervinculos_imagenes.html
-./III_BTP_A/introduccion_diseno_web.html
-./II_BTP_A/analisis_diseno/gestion_proyectos_software.html
-./II_BTP_A/analisis_diseno/analisis_y_diseno_s.html
-./II_BTP_A/analisis_diseno/rol_analista_sistemas.html
-./II_BTP_A/analisis_diseno/AYDS.html
-./II_BTP_A/analisis_diseno/ciclo_desarrollo.html
-./II_BTP_A/analisis_diseno/tecnicas_de_recoleccion_requisitos.html
-./II_BTP_A/Ofimatica_I/procesadores_texto.html
-./II_BTP_A/Ofimatica_I/hojas_calculo2.html
-./II_BTP_A/Ofimatica_I/hojas_calculo.html
-./II_BTP_A/Ofimatica_I/formato_condicional.html
-./II_BTP_A/Ofimatica_I/referencias_relayabso.html
-./II_BTP_A/Ofimatica_I/tablas_dinamicas.html
-./II_BTP_A/Ofimatica_I/validacion-datos.html
-./II_BTP_A/Ofimatica_I/fundamentos_VBA.html
-./II_BTP_A/Informatica_Aplicada_I/sistemas_numeracion.html
-./II_BTP_A/Informatica_Aplicada_I/redes_ip.html
-./II_BTP_A/Informatica_Aplicada_I/instalacion_software.html
-./II_BTP_A/Informatica_Aplicada_I/sistemas_operativos.html
-./II_BTP_A/Informatica_Aplicada_I/terminal_comando.html
-./II_BTP_A/Informatica_Aplicada_I/manejo_archivos.html
-./II_BTP_A/Informatica_Aplicada_I/dipositivos_almac.html
-./II_BTP_A/Informatica_Aplicada_I/hexadecimales.html
-./II_BTP_A/Programacion/clasificacion_etapas_algoritmos.html
-./II_BTP_A/Programacion/introduccion_programacion.html
-./II_BTP_A/Programacion/analisis_diseno_algoritmos.html
-./II_BTP_A/Programacion/pseudocodigo_ordenacion.html
-./II_BTP_A/Programacion/estrategias_solucion_problemas.html
-./II_BTP_A/Programacion/programacion_representacion.html
-./Informatica_I/seguridad_informatica.html
-./Informatica_I/perifericos_entrada_salida.html
-./Informatica_I/texto_tablas.html
-./Informatica_I/medidas_navegacion_extensiones.html
-./Informatica_I/hojas_calculo.html
-./Informatica_I/prosesadores_texto.html
-./Informatica_I/sistema_operativo.html
-./Informatica_I/historia_computacion.htm
-./Informatica_I/Partes_Computadora.html
-./Informatica_I/insertar_formato.html
-./Informatica_I/software_concepto.html
+Archivo: backend/exam-service/Code.gs
+-------------------------------------
+- Necesita: updateExam(payload), deleteExam(payload).
+
