@@ -16,21 +16,91 @@
         .slide::-webkit-scrollbar { display: none; }
         .slide.active { display: flex; opacity: 1; animation-name: fadeIn; animation-duration: 0.8s; animation-fill-mode: forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-
-
-        /* Escalado de fuente base (AUMENTADO 50%) y mejora de interlineado */
-        .slide h2 { font-size: clamp(2.2rem, 9vw, 3.5rem) !important; line-height: 1.4 !important; margin-bottom: 1.5rem !important; }
-        .slide h3 { font-size: clamp(1.7rem, 7vw, 2.6rem) !important; line-height: 1.4 !important; margin-bottom: 1.2rem !important; }
-        .slide p, .slide li { font-size: clamp(1.2rem, 4.5vw, 1.8rem) !important; line-height: 1.6 !important; margin-bottom: 1.2rem !important; }
-        .slide img { max-height: 55vh; object-fit: contain; margin: 1rem auto; }
-@media (max-width: 768px) { .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
+         .slide p, .slide li { font-size: 0.9rem; } .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
         .quiz-option-button { transition: background-color 0.3s, transform 0.2s; text-align: left; padding-left: 1.5rem; }
         .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
         .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
         .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
         .step-box { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.8rem; margin: 0.3rem 0; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .step-number { display: inline-block; background: #3b82f6; color: white; width: 26px; height: 26px; border-radius: 50%; text-align: center; line-height: 26px; margin-right: 10px; font-weight: bold; font-size: 0.9rem; }
-    </style>
+
+        /* Typography Scaling (AUMENTADO 50%) */
+        .slide h2 { font-size: clamp(2.5rem, 10vw, 4rem) !important; line-height: 1.3 !important; margin-bottom: 1.5rem !important; }
+        .slide h3 { font-size: clamp(2rem, 8vw, 3.1rem) !important; line-height: 1.3 !important; margin-bottom: 1.2rem !important; }
+        .slide p, .slide li { font-size: clamp(1.4rem, 5vw, 2.2rem) !important; line-height: 1.6 !important; margin-bottom: 1.2rem !important; }
+        .slide img { max-height: 50vh; object-fit: contain; margin: 1rem auto; }
+
+        /* Box Typography Scaling (AUMENTADO 50% y Forzado) */
+        .concept-box, .step-box, .code-box, .quiz-option-button, .example-container, .feature-card,
+        .concept-box *, .step-box *, .code-box *, .quiz-option-button *, .example-container *, .feature-card * {
+            font-size: clamp(1.2rem, 4.5vw, 1.8rem) !important;
+            line-height: 1.5 !important;
+        }
+
+        /* Fullscreen UI Hiding Logic */
+        body.is-fullscreen header,
+        body.is-fullscreen footer,
+        body.is-fullscreen [id*="header"],
+        body.is-fullscreen [id*="footer"],
+        body.is-fullscreen .logo-fixed,
+        body.is-fullscreen .xp-taskbar,
+        body.is-fullscreen .nav-buttons,
+        body.is-fullscreen .mobile-nav-buttons {
+            display: none !important;
+        }
+        body.is-fullscreen main { padding: 0 !important; margin: 0 !important; }
+        body.is-fullscreen #presentation-container {
+            height: 100vh !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+        }
+
+
+            .slide h2 { font-size: 2.2rem !important; }
+            .slide p, .slide li { font-size: 1.3rem !important; }
+        }
+
+        /* Typography Scaling (AUMENTADO 50%) */
+        .slide h2 { font-size: clamp(2.5rem, 10vw, 4rem) !important; line-height: 1.3 !important; margin-bottom: 1.5rem !important; }
+        .slide h3 { font-size: clamp(2rem, 8vw, 3.1rem) !important; line-height: 1.3 !important; margin-bottom: 1.2rem !important; }
+        .slide p, .slide li { font-size: clamp(1.4rem, 5vw, 2.2rem) !important; line-height: 1.6 !important; margin-bottom: 1.2rem !important; }
+        .slide img { max-height: 50vh; object-fit: contain; margin: 1rem auto; }
+
+        /* Box Typography Scaling (AUMENTADO 50% y Consistencia) */
+        .concept-box, .step-box, .code-box, .quiz-option-button, .example-container, .feature-card,
+        .concept-box *, .step-box *, .code-box *, .quiz-option-button *, .example-container *, .feature-card * {
+            font-size: clamp(1.2rem, 4.5vw, 1.8rem) !important;
+            line-height: 1.5 !important;
+        }
+
+        /* Fullscreen UI Hiding Logic */
+        body.is-fullscreen header,
+        body.is-fullscreen footer,
+        body.is-fullscreen [id*="header"],
+        body.is-fullscreen [id*="footer"],
+        body.is-fullscreen .logo-fixed,
+        body.is-fullscreen .xp-taskbar,
+        body.is-fullscreen .nav-buttons,
+        body.is-fullscreen .mobile-nav-buttons {
+            display: none !important;
+        }
+        body.is-fullscreen main { padding: 0 !important; margin: 0 !important; }
+        body.is-fullscreen #presentation-container {
+            height: 100vh !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+        }
+
+        @media (max-width: 768px) {
+            .nav-button { padding: 0.5rem 1rem; font-size: 0.9rem; }
+            .slide h2 { font-size: 2.2rem !important; }
+            .slide p, .slide li { font-size: 1.3rem !important; }
+        }
+</style>
 </head>
 <body class="antialiased">
     <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
@@ -467,41 +537,31 @@
             showSlide(0); handleFullscreenChange();
         });
 
-                function handleFullscreenChange() {
+
+
+    // Navigation improvements (2026)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
+        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
+    });
+
+
+
+
+
+
+    function handleFullscreenChange() {
         const isFS = !!(document.fullscreenElement ||
                       document.webkitFullscreenElement ||
                       document.mozFullScreenElement ||
                       document.msFullscreenElement ||
                       (window.innerHeight >= screen.height - 10));
 
-        const uiElements = document.querySelectorAll('header, footer, [id*="header"], [id*="footer"], .logo-fixed, .xp-taskbar, .nav-buttons, .mobile-nav-buttons');
-        const container = document.getElementById('presentation-container');
-
-        uiElements.forEach(el => {
-            if (isFS) {
-                el.style.setProperty('display', 'none', 'important');
-            } else {
-                el.style.display = '';
-            }
-        });
-
         if (isFS) {
-            if (container) {
-                container.style.setProperty('height', '100vh', 'important');
-                container.style.setProperty('width', '100vw', 'important');
-                container.style.setProperty('max-width', '100vw', 'important');
-                container.style.setProperty('margin', '0', 'important');
-                container.style.setProperty('border-radius', '0', 'important');
-            }
+            document.body.classList.add('is-fullscreen');
             document.body.style.overflow = 'hidden';
         } else {
-            if (container) {
-                container.style.height = '';
-                container.style.width = '';
-                container.style.maxWidth = '';
-                container.style.borderRadius = '';
-                container.style.margin = '';
-            }
+            document.body.classList.remove('is-fullscreen');
             document.body.style.overflow = '';
         }
     }
@@ -512,11 +572,10 @@
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
     window.addEventListener('resize', handleFullscreenChange);
 
-
-    // Navigation improvements (2026)
+    // Navigation Improvements (Keyboards & Touch)
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
+        if (e.key === 'ArrowRight') typeof showSlide === 'function' ? showSlide(currentSlideIndex + 1) : null;
+        if (e.key === 'ArrowLeft') typeof showSlide === 'function' ? showSlide(currentSlideIndex - 1) : null;
     });
 
     (function() {
@@ -526,10 +585,13 @@
         container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
         container.addEventListener('touchend', e => {
             let teX = e.changedTouches[0].screenX;
-            if (tsX - teX > 50) typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-            if (teX - tsX > 50) typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
+            if (tsX - teX > 50) typeof showSlide === 'function' ? showSlide(currentSlideIndex + 1) : null;
+            if (teX - tsX > 50) typeof showSlide === 'function' ? showSlide(currentSlideIndex - 1) : null;
         }, {passive: true});
     })();
+
+    // Initial check
+    handleFullscreenChange();
 
 </script>
 </body>
