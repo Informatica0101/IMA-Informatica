@@ -50,3 +50,14 @@ Archivo: backend/exam-service/Code.gs
 -------------------------------------
 - Necesita: updateExam(payload), deleteExam(payload).
 
+
+AUDITORÍA PRESENTACIONES 2026 - FULLSCREEN Y TIPOGRAFÍA (22/03/2026)
+-------------------------------------------------------------------
+- Archivos involucrados: 12 archivos de 2026 existentes + 2 nuevos.
+- Hallazgo: El encabezado y pie de página no se ocultaban en modo F11 porque no tenían los IDs necesarios y la lógica del API de Fullscreen no detecta el modo de pantalla completa del navegador por sí sola.
+- Resolución:
+  - Se añadieron id="page-header" e id="page-footer" a todos los archivos.
+  - Se implementó handleFullscreenChange con heurística de dimensiones (window.innerHeight >= screen.height - 10).
+  - Se añadieron event listeners para 'resize'.
+- Hallazgo Tipografía: La letra era pequeña para presentaciones proyectadas.
+- Resolución: Aumento del 50% en p (1.5rem) y h3 (2.25rem) con line-height de 1.6 y 1.4 respectivamente.

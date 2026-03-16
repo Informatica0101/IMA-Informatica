@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clasificación y Etapas de Algoritmos - Programación I</title>
+    <title>Tablas y etiquetas div/span - Diseño Web I</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -21,8 +21,10 @@
         .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
         .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
         .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
-        .step-box { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.8rem; margin: 0.3rem 0; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .step-number { display: inline-block; background: #3b82f6; color: white; width: 26px; height: 26px; border-radius: 50%; text-align: center; line-height: 26px; margin-right: 10px; font-weight: bold; font-size: 0.9rem; }
+        .code-box { background: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 8px; font-family: monospace; text-align: left; width: 100%; max-width: 500px; margin: 0.5rem 0; overflow-x: auto; }
+        .code-tag { color: #f472b6; }
+        .code-attr { color: #fbbf24; }
+        .code-val { color: #34d399; }
 
         .slide p { font-size: 1.5rem !important; line-height: 1.6 !important; }
         .slide h3 { font-size: 2.25rem !important; line-height: 1.4 !important; }
@@ -35,12 +37,12 @@
 <body class="antialiased">
     <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
         <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
-            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Programación I</h1>
+            <img src="../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
+            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Diseño Web I</h1>
         </div>
         <nav class="mt-3 sm:mt-0">
             <ul class="flex space-x-2 sm:space-x-3">
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
+                <li><a href="../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
             </ul>
         </nav>
     </header>
@@ -49,165 +51,135 @@
         <div id="presentation-container" class="relative">
             <!-- Diapositiva 1: Portada -->
             <div id="slide-1" class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
-                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Clasificación y Etapas de Algoritmos</h2>
-                <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 2: Metodología de Solución</p>
+                <img src="../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
+                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Tablas y etiquetas div/span</h2>
+                <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 7: Estructurando Datos y Contenedores</p>
                 <div class="text-xs text-gray-500 space-y-1">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 15 de febrero de 2026</p>
-                    <p>Grado: Undécimo de Informática - Sección "A"</p>
+                    <p>Fecha: 22 de marzo de 2026</p>
+                    <p>Grado: Duodécimo de Informática - Sección "A"</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: ¿Por qué clasificar los algoritmos? -->
+            <!-- Diapositiva 2: Introducción a Tablas -->
             <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Por qué clasificar los algoritmos?</h3>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Qué son las Tablas HTML?</h3>
                 <div class="concept-box">
-                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
-                        Existen muchas formas de resolver un mismo problema. Clasificar los algoritmos nos ayuda a elegir la <strong>estrategia más eficiente</strong> según la situación.
+                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed text-left">
+                        Las tablas se utilizan para mostrar datos de forma organizada en filas y columnas. No deben usarse para crear el diseño general de la página.
                     </p>
-                    <div class="mt-4 bg-white p-4 rounded-lg border shadow-sm">
-                        <p class="font-bold text-blue-600 mb-2">💡 Una estrategia adecuada permite:</p>
-                        <ul class="text-xs sm:text-sm space-y-2">
-                            <li>🚀 Ahorrar tiempo de ejecución.</li>
-                            <li>💾 Usar menos memoria de la computadora.</li>
-                            <li>🛠️ Facilitar el mantenimiento del código.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 3: Estrategias Simples -->
-            <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Estrategias Simples</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-100 text-left">
-                        <h4 class="font-bold text-red-700 mb-2">Fuerza Bruta</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Resuelve el problema de la forma más simple y directa, probando todas las opciones posibles.</p>
-                        <p class="text-[10px] mt-2 italic text-red-600">Ejemplo: Probar todas las llaves de un llavero hasta abrir la puerta.</p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-xl border border-green-100 text-left">
-                        <h4 class="font-bold text-green-700 mb-2">Algoritmos Codiciosos</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Toman la mejor decisión en cada paso local, esperando llegar a la solución global óptima.</p>
-                        <p class="text-[10px] mt-2 italic text-green-600">Ejemplo: Dar el cambio usando la moneda de mayor valor disponible.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 4: Estrategias Avanzadas -->
-            <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Estrategias Avanzadas</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
-                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 text-left">
-                        <h4 class="font-bold text-purple-700 mb-2">Divide y Vencerás</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Subdivide un problema en subproblemas más pequeños del mismo tipo, los resuelve y combina los resultados.</p>
-                        <p class="text-[10px] mt-2 italic text-purple-600">Ejemplo: Buscar una palabra en un diccionario abriendo por la mitad.</p>
-                    </div>
-                    <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100 text-left">
-                        <h4 class="font-bold text-yellow-700 mb-2">Vuelta Atrás (Backtracking)</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Explora caminos de solución y, si encuentra que no sirven, retrocede al paso anterior para probar otra opción.</p>
-                        <p class="text-[10px] mt-2 italic text-yellow-600">Ejemplo: Resolver un laberinto regresando cuando llegas a un callejón sin salida.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Otros Tipos -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Programación Dinámica y Probabilísticos</h3>
-                <div class="concept-box">
-                    <div class="mb-4">
-                        <p class="font-bold text-blue-700 mb-1">📊 Programación Dinámica:</p>
-                        <p class="text-xs sm:text-sm">Similar a "Divide y Vencerás", pero guarda los resultados de subproblemas ya resueltos en una tabla para no repetirlos.</p>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg border">
-                        <p class="font-bold text-gray-700 mb-1">🎲 Algoritmos Probabilísticos:</p>
-                        <p class="text-xs sm:text-sm">Introducen el azar en su lógica. Se usan cuando el problema es tan grande que una búsqueda exacta tardaría demasiado.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: Etapa 1 - Análisis del Problema -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etapa 1: Análisis del Problema</h3>
-                <p class="text-sm text-gray-600 mb-4">Consiste en comprender qué es lo que el programa debe hacer.</p>
-                <div class="space-y-3 max-w-2xl mx-auto">
-                    <div class="step-box">
-                        <span class="step-number">1</span> <strong>Definir el problema:</strong> Entenderlo con total precisión.
-                    </div>
-                    <div class="step-box">
-                        <span class="step-number">2</span> <strong>Especificar Entradas:</strong> ¿Qué datos necesito para empezar?
-                    </div>
-                    <div class="step-box">
-                        <span class="step-number">3</span> <strong>Especificar Salidas:</strong> ¿Qué resultado debe mostrar el programa?
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Etapa 2 - Diseño del Algoritmo -->
-            <div id="slide-7" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etapa 2: Diseño del Algoritmo</h3>
-                <div class="concept-box">
-                    <p class="font-bold text-lg mb-2 text-blue-700">¿Cómo lo vamos a resolver?</p>
-                    <ul class="text-sm space-y-3">
-                        <li>📍 <strong>Diseño Descendente (Top-Down):</strong> Dividir el problema en módulos más simples.</li>
-                        <li>📍 <strong>Refinamiento por pasos:</strong> Describir primero los pasos generales y luego detallarlos poco a poco.</li>
+                    <ul class="list-disc ml-8 mt-4 text-xs sm:text-sm space-y-2 text-left">
+                        <li>📊 Ideales para datos tabulares (listas de precios, horarios).</li>
+                        <li>🧱 Estructura rígida basada en celdas.</li>
                     </ul>
-                    <div class="mt-4 p-3 bg-white border rounded italic text-xs text-center">
-                        "Un problema complejo se resuelve mejor si se divide en partes pequeñas."
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: Estructura de una Tabla -->
+            <div id="slide-3" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Estructura Básica</h3>
+                <div class="code-box">
+                    &lt;<span class="code-tag">table</span>&gt;<br>
+                    &nbsp;&nbsp;&lt;<span class="code-tag">tr</span>&gt;<span class="text-gray-400"> (Fila)</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-tag">th</span>&gt;Encabezado&lt;/<span class="code-tag">th</span>&gt;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-tag">td</span>&gt;Dato&lt;/<span class="code-tag">td</span>&gt;<span class="text-gray-400"> (Celda)</span><br>
+                    &nbsp;&nbsp;&lt;/<span class="code-tag">tr</span>&gt;<br>
+                    &lt;/<span class="code-tag">table</span>&gt;
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: Etiquetas div y span -->
+            <div id="slide-4" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Contenedores Genéricos</h3>
+                <p class="text-sm text-gray-600 mb-4">Etiquetas que no tienen un significado semántico pero sirven para agrupar contenido.</p>
+                <div class="grid grid-cols-2 gap-4 w-full max-w-2xl">
+                    <div class="p-3 bg-white border rounded">
+                        <p class="font-bold text-blue-600 text-xs mb-2">&lt;div&gt;</p>
+                        <p class="text-[10px]">Elemento de BLOQUE. Ocupa todo el ancho disponible.</p>
+                    </div>
+                    <div class="p-3 bg-white border rounded">
+                        <p class="font-bold text-blue-600 text-xs mb-2">&lt;span&gt;</p>
+                        <p class="text-[10px]">Elemento en LÍNEA. Solo ocupa el espacio de su contenido.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 8: Etapa 3 - Programación (Codificación) -->
+            <!-- Diapositiva 5: El Elemento div -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Uso de &lt;div&gt;</h3>
+                <p class="text-sm text-gray-600 mb-4">Se usa para agrupar secciones grandes o crear bloques de diseño.</p>
+                <div class="code-box">
+                    &lt;<span class="code-tag">div</span> <span class="code-attr">class</span>=<span class="code-val">"contenedor"</span>&gt;<br>
+                    &nbsp;&nbsp;&lt;<span class="code-tag">h2</span>&gt;Título&lt;/<span class="code-tag">h2</span>&gt;<br>
+                    &nbsp;&nbsp;&lt;<span class="code-tag">p</span>&gt;Contenido agrupado...&lt;/<span class="code-tag">p</span>&gt;<br>
+                    &lt;/<span class="code-tag">div</span>&gt;
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: El Elemento span -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Uso de &lt;span&gt;</h3>
+                <p class="text-sm text-gray-600 mb-4">Se usa para aplicar estilos a partes específicas de un texto.</p>
+                <div class="code-box">
+                    &lt;<span class="code-tag">p</span>&gt;<br>
+                    &nbsp;&nbsp;El cielo es &lt;<span class="code-tag">span</span> <span class="code-attr">style</span>=<span class="code-val">"color: blue;"</span>&gt;azul&lt;/<span class="code-tag">span</span>&gt;.<br>
+                    &lt;/<span class="code-tag">p</span>&gt;
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Ejemplo de Tabla Real -->
+            <div id="slide-7" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo de Tabla</h3>
+                <table class="w-full max-w-md border-collapse border border-gray-300 text-xs">
+                    <thead>
+                        <tr class="bg-blue-100">
+                            <th class="border border-gray-300 p-2">Nombre</th>
+                            <th class="border border-gray-300 p-2">Edad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-gray-300 p-2 text-left">Juan Pérez</td>
+                            <td class="border border-gray-300 p-2">17</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 p-2 text-left">María López</td>
+                            <td class="border border-gray-300 p-2">18</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Diapositiva 8: Combinando Contenedores -->
             <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etapa 3: Programación (Codificación)</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl">
-                    <div class="p-4 bg-white border rounded shadow-sm text-center">
-                        <div class="text-2xl mb-2">💻</div>
-                        <p class="font-bold text-xs uppercase">Codificación</p>
-                        <p class="text-[10px] text-gray-500">Traducir el algoritmo a un lenguaje (como PSeInt o C++).</p>
-                    </div>
-                    <div class="p-4 bg-white border rounded shadow-sm text-center">
-                        <div class="text-2xl mb-2">⚙️</div>
-                        <p class="font-bold text-xs uppercase">Ejecución</p>
-                        <p class="text-[10px] text-gray-500">Poner a funcionar el programa en la computadora.</p>
-                    </div>
-                    <div class="p-4 bg-white border rounded shadow-sm text-center">
-                        <div class="text-2xl mb-2">✅</div>
-                        <p class="font-bold text-xs uppercase">Comprobación</p>
-                        <p class="text-[10px] text-gray-500">Verificar que los resultados sean los esperados.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Técnicas de Representación -->
-            <div id="slide-9" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Técnicas de Representación</h3>
-                <p class="text-sm text-gray-700 mb-6">Antes de programar, usamos estas herramientas para planear:</p>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl">
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Lenguaje Natural</div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Pseudocódigo</div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Diagramas de Flujo</div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Fórmulas</div>
-                </div>
-                <div class="mt-8 p-4 bg-gray-50 rounded-lg max-w-2xl text-left border-l-4 border-gray-400">
-                    <p class="text-xs"><strong>Ejemplo de Lenguaje Natural:</strong><br>"Inicio -> Ir al cine -> Comprar entrada -> Ver película -> Salir -> Regresar -> Fin"</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 10: Ejercicio Práctico -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio: Identificar Etapas</h3>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Estructura y Estilo</h3>
                 <div class="concept-box">
-                    <p class="font-bold mb-3">🛠️ Situación: Necesitas un programa para calcular el promedio de 3 notas.</p>
-                    <div class="space-y-2">
-                        <p class="text-xs"><strong>A. Análisis:</strong> ¿Qué datos pido? (Nota 1, 2, 3) ¿Qué entrego? (Promedio)</p>
-                        <p class="text-xs"><strong>B. Diseño:</strong> Promedio = (N1 + N2 + N3) / 3</p>
-                        <p class="text-xs"><strong>C. Codificación:</strong> Escribir el código en PSeInt.</p>
-                    </div>
-                    <div class="mt-4 p-4 bg-blue-600 text-white rounded-lg text-center text-sm font-bold">
-                        ¡Ahora piensa tú en las etapas para un programa que calcule el área de un cuadrado!
-                    </div>
+                    <p class="text-sm text-gray-700 leading-relaxed text-left">
+                        Al combinar <strong>div</strong> y <strong>span</strong> con CSS, tenemos control total sobre el diseño y la apariencia de cada parte de nuestra web.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Ejercicio Práctico -->
+            <div id="slide-9" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio: Mi Tabla de Horarios</h3>
+                <div class="concept-box">
+                    <p class="font-bold mb-3 text-sm">Crea una página HTML que incluya:</p>
+                    <ul class="list-decimal ml-8 text-xs space-y-2">
+                        <li>Una tabla con tu horario de clases (días y horas).</li>
+                        <li>Usa un <strong>div</strong> para envolver la tabla y darle un borde.</li>
+                        <li>Usa <strong>span</strong> para resaltar el nombre de tu clase favorita en un color diferente.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Importancia de la Organización -->
+            <div id="slide-10" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Orden en el Código</h3>
+                <div class="concept-box text-center">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        El uso correcto de contenedores hace que tu código sea más fácil de leer, mantener y estilizar profesionalmente.
+                    </p>
                 </div>
             </div>
 
@@ -242,40 +214,35 @@
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen de la Clase</h3>
                 <div class="max-w-3xl mx-auto grid grid-cols-2 gap-4">
                     <div class="p-4 bg-blue-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-blue-700">Clasificación:</p>
+                        <p class="font-bold text-sm mb-2 text-blue-700">Tablas:</p>
                         <ul class="text-[10px] space-y-1">
-                            <li>• Fuerza Bruta</li>
-                            <li>• Codiciosos</li>
-                            <li>• Divide y Vencerás</li>
-                            <li>• Dinámica</li>
+                            <li>• table, tr, td, th.</li>
+                            <li>• Organización de datos tabulares.</li>
                         </ul>
                     </div>
                     <div class="p-4 bg-green-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-green-700">Etapas:</p>
+                        <p class="font-bold text-sm mb-2 text-green-700">Contenedores:</p>
                         <ul class="text-[10px] space-y-1">
-                            <li>• 1. Análisis</li>
-                            <li>• 2. Diseño</li>
-                            <li>• 3. Programación</li>
+                            <li>• div: Bloque (secciones).</li>
+                            <li>• span: Línea (texto específico).</li>
                         </ul>
                     </div>
                 </div>
-                <p class="mt-8 font-bold text-blue-600">¡Sigue el proceso y serás un gran programador!</p>
             </div>
 
             <!-- Diapositiva 14: Tarea -->
             <div id="slide-14" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Asignación (Tarea)</h3>
                 <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-indigo-200 max-w-3xl">
-                    <h4 class="font-bold text-indigo-800 mb-3">📋 Tarea: Mapa Conceptual de Algoritmos</h4>
+                    <h4 class="font-bold text-indigo-800 mb-3">📋 Tarea #7</h4>
                     <div class="text-left space-y-4 text-sm">
-                        <p><strong>Actividad:</strong> Elabora en tu cuaderno un cuadro conceptual o mapa mental que incluya:</p>
+                        <p><strong>Actividad:</strong> Crear una tabla sencilla y usar div/span para estructurar contenido.</p>
                         <ul class="list-disc pl-5 space-y-1 text-gray-700">
-                            <li>Los tipos de algoritmos vistos en clase (Fuerza Bruta, Codiciosos, etc.).</li>
-                            <li>Las 3 etapas de desarrollo (Análisis, Diseño, Programación) con una breve descripción de cada una.</li>
+                            <li>Debe mostrar información de al menos 5 compañeros.</li>
+                            <li>Usa clases CSS básicas para diferenciar encabezados.</li>
                         </ul>
-                        <p class="mt-4 bg-white p-3 rounded border italic text-xs">"Debe ser claro, ordenado y usar colores para distinguir las secciones."</p>
                         <div class="pt-4 border-t flex justify-between font-bold text-indigo-900">
-                            <span>Fecha: 22/02/2026</span>
+                            <span>Fecha: 29/03/2026</span>
                             <span>Valor: 5%</span>
                         </div>
                     </div>
@@ -293,8 +260,8 @@
 
     <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
         <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
-            <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Programación I</p>
+            <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Diseño Web I</p>
         </div>
     </footer>
 
@@ -310,54 +277,54 @@
 
         const quizQuestions = [
             {
-                question: "1. ¿Cuál es la primera etapa para desarrollar un algoritmo?",
-                options: ["Codificación", "Diseño", "Análisis", "Prueba"],
-                correctAnswer: "Análisis"
+                question: "1. ¿Qué etiqueta define una fila en una tabla?",
+                options: ["<td>", "<tr>", "<th>", "<table>"],
+                correctAnswer: "<tr>"
             },
             {
-                question: "2. ¿Qué técnica divide un problema complejo en subproblemas?",
-                options: ["Fuerza Bruta", "Divide y Vencerás", "Probabilístico", "Codicioso"],
-                correctAnswer: "Divide y Vencerás"
+                question: "2. ¿Para qué se usa <th>?",
+                options: ["Celdas de datos", "Filas", "Encabezados de tabla", "Borde de tabla"],
+                correctAnswer: "<th>"
             },
             {
-                question: "3. ¿Cómo se llaman los algoritmos que prueban todas las soluciones?",
-                options: ["Fuerza Bruta", "Divide y Vencerás", "Vuelta Atrás", "Dinámica"],
-                correctAnswer: "Fuerza Bruta"
+                question: "3. ¿Qué tipo de elemento es <div>?",
+                options: ["En línea", "De bloque", "Oculto", "Flotante"],
+                correctAnswer: "De bloque"
             },
             {
-                question: "4. ¿Qué algoritmos toman la mejor decisión local en cada paso?",
-                options: ["Fuerza Bruta", "Divide y Vencerás", "Codiciosos", "Probabilísticos"],
-                correctAnswer: "Codiciosos"
+                question: "4. ¿Qué etiqueta es mejor para resaltar una palabra en un párrafo?",
+                options: ["<div>", "<span>", "<table>", "<tr>"],
+                correctAnswer: "<span>"
             },
             {
-                question: "5. ¿Qué etapa consiste en traducir el algoritmo a un lenguaje?",
-                options: ["Análisis", "Diseño", "Codificación", "Refinamiento"],
-                correctAnswer: "Codificación"
+                question: "5. ¿Qué etiqueta define una celda de datos?",
+                options: ["<tr>", "<th>", "<td>", "<table>"],
+                correctAnswer: "<td>"
             },
             {
-                question: "6. ¿Qué técnica de representación usa lenguaje natural?",
-                options: ["Pseudocódigo", "Diagrama de Flujo", "Lenguaje Natural", "Fórmulas"],
-                correctAnswer: "Lenguaje Natural"
+                question: "6. ¿Los <div> ocupan todo el ancho disponible?",
+                options: ["No, solo su contenido", "Sí, por defecto", "Solo si tienen CSS", "A veces"],
+                correctAnswer: "Sí, por defecto"
             },
             {
-                question: "7. ¿Cuál es el objetivo de la etapa de Diseño?",
-                options: ["Comprar la computadora", "Planear cómo resolver el problema", "Instalar el sistema", "Definir las entradas"],
-                correctAnswer: "Planear cómo resolver el problema"
+                question: "7. ¿Se pueden anidar tablas?",
+                options: ["No, está prohibido", "Sí, pero no es recomendado", "Solo en HTML4", "Nunca"],
+                correctAnswer: "Sí, pero no es recomendado"
             },
             {
-                question: "8. ¿Qué algoritmos guardan resultados para evitar duplicados?",
-                options: ["Fuerza Bruta", "Vuelta Atrás", "Programación Dinámica", "Codiciosos"],
-                correctAnswer: "Programación Dinámica"
+                question: "8. ¿Qué etiqueta inicia la definición de una tabla?",
+                options: ["<tab>", "<table>", "<grid>", "<list>"],
+                correctAnswer: "<table>"
             },
             {
-                question: "9. ¿Cómo se llama al refinamiento progresivo de un algoritmo?",
-                options: ["Codificación", "Refinamiento por pasos", "Análisis", "Ejecución"],
-                correctAnswer: "Refinamiento por pasos"
+                question: "9. ¿<span> rompe la línea de texto?",
+                options: ["Sí, siempre", "No, es un elemento en línea", "Solo en móvil", "Depende del navegador"],
+                correctAnswer: "No, es un elemento en línea"
             },
             {
-                question: "10. ¿En qué etapa se definen las entradas y salidas?",
-                options: ["Análisis", "Diseño", "Codificación", "Pruebas"],
-                correctAnswer: "Análisis"
+                question: "10. ¿Cuál es el propósito principal de div y span?",
+                options: ["Añadir imágenes", "Crear enlaces", "Agrupar contenido para aplicar estilos", "Hacer cálculos"],
+                correctAnswer: "Agrupar contenido para aplicar estilos"
             }
         ];
 
