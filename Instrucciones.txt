@@ -88,3 +88,4 @@ ESTADO: PENDIENTE DE REVISIÓN
 - Escalada la tipografía en un 50% para párrafos (1.5rem) y títulos secundarios (2.25rem) con interlineado optimizado para proyección.
 - Generadas nuevas presentaciones para la semana del 22 de marzo de 2026: "Tablas y etiquetas div/span" (Diseño Web I) y "Diagramas de flujo" (Programación I).
 - Normalizados los IDs de los elementos estructurales de la página en todos los archivos del año 2026.
+- Integradas las nuevas presentaciones en el menú de navegación del encabezado (js/data.js).

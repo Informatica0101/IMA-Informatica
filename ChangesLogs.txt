@@ -783,3 +783,9 @@ DESCRIPCIÓN DE CAMBIOS:
 - Se estandarizaron IDs de header y footer.
 - Se incrementó el tamaño de fuente de párrafos y títulos secundarios en un 50% y se ajustó el interlineado.
 - Se generaron presentaciones para las clases del 22 de marzo de 2026 basadas en los planes de clase (Tablas y Diagramas de Flujo).
+
+FECHA: 22/03/2026
+ARCHIVOS MODIFICADOS:
+- js/data.js
+DESCRIPCIÓN DE CAMBIOS:
+- Integración de las nuevas presentaciones del 22 de marzo de 2026 en el menú desplegable de navegación.

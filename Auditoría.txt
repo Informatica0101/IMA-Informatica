@@ -61,3 +61,9 @@ AUDITORÍA PRESENTACIONES 2026 - FULLSCREEN Y TIPOGRAFÍA (22/03/2026)
   - Se añadieron event listeners para 'resize'.
 - Hallazgo Tipografía: La letra era pequeña para presentaciones proyectadas.
 - Resolución: Aumento del 50% en p (1.5rem) y h3 (2.25rem) con line-height de 1.6 y 1.4 respectivamente.
+
+AUDITORÍA INTEGRACIÓN MENÚ (22/03/2026)
+--------------------------------------
+- Archivo: js/data.js
+- Hallazgo: Las nuevas presentaciones no eran accesibles desde el menú de navegación principal.
+- Resolución: Se integraron los nuevos temas "Diagramas de flujo" y "Tablas y etiquetas div/span" en el objeto window.presentationData para su renderizado dinámico en el header.
