@@ -771,6 +771,10 @@ FECHA: 23/03/2026 (Robustez Backend - Fix Error de Subida)
   - Estandarizada la captura y reporte de errores en `doPost`.
   - Normalizadas las comparaciones de cadenas en filtrado de datos (`getStudentsByGradoSeccion`, `isInTeacherList`) para prevenir fallos por tipos numéricos.
 
+FECHA: 23/03/2026 (URL Update)
+- Archivo: js/config.js
+  - Se actualizaron las URLs de los microservicios USER, TASK y EXAM con los nuevos endpoints finales proporcionados.
+
 FECHA: 22/03/2026
 ARCHIVOS MODIFICADOS:
 - III_BTP_A/alineacion_formato_texto.html
