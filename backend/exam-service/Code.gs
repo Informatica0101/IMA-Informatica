@@ -78,7 +78,7 @@ function doPost(e) {
 
   } catch (err) {
     logDebug("ERROR", err.message);
-    return textResponse({ status: "error", message: err.message });
+    return textResponse({ status: "error", message: err.message || "Error interno del servidor." });
   }
 }
 
@@ -463,10 +463,12 @@ function getTeacherExamActivity(payload) {
 }
 
 function isInTeacherList(value, listString) {
-  if (!listString) return true;
+  if (!listString || String(listString).trim() === "") return true;
   if (!value) return false;
-  const list = listString.split(',').map(s => s.trim().toLowerCase());
-  return list.includes(value.toLowerCase());
+  const sValue = String(value).trim().toLowerCase();
+  const sList = String(listString).trim().toLowerCase();
+  const list = sList.split(',').map(s => s.trim());
+  return list.includes(sValue);
 }
 
 function gradeExamSubmission(payload) {

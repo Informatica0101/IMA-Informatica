@@ -56,7 +56,7 @@ function doPost(e) {
     }
   } catch (error) {
     logDebug("Error en doPost:", { message: error.message });
-    response = { status: "error", message: "Error interno del servidor." };
+    response = { status: "error", message: error.message || "Error interno del servidor." };
   }
 
   return ContentService.createTextOutput(JSON.stringify(response))
@@ -204,13 +204,20 @@ function uploadFile(payload) {
   const tituloTarea = taskData[2] || "Tarea Sin Titulo";
 
   const rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
-  const gradoFolder = getOrCreateFolder(rootFolder, grado);
-  const seccionFolder = getOrCreateFolder(gradoFolder, seccion || 'General');
-  const alumnoFolder = getOrCreateFolder(seccionFolder, nombre);
-  const parcialFolder = getOrCreateFolder(alumnoFolder, parcial || 'General');
-  const asignaturaFolder = getOrCreateFolder(parcialFolder, asignatura || 'General');
+  // Normalizar metadatos a string antes de crear carpetas
+  const sGrado = String(grado || "General");
+  const sSeccion = String(seccion || "General");
+  const sNombre = String(nombre || "Usuario");
+  const sParcial = String(parcial || "General");
+  const sAsignatura = String(asignatura || "General");
 
-  const taskDeliveryFolder = getOrCreateFolder(asignaturaFolder, `${tituloTarea}_${userId}`);
+  const gradoFolder = getOrCreateFolder(rootFolder, sGrado);
+  const seccionFolder = getOrCreateFolder(gradoFolder, sSeccion);
+  const alumnoFolder = getOrCreateFolder(seccionFolder, sNombre);
+  const parcialFolder = getOrCreateFolder(alumnoFolder, sParcial);
+  const asignaturaFolder = getOrCreateFolder(parcialFolder, sAsignatura);
+
+  const taskDeliveryFolder = getOrCreateFolder(asignaturaFolder, `${String(tituloTarea)}_${String(userId)}`);
 
   const fileInfo = fileData.split(',');
   const mimeMatch = fileInfo[0].match(/:(.*?);/);
@@ -399,15 +406,18 @@ function getAllTasks(payload) {
 }
 
 function isInTeacherList(value, listString) {
-  if (!listString) return true;
+  if (!listString || String(listString).trim() === "") return true;
   if (!value) return false;
-  const list = listString.split(',').map(s => s.trim().toLowerCase());
-  return list.includes(value.toLowerCase());
+  const sValue = String(value).trim().toLowerCase();
+  const sList = String(listString).trim().toLowerCase();
+  const list = sList.split(',').map(s => s.trim());
+  return list.includes(sValue);
 }
 
 // --- HELPERS DE DRIVE ---
 function getOrCreateFolder(parentFolder, folderName) {
-  if (!folderName || typeof folderName !== 'string' || folderName.trim() === '') throw new Error("El nombre de la carpeta no puede estar vacío.");
-  const folders = parentFolder.getFoldersByName(folderName.trim());
-  return folders.hasNext() ? folders.next() : parentFolder.createFolder(folderName.trim());
+  // Convertimos a string por si viene de una celda con formato número (ej. 10, 11)
+  const name = String(folderName || "").trim() || "Sin Nombre";
+  const folders = parentFolder.getFoldersByName(name);
+  return folders.hasNext() ? folders.next() : parentFolder.createFolder(name);
 }
