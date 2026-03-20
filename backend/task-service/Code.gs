@@ -226,7 +226,12 @@ function uploadFile(payload) {
   const blob = Utilities.newBlob(Utilities.base64Decode(fileInfo[1]), mimeType, fileName);
 
   const file = taskDeliveryFolder.createFile(blob);
-  taskDeliveryFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+  try {
+    taskDeliveryFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (e) {
+    logDebug("No se pudo establecer el permiso de compartir carpeta:", e.message);
+  }
 
   return {
     status: "success",
@@ -418,6 +423,12 @@ function isInTeacherList(value, listString) {
 function getOrCreateFolder(parentFolder, folderName) {
   // Convertimos a string por si viene de una celda con formato número (ej. 10, 11)
   const name = String(folderName || "").trim() || "Sin Nombre";
-  const folders = parentFolder.getFoldersByName(name);
-  return folders.hasNext() ? folders.next() : parentFolder.createFolder(name);
+  try {
+    const folders = parentFolder.getFoldersByName(name);
+    return folders.hasNext() ? folders.next() : parentFolder.createFolder(name);
+  } catch (e) {
+    const errorMsg = `Error de DriveApp en carpeta "${name}": ${e.message}`;
+    logDebug(errorMsg);
+    throw new Error(errorMsg);
+  }
 }

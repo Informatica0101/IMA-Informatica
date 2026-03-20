@@ -78,3 +78,12 @@ AUDITORÍA ROBUSTEZ BACKEND - ERROR SUBIDA DE TAREAS (23/03/2026)
   - Normalizar todos los metadatos a string en `uploadFile`.
   - Flexibilizar `getOrCreateFolder` para aceptar cualquier tipo y proporcionar fallbacks.
   - Exponer mensajes de error reales en `doPost` durante la fase de estabilización.
+
+AUDITORÍA ROBUSTEZ DRIVE - ACCESO DENEGADO (23/03/2026)
+------------------------------------------------------
+- Archivo: backend/task-service/Code.gs
+- Hallazgo: Error "Acceso denegado: DriveApp" reportado específicamente en tareas nuevas.
+- Análisis: El error ocurre probablemente en `taskDeliveryFolder.setSharing(...)` o al intentar crear carpetas si existen restricciones de cuotas o permisos en la cuenta institucional.
+- Acción:
+  - Envolver `setSharing` en un bloque `try-catch` para que la subida no falle si el permiso de compartir no se puede aplicar (el profesor aún puede ver el archivo en Drive).
+  - Mejorar el logging de `getOrCreateFolder` para identificar qué nivel de la jerarquía falla.

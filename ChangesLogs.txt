@@ -776,6 +776,11 @@ FECHA: 23/03/2026 (URL Update)
   - Se actualizaron las URLs de los microservicios USER, TASK y EXAM con los nuevos endpoints finales proporcionados.
   - Actualización adicional del TASK microservice al endpoint final: https://script.google.com/macros/s/AKfycbwj_s7QJEQ0gwOMbN8tY1e-ctHFT_f5NR4hH9tvhDjnRej1YkINcyp80wkgj_MABf-9/exec.
 
+FECHA: 23/03/2026 (Robustez Drive - Fix Acceso Denegado)
+- Archivo: backend/task-service/Code.gs, Línea(s): 229-233, 426-433
+  - Implementado bloque `try-catch` alrededor de `setSharing` para evitar fallos críticos si la política organizacional impide el compartido programático de archivos.
+  - Mejorada la función `getOrCreateFolder` con captura de errores descriptiva para identificar el nivel exacto de la jerarquía de carpetas que genera un "Acceso denegado".
+
 FECHA: 22/03/2026
 ARCHIVOS MODIFICADOS:
 - III_BTP_A/alineacion_formato_texto.html

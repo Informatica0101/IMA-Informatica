@@ -32,6 +32,7 @@ ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
 - Refactorizada `getOrCreateFolder` para ser resiliente a nombres nulos o no-string.
 - Mejorada la transparencia de errores en `doPost` en todos los servicios (TASK, EXAM, USER).
 - Estandarizada la lógica de comparación en filtros de servidor (`isInTeacherList`, `getStudentsByGradoSeccion`).
+- Implementada protección contra errores de "Acceso Denegado" en el compartido de Drive.
 
 TAREA: [A-48]
 TÍTULO: Refinamiento de UI de Precisión (Dashboards)
