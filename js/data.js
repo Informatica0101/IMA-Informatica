@@ -28,7 +28,8 @@ window.presentationData = [
                     { title: "Estrategias de solución de problemas", file: "II_BTP_A/Programacion/estrategias_solucion_problemas.html" },
                     { title: "Análisis y diseño de algoritmos", file: "II_BTP_A/Programacion/analisis_diseno_algoritmos.html" },
                     { title: "Programación y representación", file: "II_BTP_A/Programacion/programacion_representacion.html" },
-                    { title: "Pseudocódigo y ordenación simbólica", file: "II_BTP_A/Programacion/pseudocodigo_ordenacion.html" }
+                    { title: "Pseudocódigo y ordenación simbólica", file: "II_BTP_A/Programacion/pseudocodigo_ordenacion.html" },
+                    { title: "Diagramas de flujo", file: "II_BTP_A/Programacion/diagramas_flujo.html" }
                 ]
             }
             /* {
@@ -66,7 +67,8 @@ window.presentationData = [
                     { title: "Hipervínculos e imágenes", file: "III_BTP_A/hipervinculos_imagenes.html" },
                     { title: "Listas y comentarios en HTML", file: "III_BTP_A/listas_comentarios_html.html" },
                     { title: "Fuentes y color de fondo", file: "III_BTP_A/fuentes_color_fondo.html" },
-                    { title: "Alineación y formato de texto", file: "III_BTP_A/alineacion_formato_texto.html" }
+                    { title: "Alineación y formato de texto", file: "III_BTP_A/alineacion_formato_texto.html" },
+                    { title: "Tablas y etiquetas div/span", file: "III_BTP_A/tablas_div_span.html" }
                 ]
             }
             /* {

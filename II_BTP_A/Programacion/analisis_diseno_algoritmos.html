@@ -23,6 +23,13 @@
         .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
         .step-box { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.8rem; margin: 0.3rem 0; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .step-number { display: inline-block; background: #3b82f6; color: white; width: 26px; height: 26px; border-radius: 50%; text-align: center; line-height: 26px; margin-right: 10px; font-weight: bold; font-size: 0.9rem; }
+
+        .slide p { font-size: 1.5rem !important; line-height: 1.6 !important; }
+        .slide h3 { font-size: 2.25rem !important; line-height: 1.4 !important; }
+        @media (max-width: 768px) {
+            .slide p { font-size: 1.3rem !important; }
+            .slide h3 { font-size: 1.8rem !important; }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -454,26 +461,31 @@
             showSlide(0); handleFullscreenChange();
         });
 
+
     function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
-        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
+        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) || (window.innerHeight >= screen.height - 10);
+        const header = document.getElementById('page-header');
+        const footer = document.getElementById('page-footer');
         const container = document.getElementById('presentation-container');
 
         if (isFS) {
             if (header) header.style.setProperty('display', 'none', 'important');
             if (footer) footer.style.setProperty('display', 'none', 'important');
             if (container) container.style.setProperty('height', '100vh', 'important');
+            document.body.classList.add('is-fullscreen');
         } else {
             if (header) header.style.display = '';
             if (footer) footer.style.display = '';
             if (container) container.style.height = '';
+            document.body.classList.remove('is-fullscreen');
         }
     }
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+    window.addEventListener('resize', handleFullscreenChange);
+
 
     // Navigation improvements (2026)
     document.addEventListener('keydown', (e) => {

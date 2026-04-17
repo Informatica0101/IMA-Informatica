@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clasificación y Etapas de Algoritmos - Programación I</title>
+    <title>Diagramas de Flujo - Programación I</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -21,6 +21,9 @@
         .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
         .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
         .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
+        .code-box { background: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 8px; font-family: monospace; text-align: left; width: 100%; max-width: 500px; margin: 0.5rem 0; overflow-x: auto; }
+        .code-kw { color: #f472b6; font-weight: bold; }
+        .code-fn { color: #fbbf24; }
         .step-box { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.8rem; margin: 0.3rem 0; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .step-number { display: inline-block; background: #3b82f6; color: white; width: 26px; height: 26px; border-radius: 50%; text-align: center; line-height: 26px; margin-right: 10px; font-weight: bold; font-size: 0.9rem; }
 
@@ -50,164 +53,150 @@
             <!-- Diapositiva 1: Portada -->
             <div id="slide-1" class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
-                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Clasificación y Etapas de Algoritmos</h2>
-                <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 2: Metodología de Solución</p>
+                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Diagramas de Flujo</h2>
+                <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 7: Representación Gráfica de Procesos</p>
                 <div class="text-xs text-gray-500 space-y-1">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 15 de febrero de 2026</p>
+                    <p>Fecha: 22 de marzo de 2026</p>
                     <p>Grado: Undécimo de Informática - Sección "A"</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: ¿Por qué clasificar los algoritmos? -->
+            <!-- Diapositiva 2: ¿Qué es un Diagrama de Flujo? -->
             <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Por qué clasificar los algoritmos?</h3>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Qué es un Diagrama de Flujo?</h3>
                 <div class="concept-box">
-                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
-                        Existen muchas formas de resolver un mismo problema. Clasificar los algoritmos nos ayuda a elegir la <strong>estrategia más eficiente</strong> según la situación.
+                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed text-left">
+                        Es la representación gráfica de un algoritmo o proceso. Utiliza símbolos estandarizados para mostrar los pasos y el flujo de ejecución.
                     </p>
-                    <div class="mt-4 bg-white p-4 rounded-lg border shadow-sm">
-                        <p class="font-bold text-blue-600 mb-2">💡 Una estrategia adecuada permite:</p>
-                        <ul class="text-xs sm:text-sm space-y-2">
-                            <li>🚀 Ahorrar tiempo de ejecución.</li>
-                            <li>💾 Usar menos memoria de la computadora.</li>
-                            <li>🛠️ Facilitar el mantenimiento del código.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 3: Estrategias Simples -->
-            <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Estrategias Simples</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-100 text-left">
-                        <h4 class="font-bold text-red-700 mb-2">Fuerza Bruta</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Resuelve el problema de la forma más simple y directa, probando todas las opciones posibles.</p>
-                        <p class="text-[10px] mt-2 italic text-red-600">Ejemplo: Probar todas las llaves de un llavero hasta abrir la puerta.</p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-xl border border-green-100 text-left">
-                        <h4 class="font-bold text-green-700 mb-2">Algoritmos Codiciosos</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Toman la mejor decisión en cada paso local, esperando llegar a la solución global óptima.</p>
-                        <p class="text-[10px] mt-2 italic text-green-600">Ejemplo: Dar el cambio usando la moneda de mayor valor disponible.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 4: Estrategias Avanzadas -->
-            <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Estrategias Avanzadas</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
-                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 text-left">
-                        <h4 class="font-bold text-purple-700 mb-2">Divide y Vencerás</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Subdivide un problema en subproblemas más pequeños del mismo tipo, los resuelve y combina los resultados.</p>
-                        <p class="text-[10px] mt-2 italic text-purple-600">Ejemplo: Buscar una palabra en un diccionario abriendo por la mitad.</p>
-                    </div>
-                    <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100 text-left">
-                        <h4 class="font-bold text-yellow-700 mb-2">Vuelta Atrás (Backtracking)</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Explora caminos de solución y, si encuentra que no sirven, retrocede al paso anterior para probar otra opción.</p>
-                        <p class="text-[10px] mt-2 italic text-yellow-600">Ejemplo: Resolver un laberinto regresando cuando llegas a un callejón sin salida.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Otros Tipos -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Programación Dinámica y Probabilísticos</h3>
-                <div class="concept-box">
-                    <div class="mb-4">
-                        <p class="font-bold text-blue-700 mb-1">📊 Programación Dinámica:</p>
-                        <p class="text-xs sm:text-sm">Similar a "Divide y Vencerás", pero guarda los resultados de subproblemas ya resueltos en una tabla para no repetirlos.</p>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg border">
-                        <p class="font-bold text-gray-700 mb-1">🎲 Algoritmos Probabilísticos:</p>
-                        <p class="text-xs sm:text-sm">Introducen el azar en su lógica. Se usan cuando el problema es tan grande que una búsqueda exacta tardaría demasiado.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: Etapa 1 - Análisis del Problema -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etapa 1: Análisis del Problema</h3>
-                <p class="text-sm text-gray-600 mb-4">Consiste en comprender qué es lo que el programa debe hacer.</p>
-                <div class="space-y-3 max-w-2xl mx-auto">
-                    <div class="step-box">
-                        <span class="step-number">1</span> <strong>Definir el problema:</strong> Entenderlo con total precisión.
-                    </div>
-                    <div class="step-box">
-                        <span class="step-number">2</span> <strong>Especificar Entradas:</strong> ¿Qué datos necesito para empezar?
-                    </div>
-                    <div class="step-box">
-                        <span class="step-number">3</span> <strong>Especificar Salidas:</strong> ¿Qué resultado debe mostrar el programa?
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Etapa 2 - Diseño del Algoritmo -->
-            <div id="slide-7" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etapa 2: Diseño del Algoritmo</h3>
-                <div class="concept-box">
-                    <p class="font-bold text-lg mb-2 text-blue-700">¿Cómo lo vamos a resolver?</p>
-                    <ul class="text-sm space-y-3">
-                        <li>📍 <strong>Diseño Descendente (Top-Down):</strong> Dividir el problema en módulos más simples.</li>
-                        <li>📍 <strong>Refinamiento por pasos:</strong> Describir primero los pasos generales y luego detallarlos poco a poco.</li>
+                    <ul class="list-disc ml-8 mt-4 text-xs sm:text-sm space-y-2 text-left">
+                        <li>👁️ Visualiza la secuencia lógica rápidamente.</li>
+                        <li>🛣️ Muestra los caminos alternativos y decisiones.</li>
+                        <li>🌍 Es un lenguaje universal en programación.</li>
                     </ul>
-                    <div class="mt-4 p-3 bg-white border rounded italic text-xs text-center">
-                        "Un problema complejo se resuelve mejor si se divide en partes pequeñas."
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: Importancia -->
+            <div id="slide-3" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Por qué usarlos?</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl">
+                    <div class="p-4 bg-white border rounded shadow-sm text-left">
+                        <p class="font-bold text-blue-600 text-xs">CLARIDAD</p>
+                        <p class="text-[10px] text-gray-500">Ayuda a entender procesos complejos de un vistazo.</p>
+                    </div>
+                    <div class="p-4 bg-white border rounded shadow-sm text-left">
+                        <p class="font-bold text-blue-600 text-xs">DOCUMENTACIÓN</p>
+                        <p class="text-[10px] text-gray-500">Sirve como manual para el código que se va a escribir.</p>
+                    </div>
+                    <div class="p-4 bg-white border rounded shadow-sm text-left">
+                        <p class="font-bold text-blue-600 text-xs">DEPURACIÓN</p>
+                        <p class="text-[10px] text-gray-500">Permite detectar errores lógicos antes de programar.</p>
+                    </div>
+                    <div class="p-4 bg-white border rounded shadow-sm text-left">
+                        <p class="font-bold text-blue-600 text-xs">COMUNICACIÓN</p>
+                        <p class="text-[10px] text-gray-500">Facilita explicar la lógica a otras personas.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 8: Etapa 3 - Programación (Codificación) -->
+            <!-- Diapositiva 4: Simbología Básica (1) -->
+            <div id="slide-4" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Simbología Estándar</h3>
+                <div class="space-y-3 w-full max-w-2xl">
+                    <div class="flex items-center p-3 bg-gray-50 border rounded">
+                        <div class="w-16 h-8 border-2 border-blue-600 rounded-full mr-4 flex justify-center items-center font-bold text-[10px]">INICIO/FIN</div>
+                        <span class="text-xs">Óvalo: Marca el comienzo y el final del diagrama.</span>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-50 border rounded">
+                        <div class="w-16 h-8 border-2 border-blue-600 transform -skew-x-12 mr-4 flex justify-center items-center font-bold text-[10px]">E/S</div>
+                        <span class="text-xs">Paralelogramo: Lectura de datos o impresión de resultados.</span>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-50 border rounded">
+                        <div class="w-16 h-8 border-2 border-blue-600 mr-4 flex justify-center items-center font-bold text-[10px]">PROCESO</div>
+                        <span class="text-xs">Rectángulo: Cálculos, asignaciones o acciones.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Simbología Básica (2) -->
+            <div id="slide-5" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Decisión y Flujo</h3>
+                <div class="space-y-3 w-full max-w-2xl">
+                    <div class="flex items-center p-3 bg-gray-50 border rounded">
+                        <div class="w-10 h-10 border-2 border-blue-600 rotate-45 mr-4 flex justify-center items-center font-bold text-[8px]"><span class="-rotate-45">DECISIÓN</span></div>
+                        <span class="text-xs ml-4">Rombo: Representa una condición (Si/No).</span>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-50 border rounded">
+                        <div class="w-16 h-1 flex bg-blue-600 mr-4 relative"><div class="absolute right-0 -top-1 border-t-4 border-t-transparent border-b-4 border-b-transparent border-l-8 border-l-blue-600"></div></div>
+                        <span class="text-xs">Flechas: Indican la dirección del flujo.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: Pasos para construir un Diagrama -->
+            <div id="slide-6" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Cómo construirlo?</h3>
+                <div class="mt-4 space-y-2 max-w-lg">
+                    <div class="step-box"><span class="step-number">1</span> Definir el Inicio y el Fin.</div>
+                    <div class="step-box"><span class="step-number">2</span> Identificar las entradas (datos).</div>
+                    <div class="step-box"><span class="step-number">3</span> Establecer los procesos (acciones).</div>
+                    <div class="step-box"><span class="step-number">4</span> Aplicar decisiones si es necesario.</div>
+                    <div class="step-box"><span class="step-number">5</span> Unir todo con líneas de flujo.</div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Ejemplo: Hacer un café -->
+            <div id="slide-7" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo Cotidiano</h3>
+                <p class="text-sm text-gray-600 mb-4">Diagrama para preparar café.</p>
+                <div class="flex flex-col items-center space-y-2 text-[10px] font-bold">
+                    <div class="border-2 border-gray-800 rounded-full px-4 py-1">INICIO</div>
+                    <div class="h-4 border-l-2 border-gray-800"></div>
+                    <div class="border-2 border-gray-800 px-4 py-1">Calentar agua</div>
+                    <div class="h-4 border-l-2 border-gray-800"></div>
+                    <div class="border-2 border-gray-800 px-4 py-1 rotate-45 w-16 h-16 flex items-center justify-center"><span class="-rotate-45">¿Hierve?</span></div>
+                    <div class="h-4 border-l-2 border-gray-800"></div>
+                    <div class="border-2 border-gray-800 px-4 py-1">Servir en taza</div>
+                    <div class="h-4 border-l-2 border-gray-800"></div>
+                    <div class="border-2 border-gray-800 rounded-full px-4 py-1">FIN</div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Reglas de Oro -->
             <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etapa 3: Programación (Codificación)</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl">
-                    <div class="p-4 bg-white border rounded shadow-sm text-center">
-                        <div class="text-2xl mb-2">💻</div>
-                        <p class="font-bold text-xs uppercase">Codificación</p>
-                        <p class="text-[10px] text-gray-500">Traducir el algoritmo a un lenguaje (como PSeInt o C++).</p>
-                    </div>
-                    <div class="p-4 bg-white border rounded shadow-sm text-center">
-                        <div class="text-2xl mb-2">⚙️</div>
-                        <p class="font-bold text-xs uppercase">Ejecución</p>
-                        <p class="text-[10px] text-gray-500">Poner a funcionar el programa en la computadora.</p>
-                    </div>
-                    <div class="p-4 bg-white border rounded shadow-sm text-center">
-                        <div class="text-2xl mb-2">✅</div>
-                        <p class="font-bold text-xs uppercase">Comprobación</p>
-                        <p class="text-[10px] text-gray-500">Verificar que los resultados sean los esperados.</p>
-                    </div>
-                </div>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Reglas Importantes</h3>
+                <ul class="list-disc text-left text-xs space-y-3 max-w-md">
+                    <li>Deben escribirse de arriba hacia abajo y de izquierda a derecha.</li>
+                    <li>Las líneas de flujo no deben cruzarse.</li>
+                    <li>Solo líneas horizontales y verticales.</li>
+                    <li>Todo símbolo (excepto Inicio/Fin) debe tener entrada y salida.</li>
+                </ul>
             </div>
 
-            <!-- Diapositiva 9: Técnicas de Representación -->
+            <!-- Diapositiva 9: Diagrama vs Pseudocódigo -->
             <div id="slide-9" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Técnicas de Representación</h3>
-                <p class="text-sm text-gray-700 mb-6">Antes de programar, usamos estas herramientas para planear:</p>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl">
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Lenguaje Natural</div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Pseudocódigo</div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Diagramas de Flujo</div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Fórmulas</div>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Relación Directa</h3>
+                <div class="concept-box">
+                    <p class="text-sm text-gray-700 leading-relaxed text-center">
+                        Cada símbolo del diagrama tiene su equivalente en pseudocódigo. El diagrama es el "mapa" y el pseudocódigo es el "texto".
+                    </p>
                 </div>
-                <div class="mt-8 p-4 bg-gray-50 rounded-lg max-w-2xl text-left border-l-4 border-gray-400">
-                    <p class="text-xs"><strong>Ejemplo de Lenguaje Natural:</strong><br>"Inicio -> Ir al cine -> Comprar entrada -> Ver película -> Salir -> Regresar -> Fin"</p>
+                <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded text-xs">
+                    💡 Un diagrama bien hecho facilita un 90% la escritura del código final.
                 </div>
             </div>
 
-            <!-- Diapositiva 10: Ejercicio Práctico -->
+            <!-- Diapositiva 10: Ejercicio en Clase -->
             <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio: Identificar Etapas</h3>
+                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio Práctico</h3>
                 <div class="concept-box">
-                    <p class="font-bold mb-3">🛠️ Situación: Necesitas un programa para calcular el promedio de 3 notas.</p>
-                    <div class="space-y-2">
-                        <p class="text-xs"><strong>A. Análisis:</strong> ¿Qué datos pido? (Nota 1, 2, 3) ¿Qué entrego? (Promedio)</p>
-                        <p class="text-xs"><strong>B. Diseño:</strong> Promedio = (N1 + N2 + N3) / 3</p>
-                        <p class="text-xs"><strong>C. Codificación:</strong> Escribir el código en PSeInt.</p>
-                    </div>
-                    <div class="mt-4 p-4 bg-blue-600 text-white rounded-lg text-center text-sm font-bold">
-                        ¡Ahora piensa tú en las etapas para un programa que calcule el área de un cuadrado!
-                    </div>
+                    <p class="font-bold mb-3 text-sm">Diseña un diagrama de flujo para:</p>
+                    <p class="text-xs text-gray-700 italic">"Un proceso cotidiano: Ir de tu casa al instituto."</p>
+                    <ul class="list-disc ml-8 mt-2 text-xs space-y-1">
+                        <li>Incluye al menos una decisión (Ej: ¿Hay transporte?).</li>
+                        <li>Usa correctamente los símbolos de inicio y fin.</li>
+                    </ul>
                 </div>
             </div>
 
@@ -242,40 +231,37 @@
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen de la Clase</h3>
                 <div class="max-w-3xl mx-auto grid grid-cols-2 gap-4">
                     <div class="p-4 bg-blue-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-blue-700">Clasificación:</p>
+                        <p class="font-bold text-sm mb-2 text-blue-700">Conceptos:</p>
                         <ul class="text-[10px] space-y-1">
-                            <li>• Fuerza Bruta</li>
-                            <li>• Codiciosos</li>
-                            <li>• Divide y Vencerás</li>
-                            <li>• Dinámica</li>
+                            <li>• Representación gráfica.</li>
+                            <li>• Símbolos estandarizados.</li>
+                            <li>• Lógica visual.</li>
                         </ul>
                     </div>
                     <div class="p-4 bg-green-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-green-700">Etapas:</p>
+                        <p class="font-bold text-sm mb-2 text-green-700">Símbolos:</p>
                         <ul class="text-[10px] space-y-1">
-                            <li>• 1. Análisis</li>
-                            <li>• 2. Diseño</li>
-                            <li>• 3. Programación</li>
+                            <li>• Óvalo, Rombo, Rectángulo.</li>
+                            <li>• Líneas de flujo.</li>
                         </ul>
                     </div>
                 </div>
-                <p class="mt-8 font-bold text-blue-600">¡Sigue el proceso y serás un gran programador!</p>
             </div>
 
             <!-- Diapositiva 14: Tarea -->
             <div id="slide-14" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Asignación (Tarea)</h3>
                 <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-indigo-200 max-w-3xl">
-                    <h4 class="font-bold text-indigo-800 mb-3">📋 Tarea: Mapa Conceptual de Algoritmos</h4>
+                    <h4 class="font-bold text-indigo-800 mb-3">📋 Tarea #7: Diagramas de Flujo</h4>
                     <div class="text-left space-y-4 text-sm">
-                        <p><strong>Actividad:</strong> Elabora en tu cuaderno un cuadro conceptual o mapa mental que incluya:</p>
+                        <p><strong>Actividad:</strong> Crear un diagrama de flujo para un proceso cotidiano a elección.</p>
                         <ul class="list-disc pl-5 space-y-1 text-gray-700">
-                            <li>Los tipos de algoritmos vistos en clase (Fuerza Bruta, Codiciosos, etc.).</li>
-                            <li>Las 3 etapas de desarrollo (Análisis, Diseño, Programación) con una breve descripción de cada una.</li>
+                            <li>Usa regla para los símbolos.</li>
+                            <li>Debe tener al menos una bifurcación (decisión).</li>
+                            <li>Presentar en el cuaderno de forma ordenada.</li>
                         </ul>
-                        <p class="mt-4 bg-white p-3 rounded border italic text-xs">"Debe ser claro, ordenado y usar colores para distinguir las secciones."</p>
                         <div class="pt-4 border-t flex justify-between font-bold text-indigo-900">
-                            <span>Fecha: 22/02/2026</span>
+                            <span>Fecha: 29/03/2026</span>
                             <span>Valor: 5%</span>
                         </div>
                     </div>
@@ -310,54 +296,54 @@
 
         const quizQuestions = [
             {
-                question: "1. ¿Cuál es la primera etapa para desarrollar un algoritmo?",
-                options: ["Codificación", "Diseño", "Análisis", "Prueba"],
-                correctAnswer: "Análisis"
+                question: "1. ¿Qué símbolo representa el Inicio y el Fin?",
+                options: ["Rectángulo", "Óvalo", "Rombo", "Círculo"],
+                correctAnswer: "Óvalo"
             },
             {
-                question: "2. ¿Qué técnica divide un problema complejo en subproblemas?",
-                options: ["Fuerza Bruta", "Divide y Vencerás", "Probabilístico", "Codicioso"],
-                correctAnswer: "Divide y Vencerás"
+                question: "2. ¿Qué símbolo se usa para una decisión?",
+                options: ["Rectángulo", "Óvalo", "Rombo", "Triángulo"],
+                correctAnswer: "Rombo"
             },
             {
-                question: "3. ¿Cómo se llaman los algoritmos que prueban todas las soluciones?",
-                options: ["Fuerza Bruta", "Divide y Vencerás", "Vuelta Atrás", "Dinámica"],
-                correctAnswer: "Fuerza Bruta"
+                question: "3. ¿Qué representa el rectángulo?",
+                options: ["Entrada de datos", "Inicio", "Proceso o acción", "Fin"],
+                correctAnswer: "Proceso o acción"
             },
             {
-                question: "4. ¿Qué algoritmos toman la mejor decisión local en cada paso?",
-                options: ["Fuerza Bruta", "Divide y Vencerás", "Codiciosos", "Probabilísticos"],
-                correctAnswer: "Codiciosos"
+                question: "4. ¿En qué dirección debe fluir el diagrama?",
+                options: ["De abajo hacia arriba", "De derecha a izquierda", "De arriba hacia abajo", "Cualquier dirección"],
+                correctAnswer: "De arriba hacia abajo"
             },
             {
-                question: "5. ¿Qué etapa consiste en traducir el algoritmo a un lenguaje?",
-                options: ["Análisis", "Diseño", "Codificación", "Refinamiento"],
-                correctAnswer: "Codificación"
+                question: "5. ¿Qué símbolo se usa para Entrada y Salida?",
+                options: ["Rectángulo", "Paralelogramo", "Óvalo", "Círculo"],
+                correctAnswer: "Paralelogramo"
             },
             {
-                question: "6. ¿Qué técnica de representación usa lenguaje natural?",
-                options: ["Pseudocódigo", "Diagrama de Flujo", "Lenguaje Natural", "Fórmulas"],
-                correctAnswer: "Lenguaje Natural"
+                question: "6. ¿Pueden cruzarse las líneas de flujo?",
+                options: ["Sí, si es necesario", "No, nunca", "Solo en diagramas grandes", "A veces"],
+                correctAnswer: "No, nunca"
             },
             {
-                question: "7. ¿Cuál es el objetivo de la etapa de Diseño?",
-                options: ["Comprar la computadora", "Planear cómo resolver el problema", "Instalar el sistema", "Definir las entradas"],
-                correctAnswer: "Planear cómo resolver el problema"
+                question: "7. ¿Qué indica una flecha?",
+                options: ["Un error", "El sentido del flujo", "Una pausa", "Un comentario"],
+                correctAnswer: "El sentido del flujo"
             },
             {
-                question: "8. ¿Qué algoritmos guardan resultados para evitar duplicados?",
-                options: ["Fuerza Bruta", "Vuelta Atrás", "Programación Dinámica", "Codiciosos"],
-                correctAnswer: "Programación Dinámica"
+                question: "8. ¿El rombo cuántas salidas suele tener?",
+                options: ["Una", "Dos (Sí y No)", "Tres", "Ninguna"],
+                correctAnswer: "Dos (Sí y No)"
             },
             {
-                question: "9. ¿Cómo se llama al refinamiento progresivo de un algoritmo?",
-                options: ["Codificación", "Refinamiento por pasos", "Análisis", "Ejecución"],
-                correctAnswer: "Refinamiento por pasos"
+                question: "9. ¿Qué es un diagrama de flujo?",
+                options: ["Un tipo de música", "Una representación gráfica", "Un virus", "Un hardware"],
+                correctAnswer: "Una representación gráfica"
             },
             {
-                question: "10. ¿En qué etapa se definen las entradas y salidas?",
-                options: ["Análisis", "Diseño", "Codificación", "Pruebas"],
-                correctAnswer: "Análisis"
+                question: "10. ¿Para qué sirve documentar con diagramas?",
+                options: ["Para gastar papel", "Para guiar la programación", "Para que no se vea el código", "Para nada"],
+                correctAnswer: "Para guiar la programación"
             }
         ];
 
@@ -431,7 +417,6 @@
         function showSlide(index) {
             if (isTransitioning || index < 0 || index >= slides.length) return;
             isTransitioning = true;
-            const presentationContainer = document.getElementById('presentation-container');
 
             slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
             currentSlideIndex = index;

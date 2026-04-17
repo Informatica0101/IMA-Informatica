@@ -84,7 +84,7 @@ function doPost(e) {
     logDebug("Error en doPost", err.message);
     return textResponse({
       status: "error",
-      message: err.message
+      message: err.message || "Error interno del servidor."
     });
   }
 }
@@ -195,10 +195,16 @@ function getStudentsByGradoSeccion(payload) {
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
   const data = usuariosSheet.getDataRange().getValues().slice(1);
 
+  const sGrado = String(grado || "").trim().toLowerCase();
+  const sSeccion = String(seccion || "").trim().toLowerCase();
+
   const students = data.filter(r => {
-    const isStudent = r[6] === 'Estudiante';
-    const matchGrado = r[2] === grado;
-    const matchSeccion = !seccion || r[3] === seccion;
+    const isStudent = String(r[6] || "").trim() === 'Estudiante';
+    const rowGrado = String(r[2] || "").trim().toLowerCase();
+    const rowSeccion = String(r[3] || "").trim().toLowerCase();
+
+    const matchGrado = rowGrado === sGrado;
+    const matchSeccion = !seccion || rowSeccion === sSeccion;
     return isStudent && matchGrado && matchSeccion;
   }).map(r => ({
     userId: r[0],

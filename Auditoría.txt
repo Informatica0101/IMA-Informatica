@@ -50,3 +50,40 @@ Archivo: backend/exam-service/Code.gs
 -------------------------------------
 - Necesita: updateExam(payload), deleteExam(payload).
 
+
+AUDITORÍA PRESENTACIONES 2026 - FULLSCREEN Y TIPOGRAFÍA (22/03/2026)
+-------------------------------------------------------------------
+- Archivos involucrados: 12 archivos de 2026 existentes + 2 nuevos.
+- Hallazgo: El encabezado y pie de página no se ocultaban en modo F11 porque no tenían los IDs necesarios y la lógica del API de Fullscreen no detecta el modo de pantalla completa del navegador por sí sola.
+- Resolución:
+  - Se añadieron id="page-header" e id="page-footer" a todos los archivos.
+  - Se implementó handleFullscreenChange con heurística de dimensiones (window.innerHeight >= screen.height - 10).
+  - Se añadieron event listeners para 'resize'.
+- Hallazgo Tipografía: La letra era pequeña para presentaciones proyectadas.
+- Resolución: Aumento del 50% en p (1.5rem) y h3 (2.25rem) con line-height de 1.6 y 1.4 respectivamente.
+
+AUDITORÍA INTEGRACIÓN MENÚ (22/03/2026)
+--------------------------------------
+- Archivo: js/data.js
+- Hallazgo: Las nuevas presentaciones no eran accesibles desde el menú de navegación principal.
+- Resolución: Se integraron los nuevos temas "Diagramas de flujo" y "Tablas y etiquetas div/span" en el objeto window.presentationData para su renderizado dinámico en el header.
+
+AUDITORÍA ROBUSTEZ BACKEND - ERROR SUBIDA DE TAREAS (23/03/2026)
+---------------------------------------------------------------
+- Archivo: backend/task-service/Code.gs
+- Hallazgo Crítico: La función `getOrCreateFolder` lanza un error fatal si el `folderName` no es estrictamente de tipo 'string'. En la hoja de cálculo "Usuarios", los grados (ej. 10, 11) suelen ser interpretados como números por Apps Script, provocando el "Error interno del servidor" al intentar crear la carpeta del alumno.
+- Hallazgo Diagnóstico: El bloque `catch` en `doPost` oculta el error real tras un mensaje genérico, dificultando la depuración en producción.
+- Hallazgo Lógico: `isInTeacherList` y otros filtros de datos no realizan conversiones explícitas a string, lo que puede causar fallos de comparación si los datos en las celdas de Excel son numéricos.
+- Resolución Proyectada:
+  - Normalizar todos los metadatos a string en `uploadFile`.
+  - Flexibilizar `getOrCreateFolder` para aceptar cualquier tipo y proporcionar fallbacks.
+  - Exponer mensajes de error reales en `doPost` durante la fase de estabilización.
+
+AUDITORÍA ROBUSTEZ DRIVE - ACCESO DENEGADO (23/03/2026)
+------------------------------------------------------
+- Archivo: backend/task-service/Code.gs
+- Hallazgo: Error "Acceso denegado: DriveApp" reportado específicamente en tareas nuevas.
+- Análisis: El error ocurre probablemente en `taskDeliveryFolder.setSharing(...)` o al intentar crear carpetas si existen restricciones de cuotas o permisos en la cuenta institucional.
+- Acción:
+  - Envolver `setSharing` en un bloque `try-catch` para que la subida no falle si el permiso de compartir no se puede aplicar (el profesor aún puede ver el archivo en Drive).
+  - Mejorar el logging de `getOrCreateFolder` para identificar qué nivel de la jerarquía falla.

@@ -14,12 +14,25 @@ ESTADO DE LAS TAREAS (RESUMEN)
 [A-42] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-43] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-44] COMPLETADA (PENDIENTE DE REVISIÓN)
-[A-45] PENDIENTE DE REVISIÓN
+[A-49] PENDIENTE DE REVISIÓN
+[A-45] COMPLETADA (PENDIENTE DE REVISIÓN)
 
 ------------------------------------------------------------------------------------------------
 
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
+
+TAREA: [A-50]
+TÍTULO: Diagnóstico y Estabilización de Subida de Tareas (Backend)
+ÁREA: Backend / Drive API
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Solucionado el "Error del servidor" causado por tipos de datos numéricos (Grados) en la creación de carpetas de Drive.
+- Implementada normalización forzada a String de todos los metadatos del estudiante en `task-service`.
+- Refactorizada `getOrCreateFolder` para ser resiliente a nombres nulos o no-string.
+- Mejorada la transparencia de errores en `doPost` en todos los servicios (TASK, EXAM, USER).
+- Estandarizada la lógica de comparación en filtros de servidor (`isInTeacherList`, `getStudentsByGradoSeccion`).
+- Implementada protección contra errores de "Acceso Denegado" en el compartido de Drive.
 
 TAREA: [A-48]
 TÍTULO: Refinamiento de UI de Precisión (Dashboards)
@@ -77,3 +90,14 @@ ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
 - Implementada recursividad básica en la generación de diagramas de flujo para bloques de control.
 
 (Tareas anteriores A-42 a A-43 ya están listadas en ChangesLogs.txt)
+
+TAREA: [A-49]
+TÍTULO: Fullscreen Robusto, Tipografía Proyectable y Presentaciones (Marzo 22)
+ÁREA: Frontend / Contenido
+PRIORIDAD: ALTA
+ESTADO: PENDIENTE DE REVISIÓN
+- Implementado ocultamiento automático de header/footer en presentaciones de 2026 mediante API Fullscreen y heurística de dimensiones (F11).
+- Escalada la tipografía en un 50% para párrafos (1.5rem) y títulos secundarios (2.25rem) con interlineado optimizado para proyección.
+- Generadas nuevas presentaciones para la semana del 22 de marzo de 2026: "Tablas y etiquetas div/span" (Diseño Web I) y "Diagramas de flujo" (Programación I).
+- Normalizados los IDs de los elementos estructurales de la página en todos los archivos del año 2026.
+- Integradas las nuevas presentaciones en el menú de navegación del encabezado (js/data.js).
