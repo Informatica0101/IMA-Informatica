@@ -761,6 +761,26 @@ MODIFICACIONES:
 - Frontend (js/teacher.js, js/student.js): Refactorización total de la lógica de navegación y gestión de estados.
 - js/config.js: Actualizadas las URLs de los microservicios TASK y EXAM con los nuevos endpoints finales proporcionados. Se aplicó una nueva implementación del servicio de tareas: https://script.google.com/macros/s/AKfycbwKlOEB1WZAcgm9G7yD27YCEu5u7MjBbH9v839g7mpelaxmDEDouRgU1Ex1LAf-Bl4/exec.
 
+FECHA: 23/03/2026 (Robustez Backend - Fix Error de Subida)
+- Archivo: backend/task-service/Code.gs
+  - Refactorizada la función `getOrCreateFolder` para normalizar el nombre de carpeta a string y evitar errores fatales con grados numéricos.
+  - Saneada la función `uploadFile` forzando la conversión de metadatos (grado, sección, etc.) a string antes de interactuar con el sistema de archivos de Drive.
+  - Mejorada la función `isInTeacherList` para manejar comparaciones robustas e insensibles al tipo.
+  - Actualizado el bloque `doPost` para retornar mensajes de error descriptivos (`error.message`) al frontend, eliminando el ocultamiento de errores tras mensajes genéricos.
+- Archivos: backend/exam-service/Code.gs, backend/user-service/Code.gs
+  - Estandarizada la captura y reporte de errores en `doPost`.
+  - Normalizadas las comparaciones de cadenas en filtrado de datos (`getStudentsByGradoSeccion`, `isInTeacherList`) para prevenir fallos por tipos numéricos.
+
+FECHA: 23/03/2026 (URL Update)
+- Archivo: js/config.js
+  - Se actualizaron las URLs de los microservicios USER, TASK y EXAM con los nuevos endpoints finales proporcionados.
+  - Actualizaciones del TASK microservice a los endpoints finales proporcionados.
+
+FECHA: 23/03/2026 (Robustez Drive - Fix Acceso Denegado)
+- Archivo: backend/task-service/Code.gs, Línea(s): 229-233, 426-433
+  - Implementado bloque `try-catch` alrededor de `setSharing` para evitar fallos críticos si la política organizacional impide el compartido programático de archivos.
+  - Mejorada la función `getOrCreateFolder` con captura de errores descriptiva para identificar el nivel exacto de la jerarquía de carpetas que genera un "Acceso denegado".
+
 FECHA: 22/03/2026
 ARCHIVOS MODIFICADOS:
 - III_BTP_A/alineacion_formato_texto.html

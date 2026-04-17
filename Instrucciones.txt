@@ -22,6 +22,18 @@ ESTADO DE LAS TAREAS (RESUMEN)
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
 
+TAREA: [A-50]
+TÍTULO: Diagnóstico y Estabilización de Subida de Tareas (Backend)
+ÁREA: Backend / Drive API
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Solucionado el "Error del servidor" causado por tipos de datos numéricos (Grados) en la creación de carpetas de Drive.
+- Implementada normalización forzada a String de todos los metadatos del estudiante en `task-service`.
+- Refactorizada `getOrCreateFolder` para ser resiliente a nombres nulos o no-string.
+- Mejorada la transparencia de errores en `doPost` en todos los servicios (TASK, EXAM, USER).
+- Estandarizada la lógica de comparación en filtros de servidor (`isInTeacherList`, `getStudentsByGradoSeccion`).
+- Implementada protección contra errores de "Acceso Denegado" en el compartido de Drive.
+
 TAREA: [A-48]
 TÍTULO: Refinamiento de UI de Precisión (Dashboards)
 ÁREA: UI/UX / Frontend
