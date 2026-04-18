@@ -9,6 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const tasksList = document.getElementById('tasks-list');
     const logoutButton = document.getElementById('logout-button');
 
+    const PARCIAL_ORDER = {
+        "Cuarto Parcial": 4,
+        "Tercer Parcial": 3,
+        "Segundo Parcial": 2,
+        "Primer Parcial": 1
+    };
+    let allActivitiesData = [];
+
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('currentUser');
         window.location.href = 'login.html';
@@ -90,19 +98,66 @@ document.addEventListener('DOMContentLoaded', () => {
                 return new Date(b.fechaLimite) - new Date(a.fechaLimite);
             });
 
-            renderActivities(allActivities);
+            allActivitiesData = allActivities;
+            renderParcialTabs(allActivities);
 
         } catch (error) {
             tasksList.innerHTML = `<p class="text-red-500">Error al cargar actividades: ${error.message}</p>`;
         }
     }
 
-    function renderActivities(activities) {
+    function renderParcialTabs(activities) {
+        const tabsContainer = document.getElementById('parcial-tabs-container');
+        if (!tabsContainer) return;
+
         if (!activities || activities.length === 0) {
-            tasksList.innerHTML = '<p class="text-gray-500">No hay actividades pendientes.</p>';
+            tabsContainer.innerHTML = '';
+            renderActivities([]);
             return;
         }
-        tasksList.innerHTML = activities.map(activity => {
+
+        const parciales = [...new Set(activities.map(a => a.parcial || 'Sin Parcial'))];
+        parciales.sort((a, b) => (PARCIAL_ORDER[b] || 0) - (PARCIAL_ORDER[a] || 0));
+
+        const activeParcial = parciales[0];
+
+        tabsContainer.innerHTML = `
+            <div class="flex flex-nowrap overflow-x-auto gap-2 pb-2 scroll-horizontal-clean">
+                ${parciales.map(p => {
+                    const isActive = p === activeParcial;
+                    const activeClass = isActive ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-gray-700 hover:bg-blue-50 border border-gray-200';
+                    return `<button class="flex-none px-4 py-2 rounded-xl font-bold transition-all text-sm ${activeClass} parcial-tab" data-parcial="${p}">${p}</button>`;
+                }).join('')}
+            </div>
+        `;
+
+        // Interactividad
+        tabsContainer.querySelectorAll('.parcial-tab').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                tabsContainer.querySelectorAll('.parcial-tab').forEach(b => {
+                    b.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+                    b.classList.add('bg-white', 'text-gray-700', 'hover:bg-blue-50', 'border', 'border-gray-200');
+                });
+                e.target.classList.remove('bg-white', 'text-gray-700', 'hover:bg-blue-50', 'border', 'border-gray-200');
+                e.target.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+
+                renderActivities(allActivitiesData, e.target.dataset.parcial);
+            });
+        });
+
+        renderActivities(activities, activeParcial);
+    }
+
+    function renderActivities(activities, filterParcial = null) {
+        const filtered = filterParcial
+            ? activities.filter(a => (a.parcial || 'Sin Parcial') === filterParcial)
+            : activities;
+
+        if (!filtered || filtered.length === 0) {
+            tasksList.innerHTML = '<p class="text-gray-500">No hay actividades para este parcial.</p>';
+            return;
+        }
+        tasksList.innerHTML = filtered.map(activity => {
             let feedbackHtml = '';
             let actionButtonHtml = '';
 

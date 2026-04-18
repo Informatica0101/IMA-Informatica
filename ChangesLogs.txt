@@ -809,3 +809,16 @@ ARCHIVOS MODIFICADOS:
 - js/data.js
 DESCRIPCIÓN DE CAMBIOS:
 - Integración de las nuevas presentaciones del 22 de marzo de 2026 en el menú desplegable de navegación.
+
+FECHA: 24/03/2026
+ARCHIVOS MODIFICADOS:
+- student-dashboard.html
+- js/student.js
+- Auditoría.txt
+DESCRIPCIÓN DE CAMBIOS:
+- Implementación de sistema de pestañas (tabs) en el Dashboard del Estudiante para agrupar tareas por parcial.
+- Adición de contenedor #parcial-tabs-container en el HTML.
+- Definición de constante PARCIAL_ORDER para gestionar la jerarquía académica (IV > III > II > I).
+- Implementación de renderParcialTabs para generar la navegación dinámica basada en las actividades disponibles.
+- Actualización de renderActivities para soportar filtrado por parcial seleccionado.
+- Mejora de la experiencia de usuario seleccionando automáticamente el parcial de mayor valor (actual) al cargar.

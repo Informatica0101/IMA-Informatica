@@ -16,10 +16,24 @@ ESTADO DE LAS TAREAS (RESUMEN)
 [A-44] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-49] PENDIENTE DE REVISIÓN
 [A-45] COMPLETADA (PENDIENTE DE REVISIÓN)
+[A-51] COMPLETADA (PENDIENTE DE REVISIÓN)
 
 ------------------------------------------------------------------------------------------------
 
 TAREAS PENDIENTES DE REVISIÓN
+----------------------------
+
+TAREA: [A-51]
+TÍTULO: Dashboard Estudiante: Pestañas por Parcial
+ÁREA: Frontend / UI
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Implementado sistema de navegación por pestañas en student-dashboard.html.
+- Las tareas se agrupan por parcial (IV > III > II > I) mediante PARCIAL_ORDER en js/student.js.
+- Selección automática del parcial actual (valor mayor presente en la data).
+- Filtrado dinámico de la lista de actividades sin recarga de página.
+- Mantención de compatibilidad con tarjetas expandibles y modales de entrega.
+
 ----------------------------
 
 TAREA: [A-50]

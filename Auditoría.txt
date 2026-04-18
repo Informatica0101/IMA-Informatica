@@ -87,3 +87,13 @@ AUDITORÍA ROBUSTEZ DRIVE - ACCESO DENEGADO (23/03/2026)
 - Acción:
   - Envolver `setSharing` en un bloque `try-catch` para que la subida no falle si el permiso de compartir no se puede aplicar (el profesor aún puede ver el archivo en Drive).
   - Mejorar el logging de `getOrCreateFolder` para identificar qué nivel de la jerarquía falla.
+
+AUDITORÍA DASHBOARD ESTUDIANTE - PESTAÑAS POR PARCIAL (24/03/2026)
+-----------------------------------------------------------------
+- Archivo: student-dashboard.html, js/student.js
+- Hallazgo: El dashboard del estudiante muestra todas las tareas en una sola lista, lo que dificulta la organización por periodos académicos.
+- Plan de Acción:
+  - Implementar sistema de pestañas (tabs) usando Bootstrap 5.
+  - Agrupar tareas por parcial (IV > III > II > I).
+  - El parcial activo por defecto será el de mayor valor presente en la data.
+  - Asegurar que la lógica de expansión de tarjetas y entrega de tareas sea compatible con el filtrado por pestañas.
