@@ -97,3 +97,4 @@ AUDITORÍA DASHBOARD ESTUDIANTE - PESTAÑAS POR PARCIAL (24/03/2026)
   - Agrupar tareas por parcial (IV > III > II > I).
   - El parcial activo por defecto será el de mayor valor presente en la data.
   - Asegurar que la lógica de expansión de tarjetas y entrega de tareas sea compatible con el filtrado por pestañas.
+  - Condicionalidad de Pestañas: Se verificó que las pestañas solo se rendericen para parciales que contienen actividades en la respuesta de la API, evitando botones vacíos.

@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const parciales = [...new Set(activities.map(a => a.parcial || 'Sin Parcial'))];
+        const parciales = [...new Set(activities.map(a => (a.parcial && a.parcial.trim()) || 'Sin Parcial'))];
         parciales.sort((a, b) => (PARCIAL_ORDER[b] || 0) - (PARCIAL_ORDER[a] || 0));
 
         const activeParcial = parciales[0];
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderActivities(activities, filterParcial = null) {
         const filtered = filterParcial
-            ? activities.filter(a => (a.parcial || 'Sin Parcial') === filterParcial)
+            ? activities.filter(a => ((a.parcial && a.parcial.trim()) || 'Sin Parcial') === filterParcial)
             : activities;
 
         if (!filtered || filtered.length === 0) {

@@ -32,6 +32,7 @@ ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
 - Las tareas se agrupan por parcial (IV > III > II > I) mediante PARCIAL_ORDER en js/student.js.
 - Selección automática del parcial actual (valor mayor presente en la data).
 - Filtrado dinámico de la lista de actividades sin recarga de página.
+- Visibilidad Condicional: Las pestañas solo se muestran si existen tareas/exámenes para dicho parcial en la data.
 - Mantención de compatibilidad con tarjetas expandibles y modales de entrega.
 
 ----------------------------
