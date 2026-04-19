@@ -822,3 +822,25 @@ DESCRIPCIÓN DE CAMBIOS:
 - Implementación de renderParcialTabs para generar la navegación dinámica basada en las actividades disponibles.
 - Actualización de renderActivities para soportar filtrado por parcial seleccionado.
 - Mejora de la experiencia de usuario seleccionando automáticamente el parcial de mayor valor (actual) al cargar.
+
+19/04/2026 (Transición II Parcial)
+- Archivo: II_BTP_A/Programacion/intro_lenguajes_programacion.html
+  - Creada presentación para el 19 de abril de 2026: "Introducción a los lenguajes de programación y lenguajes de alto nivel".
+  - Contenido extraído de "Programacion Segunda Unidad.pdf" (páginas 51-54).
+  - Incluye cuestionario temático y actividad de debate Kasparov vs Deep Blue.
+- Archivo: III_BTP_A/dw_II/introduccion_css.html
+  - Creada presentación para el 19 de abril de 2026: "Introducción a CSS".
+  - Contenido extraído de "Unidad 4 Diseño Web.pdf" (Sección 1).
+  - Incluye cuestionario temático y ejercicio práctico de enlace de estilos.
+- Archivo: js/data.js
+  - Ocultadas (comentadas) las presentaciones y descargas del I Parcial.
+  - Integradas las nuevas presentaciones del II Parcial en el menú de navegación.
+  - Actualizada la sección de descargas con los folletos del II Parcial: "Programacion Segunda Unidad.pdf" y "Unidad 4 Diseño Web.pdf".
+- Refinadas las presentaciones de Abril 2026:
+    - Incrementada la extensión a 17 diapositivas por presentación.
+    - Ampliado el cuestionario a 10 preguntas por tema.
+    - Robustecida la lógica de ocultamiento de UI (Header/Footer) en modo F11/Fullscreen.
+    - Unificada la mención histórica en una sola diapositiva (Programación).
+    - Implementada optimización para dispositivos móviles mediante media queries (ajuste de fuentes y padding).
+    - Ajustada la portada eliminando el texto "II Parcial" para mayor sobriedad.
+    - Asegurada la fidelidad temática al plan de clase del 19 de abril de 2026.

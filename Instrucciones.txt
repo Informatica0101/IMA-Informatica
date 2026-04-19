@@ -23,6 +23,17 @@ ESTADO DE LAS TAREAS (RESUMEN)
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
 
+TAREA: [A-52]
+TÍTULO: Transición al II Parcial y Presentaciones (19 de abril)
+ÁREA: Frontend / Contenido
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Creadas nuevas presentaciones de 2026 para Programación ("Introducción a los lenguajes") y Diseño Web ("Introducción a CSS").
+- Ocultado el contenido del I Parcial en el menú de navegación y descargas.
+- Integrados los folletos PDF del II Parcial en el área de descargas.
+- Verificado el correcto renderizado y navegación mediante scripts de Playwright.
+- Mantenida la jerarquía institucional y el estilo de tipografía proyectable.
+
 TAREA: [A-51]
 TÍTULO: Dashboard Estudiante: Pestañas por Parcial
 ÁREA: Frontend / UI

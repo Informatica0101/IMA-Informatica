@@ -20,8 +20,8 @@ window.presentationData = [
     {
         grade: "Undécimo",
         subjects: [
-            {
-                name: "Programación",
+            /* {
+                name: "Programación (I Parcial)",
                 topics: [
                     { title: "Introducción a la Programación", file: "II_BTP_A/Programacion/introduccion_programacion.html" },
                     { title: "Clasificación y etapas de algoritmos", file: "II_BTP_A/Programacion/clasificacion_etapas_algoritmos.html" },
@@ -30,6 +30,12 @@ window.presentationData = [
                     { title: "Programación y representación", file: "II_BTP_A/Programacion/programacion_representacion.html" },
                     { title: "Pseudocódigo y ordenación simbólica", file: "II_BTP_A/Programacion/pseudocodigo_ordenacion.html" },
                     { title: "Diagramas de flujo", file: "II_BTP_A/Programacion/diagramas_flujo.html" }
+                ]
+            }, */
+            {
+                name: "Programación",
+                topics: [
+                    { title: "Introducción a los Lenguajes de Programación", file: "II_BTP_A/Programacion/intro_lenguajes_programacion.html" }
                 ]
             }
             /* {
@@ -59,8 +65,8 @@ window.presentationData = [
     {
         grade: "Duodécimo",
         subjects: [
-            {
-                name: "Diseño Web",
+            /* {
+                name: "Diseño Web (I Parcial)",
                 topics: [
                     { title: "Introducción al Diseño Web", file: "III_BTP_A/introduccion_diseno_web.html" },
                     { title: "HTML y CSS - Terminología básica", file: "III_BTP_A/terminologia_basica_html_css.html" },
@@ -69,6 +75,12 @@ window.presentationData = [
                     { title: "Fuentes y color de fondo", file: "III_BTP_A/fuentes_color_fondo.html" },
                     { title: "Alineación y formato de texto", file: "III_BTP_A/alineacion_formato_texto.html" },
                     { title: "Tablas y etiquetas div/span", file: "III_BTP_A/tablas_div_span.html" }
+                ]
+            }, */
+            {
+                name: "Diseño Web",
+                topics: [
+                    { title: "Introducción a CSS", file: "III_BTP_A/dw_II/introduccion_css.html" }
                 ]
             }
             /* {
@@ -122,11 +134,17 @@ window.downloadContentData = [
     {
         grade: "Undécimo",
         subjects: [
-            {
-                name: "Programación",
+            /* {
+                name: "Programación (I Parcial)",
                 topics: [
                     { title: "Introduccion a programacion", file: "II_BTP_A/Programacion/Programación_2026.pdf" },
                     { title: "Pseudocódigo y ordenación simbólica", file: "II_BTP_A/Programacion/pseudocodigo_ordenacion.html" }
+                ]
+            }, */
+            {
+                name: "Programación",
+                topics: [
+                    { title: "Contenido II Parcial (PDF)", file: "II_BTP_A/Programacion/II Parcial/Programacion Segunda Unidad.pdf" }
                 ]
             }
             /* {
@@ -163,11 +181,17 @@ window.downloadContentData = [
     {
         grade: "Duodécimo",
         subjects: [
-            {
-                name: "Diseño Web",
+            /* {
+                name: "Diseño Web (I Parcial)",
                 topics: [
                     { title: "Introduccion a Html", file: "III_BTP_A/introducción a HTML.pdf" },
                     { title: "Alineación y formato de texto", file: "III_BTP_A/alineacion_formato_texto.html" }
+                ]
+            }, */
+            {
+                name: "Diseño Web",
+                topics: [
+                    { title: "Contenido II Parcial (PDF)", file: "III_BTP_A/dw_II/contenido/Unidad 4 Diseño Web.pdf" }
                 ]
             }
             /* {
