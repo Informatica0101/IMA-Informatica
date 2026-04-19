@@ -357,6 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'Grados': renderGrados(searchTerm); break;
             case 'Secciones': renderSecciones(current.data.grado, searchTerm); break;
             case 'Asignaturas': renderAsignaturas(current.data.grado, current.data.seccion, searchTerm); break;
+            case 'Parciales': renderParciales(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
             case 'Alumnos': renderAlumnos(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
             case 'Detalles': renderDetallesAlumno(current.data.alumnoId, current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
         }
@@ -435,16 +436,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = asignaturas.filter(s => s.toLowerCase().includes(search));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Asignatura</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
+        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Parciales &rsaquo;</span></td></tr>`).join('');
+    }
+
+    function renderParciales(grado, seccion, asignatura, search) {
+        let parciales = [...new Set([
+            ...allActivityRaw.filter(i => i.grado === grado && i.seccion === seccion && i.asignatura === asignatura).map(i => i.parcial),
+            ...allAssignmentsRaw.filter(i => i.grado === grado && (i.seccion === seccion || !i.seccion || i.seccion === 'Todas') && i.asignatura === asignatura).map(i => i.parcial)
+        ].filter(p => p))];
+
+        const PARCIAL_ORDER = ['Primer Parcial', 'Segundo Parcial', 'Tercer Parcial', 'Cuarto Parcial'];
+        parciales.sort((a, b) => PARCIAL_ORDER.indexOf(a) - PARCIAL_ORDER.indexOf(b));
+
+        const filtered = parciales.filter(p => p.toLowerCase().includes(search));
+        currentFilteredItems = filtered;
+        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Parcial</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+        submissionsTableBody.innerHTML = filtered.map((parcial, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${parcial}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
     }
 
     function renderAlumnos(grado, seccion, asignatura, search) {
         const current = navStack[navStack.length - 1];
         const students = current.data.students || [];
+        const parcial = current.data.parcial;
 
         // Enriquecer alumnos con status de actividad
         const studentsWithStatus = students.map(s => {
-            const studentActivity = allActivityRaw.filter(i => i.alumnoId === s.userId && i.asignatura === asignatura);
+            const studentActivity = allActivityRaw.filter(i => i.alumnoId === s.userId && i.asignatura === asignatura && i.parcial === parcial);
             let hasPending = false;
             studentActivity.forEach(item => {
                 const isDelivered = !!(item.fileId || item.respuestas || item.entregaId);
@@ -511,10 +528,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderDetallesAlumno(alumnoId, grado, seccion, asignatura, search) {
         const fEstado = document.getElementById('filter-estado').value;
         const isGlobalSearch = (asignatura === 'Búsqueda Global');
+        const current = navStack[navStack.length - 1];
+        const parcial = current.data.parcial;
 
         const filtered = allActivityRaw.filter(i =>
             i.alumnoId === alumnoId &&
-            (isGlobalSearch || (i.grado === grado && i.seccion === seccion && i.asignatura === asignatura)) &&
+            (isGlobalSearch || (i.grado === grado && i.seccion === seccion && i.asignatura === asignatura && i.parcial === parcial)) &&
             i.titulo.toLowerCase().includes(search)
         );
         // Ordenar por fecha más reciente primero
@@ -619,8 +638,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (current.level === 'Grados') await pushNav('Secciones', { grado: item });
                 else if (current.level === 'Secciones') await pushNav('Asignaturas', { grado: current.data.grado, seccion: item });
-                else if (current.level === 'Asignaturas') await pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: item });
-                else if (current.level === 'Alumnos') await pushNav('Detalles', { alumnoId: item.userId, alumnoNombre: item.nombre, grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura });
+                else if (current.level === 'Asignaturas') await pushNav('Parciales', { grado: current.data.grado, seccion: current.data.seccion, asignatura: item });
+                else if (current.level === 'Parciales') await pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: item });
+                else if (current.level === 'Alumnos') await pushNav('Detalles', { alumnoId: item.userId, alumnoNombre: item.nombre, grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: current.data.parcial });
             }
         });
     }

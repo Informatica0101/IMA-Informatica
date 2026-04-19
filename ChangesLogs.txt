@@ -844,3 +844,13 @@ DESCRIPCIÓN DE CAMBIOS:
     - Implementada optimización para dispositivos móviles mediante media queries (ajuste de fuentes y padding).
     - Ajustada la portada eliminando el texto "II Parcial" para mayor sobriedad.
     - Asegurada la fidelidad temática al plan de clase del 19 de abril de 2026.
+
+20/04/2026
+- Archivo: js/teacher.js
+  - Implementación del nivel "Parcial" en la jerarquía de navegación del Dashboard del Profesor.
+  - La nueva ruta de navegación es: Grado -> Sección -> Asignaturas -> Parcial -> Alumnos -> Detalles.
+  - Añadida función `renderParciales` que extrae y visualiza los periodos académicos únicos disponibles en la data de actividades.
+  - Refactorizadas las funciones `renderAlumnos` y `renderDetallesAlumno` para incorporar el filtrado obligatorio por el parcial seleccionado en la navegación.
+  - Actualizado el listener de eventos de la tabla para gestionar las transiciones de estado hacia y desde el nivel de Parciales.
+- Archivo: Auditoría.txt
+  - Registrada la inserción del nivel "Parcial" en la auditoría detallada del Dashboard del Profesor.
