@@ -131,6 +131,20 @@
         .quiz-option:hover { background-color: #eff6ff; border-color: #3b82f6; }
         .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
         .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+
+        /* Adaptación Móvil */
+        @media (max-width: 768px) {
+            .slide { padding: 2rem 1.5rem; }
+            h2 { font-size: 1.75rem; }
+            h3 { font-size: 1.4rem; }
+            p, li { font-size: 1rem; line-height: 1.4; }
+            .concept-box { padding: 1rem; border-left-width: 4px; margin-top: 1rem; }
+            .nav-button { padding: 0.5rem 1rem; font-size: 0.875rem; }
+            #slide-counter { bottom: 1rem; right: 1rem; font-size: 0.75rem; }
+            .quiz-option { padding: 0.75rem; font-size: 0.9rem; }
+            #page-header h1 { font-size: 1rem; }
+            #page-header img { width: 100px !important; }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -141,7 +155,7 @@
             <h1 class="text-xl font-bold text-gray-800">Programación I</h1>
         </div>
         <nav>
-            <a href="../../index.html" class="text-gray-600 hover:text-blue-600 font-semibold">Volver al Inicio</a>
+            <a href="../../index.html" class="text-gray-600 hover:text-blue-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
         </nav>
     </header>
 
@@ -151,8 +165,7 @@
             <div class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
                 <h2>Introducción a los Lenguajes de Programación</h2>
-                <p class="text-2xl text-blue-600 font-semibold">II Parcial - 2026</p>
-                <div class="mt-12 text-lg text-gray-500">
+                <div class="mt-8 text-lg text-gray-500">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
                     <p>Fecha: 19 de abril de 2026</p>
                     <p>Grado: II BTP Informática Sección "A"</p>
@@ -164,162 +177,164 @@
                 <h3>El Concepto de Algoritmo</h3>
                 <p>Decir que un problema se puede resolver algorítmicamente implica que es posible escribir un programa que producirá la respuesta correcta.</p>
                 <div class="concept-box">
-                    <p><strong>Definición:</strong> Conjunto claramente especificado de instrucciones sencillas a seguir para resolver un problema o calcular una función.</p>
+                    <p><strong>Definición Informal:</strong> Un conjunto claramente especificado de instrucciones sencillas a seguir para resolver un problema o calcular una función.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 3: Teoría de la Computabilidad -->
+            <!-- Diapositiva 3: Características de los Algoritmos -->
+            <div class="slide">
+                <h3>Características Fundamentales</h3>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li><strong>Claridad:</strong> Instrucciones no ambiguas.</li>
+                    <li><strong>Precisión:</strong> Pasos bien definidos.</li>
+                    <li><strong>Finitud:</strong> Debe terminar después de un número finito de pasos.</li>
+                    <li><strong>Efectividad:</strong> Cada paso debe ser lo suficientemente básico para realizarse.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 4: Teoría de la Computabilidad -->
             <div class="slide">
                 <h3>Teoría de la Computabilidad</h3>
                 <p>Nació en la década de 1930 para formalizar el estudio de los algoritmos antes de que existieran las computadoras físicas.</p>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
                     <li>Se enfoca en caracterizar los problemas que tienen solución algorítmica.</li>
-                    <li>Presenta problemas que <strong>no</strong> pueden ser resueltos por máquinas.</li>
+                    <li>Identifica problemas que <strong>no</strong> pueden ser resueltos por máquinas de forma general.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 4: Hitos Históricos -->
+            <!-- Diapositiva 5: Hitos Históricos -->
             <div class="slide">
-                <h3>Menciones Históricas</h3>
+                <h3>Hitos: Alan Turing y Deep Blue</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
                     <div class="bg-blue-50 p-6 rounded-lg border-t-4 border-blue-500">
                         <h4 class="font-bold text-xl mb-2 text-blue-800">Alan Turing (1912-1954)</h4>
-                        <p class="text-base">Demostró la insolubilidad del "Problema del Paro" y diseñó los primeros computadores electrónicos programables.</p>
+                        <p class="text-base">Padre de la computación. Demostró la insolubilidad del "Problema del Paro", estableciendo los límites de lo que una computadora puede hacer.</p>
                     </div>
                     <div class="bg-gray-50 p-6 rounded-lg border-t-4 border-gray-500">
                         <h4 class="font-bold text-xl mb-2 text-gray-800">Kasparov vs Deep Blue</h4>
-                        <p class="text-base">En 1997, la supercomputadora de IBM derrotó al campeón mundial de ajedrez (3.5 a 2.5), marcando un hito en la IA.</p>
+                        <p class="text-base">En 1997, una computadora venció al campeón mundial de ajedrez. Deep Blue calculaba 100 millones de posiciones por segundo.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 5: El Problema del Paro -->
+            <!-- Diapositiva 6: El Problema del Paro -->
             <div class="slide">
                 <h3>El Problema del Paro</h3>
-                <p>Es el desafío de determinar si un programa llegará a un punto de detención o entrará en un ciclo infinito con una entrada dada.</p>
+                <p>Es uno de los resultados negativos más importantes de la teoría de computabilidad establecido por Alan Turing.</p>
                 <div class="concept-box border-red-500">
-                    <p class="font-bold text-red-600">Resultado de Turing:</p>
-                    <p>No puede existir un programa de computadora que resuelva este problema para cualquier algoritmo arbitrario.</p>
+                    <p>Consiste en determinar si cualquier algoritmo se detendrá en algún momento o entrará en un ciclo infinito con una entrada dada.</p>
+                    <p class="mt-4 font-bold text-red-600">Resultado: Es insoluble por una computadora.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 6: Complejidad Computacional -->
+            <!-- Diapositiva 7: Complejidad Computacional -->
             <div class="slide">
                 <h3>Complejidad Computacional</h3>
-                <p>Estudio de las necesidades de tiempo y espacio (memoria) que requiere un programa para ejecutarse.</p>
+                <p>El hecho de que un problema tenga solución teórica no significa que sea práctico resolverlo.</p>
                 <ul class="text-left mt-6 list-disc list-inside space-y-2">
-                    <li>Un problema puede ser resoluble en teoría, pero no en la práctica por requerir siglos de ejecución.</li>
-                    <li>Se mide en número de instrucciones o bits de almacenamiento.</li>
+                    <li>Estudia los recursos necesarios: <strong>Tiempo</strong> y <strong>Espacio</strong>.</li>
+                    <li>Un programa "perfecto" puede ser inútil si requiere siglos para terminar o una memoria infinita.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 7: Lenguajes de Alto Nivel -->
+            <!-- Diapositiva 8: Medidas de Complejidad -->
+            <div class="slide">
+                <h3>¿Cómo se mide la complejidad?</h3>
+                <p>Se han formulado axiomas básicos y generales para medir qué tan "difícil" es un programa:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-gray-100 p-4 rounded text-left">
+                        <strong>Número de Instrucciones:</strong> Cantidad de pasos ejecutados por la máquina.
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded text-left">
+                        <strong>Bits de Almacenamiento:</strong> Cantidad de memoria ocupada por el programa.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Resolubilidad Práctica -->
+            <div class="slide">
+                <h3>Resolubilidad Práctica</h3>
+                <p>Existen problemas arbitrariamente complejos para los que no existe un programa óptimo.</p>
+                <div class="concept-box border-yellow-500">
+                    <p>Un problema es útil en la práctica solo si sus necesidades de tiempo y almacenamiento son razonables para las aplicaciones actuales.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Lenguajes de Alto Nivel -->
             <div class="slide">
                 <h3>Lenguajes de Alto Nivel</h3>
-                <p>Permiten a los programadores escribir instrucciones usando palabras similares al lenguaje humano (como el inglés) y símbolos matemáticos.</p>
+                <p>Son lenguajes que permiten a los programadores escribir instrucciones usando palabras y símbolos familiares.</p>
                 <div class="concept-box">
-                    <p><strong>Ventaja:</strong> Son independientes de la arquitectura de la computadora (portables).</p>
+                    <p>Se aproximan al lenguaje humano (generalmente inglés) y a la notación matemática estándar, facilitando la creación de software complejo.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 8: Lenguajes Compilados -->
+            <!-- Diapositiva 11: Independencia de la Máquina -->
             <div class="slide">
-                <h3>Lenguajes Compilados</h3>
-                <p>El código fuente se traduce íntegramente a lenguaje de máquina antes de ser ejecutado.</p>
-                <ul class="text-left mt-6 list-disc list-inside space-y-2">
-                    <li><strong>Proceso:</strong> El compilador genera un archivo ejecutable (.exe, .bin).</li>
-                    <li><strong>Velocidad:</strong> Son mucho más rápidos durante la ejecución de producción.</li>
+                <h3>Portabilidad e Independencia</h3>
+                <p>Una característica clave de los lenguajes de alto nivel es su independencia de la arquitectura del procesador.</p>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li>Un programa escrito en lenguaje de alto nivel puede ejecutarse en diferentes máquinas con pocos cambios.</li>
+                    <li>El programador no necesita conocer los detalles internos de los registros del CPU.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 9: Lenguajes Interpretados -->
+            <!-- Diapositiva 12: Ventajas de los Lenguajes de Alto Nivel -->
             <div class="slide">
-                <h3>Lenguajes Interpretados</h3>
-                <p>Un programa llamado <strong>intérprete</strong> lee y ejecuta las instrucciones una por una en tiempo real.</p>
-                <div class="concept-box border-orange-500">
-                    <p><strong>Diferencia:</strong> No generan un archivo ejecutable previo; la traducción ocurre mientras el programa corre.</p>
-                </div>
+                <h3>Ventajas Principales</h3>
+                <ol class="text-left mt-6 list-decimal list-inside space-y-4">
+                    <li><strong>Legibilidad:</strong> El código es más fácil de entender por humanos.</li>
+                    <li><strong>Mantenibilidad:</strong> Corregir errores es más sencillo.</li>
+                    <li><strong>Productividad:</strong> Se escribe más funcionalidad con menos líneas de código.</li>
+                    <li><strong>Abstracción:</strong> Permite enfocarse en la lógica del problema.</li>
+                </ol>
             </div>
 
-            <!-- Diapositiva 10: Lenguajes Declarativos -->
+            <!-- Diapositiva 13: Ejemplo Algorítmico -->
             <div class="slide">
-                <h3>Lenguajes Declarativos</h3>
-                <p>En este enfoque, el programador le indica a la computadora <strong>qué</strong> desea obtener, sin especificar <strong>cómo</strong> obtenerlo.</p>
-                <p class="mt-4 italic">Ejemplo: SQL para bases de datos.</p>
-                <div class="concept-box">
-                    <p>Se describe el problema en lugar de proveer los pasos detallados de la solución.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 11: Características Declarativas -->
-            <div class="slide">
-                <h3>Características del Enfoque Declarativo</h3>
+                <h3>Ejemplo: El Juego de Ajedrez</h3>
+                <p>¿Por qué el ajedrez es un buen ejemplo de complejidad?</p>
                 <ul class="text-left mt-6 list-disc list-inside space-y-2">
-                    <li>Concentración en la <strong>lógica</strong>, no en la secuencia de control.</li>
-                    <li>Las variables suelen ser inmutables (un solo valor).</li>
-                    <li>El orden de ejecución no afecta el resultado final.</li>
-                    <li>Las listas son la estructura fundamental de datos.</li>
+                    <li>Las formas de acomodar piezas son finitas.</li>
+                    <li>Bajo ciertas reglas, la partida debe terminar.</li>
+                    <li>Un programa podría considerar TODOS los movimientos posibles (teórico).</li>
+                    <li>En la práctica, el número de posibilidades es astronómico.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 12: Ventajas y Desventajas -->
+            <!-- Diapositiva 14: Ejercicio en Clase 1 -->
             <div class="slide">
-                <h3>Ventajas y Desventajas</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-                    <div class="bg-green-50 p-4 rounded border-l-4 border-green-500">
-                        <p class="font-bold">Ventajas:</p>
-                        <p class="text-sm">Código más corto, fácil de mantener y razonar matemáticamente.</p>
-                    </div>
-                    <div class="bg-red-50 p-4 rounded border-l-4 border-red-500">
-                        <p class="font-bold">Desventajas:</p>
-                        <p class="text-sm">Menos eficiente en uso de memoria y no apto para todos los problemas.</p>
-                    </div>
+                <h3>Ejercicio 1: Definición de Algoritmo</h3>
+                <p>En tu cuaderno, redacta un algoritmo sencillo de al menos 5 pasos para realizar una tarea cotidiana (ej: cambiar una llanta o hacer café).</p>
+                <div class="concept-box bg-blue-50 border-blue-400">
+                    <p><strong>Criterio:</strong> Asegúrate de que los pasos sean claros, precisos y que el proceso tenga un fin definido.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 13: Programación Lógica -->
+            <!-- Diapositiva 15: Ejercicio en Clase 2 -->
             <div class="slide">
-                <h3>Programación Lógica</h3>
-                <p>Basada en la lógica de predicados. El programa es un conjunto de hechos y reglas.</p>
-                <div class="concept-box">
-                    <p>Utiliza mecanismos de inferencia para responder consultas a partir de los datos proporcionados.</p>
-                </div>
+                <h3>Ejercicio 2: Análisis de Complejidad</h3>
+                <p>Discute con tu compañero: ¿Qué recursos (tiempo o memoria) crees que se agotarían primero si intentaras escribir un programa que adivine una contraseña de 20 caracteres por fuerza bruta?</p>
+                <p class="mt-6 italic">Justifica si el problema es resoluble en la práctica.</p>
             </div>
 
-            <!-- Diapositiva 14: Orientada a Bases de Datos -->
+            <!-- Diapositiva 16: Cuestionario Interactivo -->
             <div class="slide">
-                <h3>Programación orientada a Bases de Datos</h3>
-                <p>Sistemas diseñados para gestionar grandes volúmenes de información de forma estructurada.</p>
-                <ul class="text-left mt-6 list-disc list-inside space-y-2">
-                    <li><strong>SQL:</strong> Lenguaje estándar para interactuar con bases de datos relacionales.</li>
-                    <li>Permite crear, leer, actualizar y borrar (CRUD) datos eficientemente.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 15: Cuestionario Parte 1 -->
-            <div class="slide">
-                <h3>¡Cuestionario de Repaso! (1/2)</h3>
-                <div id="quiz-container-1" class="max-w-2xl w-full">
-                    <p id="quiz-question" class="mb-4 font-bold text-xl"></p>
+                <h3>¡Pon a prueba tus conocimientos!</h3>
+                <div id="quiz-container" class="max-w-2xl w-full">
+                    <p id="quiz-question" class="mb-4 font-bold text-xl text-blue-800 text-left"></p>
                     <div id="quiz-options" class="flex flex-col gap-2"></div>
                     <p id="quiz-feedback" class="mt-4 font-bold text-lg"></p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 16: Actividad Práctica -->
-            <div class="slide">
-                <h3>Actividad: Kasparov vs Deep Blue</h3>
-                <div class="concept-box bg-yellow-50 border-yellow-400">
-                    <p class="font-bold text-yellow-800">Debate grupal:</p>
-                    <p class="mt-4">¿Ganó realmente la máquina a Garry Kasparov por superioridad lógica, o el cansancio y los factores emocionales del humano fueron los que decidieron la partida?</p>
-                    <p class="mt-4 italic">Realicen un resumen de las páginas 51 a 56 del folleto.</p>
                 </div>
             </div>
 
             <!-- Diapositiva 17: Fin -->
             <div class="slide">
                 <h2>¡Muchas Gracias!</h2>
-                <p>Próxima clase: Programación Imperativa y Objetos.</p>
+                <p class="text-xl">Plan de clase del 19 de abril completado.</p>
+                <div class="mt-8">
+                    <p class="text-sm">Tarea: Resumen de las páginas 51 a 54 del folleto.</p>
+                </div>
             </div>
         </div>
 
@@ -349,15 +364,15 @@
 
         const quizData = [
             { q: "¿En qué década se formalizó el concepto de algoritmo?", options: ["1950", "1930", "1910", "1970"], a: "1930" },
-            { q: "¿Quién demostró la insolubilidad del 'problema del paro'?", options: ["Garry Kasparov", "Bill Gates", "Alan Turing", "Steve Jobs"], a: "Alan Turing" },
-            { q: "¿Qué dos factores mide la complejidad computacional?", options: ["Color y Forma", "Tiempo y Espacio", "Precio y Tamaño", "Hardware y Software"], a: "Tiempo y Espacio" },
-            { q: "¿Cómo se llama el proceso de traducir todo el código antes de ejecutarlo?", options: ["Interpretación", "Depuración", "Compilación", "Inferencia"], a: "Compilación" },
-            { q: "¿Qué enfoque indica el 'QUÉ' pero no el 'CÓMO'?", options: ["Imperativo", "Declarativo", "Procedural", "Binario"], a: "Declarativo" },
-            { q: "¿Cuál es un ejemplo de lenguaje declarativo?", options: ["C++", "Java", "SQL", "Assembly"], a: "SQL" },
-            { q: "¿Cómo son las variables en la programación declarativa?", options: ["Dinámicas", "Inmutables (un solo valor)", "Globales", "Opcionales"], a: "Inmutables (un solo valor)" },
-            { q: "¿Qué ejecuta las instrucciones una por una en tiempo real?", options: ["Compilador", "Enlazador", "Intérprete", "Bios"], a: "Intérprete" },
-            { q: "¿Qué problema determina si un algoritmo se detendrá?", options: ["Problema de Turing", "Problema del Paro", "Complejidad de Deep Blue", "Teoría P vs NP"], a: "Problema del Paro" },
-            { q: "¿Cuál es la principal ventaja de los lenguajes de alto nivel?", options: ["Son más pesados", "Independencia de la máquina", "No necesitan traducción", "Son solo para expertos"], a: "Independencia de la máquina" }
+            { q: "¿Quién demostró la insolubilidad del 'problema del paro'?", options: ["Garry Kasparov", "Deep Blue", "Alan Turing", "John von Neumann"], a: "Alan Turing" },
+            { q: "¿Qué dos factores mide la complejidad computacional?", options: ["Color y Forma", "Precio y Tamaño", "Tiempo y Espacio", "Hardware y Software"], a: "Tiempo y Espacio" },
+            { q: "¿Qué es un algoritmo según la definición informal?", options: ["Una pieza de hardware", "Instrucciones sencillas para resolver un problema", "Un lenguaje de programación", "Un componente del CPU"], a: "Instrucciones sencillas para resolver un problema" },
+            { q: "¿Qué problema determinó Turing que no puede ser resuelto por computadora?", options: ["Cálculo de Pi", "Juego de Ajedrez", "El Problema del Paro", "Suma de enteros"], a: "El Problema del Paro" },
+            { q: "¿Cuál es una medida de complejidad mencionada?", options: ["Número de usuarios", "Número de instrucciones ejecutadas", "Velocidad de internet", "Precio de la computadora"], a: "Número de instrucciones ejecutadas" },
+            { q: "¿Qué permiten los lenguajes de alto nivel al programador?", options: ["Hablar con la máquina en binario", "Escribir instrucciones usando palabras y símbolos", "No usar software", "Modificar el voltaje del CPU"], a: "Escribir instrucciones usando palabras y símbolos" },
+            { q: "¿Cuál es la principal ventaja de los lenguajes de alto nivel?", options: ["Son más lentos", "Son independientes de la máquina", "Son más caros", "Requieren hardware especial"], a: "Son independientes de la máquina" },
+            { q: "¿Por qué el ajedrez se considera complejo en la práctica?", options: ["Las reglas cambian", "Las piezas son finitas", "Las posibilidades de movimientos son astronómicas", "No tiene solución teórica"], a: "Las posibilidades de movimientos son astronómicas" },
+            { q: "¿Qué significa que un algoritmo sea finito?", options: ["Que nunca termina", "Que tiene un fin definido", "Que es infinito", "Que es muy pequeño"], a: "Que tiene un fin definido" }
         ];
         let currentQuiz = 0;
 
@@ -372,7 +387,7 @@
             prevBtn.disabled = currentSlide === 0;
             nextBtn.disabled = currentSlide === slides.length - 1;
 
-            if (currentSlide === 14) loadQuiz();
+            if (currentSlide === 15) loadQuiz();
         }
 
         function loadQuiz() {
@@ -424,7 +439,7 @@
             if (e.key === 'ArrowLeft') showSlide(currentSlide - 1);
         });
 
-        // Fullscreen Logic
+        // Fullscreen Logic (Hybrid API + Heuristic)
         function handleFullscreen() {
             const isFull = window.innerHeight >= screen.height - 10 || document.fullscreenElement;
             header.style.setProperty('display', isFull ? 'none' : 'flex', 'important');

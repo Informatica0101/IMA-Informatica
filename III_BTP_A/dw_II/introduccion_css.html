@@ -144,6 +144,21 @@
             margin-top: 1rem;
             font-family: monospace;
         }
+
+        /* Adaptación Móvil */
+        @media (max-width: 768px) {
+            .slide { padding: 2rem 1.5rem; }
+            h2 { font-size: 1.75rem; }
+            h3 { font-size: 1.4rem; }
+            p, li { font-size: 1rem; line-height: 1.4; }
+            .concept-box { padding: 1rem; border-left-width: 4px; margin-top: 1rem; }
+            .nav-button { padding: 0.5rem 1rem; font-size: 0.875rem; }
+            #slide-counter { bottom: 1rem; right: 1rem; font-size: 0.75rem; }
+            .quiz-option { padding: 0.75rem; font-size: 0.9rem; }
+            pre { font-size: 0.9rem; padding: 1rem; }
+            #page-header h1 { font-size: 1rem; }
+            #page-header img { width: 100px !important; }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -154,7 +169,7 @@
             <h1 class="text-xl font-bold text-gray-800">Diseño Web II</h1>
         </div>
         <nav>
-            <a href="../../index.html" class="text-gray-600 hover:text-orange-600 font-semibold">Volver al Inicio</a>
+            <a href="../../index.html" class="text-gray-600 hover:text-orange-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
         </nav>
     </header>
 
@@ -164,8 +179,7 @@
             <div class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
                 <h2>Introducción a CSS</h2>
-                <p class="text-2xl text-orange-600 font-semibold">II Parcial - 2026</p>
-                <div class="mt-12 text-lg text-gray-500">
+                <div class="mt-8 text-lg text-gray-500">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
                     <p>Fecha: 19 de abril de 2026</p>
                     <p>Grado: III BTP Informática Sección "A"</p>
@@ -179,7 +193,7 @@
                 <div class="concept-box">
                     <p>Es un lenguaje que se usa para describir la <strong>apariencia</strong> y el <strong>formato</strong> de tu HTML.</p>
                 </div>
-                <p class="mt-6">Imagina que el HTML es el esqueleto y el CSS es la ropa y el maquillaje.</p>
+                <p class="mt-6">Una hoja de estilo es un archivo que describe cómo debe verse un archivo HTML.</p>
             </div>
 
             <!-- Diapositiva 3: ¿Por qué en Cascada? -->
@@ -187,17 +201,17 @@
                 <h3>¿Por qué "en Cascada"?</h3>
                 <p>Se llaman así porque las reglas pueden usarse unas sobre otras para sumarse y aplicarse a un mismo documento.</p>
                 <div class="concept-box bg-orange-50 border-orange-400">
-                    <p>Si defines que todos los párrafos son azules, pero luego dices que uno en específico es rojo, CSS aplicará el cambio basado en prioridades.</p>
+                    <p>Si indicas que todos los párrafos deben tener la fuente azul, pero luego señalas que un párrafo específico debe ser rojo, ¡CSS lo puede hacer!</p>
                 </div>
             </div>
 
             <!-- Diapositiva 4: Separación de Forma y Función -->
             <div class="slide">
-                <h3>Forma vs. Función</h3>
-                <p>Existen dos razones principales para separar el CSS del HTML:</p>
+                <h3>¿Por qué separar la forma de la función?</h3>
+                <p>Existen dos razones principales para separar el CSS (Formato) del HTML (Estructura):</p>
                 <ul class="text-left mt-6 list-decimal list-inside space-y-4">
-                    <li><strong>Reutilización:</strong> Aplicar el mismo formato a diversos elementos sin repetir código.</li>
-                    <li><strong>Mantenimiento:</strong> Cambiar la apariencia de todo un sitio web desde un solo archivo centralizado.</li>
+                    <li><strong>Reutilización:</strong> Puedes aplicarle el mismo formato a diversos elementos sin tener que volver a escribir el código.</li>
+                    <li><strong>Apariencia global:</strong> Puedes aplicarle un formato parecido a varias páginas desde un solo archivo CSS.</li>
                 </ul>
             </div>
 
@@ -205,15 +219,15 @@
             <div class="slide">
                 <h3>Estilos en Línea (Inline)</h3>
                 <p>Se aplican directamente en la etiqueta HTML usando el atributo <code>style</code>.</p>
-                <pre><code>&lt;p style="color:red"&gt;¡Soy rojo!&lt;/p&gt;</code></pre>
-                <p class="mt-4 text-red-600 font-bold">¡No recomendado!</p>
-                <p class="text-sm italic">Obliga a repetir código y dificulta cambios globales.</p>
+                <pre><code>&lt;p style="color:red"&gt;Red font!&lt;/p&gt;</code></pre>
+                <p class="mt-4 text-red-600 font-bold">¡No es la mejor forma!</p>
+                <p class="text-sm italic">Si quieres cambiar el estilo de varios elementos, tendrías que cambiar cada etiqueta una por una.</p>
             </div>
 
             <!-- Diapositiva 6: Estilos Internos -->
             <div class="slide">
                 <h3>Estilos Internos</h3>
-                <p>Se colocan dentro de las etiquetas <code>&lt;style&gt;</code> en el encabezado del HTML.</p>
+                <p>Se colocan justo en el mismo archivo de código HTML, dentro de las etiquetas <code>&lt;style&gt;</code>.</p>
                 <pre><code>&lt;head&gt;
   &lt;style&gt;
     p { color: purple; }
@@ -221,42 +235,43 @@
 &lt;/head&gt;</code></pre>
             </div>
 
-            <!-- Diapositiva 7: Estilos Externos (El Estándar) -->
+            <!-- Diapositiva 7: Estilos Externos -->
             <div class="slide">
-                <h3>Estilos Externos</h3>
-                <p>Es la mejor forma. Se crea un archivo <code>.css</code> independiente y se enlaza al HTML.</p>
+                <h3>Estilos Externos (Fuera de línea)</h3>
+                <p>Es la forma más eficiente. Se escribe el código en un archivo aparte (con extensión .css) y se conecta al HTML.</p>
                 <div class="concept-box border-green-500">
-                    <p>Permite que múltiples páginas HTML compartan el mismo diseño, ahorrando tiempo y código.</p>
+                    <p>Permite que un único archivo controle el diseño de todo tu sitio web.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 8: Cómo enlazar un CSS -->
+            <!-- Diapositiva 8: Cómo enlazar un CSS (La etiqueta link) -->
             <div class="slide">
                 <h3>¿Cómo se enlaza?</h3>
-                <p>Se usa la etiqueta <code>&lt;link&gt;</code> dentro del <code>&lt;head&gt;</code>.</p>
+                <p>Se agrega la etiqueta <code>&lt;link&gt;</code> entre las etiquetas <code>&lt;head&gt;</code> de tu página HTML.</p>
                 <ul class="text-left mt-6 list-disc list-inside space-y-2">
-                    <li><strong>type:</strong> Siempre "text/css".</li>
-                    <li><strong>rel:</strong> Siempre "stylesheet".</li>
-                    <li><strong>href:</strong> La ruta del archivo (ej: "style.css").</li>
+                    <li><strong>type:</strong> Siempre debe ser "text/css".</li>
+                    <li><strong>rel:</strong> Siempre debe ser "stylesheet".</li>
+                    <li><strong>href:</strong> La dirección de tu archivo CSS.</li>
                 </ul>
             </div>
 
             <!-- Diapositiva 9: Ejemplo de Enlace -->
             <div class="slide">
-                <h3>Ejemplo de etiqueta link</h3>
+                <h3>Sintaxis de enlace</h3>
                 <pre><code>&lt;link type="text/css" rel="stylesheet"
       href="stylesheet.css" /&gt;</code></pre>
-                <p class="mt-6 italic">Notarás que termina en /&gt; porque es una etiqueta autocerrable.</p>
+                <p class="mt-6 italic">Notarás que termina en <code>/&gt;</code> porque es una etiqueta autocerrable.</p>
             </div>
 
             <!-- Diapositiva 10: Etiquetas Autocerrables -->
             <div class="slide">
                 <h3>Etiquetas Autocerrables</h3>
-                <p>Algunas etiquetas no tienen una etiqueta de cierre separada (como <code>&lt;/p&gt;</code>).</p>
+                <p>No todas las etiquetas HTML tienen una etiqueta de cierre separada. Ejemplos comunes:</p>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><code>&lt;link /&gt;</code>: Para enlaces.</li>
-                    <li><code>&lt;img /&gt;</code>: Para imágenes.</li>
-                    <li><code>&lt;br /&gt;</code>: Para saltos de línea.</li>
+                    <li><code>&lt;link /&gt;</code></li>
+                    <li><code>&lt;img /&gt;</code> (para insertar imágenes)</li>
+                    <li><code>&lt;br /&gt;</code> (para saltos de línea)</li>
+                    <li><code>&lt;hr /&gt;</code> (para líneas horizontales)</li>
                 </ul>
             </div>
 
@@ -268,72 +283,75 @@
   propiedad: valor;
 }</code></pre>
                     <ul class="text-left mt-6 list-disc list-inside">
-                        <li><strong>Selector:</strong> A qué elemento aplicamos el estilo.</li>
-                        <li><strong>Propiedad:</strong> Qué característica queremos cambiar.</li>
-                        <li><strong>Valor:</strong> El nuevo estado de esa propiedad.</li>
+                        <li><strong>Selector:</strong> Indica a qué elemento aplicamos el estilo (ej: p, h1, div).</li>
+                        <li><strong>Propiedad:</strong> La característica que queremos cambiar (ej: color).</li>
+                        <li><strong>Valor:</strong> El ajuste que le damos (ej: red).</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Diapositiva 12: Medidas en CSS (Unidades) -->
+            <!-- Diapositiva 12: Ejemplo Práctico 1 -->
             <div class="slide">
-                <h3>Unidades de Medida</h3>
-                <p>Para definir tamaños, CSS utiliza diferentes unidades:</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                    <div class="bg-gray-100 p-4 rounded"><strong>px:</strong> Píxeles (Fijo).</div>
-                    <div class="bg-gray-100 p-4 rounded"><strong>%:</strong> Porcentaje (Relativo).</div>
-                    <div class="bg-gray-100 p-4 rounded"><strong>em:</strong> Basado en fuente (Relativo).</div>
+                <h3>Ejemplo: Colorear Párrafos</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="text-left">
+                        <p class="font-bold">Código CSS:</p>
+                        <pre><code>p {
+  color: red;
+}</code></pre>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-bold">Resultado:</p>
+                        <div class="p-4 bg-white border rounded">
+                            <p style="color: red; font-size: 1rem;">¡Soy un párrafo escrito en rojo!</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 13: Propiedades: Color de Fondo -->
+            <!-- Diapositiva 13: Ejemplo Práctico 2 (Etiqueta span) -->
             <div class="slide">
-                <h3>Background Color</h3>
-                <p>Define el color de fondo de un elemento.</p>
-                <pre><code>div {
-  background-color: yellow;
-}</code></pre>
+                <h3>Uso de span para detalles</h3>
+                <p>Si queremos cambiar solo una parte de un texto:</p>
+                <pre><code>span { color: blue; }</code></pre>
+                <div class="concept-box">
+                    <p>Texto normal <span>¡Texto azul!</span> texto normal.</p>
+                </div>
             </div>
 
-            <!-- Diapositiva 14: Propiedades: Altura y Ancho -->
+            <!-- Diapositiva 14: Actividad en Clase 1 -->
             <div class="slide">
-                <h3>Height y Width</h3>
-                <p>Controlan las dimensiones de los contenedores o elementos.</p>
-                <pre><code>img {
-  height: 100px;
-  width: 200px;
-}</code></pre>
+                <h3>Actividad: Análisis en Cuaderno</h3>
+                <p>Escribe en tu cuaderno la estructura básica de una regla CSS identificando sus 3 partes fundamentales.</p>
+                <div class="concept-box bg-blue-50 border-blue-400">
+                    <p><strong>Reto:</strong> Escribe una regla que cambie el color de todos los encabezados h1 a verde.</p>
+                </div>
             </div>
 
-            <!-- Diapositiva 15: Cuestionario -->
+            <!-- Diapositiva 15: Actividad en Clase 2 -->
             <div class="slide">
-                <h3>¡Cuestionario de Evaluación!</h3>
+                <h3>Ejercicio: Enlace de Archivos</h3>
+                <p>Imagina que tienes un archivo CSS llamado "mis_estilos.css". Escribe la etiqueta HTML completa necesaria para conectarlo a tu página.</p>
+                <p class="mt-6 italic text-sm">Recuerda los 3 atributos necesarios vistos anteriormente.</p>
+            </div>
+
+            <!-- Diapositiva 16: Cuestionario Interactivo -->
+            <div class="slide">
+                <h3>¡Evalúa tu aprendizaje!</h3>
                 <div id="quiz-container" class="max-w-2xl w-full">
-                    <p id="quiz-question" class="mb-4 font-bold text-xl text-orange-800"></p>
+                    <p id="quiz-question" class="mb-4 font-bold text-xl text-orange-800 text-left"></p>
                     <div id="quiz-options" class="flex flex-col gap-2"></div>
                     <p id="quiz-feedback" class="mt-4 font-bold text-lg"></p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 16: Ejercicio Práctico -->
-            <div class="slide">
-                <h3>Actividad en Clase</h3>
-                <div class="concept-box bg-blue-50 border-blue-400">
-                    <p class="font-bold text-blue-800">Objetivo: Enlazar CSS Externo</p>
-                    <ol class="mt-4 text-base space-y-2 text-left list-decimal list-inside">
-                        <li>Crea una carpeta llamada "Ejercicio CSS".</li>
-                        <li>Crea <code>index.html</code> y <code>estilo.css</code>.</li>
-                        <li>Usa <code>&lt;link&gt;</code> para conectarlos.</li>
-                        <li>Estila todos los <code>&lt;span&gt;</code> para que sean rojos y en cursiva.</li>
-                        <li>Visualiza los cambios.</li>
-                    </ol>
                 </div>
             </div>
 
             <!-- Diapositiva 17: Fin -->
             <div class="slide">
                 <h2>¡Muchas Gracias!</h2>
-                <p>Próximo tema: Bordes y Decoración de Texto.</p>
+                <p class="text-xl">Plan de clase del 19 de abril completado.</p>
+                <div class="mt-8">
+                    <p class="text-sm">Tarea: Crear HTML aplicando estilos en línea, internos y externos y comparar resultados.</p>
+                </div>
             </div>
         </div>
 
@@ -362,16 +380,16 @@
         let currentSlide = 0;
 
         const quizData = [
-            { q: "¿Qué significa CSS?", options: ["Color System Style", "Cascading Style Sheets", "Code Syntax Sheet", "Custom Style System"], a: "Cascading Style Sheets" },
-            { q: "¿Para qué sirve separar CSS de HTML?", options: ["Para que sea más lento", "Reutilización y mantenimiento", "No tiene utilidad", "Solo para expertos"], a: "Reutilización y mantenimiento" },
-            { q: "¿Qué etiqueta enlaza un archivo CSS externo?", options: ["<script>", "<href>", "<link>", "<style>"], a: "<link>" },
-            { q: "¿Cuál atributo de <link> define el tipo de archivo?", options: ["rel", "src", "type", "href"], a: "type" },
-            { q: "¿Cómo se llama la propiedad para cambiar el color de fondo?", options: ["color", "bg-color", "background-color", "fill"], a: "background-color" },
-            { q: "¿Qué es una etiqueta autocerrable?", options: ["No tiene cierre separado", "Se cierra sola al escribir", "No se usa en HTML5", "Es invisible"], a: "No tiene cierre separado" },
-            { q: "¿Cuál es una unidad de medida fija?", options: ["px", "em", "%", "rem"], a: "px" },
-            { q: "¿Qué parte de la regla CSS indica qué elemento estilar?", options: ["Propiedad", "Valor", "Selector", "Llave"], a: "Selector" },
-            { q: "¿Dónde se colocan los estilos internos?", options: ["En el <body>", "En el <head>", "En un archivo .js", "Al final del documento"], a: "En el <head>" },
-            { q: "¿Cuál es el valor del atributo 'rel' para CSS?", options: ["stylesheet", "css", "link", "text/css"], a: "stylesheet" }
+            { q: "¿Qué significan las siglas CSS?", options: ["Computer Style Sheets", "Cascading Style Sheets", "Color System Sheets", "Creative Syntax Sheet"], a: "Cascading Style Sheets" },
+            { q: "¿Qué describe una hoja de estilo?", options: ["La base de datos", "Cómo debe verse un archivo HTML", "La lógica de programación", "El nombre del servidor"], a: "Cómo debe verse un archivo HTML" },
+            { q: "¿Por qué se llaman 'en cascada'?", options: ["Porque caen del cielo", "Porque se pueden usar unas sobre otras", "Porque son transparentes", "Por su velocidad"], a: "Porque se pueden usar unas sobre otras" },
+            { q: "¿Cuál es una ventaja de separar forma de función?", options: ["Reutilización de código", "Ocupa más espacio", "Es más difícil de leer", "Solo funciona en Windows"], a: "Reutilización de código" },
+            { q: "¿Cómo se llama el atributo para estilos en línea?", options: ["format", "class", "style", "css"], a: "style" },
+            { q: "¿Dónde se ubican los estilos internos?", options: ["Dentro de <body>", "Dentro de <head>", "En un archivo .jpg", "Al final del servidor"], a: "Dentro de <head>" },
+            { q: "¿Qué etiqueta enlaza un CSS externo?", options: ["<a>", "<link>", "<style>", "<script>"], a: "<link>" },
+            { q: "¿Qué valor debe tener el atributo 'rel'?", options: ["stylesheet", "css-file", "link-style", "text/css"], a: "stylesheet" },
+            { q: "¿Qué es una etiqueta autocerrable?", options: ["Se cierra sola al abrirse", "No tiene una etiqueta de cierre separada", "Cierra el navegador", "Es obligatoria"], a: "No tiene una etiqueta de cierre separada" },
+            { q: "¿Qué parte de la regla CSS indica qué característica cambiar?", options: ["Selector", "Valor", "Propiedad", "Llave"], a: "Propiedad" }
         ];
         let currentQuiz = 0;
 
@@ -386,7 +404,7 @@
             prevBtn.disabled = currentSlide === 0;
             nextBtn.disabled = currentSlide === slides.length - 1;
 
-            if (currentSlide === 14) loadQuiz();
+            if (currentSlide === 15) loadQuiz();
         }
 
         function loadQuiz() {
