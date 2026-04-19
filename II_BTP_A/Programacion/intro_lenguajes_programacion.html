@@ -88,6 +88,8 @@
             border-radius: 0.5rem;
             text-align: left;
             margin-top: 2rem;
+            width: 100%;
+            max-width: 900px;
         }
 
         /* Botones de navegación */
@@ -118,12 +120,13 @@
         .quiz-option {
             width: 100%;
             padding: 1rem;
-            margin: 0.5rem 0;
+            margin: 0.25rem 0;
             border: 2px solid #e5e7eb;
             border-radius: 0.75rem;
             font-weight: 600;
             transition: all 0.2s;
             background: white;
+            font-size: 1.1rem;
         }
         .quiz-option:hover { background-color: #eff6ff; border-color: #3b82f6; }
         .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
@@ -156,33 +159,36 @@
                 </div>
             </div>
 
-            <!-- Diapositiva 2: Origen de los Algoritmos -->
+            <!-- Diapositiva 2: Concepto de Algoritmo -->
             <div class="slide">
                 <h3>El Concepto de Algoritmo</h3>
-                <p>En la década de 1930, antes de las computadoras modernas, los matemáticos trabajaron para formalizar el concepto de <strong>algoritmo</strong>.</p>
+                <p>Decir que un problema se puede resolver algorítmicamente implica que es posible escribir un programa que producirá la respuesta correcta.</p>
                 <div class="concept-box">
-                    <p><strong>Definición Informal:</strong> Un conjunto claramente especificado de instrucciones sencillas a seguir para resolver un problema o calcular una función.</p>
+                    <p><strong>Definición:</strong> Conjunto claramente especificado de instrucciones sencillas a seguir para resolver un problema o calcular una función.</p>
                 </div>
             </div>
 
             <!-- Diapositiva 3: Teoría de la Computabilidad -->
             <div class="slide">
                 <h3>Teoría de la Computabilidad</h3>
-                <p>Se encarga de describir o caracterizar los problemas que se pueden resolver algorítmicamente.</p>
-                <ul class="text-left mt-6 list-disc list-inside">
-                    <li>Formalización de modelos de cómputo.</li>
-                    <li>Identificación de problemas insolubles.</li>
-                    <li>Alan Turing: Figura clave en este campo.</li>
+                <p>Nació en la década de 1930 para formalizar el estudio de los algoritmos antes de que existieran las computadoras físicas.</p>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li>Se enfoca en caracterizar los problemas que tienen solución algorítmica.</li>
+                    <li>Presenta problemas que <strong>no</strong> pueden ser resueltos por máquinas.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 4: Alan Turing -->
+            <!-- Diapositiva 4: Hitos Históricos -->
             <div class="slide">
-                <h3>Alan Turing (1912 - 1954)</h3>
-                <div class="flex flex-col md:flex-row items-center gap-8">
-                    <div class="text-left">
-                        <p>Matemático, lógico y científico de la computación británico. Considerado uno de los padres de la ciencia de la computación.</p>
-                        <p class="mt-4"><strong>Logros:</strong> Descifró el código Enigma naval en la 2da Guerra Mundial y diseñó uno de los primeros computadores electrónicos.</p>
+                <h3>Menciones Históricas</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+                    <div class="bg-blue-50 p-6 rounded-lg border-t-4 border-blue-500">
+                        <h4 class="font-bold text-xl mb-2 text-blue-800">Alan Turing (1912-1954)</h4>
+                        <p class="text-base">Demostró la insolubilidad del "Problema del Paro" y diseñó los primeros computadores electrónicos programables.</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg border-t-4 border-gray-500">
+                        <h4 class="font-bold text-xl mb-2 text-gray-800">Kasparov vs Deep Blue</h4>
+                        <p class="text-base">En 1997, la supercomputadora de IBM derrotó al campeón mundial de ajedrez (3.5 a 2.5), marcando un hito en la IA.</p>
                     </div>
                 </div>
             </div>
@@ -190,64 +196,130 @@
             <!-- Diapositiva 5: El Problema del Paro -->
             <div class="slide">
                 <h3>El Problema del Paro</h3>
-                <p>Uno de los resultados negativos más importantes de Turing.</p>
-                <div class="concept-box">
-                    <p>Consiste en determinar si <strong>cualquier</strong> algoritmo llegará en algún momento a detenerse o si entrará en un ciclo infinito.</p>
-                    <p class="mt-4 text-red-600 font-bold">Conclusión: No puede existir un programa de computadora que resuelva este problema para todos los casos.</p>
+                <p>Es el desafío de determinar si un programa llegará a un punto de detención o entrará en un ciclo infinito con una entrada dada.</p>
+                <div class="concept-box border-red-500">
+                    <p class="font-bold text-red-600">Resultado de Turing:</p>
+                    <p>No puede existir un programa de computadora que resuelva este problema para cualquier algoritmo arbitrario.</p>
                 </div>
             </div>
 
             <!-- Diapositiva 6: Complejidad Computacional -->
             <div class="slide">
                 <h3>Complejidad Computacional</h3>
-                <p>No basta con saber que un problema se puede resolver; debe ser <strong>práctico</strong> hacerlo.</p>
-                <ul class="text-left mt-6 list-disc list-inside">
-                    <li><strong>Tiempo:</strong> ¿Cuánto tarda en ejecutarse?</li>
-                    <li><strong>Espacio:</strong> ¿Cuánta memoria requiere?</li>
+                <p>Estudio de las necesidades de tiempo y espacio (memoria) que requiere un programa para ejecutarse.</p>
+                <ul class="text-left mt-6 list-disc list-inside space-y-2">
+                    <li>Un problema puede ser resoluble en teoría, pero no en la práctica por requerir siglos de ejecución.</li>
+                    <li>Se mide en número de instrucciones o bits de almacenamiento.</li>
                 </ul>
-                <p class="mt-6 font-semibold">Existen problemas tan complejos que sus necesidades de recursos los hacen inútiles en la práctica.</p>
             </div>
 
-            <!-- Diapositiva 7: Ejemplo: El Ajedrez -->
+            <!-- Diapositiva 7: Lenguajes de Alto Nivel -->
             <div class="slide">
-                <h3>El Reto del Ajedrez</h3>
-                <p>En teoría, se puede escribir un programa perfecto para jugar ajedrez porque las posiciones son finitas.</p>
-                <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="bg-blue-50 p-6 rounded-lg">
-                        <h4 class="font-bold text-blue-800">Deep Blue (IBM)</h4>
-                        <p class="text-base">Capaz de calcular 100 millones de posiciones por segundo.</p>
+                <h3>Lenguajes de Alto Nivel</h3>
+                <p>Permiten a los programadores escribir instrucciones usando palabras similares al lenguaje humano (como el inglés) y símbolos matemáticos.</p>
+                <div class="concept-box">
+                    <p><strong>Ventaja:</strong> Son independientes de la arquitectura de la computadora (portables).</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Lenguajes Compilados -->
+            <div class="slide">
+                <h3>Lenguajes Compilados</h3>
+                <p>El código fuente se traduce íntegramente a lenguaje de máquina antes de ser ejecutado.</p>
+                <ul class="text-left mt-6 list-disc list-inside space-y-2">
+                    <li><strong>Proceso:</strong> El compilador genera un archivo ejecutable (.exe, .bin).</li>
+                    <li><strong>Velocidad:</strong> Son mucho más rápidos durante la ejecución de producción.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 9: Lenguajes Interpretados -->
+            <div class="slide">
+                <h3>Lenguajes Interpretados</h3>
+                <p>Un programa llamado <strong>intérprete</strong> lee y ejecuta las instrucciones una por una en tiempo real.</p>
+                <div class="concept-box border-orange-500">
+                    <p><strong>Diferencia:</strong> No generan un archivo ejecutable previo; la traducción ocurre mientras el programa corre.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Lenguajes Declarativos -->
+            <div class="slide">
+                <h3>Lenguajes Declarativos</h3>
+                <p>En este enfoque, el programador le indica a la computadora <strong>qué</strong> desea obtener, sin especificar <strong>cómo</strong> obtenerlo.</p>
+                <p class="mt-4 italic">Ejemplo: SQL para bases de datos.</p>
+                <div class="concept-box">
+                    <p>Se describe el problema en lugar de proveer los pasos detallados de la solución.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 11: Características Declarativas -->
+            <div class="slide">
+                <h3>Características del Enfoque Declarativo</h3>
+                <ul class="text-left mt-6 list-disc list-inside space-y-2">
+                    <li>Concentración en la <strong>lógica</strong>, no en la secuencia de control.</li>
+                    <li>Las variables suelen ser inmutables (un solo valor).</li>
+                    <li>El orden de ejecución no afecta el resultado final.</li>
+                    <li>Las listas son la estructura fundamental de datos.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 12: Ventajas y Desventajas -->
+            <div class="slide">
+                <h3>Ventajas y Desventajas</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                    <div class="bg-green-50 p-4 rounded border-l-4 border-green-500">
+                        <p class="font-bold">Ventajas:</p>
+                        <p class="text-sm">Código más corto, fácil de mantener y razonar matemáticamente.</p>
                     </div>
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h4 class="font-bold text-gray-800">Garry Kasparov</h4>
-                        <p class="text-base">Gran Maestro que fue derrotado por la máquina en 1997 (3.5 a 2.5).</p>
+                    <div class="bg-red-50 p-4 rounded border-l-4 border-red-500">
+                        <p class="font-bold">Desventajas:</p>
+                        <p class="text-sm">Menos eficiente en uso de memoria y no apto para todos los problemas.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 8: Cuestionario -->
+            <!-- Diapositiva 13: Programación Lógica -->
             <div class="slide">
-                <h3>¡Pon a prueba tus conocimientos!</h3>
-                <div id="quiz-container" class="max-w-2xl w-full">
-                    <p id="quiz-question" class="mb-8 font-bold text-2xl"></p>
-                    <div id="quiz-options" class="flex flex-col gap-4"></div>
-                    <p id="quiz-feedback" class="mt-6 font-bold text-xl"></p>
+                <h3>Programación Lógica</h3>
+                <p>Basada en la lógica de predicados. El programa es un conjunto de hechos y reglas.</p>
+                <div class="concept-box">
+                    <p>Utiliza mecanismos de inferencia para responder consultas a partir de los datos proporcionados.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 9: Actividad Práctica -->
+            <!-- Diapositiva 14: Orientada a Bases de Datos -->
             <div class="slide">
-                <h3>Actividad en Clase</h3>
+                <h3>Programación orientada a Bases de Datos</h3>
+                <p>Sistemas diseñados para gestionar grandes volúmenes de información de forma estructurada.</p>
+                <ul class="text-left mt-6 list-disc list-inside space-y-2">
+                    <li><strong>SQL:</strong> Lenguaje estándar para interactuar con bases de datos relacionales.</li>
+                    <li>Permite crear, leer, actualizar y borrar (CRUD) datos eficientemente.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 15: Cuestionario Parte 1 -->
+            <div class="slide">
+                <h3>¡Cuestionario de Repaso! (1/2)</h3>
+                <div id="quiz-container-1" class="max-w-2xl w-full">
+                    <p id="quiz-question" class="mb-4 font-bold text-xl"></p>
+                    <div id="quiz-options" class="flex flex-col gap-2"></div>
+                    <p id="quiz-feedback" class="mt-4 font-bold text-lg"></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 16: Actividad Práctica -->
+            <div class="slide">
+                <h3>Actividad: Kasparov vs Deep Blue</h3>
                 <div class="concept-box bg-yellow-50 border-yellow-400">
-                    <p class="font-bold text-yellow-800">Debate y Reflexión:</p>
-                    <p class="mt-4">¿Creen que el cansancio de Kasparov fue el factor decisivo para su derrota ante Deep Blue, o la capacidad de cálculo de la máquina ya superaba la intuición humana en 1997?</p>
-                    <p class="mt-4 italic">Realicen un resumen de las páginas 51 a la 54 de su folleto.</p>
+                    <p class="font-bold text-yellow-800">Debate grupal:</p>
+                    <p class="mt-4">¿Ganó realmente la máquina a Garry Kasparov por superioridad lógica, o el cansancio y los factores emocionales del humano fueron los que decidieron la partida?</p>
+                    <p class="mt-4 italic">Realicen un resumen de las páginas 51 a 56 del folleto.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 10: Fin -->
+            <!-- Diapositiva 17: Fin -->
             <div class="slide">
                 <h2>¡Muchas Gracias!</h2>
-                <p>Próximo tema: Lenguajes compilados e interpretados.</p>
+                <p>Próxima clase: Programación Imperativa y Objetos.</p>
             </div>
         </div>
 
@@ -256,7 +328,7 @@
             <button id="prev-btn" class="nav-button">Anterior</button>
             <button id="next-btn" class="nav-button">Siguiente</button>
         </div>
-        <div id="slide-counter">1 / 10</div>
+        <div id="slide-counter">1 / 17</div>
     </main>
 
     <footer id="page-footer" class="w-full bg-gray-900 text-white text-center p-2 text-sm">
@@ -276,21 +348,16 @@
         let currentSlide = 0;
 
         const quizData = [
-            {
-                q: "¿En qué década se formalizó el concepto de algoritmo?",
-                options: ["1950", "1930", "1910", "1970"],
-                a: "1930"
-            },
-            {
-                q: "¿Quién demostró la insolubilidad del 'problema del paro'?",
-                options: ["Garry Kasparov", "Bill Gates", "Alan Turing", "Steve Jobs"],
-                a: "Alan Turing"
-            },
-            {
-                q: "¿Qué dos factores mide la complejidad computacional?",
-                options: ["Color y Forma", "Precio y Tamaño", "Tiempo y Espacio", "Hardware y Software"],
-                a: "Tiempo y Espacio"
-            }
+            { q: "¿En qué década se formalizó el concepto de algoritmo?", options: ["1950", "1930", "1910", "1970"], a: "1930" },
+            { q: "¿Quién demostró la insolubilidad del 'problema del paro'?", options: ["Garry Kasparov", "Bill Gates", "Alan Turing", "Steve Jobs"], a: "Alan Turing" },
+            { q: "¿Qué dos factores mide la complejidad computacional?", options: ["Color y Forma", "Tiempo y Espacio", "Precio y Tamaño", "Hardware y Software"], a: "Tiempo y Espacio" },
+            { q: "¿Cómo se llama el proceso de traducir todo el código antes de ejecutarlo?", options: ["Interpretación", "Depuración", "Compilación", "Inferencia"], a: "Compilación" },
+            { q: "¿Qué enfoque indica el 'QUÉ' pero no el 'CÓMO'?", options: ["Imperativo", "Declarativo", "Procedural", "Binario"], a: "Declarativo" },
+            { q: "¿Cuál es un ejemplo de lenguaje declarativo?", options: ["C++", "Java", "SQL", "Assembly"], a: "SQL" },
+            { q: "¿Cómo son las variables en la programación declarativa?", options: ["Dinámicas", "Inmutables (un solo valor)", "Globales", "Opcionales"], a: "Inmutables (un solo valor)" },
+            { q: "¿Qué ejecuta las instrucciones una por una en tiempo real?", options: ["Compilador", "Enlazador", "Intérprete", "Bios"], a: "Intérprete" },
+            { q: "¿Qué problema determina si un algoritmo se detendrá?", options: ["Problema de Turing", "Problema del Paro", "Complejidad de Deep Blue", "Teoría P vs NP"], a: "Problema del Paro" },
+            { q: "¿Cuál es la principal ventaja de los lenguajes de alto nivel?", options: ["Son más pesados", "Independencia de la máquina", "No necesitan traducción", "Son solo para expertos"], a: "Independencia de la máquina" }
         ];
         let currentQuiz = 0;
 
@@ -305,43 +372,47 @@
             prevBtn.disabled = currentSlide === 0;
             nextBtn.disabled = currentSlide === slides.length - 1;
 
-            if (currentSlide === 7) loadQuiz();
+            if (currentSlide === 14) loadQuiz();
         }
 
         function loadQuiz() {
+            const questionEl = document.getElementById('quiz-question');
+            const optionsEl = document.getElementById('quiz-options');
+            const feedbackEl = document.getElementById('quiz-feedback');
+
             if (currentQuiz >= quizData.length) {
-                document.getElementById('quiz-question').textContent = "¡Cuestionario completado!";
-                document.getElementById('quiz-options').innerHTML = "";
+                questionEl.textContent = "¡Cuestionario completado!";
+                optionsEl.innerHTML = "";
+                feedbackEl.textContent = "";
                 return;
             }
             const data = quizData[currentQuiz];
-            document.getElementById('quiz-question').textContent = data.q;
-            const optionsContainer = document.getElementById('quiz-options');
-            optionsContainer.innerHTML = "";
-            document.getElementById('quiz-feedback').textContent = "";
+            questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
+            optionsEl.innerHTML = "";
+            feedbackEl.textContent = "";
 
             data.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.textContent = opt;
                 btn.className = "quiz-option";
                 btn.onclick = () => {
-                    const btns = optionsContainer.querySelectorAll('button');
+                    const btns = optionsEl.querySelectorAll('button');
                     btns.forEach(b => b.disabled = true);
                     if (opt === data.a) {
                         btn.classList.add('correct');
-                        document.getElementById('quiz-feedback').textContent = "¡Correcto!";
-                        document.getElementById('quiz-feedback').className = "mt-6 font-bold text-xl text-green-600";
+                        feedbackEl.textContent = "¡Correcto!";
+                        feedbackEl.className = "mt-4 font-bold text-lg text-green-600";
                     } else {
                         btn.classList.add('incorrect');
-                        document.getElementById('quiz-feedback').textContent = `Incorrecto. La respuesta es: ${data.a}`;
-                        document.getElementById('quiz-feedback').className = "mt-6 font-bold text-xl text-red-600";
+                        feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
+                        feedbackEl.className = "mt-4 font-bold text-lg text-red-600";
                     }
                     setTimeout(() => {
                         currentQuiz++;
                         loadQuiz();
-                    }, 2000);
+                    }, 1500);
                 };
-                optionsContainer.appendChild(btn);
+                optionsEl.appendChild(btn);
             });
         }
 

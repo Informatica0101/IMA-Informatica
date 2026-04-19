@@ -88,6 +88,8 @@
             border-radius: 0.5rem;
             text-align: left;
             margin-top: 2rem;
+            width: 100%;
+            max-width: 900px;
         }
 
         /* Botones de navegación */
@@ -118,12 +120,13 @@
         .quiz-option {
             width: 100%;
             padding: 1rem;
-            margin: 0.5rem 0;
+            margin: 0.25rem 0;
             border: 2px solid #e5e7eb;
             border-radius: 0.75rem;
             font-weight: 600;
             transition: all 0.2s;
             background: white;
+            font-size: 1.1rem;
         }
         .quiz-option:hover { background-color: #fff7ed; border-color: #fd7e14; }
         .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
@@ -139,6 +142,7 @@
             width: 100%;
             max-width: 800px;
             margin-top: 1rem;
+            font-family: monospace;
         }
     </style>
 </head>
@@ -175,7 +179,7 @@
                 <div class="concept-box">
                     <p>Es un lenguaje que se usa para describir la <strong>apariencia</strong> y el <strong>formato</strong> de tu HTML.</p>
                 </div>
-                <p class="mt-6">Separa la <strong>estructura</strong> (HTML) de la <strong>presentación</strong> (CSS).</p>
+                <p class="mt-6">Imagina que el HTML es el esqueleto y el CSS es la ropa y el maquillaje.</p>
             </div>
 
             <!-- Diapositiva 3: ¿Por qué en Cascada? -->
@@ -183,84 +187,153 @@
                 <h3>¿Por qué "en Cascada"?</h3>
                 <p>Se llaman así porque las reglas pueden usarse unas sobre otras para sumarse y aplicarse a un mismo documento.</p>
                 <div class="concept-box bg-orange-50 border-orange-400">
-                    <p><strong>Ejemplo:</strong> Si indicas que todos los párrafos deben ser azules, pero señalas que un párrafo específico debe ser rojo, ¡CSS lo puede hacer siguiendo un orden de prioridad!</p>
+                    <p>Si defines que todos los párrafos son azules, pero luego dices que uno en específico es rojo, CSS aplicará el cambio basado en prioridades.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 4: Ejemplo de Código -->
+            <!-- Diapositiva 4: Separación de Forma y Función -->
+            <div class="slide">
+                <h3>Forma vs. Función</h3>
+                <p>Existen dos razones principales para separar el CSS del HTML:</p>
+                <ul class="text-left mt-6 list-decimal list-inside space-y-4">
+                    <li><strong>Reutilización:</strong> Aplicar el mismo formato a diversos elementos sin repetir código.</li>
+                    <li><strong>Mantenimiento:</strong> Cambiar la apariencia de todo un sitio web desde un solo archivo centralizado.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 5: Tipos de Aplicación (Inline) -->
+            <div class="slide">
+                <h3>Estilos en Línea (Inline)</h3>
+                <p>Se aplican directamente en la etiqueta HTML usando el atributo <code>style</code>.</p>
+                <pre><code>&lt;p style="color:red"&gt;¡Soy rojo!&lt;/p&gt;</code></pre>
+                <p class="mt-4 text-red-600 font-bold">¡No recomendado!</p>
+                <p class="text-sm italic">Obliga a repetir código y dificulta cambios globales.</p>
+            </div>
+
+            <!-- Diapositiva 6: Estilos Internos -->
+            <div class="slide">
+                <h3>Estilos Internos</h3>
+                <p>Se colocan dentro de las etiquetas <code>&lt;style&gt;</code> en el encabezado del HTML.</p>
+                <pre><code>&lt;head&gt;
+  &lt;style&gt;
+    p { color: purple; }
+  &lt;/style&gt;
+&lt;/head&gt;</code></pre>
+            </div>
+
+            <!-- Diapositiva 7: Estilos Externos (El Estándar) -->
+            <div class="slide">
+                <h3>Estilos Externos</h3>
+                <p>Es la mejor forma. Se crea un archivo <code>.css</code> independiente y se enlaza al HTML.</p>
+                <div class="concept-box border-green-500">
+                    <p>Permite que múltiples páginas HTML compartan el mismo diseño, ahorrando tiempo y código.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Cómo enlazar un CSS -->
+            <div class="slide">
+                <h3>¿Cómo se enlaza?</h3>
+                <p>Se usa la etiqueta <code>&lt;link&gt;</code> dentro del <code>&lt;head&gt;</code>.</p>
+                <ul class="text-left mt-6 list-disc list-inside space-y-2">
+                    <li><strong>type:</strong> Siempre "text/css".</li>
+                    <li><strong>rel:</strong> Siempre "stylesheet".</li>
+                    <li><strong>href:</strong> La ruta del archivo (ej: "style.css").</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 9: Ejemplo de Enlace -->
+            <div class="slide">
+                <h3>Ejemplo de etiqueta link</h3>
+                <pre><code>&lt;link type="text/css" rel="stylesheet"
+      href="stylesheet.css" /&gt;</code></pre>
+                <p class="mt-6 italic">Notarás que termina en /&gt; porque es una etiqueta autocerrable.</p>
+            </div>
+
+            <!-- Diapositiva 10: Etiquetas Autocerrables -->
+            <div class="slide">
+                <h3>Etiquetas Autocerrables</h3>
+                <p>Algunas etiquetas no tienen una etiqueta de cierre separada (como <code>&lt;/p&gt;</code>).</p>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li><code>&lt;link /&gt;</code>: Para enlaces.</li>
+                    <li><code>&lt;img /&gt;</code>: Para imágenes.</li>
+                    <li><code>&lt;br /&gt;</code>: Para saltos de línea.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 11: Sintaxis CSS -->
             <div class="slide">
                 <h3>Sintaxis Básica</h3>
                 <div class="flex flex-col items-center">
-                    <pre><code>p {
-  color: red;
-  font-size: 16px;
+                    <pre><code>selector {
+  propiedad: valor;
 }</code></pre>
                     <ul class="text-left mt-6 list-disc list-inside">
-                        <li><strong>Selector:</strong> <code>p</code> (a qué elemento aplicamos estilo).</li>
-                        <li><strong>Propiedad:</strong> <code>color</code> (qué queremos cambiar).</li>
-                        <li><strong>Valor:</strong> <code>red</code> (el nuevo estado).</li>
+                        <li><strong>Selector:</strong> A qué elemento aplicamos el estilo.</li>
+                        <li><strong>Propiedad:</strong> Qué característica queremos cambiar.</li>
+                        <li><strong>Valor:</strong> El nuevo estado de esa propiedad.</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Diapositiva 5: Separación de Forma y Función -->
+            <!-- Diapositiva 12: Medidas en CSS (Unidades) -->
             <div class="slide">
-                <h3>Forma vs. Función</h3>
-                <p>¿Por qué separar el contenido (HTML) del formato (CSS)?</p>
-                <ul class="text-left mt-6 list-decimal list-inside space-y-4">
-                    <li><strong>Reutilización:</strong> Aplicar el mismo formato a diversos elementos sin repetir código.</li>
-                    <li><strong>Mantenimiento:</strong> Cambiar la apariencia de todo un sitio web desde un solo archivo.</li>
-                    <li><strong>Eficiencia:</strong> Reduce el tamaño de los archivos HTML.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 6: Estilos Inline vs. Externos -->
-            <div class="slide">
-                <h3>Mejor fuera de línea</h3>
-                <p>Existen varias formas de aplicar CSS, pero la mejor es mediante un archivo externo.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-                    <div class="bg-red-50 p-6 rounded-lg text-left">
-                        <h4 class="font-bold text-red-800">Inline (No recomendado)</h4>
-                        <p class="text-sm mt-2"><code>&lt;p style="color:red"&gt;...&lt;/p&gt;</code></p>
-                        <p class="text-xs mt-2 italic text-red-600">Obliga a repetir código en cada etiqueta.</p>
-                    </div>
-                    <div class="bg-green-50 p-6 rounded-lg text-left">
-                        <h4 class="font-bold text-green-800">Externo (Recomendado)</h4>
-                        <p class="text-sm mt-2"><code>&lt;link rel="stylesheet" href="style.css"&gt;</code></p>
-                        <p class="text-xs mt-2 italic text-green-600">Un solo lugar para todos los cambios.</p>
-                    </div>
+                <h3>Unidades de Medida</h3>
+                <p>Para definir tamaños, CSS utiliza diferentes unidades:</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-gray-100 p-4 rounded"><strong>px:</strong> Píxeles (Fijo).</div>
+                    <div class="bg-gray-100 p-4 rounded"><strong>%:</strong> Porcentaje (Relativo).</div>
+                    <div class="bg-gray-100 p-4 rounded"><strong>em:</strong> Basado en fuente (Relativo).</div>
                 </div>
             </div>
 
-            <!-- Diapositiva 7: Cuestionario -->
+            <!-- Diapositiva 13: Propiedades: Color de Fondo -->
             <div class="slide">
-                <h3>¡Pon a prueba tus conocimientos!</h3>
+                <h3>Background Color</h3>
+                <p>Define el color de fondo de un elemento.</p>
+                <pre><code>div {
+  background-color: yellow;
+}</code></pre>
+            </div>
+
+            <!-- Diapositiva 14: Propiedades: Altura y Ancho -->
+            <div class="slide">
+                <h3>Height y Width</h3>
+                <p>Controlan las dimensiones de los contenedores o elementos.</p>
+                <pre><code>img {
+  height: 100px;
+  width: 200px;
+}</code></pre>
+            </div>
+
+            <!-- Diapositiva 15: Cuestionario -->
+            <div class="slide">
+                <h3>¡Cuestionario de Evaluación!</h3>
                 <div id="quiz-container" class="max-w-2xl w-full">
-                    <p id="quiz-question" class="mb-8 font-bold text-2xl"></p>
-                    <div id="quiz-options" class="flex flex-col gap-4"></div>
-                    <p id="quiz-feedback" class="mt-6 font-bold text-xl"></p>
+                    <p id="quiz-question" class="mb-4 font-bold text-xl text-orange-800"></p>
+                    <div id="quiz-options" class="flex flex-col gap-2"></div>
+                    <p id="quiz-feedback" class="mt-4 font-bold text-lg"></p>
                 </div>
             </div>
 
-            <!-- Diapositiva 8: Actividad Práctica -->
+            <!-- Diapositiva 16: Ejercicio Práctico -->
             <div class="slide">
-                <h3>Ejercicio Práctico</h3>
+                <h3>Actividad en Clase</h3>
                 <div class="concept-box bg-blue-50 border-blue-400">
-                    <p class="font-bold text-blue-800">Objetivo: Enlazar CSS a HTML</p>
+                    <p class="font-bold text-blue-800">Objetivo: Enlazar CSS Externo</p>
                     <ol class="mt-4 text-base space-y-2 text-left list-decimal list-inside">
-                        <li>Crea un archivo llamado <code>index.html</code>.</li>
-                        <li>Crea un archivo llamado <code>stylesheet.css</code>.</li>
-                        <li>En el HTML, usa la etiqueta <code>&lt;link&gt;</code> para conectar el CSS.</li>
-                        <li>Define que todos los <code>&lt;span&gt;</code> tengan color rojo y fuente cursiva en el CSS.</li>
-                        <li>Visualiza los cambios en tu navegador.</li>
+                        <li>Crea una carpeta llamada "Ejercicio CSS".</li>
+                        <li>Crea <code>index.html</code> y <code>estilo.css</code>.</li>
+                        <li>Usa <code>&lt;link&gt;</code> para conectarlos.</li>
+                        <li>Estila todos los <code>&lt;span&gt;</code> para que sean rojos y en cursiva.</li>
+                        <li>Visualiza los cambios.</li>
                     </ol>
                 </div>
             </div>
 
-            <!-- Diapositiva 9: Fin -->
+            <!-- Diapositiva 17: Fin -->
             <div class="slide">
                 <h2>¡Muchas Gracias!</h2>
-                <p>Próximo tema: Medidas en CSS (px, %, em).</p>
+                <p>Próximo tema: Bordes y Decoración de Texto.</p>
             </div>
         </div>
 
@@ -269,7 +342,7 @@
             <button id="prev-btn" class="nav-button">Anterior</button>
             <button id="next-btn" class="nav-button">Siguiente</button>
         </div>
-        <div id="slide-counter">1 / 9</div>
+        <div id="slide-counter">1 / 17</div>
     </main>
 
     <footer id="page-footer" class="w-full bg-gray-900 text-white text-center p-2 text-sm">
@@ -289,21 +362,16 @@
         let currentSlide = 0;
 
         const quizData = [
-            {
-                q: "¿Qué significan las siglas CSS?",
-                options: ["Creative Style Sheets", "Cascading Style Sheets", "Computer Style Syntax", "Color Style Sheets"],
-                a: "Cascading Style Sheets"
-            },
-            {
-                q: "¿Cuál es la principal ventaja de usar archivos CSS externos?",
-                options: ["Se ve más bonito", "Es más rápido de escribir", "Permite cambios globales desde un solo lugar", "No requiere HTML"],
-                a: "Permite cambios globales desde un solo lugar"
-            },
-            {
-                q: "¿Qué etiqueta se usa para enlazar un archivo CSS externo?",
-                options: ["<script>", "<style>", "<link>", "<a>"],
-                a: "<link>"
-            }
+            { q: "¿Qué significa CSS?", options: ["Color System Style", "Cascading Style Sheets", "Code Syntax Sheet", "Custom Style System"], a: "Cascading Style Sheets" },
+            { q: "¿Para qué sirve separar CSS de HTML?", options: ["Para que sea más lento", "Reutilización y mantenimiento", "No tiene utilidad", "Solo para expertos"], a: "Reutilización y mantenimiento" },
+            { q: "¿Qué etiqueta enlaza un archivo CSS externo?", options: ["<script>", "<href>", "<link>", "<style>"], a: "<link>" },
+            { q: "¿Cuál atributo de <link> define el tipo de archivo?", options: ["rel", "src", "type", "href"], a: "type" },
+            { q: "¿Cómo se llama la propiedad para cambiar el color de fondo?", options: ["color", "bg-color", "background-color", "fill"], a: "background-color" },
+            { q: "¿Qué es una etiqueta autocerrable?", options: ["No tiene cierre separado", "Se cierra sola al escribir", "No se usa en HTML5", "Es invisible"], a: "No tiene cierre separado" },
+            { q: "¿Cuál es una unidad de medida fija?", options: ["px", "em", "%", "rem"], a: "px" },
+            { q: "¿Qué parte de la regla CSS indica qué elemento estilar?", options: ["Propiedad", "Valor", "Selector", "Llave"], a: "Selector" },
+            { q: "¿Dónde se colocan los estilos internos?", options: ["En el <body>", "En el <head>", "En un archivo .js", "Al final del documento"], a: "En el <head>" },
+            { q: "¿Cuál es el valor del atributo 'rel' para CSS?", options: ["stylesheet", "css", "link", "text/css"], a: "stylesheet" }
         ];
         let currentQuiz = 0;
 
@@ -318,43 +386,47 @@
             prevBtn.disabled = currentSlide === 0;
             nextBtn.disabled = currentSlide === slides.length - 1;
 
-            if (currentSlide === 6) loadQuiz();
+            if (currentSlide === 14) loadQuiz();
         }
 
         function loadQuiz() {
+            const questionEl = document.getElementById('quiz-question');
+            const optionsEl = document.getElementById('quiz-options');
+            const feedbackEl = document.getElementById('quiz-feedback');
+
             if (currentQuiz >= quizData.length) {
-                document.getElementById('quiz-question').textContent = "¡Cuestionario completado!";
-                document.getElementById('quiz-options').innerHTML = "";
+                questionEl.textContent = "¡Cuestionario completado!";
+                optionsEl.innerHTML = "";
+                feedbackEl.textContent = "";
                 return;
             }
             const data = quizData[currentQuiz];
-            document.getElementById('quiz-question').textContent = data.q;
-            const optionsContainer = document.getElementById('quiz-options');
-            optionsContainer.innerHTML = "";
-            document.getElementById('quiz-feedback').textContent = "";
+            questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
+            optionsEl.innerHTML = "";
+            feedbackEl.textContent = "";
 
             data.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.textContent = opt;
                 btn.className = "quiz-option";
                 btn.onclick = () => {
-                    const btns = optionsContainer.querySelectorAll('button');
+                    const btns = optionsEl.querySelectorAll('button');
                     btns.forEach(b => b.disabled = true);
                     if (opt === data.a) {
                         btn.classList.add('correct');
-                        document.getElementById('quiz-feedback').textContent = "¡Correcto!";
-                        document.getElementById('quiz-feedback').className = "mt-6 font-bold text-xl text-green-600";
+                        feedbackEl.textContent = "¡Correcto!";
+                        feedbackEl.className = "mt-4 font-bold text-lg text-green-600";
                     } else {
                         btn.classList.add('incorrect');
-                        document.getElementById('quiz-feedback').textContent = `Incorrecto. La respuesta es: ${data.a}`;
-                        document.getElementById('quiz-feedback').className = "mt-6 font-bold text-xl text-red-600";
+                        feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
+                        feedbackEl.className = "mt-4 font-bold text-lg text-red-600";
                     }
                     setTimeout(() => {
                         currentQuiz++;
                         loadQuiz();
-                    }, 2000);
+                    }, 1500);
                 };
-                optionsContainer.appendChild(btn);
+                optionsEl.appendChild(btn);
             });
         }
 

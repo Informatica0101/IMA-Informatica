@@ -836,3 +836,8 @@ DESCRIPCIÓN DE CAMBIOS:
   - Ocultadas (comentadas) las presentaciones y descargas del I Parcial.
   - Integradas las nuevas presentaciones del II Parcial en el menú de navegación.
   - Actualizada la sección de descargas con los folletos del II Parcial: "Programacion Segunda Unidad.pdf" y "Unidad 4 Diseño Web.pdf".
+- Refinadas las presentaciones de Abril 2026:
+    - Incrementada la extensión a 17 diapositivas por presentación.
+    - Ampliado el cuestionario a 10 preguntas por tema.
+    - Robustecida la lógica de ocultamiento de UI (Header/Footer) en modo F11/Fullscreen.
+    - Unificada la mención histórica en una sola diapositiva (Programación).
