@@ -98,3 +98,15 @@ AUDITORÍA DASHBOARD ESTUDIANTE - PESTAÑAS POR PARCIAL (24/03/2026)
   - El parcial activo por defecto será el de mayor valor presente en la data.
   - Asegurar que la lógica de expansión de tarjetas y entrega de tareas sea compatible con el filtrado por pestañas.
   - Condicionalidad de Pestañas: Se verificó que las pestañas solo se rendericen para parciales que contienen actividades en la respuesta de la API, evitando botones vacíos.
+
+AUDITORÍA PRESENTACIONES Y DESCARGAS II PARCIAL (19/04/2026)
+-----------------------------------------------------------
+- Archivos involucrados: js/data.js, II_BTP_A/Programacion/II Parcial/Programacion Segunda Unidad.pdf, III_BTP_A/dw_II/contenido/Unidad 4 Diseño Web.pdf
+- Hallazgo: Se requiere la transición al II Parcial. El contenido del I Parcial en el área de "Cursos" y "Descargas" debe ser ocultado (comentado).
+- Temas identificados para el 19 de abril:
+    - Programación: "Introducción a los lenguajes de programación y lenguajes de alto nivel" (basado en el plan de clases y PDF de contenido).
+    - Diseño Web: "Introducción a CSS" (basado en el plan de clases y PDF de contenido).
+- Plantilla: Se utilizará III_BTP_A/dw_II/tablas_columnas.html como base para las nuevas presentaciones, manteniendo el estilo 2026 (Fullscreen nativo y tipografía proyectable).
+- Tarea: Crear II_BTP_A/Programacion/intro_lenguajes_programacion.html.
+- Tarea: Crear III_BTP_A/dw_II/introduccion_css.html.
+- Tarea: Actualizar js/data.js para reflejar el cambio de parcial y nuevos archivos de descarga.
