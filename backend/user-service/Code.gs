@@ -189,19 +189,29 @@ function loginUser(payload) {
   };
 }
 
+function normalizeString(str) {
+  if (!str) return "";
+  return str
+    .toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
 function getStudentsByGradoSeccion(payload) {
   const { grado, seccion } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
   const data = usuariosSheet.getDataRange().getValues().slice(1);
 
-  const sGrado = String(grado || "").trim().toLowerCase();
-  const sSeccion = String(seccion || "").trim().toLowerCase();
+  const sGrado = normalizeString(grado);
+  const sSeccion = normalizeString(seccion);
 
   const students = data.filter(r => {
     const isStudent = String(r[6] || "").trim() === 'Estudiante';
-    const rowGrado = String(r[2] || "").trim().toLowerCase();
-    const rowSeccion = String(r[3] || "").trim().toLowerCase();
+    const rowGrado = normalizeString(r[2]);
+    const rowSeccion = normalizeString(r[3]);
 
     const matchGrado = rowGrado === sGrado;
     const matchSeccion = !seccion || rowSeccion === sSeccion;

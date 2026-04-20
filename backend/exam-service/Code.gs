@@ -31,10 +31,11 @@ function textResponse(obj) {
 function normalizeString(str) {
   if (!str) return "";
   return str
+    .toString()
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]/g, "");
+    .trim();
 }
 
 // ---------------------------------------------------------------------------
@@ -101,7 +102,8 @@ function createExam(p) {
     p.fechaLimite,
     p.tiempoLimite || "",
     "Inactivo",
-    p.profesorId || ""
+    p.profesorId || "",
+    p.parcial || "Primer Parcial"
   ]);
 
   (p.preguntas || []).forEach((q, i) => {
@@ -133,7 +135,7 @@ function updateExamStatus({ examenId, estado }) {
 }
 
 function updateExam(payload) {
-  const { examenId, titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tiempoLimite } = payload;
+  const { examenId, titulo, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tiempoLimite, parcial } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Examenes");
   const data = sheet.getDataRange().getValues();
@@ -148,6 +150,7 @@ function updateExam(payload) {
   if (seccionAsignada !== undefined) sheet.getRange(row, 5).setValue(seccionAsignada);
   if (fechaLimite !== undefined) sheet.getRange(row, 6).setValue(fechaLimite);
   if (tiempoLimite !== undefined) sheet.getRange(row, 7).setValue(tiempoLimite);
+  if (parcial !== undefined) sheet.getRange(row, 10).setValue(parcial);
 
   return { status: "success", message: "Examen actualizado." };
 }
@@ -203,7 +206,8 @@ function getAllExams(payload) {
       grado: r[3],
       seccion: r[4],
       fechaLimite: r[5] ? new Date(r[5]).toISOString() : null,
-      estado: r[7]
+      estado: r[7],
+      parcial: r[9] || "Primer Parcial"
     }))
   };
 }
@@ -426,13 +430,14 @@ function getTeacherExamActivity(payload) {
   const entregasValues = entregasSheet.getDataRange().getValues();
 
   const submissions = entregasValues.slice(1).map(entrega => {
-    const examen = examenesData.find(t => t[0] === entrega[1]);
+    // Uso de == para ser resiliente a tipos (string vs number)
+    const examen = examenesData.find(t => t[0] == entrega[1]);
 
     // SI EL EXAMEN NO EXISTE O NO PERTENECE AL PROFESOR -> DESCARTAR
     if (!examen) return null;
-    if (profesorId && examen[8] && examen[8] !== profesorId) return null;
+    if (profesorId && examen[8] && examen[8] != profesorId) return null;
 
-    const usuario = usuariosData.find(u => u[0] === entrega[2]);
+    const usuario = usuariosData.find(u => u[0] == entrega[2]);
 
     // Filtro por Grado y Sección del Profesor
     if (usuario) {
@@ -450,6 +455,7 @@ function getTeacherExamActivity(payload) {
       grado: usuario ? usuario[2] : "N/A",
       seccion: usuario ? usuario[3] : "N/A",
       asignatura: examen[2] || "N/A",
+      parcial: examen[9] || "Primer Parcial",
       fecha: new Date(entrega[3]),
       calificacion: entrega[5],
       estado: entrega[6],
@@ -465,8 +471,8 @@ function getTeacherExamActivity(payload) {
 function isInTeacherList(value, listString) {
   if (!listString || String(listString).trim() === "") return true;
   if (!value) return false;
-  const sValue = String(value).trim().toLowerCase();
-  const sList = String(listString).trim().toLowerCase();
+  const sValue = normalizeString(value);
+  const sList = normalizeString(listString);
   const list = sList.split(',').map(s => s.trim());
   return list.includes(sValue);
 }
