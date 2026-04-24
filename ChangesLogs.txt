@@ -858,3 +858,13 @@ DESCRIPCIÓN DE CAMBIOS:
 20/04/2026 (v12 Update)
 - Archivo: js/config.js
   - Actualizadas las URLs de los microservicios TASK y EXAM a los nuevos endpoints de producción.
+
+26/04/2026
+- Archivos: II_BTP_A/Programacion/lenguajes_compilados_interpretados.html, III_BTP_A/dw_II/enlazar_estilos_autocerrables.html
+  - Generación de presentaciones de 16 diapositivas para la semana del 26 de abril.
+  - El tema de Programación se centró en el bucle "Para" (for), incluyendo sintaxis en JavaScript, C y C++, descartando otros tipos de bucles.
+  - Implementados cuestionarios de 10 preguntas divididos en Slides 14 y 15 con persistencia de estado.
+  - Aplicada retroalimentación de color en el quiz: Verde (Correcto) y Rojo (Incorrecto).
+  - Eliminado texto redundante en la diapositiva de cierre.
+- Archivo: js/data.js
+  - Inserción de los nuevos temas en el menú de navegación "Cursos".

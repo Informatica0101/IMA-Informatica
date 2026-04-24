@@ -24,6 +24,17 @@ ESTADO DE LAS TAREAS (RESUMEN)
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
 
+TAREA: [A-55]
+TÍTULO: Presentaciones Semana 26 de Abril (Bucle Para y CSS Link)
+ÁREA: Frontend / Contenido / Lógica
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Generadas presentaciones de 16 slides para Programación y Diseño Web.
+- Programación: Foco exclusivo en Bucle Para (PSeInt, JS, C, C++).
+- Implementados quizzes de 10 preguntas con retroalimentación cromática (Verde/Rojo).
+- Corregida la persistencia de contenedores de quiz entre diapositivas 14 y 15.
+- Eliminado contenido fuera de alcance (Mientras/Repetir).
+
 TAREA: [A-53]
 TÍTULO: Dashboard Profesor: Jerarquía por Parcial
 ÁREA: Frontend / UI / Navegación

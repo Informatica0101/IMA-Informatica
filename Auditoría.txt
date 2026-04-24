@@ -109,6 +109,15 @@ AUDITORÍA PRESENTACIONES Y DESCARGAS II PARCIAL (19/04/2026)
     - Programación: "Introducción a los lenguajes de programación y lenguajes de alto nivel" (basado en el plan de clases y PDF de contenido).
     - Diseño Web: "Introducción a CSS" (basado en el plan de clases y PDF de contenido).
 - Plantilla: Se utilizará III_BTP_A/dw_II/tablas_columnas.html como base para las nuevas presentaciones, manteniendo el estilo 2026 (Fullscreen nativo y tipografía proyectable).
-- Tarea: Crear II_BTP_A/Programacion/intro_lenguajes_programacion.html.
-- Tarea: Crear III_BTP_A/dw_II/introduccion_css.html.
-- Tarea: Actualizar js/data.js para reflejar el cambio de parcial y nuevos archivos de descarga.
+- Tarea: Crear II_BTP_A/Programacion/intro_lenguajes_programacion.html. (COMPLETADA)
+- Tarea: Crear III_BTP_A/dw_II/introduccion_css.html. (COMPLETADA)
+- Tarea: Actualizar js/data.js para reflejar el cambio de parcial y nuevos archivos de descarga. (COMPLETADA)
+
+AUDITORÍA PRESENTACIONES SEMANA 26 DE ABRIL (26/04/2026)
+-------------------------------------------------------
+- Archivos involucrados: II_BTP_A/Programacion/lenguajes_compilados_interpretados.html, III_BTP_A/dw_II/enlazar_estilos_autocerrables.html
+- Hallazgo: La información de bucles en Programación debe centrarse únicamente en el bucle "Para", omitiendo "Mientras" y "Repetir".
+- Hallazgo: Se requiere explicación de sintaxis del bucle "Para" en JavaScript, C y C++.
+- Hallazgo UX/Cuestionario: Los cuestionarios deben tener 10 preguntas divididas en dos diapositivas (14 y 15).
+- Hallazgo Estético: La retroalimentación del quiz debe usar verde para aciertos y rojo para fallos.
+- Hallazgo Limpieza: Eliminar texto redundante de la diapositiva final.
