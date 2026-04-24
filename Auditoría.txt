@@ -118,6 +118,7 @@ AUDITORÍA PRESENTACIONES SEMANA 26 DE ABRIL (26/04/2026)
 - Archivos involucrados: II_BTP_A/Programacion/lenguajes_compilados_interpretados.html, III_BTP_A/dw_II/enlazar_estilos_autocerrables.html
 - Hallazgo: La información de bucles en Programación debe centrarse únicamente en el bucle "Para", omitiendo "Mientras" y "Repetir".
 - Hallazgo: Se requiere explicación de sintaxis del bucle "Para" en JavaScript, C y C++.
-- Hallazgo UX/Cuestionario: Los cuestionarios deben tener 10 preguntas divididas en dos diapositivas (14 y 15).
-- Hallazgo Estético: La retroalimentación del quiz debe usar verde para aciertos y rojo para fallos.
-- Hallazgo Limpieza: Eliminar texto redundante de la diapositiva final.
+- Hallazgo UX/Cuestionario: Los cuestionarios deben tener 10 preguntas divididas en dos diapositivas (14 y 15). (SOLUCIONADO)
+- Hallazgo Lógico: El quiz se bloqueaba; se implementó avance automático de 2 segundos. (SOLUCIONADO)
+- Hallazgo Estético: La retroalimentación del quiz debe usar verde (#16a34a) y rojo (#dc2626). (SOLUCIONADO)
+- Hallazgo Limpieza: Eliminar texto redundante de la diapositiva final. (SOLUCIONADO)

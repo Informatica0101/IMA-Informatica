@@ -863,8 +863,9 @@ DESCRIPCIÓN DE CAMBIOS:
 - Archivos: II_BTP_A/Programacion/lenguajes_compilados_interpretados.html, III_BTP_A/dw_II/enlazar_estilos_autocerrables.html
   - Generación de presentaciones de 16 diapositivas para la semana del 26 de abril.
   - El tema de Programación se centró en el bucle "Para" (for), incluyendo sintaxis en JavaScript, C y C++, descartando otros tipos de bucles.
-  - Implementados cuestionarios de 10 preguntas divididos en Slides 14 y 15 con persistencia de estado.
-  - Aplicada retroalimentación de color en el quiz: Verde (Correcto) y Rojo (Incorrecto).
+  - Implementados cuestionarios de 10 preguntas divididos en Slides 14 y 15 con persistencia de estado y avance automático tras 2 segundos.
+  - Aplicada retroalimentación de color en el quiz: Verde (#16a34a) y Rojo (#dc2626).
+  - Ajustado contenido de Diseño Web para centrarse en <link> y elementos void, evitando redundancia con la clase previa.
   - Eliminado texto redundante en la diapositiva de cierre.
 - Archivo: js/data.js
   - Inserción de los nuevos temas en el menú de navegación "Cursos".

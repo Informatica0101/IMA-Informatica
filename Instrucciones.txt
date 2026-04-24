@@ -31,9 +31,10 @@ PRIORIDAD: ALTA
 ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
 - Generadas presentaciones de 16 slides para Programación y Diseño Web.
 - Programación: Foco exclusivo en Bucle Para (PSeInt, JS, C, C++).
-- Implementados quizzes de 10 preguntas con retroalimentación cromática (Verde/Rojo).
+- Implementados quizzes de 10 preguntas con retroalimentación cromática (Verde/Rojo) y avance automático.
 - Corregida la persistencia de contenedores de quiz entre diapositivas 14 y 15.
 - Eliminado contenido fuera de alcance (Mientras/Repetir).
+- Asegurada no redundancia en Diseño Web.
 
 TAREA: [A-53]
 TÍTULO: Dashboard Profesor: Jerarquía por Parcial

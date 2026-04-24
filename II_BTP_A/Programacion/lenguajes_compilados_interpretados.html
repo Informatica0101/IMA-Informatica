@@ -360,9 +360,9 @@
         const quizData = [
             { q: "¿Qué hace un compilador con el código fuente?", options: ["Ejecuta línea a línea", "Genera código objeto", "Borra el código fuente", "Lo envía por internet"], a: "Genera código objeto" },
             { q: "¿Cuál es una ventaja de los lenguajes interpretados?", options: ["Ejecución más veloz", "Diseño más rápido", "No usa intérpretes", "Es más difícil hackear"], a: "Diseño más rápido" },
-            { q: "¿Qué sucede con las instrucciones de un ciclo en un intérprete?", options: ["Se traducen una vez", "Se interpretan siempre", "Se ignoran por rapidez", "Se guardan en un disco"], a: "Se interpretan siempre" },
+            { q: "¿Qué sucede con las instrucciones de un ciclo en un intérprete?", options: ["Solo se traducen una vez", "Se interpretan siempre", "Se ignoran por rapidez", "Se guardan en un disco"], a: "Se interpretan siempre" },
             { q: "¿Cuál lenguaje es un ejemplo de lenguaje compilado?", options: ["Python", "PHP", "C++", "JavaScript"], a: "C++" },
-            { q: "¿Qué es un bucle en programación?", options: ["Un error del sistema", "Repite instrucciones", "Un tipo de variable", "Un cable de red"], a: "Repite instrucciones" },
+            { q: "¿Qué es un bucle en programación?", options: ["Error fatal del sistema", "Repite instrucciones", "Tipo de dato o variable", "Cable de red o conexión"], a: "Repite instrucciones" },
             { q: "¿Cuándo se usa preferentemente el bucle 'Para'?", options: ["Si el fin es incierto", "Conteo definido", "En compilados solo", "Para apagar la PC"], a: "Conteo definido" },
             { q: "¿Qué componente define el inicio y el fin del bucle?", options: ["Rango de ejecución", "Variable de control", "Incremento de valor", "Nombre del bucle"], a: "Rango de ejecución" },
             { q: "¿Qué lenguaje usa 'let i = 0' en su bucle for?", options: ["JavaScript", "C++", "Pascal", "Ensamblador"], a: "JavaScript" },
@@ -399,6 +399,10 @@
                 feedbackEl.textContent = "Has respondido todas las preguntas.";
                 return;
             }
+
+            if (currentSlide === 13 && currentQuiz >= 5) { showSlide(14); return; }
+            if (currentSlide === 14 && currentQuiz < 5) { showSlide(13); return; }
+
             const data = quizData[currentQuiz];
             questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
             optionsEl.innerHTML = "";
@@ -414,11 +418,11 @@
                     if (opt === data.a) {
                         btn.classList.add('correct');
                         feedbackEl.textContent = "¡Correcto!";
-                        feedbackEl.className = "mt-4 font-bold text-lg text-green-600";
+                        feedbackEl.style.color = "#16a34a"; // Verde
                     } else {
                         btn.classList.add('incorrect');
                         feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
-                        feedbackEl.className = "mt-4 font-bold text-lg text-red-600";
+                        feedbackEl.style.color = "#dc2626"; // Rojo
                     }
                     setTimeout(() => {
                         currentQuiz++;
@@ -427,7 +431,7 @@
                         } else {
                             loadQuiz();
                         }
-                    }, 1500);
+                    }, 2000);
                 };
                 optionsEl.appendChild(btn);
             });

@@ -414,6 +414,10 @@
                 feedbackEl.textContent = "Has respondido todas las preguntas.";
                 return;
             }
+
+            if (currentSlide === 13 && currentQuiz >= 5) { showSlide(14); return; }
+            if (currentSlide === 14 && currentQuiz < 5) { showSlide(13); return; }
+
             const data = quizData[currentQuiz];
             questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
             optionsEl.innerHTML = "";
@@ -429,11 +433,11 @@
                     if (opt === data.a) {
                         btn.classList.add('correct');
                         feedbackEl.textContent = "¡Correcto!";
-                        feedbackEl.className = "mt-4 font-bold text-lg text-green-600";
+                        feedbackEl.style.color = "#16a34a"; // Verde
                     } else {
                         btn.classList.add('incorrect');
                         feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
-                        feedbackEl.className = "mt-4 font-bold text-lg text-red-600";
+                        feedbackEl.style.color = "#dc2626"; // Rojo
                     }
                     setTimeout(() => {
                         currentQuiz++;
@@ -442,7 +446,7 @@
                         } else {
                             loadQuiz();
                         }
-                    }, 1500);
+                    }, 2000);
                 };
                 optionsEl.appendChild(btn);
             });
