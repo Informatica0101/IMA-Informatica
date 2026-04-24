@@ -186,118 +186,135 @@
                 </div>
             </div>
 
-            <!-- Diapositiva 2: Estilos Externos -->
+            <!-- Diapositiva 2: Importancia del Enlace Externo -->
             <div class="slide">
-                <h3>Mejor fuera de línea que en línea</h3>
-                <p>Escribir el CSS en un archivo aparte es la mejor forma de darle estilo a tu sitio web.</p>
+                <h3>El Método de Enlace Externo</h3>
+                <p>En lugar de escribir estilos dentro de cada etiqueta, los centralizamos en un archivo <strong>.css</strong>.</p>
                 <div class="concept-box">
-                    <p><strong>Ventaja Clave:</strong> Con un único archivo CSS haces cambios en un solo lugar que afectan a todas las etiquetas de estilo de tu proyecto.</p>
+                    <p><strong>¿Por qué es superior?</strong> Permite que un solo cambio en el archivo CSS actualice instantáneamente cientos de páginas HTML vinculadas.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 3: Por qué no usar estilos en línea -->
+            <!-- Diapositiva 3: Atributos de la Etiqueta Link -->
             <div class="slide">
-                <h3>Problemas del estilo inline</h3>
-                <p>Usar <code>&lt;p style="color:red"&gt;</code> no es eficiente porque:</p>
+                <h3>Atributos del Elemento &lt;link&gt;</h3>
+                <p>Esta etiqueta se ubica siempre dentro de la sección <code>&lt;head&gt;</code> y requiere tres parámetros:</p>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li>Tienes que escribir el mismo código una y otra vez.</li>
-                    <li>Si quieres cambiar el estilo de varios elementos, debes modificar cada etiqueta individualmente.</li>
-                    <li>Mezcla la estructura (HTML) con el diseño (CSS).</li>
+                    <li><strong>rel="stylesheet":</strong> Define la relación entre el HTML y el archivo vinculado.</li>
+                    <li><strong>type="text/css":</strong> Indica el tipo de contenido que el navegador debe esperar.</li>
+                    <li><strong>href:</strong> La ruta de ubicación del archivo CSS.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 4: Cómo enlazar un CSS -->
+            <!-- Diapositiva 4: Rutas Relativas vs Absolutas -->
             <div class="slide">
-                <h3>Enlazar estilos CSS</h3>
-                <p>Para que el HTML pueda "ver" la información de CSS, usamos la etiqueta <code>&lt;link&gt;</code> dentro de <code>&lt;head&gt;</code>.</p>
-                <div class="concept-box border-orange-500">
-                    <p>La etiqueta necesita tres atributos fundamentales: <strong>type</strong>, <strong>rel</strong> y <strong>href</strong>.</p>
+                <h3>Entendiendo el atributo 'href'</h3>
+                <p>El valor de <code>href</code> depende de dónde esté guardado el archivo:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-orange-50 p-4 rounded text-left">
+                        <strong>Ruta Relativa:</strong> <code>href="estilos.css"</code> (Si están en la misma carpeta).
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded text-left">
+                        <strong>Ruta Absoluta:</strong> <code>href="https://sitio.com/estilos.css"</code> (Carga desde internet).
+                    </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 5: Atributos de la etiqueta link -->
+            <!-- Diapositiva 5: Ejemplo Completo de Enlace -->
             <div class="slide">
-                <h3>Los 3 atributos de &lt;link&gt;</h3>
-                <ol class="text-left mt-6 list-decimal list-inside space-y-4">
-                    <li><strong>type:</strong> Siempre debe ser igual a <code>"text/css"</code>.</li>
-                    <li><strong>rel:</strong> Siempre debe ser igual a <code>"stylesheet"</code>.</li>
-                    <li><strong>href:</strong> La dirección web (o ruta local) de tu archivo CSS.</li>
-                </ol>
+                <h3>Sintaxis Correcta</h3>
+                <pre><code>&lt;head&gt;
+  &lt;title&gt;Mi Proyecto&lt;/title&gt;
+  &lt;link rel="stylesheet"
+        type="text/css"
+        href="css/style.css" /&gt;
+&lt;/head&gt;</code></pre>
+                <p class="mt-4 italic text-sm">Nota: En este ejemplo, el archivo CSS está dentro de una carpeta llamada 'css'.</p>
             </div>
 
-            <!-- Diapositiva 6: Ejemplo de sintaxis -->
+            <!-- Diapositiva 6: Mantenimiento y Organización -->
             <div class="slide">
-                <h3>Ejemplo de enlace</h3>
-                <pre><code>&lt;link type="text/css"
-      rel="stylesheet"
-      href="stylesheet.css" /&gt;</code></pre>
-                <p class="mt-6">Este código conecta tu archivo HTML con un archivo llamado "stylesheet.css".</p>
+                <h3>Ventaja: Código Limpio</h3>
+                <p>Al separar la <strong>estructura</strong> (HTML) del <strong>diseño</strong> (CSS):</p>
+                <ul class="text-left mt-6 list-decimal list-inside space-y-4">
+                    <li>El archivo HTML es más legible y corto.</li>
+                    <li>Varios diseñadores pueden trabajar en el mismo proyecto sin interferir.</li>
+                    <li>Se reduce el peso de carga total del sitio web.</li>
+                </ul>
             </div>
 
             <!-- Diapositiva 7: Ejercicio 1 -->
             <div class="slide">
-                <h3>Ejercicio 1: Vinculación</h3>
-                <p>Escribe en tu cuaderno la etiqueta completa para enlazar un archivo CSS que se encuentra en la misma carpeta y se llama "estilos_ma.css".</p>
+                <h3>Ejercicio 1: Estructura de Proyecto</h3>
+                <p>Dibuja un diagrama de carpetas para un proyecto que tenga un archivo 'index.html' en la raíz y un archivo 'main.css' dentro de una subcarpeta 'activos'.</p>
                 <div class="concept-box bg-orange-50 border-orange-400">
-                    <p><strong>Reto:</strong> ¿En qué parte del documento HTML (etiqueta padre) se debe colocar siempre este enlace?</p>
+                    <p><strong>Reto:</strong> Escribe la etiqueta &lt;link&gt; correcta para conectar esos dos archivos.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 8: Etiquetas Autocerrables -->
+            <!-- Diapositiva 8: ¿Qué son las Etiquetas Autocerrables? -->
             <div class="slide">
-                <h3>Etiquetas Autocerrables</h3>
-                <p>Son aquellas que no necesitan una etiqueta de cierre separada (como <code>&lt;/p&gt;</code>) porque nunca contienen texto u otros elementos dentro.</p>
+                <h3>Etiquetas Autocerrables (Void Elements)</h3>
+                <p>En HTML, la mayoría de las etiquetas vienen en pares (apertura y cierre). Sin embargo, hay excepciones.</p>
                 <div class="concept-box">
-                    <p>Se cierran usando un solo par de <code>&lt; /&gt;</code> al final de la etiqueta de inicio.</p>
+                    <p>Son etiquetas que no contienen texto u otros elementos dentro, por lo que no necesitan una etiqueta de cierre separada como <code>&lt;/tag&gt;</code>.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 9: Ejemplo de Autocierre -->
+            <!-- Diapositiva 9: Sintaxis de Autocierre -->
             <div class="slide">
-                <h3>Sintaxis de Autocierre</h3>
-                <p>Se agrega una barra diagonal antes del signo "mayor que":</p>
-                <pre><code>&lt;link ... /&gt;
-&lt;img src="..." /&gt;</code></pre>
-                <p class="mt-4 italic">Esto le indica al navegador que la etiqueta ha terminado ahí mismo.</p>
+                <h3>La Barra Diagonal (/)</h3>
+                <p>Aunque en HTML5 moderno la barra al final es opcional, se recomienda usarla por compatibilidad y claridad:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <div class="bg-gray-100 p-4 rounded font-mono">
+                        &lt;img src="foto.jpg"&gt;
+                        <p class="text-xs mt-2 italic">(Válido en HTML5)</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded font-mono">
+                        &lt;img src="foto.jpg" /&gt;
+                        <p class="text-xs mt-2 italic">(Recomendado/Estándar)</p>
+                    </div>
+                </div>
             </div>
 
-            <!-- Diapositiva 10: La etiqueta img -->
+            <!-- Diapositiva 10: Lista de Etiquetas Comunes (I) -->
             <div class="slide">
-                <h3>La etiqueta &lt;img&gt;</h3>
-                <p>Es uno de los ejemplos más comunes de etiquetas autocerrables.</p>
-                <pre><code>&lt;img src="paisaje.jpg" /&gt;</code></pre>
-                <p class="mt-4">No lleva <code>&lt;/img&gt;</code> al final porque la imagen es el contenido en sí misma.</p>
-            </div>
-
-            <!-- Diapositiva 11: Otras etiquetas comunes -->
-            <div class="slide">
-                <h3>Etiquetas &lt;br&gt; y &lt;hr&gt;</h3>
-                <p>Otras etiquetas que ahorran tiempo y esfuerzo al ser autocerrables:</p>
+                <h3>Ejemplos Esenciales I</h3>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><code>&lt;br /&gt;</code>: Inserta un salto de línea simple.</li>
-                    <li><code>&lt;hr /&gt;</code>: Dibuja una línea horizontal en la página.</li>
+                    <li><code>&lt;br /&gt;</code>: Inserta un salto de línea forzado.</li>
+                    <li><code>&lt;hr /&gt;</code>: Crea una línea divisoria horizontal.</li>
+                    <li><code>&lt;img /&gt;</code>: Inserta una imagen mediante el atributo src.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 12: Resumen Técnico -->
+            <!-- Diapositiva 11: Lista de Etiquetas Comunes (II) -->
             <div class="slide">
-                <h3>Resumen de la Sesión</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <div class="bg-orange-50 p-4 rounded text-left">
-                        <strong>Enlace Externo:</strong> Permite separar el diseño de la estructura, facilitando el mantenimiento.
-                    </div>
-                    <div class="bg-orange-50 p-4 rounded text-left">
-                        <strong>Autocierre:</strong> Simplifica la sintaxis del documento para elementos sin contenido interno.
-                    </div>
+                <h3>Ejemplos Esenciales II</h3>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li><code>&lt;meta /&gt;</code>: Define metadatos (como el conjunto de caracteres).</li>
+                    <li><code>&lt;input /&gt;</code>: Crea campos de entrada en formularios.</li>
+                    <li><code>&lt;link /&gt;</code>: Vincula recursos externos como hojas de estilo.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 12: Errores Comunes -->
+            <div class="slide">
+                <h3>¿Qué NO hacer?</h3>
+                <p>Intentar cerrar una etiqueta autocerrable con una etiqueta de cierre separada es un error de sintaxis:</p>
+                <div class="concept-box border-red-500 bg-red-50">
+                    <p class="text-red-700 font-bold">Incorrecto:</p>
+                    <code>&lt;br&gt; Contenido &lt;/br&gt;</code>
+                    <p class="mt-4 text-gray-700">El navegador ignorará el cierre o podría renderizar mal la página.</p>
                 </div>
             </div>
 
             <!-- Diapositiva 13: Ejercicio 2 -->
             <div class="slide">
-                <h3>Ejercicio 2: Estructura Estética</h3>
-                <p>Dibuja en tu cuaderno una estructura básica de carpetas donde guardes un archivo HTML y su correspondiente archivo CSS enlazado.</p>
-                <div class="concept-box bg-green-50 border-green-400 text-green-800">
-                    <p><strong>Pregunta:</strong> ¿Por qué es importante que el nombre del archivo en <code>href</code> coincida exactamente con el nombre del archivo real?</p>
+                <h3>Ejercicio 2: Identificación Técnica</h3>
+                <p>De la siguiente lista, identifica cuáles etiquetas son autocerrables y cuáles requieren cierre manual:</p>
+                <p class="mt-4 font-mono">div, img, p, br, section, hr, meta, h1</p>
+                <div class="concept-box bg-green-50 border-green-400">
+                    <p><strong>Práctica:</strong> Escribe en tu cuaderno la forma correcta de usar las 4 etiquetas autocerrables de la lista.</p>
                 </div>
             </div>
 
@@ -356,16 +373,16 @@
         let currentSlide = 0;
 
         const quizData = [
-            { q: "¿Cuál es la mejor forma de aplicar estilos según el texto?", options: ["Estilos en línea", "Archivos externos", "No usar estilos", "Pie de página"], a: "Archivos externos" },
-            { q: "¿Qué sucede si usas estilos inline y quieres cambiar varios elementos?", options: ["Cambian solos", "Uno por uno", "Error fatal", "Borra el código"], a: "Uno por uno" },
-            { q: "¿Qué etiqueta se usa para conectar un archivo CSS externo?", options: ["<a>", "<link>", "<style>", "<img>"], a: "<link>" },
-            { q: "¿Qué atributo de <link> debe ser siempre 'text/css'?", options: ["href", "rel", "type", "src"], a: "type" },
-            { q: "¿Qué atributo de <link> indica la ubicación del archivo?", options: ["rel", "href", "type", "id"], a: "href" },
-            { q: "¿Qué es una etiqueta autocerrable?", options: ["Se apaga sola", "Carece de cierre", "Cierra el browser", "Es invisible"], a: "Carece de cierre" },
-            { q: "¿Cómo se cierra correctamente una etiqueta autocerrable?", options: ["Con </tag>", "Usando /> final", "No se cierra", "Con un punto"], a: "Usando /> final" },
-            { q: "¿Cuál de estas etiquetas es autocerrable?", options: ["<p>", "<div>", "<img>", "<body>"], a: "<img>" },
-            { q: "¿Qué hace la etiqueta <br />?", options: ["Borra líneas", "Salto de línea", "Pinta un punto", "Mueve el texto"], a: "Salto de línea" },
-            { q: "¿Qué hace la etiqueta <hr />?", options: ["Línea horizontal", "Crea un enlace", "Pausa el video", "Cierra la web"], a: "Línea horizontal" }
+            { q: "¿En qué sección del HTML se coloca la etiqueta <link>?", options: ["Dentro del <body>", "Dentro del <head>", "Al final del footer", "En el título"], a: "Dentro del <head>" },
+            { q: "¿Qué atributo de <link> define la ruta del archivo?", options: ["Atributo rel", "Atributo href", "Atributo type", "Atributo src"], a: "Atributo href" },
+            { q: "¿Qué valor debe tener 'rel' para enlazar un CSS?", options: ["Relation", "Stylesheet", "CSS-File", "Link"], a: "Stylesheet" },
+            { q: "¿Cuál es una ventaja de los archivos CSS externos?", options: ["Diseño más lento", "Mantenimiento fácil", "Más líneas de HTML", "Solo para imágenes"], a: "Mantenimiento fácil" },
+            { q: "¿Qué es una etiqueta autocerrable?", options: ["Se cierra al azar", "Carece de cierre manual", "No tiene atributos", "Es solo para texto"], a: "Carece de cierre manual" },
+            { q: "¿Cómo se cierra formalmente una etiqueta void?", options: ["Usando </tag>", "Usando /> final", "No se cierra nada", "Con un punto"], a: "Usando /> final" },
+            { q: "¿Cuál de estas etiquetas es autocerrable?", options: ["La etiqueta div", "La etiqueta img", "La etiqueta p", "La etiqueta h1"], a: "La etiqueta img" },
+            { q: "¿Qué hace la etiqueta <br />?", options: ["Borra una línea", "Salto de línea", "Dibuja un círculo", "Cambia el color"], a: "Salto de línea" },
+            { q: "¿Qué etiqueta define metadatos?", options: ["Etiqueta title", "Etiqueta meta", "Etiqueta link", "Etiqueta html"], a: "Etiqueta meta" },
+            { q: "¿Qué sucede si cierras mal una etiqueta void?", options: ["El código se borra", "Error de renderizado", "El browser explota", "No sucede nada"], a: "Error de renderizado" }
         ];
         let currentQuiz = 0;
 
