@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enlazar estilos CSS / Etiquetas autocerrables</title>
+    <!-- CDN de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter & Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Universal box-sizing */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Configuración base */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        /* Contenedor principal */
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        #presentation-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+
+        /* Estilo para cada diapositiva */
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 4rem;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation: fadeIn 0.8s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tipografía proyectable (Estándar 2026) */
+        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3rem; color: #fd7e14; margin-bottom: 1.5rem; }
+        h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.25rem; line-height: 1.4; color: #1f2937; margin-bottom: 1.5rem; }
+        p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 900px; }
+
+        .concept-box {
+            background-color: #fef2f2;
+            border-left: 8px solid #fd7e14;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            text-align: left;
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        /* Botones de navegación */
+        .nav-button {
+            background-color: #fd7e14;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .nav-button:hover { background-color: #e67e22; transform: scale(1.05); }
+        .nav-button:disabled { background-color: #d1d5db; cursor: not-allowed; transform: scale(1); }
+
+        #slide-counter {
+            position: absolute;
+            bottom: 1.5rem;
+            right: 2rem;
+            font-weight: 600;
+            color: #9ca3af;
+            z-index: 10;
+        }
+
+        /* Quiz */
+        .quiz-option {
+            width: 100%;
+            padding: 1rem;
+            margin: 0.25rem 0;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            background: white;
+            font-size: 1.1rem;
+        }
+        .quiz-option:hover { background-color: #fff7ed; border-color: #fd7e14; }
+        .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
+        .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+
+        pre {
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: left;
+            font-size: 1.25rem;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 1rem;
+            font-family: monospace;
+        }
+
+        /* Adaptación Móvil */
+        @media (max-width: 768px) {
+            .slide { padding: 2rem 1.5rem; }
+            h2 { font-size: 1.75rem; }
+            h3 { font-size: 1.4rem; }
+            p, li { font-size: 1rem; line-height: 1.4; }
+            .concept-box { padding: 1rem; border-left-width: 4px; margin-top: 1rem; }
+            .nav-button { padding: 0.5rem 1rem; font-size: 0.875rem; }
+            #slide-counter { bottom: 1rem; right: 1rem; font-size: 0.75rem; }
+            .quiz-option { padding: 0.75rem; font-size: 0.9rem; }
+            pre { font-size: 0.9rem; padding: 1rem; }
+            #page-header h1 { font-size: 1rem; }
+            #page-header img { width: 100px !important; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="page-header" class="w-full bg-white p-4 shadow-sm flex justify-between items-center z-50">
+        <div class="flex items-center space-x-4">
+            <img src="../../imagenes/logo.png" alt="Logo IMA" style="width: 150px; height: auto;">
+            <h1 class="text-xl font-bold text-gray-800">Diseño Web II</h1>
+        </div>
+        <nav>
+            <a href="../../index.html" class="text-gray-600 hover:text-orange-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
+        </nav>
+    </header>
+
+    <main>
+        <div id="presentation-container">
+            <!-- Diapositiva 1: Portada -->
+            <div class="slide active">
+                <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
+                <h2>Enlazar estilos CSS / Etiquetas autocerrables</h2>
+                <div class="mt-8 text-lg text-gray-500">
+                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                    <p>Fecha: 26 de abril de 2026</p>
+                    <p>Grado: III BTP Informática Sección "A"</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 2: Estilos Externos -->
+            <div class="slide">
+                <h3>Mejor fuera de línea que en línea</h3>
+                <p>Escribir el CSS en un archivo aparte es la mejor forma de darle estilo a tu sitio web.</p>
+                <div class="concept-box">
+                    <p><strong>Ventaja Clave:</strong> Con un único archivo CSS haces cambios en un solo lugar que afectan a todas las etiquetas de estilo de tu proyecto.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: Por qué no usar estilos en línea -->
+            <div class="slide">
+                <h3>Problemas del estilo inline</h3>
+                <p>Usar <code>&lt;p style="color:red"&gt;</code> no es eficiente porque:</p>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li>Tienes que escribir el mismo código una y otra vez.</li>
+                    <li>Si quieres cambiar el estilo de varios elementos, debes modificar cada etiqueta individualmente.</li>
+                    <li>Mezcla la estructura (HTML) con el diseño (CSS).</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 4: Cómo enlazar un CSS -->
+            <div class="slide">
+                <h3>Enlazar estilos CSS</h3>
+                <p>Para que el HTML pueda "ver" la información de CSS, usamos la etiqueta <code>&lt;link&gt;</code> dentro de <code>&lt;head&gt;</code>.</p>
+                <div class="concept-box border-orange-500">
+                    <p>La etiqueta necesita tres atributos fundamentales: <strong>type</strong>, <strong>rel</strong> y <strong>href</strong>.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Atributos de la etiqueta link -->
+            <div class="slide">
+                <h3>Los 3 atributos de &lt;link&gt;</h3>
+                <ol class="text-left mt-6 list-decimal list-inside space-y-4">
+                    <li><strong>type:</strong> Siempre debe ser igual a <code>"text/css"</code>.</li>
+                    <li><strong>rel:</strong> Siempre debe ser igual a <code>"stylesheet"</code>.</li>
+                    <li><strong>href:</strong> La dirección web (o ruta local) de tu archivo CSS.</li>
+                </ol>
+            </div>
+
+            <!-- Diapositiva 6: Ejemplo de sintaxis -->
+            <div class="slide">
+                <h3>Ejemplo de enlace</h3>
+                <pre><code>&lt;link type="text/css"
+      rel="stylesheet"
+      href="stylesheet.css" /&gt;</code></pre>
+                <p class="mt-6">Este código conecta tu archivo HTML con un archivo llamado "stylesheet.css".</p>
+            </div>
+
+            <!-- Diapositiva 7: Ejercicio 1 -->
+            <div class="slide">
+                <h3>Ejercicio 1: Vinculación</h3>
+                <p>Escribe en tu cuaderno la etiqueta completa para enlazar un archivo CSS que se encuentra en la misma carpeta y se llama "estilos_ma.css".</p>
+                <div class="concept-box bg-orange-50 border-orange-400">
+                    <p><strong>Reto:</strong> ¿En qué parte del documento HTML (etiqueta padre) se debe colocar siempre este enlace?</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Etiquetas Autocerrables -->
+            <div class="slide">
+                <h3>Etiquetas Autocerrables</h3>
+                <p>Son aquellas que no necesitan una etiqueta de cierre separada (como <code>&lt;/p&gt;</code>) porque nunca contienen texto u otros elementos dentro.</p>
+                <div class="concept-box">
+                    <p>Se cierran usando un solo par de <code>&lt; /&gt;</code> al final de la etiqueta de inicio.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Ejemplo de Autocierre -->
+            <div class="slide">
+                <h3>Sintaxis de Autocierre</h3>
+                <p>Se agrega una barra diagonal antes del signo "mayor que":</p>
+                <pre><code>&lt;link ... /&gt;
+&lt;img src="..." /&gt;</code></pre>
+                <p class="mt-4 italic">Esto le indica al navegador que la etiqueta ha terminado ahí mismo.</p>
+            </div>
+
+            <!-- Diapositiva 10: La etiqueta img -->
+            <div class="slide">
+                <h3>La etiqueta &lt;img&gt;</h3>
+                <p>Es uno de los ejemplos más comunes de etiquetas autocerrables.</p>
+                <pre><code>&lt;img src="paisaje.jpg" /&gt;</code></pre>
+                <p class="mt-4">No lleva <code>&lt;/img&gt;</code> al final porque la imagen es el contenido en sí misma.</p>
+            </div>
+
+            <!-- Diapositiva 11: Otras etiquetas comunes -->
+            <div class="slide">
+                <h3>Etiquetas &lt;br&gt; y &lt;hr&gt;</h3>
+                <p>Otras etiquetas que ahorran tiempo y esfuerzo al ser autocerrables:</p>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li><code>&lt;br /&gt;</code>: Inserta un salto de línea simple.</li>
+                    <li><code>&lt;hr /&gt;</code>: Dibuja una línea horizontal en la página.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 12: Resumen Técnico -->
+            <div class="slide">
+                <h3>Resumen de la Sesión</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-orange-50 p-4 rounded text-left">
+                        <strong>Enlace Externo:</strong> Permite separar el diseño de la estructura, facilitando el mantenimiento.
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded text-left">
+                        <strong>Autocierre:</strong> Simplifica la sintaxis del documento para elementos sin contenido interno.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 13: Ejercicio 2 -->
+            <div class="slide">
+                <h3>Ejercicio 2: Estructura Estética</h3>
+                <p>Dibuja en tu cuaderno una estructura básica de carpetas donde guardes un archivo HTML y su correspondiente archivo CSS enlazado.</p>
+                <div class="concept-box bg-green-50 border-green-400 text-green-800">
+                    <p><strong>Pregunta:</strong> ¿Por qué es importante que el nombre del archivo en <code>href</code> coincida exactamente con el nombre del archivo real?</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 14: Cuestionario Interactivo (Parte 1) -->
+            <div class="slide">
+                <h3>¡Evaluación de conceptos!</h3>
+                <div class="quiz-container max-w-2xl w-full">
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <div class="quiz-options flex flex-col gap-2"></div>
+                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 15: Cuestionario Interactivo (Parte 2) -->
+            <div class="slide">
+                <h3>Cuestionario: Continuación</h3>
+                <div class="quiz-container max-w-2xl w-full">
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <div class="quiz-options flex flex-col gap-2"></div>
+                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 16: Fin y Asignación -->
+            <div class="slide">
+                <h2>¡Muchas Gracias!</h2>
+                <div class="concept-box border-orange-600">
+                    <p><strong>Asignación:</strong> Ejercicios enlazando una página HTML con imágenes y etiquetas autocerrables. Deben crear una estructura de carpetas correcta.</p>
+                    <p class="mt-4 text-sm">Fecha de entrega: Próxima clase.</p>
+                </div>
+                <p class="mt-8 text-xl">Plan de clase del 26 de abril completado.</p>
+            </div>
+        </div>
+
+        <!-- Controles -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-4 z-20">
+            <button id="prev-btn" class="nav-button">Anterior</button>
+            <button id="next-btn" class="nav-button">Siguiente</button>
+        </div>
+        <div id="slide-counter">1 / 16</div>
+    </main>
+
+    <footer id="page-footer" class="w-full bg-gray-900 text-white text-center p-2 text-sm">
+        <div class="flex items-center justify-center space-x-2">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="Honduras" width="60">
+            <p>© 2026 Instituto María Auxiliadora - Área de Informática</p>
+        </div>
+    </footer>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const header = document.getElementById('page-header');
+        const footer = document.getElementById('page-footer');
+        let currentSlide = 0;
+
+        const quizData = [
+            { q: "¿Cuál es la mejor forma de aplicar estilos según el texto?", options: ["Estilos en línea", "Archivos externos", "No usar estilos", "Pie de página"], a: "Archivos externos" },
+            { q: "¿Qué sucede si usas estilos inline y quieres cambiar varios elementos?", options: ["Cambian solos", "Uno por uno", "Error fatal", "Borra el código"], a: "Uno por uno" },
+            { q: "¿Qué etiqueta se usa para conectar un archivo CSS externo?", options: ["<a>", "<link>", "<style>", "<img>"], a: "<link>" },
+            { q: "¿Qué atributo de <link> debe ser siempre 'text/css'?", options: ["href", "rel", "type", "src"], a: "type" },
+            { q: "¿Qué atributo de <link> indica la ubicación del archivo?", options: ["rel", "href", "type", "id"], a: "href" },
+            { q: "¿Qué es una etiqueta autocerrable?", options: ["Se apaga sola", "Carece de cierre", "Cierra el browser", "Es invisible"], a: "Carece de cierre" },
+            { q: "¿Cómo se cierra correctamente una etiqueta autocerrable?", options: ["Con </tag>", "Usando /> final", "No se cierra", "Con un punto"], a: "Usando /> final" },
+            { q: "¿Cuál de estas etiquetas es autocerrable?", options: ["<p>", "<div>", "<img>", "<body>"], a: "<img>" },
+            { q: "¿Qué hace la etiqueta <br />?", options: ["Borra líneas", "Salto de línea", "Pinta un punto", "Mueve el texto"], a: "Salto de línea" },
+            { q: "¿Qué hace la etiqueta <hr />?", options: ["Línea horizontal", "Crea un enlace", "Pausa el video", "Cierra la web"], a: "Línea horizontal" }
+        ];
+        let currentQuiz = 0;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].style.display = 'none';
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].style.display = 'flex';
+            setTimeout(() => slides[currentSlide].classList.add('active'), 10);
+
+            slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === slides.length - 1;
+
+            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
+        }
+
+        function loadQuiz() {
+            const currentSlideEl = slides[currentSlide];
+            const questionEl = currentSlideEl.querySelector('.quiz-question');
+            const optionsEl = currentSlideEl.querySelector('.quiz-options');
+            const feedbackEl = currentSlideEl.querySelector('.quiz-feedback');
+
+            if (!questionEl) return;
+
+            if (currentQuiz >= quizData.length) {
+                questionEl.textContent = "¡Cuestionario completado!";
+                optionsEl.innerHTML = "";
+                feedbackEl.textContent = "Has respondido todas las preguntas.";
+                return;
+            }
+            const data = quizData[currentQuiz];
+            questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
+            optionsEl.innerHTML = "";
+            feedbackEl.textContent = "";
+
+            data.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.textContent = opt;
+                btn.className = "quiz-option";
+                btn.onclick = () => {
+                    const btns = optionsEl.querySelectorAll('button');
+                    btns.forEach(b => b.disabled = true);
+                    if (opt === data.a) {
+                        btn.classList.add('correct');
+                        feedbackEl.textContent = "¡Correcto!";
+                        feedbackEl.className = "mt-4 font-bold text-lg text-green-600";
+                    } else {
+                        btn.classList.add('incorrect');
+                        feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
+                        feedbackEl.className = "mt-4 font-bold text-lg text-red-600";
+                    }
+                    setTimeout(() => {
+                        currentQuiz++;
+                        if (currentQuiz === 5 && currentSlide === 13) {
+                            showSlide(14);
+                        } else {
+                            loadQuiz();
+                        }
+                    }, 1500);
+                };
+                optionsEl.appendChild(btn);
+            });
+        }
+
+        nextBtn.onclick = () => showSlide(currentSlide + 1);
+        prevBtn.onclick = () => showSlide(currentSlide - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') showSlide(currentSlide + 1);
+            if (e.key === 'ArrowLeft') showSlide(currentSlide - 1);
+        });
+
+        // Fullscreen Logic
+        function handleFullscreen() {
+            const isFull = window.innerHeight >= screen.height - 10 || document.fullscreenElement;
+            header.style.setProperty('display', isFull ? 'none' : 'flex', 'important');
+            footer.style.setProperty('display', isFull ? 'none' : 'block', 'important');
+        }
+
+        window.addEventListener('resize', handleFullscreen);
+        document.addEventListener('fullscreenchange', handleFullscreen);
+
+        showSlide(0);
+        handleFullscreen();
+    </script>
+</body>
+</html>
