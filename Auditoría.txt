@@ -26,6 +26,8 @@ Archivo: js/teacher.js
 ----------------------
 - Utiliza fetchApi para interactuar con los microservicios.
 - La navegación es jerárquica (Grados -> Secciones -> Asignaturas -> Alumnos -> Detalles).
+- Próxima actualización: Insertar nivel "Parcial" entre Asignaturas y Alumnos. (ACTUALIZADO: Implementado)
+- Hallazgo Crítico: El filtrado por Parcial en el frontend requiere normalización estricta (lowercase/trim) para evitar que las entregas desaparezcan por diferencias sutiles en los datos.
 - La búsqueda es global o local según el nivel.
 - Hay lógica para calificar tareas y exámenes.
 - Tarea: Refactorizar el dashboard para que sea una tabla plana con filtros. (COMPLETADO)

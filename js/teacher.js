@@ -47,6 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const allSections = [sectionDashboard, sectionGestion, sectionReportes, sectionCrear, sectionCrearExamen];
     const allNavLinks = [navDashboard, navGestion, navReportes, navCrear, navCrearExamen];
 
+    // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
+    const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
     // --- Lógica de Navegación ---
     function navigateTo(targetSection, navElement) {
         allSections.forEach(section => section && section.classList.add('hidden'));
@@ -357,6 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'Grados': renderGrados(searchTerm); break;
             case 'Secciones': renderSecciones(current.data.grado, searchTerm); break;
             case 'Asignaturas': renderAsignaturas(current.data.grado, current.data.seccion, searchTerm); break;
+            case 'Parciales': renderParciales(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
             case 'Alumnos': renderAlumnos(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
             case 'Detalles': renderDetallesAlumno(current.data.alumnoId, current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
         }
@@ -370,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!item.alumnoNombre) return;
             const key = `${item.alumnoId}`;
             if (!seen.has(key)) {
-                if (item.alumnoNombre.toLowerCase().includes(search)) {
+                if (norm(item.alumnoNombre).includes(norm(search))) {
                     alumnosGlobal.push({ id: item.alumnoId, nombre: item.alumnoNombre, grado: item.grado, seccion: item.seccion, total: 0 });
                     seen.add(key);
                 }
@@ -398,8 +402,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ...allActivityRaw.map(item => item.grado),
             ...allAssignmentsRaw.map(item => item.grado)
         ].filter(g => g))];
-        if (fGrado) grados = grados.filter(g => g === fGrado);
-        const filtered = grados.filter(g => g.toLowerCase().includes(search));
+        if (fGrado) grados = grados.filter(g => norm(g) === norm(fGrado));
+        const filtered = grados.filter(g => norm(g).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
         if (filtered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-8 text-gray-500">No hay grados.</td></tr>'; return; }
@@ -409,19 +413,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderSecciones(grado, search) {
         const fSeccion = document.getElementById('filter-seccion').value;
         let secciones = [...new Set([
-            ...allActivityRaw.filter(i => i.grado === grado).map(i => i.seccion),
-            ...allAssignmentsRaw.filter(i => i.grado === grado).map(i => i.seccion)
-        ].filter(s => s && s !== 'Todas'))];
+            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion),
+            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion)
+        ].filter(s => s && norm(s) !== 'todas'))];
 
-        const hasTodas = allAssignmentsRaw.some(a => a.grado === grado && (a.seccion === 'Todas' || !a.seccion));
+        const hasTodas = allAssignmentsRaw.some(a => norm(a.grado) === norm(grado) && (norm(a.seccion) === 'todas' || !a.seccion));
         if (hasTodas) {
             ['A', 'B', 'C'].forEach(s => {
                 if (!secciones.includes(s)) secciones.push(s);
             });
         }
 
-        if (fSeccion) secciones = secciones.filter(s => s === fSeccion);
-        const filtered = secciones.filter(s => s.toLowerCase().includes(search));
+        if (fSeccion) secciones = secciones.filter(s => norm(s) === norm(fSeccion));
+        const filtered = secciones.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Sección</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
         submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${seccion}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Asignaturas &rsaquo;</span></td></tr>`).join('');
@@ -429,22 +433,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderAsignaturas(grado, seccion, search) {
         let asignaturas = [...new Set([
-            ...allActivityRaw.filter(i => i.grado === grado && i.seccion === seccion).map(i => i.asignatura),
-            ...allAssignmentsRaw.filter(i => i.grado === grado && (i.seccion === seccion || !i.seccion || i.seccion === 'Todas')).map(i => i.asignatura)
+            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado) && norm(i.seccion) === norm(seccion)).map(i => i.asignatura),
+            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado) && (norm(i.seccion) === norm(seccion) || !i.seccion || norm(i.seccion) === 'todas')).map(i => i.asignatura)
         ].filter(s => s))];
-        const filtered = asignaturas.filter(s => s.toLowerCase().includes(search));
+        const filtered = asignaturas.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Asignatura</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
+        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Parciales &rsaquo;</span></td></tr>`).join('');
+    }
+
+    function renderParciales(grado, seccion, asignatura, search) {
+        let parciales = [...new Set([
+            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado) && norm(i.seccion) === norm(seccion) && norm(i.asignatura) === norm(asignatura)).map(i => i.parcial),
+            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado) && (norm(i.seccion) === norm(seccion) || !i.seccion || norm(i.seccion) === 'todas') && norm(i.asignatura) === norm(asignatura)).map(i => i.parcial)
+        ].filter(p => p))];
+
+        const PARCIAL_ORDER = ['Primer Parcial', 'Segundo Parcial', 'Tercer Parcial', 'Cuarto Parcial'];
+        parciales.sort((a, b) => PARCIAL_ORDER.indexOf(a) - PARCIAL_ORDER.indexOf(b));
+
+        const filtered = parciales.filter(p => norm(p).includes(norm(search)));
+        currentFilteredItems = filtered;
+        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Parcial</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+        submissionsTableBody.innerHTML = filtered.map((parcial, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${parcial}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
     }
 
     function renderAlumnos(grado, seccion, asignatura, search) {
         const current = navStack[navStack.length - 1];
         const students = current.data.students || [];
+        const parcial = current.data.parcial;
 
         // Enriquecer alumnos con status de actividad
         const studentsWithStatus = students.map(s => {
-            const studentActivity = allActivityRaw.filter(i => i.alumnoId === s.userId && i.asignatura === asignatura);
+            // Filtramos la actividad del alumno por asignatura y parcial
+            // Eliminamos la validación redundante de grado/sección aquí ya que el alumnoId es unívoco
+            const studentActivity = allActivityRaw.filter(i => i.alumnoId == s.userId && norm(i.asignatura) === norm(asignatura) && norm(i.parcial) === norm(parcial));
             let hasPending = false;
             studentActivity.forEach(item => {
                 const isDelivered = !!(item.fileId || item.respuestas || item.entregaId);
@@ -454,7 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return { ...s, hasPending, statusText: hasPending ? 'Pendiente' : 'Al día' };
         });
 
-        let filtered = studentsWithStatus.filter(s => s.nombre.toLowerCase().includes(search));
+        let filtered = studentsWithStatus.filter(s => norm(s.nombre).includes(norm(search)));
 
         // Aplicar ordenamiento
         filtered.sort((a, b) => {
@@ -511,11 +533,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderDetallesAlumno(alumnoId, grado, seccion, asignatura, search) {
         const fEstado = document.getElementById('filter-estado').value;
         const isGlobalSearch = (asignatura === 'Búsqueda Global');
+        const current = navStack[navStack.length - 1];
+        const parcial = current.data.parcial;
 
         const filtered = allActivityRaw.filter(i =>
-            i.alumnoId === alumnoId &&
-            (isGlobalSearch || (i.grado === grado && i.seccion === seccion && i.asignatura === asignatura)) &&
-            i.titulo.toLowerCase().includes(search)
+            i.alumnoId == alumnoId &&
+            (isGlobalSearch || (norm(i.asignatura) === norm(asignatura) && norm(i.parcial) === norm(parcial))) &&
+            norm(i.titulo).includes(norm(search))
         );
         // Ordenar por fecha más reciente primero
         filtered.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
@@ -619,8 +643,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (current.level === 'Grados') await pushNav('Secciones', { grado: item });
                 else if (current.level === 'Secciones') await pushNav('Asignaturas', { grado: current.data.grado, seccion: item });
-                else if (current.level === 'Asignaturas') await pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: item });
-                else if (current.level === 'Alumnos') await pushNav('Detalles', { alumnoId: item.userId, alumnoNombre: item.nombre, grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura });
+                else if (current.level === 'Asignaturas') await pushNav('Parciales', { grado: current.data.grado, seccion: current.data.seccion, asignatura: item });
+                else if (current.level === 'Parciales') await pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: item });
+                else if (current.level === 'Alumnos') await pushNav('Detalles', { alumnoId: item.userId, alumnoNombre: item.nombre, grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: current.data.parcial });
             }
         });
     }
@@ -642,8 +667,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ]);
             const students = studentsRes.data || [];
             if (students.length === 0) { alert('Sin alumnos.'); return; }
-            const allTasks = (tasksRes.data || []).filter(t => t.grado === grado && (!t.seccion || t.seccion === seccion) && t.parcial === parcial);
-            const allExams = (examsRes.data || []).filter(e => e.grado === grado && (!e.seccion || e.seccion === seccion || e.seccion === 'Todas'));
+            const allTasks = (tasksRes.data || []).filter(t => norm(t.grado) === norm(grado) && (!t.seccion || norm(t.seccion) === norm(seccion)) && norm(t.parcial) === norm(parcial));
+            const allExams = (examsRes.data || []).filter(e => norm(e.grado) === norm(grado) && (!e.seccion || norm(e.seccion) === norm(seccion) || norm(e.seccion) === 'todas'));
             const taskSubmissions = taskSubRes.data || [];
             const examSubmissions = examSubRes.data || [];
             const subjects = [...new Set([...allTasks.map(t => t.asignatura), ...allExams.map(e => e.asignatura)])];

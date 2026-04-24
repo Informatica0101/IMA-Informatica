@@ -17,11 +17,30 @@ ESTADO DE LAS TAREAS (RESUMEN)
 [A-49] PENDIENTE DE REVISIÓN
 [A-45] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-51] COMPLETADA (PENDIENTE DE REVISIÓN)
+[A-53] COMPLETADA (PENDIENTE DE REVISIÓN)
 
 ------------------------------------------------------------------------------------------------
 
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
+
+TAREA: [A-53]
+TÍTULO: Dashboard Profesor: Jerarquía por Parcial
+ÁREA: Frontend / UI / Navegación
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Insertado el nivel "Parcial" en la navegación jerárquica: Asignaturas -> Parcial -> Alumnos.
+- Implementada la función `renderParciales` para extracción dinámica de periodos desde la data de la API.
+- Actualizada la lógica de status de alumno (Pendiente/Al día) para que sea específica al parcial seleccionado.
+- Refinado el filtrado de detalles del alumno para restringir la vista al parcial actual del flujo.
+- Verificado el flujo completo mediante mock de API y Playwright.
+
+TAREA: [A-54]
+TÍTULO: Actualización de URLs de Microservicios (Abril 20)
+ÁREA: Backend / Configuración
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Actualizadas las URLs de TASK y EXAM en js/config.js.
 
 TAREA: [A-52]
 TÍTULO: Transición al II Parcial y Presentaciones (19 de abril)

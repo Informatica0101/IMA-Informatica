@@ -341,13 +341,14 @@ function getTeacherActivity(payload) {
   const mimeTypeIndex = entregasHeaders.indexOf("mimeType");
 
   const submissions = entregasValues.map(entrega => {
-    const tarea = tareasData.find(t => t[0] === entrega[1]);
+    // Uso de == para ser resiliente a tipos (string vs number)
+    const tarea = tareasData.find(t => t[0] == entrega[1]);
 
     // SI LA TAREA NO EXISTE O NO PERTENECE AL PROFESOR -> DESCARTAR
     if (!tarea) return null;
-    if (profesorId && tarea[10] && tarea[10] !== profesorId) return null;
+    if (profesorId && tarea[10] && tarea[10] != profesorId) return null;
 
-    const usuario = usuariosData.find(u => u[0] === entrega[2]);
+    const usuario = usuariosData.find(u => u[0] == entrega[2]);
 
     // Filtro por Grado y Sección del Profesor (si se especifican en el payload)
     if (usuario) {
@@ -364,6 +365,7 @@ function getTeacherActivity(payload) {
       grado: usuario ? usuario[2] : "N/A",
       seccion: usuario ? usuario[3] : "N/A",
       asignatura: tarea[5] || "N/A",
+      parcial: tarea[4] || "N/A",
       fecha: new Date(entrega[3]),
       fileId: entrega[fileIdIndex],
       mimeType: mimeTypeIndex > -1 ? entrega[mimeTypeIndex] : null,
@@ -410,11 +412,21 @@ function getAllTasks(payload) {
   };
 }
 
+function normalizeString(str) {
+  if (!str) return "";
+  return str
+    .toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
 function isInTeacherList(value, listString) {
   if (!listString || String(listString).trim() === "") return true;
   if (!value) return false;
-  const sValue = String(value).trim().toLowerCase();
-  const sList = String(listString).trim().toLowerCase();
+  const sValue = normalizeString(value);
+  const sList = normalizeString(listString);
   const list = sList.split(',').map(s => s.trim());
   return list.includes(sValue);
 }
