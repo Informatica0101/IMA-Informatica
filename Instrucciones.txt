@@ -24,6 +24,28 @@ ESTADO DE LAS TAREAS (RESUMEN)
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
 
+TAREA: [A-56]
+TÍTULO: Presentaciones Semana 03 de Mayo (Bucle Mientras y Medidas CSS)
+ÁREA: Frontend / Contenido / Lógica
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Generadas presentaciones de 16 slides para Programación y Diseño Web.
+- Programación: Lenguajes Declarativos y Bucle Mientras.
+- Diseño Web: Medidas en CSS (px, em, %).
+- Quizzes automatizados (2s) con feedback Verde/Rojo y persistencia multidiapositiva.
+
+TAREA: [A-55]
+TÍTULO: Presentaciones Semana 26 de Abril (Bucle Para y CSS Link)
+ÁREA: Frontend / Contenido / Lógica
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Generadas presentaciones de 16 slides para Programación y Diseño Web.
+- Programación: Foco exclusivo en Bucle Para (PSeInt, JS, C, C++).
+- Implementados quizzes de 10 preguntas con retroalimentación cromática (Verde/Rojo) y avance automático.
+- Corregida la persistencia de contenedores de quiz entre diapositivas 14 y 15.
+- Eliminado contenido fuera de alcance (Mientras/Repetir).
+- Asegurada no redundancia en Diseño Web.
+
 TAREA: [A-53]
 TÍTULO: Dashboard Profesor: Jerarquía por Parcial
 ÁREA: Frontend / UI / Navegación
