@@ -36,7 +36,8 @@ window.presentationData = [
                 name: "Programación",
                 topics: [
                     { title: "Introducción a los Lenguajes de Programación", file: "II_BTP_A/Programacion/intro_lenguajes_programacion.html" },
-                    { title: "Lenguajes compilados e interpretados / Bucles", file: "II_BTP_A/Programacion/lenguajes_compilados_interpretados.html" }
+                    { title: "Lenguajes compilados e interpretados / Bucles", file: "II_BTP_A/Programacion/lenguajes_compilados_interpretados.html" },
+                    { title: "Lenguajes declarativos / Bucle Mientras", file: "II_BTP_A/Programacion/lenguajes_declarativos_mientras.html" }
                 ]
             }
             /* {
@@ -82,7 +83,8 @@ window.presentationData = [
                 name: "Diseño Web",
                 topics: [
                     { title: "Introducción a CSS", file: "III_BTP_A/dw_II/introduccion_css.html" },
-                    { title: "Enlazar estilos CSS / Etiquetas autocerrables", file: "III_BTP_A/dw_II/enlazar_estilos_autocerrables.html" }
+                    { title: "Enlazar estilos CSS / Etiquetas autocerrables", file: "III_BTP_A/dw_II/enlazar_estilos_autocerrables.html" },
+                    { title: "Medidas en CSS (px, em, %)", file: "III_BTP_A/dw_II/medidas_css.html" }
                 ]
             }
             /* {

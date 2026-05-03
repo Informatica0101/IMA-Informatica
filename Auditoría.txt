@@ -122,3 +122,10 @@ AUDITORÍA PRESENTACIONES SEMANA 26 DE ABRIL (26/04/2026)
 - Hallazgo Lógico: El quiz se bloqueaba; se implementó avance automático de 2 segundos. (SOLUCIONADO)
 - Hallazgo Estético: La retroalimentación del quiz debe usar verde (#16a34a) y rojo (#dc2626). (SOLUCIONADO)
 - Hallazgo Limpieza: Eliminar texto redundante de la diapositiva final. (SOLUCIONADO)
+
+AUDITORÍA PRESENTACIONES SEMANA 03 DE MAYO (03/05/2026)
+------------------------------------------------------
+- Archivos involucrados: II_BTP_A/Programacion/lenguajes_declarativos_mientras.html, III_BTP_A/dw_II/medidas_css.html
+- Hallazgo: Los temas para esta semana son Lenguajes Declarativos y Bucle Mientras (Programación) y Medidas en CSS (Diseño Web).
+- Hallazgo Lógico: Se mantiene el avance automático de 2 segundos y retroalimentación cromática en el quiz.
+- Tarea: Crear presentaciones siguiendo el estándar de 16 slides de 2026. (COMPLETADA)

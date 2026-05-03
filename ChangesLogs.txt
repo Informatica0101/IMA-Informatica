@@ -867,5 +867,12 @@ DESCRIPCIÓN DE CAMBIOS:
   - Aplicada retroalimentación de color en el quiz: Verde (#16a34a) y Rojo (#dc2626).
   - Ajustado contenido de Diseño Web para centrarse en <link> y elementos void, evitando redundancia con la clase previa.
   - Eliminado texto redundante en la diapositiva de cierre.
+
+03/05/2026
+- Archivos: II_BTP_A/Programacion/lenguajes_declarativos_mientras.html, III_BTP_A/dw_II/medidas_css.html
+  - Generación de presentaciones de 16 diapositivas para la semana del 3 de mayo.
+  - El tema de Programación cubrió Lenguajes Declarativos y el Bucle "Mientras" (while).
+  - El tema de Diseño Web se enfocó en Medidas en CSS (Unidades absolutas vs relativas).
+  - Implementado sistema de quiz automático con retroalimentación cromática y transición de slides.
 - Archivo: js/data.js
   - Inserción de los nuevos temas en el menú de navegación "Cursos".
