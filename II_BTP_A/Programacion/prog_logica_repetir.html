@@ -165,80 +165,80 @@
                 <h2>Programación Lógica / Bucle Repetir</h2>
                 <div class="mt-8 text-lg text-gray-500">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 10 de mayo de 2026</p>
+                    <p>Fecha: 17 de mayo de 2026</p>
                     <p>Grado: II BTP Informática Sección "A"</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: Concepto de Programación Lógica -->
+            <!-- Diapositiva 2: Concepto de Programación Lógica (PDF p.58) -->
             <div class="slide">
                 <h3>Programación Lógica</h3>
-                <p>Es un paradigma de programación basado en la lógica de primer orden. En lugar de dar órdenes, definimos relaciones.</p>
+                <p>Consiste en emplear la lógica como lenguaje de programación. Es <strong>declarativa</strong> porque sirve para especificar <strong>qué</strong> problema resolver (condiciones).</p>
                 <div class="concept-box">
-                    <p>El programador describe el problema mediante axiomas y reglas, y el sistema utiliza un motor de inferencia para encontrar soluciones.</p>
+                    <p>Se especifican las condiciones que satisfacen las soluciones, y estas se deducen a partir de las mismas.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 3: Hechos (Facts) -->
+            <!-- Diapositiva 3: Relación entre Entidades (PDF p.58) -->
             <div class="slide">
-                <h3>Hechos (Facts)</h3>
-                <p>Son declaraciones que establecen una relación entre objetos o una propiedad de un objeto que se asume como verdadera.</p>
-                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-blue-500">
-                    progenitor(juan, maria). <br>
-                    humano(juan).
-                </div>
-                <p class="mt-4 text-sm">Significa: "Juan es progenitor de María" y "Juan es humano".</p>
-            </div>
-
-            <!-- Diapositiva 4: Reglas (Rules) -->
-            <div class="slide">
-                <h3>Reglas (Rules)</h3>
-                <p>Permiten inferir nuevos hechos a partir de otros hechos existentes. Tienen una estructura condicional.</p>
-                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-blue-500">
-                    hijo(X, Y) :- progenitor(Y, X).
-                </div>
-                <p class="mt-4 text-sm">Se lee: "X es hijo de Y <strong>si</strong> Y es progenitor de X".</p>
-            </div>
-
-            <!-- Diapositiva 5: Lenguaje Prolog -->
-            <div class="slide">
-                <h3>El Lenguaje Prolog</h3>
-                <p>Es el lenguaje más representativo de este paradigma. Sus siglas significan "PROgrammation en LOGique".</p>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li>Utilizado ampliamente en Inteligencia Artificial.</li>
-                    <li>No tiene estructuras de control tradicionales (if, for, while).</li>
-                    <li>Se basa en la recursividad y la unificación.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 6: Consultas e Inferencia -->
-            <div class="slide">
-                <h3>Consultas e Inferencia</h3>
-                <p>Una vez definida la base de conocimientos (hechos y reglas), realizamos preguntas al sistema.</p>
+                <h3>Relaciones y Entidades</h3>
+                <p>En la programación lógica se trabaja de forma descriptiva, estableciendo relaciones entre entidades.</p>
                 <div class="concept-box border-blue-400">
-                    <p><strong>Unificación:</strong> Proceso de emparejar variables con constantes.<br><strong>Backtracking:</strong> Búsqueda de alternativas si una rama falla.</p>
+                    <p><strong>Relación:</strong> El vínculo o propiedad que une a los elementos.<br><strong>Entidad (Objeto):</strong> Los elementos o sujetos sobre los que recae la relación.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: Algoritmos = Lógica + Control (PDF p.58) -->
+            <div class="slide">
+                <h3>Idea Esencial</h3>
+                <p class="font-bold text-2xl text-blue-600 italic">Algoritmos = Lógica + Control</p>
+                <div class="concept-box">
+                    <ul class="list-disc list-inside space-y-4">
+                        <li><strong>Lógica:</strong> El conocimiento especificado en un lenguaje formal.</li>
+                        <li><strong>Control:</strong> Mecanismo de inferencia que actúa sobre el conocimiento.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Ejemplo: Objetos y Relaciones -->
+            <div class="slide">
+                <h3>Ejemplo de Aplicación</h3>
+                <p>Si queremos representar que "Juan es el padre de María":</p>
+                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-blue-500">
+                    padre(juan, maria).
+                </div>
+                <div class="mt-4 text-left">
+                    <p><strong>Relación:</strong> padre</p>
+                    <p><strong>Objetos (Entidades):</strong> juan, maria</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: Lenguaje Prolog (PDF p.58) -->
+            <div class="slide">
+                <h3>Prolog</h3>
+                <p>Es uno de los lenguajes más representativos. Clásico de la <strong>Inteligencia Artificial</strong> y aplicado en el desarrollo de software comercial.</p>
+                <div class="concept-box bg-blue-50">
+                    <p>Utiliza la lógica de primer orden para resolver problemas mediante un mecanismo de inferencia.</p>
                 </div>
             </div>
 
             <!-- Diapositiva 7: Ejercicio 1 -->
             <div class="slide">
-                <h3>Ejercicio 1: Lógica Familiar</h3>
-                <p>Dada la siguiente base de conocimientos, escribe la regla para "Abuelo":</p>
-                <div class="bg-gray-100 p-4 rounded text-left font-mono mb-4">
-                    progenitor(pablo, juan).<br>
-                    progenitor(juan, luis).
+                <h3>Ejercicio en Clase</h3>
+                <p>Identifica los objetos y la relación en las siguientes sentencias lógicas:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <div class="bg-gray-100 p-4 rounded text-left font-mono">color(cielo, azul).</div>
+                    <div class="bg-gray-100 p-4 rounded text-left font-mono">es_un(perro, mamifero).</div>
                 </div>
-                <div class="concept-box bg-blue-50 border-blue-300">
-                    <p class="italic text-center">abuelo(X, Z) :- progenitor(X, Y), progenitor(Y, Z).</p>
-                </div>
+                <p class="mt-4 text-sm italic">Escribe tus respuestas en el cuaderno.</p>
             </div>
 
-            <!-- Diapositiva 8: Bucle Repetir (Concepto) -->
+            <!-- Diapositiva 8: Bucle Repetir (Concepto General) -->
             <div class="slide">
-                <h3>Estructura "Repetir" (Repeat-Until)</h3>
-                <p>Es una estructura de control iterativa que ejecuta un bloque de instrucciones y luego evalúa una condición.</p>
+                <h3>El Bucle "Repetir"</h3>
+                <p>Es una estructura iterativa que ejecuta un bloque de código y luego evalúa una condición.</p>
                 <div class="concept-box">
-                    <p>A diferencia del "Mientras", esta estructura garantiza que el cuerpo del bucle se ejecute <strong>al menos una vez</strong>.</p>
+                    <p><strong>Diferencia clave:</strong> A diferencia del "Mientras", el bloque de instrucciones se ejecuta <strong>al menos una vez</strong>.</p>
                 </div>
             </div>
 
@@ -250,59 +250,59 @@
                     &nbsp;&nbsp;Instrucciones...<br>
                     Hasta Que (condición)
                 </div>
-                <p class="mt-6 text-sm italic">El bucle se repite <strong>hasta que</strong> la condición sea verdadera (sale cuando es cierta).</p>
+                <p class="mt-6 text-sm italic">Se repite el proceso MIENTRAS la condición sea falsa, y se sale cuando sea verdadera.</p>
             </div>
 
-            <!-- Diapositiva 10: Comparativa: Mientras vs Repetir -->
+            <!-- Diapositiva 10: Funcionamiento Lógico -->
+            <div class="slide">
+                <h3>Flujo de Ejecución</h3>
+                <ol class="text-left mt-6 list-decimal list-inside space-y-4">
+                    <li>Se ejecutan las instrucciones una vez.</li>
+                    <li>Se evalúa la condición al final.</li>
+                    <li>Si es <strong>Falsa</strong>, vuelve al paso 1.</li>
+                    <li>Si es <strong>Verdadera</strong>, termina el bucle.</li>
+                </ol>
+            </div>
+
+            <!-- Diapositiva 11: Ejemplo Desarrollado -->
+            <div class="slide">
+                <h3>Ejemplo: Validar número positivo</h3>
+                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono">
+                    Repetir<br>
+                    &nbsp;&nbsp;Escribir "Ingrese un número mayor a 0:"<br>
+                    &nbsp;&nbsp;Leer n<br>
+                    Hasta Que (n > 0)
+                </div>
+                <p class="mt-4 text-sm">El programa seguirá pidiendo el número hasta que el usuario ingrese uno correcto.</p>
+            </div>
+
+            <!-- Diapositiva 12: Comparativa -->
             <div class="slide">
                 <h3>Mientras vs Repetir</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <div class="bg-blue-50 p-6 rounded-lg text-left">
-                        <p class="font-bold">Mientras (While):</p>
-                        <p class="text-sm">Evalúa al inicio. Puede ejecutarse 0 veces. Sale cuando la condición es falsa.</p>
+                    <div class="text-left bg-blue-50 p-4 rounded">
+                        <p class="font-bold">Mientras:</p>
+                        <ul class="text-sm list-disc list-inside">
+                            <li>Evalúa al inicio.</li>
+                            <li>Puede ejecutarse 0 veces.</li>
+                        </ul>
                     </div>
-                    <div class="bg-green-50 p-6 rounded-lg text-left">
-                        <p class="font-bold">Repetir (Do-Until):</p>
-                        <p class="text-sm">Evalúa al final. Se ejecuta mínimo 1 vez. Sale cuando la condición es verdadera.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 11: Ejemplo: Contador 1 al 5 -->
-            <div class="slide">
-                <h3>Ejemplo Práctico</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-gray-100 p-4 rounded text-left font-mono">
-                        i = 1<br>
-                        Repetir<br>
-                        &nbsp;&nbsp;Escribir i<br>
-                        &nbsp;&nbsp;i = i + 1<br>
-                        Hasta Que (i > 5)
-                    </div>
-                    <div class="bg-blue-50 p-4 rounded text-left flex flex-col justify-center">
-                        <p class="font-bold">Resultado:</p>
-                        <p>Imprime: 1, 2, 3, 4, 5</p>
-                        <p class="text-xs mt-2 italic">Nota: Sale cuando i llega a 6.</p>
+                    <div class="text-left bg-green-50 p-4 rounded">
+                        <p class="font-bold">Repetir:</p>
+                        <ul class="text-sm list-disc list-inside">
+                            <li>Evalúa al final.</li>
+                            <li>Se ejecuta al menos 1 vez.</li>
+                        </ul>
                     </div>
                 </div>
-            </div>
-
-            <!-- Diapositiva 12: Casos de Uso del Repetir -->
-            <div class="slide">
-                <h3>¿Cuándo usar "Repetir"?</h3>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><strong>Menús de usuario:</strong> Mostrar el menú al menos una vez antes de preguntar la opción.</li>
-                    <li><strong>Validación de datos:</strong> Pedir un dato y repetir si es incorrecto.</li>
-                    <li><strong>Procesos interactivos:</strong> "Desea continuar (S/N)".</li>
-                </ul>
             </div>
 
             <!-- Diapositiva 13: Ejercicio 2 -->
             <div class="slide">
-                <h3>Ejercicio 2: Validación</h3>
-                <p>Escribe en tu cuaderno un algoritmo que pida un número positivo. Si el usuario ingresa un número negativo, debe volver a pedirlo.</p>
+                <h3>Ejercicio Práctico</h3>
+                <p>Escribe un algoritmo que sume números ingresados por el usuario hasta que la suma total sea mayor a 100.</p>
                 <div class="concept-box bg-green-50 border-green-400">
-                    <p><strong>Pista:</strong> Repetir... Leer num... Hasta Que (num >= 0)</p>
+                    <p>Utiliza la estructura <strong>Repetir</strong> para garantizar que se pida al menos un número.</p>
                 </div>
             </div>
 
@@ -330,7 +330,7 @@
             <div class="slide">
                 <h2>¡Muchas Gracias!</h2>
                 <div class="concept-box border-blue-600">
-                    <p><strong>Asignación:</strong> Investigar cómo se escribe el bucle "Do-While" en el lenguaje C++ y compararlo con el "Repetir" de pseudocódigo.</p>
+                    <p><strong>Asignación:</strong> Realizar un mapa conceptual sobre la Programación Lógica y sus diferencias con la Programación Imperativa.</p>
                     <p class="mt-4 text-sm">Fecha de entrega: Próxima clase.</p>
                 </div>
             </div>
@@ -361,16 +361,16 @@
         let currentSlide = 0;
 
         const quizData = [
-            { q: "¿En qué se basa la programación lógica?", options: ["Órdenes secuenciales", "Lógica de primer orden", "Gestión de memoria", "Eventos del mouse"], a: "Lógica de primer orden" },
-            { q: "¿Qué es un 'hecho' en Prolog?", options: ["Una función matemática", "Una declaración verdadera", "Un error del sistema", "Un comentario"], a: "Una declaración verdadera" },
-            { q: "¿Cuál es el lenguaje más usado en este paradigma?", options: ["Java", "Prolog", "C++", "Python"], a: "Prolog" },
-            { q: "¿Qué permite una 'regla'?", options: ["Borrar datos", "Inferir nuevos hechos", "Dibujar gráficos", "Apagar el equipo"], a: "Inferir nuevos hechos" },
-            { q: "¿Cómo busca Prolog las respuestas?", options: ["Unificación y Backtracking", "Orden alfabético", "Solo de arriba a abajo", "Por azar"], a: "Unificación y Backtracking" },
-            { q: "¿Cuándo se evalúa la condición en 'Repetir'?", options: ["Al principio", "Al final", "Nunca", "Solo si hay error"], a: "Al final" },
-            { q: "¿Cuántas veces se ejecuta mínimo el 'Repetir'?", options: ["0 veces", "1 vez", "10 veces", "Infinitas"], a: "1 vez" },
-            { q: "¿Cuándo sale el flujo del bucle 'Repetir'?", options: ["Condición es falsa", "Condición es verdadera", "Al presionar Esc", "Al terminar la RAM"], a: "Condición es verdadera" },
-            { q: "¿Para qué es ideal el bucle 'Repetir'?", options: ["Cálculos complejos", "Validación de entradas", "No usar variables", "Crear arreglos"], a: "Validación de entradas" },
-            { q: "¿Qué significa Prolog?", options: ["Programación Lógica", "Proceso Logístico", "Protocolo Libre", "Primer Logro"], a: "Programación Lógica" }
+            { q: "¿Qué caracteriza a la programación lógica?", options: ["Uso de órdenes", "Es declarativa", "Manejo de memoria", "Es secuencial"], a: "Es declarativa" },
+            { q: "¿Qué especifica el programador en este paradigma?", options: ["Cómo resolverlo", "Qué problema resolver", "El hardware a usar", "El tiempo de ejecución"], a: "Qué problema resolver" },
+            { q: "¿Cuál es la idea esencial de la prog. lógica?", options: ["Input + Output", "Lógica + Control", "Datos + Código", "Variables + RAM"], a: "Lógica + Control" },
+            { q: "¿En qué lenguaje se basa la prog. lógica?", options: ["C++", "Prolog", "Java", "Python"], a: "Prolog" },
+            { q: "¿Qué es una 'entidad' en este contexto?", options: ["Una relación", "Un objeto", "Un error", "Una función"], a: "Un objeto" },
+            { q: "¿Cuántas veces corre mínimo el bucle 'Repetir'?", options: ["0 veces", "1 vez", "10 veces", "Infinitas"], a: "1 vez" },
+            { q: "¿Cuándo se evalúa la condición en 'Repetir'?", options: ["Al inicio", "Al final", "En el medio", "Nunca"], a: "Al final" },
+            { q: "¿Qué lenguaje es clásico de la IA?", options: ["Assembly", "Prolog", "Cobol", "Fortran"], a: "Prolog" },
+            { q: "¿Cuándo sale el flujo del bucle 'Repetir'?", options: ["Condición es falsa", "Condición es verdadera", "Al dar error", "Al apagar la PC"], a: "Condición es verdadera" },
+            { q: "¿Cómo se describen los algoritmos según el PDF?", options: ["Instrucciones", "Conocimiento formal", "Dibujos", "Solo números"], a: "Conocimiento formal" }
         ];
         let currentQuiz = 0;
 
@@ -403,8 +403,8 @@
                 return;
             }
 
-            if (currentSlide === 13 && currentQuiz >= 5) { showSlide(14); return; }
-            if (currentSlide === 14 && currentQuiz < 5) { showSlide(13); return; }
+            if (currentQuiz < 5 && currentSlide === 14) { showSlide(13); return; }
+            if (currentQuiz >= 5 && currentSlide === 13) { showSlide(14); return; }
 
             const data = quizData[currentQuiz];
             questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
