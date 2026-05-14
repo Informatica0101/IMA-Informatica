@@ -425,3 +425,22 @@ span.rounded-full {
     scrollbar-width: thin;
     scrollbar-color: #ccc #f1f1f1;
 }
+
+/* --- TAILWIND COMPATIBILITY SHIM (A-57) --- */
+/* To maintain compatibility with core simulator files while strictly avoiding external dependencies */
+.flex { display: flex !important; }
+.flex-col { flex-direction: column !important; }
+.items-center { align-items: center !important; }
+.justify-center { justify-content: center !important; }
+.justify-between { justify-content: space-between !important; }
+.gap-2 { gap: 0.5rem !important; }
+.gap-4 { gap: 1rem !important; }
+.grid { display: grid !important; }
+.hidden { display: none !important; }
+.w-full { width: 100% !important; }
+.text-center { text-align: center !important; }
+.font-bold { font-weight: 700 !important; }
+.text-white { color: white !important; }
+.bg-blue-600 { background-color: #0d6efd !important; }
+.rounded-xl { border-radius: 0.75rem !important; }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important; }

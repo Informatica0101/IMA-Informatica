@@ -168,3 +168,14 @@ ESTADO: PENDIENTE DE REVISIÓN
 - Generadas nuevas presentaciones para la semana del 22 de marzo de 2026: "Tablas y etiquetas div/span" (Diseño Web I) y "Diagramas de flujo" (Programación I).
 - Normalizados los IDs de los elementos estructurales de la página en todos los archivos del año 2026.
 - Integradas las nuevas presentaciones en el menú de navegación del encabezado (js/data.js).
+
+TAREA: [A-57]
+TÍTULO: Migración Bootstrap 5 y Presentaciones 17 Mayo
+ÁREA: Frontend / Contenido
+PRIORIDAD: CRÍTICA
+ESTADO: PENDIENTE DE REVISIÓN
+- Migración total de Tailwind CSS a Bootstrap 5 en 60 archivos.
+- Reparación de carga de estilos y componentes mediante estandarización de caché (v=13).
+- Generación de presentaciones de 16 slides para Programación (Lógica/Repetir) y Diseño Web (Personalización unificada).
+- Contenido de Bucle Repetir investigado externamente según requerimiento.
+- Quizzes de 10 preguntas actualizados con feedback cromático.

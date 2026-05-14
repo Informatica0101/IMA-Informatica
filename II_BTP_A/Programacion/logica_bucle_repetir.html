@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lenguajes compilados e interpretados / Bucle Para</title>
-    <!-- CDN de Tailwind CSS -->
+    <title>Programación Lógica / Bucle Repetir</title>
+    <!-- CDN de Bootstrap 5 (Migración completada) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts - Inter & Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
     <style>
         /* Universal box-sizing */
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         /* Configuración base */
         html, body {
@@ -92,6 +90,8 @@
             max-width: 900px;
         }
 
+        .concept-box * { font-size: 1.5rem !important; }
+
         /* Botones de navegación */
         .nav-button {
             background-color: #0d6efd;
@@ -149,13 +149,13 @@
 </head>
 <body class="antialiased">
 
-    <header id="page-header" class="w-full bg-white p-4 shadow-sm flex justify-between items-center z-50">
-        <div class="flex items-center space-x-4">
+    <header id="page-header" class="w-full bg-white p-4 shadow-sm d-flex justify-content-between align-items-center z-3">
+        <div class="d-flex align-items-center space-x-4">
             <img src="../../imagenes/logo.png" alt="Logo IMA" style="width: 150px; height: auto;">
-            <h1 class="text-xl font-bold text-gray-800">Programación I</h1>
+            <h1 class="text-xl font-bold text-dark ms-3">Programación I</h1>
         </div>
         <nav>
-            <a href="../../index.html" class="text-gray-600 hover:text-blue-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
+            <a href="../../index.html" class="text-secondary fw-semibold text-decoration-none small">Volver al Inicio</a>
         </nav>
     </header>
 
@@ -164,190 +164,197 @@
             <!-- Diapositiva 1: Portada -->
             <div class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
-                <h2>Lenguajes compilados e interpretados / Estructuras de control (Bucle Para)</h2>
-                <div class="mt-8 text-lg text-gray-500">
+                <h2>Programación Lógica / Estructuras de Control (Repetir)</h2>
+                <div class="mt-8 text-lg text-secondary">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 26 de abril de 2026</p>
+                    <p>Fecha: 17 de mayo de 2026</p>
                     <p>Grado: II BTP Informática Sección "A"</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: Concepto de Compilación -->
+            <!-- Diapositiva 2: Concepto de Programación Lógica -->
             <div class="slide">
-                <h3>El Proceso de Compilación</h3>
-                <p>Un compilador es un programa que traduce un programa escrito en un lenguaje de alto nivel a lenguaje de máquina.</p>
+                <h3>Programación Lógica</h3>
+                <p>Es un paradigma de programación basado en la lógica formal, específicamente en la lógica de predicados.</p>
+                <div class="concept-box bg-blue-50">
+                    <p>En este modelo, no decimos a la computadora "cómo" hacer las cosas, sino que definimos relaciones y permitimos que el sistema deduzca los resultados.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: Hechos (Facts) -->
+            <div class="slide">
+                <h3>Los Hechos</h3>
+                <p>Son verdades fundamentales que establecemos dentro de nuestro sistema lógico.</p>
                 <div class="concept-box">
-                    <p><strong>Traducción Previa:</strong> El compilador traduce el código completo antes de que el programa se ejecute, creando un archivo llamado "código objeto".</p>
+                    <p>Ejemplo en Prolog:</p>
+                    <code class="font-mono text-primary">humano(socrates).</code><br>
+                    <code class="font-mono text-primary">animal(perro).</code>
+                    <p class="mt-3 small">Esto afirma que Sócrates es humano y el perro es un animal.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 3: Ventajas de la Compilación -->
+            <!-- Diapositiva 4: Reglas (Rules) -->
             <div class="slide">
-                <h3>Ventajas de los Lenguajes Compilados</h3>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><strong>Velocidad:</strong> El programa se ejecuta mucho más rápido porque ya está en lenguaje de máquina.</li>
-                    <li><strong>Optimización:</strong> El compilador puede mejorar el código durante la traducción.</li>
-                    <li><strong>Seguridad:</strong> El código fuente no necesita ser distribuido con el ejecutable.</li>
+                <h3>Las Reglas</h3>
+                <p>Definen relaciones lógicas que permiten al sistema inferir nueva información a partir de los hechos.</p>
+                <div class="concept-box border-success bg-success bg-opacity-10">
+                    <p>Sintaxis conceptual:</p>
+                    <p><em>"Si X es humano, entonces X es mortal."</em></p>
+                    <code class="font-mono text-success">mortal(X) :- humano(X).</code>
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Motor de Inferencia -->
+            <div class="slide">
+                <h3>Motor de Inferencia</h3>
+                <p>Es el componente que procesa los hechos y las reglas para responder consultas.</p>
+                <ul class="text-start mt-6 list-disc list-inside space-y-3">
+                    <li><strong>Unificación:</strong> Busca coincidencias entre la consulta y la base de conocimientos.</li>
+                    <li><strong>Backtracking:</strong> Vuelve atrás si una ruta lógica no llega a una solución.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 4: Concepto de Interpretación -->
+            <!-- Diapositiva 6: Aplicaciones de la Prog. Lógica -->
             <div class="slide">
-                <h3>El Proceso de Interpretación</h3>
-                <p>Un intérprete traduce y ejecuta el programa línea por línea, conforme sea necesario durante el proceso de datos.</p>
-                <div class="concept-box border-yellow-500">
-                    <p><strong>Traducción en Tiempo Real:</strong> No se graba un código objeto; el intérprete debe estar presente cada vez que se corre el programa.</p>
+                <h3>¿Dónde se aplica?</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <div class="p-4 bg-light rounded-3 text-start">
+                        <p class="fw-bold text-primary">Inteligencia Artificial</p>
+                        <p class="small">Sistemas de diagnóstico médico y razonamiento automático.</p>
+                    </div>
+                    <div class="p-4 bg-light rounded-3 text-start">
+                        <p class="fw-bold text-primary">Procesamiento de Lenguaje</p>
+                        <p class="small">Análisis gramatical y traducción automática de idiomas.</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 5: Ventajas de la Interpretación -->
+            <!-- Diapositiva 7: Ejercicio 1: Lógica -->
             <div class="slide">
-                <h3>Ventajas de los Lenguajes Interpretados</h3>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><strong>Tiempo de Diseño:</strong> Es más rápido desarrollar porque no hay que esperar a que el código se compile tras cada cambio.</li>
-                    <li><strong>Depuración:</strong> Es más fácil encontrar y corregir errores sobre la marcha.</li>
-                    <li><strong>Multiplataforma:</strong> El mismo código fuente puede correr en distintos sistemas que tengan el intérprete.</li>
+                <h3>Ejercicio 1: Deducción</h3>
+                <p>Escribe en tu cuaderno una regla lógica para definir quién es un "abuelo" basándote en el hecho "padre".</p>
+                <div class="concept-box text-center fst-italic">
+                    Pista: X es abuelo de Z si X es padre de Y Y Y es padre de Z.
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: El Bucle Repetir (Concepto) -->
+            <div class="slide">
+                <h3>Bucle Repetir (Do-Until)</h3>
+                <p>Es una estructura de control que repite un bloque de instrucciones <strong>hasta que</strong> se cumple una condición.</p>
+                <div class="concept-box border-warning bg-warning bg-opacity-10">
+                    <p>A diferencia del bucle "Mientras", el bloque de código se ejecuta <strong>al menos una vez</strong>, ya que la condición se evalúa al final.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Diferencia con "Mientras" -->
+            <div class="slide">
+                <h3>Repetir vs Mientras</h3>
+                <div class="row w-100 mt-4">
+                    <div class="col-md-6 p-3">
+                        <div class="p-4 bg-light border-top border-4 border-blue-500 rounded text-start h-100">
+                            <p class="fw-bold">Mientras (While)</p>
+                            <p class="small">Evalúa <strong>antes</strong> de entrar. Puede ejecutarse 0 veces.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 p-3">
+                        <div class="p-4 bg-light border-top border-4 border-orange-500 rounded text-start h-100">
+                            <p class="fw-bold">Repetir (Until)</p>
+                            <p class="small">Evalúa <strong>después</strong> de entrar. Se ejecuta mínimo 1 vez.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Sintaxis en PSeInt -->
+            <div class="slide">
+                <h3>Sintaxis en Pseudocódigo</h3>
+                <div class="bg-dark text-white p-5 rounded-4 text-start font-mono shadow-lg mt-4" style="font-size: 1.8rem !important;">
+                    <span class="text-info">Repetir</span><br>
+                    &nbsp;&nbsp;&nbsp;instrucciones...<br>
+                    <span class="text-info">Hasta Que</span> <span class="text-warning">condicion</span>
+                </div>
+                <p class="mt-4 small italic">El bucle termina cuando la condición es <strong>Verdadera</strong>.</p>
+            </div>
+
+            <!-- Diapositiva 11: Ejemplo Práctico -->
+            <div class="slide">
+                <h3>Ejemplo: Validación de Datos</h3>
+                <p>Pedir un número hasta que sea positivo:</p>
+                <div class="bg-light p-4 rounded-3 text-start font-mono border w-100 max-w-lg">
+                    Repetir<br>
+                    &nbsp;&nbsp;Escribir "Ingrese un número mayor a 0:"<br>
+                    &nbsp;&nbsp;Leer n<br>
+                    Hasta Que n > 0
+                </div>
+                <p class="mt-4 text-secondary">Si el usuario ingresa -5, el programa volverá a preguntar.</p>
+            </div>
+
+            <!-- Diapositiva 12: Casos de Uso del Repetir -->
+            <div class="slide">
+                <h3>¿Cuándo usar Repetir?</h3>
+                <ul class="text-start mt-6 list-disc list-inside space-y-4">
+                    <li><strong>Menús de Usuario:</strong> Para mostrar las opciones y volver a pedirlas si la opción es inválida.</li>
+                    <li><strong>Ingreso de Contraseñas:</strong> Para asegurar que el código se ejecute al menos una vez antes de verificar.</li>
+                    <li><strong>Cualquier proceso</strong> que deba intentar una acción inicial antes de decidir si continúa.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 6: Comparativa Final -->
+            <!-- Diapositiva 13: Ejercicio 2: Bucle -->
             <div class="slide">
-                <h3>Compilación vs Interpretación</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <div class="bg-blue-50 p-6 rounded-lg border-t-4 border-blue-500 text-left">
-                        <h4 class="font-bold text-xl mb-2">Compilados</h4>
-                        <p class="text-base">Ejecución rápida, requieren paso de traducción previo. Ejemplos: C++, Java (Híbrido).</p>
-                    </div>
-                    <div class="bg-yellow-50 p-6 rounded-lg border-t-4 border-yellow-500 text-left">
-                        <h4 class="font-bold text-xl mb-2">Interpretados</h4>
-                        <p class="text-base">Ejecución más lenta, desarrollo más ágil. Ejemplos: Python, PHP, JavaScript.</p>
-                    </div>
+                <h3>Ejercicio 2: Algoritmo</h3>
+                <p>Escribe en tu cuaderno un algoritmo que pida al usuario presionar la tecla "S" para salir, usando un bucle Repetir.</p>
+                <div class="concept-box bg-light">
+                    <p>Requisito: El programa debe terminar únicamente cuando la variable de entrada sea igual a "S".</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 7: Ejercicio 1 -->
-            <div class="slide">
-                <h3>Ejercicio 1: Identificación</h3>
-                <p>En tu cuaderno, haz una lista de 3 lenguajes de programación que conozcas e investiga si son principalmente compilados o interpretados.</p>
-                <div class="concept-box bg-blue-50 border-blue-400">
-                    <p><strong>Pregunta de reflexión:</strong> ¿Por qué crees que los videojuegos de alta gama suelen escribirse en lenguajes compilados como C++?</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Introducción a los Bucles -->
-            <div class="slide">
-                <h3>Estructuras de Control: Bucles</h3>
-                <p>Un bucle es una estructura que permite repetir un bloque de instrucciones.</p>
-                <div class="concept-box">
-                    <p><strong>¿Cuándo se utilizan?</strong> Se usan cuando necesitamos realizar una misma tarea múltiples veces sobre diferentes datos o simplemente repetir un proceso un número determinado de veces.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: El Bucle "Para" (For) -->
-            <div class="slide">
-                <h3>El Bucle "Para"</h3>
-                <p>Se utiliza específicamente cuando conocemos de antemano el número exacto de veces que queremos que se repita la acción.</p>
-                <div class="bg-gray-100 p-4 rounded text-left mt-4 font-mono text-lg">
-                    Para variable = inicio Hasta fin Con Paso incremento Hacer<br>
-                    &nbsp;&nbsp;Instrucciones...<br>
-                    FinPara
-                </div>
-            </div>
-
-            <!-- Diapositiva 10: Explicación de la Sintaxis -->
-            <div class="slide">
-                <h3>Componentes del Bucle Para</h3>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><strong>Variable de control:</strong> Almacena el número de la repetición actual.</li>
-                    <li><strong>Valor Inicial y Final:</strong> Definen el rango de ejecución.</li>
-                    <li><strong>Incremento:</strong> Define cuánto aumenta la variable en cada vuelta.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 11: Ejemplo Simple -->
-            <div class="slide">
-                <h3>Ejemplo: Imprimir números del 1 al 5</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-gray-100 p-4 rounded text-left font-mono">
-                        Para i = 1 Hasta 5 Hacer<br>
-                        &nbsp;&nbsp;Escribir i<br>
-                        FinPara
-                    </div>
-                    <div class="bg-blue-50 p-4 rounded text-left">
-                        <p class="font-bold">Resultado:</p>
-                        <p>1, 2, 3, 4, 5</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Bucle Para en otros Lenguajes -->
-            <div class="slide">
-                <h3>Sintaxis en C, C++ y JavaScript</h3>
-                <p>Curiosamente, estos tres lenguajes comparten la misma sintaxis para el bucle for:</p>
-                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-lg">
-                    for (int i = 1; i <= 5; i++) {<br>
-                    &nbsp;&nbsp;// Instrucciones en C/C++<br>
-                    }<br><br>
-                    for (let i = 1; i <= 5; i++) {<br>
-                    &nbsp;&nbsp;// Instrucciones en JavaScript<br>
-                    }
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Ejercicio 2 -->
-            <div class="slide">
-                <h3>Ejercicio 2: Práctica de Lógica</h3>
-                <p>Escribe en pseudocódigo un bucle "Para" que imprima la tabla del 2 (del 2 al 20).</p>
-                <div class="concept-box bg-green-50 border-green-400">
-                    <p><strong>Pista:</strong> Puedes usar el incremento o multiplicar la variable de control por 2 en cada vuelta.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 14: Cuestionario Interactivo (Parte 1) -->
+            <!-- Diapositiva 14: Cuestionario (Parte 1) -->
             <div class="slide">
                 <h3>Cuestionario: Evaluación</h3>
-                <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
-                    <div class="quiz-options flex flex-col gap-2"></div>
-                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
+                <div class="quiz-container max-w-2xl w-100">
+                    <p class="quiz-question mb-4 fw-bold text-xl text-primary text-start"></p>
+                    <div class="quiz-options d-flex flex-column gap-2"></div>
+                    <p class="quiz-feedback mt-4 fw-bold text-lg"></p>
                 </div>
             </div>
 
-            <!-- Diapositiva 15: Cuestionario Interactivo (Parte 2) -->
+            <!-- Diapositiva 15: Cuestionario (Parte 2) -->
             <div class="slide">
                 <h3>Cuestionario: Continuación</h3>
-                <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
-                    <div class="quiz-options flex flex-col gap-2"></div>
-                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
+                <div class="quiz-container max-w-2xl w-100">
+                    <p class="quiz-question mb-4 fw-bold text-xl text-primary text-start"></p>
+                    <div class="quiz-options d-flex flex-column gap-2"></div>
+                    <p class="quiz-feedback mt-4 fw-bold text-lg"></p>
                 </div>
             </div>
 
             <!-- Diapositiva 16: Fin y Asignación -->
             <div class="slide">
                 <h2>¡Muchas Gracias!</h2>
-                <div class="concept-box border-blue-600">
-                    <p><strong>Asignación:</strong> Realizar ejercicios prácticos de bucles (Para) en el cuaderno para reforzar la lógica de iteración.</p>
-                    <p class="mt-4 text-sm">Fecha de entrega: Próxima clase.</p>
+                <div class="concept-box border-primary">
+                    <p><strong>Asignación:</strong> Realizar un algoritmo que sume números ingresados por el usuario hasta que el total sea mayor a 100.</p>
+                    <p class="mt-4 small">Fecha de entrega: Próxima clase (24 de mayo).</p>
                 </div>
             </div>
         </div>
 
         <!-- Controles -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-4 z-20">
+        <div class="position-absolute bottom-0 start-50 translate-middle-x mb-5 d-flex gap-3 z-3">
             <button id="prev-btn" class="nav-button">Anterior</button>
             <button id="next-btn" class="nav-button">Siguiente</button>
         </div>
         <div id="slide-counter">1 / 16</div>
     </main>
 
-    <footer id="page-footer" class="w-full bg-gray-900 text-white text-center p-2 text-sm">
-        <div class="flex items-center justify-center space-x-2">
+    <footer id="page-footer" class="w-100 bg-dark text-white text-center p-2 small z-3">
+        <div class="d-flex align-items-center justify-content-center gap-2">
             <img src="../../imagenes/bandera-de-honduras.png" alt="Honduras" width="60">
-            <p>© 2026 Instituto María Auxiliadora - Área de Informática</p>
+            <p class="m-0">© 2026 Instituto María Auxiliadora - Área de Informática</p>
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const slides = document.querySelectorAll('.slide');
         const nextBtn = document.getElementById('next-btn');
@@ -358,16 +365,16 @@
         let currentSlide = 0;
 
         const quizData = [
-            { q: "¿Qué hace un compilador con el código fuente?", options: ["Ejecuta línea a línea", "Genera código objeto", "Borra el código fuente", "Lo envía por internet"], a: "Genera código objeto" },
-            { q: "¿Cuál es una ventaja de los lenguajes interpretados?", options: ["Ejecución más veloz", "Diseño más rápido", "No usa intérpretes", "Es más difícil hackear"], a: "Diseño más rápido" },
-            { q: "¿Qué sucede con las instrucciones de un ciclo en un intérprete?", options: ["Solo se traducen una vez", "Se interpretan siempre", "Se ignoran por rapidez", "Se guardan en un disco"], a: "Se interpretan siempre" },
-            { q: "¿Cuál lenguaje es un ejemplo de lenguaje compilado?", options: ["Python", "PHP", "C++", "JavaScript"], a: "C++" },
-            { q: "¿Qué es un bucle en programación?", options: ["Error fatal del sistema", "Repite instrucciones", "Tipo de dato o variable", "Cable de red o conexión"], a: "Repite instrucciones" },
-            { q: "¿Cuándo se usa preferentemente el bucle 'Para'?", options: ["Si el fin es incierto", "Conteo definido", "En compilados solo", "Para apagar la PC"], a: "Conteo definido" },
-            { q: "¿Qué componente define el inicio y el fin del bucle?", options: ["Rango de ejecución", "Variable de control", "Incremento de valor", "Nombre del bucle"], a: "Rango de ejecución" },
-            { q: "¿Qué lenguaje usa 'let i = 0' en su bucle for?", options: ["JavaScript", "C++", "Pascal", "Ensamblador"], a: "JavaScript" },
-            { q: "¿Cuál es el resultado de un bucle de 1 a 5?", options: ["Uno, dos, tres, cuatro, cinco", "1, 2, 3, 4, 5", "1, 3, 5", "0, 1, 2, 3, 4"], a: "1, 2, 3, 4, 5" },
-            { q: "¿Qué lenguajes comparten sintaxis de bucle for?", options: ["Java y Python", "C, C++ y JS", "SQL, HTML y XML", "Basic y PHP"], a: "C, C++ y JS" }
+            { q: "¿En qué se basa la programación lógica?", options: ["Lógica de predicados", "Lógica de microchips", "Lógica de transistores", "Lógica de procesadores"], a: "Lógica de predicados" },
+            { q: "¿Qué es un hecho en Prolog?", options: ["Una verdad conocida", "Una función matemática", "Un error del compilador", "Una variable dinámica"], a: "Una verdad conocida" },
+            { q: "¿Qué mecanismo permite deducir verdades?", options: ["Backtracking", "Formateo de disco", "Compilación rápida", "Borrado de memoria"], a: "Backtracking" },
+            { q: "¿Cuál es el lenguaje lógico más usado?", options: ["Python", "Java", "Prolog", "Swift"], a: "Prolog" },
+            { q: "¿Para qué sirve un sistema experto?", options: ["Imitar razonamiento", "Jugar al solitario", "Limpiar el disco", "Instalar un Office"], a: "Imitar razonamiento" },
+            { q: "¿Cuándo se evalúa la condición en Repetir?", options: ["Al final", "Al inicio", "A la mitad", "Al cargar"], a: "Al final" },
+            { q: "¿Mínimo de veces que corre Repetir?", options: ["1 vez", "0 veces", "5 veces", "Muchos"], a: "1 vez" },
+            { q: "¿Cómo termina el bucle Repetir?", options: ["Si es verdadera", "Si es muy falsa", "Si se suspende", "Por un error"], a: "Si es verdadera" },
+            { q: "¿Uso ideal del bucle Repetir?", options: ["Menús y validación", "Operación matemática", "Dibujo de gráficos", "Conexión de red"], a: "Menús y validación" },
+            { q: "¿Cuál describe mejor a Prolog?", options: ["Lógico", "Imperativo", "Funcional", "Ensamblador"], a: "Lógico" }
         ];
         let currentQuiz = 0;
 
@@ -418,11 +425,11 @@
                     if (opt === data.a) {
                         btn.classList.add('correct');
                         feedbackEl.textContent = "¡Correcto!";
-                        feedbackEl.style.color = "#16a34a"; // Verde
+                        feedbackEl.style.color = "#16a34a";
                     } else {
                         btn.classList.add('incorrect');
                         feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
-                        feedbackEl.style.color = "#dc2626"; // Rojo
+                        feedbackEl.style.color = "#dc2626";
                     }
                     setTimeout(() => {
                         currentQuiz++;
@@ -458,6 +465,5 @@
         showSlide(0);
         handleFullscreen();
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

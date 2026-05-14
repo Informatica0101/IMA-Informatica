@@ -876,3 +876,11 @@ DESCRIPCIÓN DE CAMBIOS:
   - Implementado sistema de quiz automático con retroalimentación cromática y transición de slides.
 - Archivo: js/data.js
   - Inserción de los nuevos temas en el menú de navegación "Cursos".
+
+14/05/2026
+- Global (.html): Migración masiva (60 archivos) de Tailwind CSS a Bootstrap 5.3.3 para cumplir con estándares institucionales y eliminar dependencias externas no autorizadas.
+- Global: Actualización coordinada de la versión de caché a v=13 en archivos HTML, JS y Service Worker.
+- II_BTP_A/Programacion/logica_bucle_repetir.html: Creada nueva presentación (16 slides) para el 17 de mayo sobre Programación Lógica y Bucle Repetir (con investigación externa).
+- III_BTP_A/dw_II/personalizacion_contenedores.html: Creada nueva presentación (16 slides) unificando temas de personalización (fondo, dimensiones, bordes, enlaces) del 17 y 24 de mayo.
+- js/data.js: Integración de los nuevos temas en el menú de Cursos.
+- sw.js: Actualización del manifiesto de caché para incluir los nuevos archivos de presentación y elevar la versión de la app.

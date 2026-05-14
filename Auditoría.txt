@@ -129,3 +129,17 @@ AUDITORÍA PRESENTACIONES SEMANA 03 DE MAYO (03/05/2026)
 - Hallazgo: Los temas para esta semana son Lenguajes Declarativos y Bucle Mientras (Programación) y Medidas en CSS (Diseño Web).
 - Hallazgo Lógico: Se mantiene el avance automático de 2 segundos y retroalimentación cromática en el quiz.
 - Tarea: Crear presentaciones siguiendo el estándar de 16 slides de 2026. (COMPLETADA)
+
+AUDITORÍA MIGRACIÓN BOOTSTRAP Y PRESENTACIONES 17 MAYO (14/05/2026)
+-------------------------------------------------------------------
+- Archivos involucrados: Global (.html), II_BTP_A/Programacion/logica_bucle_repetir.html, III_BTP_A/dw_II/personalizacion_contenedores.html
+- Hallazgo Crítico: El portal fallaba al cargar estilos debido a una mezcla de dependencias de Tailwind CSS (prohibido) e inconsistencias en las versiones de caché v=11/v=12.
+- Resolución:
+  - Migración total de 60 archivos HTML a Bootstrap 5.3.3.
+  - Eliminación de scripts de cdn.tailwindcss.com.
+  - Estandarización de la versión de caché a v=13 en todo el sistema.
+- Hallazgo Presentaciones: Se requiere unificación de temas para Diseño Web y contenido externo para Bucle Repetir en Programación.
+- Resolución:
+  - Creada presentación "Programación Lógica / Bucle Repetir" (16 slides) con investigación externa.
+  - Creada presentación "Personalización de Contenedores y Enlaces" (16 slides) unificando temas del 17 y 24 de mayo.
+  - Actualización de cuestionarios (10 preguntas) con feedback cromático.
