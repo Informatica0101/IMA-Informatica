@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medidas en CSS</title>
-    <!-- CDN de Tailwind CSS -->
+    <title>Programación Lógica / Bucle Repetir</title>
+    <!-- CDN de Tailwind CSS v4 -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Google Fonts - Inter & Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
     <style>
         /* Universal box-sizing */
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         /* Configuración base */
         html, body {
@@ -77,13 +75,13 @@
         }
 
         /* Tipografía proyectable (Estándar 2026) */
-        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3rem; color: #fd7e14; margin-bottom: 1.5rem; }
+        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3rem; color: #0d6efd; margin-bottom: 1.5rem; }
         h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.25rem; line-height: 1.4; color: #1f2937; margin-bottom: 1.5rem; }
         p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 900px; }
 
         .concept-box {
-            background-color: #fef2f2;
-            border-left: 8px solid #fd7e14;
+            background-color: #f9fafb;
+            border-left: 8px solid #0d6efd;
             padding: 2rem;
             border-radius: 0.5rem;
             text-align: left;
@@ -94,7 +92,7 @@
 
         /* Botones de navegación */
         .nav-button {
-            background-color: #fd7e14;
+            background-color: #0d6efd;
             color: #ffffff;
             padding: 0.75rem 1.5rem;
             border-radius: 6px;
@@ -104,7 +102,7 @@
             border: none;
         }
 
-        .nav-button:hover { background-color: #e67e22; transform: scale(1.05); }
+        .nav-button:hover { background-color: #0b5ed7; transform: scale(1.05); }
         .nav-button:disabled { background-color: #d1d5db; cursor: not-allowed; transform: scale(1); }
 
         #slide-counter {
@@ -128,22 +126,9 @@
             background: white;
             font-size: 1.1rem;
         }
-        .quiz-option:hover { background-color: #fff7ed; border-color: #fd7e14; }
+        .quiz-option:hover { background-color: #eff6ff; border-color: #3b82f6; }
         .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
         .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
-
-        pre {
-            background-color: #1e293b;
-            color: #f8fafc;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            text-align: left;
-            font-size: 1.25rem;
-            width: 100%;
-            max-width: 800px;
-            margin-top: 1rem;
-            font-family: monospace;
-        }
 
         /* Adaptación Móvil */
         @media (max-width: 768px) {
@@ -155,7 +140,6 @@
             .nav-button { padding: 0.5rem 1rem; font-size: 0.875rem; }
             #slide-counter { bottom: 1rem; right: 1rem; font-size: 0.75rem; }
             .quiz-option { padding: 0.75rem; font-size: 0.9rem; }
-            pre { font-size: 0.9rem; padding: 1rem; }
             #page-header h1 { font-size: 1rem; }
             #page-header img { width: 100px !important; }
         }
@@ -166,10 +150,10 @@
     <header id="page-header" class="w-full bg-white p-4 shadow-sm flex justify-between items-center z-50">
         <div class="flex items-center space-x-4">
             <img src="../../imagenes/logo.png" alt="Logo IMA" style="width: 150px; height: auto;">
-            <h1 class="text-xl font-bold text-gray-800">Diseño Web II</h1>
+            <h1 class="text-xl font-bold text-gray-800">Programación I</h1>
         </div>
         <nav>
-            <a href="../../index.html" class="text-gray-600 hover:text-orange-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
+            <a href="../../index.html" class="text-gray-600 hover:text-blue-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
         </nav>
     </header>
 
@@ -178,167 +162,165 @@
             <!-- Diapositiva 1: Portada -->
             <div class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
-                <h2>Medidas en CSS</h2>
+                <h2>Programación Lógica / Bucle Repetir</h2>
                 <div class="mt-8 text-lg text-gray-500">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 03 de mayo de 2026</p>
-                    <p>Grado: III BTP Informática Sección "A"</p>
+                    <p>Fecha: 10 de mayo de 2026</p>
+                    <p>Grado: II BTP Informática Sección "A"</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: Introducción a las Unidades -->
+            <!-- Diapositiva 2: Concepto de Programación Lógica -->
             <div class="slide">
-                <h3>Unidades de Medida</h3>
-                <p>En CSS, necesitamos especificar el tamaño de diversos elementos: fuentes, márgenes, anchos y altos.</p>
+                <h3>Programación Lógica</h3>
+                <p>Es un paradigma de programación basado en la lógica de primer orden. En lugar de dar órdenes, definimos relaciones.</p>
                 <div class="concept-box">
-                    <p>Existen dos tipos principales de unidades: <strong>Absolutas</strong> (fijas) y <strong>Relativas</strong> (flexibles).</p>
+                    <p>El programador describe el problema mediante axiomas y reglas, y el sistema utiliza un motor de inferencia para encontrar soluciones.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 3: Unidades Absolutas (Píxeles) -->
+            <!-- Diapositiva 3: Hechos (Facts) -->
             <div class="slide">
-                <h3>Píxeles (px)</h3>
-                <p>Un píxel es un punto físico en la pantalla de la computadora.</p>
-                <div class="concept-box">
-                    <p><strong>Uso:</strong> Son geniales cuando quieres que el usuario vea exactamente lo mismo que tú diseñaste. Sin embargo, no se adaptan bien a pantallas muy diferentes (como smartphones).</p>
+                <h3>Hechos (Facts)</h3>
+                <p>Son declaraciones que establecen una relación entre objetos o una propiedad de un objeto que se asume como verdadera.</p>
+                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-blue-500">
+                    progenitor(juan, maria). <br>
+                    humano(juan).
                 </div>
+                <p class="mt-4 text-sm">Significa: "Juan es progenitor de María" y "Juan es humano".</p>
             </div>
 
-            <!-- Diapositiva 4: Ejemplo de Píxeles -->
+            <!-- Diapositiva 4: Reglas (Rules) -->
             <div class="slide">
-                <h3>Sintaxis con px</h3>
-                <pre><code>p {
-  font-size: 16px;
-  width: 300px;
-}</code></pre>
-                <p class="mt-6 italic">Define un tamaño fijo que no cambiará independientemente del dispositivo.</p>
-            </div>
-
-            <!-- Diapositiva 5: Unidades Relativas (em) -->
-            <div class="slide">
-                <h3>Unidades Relativas: em</h3>
-                <p>Un <strong>em</strong> es igual al tamaño de fuente predeterminado de la pantalla o del elemento padre.</p>
-                <div class="concept-box bg-orange-50 border-orange-400">
-                    <p><strong>Ventaja:</strong> Son ideales para smartphones porque se escalan proporcionalmente. "1em es el tamaño normal, 2em es el doble, 0.5em es la mitad".</p>
+                <h3>Reglas (Rules)</h3>
+                <p>Permiten inferir nuevos hechos a partir de otros hechos existentes. Tienen una estructura condicional.</p>
+                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-blue-500">
+                    hijo(X, Y) :- progenitor(Y, X).
                 </div>
+                <p class="mt-4 text-sm">Se lee: "X es hijo de Y <strong>si</strong> Y es progenitor de X".</p>
             </div>
 
-            <!-- Diapositiva 6: Comparativa px vs em -->
+            <!-- Diapositiva 5: Lenguaje Prolog -->
             <div class="slide">
-                <h3>px vs em</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <div class="bg-gray-100 p-6 rounded text-left">
-                        <p class="font-bold">Píxeles (px):</p>
-                        <ul class="text-sm list-disc list-inside">
-                            <li>Medida absoluta y fija.</li>
-                            <li>Precisión exacta.</li>
-                            <li>Dificultad en móviles.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-orange-50 p-6 rounded text-left">
-                        <p class="font-bold">Em (em):</p>
-                        <ul class="text-sm list-disc list-inside">
-                            <li>Medida relativa y flexible.</li>
-                            <li>Escalabilidad proporcional.</li>
-                            <li>Ideal para diseño adaptativo.</li>
-                        </ul>
-                    </div>
+                <h3>El Lenguaje Prolog</h3>
+                <p>Es el lenguaje más representativo de este paradigma. Sus siglas significan "PROgrammation en LOGique".</p>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li>Utilizado ampliamente en Inteligencia Artificial.</li>
+                    <li>No tiene estructuras de control tradicionales (if, for, while).</li>
+                    <li>Se basa en la recursividad y la unificación.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 6: Consultas e Inferencia -->
+            <div class="slide">
+                <h3>Consultas e Inferencia</h3>
+                <p>Una vez definida la base de conocimientos (hechos y reglas), realizamos preguntas al sistema.</p>
+                <div class="concept-box border-blue-400">
+                    <p><strong>Unificación:</strong> Proceso de emparejar variables con constantes.<br><strong>Backtracking:</strong> Búsqueda de alternativas si una rama falla.</p>
                 </div>
             </div>
 
             <!-- Diapositiva 7: Ejercicio 1 -->
             <div class="slide">
-                <h3>Ejercicio 1: Cálculo Visual</h3>
-                <p>Si el tamaño de fuente base de un navegador es de 16px, ¿a cuántos píxeles equivalen 1.5em?</p>
+                <h3>Ejercicio 1: Lógica Familiar</h3>
+                <p>Dada la siguiente base de conocimientos, escribe la regla para "Abuelo":</p>
+                <div class="bg-gray-100 p-4 rounded text-left font-mono mb-4">
+                    progenitor(pablo, juan).<br>
+                    progenitor(juan, luis).
+                </div>
+                <div class="concept-box bg-blue-50 border-blue-300">
+                    <p class="italic text-center">abuelo(X, Z) :- progenitor(X, Y), progenitor(Y, Z).</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Bucle Repetir (Concepto) -->
+            <div class="slide">
+                <h3>Estructura "Repetir" (Repeat-Until)</h3>
+                <p>Es una estructura de control iterativa que ejecuta un bloque de instrucciones y luego evalúa una condición.</p>
                 <div class="concept-box">
-                    <p class="text-center font-mono text-2xl">1.5 * 16 = ?</p>
+                    <p>A diferencia del "Mientras", esta estructura garantiza que el cuerpo del bucle se ejecute <strong>al menos una vez</strong>.</p>
                 </div>
-                <p class="mt-4 italic">Anota la respuesta y el razonamiento en tu cuaderno.</p>
             </div>
 
-            <!-- Diapositiva 8: Porcentajes (%) -->
+            <!-- Diapositiva 9: Sintaxis del Repetir -->
             <div class="slide">
-                <h3>Unidad Relativa: Porcentaje (%)</h3>
-                <p>Se utiliza comúnmente para anchos (width) y alturas (height), tomando como referencia el elemento contenedor.</p>
-                <pre><code>div {
-  width: 50%;
-}</code></pre>
-                <p class="mt-4 text-sm">El contenedor ocupará la mitad del espacio disponible de su padre.</p>
+                <h3>Sintaxis en Pseudocódigo</h3>
+                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-green-500">
+                    Repetir<br>
+                    &nbsp;&nbsp;Instrucciones...<br>
+                    Hasta Que (condición)
+                </div>
+                <p class="mt-6 text-sm italic">El bucle se repite <strong>hasta que</strong> la condición sea verdadera (sale cuando es cierta).</p>
             </div>
 
-            <!-- Diapositiva 9: Fuentes Predeterminadas -->
+            <!-- Diapositiva 10: Comparativa: Mientras vs Repetir -->
             <div class="slide">
-                <h3>Fuentes en CSS</h3>
-                <p>CSS incluye familias de fuentes genéricas para asegurar que el usuario vea algo similar a tu intención:</p>
-                <ul class="text-left mt-6 list-decimal list-inside space-y-4">
-                    <li><strong>serif:</strong> Con remates decorativos (ej: Times New Roman).</li>
-                    <li><strong>sans-serif:</strong> Sin adornos, limpia (ej: Arial).</li>
-                    <li><strong>cursive:</strong> Estilo hecho a mano alzada.</li>
+                <h3>Mientras vs Repetir</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-blue-50 p-6 rounded-lg text-left">
+                        <p class="font-bold">Mientras (While):</p>
+                        <p class="text-sm">Evalúa al inicio. Puede ejecutarse 0 veces. Sale cuando la condición es falsa.</p>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg text-left">
+                        <p class="font-bold">Repetir (Do-Until):</p>
+                        <p class="text-sm">Evalúa al final. Se ejecuta mínimo 1 vez. Sale cuando la condición es verdadera.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 11: Ejemplo: Contador 1 al 5 -->
+            <div class="slide">
+                <h3>Ejemplo Práctico</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-100 p-4 rounded text-left font-mono">
+                        i = 1<br>
+                        Repetir<br>
+                        &nbsp;&nbsp;Escribir i<br>
+                        &nbsp;&nbsp;i = i + 1<br>
+                        Hasta Que (i > 5)
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded text-left flex flex-col justify-center">
+                        <p class="font-bold">Resultado:</p>
+                        <p>Imprime: 1, 2, 3, 4, 5</p>
+                        <p class="text-xs mt-2 italic">Nota: Sale cuando i llega a 6.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Casos de Uso del Repetir -->
+            <div class="slide">
+                <h3>¿Cuándo usar "Repetir"?</h3>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li><strong>Menús de usuario:</strong> Mostrar el menú al menos una vez antes de preguntar la opción.</li>
+                    <li><strong>Validación de datos:</strong> Pedir un dato y repetir si es incorrecto.</li>
+                    <li><strong>Procesos interactivos:</strong> "Desea continuar (S/N)".</li>
                 </ul>
-            </div>
-
-            <!-- Diapositiva 10: Propiedad font-family -->
-            <div class="slide">
-                <h3>Definiendo Tipografías</h3>
-                <pre><code>h1 {
-  font-family: Verdana, sans-serif;
-}</code></pre>
-                <p class="mt-4 text-sm">Si el sistema no tiene "Verdana", usará cualquier fuente "sans-serif" disponible.</p>
-            </div>
-
-            <!-- Diapositiva 11: Múltiples Propiedades -->
-            <div class="slide">
-                <h3>Combinando Estilos</h3>
-                <p>Un solo selector puede tener muchas propiedades agrupadas:</p>
-                <pre><code>p {
-  font-family: Arial;
-  color: blue;
-  font-size: 24px;
-}</code></pre>
-                <p class="mt-4 italic">¡No olvides los puntos y comas (;)!</p>
-            </div>
-
-            <!-- Diapositiva 12: Comentarios en Código -->
-            <div class="slide">
-                <h3>La Importancia de los Comentarios</h3>
-                <p>Ayudan a recordar por qué hiciste algo de cierta manera.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div class="bg-blue-50 p-4 rounded text-left font-mono">
-                        &lt;!-- Comentario HTML --&gt;
-                    </div>
-                    <div class="bg-orange-50 p-4 rounded text-left font-mono">
-                        /* Comentario CSS */
-                    </div>
-                </div>
             </div>
 
             <!-- Diapositiva 13: Ejercicio 2 -->
             <div class="slide">
-                <h3>Ejercicio 2: Estilos Mixtos</h3>
-                <p>Crea una regla CSS para un <code>h2</code> que tenga:</p>
-                <ul class="list-disc list-inside mt-4">
-                    <li>Fuente: Courier.</li>
-                    <li>Tamaño: 2.5em.</li>
-                    <li>Color: Violeta (purple).</li>
-                </ul>
-                <p class="mt-6 italic">Escríbelo en tu cuaderno incluyendo un comentario que diga "Título Principal".</p>
+                <h3>Ejercicio 2: Validación</h3>
+                <p>Escribe en tu cuaderno un algoritmo que pida un número positivo. Si el usuario ingresa un número negativo, debe volver a pedirlo.</p>
+                <div class="concept-box bg-green-50 border-green-400">
+                    <p><strong>Pista:</strong> Repetir... Leer num... Hasta Que (num >= 0)</p>
+                </div>
             </div>
 
-            <!-- Diapositiva 14: Cuestionario Interactivo (Parte 1) -->
+            <!-- Diapositiva 14: Cuestionario (Parte 1) -->
             <div class="slide">
-                <h3>¡Evaluación de conceptos!</h3>
+                <h3>Cuestionario: Evaluación</h3>
                 <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
                     <div class="quiz-options flex flex-col gap-2"></div>
                     <p class="quiz-feedback mt-4 font-bold text-lg"></p>
                 </div>
             </div>
 
-            <!-- Diapositiva 15: Cuestionario Interactivo (Parte 2) -->
+            <!-- Diapositiva 15: Cuestionario (Parte 2) -->
             <div class="slide">
                 <h3>Cuestionario: Continuación</h3>
                 <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
                     <div class="quiz-options flex flex-col gap-2"></div>
                     <p class="quiz-feedback mt-4 font-bold text-lg"></p>
                 </div>
@@ -347,8 +329,8 @@
             <!-- Diapositiva 16: Fin y Asignación -->
             <div class="slide">
                 <h2>¡Muchas Gracias!</h2>
-                <div class="concept-box border-orange-600">
-                    <p><strong>Asignación:</strong> Ejercicios usando px, %, y em para definir tamaños de texto y contenedores en una página HTML personal.</p>
+                <div class="concept-box border-blue-600">
+                    <p><strong>Asignación:</strong> Investigar cómo se escribe el bucle "Do-While" en el lenguaje C++ y compararlo con el "Repetir" de pseudocódigo.</p>
                     <p class="mt-4 text-sm">Fecha de entrega: Próxima clase.</p>
                 </div>
             </div>
@@ -379,16 +361,16 @@
         let currentSlide = 0;
 
         const quizData = [
-            { q: "¿Qué es un píxel (px) en diseño web?", options: ["Punto en la pantalla", "Un tipo de color", "Una fuente genérica", "Un archivo CSS"], a: "Punto en la pantalla" },
-            { q: "¿Por qué los px son una unidad absoluta?", options: ["Cambian con la pantalla", "Son de tamaño fijo", "Son solo para texto", "No existen físicamente"], a: "Son de tamaño fijo" },
-            { q: "¿A qué es igual un 1em?", options: ["Exactamente a 10px", "Al tamaño base fuente", "Al ancho de pantalla", "A 100 píxeles"], a: "Al tamaño base fuente" },
-            { q: "¿Qué unidad es mejor para smartphones?", options: ["Píxeles (px)", "Puntos (pt)", "Unidad relativa em", "Centímetros (cm)"], a: "Unidad relativa em" },
-            { q: "¿Cómo se escribe un comentario en CSS?", options: ["// comentario", "/* comentario */", "<!-- comentario -->", "# comentario"], a: "/* comentario */" },
-            { q: "¿Qué fuente tiene adornos decorativos?", options: ["serif", "sans-serif", "monospace", "digital"], a: "serif" },
-            { q: "¿Qué fuente es limpia y sin adornos?", options: ["cursive", "serif", "sans-serif", "fantasy"], a: "sans-serif" },
-            { q: "¿Para qué sirve el punto y coma en CSS?", options: ["Para abrir llaves", "Cerrar propiedad", "Borrar el código", "Cambiar el color"], a: "Cerrar propiedad" },
-            { q: "¿Qué unidad mide porcentajes del padre?", options: ["px", "em", "Simbolo %", "pt"], a: "Simbolo %" },
-            { q: "¿Qué sucede si una fuente no está instalada?", options: ["El browser falla", "Usa la siguiente", "No muestra texto", "Borra el archivo"], a: "Usa la siguiente" }
+            { q: "¿En qué se basa la programación lógica?", options: ["Órdenes secuenciales", "Lógica de primer orden", "Gestión de memoria", "Eventos del mouse"], a: "Lógica de primer orden" },
+            { q: "¿Qué es un 'hecho' en Prolog?", options: ["Una función matemática", "Una declaración verdadera", "Un error del sistema", "Un comentario"], a: "Una declaración verdadera" },
+            { q: "¿Cuál es el lenguaje más usado en este paradigma?", options: ["Java", "Prolog", "C++", "Python"], a: "Prolog" },
+            { q: "¿Qué permite una 'regla'?", options: ["Borrar datos", "Inferir nuevos hechos", "Dibujar gráficos", "Apagar el equipo"], a: "Inferir nuevos hechos" },
+            { q: "¿Cómo busca Prolog las respuestas?", options: ["Unificación y Backtracking", "Orden alfabético", "Solo de arriba a abajo", "Por azar"], a: "Unificación y Backtracking" },
+            { q: "¿Cuándo se evalúa la condición en 'Repetir'?", options: ["Al principio", "Al final", "Nunca", "Solo si hay error"], a: "Al final" },
+            { q: "¿Cuántas veces se ejecuta mínimo el 'Repetir'?", options: ["0 veces", "1 vez", "10 veces", "Infinitas"], a: "1 vez" },
+            { q: "¿Cuándo sale el flujo del bucle 'Repetir'?", options: ["Condición es falsa", "Condición es verdadera", "Al presionar Esc", "Al terminar la RAM"], a: "Condición es verdadera" },
+            { q: "¿Para qué es ideal el bucle 'Repetir'?", options: ["Cálculos complejos", "Validación de entradas", "No usar variables", "Crear arreglos"], a: "Validación de entradas" },
+            { q: "¿Qué significa Prolog?", options: ["Programación Lógica", "Proceso Logístico", "Protocolo Libre", "Primer Logro"], a: "Programación Lógica" }
         ];
         let currentQuiz = 0;
 

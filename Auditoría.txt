@@ -129,3 +129,11 @@ AUDITORÍA PRESENTACIONES SEMANA 03 DE MAYO (03/05/2026)
 - Hallazgo: Los temas para esta semana son Lenguajes Declarativos y Bucle Mientras (Programación) y Medidas en CSS (Diseño Web).
 - Hallazgo Lógico: Se mantiene el avance automático de 2 segundos y retroalimentación cromática en el quiz.
 - Tarea: Crear presentaciones siguiendo el estándar de 16 slides de 2026. (COMPLETADA)
+
+AUDITORÍA PRESENTACIONES SEMANA 10-24 MAYO (10/05/2026)
+------------------------------------------------------
+- Archivos: II_BTP_A/Programacion/prog_logica_repetir.html, III_BTP_A/dw_II/modelo_caja_dimensiones.html
+- Hallazgo Técnico: Se actualizó el motor de Tailwind CSS a la versión 4 (browser-based) en todas las presentaciones de 2026 para aprovechar las últimas optimizaciones y simplificar la carga de recursos externos.
+- Hallazgo Contenido: El tema "Bucle Repetir" no contaba con PDF base; se integró documentación técnica estándar (Sintaxis, Comparativa con Mientras) para asegurar la completitud pedagógica.
+- Hallazgo Unificación: Se unificaron los temas de Diseño Web de las semanas del 17 y 24 de mayo en una sola presentación de 16 diapositivas para mejorar la cohesión del tema "Modelo de Caja".
+- Hallazgo UX: Se validó que el quiz interactivo de 10 preguntas funcione correctamente con el nuevo motor de Tailwind v4 y mantenga la retroalimentación visual cromática.

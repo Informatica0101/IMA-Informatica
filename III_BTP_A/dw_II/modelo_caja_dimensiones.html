@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medidas en CSS</title>
-    <!-- CDN de Tailwind CSS -->
+    <title>Modelo de Caja y Dimensiones en CSS</title>
+    <!-- CDN de Tailwind CSS v4 -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Google Fonts - Inter & Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
     <style>
         /* Universal box-sizing */
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         /* Configuración base */
         html, body {
@@ -82,7 +80,7 @@
         p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 900px; }
 
         .concept-box {
-            background-color: #fef2f2;
+            background-color: #fffaf0;
             border-left: 8px solid #fd7e14;
             padding: 2rem;
             border-radius: 0.5rem;
@@ -104,7 +102,7 @@
             border: none;
         }
 
-        .nav-button:hover { background-color: #e67e22; transform: scale(1.05); }
+        .nav-button:hover { background-color: #e67300; transform: scale(1.05); }
         .nav-button:disabled { background-color: #d1d5db; cursor: not-allowed; transform: scale(1); }
 
         #slide-counter {
@@ -114,6 +112,26 @@
             font-weight: 600;
             color: #9ca3af;
             z-index: 10;
+        }
+
+        /* Box Model Visualizer */
+        .box-visualizer {
+            border: 4px dashed #9ca3af;
+            padding: 20px;
+            background: #fef3c7;
+            display: inline-block;
+            margin: 20px;
+        }
+        .box-border {
+            border: 8px solid #fd7e14;
+            padding: 20px;
+            background: #ffedd5;
+        }
+        .box-content {
+            background: #fdba74;
+            padding: 20px;
+            color: white;
+            font-weight: bold;
         }
 
         /* Quiz */
@@ -132,32 +150,11 @@
         .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
         .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
 
-        pre {
-            background-color: #1e293b;
-            color: #f8fafc;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            text-align: left;
-            font-size: 1.25rem;
-            width: 100%;
-            max-width: 800px;
-            margin-top: 1rem;
-            font-family: monospace;
-        }
-
-        /* Adaptación Móvil */
         @media (max-width: 768px) {
             .slide { padding: 2rem 1.5rem; }
             h2 { font-size: 1.75rem; }
             h3 { font-size: 1.4rem; }
             p, li { font-size: 1rem; line-height: 1.4; }
-            .concept-box { padding: 1rem; border-left-width: 4px; margin-top: 1rem; }
-            .nav-button { padding: 0.5rem 1rem; font-size: 0.875rem; }
-            #slide-counter { bottom: 1rem; right: 1rem; font-size: 0.75rem; }
-            .quiz-option { padding: 0.75rem; font-size: 0.9rem; }
-            pre { font-size: 0.9rem; padding: 1rem; }
-            #page-header h1 { font-size: 1rem; }
-            #page-header img { width: 100px !important; }
         }
     </style>
 </head>
@@ -166,7 +163,7 @@
     <header id="page-header" class="w-full bg-white p-4 shadow-sm flex justify-between items-center z-50">
         <div class="flex items-center space-x-4">
             <img src="../../imagenes/logo.png" alt="Logo IMA" style="width: 150px; height: auto;">
-            <h1 class="text-xl font-bold text-gray-800">Diseño Web II</h1>
+            <h1 class="text-xl font-bold text-gray-800">Diseño Web</h1>
         </div>
         <nav>
             <a href="../../index.html" class="text-gray-600 hover:text-orange-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
@@ -178,155 +175,160 @@
             <!-- Diapositiva 1: Portada -->
             <div class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
-                <h2>Medidas en CSS</h2>
+                <h2>Modelo de Caja y Dimensiones en CSS</h2>
                 <div class="mt-8 text-lg text-gray-500">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 03 de mayo de 2026</p>
+                    <p>Fecha: 17 y 24 de mayo de 2026</p>
                     <p>Grado: III BTP Informática Sección "A"</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: Introducción a las Unidades -->
+            <!-- Diapositiva 2: ¿Qué es el Modelo de Caja? -->
             <div class="slide">
-                <h3>Unidades de Medida</h3>
-                <p>En CSS, necesitamos especificar el tamaño de diversos elementos: fuentes, márgenes, anchos y altos.</p>
+                <h3>El Modelo de Caja (Box Model)</h3>
+                <p>En CSS, cada elemento HTML se considera como una caja rectangular.</p>
                 <div class="concept-box">
-                    <p>Existen dos tipos principales de unidades: <strong>Absolutas</strong> (fijas) y <strong>Relativas</strong> (flexibles).</p>
+                    <p>Este modelo permite controlar el espacio, el borde y el contenido de cada elemento de forma independiente.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 3: Unidades Absolutas (Píxeles) -->
+            <!-- Diapositiva 3: Partes de la Caja -->
             <div class="slide">
-                <h3>Píxeles (px)</h3>
-                <p>Un píxel es un punto físico en la pantalla de la computadora.</p>
-                <div class="concept-box">
-                    <p><strong>Uso:</strong> Son geniales cuando quieres que el usuario vea exactamente lo mismo que tú diseñaste. Sin embargo, no se adaptan bien a pantallas muy diferentes (como smartphones).</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 4: Ejemplo de Píxeles -->
-            <div class="slide">
-                <h3>Sintaxis con px</h3>
-                <pre><code>p {
-  font-size: 16px;
-  width: 300px;
-}</code></pre>
-                <p class="mt-6 italic">Define un tamaño fijo que no cambiará independientemente del dispositivo.</p>
-            </div>
-
-            <!-- Diapositiva 5: Unidades Relativas (em) -->
-            <div class="slide">
-                <h3>Unidades Relativas: em</h3>
-                <p>Un <strong>em</strong> es igual al tamaño de fuente predeterminado de la pantalla o del elemento padre.</p>
-                <div class="concept-box bg-orange-50 border-orange-400">
-                    <p><strong>Ventaja:</strong> Son ideales para smartphones porque se escalan proporcionalmente. "1em es el tamaño normal, 2em es el doble, 0.5em es la mitad".</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: Comparativa px vs em -->
-            <div class="slide">
-                <h3>px vs em</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <div class="bg-gray-100 p-6 rounded text-left">
-                        <p class="font-bold">Píxeles (px):</p>
-                        <ul class="text-sm list-disc list-inside">
-                            <li>Medida absoluta y fija.</li>
-                            <li>Precisión exacta.</li>
-                            <li>Dificultad en móviles.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-orange-50 p-6 rounded text-left">
-                        <p class="font-bold">Em (em):</p>
-                        <ul class="text-sm list-disc list-inside">
-                            <li>Medida relativa y flexible.</li>
-                            <li>Escalabilidad proporcional.</li>
-                            <li>Ideal para diseño adaptativo.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Ejercicio 1 -->
-            <div class="slide">
-                <h3>Ejercicio 1: Cálculo Visual</h3>
-                <p>Si el tamaño de fuente base de un navegador es de 16px, ¿a cuántos píxeles equivalen 1.5em?</p>
-                <div class="concept-box">
-                    <p class="text-center font-mono text-2xl">1.5 * 16 = ?</p>
-                </div>
-                <p class="mt-4 italic">Anota la respuesta y el razonamiento en tu cuaderno.</p>
-            </div>
-
-            <!-- Diapositiva 8: Porcentajes (%) -->
-            <div class="slide">
-                <h3>Unidad Relativa: Porcentaje (%)</h3>
-                <p>Se utiliza comúnmente para anchos (width) y alturas (height), tomando como referencia el elemento contenedor.</p>
-                <pre><code>div {
-  width: 50%;
-}</code></pre>
-                <p class="mt-4 text-sm">El contenedor ocupará la mitad del espacio disponible de su padre.</p>
-            </div>
-
-            <!-- Diapositiva 9: Fuentes Predeterminadas -->
-            <div class="slide">
-                <h3>Fuentes en CSS</h3>
-                <p>CSS incluye familias de fuentes genéricas para asegurar que el usuario vea algo similar a tu intención:</p>
-                <ul class="text-left mt-6 list-decimal list-inside space-y-4">
-                    <li><strong>serif:</strong> Con remates decorativos (ej: Times New Roman).</li>
-                    <li><strong>sans-serif:</strong> Sin adornos, limpia (ej: Arial).</li>
-                    <li><strong>cursive:</strong> Estilo hecho a mano alzada.</li>
+                <h3>Componentes de la Caja</h3>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li><strong>Contenido:</strong> Donde aparece el texto o imágenes.</li>
+                    <li><strong>Padding (Relleno):</strong> Espacio entre el contenido y el borde.</li>
+                    <li><strong>Borde:</strong> Línea que rodea el padding y el contenido.</li>
+                    <li><strong>Margen:</strong> Espacio exterior que separa la caja de otras cajas.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 10: Propiedad font-family -->
+            <!-- Diapositiva 4: Visualización Gráfica -->
             <div class="slide">
-                <h3>Definiendo Tipografías</h3>
-                <pre><code>h1 {
-  font-family: Verdana, sans-serif;
-}</code></pre>
-                <p class="mt-4 text-sm">Si el sistema no tiene "Verdana", usará cualquier fuente "sans-serif" disponible.</p>
+                <h3>Esquema Visual</h3>
+                <div class="box-visualizer">
+                    <p class="text-xs mb-1 font-bold">Margin</p>
+                    <div class="box-border">
+                        <p class="text-xs mb-1 font-bold">Border</p>
+                        <div class="bg-orange-100 p-4">
+                             <p class="text-xs mb-1 font-bold">Padding</p>
+                             <div class="box-content text-center">CONTENIDO</div>
+                        </div>
+                    </div>
+                </div>
+                <p class="mt-4 text-sm italic">El margen es transparente y no tiene color de fondo.</p>
             </div>
 
-            <!-- Diapositiva 11: Múltiples Propiedades -->
+            <!-- Diapositiva 5: Propiedades de Margen -->
             <div class="slide">
-                <h3>Combinando Estilos</h3>
-                <p>Un solo selector puede tener muchas propiedades agrupadas:</p>
-                <pre><code>p {
-  font-family: Arial;
-  color: blue;
-  font-size: 24px;
-}</code></pre>
-                <p class="mt-4 italic">¡No olvides los puntos y comas (;)!</p>
+                <h3>Márgenes (Margin)</h3>
+                <p>Controla el espacio fuera del elemento.</p>
+                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-orange-500">
+                    margin-top: 20px;<br>
+                    margin-right: 15px;<br>
+                    margin-bottom: 20px;<br>
+                    margin-left: 15px;
+                </div>
+                <p class="mt-4 text-base">Abreviado: <strong>margin: 20px 15px;</strong> (Arriba/Abajo Izq/Der)</p>
             </div>
 
-            <!-- Diapositiva 12: Comentarios en Código -->
+            <!-- Diapositiva 6: Propiedades de Padding -->
             <div class="slide">
-                <h3>La Importancia de los Comentarios</h3>
-                <p>Ayudan a recordar por qué hiciste algo de cierta manera.</p>
+                <h3>Relleno (Padding)</h3>
+                <p>Espacio entre el contenido y el borde. Afecta el tamaño visual del fondo del elemento.</p>
+                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-orange-400">
+                    padding: 10px 20px 10px 20px;<br>
+                    background-color: yellow;
+                </div>
+                <p class="mt-4 text-base italic">El color de fondo se extiende por el área del padding.</p>
+            </div>
+
+            <!-- Diapositiva 7: Dimensiones: Width y Height -->
+            <div class="slide">
+                <h3>Dimensiones del Contenido</h3>
+                <p>Propiedades <strong>width</strong> (ancho) y <strong>height</strong> (alto).</p>
+                <div class="concept-box">
+                    <p>Por defecto, en el modelo estándar, el ancho total es: <br>
+                    <em>Ancho = width + padding + border</em></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Box-Sizing: Border-Box -->
+            <div class="slide">
+                <h3>Cambiando el Cálculo: Border-Box</h3>
+                <p>Es la mejor práctica moderna. Incluye el padding y el borde dentro del ancho definido.</p>
+                <div class="bg-gray-800 text-white p-6 rounded text-left mt-4 font-mono text-lg">
+                    * {<br>
+                    &nbsp;&nbsp;box-sizing: border-box;<br>
+                    }
+                </div>
+                <p class="mt-4 text-sm">Esto evita que los elementos se "rompan" al añadir padding.</p>
+            </div>
+
+            <!-- Diapositiva 9: Unidades de Medida en Dimensiones -->
+            <div class="slide">
+                <h3>Unidades Comunes</h3>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li><strong>px:</strong> Píxeles (Fijo).</li>
+                    <li><strong>%:</strong> Porcentaje relativo al contenedor padre.</li>
+                    <li><strong>vh / vw:</strong> Relativo al tamaño de la ventana (Viewport).</li>
+                    <li><strong>auto:</strong> El navegador calcula el espacio automáticamente.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 10: Centrado con Márgenes -->
+            <div class="slide">
+                <h3>Truco: Centrado Horizontal</h3>
+                <p>Para centrar un bloque, dale un ancho fijo y márgenes automáticos a los lados.</p>
+                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-green-500">
+                    width: 50%;<br>
+                    margin: 0 auto;
+                </div>
+            </div>
+
+            <!-- Diapositiva 11: Dimensiones Máximas y Mínimas -->
+            <div class="slide">
+                <h3>Límites: Max y Min</h3>
+                <p>Permiten que el diseño sea flexible pero controlado.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div class="bg-blue-50 p-4 rounded text-left font-mono">
-                        &lt;!-- Comentario HTML --&gt;
+                    <div class="bg-orange-50 p-4 rounded text-left">
+                        <p class="font-bold">max-width: 1200px;</p>
+                        <p class="text-sm">No crecerá más allá de 1200px aunque la pantalla sea enorme.</p>
                     </div>
-                    <div class="bg-orange-50 p-4 rounded text-left font-mono">
-                        /* Comentario CSS */
+                    <div class="bg-orange-50 p-4 rounded text-left">
+                        <p class="font-bold">min-height: 300px;</p>
+                        <p class="text-sm">Garantiza un espacio mínimo incluso si no hay mucho texto.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 13: Ejercicio 2 -->
+            <!-- Diapositiva 12: Desbordamiento (Overflow) -->
             <div class="slide">
-                <h3>Ejercicio 2: Estilos Mixtos</h3>
-                <p>Crea una regla CSS para un <code>h2</code> que tenga:</p>
-                <ul class="list-disc list-inside mt-4">
-                    <li>Fuente: Courier.</li>
-                    <li>Tamaño: 2.5em.</li>
-                    <li>Color: Violeta (purple).</li>
+                <h3>Desbordamiento (Overflow)</h3>
+                <p>Controla qué pasa cuando el contenido es más grande que la caja.</p>
+                <ul class="text-left mt-4 list-disc list-inside text-base">
+                    <li><strong>visible:</strong> El contenido sale de la caja (default).</li>
+                    <li><strong>hidden:</strong> Se recorta lo que sobra.</li>
+                    <li><strong>scroll:</strong> Añade barras de desplazamiento siempre.</li>
+                    <li><strong>auto:</strong> Añade barras solo si es necesario.</li>
                 </ul>
-                <p class="mt-6 italic">Escríbelo en tu cuaderno incluyendo un comentario que diga "Título Principal".</p>
             </div>
 
-            <!-- Diapositiva 14: Cuestionario Interactivo (Parte 1) -->
+            <!-- Diapositiva 13: Ejercicio Práctico en Clase -->
             <div class="slide">
-                <h3>¡Evaluación de conceptos!</h3>
+                <h3>Ejercicio: La Tarjeta Perfecta</h3>
+                <p>Crea un archivo HTML con una caja que tenga:</p>
+                <ul class="text-left mt-4 list-decimal list-inside text-base">
+                    <li>Ancho de 300px y Alto de 200px.</li>
+                    <li>Fondo celeste y borde azul de 2px.</li>
+                    <li>Padding de 20px para que el texto no toque el borde.</li>
+                    <li>Margen de 50px arriba para separarlo del título.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 14: Cuestionario (Parte 1) -->
+            <div class="slide">
+                <h3>Cuestionario: Evaluación</h3>
                 <div class="quiz-container max-w-2xl w-full">
                     <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
                     <div class="quiz-options flex flex-col gap-2"></div>
@@ -334,7 +336,7 @@
                 </div>
             </div>
 
-            <!-- Diapositiva 15: Cuestionario Interactivo (Parte 2) -->
+            <!-- Diapositiva 15: Cuestionario (Parte 2) -->
             <div class="slide">
                 <h3>Cuestionario: Continuación</h3>
                 <div class="quiz-container max-w-2xl w-full">
@@ -348,8 +350,8 @@
             <div class="slide">
                 <h2>¡Muchas Gracias!</h2>
                 <div class="concept-box border-orange-600">
-                    <p><strong>Asignación:</strong> Ejercicios usando px, %, y em para definir tamaños de texto y contenedores en una página HTML personal.</p>
-                    <p class="mt-4 text-sm">Fecha de entrega: Próxima clase.</p>
+                    <p><strong>Asignación:</strong> Diseñar en papel un layout de 3 columnas indicando qué márgenes y rellenos usarías para que no se peguen entre sí.</p>
+                    <p class="mt-4 text-sm">Fecha de entrega: Próxima semana.</p>
                 </div>
             </div>
         </div>
@@ -379,16 +381,16 @@
         let currentSlide = 0;
 
         const quizData = [
-            { q: "¿Qué es un píxel (px) en diseño web?", options: ["Punto en la pantalla", "Un tipo de color", "Una fuente genérica", "Un archivo CSS"], a: "Punto en la pantalla" },
-            { q: "¿Por qué los px son una unidad absoluta?", options: ["Cambian con la pantalla", "Son de tamaño fijo", "Son solo para texto", "No existen físicamente"], a: "Son de tamaño fijo" },
-            { q: "¿A qué es igual un 1em?", options: ["Exactamente a 10px", "Al tamaño base fuente", "Al ancho de pantalla", "A 100 píxeles"], a: "Al tamaño base fuente" },
-            { q: "¿Qué unidad es mejor para smartphones?", options: ["Píxeles (px)", "Puntos (pt)", "Unidad relativa em", "Centímetros (cm)"], a: "Unidad relativa em" },
-            { q: "¿Cómo se escribe un comentario en CSS?", options: ["// comentario", "/* comentario */", "<!-- comentario -->", "# comentario"], a: "/* comentario */" },
-            { q: "¿Qué fuente tiene adornos decorativos?", options: ["serif", "sans-serif", "monospace", "digital"], a: "serif" },
-            { q: "¿Qué fuente es limpia y sin adornos?", options: ["cursive", "serif", "sans-serif", "fantasy"], a: "sans-serif" },
-            { q: "¿Para qué sirve el punto y coma en CSS?", options: ["Para abrir llaves", "Cerrar propiedad", "Borrar el código", "Cambiar el color"], a: "Cerrar propiedad" },
-            { q: "¿Qué unidad mide porcentajes del padre?", options: ["px", "em", "Simbolo %", "pt"], a: "Simbolo %" },
-            { q: "¿Qué sucede si una fuente no está instalada?", options: ["El browser falla", "Usa la siguiente", "No muestra texto", "Borra el archivo"], a: "Usa la siguiente" }
+            { q: "¿Qué es el Modelo de Caja?", options: ["Un tipo de base de datos", "Un esquema de cada elemento HTML", "Una etiqueta para imágenes", "Un motor de búsqueda"], a: "Un esquema de cada elemento HTML" },
+            { q: "¿Qué propiedad controla el espacio interior?", options: ["Margin", "Border", "Padding", "Display"], a: "Padding" },
+            { q: "¿Cómo se llama el espacio exterior de la caja?", options: ["Padding", "Margin", "Outset", "Gap"], a: "Margin" },
+            { q: "¿Qué hace 'box-sizing: border-box'?", options: ["Borra los bordes", "Incluye padding en el ancho", "Hace la caja redonda", "Oculta el contenido"], a: "Incluye padding en el ancho" },
+            { q: "¿Cuál de estos NO es parte del modelo de caja?", options: ["Content", "Padding", "Z-index", "Border"], a: "Z-index" },
+            { q: "¿Qué valor de margin centra un bloque?", options: ["margin: center", "margin: 0 auto", "margin: middle", "margin: 100%"], a: "margin: 0 auto" },
+            { q: "¿Qué unidad es relativa al ancho de ventana?", options: ["px", "em", "vw", "%"], a: "vw" },
+            { q: "¿Qué propiedad evita que una caja sea gigante?", options: ["min-width", "max-width", "flex-width", "limit-width"], a: "max-width" },
+            { q: "¿Qué pasa con overflow: hidden?", options: ["Sale contenido extra", "Se corta lo que sobra", "Aparece una lupa", "Se borra la caja"], a: "Se corta lo que sobra" },
+            { q: "¿El margen tiene color de fondo?", options: ["Sí, el del body", "No, es transparente", "Solo si se indica", "Sí, el de la caja"], a: "No, es transparente" }
         ];
         let currentQuiz = 0;
 
