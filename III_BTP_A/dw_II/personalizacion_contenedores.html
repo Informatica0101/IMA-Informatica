@@ -4,466 +4,306 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personalización de Contenedores y Enlaces en CSS</title>
-    <!-- CDN de Bootstrap 5 (Migración completada) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts - Inter & Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css?v=15">
     <style>
-        /* Universal box-sizing */
-        * { box-sizing: border-box; }
-
-        /* Configuración base */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            color: #1f2937;
-        }
-
-        /* Contenedor principal */
-        main {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        #presentation-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-color: #ffffff;
-            overflow: hidden;
-        }
-
-        /* Estilo para cada diapositiva */
-        .slide {
-            width: 100%;
-            height: 100%;
-            padding: 4rem;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-        }
-
-        .slide.active {
-            display: flex;
-            opacity: 1;
-            animation: fadeIn 0.8s forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Tipografía proyectable (Estándar 2026) */
-        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3rem; color: #0d6efd; margin-bottom: 1.5rem; }
-        h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.25rem; line-height: 1.4; color: #1f2937; margin-bottom: 1.5rem; }
-        p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 900px; }
-
-        .concept-box {
-            background-color: #f9fafb;
-            border-left: 8px solid #0d6efd;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            text-align: left;
-            margin-top: 2rem;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .concept-box * { font-size: 1.5rem !important; }
-
-        /* Botones de navegación */
-        .nav-button {
-            background-color: #0d6efd;
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: all 0.3s;
-            cursor: pointer;
-            border: none;
-        }
-
-        .nav-button:hover { background-color: #0b5ed7; transform: scale(1.05); }
-        .nav-button:disabled { background-color: #d1d5db; cursor: not-allowed; transform: scale(1); }
-
-        #slide-counter {
-            position: absolute;
-            bottom: 1.5rem;
-            right: 2rem;
-            font-weight: 600;
-            color: #9ca3af;
-            z-index: 10;
-        }
-
-        /* Quiz */
-        .quiz-option {
-            width: 100%;
-            padding: 1rem;
-            margin: 0.25rem 0;
-            border: 2px solid #e5e7eb;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            background: white;
-            font-size: 1.1rem;
-        }
-        .quiz-option:hover { background-color: #eff6ff; border-color: #3b82f6; }
-        .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
-        .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
-
-        /* Adaptación Móvil */
+        html, body { height: 100vh; width: 100vw; overflow: hidden; }
+        main { flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+        #presentation-container { width: 100%; height: 100%; position: relative; background-color: #ffffff; overflow: hidden; }
+        .slide { width: 100%; height: 100%; padding: 4rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: absolute; top: 0; left: 0; opacity: 0; }
+        .slide.active { display: flex; opacity: 1; animation: fadeInUp 0.8s forwards; }
+        h2 { font-size: 3.5rem; color: var(--ima-blue); margin-bottom: 2rem; }
+        h3 { font-size: 2.5rem; color: var(--ima-gray-900); margin-bottom: 2rem; }
+        p, li { font-size: 1.5rem; line-height: 1.6; color: var(--ima-gray-700); max-width: 950px; }
+        .concept-box-pres { background-color: var(--ima-gray-50); border-left: 10px solid var(--ima-blue); padding: 2.5rem; border-radius: 1rem; text-align: left; margin-top: 2rem; width: 100%; max-width: 950px; }
+        .nav-button-pres { background-color: var(--ima-blue); color: white; padding: 0.8rem 1.6rem; border-radius: 0.75rem; font-weight: 700; border: none; transition: all 0.2s; box-shadow: var(--shadow-md); }
+        .nav-button-pres:hover { background-color: var(--ima-blue-dark); transform: translateY(-2px); }
+        .nav-button-pres:disabled { background-color: var(--ima-gray-300); cursor: not-allowed; transform: none; }
+        .quiz-option-pres { width: 100%; padding: 1.2rem; margin: 0.5rem 0; border: 2px solid var(--ima-gray-200); border-radius: 1rem; font-weight: 600; transition: all 0.2s; background: white; font-size: 1.2rem; text-align: left; }
+        .quiz-option-pres:hover { background-color: var(--ima-gray-100); border-color: var(--ima-blue); }
+        .quiz-option-pres.correct { background-color: #d1fae5; border-color: var(--ima-green); color: #065f46; }
+        .quiz-option-pres.incorrect { background-color: #fee2e2; border-color: var(--ima-red); color: #991b1b; }
+        #slide-counter { position: absolute; bottom: 1.5rem; right: 2rem; font-weight: 700; color: var(--ima-gray-400); }
         @media (max-width: 768px) {
-            .slide { padding: 2rem 1.5rem; }
-            h2 { font-size: 1.75rem; }
-            h3 { font-size: 1.4rem; }
-            p, li { font-size: 1rem; line-height: 1.4; }
-            .concept-box { padding: 1rem; border-left-width: 4px; margin-top: 1rem; }
-            .nav-button { padding: 0.5rem 1rem; font-size: 0.875rem; }
-            #slide-counter { bottom: 1rem; right: 1rem; font-size: 0.75rem; }
-            .quiz-option { padding: 0.75rem; font-size: 0.9rem; }
-            #page-header h1 { font-size: 1rem; }
-            #page-header img { width: 100px !important; }
+            .slide { padding: 2rem 1rem; }
+            h2 { font-size: 2.2rem; }
+            h3 { font-size: 1.8rem; }
+            p, li { font-size: 1.1rem; }
+            .concept-box-pres { padding: 1.5rem; border-left-width: 6px; }
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <header id="page-header" class="w-full bg-white p-4 shadow-sm d-flex justify-content-between align-items-center z-3">
-        <div class="d-flex align-items-center space-x-4">
-            <img src="../../imagenes/logo.png" alt="Logo IMA" style="width: 150px; height: auto;">
-            <h1 class="text-xl font-bold text-dark ms-3">Diseño Web I</h1>
+    <header id="page-header" class="header-refined px-5 justify-between">
+        <div class="flex items-center space-x-4">
+            <img src="../../imagenes/logo.png" alt="Logo IMA" class="logo-img">
+            <h1 class="text-xl font-bold text-gray-800 hidden md:inline">Diseño Web I</h1>
         </div>
-        <nav>
-            <a href="../../index.html" class="text-secondary fw-semibold text-decoration-none small">Volver al Inicio</a>
-        </nav>
+        <a href="../../index.html" class="nav-link-ima font-bold">Volver</a>
     </header>
 
     <main>
         <div id="presentation-container">
-            <!-- Diapositiva 1: Portada -->
             <div class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
+                <img src="../../imagenes/logo.png" alt="Logo" style="width: 280px;" class="mb-8">
                 <h2>Color de fondo, Dimensionamiento y Estilos de Enlaces</h2>
-                <div class="mt-8 text-lg text-secondary">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                <div class="mt-8 text-xl text-gray-600 font-medium">
+                    <p>Clase: Diseño Web I</p>
                     <p>Fecha: 17 y 24 de mayo de 2026</p>
-                    <p>Grado: III BTP Informática Sección "A"</p>
+                    <p>Tema: Personalización Avanzada</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: Propiedad Background-color -->
             <div class="slide">
                 <h3>Color de Fondo</h3>
-                <p>La propiedad <code>background-color</code> establece el color de fondo de un elemento.</p>
-                <div class="concept-box bg-blue-50">
-                    <p>Sintaxis:</p>
-                    <code class="font-mono text-primary">elemento { background-color: valor; }</code>
-                    <p class="mt-3 small">Valores: nombres (red), hexadecimal (#FF0000), RGB (rgb(255,0,0)).</p>
+                <p>La propiedad <code>background-color</code> permite definir el ambiente visual de un contenedor.</p>
+                <div class="concept-box-pres">
+                    <p>Podemos usar nombres básicos, códigos Hexadecimales (#ffffff) o formatos funcionales como RGB y HSL para mayor precisión.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 3: Dimensiones: Width y Height -->
             <div class="slide">
-                <h3>Altura y Ancho</h3>
-                <p>Determinan el espacio que ocupa el contenido de la caja.</p>
-                <div class="concept-box border-success bg-success bg-opacity-10">
-                    <ul class="list-disc list-inside">
-                        <li><code>width:</code> Anchura del elemento.</li>
-                        <li><code>height:</code> Altura del elemento.</li>
-                    </ul>
-                    <p class="mt-3 small">Ejemplo: <code>div { width: 50%; height: 200px; }</code></p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 4: Modelo de Caja (Repaso Detallado) -->
-            <div class="slide">
-                <h3>El Modelo de Caja</h3>
-                <p>Todo elemento es una caja compuesta por capas:</p>
-                <ul class="text-start mt-6 list-disc list-inside space-y-2">
-                    <li><strong>Content:</strong> El texto o imagen.</li>
-                    <li><strong>Padding:</strong> Espacio entre contenido y borde.</li>
-                    <li><strong>Border:</strong> Línea que rodea el padding.</li>
-                    <li><strong>Margin:</strong> Espacio fuera del borde.</li>
+                <h3>Dimensionamiento (Box Model)</h3>
+                <p>Todo elemento en HTML es una caja. Sus dimensiones principales se controlan con <code>width</code> y <code>height</code>.</p>
+                <ul class="text-left mt-6 space-y-4">
+                    <li><strong>Width (Ancho):</strong> Controla el espacio horizontal.</li>
+                    <li><strong>Height (Alto):</strong> Controla el espacio vertical.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 5: Propiedad Border (Bordes) -->
             <div class="slide">
-                <h3>Bordes en CSS</h3>
-                <p>La propiedad <code>border</code> es una abreviación (shorthand) para tres valores:</p>
-                <div class="concept-box bg-light">
-                    <code class="font-mono text-dark">border: [grosor] [estilo] [color];</code>
-                    <p class="mt-3 small text-secondary">Ejemplo: <code>border: 2px solid blue;</code></p>
-                    <p class="small text-secondary">Estilos: solid, dashed, dotted, double.</p>
+                <h3>Unidades de Medida</h3>
+                <p>Es vital elegir la unidad correcta según el dispositivo:</p>
+                <div class="concept-box-pres">
+                    <p><strong>Absolutas:</strong> <code>px</code> (píxeles) para tamaños fijos.</p>
+                    <p><strong>Relativas:</strong> <code>%</code> (porcentaje) para diseños que se adaptan a la pantalla.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 6: Border-radius (Esquinas) -->
+            <div class="slide">
+                <h3>Bordes (Properties)</h3>
+                <p>La propiedad <code>border</code> es una abreviación que define grosor, estilo y color al mismo tiempo.</p>
+                <div class="bg-gray-100 p-6 rounded-2xl border-2 border-dashed border-blue-400 mt-6 font-mono text-xl">
+                    border: 2px solid #0d6efd;
+                </div>
+            </div>
+
             <div class="slide">
                 <h3>Bordes Redondeados</h3>
-                <p>Permite suavizar las esquinas de los contenedores.</p>
-                <div class="concept-box border-info bg-info bg-opacity-10">
-                    <code class="font-mono text-info">border-radius: 15px;</code>
-                    <p class="mt-3 small">Si se usa el 50%, el elemento se vuelve un círculo (si es cuadrado).</p>
+                <p>Con <code>border-radius</code> podemos suavizar las esquinas o crear círculos perfectos.</p>
+                <div class="concept-box-pres" style="border-left-color: var(--ima-purple);">
+                    <p>Un <code>border-radius: 50%</code> aplicado a un elemento cuadrado lo transformará automáticamente en un círculo.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 7: Ejercicio 1: Contenedores -->
             <div class="slide">
-                <h3>Ejercicio 1: La Caja</h3>
-                <p>Escribe el código CSS para un <code>section</code> con:</p>
-                <ul class="list-disc list-inside small text-start">
-                    <li>Fondo gris claro.</li>
-                    <li>Ancho de 400px y altura de 100px.</li>
-                    <li>Borde rojo sólido de 5px.</li>
-                    <li>Esquinas redondeadas de 10px.</li>
+                <h3>Ejercicio 1: Contenedores</h3>
+                <p>Dibuja en tu cuaderno una caja y escribe el código CSS para que tenga fondo verde, un borde doble negro y esquinas de 20px.</p>
+                <div class="mt-8 p-6 bg-green-100 rounded-2xl border-2 border-green-600">
+                    <p class="font-bold text-green-800">Pista: border-style: double;</p>
+                </div>
+            </div>
+
+            <div class="slide">
+                <h3>Estados de los Enlaces</h3>
+                <p>Los enlaces (<code>&lt;a&gt;</code>) tienen estados interactivos conocidos como pseudo-clases.</p>
+                <ul class="text-left mt-6 space-y-4">
+                    <li><code>:link</code> - Estado inicial.</li>
+                    <li><code>:visited</code> - Enlace ya clicado.</li>
+                    <li><code>:hover</code> - Mouse encima.</li>
+                    <li><code>:active</code> - Momento del clic.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 8: Estilos de Enlaces (links) -->
-            <div class="slide">
-                <h3>Personalización de Enlaces</h3>
-                <p>Por defecto, los enlaces son azules y subrayados. Podemos cambiar esto con CSS.</p>
-                <div class="concept-box">
-                    <code class="font-mono text-primary">a { color: green; text-decoration: none; }</code>
-                    <p class="mt-3 small"><code>text-decoration: none;</code> elimina el subrayado.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Pseudo-clases de Enlace -->
-            <div class="slide">
-                <h3>Estados del Enlace</h3>
-                <div class="row w-100 mt-4 text-start">
-                    <div class="col-6">
-                        <p class="small"><code>:link</code> - Estado normal.</p>
-                        <p class="small"><code>:visited</code> - Enlace ya visitado.</p>
-                    </div>
-                    <div class="col-6">
-                        <p class="small"><code>:hover</code> - Al pasar el mouse.</p>
-                        <p class="small"><code>:active</code> - Al hacer clic.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 10: Text-decoration -->
             <div class="slide">
                 <h3>Decoración de Texto</h3>
-                <p>Controla las líneas decorativas en el texto.</p>
-                <div class="concept-box bg-warning bg-opacity-10 border-warning">
-                    <ul class="list-unstyled small">
-                        <li><code>underline:</code> Subrayado.</li>
-                        <li><code>overline:</code> Línea superior.</li>
-                        <li><code>line-through:</code> Tachado.</li>
-                        <li><code>none:</code> Sin decoración.</li>
-                    </ul>
+                <p>La propiedad <code>text-decoration</code> nos permite quitar el subrayado clásico de los enlaces.</p>
+                <div class="concept-box-pres bg-blue-100 border-blue-600">
+                    <p class="font-bold text-blue-900">Sintaxis: text-decoration: none;</p>
+                    <p class="text-sm mt-2">Se usa mucho para menús de navegación modernos.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 11: Ejemplo de Sintaxis Unificada -->
             <div class="slide">
-                <h3>Ejemplo: Botón de Navegación</h3>
-                <div class="bg-dark text-white p-4 rounded-3 text-start font-mono small">
-                    a.boton {<br>
-                    &nbsp;&nbsp;background-color: blue;<br>
-                    &nbsp;&nbsp;color: white;<br>
-                    &nbsp;&nbsp;padding: 10px 20px;<br>
-                    &nbsp;&nbsp;text-decoration: none;<br>
-                    &nbsp;&nbsp;border-radius: 5px;<br>
+                <h3>Cambiando Colores de Enlace</h3>
+                <p>Es una buena práctica cambiar el color de un enlace cuando el usuario pasa el mouse sobre él (feedback).</p>
+                <div class="bg-gray-900 text-white p-8 rounded-3xl text-left font-mono mt-4">
+                    a:hover {<br>
+                    &nbsp;&nbsp;color: orange;<br>
+                    &nbsp;&nbsp;font-weight: bold;<br>
                     }
                 </div>
             </div>
 
-            <!-- Diapositiva 12: Importancia de la Visibilidad -->
             <div class="slide">
-                <h3>Impacto en la Usabilidad</h3>
-                <p>Un enlace debe parecer un enlace. Quitar el subrayado requiere compensar con color o negrita para que el usuario sepa que es clicable.</p>
-                <div class="concept-box">
-                    <p class="small italic">Consejo: Usa :hover para dar feedback visual al usuario.</p>
+                <h3>Sombras (Box-shadow)</h3>
+                <p>Agrega profundidad a tus contenedores con sombras personalizadas.</p>
+                <div class="concept-box-pres">
+                    <p>Definimos desplazamiento horizontal, vertical, desenfoque (blur) y color.</p>
+                    <p class="text-xs mt-3">Ejemplo: box-shadow: 0 4px 10px rgba(0,0,0,0.1);</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 13: Ejercicio 2: Enlaces -->
             <div class="slide">
-                <h3>Ejercicio 2: Menú</h3>
-                <p>Diseña en tu cuaderno un menú con 3 enlaces. Escribe el CSS para que al pasar el mouse (:hover), el fondo cambie a amarillo y el texto a negro.</p>
-            </div>
-
-            <!-- Diapositiva 14: Cuestionario (Parte 1) -->
-            <div class="slide">
-                <h3>Cuestionario: Evaluación</h3>
-                <div class="quiz-container max-w-2xl w-100">
-                    <p class="quiz-question mb-4 fw-bold text-xl text-primary text-start"></p>
-                    <div class="quiz-options d-flex flex-column gap-2"></div>
-                    <p class="quiz-feedback mt-4 fw-bold text-lg"></p>
+                <h3>Layout y Alineación</h3>
+                <p>El dimensionamiento correcto permite que los contenedores se alineen correctamente en la cuadrícula del sitio.</p>
+                <div class="concept-box-pres bg-orange-100 border-orange-600">
+                    <p class="text-orange-900">Recuerda: El margen (margin) agrega espacio <strong>fuera</strong> de la caja.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 15: Cuestionario (Parte 2) -->
             <div class="slide">
-                <h3>Cuestionario: Continuación</h3>
-                <div class="quiz-container max-w-2xl w-100">
-                    <p class="quiz-question mb-4 fw-bold text-xl text-primary text-start"></p>
-                    <div class="quiz-options d-flex flex-column gap-2"></div>
-                    <p class="quiz-feedback mt-4 fw-bold text-lg"></p>
+                <h3>Ejercicio 2: Estilos</h3>
+                <p>Escribe el código CSS para un enlace que no tenga subrayado, sea de color azul, y que al pasar el mouse se ponga rojo.</p>
+            </div>
+
+            <div class="slide">
+                <h3>Cuestionario de Evaluación</h3>
+                <div class="quiz-container-pres w-full max-w-2xl">
+                    <p id="q-text" class="text-2xl font-bold text-blue-600 mb-6 text-left"></p>
+                    <div id="q-options" class="flex flex-col space-y-3"></div>
+                    <p id="q-feedback" class="mt-6 font-bold text-xl h-8"></p>
                 </div>
             </div>
 
-            <!-- Diapositiva 16: Fin y Asignación -->
             <div class="slide">
-                <h2>¡Muchas Gracias!</h2>
-                <div class="concept-box border-primary">
-                    <p><strong>Asignación:</strong> Crear un archivo HTML con un contenedor (div) que simule una tarjeta de perfil, incluyendo foto, nombre (enlace) y descripción, aplicando todos los conceptos vistos.</p>
-                    <p class="mt-4 small">Fecha de entrega: Próxima clase.</p>
+                <h3>Cuestionario (Parte 2)</h3>
+                <div class="quiz-container-pres w-full max-w-2xl">
+                    <p id="q-text-2" class="text-2xl font-bold text-blue-600 mb-6 text-left"></p>
+                    <div id="q-options-2" class="flex flex-col space-y-3"></div>
+                    <p id="q-feedback-2" class="mt-6 font-bold text-xl h-8"></p>
+                </div>
+            </div>
+
+            <div class="slide">
+                <h2>Fin de la Clase</h2>
+                <div class="concept-box-pres border-green-600 shadow-xl">
+                    <p class="font-bold text-green-800 mb-4">Tarea Práctica:</p>
+                    <p>Diseñar una tarjeta informativa en HTML/CSS que use 3 colores de fondo distintos y enlaces con efectos de hover.</p>
+                    <p class="mt-6 text-gray-500 font-bold">¡Excelente trabajo hoy!</p>
                 </div>
             </div>
         </div>
 
-        <!-- Controles -->
-        <div class="position-absolute bottom-0 start-50 translate-middle-x mb-5 d-flex gap-3 z-3">
-            <button id="prev-btn" class="nav-button">Anterior</button>
-            <button id="next-btn" class="nav-button">Siguiente</button>
+        <div class="fixed bottom-0 left-0 w-full p-8 flex justify-center space-x-6 z-50 pointer-events-none">
+            <button id="prev-btn" class="nav-button-pres pointer-events-auto">Anterior</button>
+            <button id="next-btn" class="nav-button-pres pointer-events-auto">Siguiente</button>
         </div>
         <div id="slide-counter">1 / 16</div>
     </main>
 
-    <footer id="page-footer" class="w-100 bg-dark text-white text-center p-2 small z-3">
-        <div class="d-flex align-items-center justify-content-center gap-2">
+    <footer id="page-footer" class="bg-gray-900 text-white py-4 text-center">
+        <div class="container flex justify-center items-center space-x-4">
             <img src="../../imagenes/bandera-de-honduras.png" alt="Honduras" width="60">
-            <p class="m-0">© 2026 Instituto María Auxiliadora - Área de Informática</p>
+            <p class="text-sm font-medium">© 2026 Instituto María Auxiliadora - Área de Informática</p>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const slides = document.querySelectorAll('.slide');
         const nextBtn = document.getElementById('next-btn');
         const prevBtn = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
+        const counter = document.getElementById('slide-counter');
         const header = document.getElementById('page-header');
         const footer = document.getElementById('page-footer');
-        let currentSlide = 0;
+        let current = 0;
 
         const quizData = [
-            { q: "¿Qué propiedad define el color de fondo?", options: ["background-color", "background-image", "background-repeat", "background-attachment"], a: "background-color" },
-            { q: "¿Qué propiedad define la anchura?", options: ["width", "height", "margin", "padding"], a: "width" },
-            { q: "¿Cuál NO es parte del Modelo de Caja?", options: ["Padding", "Border", "Margin", "Memory-usage"], a: "Memory-usage" },
-            { q: "¿Qué hace 'text-decoration: none'?", options: ["Quita subrayado", "Cambia el tamaño", "Centra los textos", "Pone negrita real"], a: "Quita subrayado" },
-            { q: "¿Qué propiedad redondea esquinas?", options: ["border-radius", "border-outline", "border-display", "border-styling"], a: "border-radius" },
-            { q: "¿Cuándo se activa ':hover'?", options: ["Al pasar el mouse", "Al hacer un clic", "Al visitar sitio", "Al cargar página"], a: "Al pasar el mouse" },
-            { q: "¿Qué valor de border es un estilo?", options: ["solid", "dotted", "dashed", "double"], a: "solid" },
-            { q: "¿Qué unidad es relativa al padre?", options: ["%", "em", "vw", "vh"], a: "%" },
-            { q: "¿Qué es el padding?", options: ["Espacio interno", "Espacio externo", "Grosor del borde", "Color de fuente"], a: "Espacio interno" },
-            { q: "¿Qué hace 'line-through'?", options: ["Tachado", "Línea superior", "Subrayado bajo", "Doble subrayado"], a: "Tachado" }
+            { q: "¿Qué propiedad define el fondo?", options: ["background-color", "color", "border-color", "fill-color"], a: "background-color" },
+            { q: "¿Qué propiedad define el ancho?", options: ["width", "height", "padding", "margin"], a: "width" },
+            { q: "¿Unidad para tamaños fijos?", options: ["px", "%", "em", "auto"], a: "px" },
+            { q: "¿Unidad para tamaños adaptables?", options: ["%", "pt", "in", "cm"], a: "%" },
+            { q: "¿Qué propiedad redondea bordes?", options: ["border-radius", "border-style", "border-width", "border-collapse"], a: "border-radius" },
+            { q: "¿Cómo quitar el subrayado?", options: ["text-decoration: none", "text-style: plain", "font-style: normal", "border: none"], a: "text-decoration: none" },
+            { q: "¿Pseudo-clase al pasar el mouse?", options: [":hover", ":link", ":active", ":visited"], a: ":hover" },
+            { q: "¿Cuál NO es un valor de border?", options: ["shadow", "solid", "dashed", "dotted"], a: "shadow" },
+            { q: "¿Qué es el margin?", options: ["Espacio exterior", "Espacio interior", "Grosor del borde", "Tamaño de fuente"], a: "Espacio exterior" },
+            { q: "¿Para qué sirve el padding?", options: ["Espacio interior", "Espacio exterior", "Sombra de caja", "Ancho del texto"], a: "Espacio interior" }
         ];
-        let currentQuiz = 0;
+        let quizIdx = 0;
 
-        function showSlide(n) {
-            slides[currentSlide].classList.remove('active');
-            slides[currentSlide].style.display = 'none';
-            currentSlide = (n + slides.length) % slides.length;
-            slides[currentSlide].style.display = 'flex';
-            setTimeout(() => slides[currentSlide].classList.add('active'), 10);
+        function show(idx) {
+            slides[current].classList.remove('active');
+            slides[current].style.display = 'none';
+            current = (idx + slides.length) % slides.length;
+            slides[current].style.display = 'flex';
+            setTimeout(() => slides[current].classList.add('active'), 20);
 
-            slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
-            prevBtn.disabled = currentSlide === 0;
-            nextBtn.disabled = currentSlide === slides.length - 1;
+            counter.textContent = `${current + 1} / ${slides.length}`;
+            prevBtn.disabled = current === 0;
+            nextBtn.disabled = current === slides.length - 1;
 
-            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
+            if (current === 13 || current === 14) renderQuiz();
         }
 
-        function loadQuiz() {
-            const currentSlideEl = slides[currentSlide];
-            const questionEl = currentSlideEl.querySelector('.quiz-question');
-            const optionsEl = currentSlideEl.querySelector('.quiz-options');
-            const feedbackEl = currentSlideEl.querySelector('.quiz-feedback');
+        function renderQuiz() {
+            const isSlide14 = current === 13;
+            const containerId = isSlide14 ? 'q-text' : 'q-text-2';
+            const optionsId = isSlide14 ? 'q-options' : 'q-options-2';
+            const feedbackId = isSlide14 ? 'q-feedback' : 'q-feedback-2';
 
-            if (!questionEl) return;
+            const qText = document.getElementById(containerId);
+            const qOpts = document.getElementById(optionsId);
+            const qFeed = document.getElementById(feedbackId);
 
-            if (currentQuiz >= quizData.length) {
-                questionEl.textContent = "¡Cuestionario completado!";
-                optionsEl.innerHTML = "";
-                feedbackEl.textContent = "Has respondido todas las preguntas.";
+            if (!qText) return;
+            if (quizIdx >= quizData.length) {
+                qText.textContent = "¡Quiz completado!";
+                qOpts.innerHTML = "";
                 return;
             }
 
-            if (currentSlide === 13 && currentQuiz >= 5) { showSlide(14); return; }
-            if (currentSlide === 14 && currentQuiz < 5) { showSlide(13); return; }
+            if (isSlide14 && quizIdx >= 5) { show(14); return; }
+            if (!isSlide14 && quizIdx < 5) { show(13); return; }
 
-            const data = quizData[currentQuiz];
-            questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
-            optionsEl.innerHTML = "";
-            feedbackEl.textContent = "";
+            const data = quizData[quizIdx];
+            qText.textContent = `${quizIdx + 1}. ${data.q}`;
+            qOpts.innerHTML = "";
+            qFeed.textContent = "";
 
             data.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.textContent = opt;
-                btn.className = "quiz-option";
-                btn.onclick = () => {
-                    const btns = optionsEl.querySelectorAll('button');
-                    btns.forEach(b => b.disabled = true);
+                const b = document.createElement('button');
+                b.className = "quiz-option-pres";
+                b.textContent = opt;
+                b.onclick = () => {
+                    const all = qOpts.querySelectorAll('button');
+                    all.forEach(x => x.disabled = true);
                     if (opt === data.a) {
-                        btn.classList.add('correct');
-                        feedbackEl.textContent = "¡Correcto!";
-                        feedbackEl.style.color = "#16a34a";
+                        b.classList.add('correct');
+                        qFeed.textContent = "¡Correcto!";
+                        qFeed.style.color = "var(--ima-green)";
                     } else {
-                        btn.classList.add('incorrect');
-                        feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
-                        feedbackEl.style.color = "#dc2626";
+                        b.classList.add('incorrect');
+                        qFeed.textContent = `Respuesta: ${data.a}`;
+                        qFeed.style.color = "var(--ima-red)";
                     }
                     setTimeout(() => {
-                        currentQuiz++;
-                        if (currentQuiz === 5 && currentSlide === 13) {
-                            showSlide(14);
-                        } else {
-                            loadQuiz();
-                        }
+                        quizIdx++;
+                        if (quizIdx === 5 && isSlide14) show(14);
+                        else renderQuiz();
                     }, 2000);
                 };
-                optionsEl.appendChild(btn);
+                qOpts.appendChild(b);
             });
         }
 
-        nextBtn.onclick = () => showSlide(currentSlide + 1);
-        prevBtn.onclick = () => showSlide(currentSlide - 1);
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') showSlide(currentSlide + 1);
-            if (e.key === 'ArrowLeft') showSlide(currentSlide - 1);
+        nextBtn.onclick = () => show(current + 1);
+        prevBtn.onclick = () => show(current - 1);
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight') show(current + 1);
+            if (e.key === 'ArrowLeft') show(current - 1);
         });
 
-        // Fullscreen Logic
-        function handleFullscreen() {
+        function syncFS() {
             const isFull = window.innerHeight >= screen.height - 10 || document.fullscreenElement;
-            header.style.setProperty('display', isFull ? 'none' : 'flex', 'important');
-            footer.style.setProperty('display', isFull ? 'none' : 'block', 'important');
+            header.style.display = isFull ? 'none' : 'flex';
+            footer.style.display = isFull ? 'none' : 'block';
         }
+        window.addEventListener('resize', syncFS);
+        document.addEventListener('fullscreenchange', syncFS);
 
-        window.addEventListener('resize', handleFullscreen);
-        document.addEventListener('fullscreenchange', handleFullscreen);
-
-        showSlide(0);
-        handleFullscreen();
+        show(0);
+        syncFS();
     </script>
 </body>
 </html>

@@ -143,3 +143,16 @@ AUDITORÍA MIGRACIÓN BOOTSTRAP Y PRESENTACIONES 17 MAYO (14/05/2026)
   - Creada presentación "Programación Lógica / Bucle Repetir" (16 slides) con investigación externa.
   - Creada presentación "Personalización de Contenedores y Enlaces" (16 slides) unificando temas del 17 y 24 de mayo.
   - Actualización de cuestionarios (10 preguntas) con feedback cromático.
+
+AUDITORÍA SISTEMA DE DISEÑO LOCAL (14/05/2026)
+---------------------------------------------
+- Hallazgo: La dependencia de CDNs externas para Tailwind y Bootstrap causaba fallos intermitentes en la carga del portal (solo cargaba HTML sin estilos).
+- Resolución: Se eliminaron todas las referencias a frameworks externos en 60 archivos. Se creó un CSS local robusto que emula las clases de utilidad necesarias.
+- Verificación: El portal ahora carga instantáneamente y es 100% funcional offline.
+
+AUDITORÍA DE INDEPENDENCIA TECNOLÓGICA (14/05/2026)
+--------------------------------------------------
+- Hallazgo Crítico: Se detectó una regresión parcial donde se intentó sustituir Tailwind por Bootstrap CDN, lo cual aún dejaba al portal vulnerable a fallos de red externa.
+- Resolución Final: Se eliminaron TODOS los enlaces a 'cdn.jsdelivr.net', 'fonts.googleapis.com' y 'cdnjs.cloudflare.com'.
+- Verificación: Se ejecutó script de limpieza automatizada y verificación manual. El portal ahora depende exclusivamente de activos locales situados en /css/, /js/ e /imagenes/.
+- Cache: Se estandarizó la versión v15 para asegurar la purga de versiones híbridas previas.

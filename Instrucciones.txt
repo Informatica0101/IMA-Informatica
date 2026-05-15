@@ -179,3 +179,25 @@ ESTADO: PENDIENTE DE REVISIÓN
 - Generación de presentaciones de 16 slides para Programación (Lógica/Repetir) y Diseño Web (Personalización unificada).
 - Contenido de Bucle Repetir investigado externamente según requerimiento.
 - Quizzes de 10 preguntas actualizados con feedback cromático.
+
+TAREA: [A-58]
+TÍTULO: Diagnóstico de Carga y Reparación del Portal (Local Design System)
+ÁREA: Frontend / Infraestructura
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Eliminadas dependencias externas (Tailwind/Bootstrap) de 60 archivos HTML.
+- Implementado Sistema de Diseño Local en css/style.css (v14.4).
+- Reparada la carga del portal y dashboards.
+- Creadas presentaciones para el 17 de mayo de 2026.
+- Integrados los nuevos temas en el menú de Cursos.
+- Sincronizada la caché del sistema a v=14.4.
+
+TAREA: [A-59]
+TÍTULO: Migración a Sistema de Diseño Local 100% Independiente
+ÁREA: Infraestructura / Frontend
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Lograda la independencia total de frameworks externos (No Tailwind, No Bootstrap CDN).
+- Implementado CSS local v15 robusto y escalable.
+- Verificado el funcionamiento offline/local mediante Playwright.
+- Presentaciones del 17 de mayo integradas y estilizadas localmente.

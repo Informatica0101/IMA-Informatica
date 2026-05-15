@@ -4,466 +4,308 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Programación Lógica / Bucle Repetir</title>
-    <!-- CDN de Bootstrap 5 (Migración completada) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts - Inter & Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css?v=15">
     <style>
-        /* Universal box-sizing */
-        * { box-sizing: border-box; }
-
-        /* Configuración base */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            color: #1f2937;
-        }
-
-        /* Contenedor principal */
-        main {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        #presentation-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-color: #ffffff;
-            overflow: hidden;
-        }
-
-        /* Estilo para cada diapositiva */
-        .slide {
-            width: 100%;
-            height: 100%;
-            padding: 4rem;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-        }
-
-        .slide.active {
-            display: flex;
-            opacity: 1;
-            animation: fadeIn 0.8s forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Tipografía proyectable (Estándar 2026) */
-        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3rem; color: #0d6efd; margin-bottom: 1.5rem; }
-        h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.25rem; line-height: 1.4; color: #1f2937; margin-bottom: 1.5rem; }
-        p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 900px; }
-
-        .concept-box {
-            background-color: #f9fafb;
-            border-left: 8px solid #0d6efd;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            text-align: left;
-            margin-top: 2rem;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .concept-box * { font-size: 1.5rem !important; }
-
-        /* Botones de navegación */
-        .nav-button {
-            background-color: #0d6efd;
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: all 0.3s;
-            cursor: pointer;
-            border: none;
-        }
-
-        .nav-button:hover { background-color: #0b5ed7; transform: scale(1.05); }
-        .nav-button:disabled { background-color: #d1d5db; cursor: not-allowed; transform: scale(1); }
-
-        #slide-counter {
-            position: absolute;
-            bottom: 1.5rem;
-            right: 2rem;
-            font-weight: 600;
-            color: #9ca3af;
-            z-index: 10;
-        }
-
-        /* Quiz */
-        .quiz-option {
-            width: 100%;
-            padding: 1rem;
-            margin: 0.25rem 0;
-            border: 2px solid #e5e7eb;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            background: white;
-            font-size: 1.1rem;
-        }
-        .quiz-option:hover { background-color: #eff6ff; border-color: #3b82f6; }
-        .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
-        .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
-
-        /* Adaptación Móvil */
+        html, body { height: 100vh; width: 100vw; overflow: hidden; }
+        main { flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+        #presentation-container { width: 100%; height: 100%; position: relative; background-color: #ffffff; overflow: hidden; }
+        .slide { width: 100%; height: 100%; padding: 4rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: absolute; top: 0; left: 0; opacity: 0; }
+        .slide.active { display: flex; opacity: 1; animation: fadeInUp 0.8s forwards; }
+        h2 { font-size: 3.5rem; color: var(--ima-blue); margin-bottom: 2rem; }
+        h3 { font-size: 2.5rem; color: var(--ima-gray-900); margin-bottom: 2rem; }
+        p, li { font-size: 1.5rem; line-height: 1.6; color: var(--ima-gray-700); max-width: 950px; }
+        .concept-box-pres { background-color: var(--ima-gray-50); border-left: 10px solid var(--ima-blue); padding: 2.5rem; border-radius: 1rem; text-align: left; margin-top: 2rem; width: 100%; max-width: 950px; }
+        .nav-button-pres { background-color: var(--ima-blue); color: white; padding: 0.8rem 1.6rem; border-radius: 0.75rem; font-weight: 700; border: none; transition: all 0.2s; box-shadow: var(--shadow-md); }
+        .nav-button-pres:hover { background-color: var(--ima-blue-dark); transform: translateY(-2px); }
+        .nav-button-pres:disabled { background-color: var(--ima-gray-300); cursor: not-allowed; transform: none; }
+        .quiz-option-pres { width: 100%; padding: 1.2rem; margin: 0.5rem 0; border: 2px solid var(--ima-gray-200); border-radius: 1rem; font-weight: 600; transition: all 0.2s; background: white; font-size: 1.2rem; text-align: left; }
+        .quiz-option-pres:hover { background-color: var(--ima-gray-100); border-color: var(--ima-blue); }
+        .quiz-option-pres.correct { background-color: #d1fae5; border-color: var(--ima-green); color: #065f46; }
+        .quiz-option-pres.incorrect { background-color: #fee2e2; border-color: var(--ima-red); color: #991b1b; }
+        #slide-counter { position: absolute; bottom: 1.5rem; right: 2rem; font-weight: 700; color: var(--ima-gray-400); }
         @media (max-width: 768px) {
-            .slide { padding: 2rem 1.5rem; }
-            h2 { font-size: 1.75rem; }
-            h3 { font-size: 1.4rem; }
-            p, li { font-size: 1rem; line-height: 1.4; }
-            .concept-box { padding: 1rem; border-left-width: 4px; margin-top: 1rem; }
-            .nav-button { padding: 0.5rem 1rem; font-size: 0.875rem; }
-            #slide-counter { bottom: 1rem; right: 1rem; font-size: 0.75rem; }
-            .quiz-option { padding: 0.75rem; font-size: 0.9rem; }
-            #page-header h1 { font-size: 1rem; }
-            #page-header img { width: 100px !important; }
+            .slide { padding: 2rem 1rem; }
+            h2 { font-size: 2.2rem; }
+            h3 { font-size: 1.8rem; }
+            p, li { font-size: 1.1rem; }
+            .concept-box-pres { padding: 1.5rem; border-left-width: 6px; }
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <header id="page-header" class="w-full bg-white p-4 shadow-sm d-flex justify-content-between align-items-center z-3">
-        <div class="d-flex align-items-center space-x-4">
-            <img src="../../imagenes/logo.png" alt="Logo IMA" style="width: 150px; height: auto;">
-            <h1 class="text-xl font-bold text-dark ms-3">Programación I</h1>
+    <header id="page-header" class="header-refined px-5 justify-between">
+        <div class="flex items-center space-x-4">
+            <img src="../../imagenes/logo.png" alt="Logo IMA" class="logo-img">
+            <h1 class="text-xl font-bold text-gray-800 hidden md:inline">Programación I</h1>
         </div>
-        <nav>
-            <a href="../../index.html" class="text-secondary fw-semibold text-decoration-none small">Volver al Inicio</a>
-        </nav>
+        <a href="../../index.html" class="nav-link-ima font-bold">Volver</a>
     </header>
 
     <main>
         <div id="presentation-container">
-            <!-- Diapositiva 1: Portada -->
             <div class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
-                <h2>Programación Lógica / Estructuras de Control (Repetir)</h2>
-                <div class="mt-8 text-lg text-secondary">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                <img src="../../imagenes/logo.png" alt="Logo" style="width: 280px;" class="mb-8">
+                <h2>Programación Lógica / Bucle Repetir</h2>
+                <div class="mt-8 text-xl text-gray-600 font-medium">
+                    <p>Institución: Instituto María Auxiliadora</p>
                     <p>Fecha: 17 de mayo de 2026</p>
-                    <p>Grado: II BTP Informática Sección "A"</p>
+                    <p>Clase: Programación I</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: Concepto de Programación Lógica -->
             <div class="slide">
                 <h3>Programación Lógica</h3>
-                <p>Es un paradigma de programación basado en la lógica formal, específicamente en la lógica de predicados.</p>
-                <div class="concept-box bg-blue-50">
-                    <p>En este modelo, no decimos a la computadora "cómo" hacer las cosas, sino que definimos relaciones y permitimos que el sistema deduzca los resultados.</p>
+                <p>Paradigma de programación basado en el uso de funciones matemáticas y lógica formal para resolver problemas complejos.</p>
+                <div class="concept-box-pres">
+                    <p>A diferencia de la programación imperativa, aquí se definen <strong>qué</strong> resultados se desean obtener en lugar de detallar cada paso del proceso.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 3: Hechos (Facts) -->
             <div class="slide">
-                <h3>Los Hechos</h3>
-                <p>Son verdades fundamentales que establecemos dentro de nuestro sistema lógico.</p>
-                <div class="concept-box">
-                    <p>Ejemplo en Prolog:</p>
-                    <code class="font-mono text-primary">humano(socrates).</code><br>
-                    <code class="font-mono text-primary">animal(perro).</code>
-                    <p class="mt-3 small">Esto afirma que Sócrates es humano y el perro es un animal.</p>
-                </div>
+                <h3>Base de Conocimientos</h3>
+                <p>En este paradigma, el programa se compone de un conjunto de hechos y reglas que describen el dominio del problema.</p>
+                <ul class="text-left mt-6 space-y-4">
+                    <li><strong>Hechos:</strong> Afirmaciones que son siempre verdaderas (ej. "Juan es padre de Pedro").</li>
+                    <li><strong>Reglas:</strong> Instrucciones condicionales (ej. "Si A es padre de B, entonces A es ancestro de B").</li>
+                </ul>
             </div>
 
-            <!-- Diapositiva 4: Reglas (Rules) -->
-            <div class="slide">
-                <h3>Las Reglas</h3>
-                <p>Definen relaciones lógicas que permiten al sistema inferir nueva información a partir de los hechos.</p>
-                <div class="concept-box border-success bg-success bg-opacity-10">
-                    <p>Sintaxis conceptual:</p>
-                    <p><em>"Si X es humano, entonces X es mortal."</em></p>
-                    <code class="font-mono text-success">mortal(X) :- humano(X).</code>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Motor de Inferencia -->
             <div class="slide">
                 <h3>Motor de Inferencia</h3>
-                <p>Es el componente que procesa los hechos y las reglas para responder consultas.</p>
-                <ul class="text-start mt-6 list-disc list-inside space-y-3">
-                    <li><strong>Unificación:</strong> Busca coincidencias entre la consulta y la base de conocimientos.</li>
-                    <li><strong>Backtracking:</strong> Vuelve atrás si una ruta lógica no llega a una solución.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 6: Aplicaciones de la Prog. Lógica -->
-            <div class="slide">
-                <h3>¿Dónde se aplica?</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div class="p-4 bg-light rounded-3 text-start">
-                        <p class="fw-bold text-primary">Inteligencia Artificial</p>
-                        <p class="small">Sistemas de diagnóstico médico y razonamiento automático.</p>
-                    </div>
-                    <div class="p-4 bg-light rounded-3 text-start">
-                        <p class="fw-bold text-primary">Procesamiento de Lenguaje</p>
-                        <p class="small">Análisis gramatical y traducción automática de idiomas.</p>
-                    </div>
+                <p>Es el "cerebro" del lenguaje lógico que busca respuestas dentro de la base de conocimientos usando algoritmos de búsqueda.</p>
+                <div class="concept-box-pres">
+                    <p>Utiliza el <strong>Backtracking</strong>: si una ruta de razonamiento falla, el motor regresa al último punto de decisión e intenta una alternativa.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 7: Ejercicio 1: Lógica -->
             <div class="slide">
-                <h3>Ejercicio 1: Deducción</h3>
-                <p>Escribe en tu cuaderno una regla lógica para definir quién es un "abuelo" basándote en el hecho "padre".</p>
-                <div class="concept-box text-center fst-italic">
-                    Pista: X es abuelo de Z si X es padre de Y Y Y es padre de Z.
+                <h3>Lenguaje Prolog</h3>
+                <p>PROgrammation en LOGique es el lenguaje más representativo de este paradigma, nacido en los años 70 para procesar lenguaje natural.</p>
+                <img src="../../imagenes/programacion_representacion.html" onerror="this.remove()" class="mt-4 rounded-xl shadow-md">
+            </div>
+
+            <div class="slide">
+                <h3>Aplicaciones Actuales</h3>
+                <p>Sistemas expertos, inteligencia artificial, diagnóstico médico y bases de datos deductivas.</p>
+                <div class="concept-box-pres">
+                    <p>Ideal para problemas donde las reglas son muy complejas y cambiantes, como la legislación o la genética.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 8: El Bucle Repetir (Concepto) -->
+            <div class="slide">
+                <h3>Ejercicio 1: Lógica</h3>
+                <p>Define tres hechos sobre tu familia (padre, madre, hermano) en formato lógico: <code>relacion(sujeto, objeto).</code></p>
+                <div class="mt-8 p-6 bg-blue-100 rounded-2xl border-2 border-blue-600">
+                    <p class="font-bold text-blue-800">Ejemplo: padre(antonio, pablo).</p>
+                </div>
+            </div>
+
             <div class="slide">
                 <h3>Bucle Repetir (Do-Until)</h3>
-                <p>Es una estructura de control que repite un bloque de instrucciones <strong>hasta que</strong> se cumple una condición.</p>
-                <div class="concept-box border-warning bg-warning bg-opacity-10">
-                    <p>A diferencia del bucle "Mientras", el bloque de código se ejecuta <strong>al menos una vez</strong>, ya que la condición se evalúa al final.</p>
+                <p>Estructura de control que ejecuta un bloque de código <strong>antes</strong> de evaluar la condición de salida.</p>
+                <div class="concept-box-pres" style="border-left-color: var(--ima-orange);">
+                    <p>Garantía: El código dentro de un bucle Repetir siempre se ejecutará <strong>al menos una vez</strong>.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 9: Diferencia con "Mientras" -->
             <div class="slide">
-                <h3>Repetir vs Mientras</h3>
-                <div class="row w-100 mt-4">
-                    <div class="col-md-6 p-3">
-                        <div class="p-4 bg-light border-top border-4 border-blue-500 rounded text-start h-100">
-                            <p class="fw-bold">Mientras (While)</p>
-                            <p class="small">Evalúa <strong>antes</strong> de entrar. Puede ejecutarse 0 veces.</p>
-                        </div>
+                <h3>Sintaxis en PSeInt</h3>
+                <div class="bg-gray-900 text-green-500 p-8 rounded-3xl text-left font-bold text-2xl w-full max-w-2xl shadow-2xl">
+                    <span class="text-blue-400">Repetir</span><br>
+                    &nbsp;&nbsp;&nbsp;Escribir "Ingrese su clave:"<br>
+                    &nbsp;&nbsp;&nbsp;Leer clave<br>
+                    <span class="text-blue-400">Hasta Que</span> clave == 1234
+                </div>
+            </div>
+
+            <div class="slide">
+                <h3>Diferencia con "Mientras"</h3>
+                <p>Mientras (While) evalúa al inicio; Repetir (Until) evalúa al final.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 w-full max-w-4xl">
+                    <div class="p-6 bg-white border rounded-3xl text-left">
+                        <h4 class="text-blue-600 mb-3">Mientras</h4>
+                        <p class="text-sm">Si la condición es falsa al inicio, <strong>nunca</strong> se ejecuta.</p>
                     </div>
-                    <div class="col-md-6 p-3">
-                        <div class="p-4 bg-light border-top border-4 border-orange-500 rounded text-start h-100">
-                            <p class="fw-bold">Repetir (Until)</p>
-                            <p class="small">Evalúa <strong>después</strong> de entrar. Se ejecuta mínimo 1 vez.</p>
-                        </div>
+                    <div class="p-6 bg-white border rounded-3xl text-left">
+                        <h4 class="text-orange-600 mb-3">Repetir</h4>
+                        <p class="text-sm">Incluso si la condición es falsa, se ejecuta <strong>una vez</strong> inicialmente.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 10: Sintaxis en PSeInt -->
             <div class="slide">
-                <h3>Sintaxis en Pseudocódigo</h3>
-                <div class="bg-dark text-white p-5 rounded-4 text-start font-mono shadow-lg mt-4" style="font-size: 1.8rem !important;">
-                    <span class="text-info">Repetir</span><br>
-                    &nbsp;&nbsp;&nbsp;instrucciones...<br>
-                    <span class="text-info">Hasta Que</span> <span class="text-warning">condicion</span>
+                <h3>Condición de Salida</h3>
+                <p>En PSeInt y muchos lenguajes, el bucle continúa mientras la condición sea <strong>Falsa</strong> y termina cuando es <strong>Verdadera</strong>.</p>
+                <div class="concept-box-pres">
+                    <p>Es fundamental asegurar que la condición se cumpla en algún momento para evitar <strong>bucles infinitos</strong>.</p>
                 </div>
-                <p class="mt-4 small italic">El bucle termina cuando la condición es <strong>Verdadera</strong>.</p>
             </div>
 
-            <!-- Diapositiva 11: Ejemplo Práctico -->
             <div class="slide">
-                <h3>Ejemplo: Validación de Datos</h3>
-                <p>Pedir un número hasta que sea positivo:</p>
-                <div class="bg-light p-4 rounded-3 text-start font-mono border w-100 max-w-lg">
-                    Repetir<br>
-                    &nbsp;&nbsp;Escribir "Ingrese un número mayor a 0:"<br>
-                    &nbsp;&nbsp;Leer n<br>
-                    Hasta Que n > 0
-                </div>
-                <p class="mt-4 text-secondary">Si el usuario ingresa -5, el programa volverá a preguntar.</p>
-            </div>
-
-            <!-- Diapositiva 12: Casos de Uso del Repetir -->
-            <div class="slide">
-                <h3>¿Cuándo usar Repetir?</h3>
-                <ul class="text-start mt-6 list-disc list-inside space-y-4">
-                    <li><strong>Menús de Usuario:</strong> Para mostrar las opciones y volver a pedirlas si la opción es inválida.</li>
-                    <li><strong>Ingreso de Contraseñas:</strong> Para asegurar que el código se ejecute al menos una vez antes de verificar.</li>
-                    <li><strong>Cualquier proceso</strong> que deba intentar una acción inicial antes de decidir si continúa.</li>
+                <h3>Casos de Uso Comunes</h3>
+                <ul class="text-left mt-6 space-y-4">
+                    <li><strong>Menús interactivos:</strong> Mostrar opciones hasta que el usuario elija "Salir".</li>
+                    <li><strong>Validación de entradas:</strong> Pedir un dato hasta que cumpla con el formato correcto.</li>
+                    <li><strong>Procesos interactivos:</strong> Juegos que preguntan "¿Desea jugar de nuevo?".</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 13: Ejercicio 2: Bucle -->
             <div class="slide">
-                <h3>Ejercicio 2: Algoritmo</h3>
-                <p>Escribe en tu cuaderno un algoritmo que pida al usuario presionar la tecla "S" para salir, usando un bucle Repetir.</p>
-                <div class="concept-box bg-light">
-                    <p>Requisito: El programa debe terminar únicamente cuando la variable de entrada sea igual a "S".</p>
+                <h3>Ejercicio 2: Pseudocódigo</h3>
+                <p>Diseña un algoritmo que pida números al usuario y los sume, deteniéndose cuando el usuario ingrese el número 0.</p>
+                <div class="concept-box-pres bg-green-100 border-green-600">
+                    <p class="text-green-800 font-bold">Pista: Usa una variable 'suma' e inicialízala en 0.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 14: Cuestionario (Parte 1) -->
             <div class="slide">
-                <h3>Cuestionario: Evaluación</h3>
-                <div class="quiz-container max-w-2xl w-100">
-                    <p class="quiz-question mb-4 fw-bold text-xl text-primary text-start"></p>
-                    <div class="quiz-options d-flex flex-column gap-2"></div>
-                    <p class="quiz-feedback mt-4 fw-bold text-lg"></p>
+                <h3>Cuestionario de Repaso</h3>
+                <div class="quiz-container-pres w-full max-w-2xl">
+                    <p id="q-text" class="text-2xl font-bold text-blue-600 mb-6 text-left"></p>
+                    <div id="q-options" class="flex flex-col space-y-3"></div>
+                    <p id="q-feedback" class="mt-6 font-bold text-xl h-8"></p>
                 </div>
             </div>
 
-            <!-- Diapositiva 15: Cuestionario (Parte 2) -->
             <div class="slide">
-                <h3>Cuestionario: Continuación</h3>
-                <div class="quiz-container max-w-2xl w-100">
-                    <p class="quiz-question mb-4 fw-bold text-xl text-primary text-start"></p>
-                    <div class="quiz-options d-flex flex-column gap-2"></div>
-                    <p class="quiz-feedback mt-4 fw-bold text-lg"></p>
+                <h3>Cuestionario (Continuación)</h3>
+                <div class="quiz-container-pres w-full max-w-2xl">
+                    <p id="q-text-2" class="text-2xl font-bold text-blue-600 mb-6 text-left"></p>
+                    <div id="q-options-2" class="flex flex-col space-y-3"></div>
+                    <p id="q-feedback-2" class="mt-6 font-bold text-xl h-8"></p>
                 </div>
             </div>
 
-            <!-- Diapositiva 16: Fin y Asignación -->
             <div class="slide">
-                <h2>¡Muchas Gracias!</h2>
-                <div class="concept-box border-primary">
-                    <p><strong>Asignación:</strong> Realizar un algoritmo que sume números ingresados por el usuario hasta que el total sea mayor a 100.</p>
-                    <p class="mt-4 small">Fecha de entrega: Próxima clase (24 de mayo).</p>
+                <h2>Conclusión y Tarea</h2>
+                <div class="concept-box-pres border-blue-600 shadow-xl">
+                    <p class="font-bold text-blue-800 mb-4">Actividad Práctica:</p>
+                    <p>Investigar y escribir en el cuaderno: ¿Cuál es la diferencia entre el bucle "Do-While" de C++ y el "Repetir-Hasta Que" de PSeInt?</p>
+                    <p class="mt-6 text-gray-500 font-bold">¡Nos vemos en la próxima clase!</p>
                 </div>
             </div>
         </div>
 
-        <!-- Controles -->
-        <div class="position-absolute bottom-0 start-50 translate-middle-x mb-5 d-flex gap-3 z-3">
-            <button id="prev-btn" class="nav-button">Anterior</button>
-            <button id="next-btn" class="nav-button">Siguiente</button>
+        <div class="fixed bottom-0 left-0 w-full p-8 flex justify-center space-x-6 z-50 pointer-events-none">
+            <button id="prev-btn" class="nav-button-pres pointer-events-auto">Anterior</button>
+            <button id="next-btn" class="nav-button-pres pointer-events-auto">Siguiente</button>
         </div>
         <div id="slide-counter">1 / 16</div>
     </main>
 
-    <footer id="page-footer" class="w-100 bg-dark text-white text-center p-2 small z-3">
-        <div class="d-flex align-items-center justify-content-center gap-2">
+    <footer id="page-footer" class="bg-gray-900 text-white py-4 text-center">
+        <div class="container flex justify-center items-center space-x-4">
             <img src="../../imagenes/bandera-de-honduras.png" alt="Honduras" width="60">
-            <p class="m-0">© 2026 Instituto María Auxiliadora - Área de Informática</p>
+            <p class="text-sm font-medium">© 2026 Instituto María Auxiliadora - Área de Informática</p>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const slides = document.querySelectorAll('.slide');
         const nextBtn = document.getElementById('next-btn');
         const prevBtn = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
+        const counter = document.getElementById('slide-counter');
         const header = document.getElementById('page-header');
         const footer = document.getElementById('page-footer');
-        let currentSlide = 0;
+        let current = 0;
 
         const quizData = [
-            { q: "¿En qué se basa la programación lógica?", options: ["Lógica de predicados", "Lógica de microchips", "Lógica de transistores", "Lógica de procesadores"], a: "Lógica de predicados" },
-            { q: "¿Qué es un hecho en Prolog?", options: ["Una verdad conocida", "Una función matemática", "Un error del compilador", "Una variable dinámica"], a: "Una verdad conocida" },
-            { q: "¿Qué mecanismo permite deducir verdades?", options: ["Backtracking", "Formateo de disco", "Compilación rápida", "Borrado de memoria"], a: "Backtracking" },
-            { q: "¿Cuál es el lenguaje lógico más usado?", options: ["Python", "Java", "Prolog", "Swift"], a: "Prolog" },
-            { q: "¿Para qué sirve un sistema experto?", options: ["Imitar razonamiento", "Jugar al solitario", "Limpiar el disco", "Instalar un Office"], a: "Imitar razonamiento" },
-            { q: "¿Cuándo se evalúa la condición en Repetir?", options: ["Al final", "Al inicio", "A la mitad", "Al cargar"], a: "Al final" },
-            { q: "¿Mínimo de veces que corre Repetir?", options: ["1 vez", "0 veces", "5 veces", "Muchos"], a: "1 vez" },
-            { q: "¿Cómo termina el bucle Repetir?", options: ["Si es verdadera", "Si es muy falsa", "Si se suspende", "Por un error"], a: "Si es verdadera" },
-            { q: "¿Uso ideal del bucle Repetir?", options: ["Menús y validación", "Operación matemática", "Dibujo de gráficos", "Conexión de red"], a: "Menús y validación" },
-            { q: "¿Cuál describe mejor a Prolog?", options: ["Lógico", "Imperativo", "Funcional", "Ensamblador"], a: "Lógico" }
+            { q: "¿En qué se basa la programación lógica?", options: ["Lógica formal", "Lógica de transistores", "Lógica binaria básica", "Lógica de circuitos"], a: "Lógica formal" },
+            { q: "¿Qué es un hecho en Prolog?", options: ["Una verdad absoluta", "Una función variable", "Un error de sistema", "Un comentario"], a: "Una verdad absoluta" },
+            { q: "¿Qué motor usa la prog. lógica?", options: ["Motor de inferencia", "Motor de renderizado", "Motor de combustión", "Motor de base de datos"], a: "Motor de inferencia" },
+            { q: "¿Cuál es el lenguaje lógico icónico?", options: ["Prolog", "C++", "Java", "Python"], a: "Prolog" },
+            { q: "¿Qué algoritmo usa Prolog para fallas?", options: ["Backtracking", "QuickSort", "BubbleSort", "Recursividad simple"], a: "Backtracking" },
+            { q: "¿Mínimo de ejecuciones en Repetir?", options: ["Al menos 1 vez", "0 veces si falla", "Depende del clima", "Exactamente 5"], a: "Al menos 1 vez" },
+            { q: "¿Cuándo evalúa Repetir?", options: ["Al final del bucle", "Al inicio siempre", "A la mitad", "Al cargar programa"], a: "Al final del bucle" },
+            { q: "¿Qué pasa si la condición es verdadera?", options: ["El bucle termina", "El bucle se reinicia", "Se borra el código", "El programa falla"], a: "El bucle termina" },
+            { q: "¿Diferencia clave con Mientras?", options: ["Orden de evaluación", "Color de comandos", "Nombre del programador", "Tamaño del archivo"], a: "Orden de evaluación" },
+            { q: "¿Es útil para menús?", options: ["Sí, es ideal", "No, nunca se usa", "Solo en Linux", "Solo en servidores"], a: "Sí, es ideal" }
         ];
-        let currentQuiz = 0;
+        let quizIdx = 0;
 
-        function showSlide(n) {
-            slides[currentSlide].classList.remove('active');
-            slides[currentSlide].style.display = 'none';
-            currentSlide = (n + slides.length) % slides.length;
-            slides[currentSlide].style.display = 'flex';
-            setTimeout(() => slides[currentSlide].classList.add('active'), 10);
+        function show(idx) {
+            slides[current].classList.remove('active');
+            slides[current].style.display = 'none';
+            current = (idx + slides.length) % slides.length;
+            slides[current].style.display = 'flex';
+            setTimeout(() => slides[current].classList.add('active'), 20);
 
-            slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
-            prevBtn.disabled = currentSlide === 0;
-            nextBtn.disabled = currentSlide === slides.length - 1;
+            counter.textContent = `${current + 1} / ${slides.length}`;
+            prevBtn.disabled = current === 0;
+            nextBtn.disabled = current === slides.length - 1;
 
-            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
+            if (current === 13 || current === 14) renderQuiz();
         }
 
-        function loadQuiz() {
-            const currentSlideEl = slides[currentSlide];
-            const questionEl = currentSlideEl.querySelector('.quiz-question');
-            const optionsEl = currentSlideEl.querySelector('.quiz-options');
-            const feedbackEl = currentSlideEl.querySelector('.quiz-feedback');
+        function renderQuiz() {
+            const isSlide14 = current === 13;
+            const containerId = isSlide14 ? 'q-text' : 'q-text-2';
+            const optionsId = isSlide14 ? 'q-options' : 'q-options-2';
+            const feedbackId = isSlide14 ? 'q-feedback' : 'q-feedback-2';
 
-            if (!questionEl) return;
+            const qText = document.getElementById(containerId);
+            const qOpts = document.getElementById(optionsId);
+            const qFeed = document.getElementById(feedbackId);
 
-            if (currentQuiz >= quizData.length) {
-                questionEl.textContent = "¡Cuestionario completado!";
-                optionsEl.innerHTML = "";
-                feedbackEl.textContent = "Has respondido todas las preguntas.";
+            if (!qText) return;
+            if (quizIdx >= quizData.length) {
+                qText.textContent = "¡Cuestionario finalizado!";
+                qOpts.innerHTML = "";
                 return;
             }
 
-            if (currentSlide === 13 && currentQuiz >= 5) { showSlide(14); return; }
-            if (currentSlide === 14 && currentQuiz < 5) { showSlide(13); return; }
+            if (isSlide14 && quizIdx >= 5) { show(14); return; }
+            if (!isSlide14 && quizIdx < 5) { show(13); return; }
 
-            const data = quizData[currentQuiz];
-            questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
-            optionsEl.innerHTML = "";
-            feedbackEl.textContent = "";
+            const data = quizData[quizIdx];
+            qText.textContent = `${quizIdx + 1}. ${data.q}`;
+            qOpts.innerHTML = "";
+            qFeed.textContent = "";
 
             data.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.textContent = opt;
-                btn.className = "quiz-option";
-                btn.onclick = () => {
-                    const btns = optionsEl.querySelectorAll('button');
-                    btns.forEach(b => b.disabled = true);
+                const b = document.createElement('button');
+                b.className = "quiz-option-pres";
+                b.textContent = opt;
+                b.onclick = () => {
+                    const all = qOpts.querySelectorAll('button');
+                    all.forEach(x => x.disabled = true);
                     if (opt === data.a) {
-                        btn.classList.add('correct');
-                        feedbackEl.textContent = "¡Correcto!";
-                        feedbackEl.style.color = "#16a34a";
+                        b.classList.add('correct');
+                        qFeed.textContent = "¡Excelente!";
+                        qFeed.style.color = "var(--ima-green)";
                     } else {
-                        btn.classList.add('incorrect');
-                        feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
-                        feedbackEl.style.color = "#dc2626";
+                        b.classList.add('incorrect');
+                        qFeed.textContent = `Error. La respuesta era: ${data.a}`;
+                        qFeed.style.color = "var(--ima-red)";
                     }
                     setTimeout(() => {
-                        currentQuiz++;
-                        if (currentQuiz === 5 && currentSlide === 13) {
-                            showSlide(14);
-                        } else {
-                            loadQuiz();
-                        }
+                        quizIdx++;
+                        if (quizIdx === 5 && isSlide14) show(14);
+                        else renderQuiz();
                     }, 2000);
                 };
-                optionsEl.appendChild(btn);
+                qOpts.appendChild(b);
             });
         }
 
-        nextBtn.onclick = () => showSlide(currentSlide + 1);
-        prevBtn.onclick = () => showSlide(currentSlide - 1);
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') showSlide(currentSlide + 1);
-            if (e.key === 'ArrowLeft') showSlide(currentSlide - 1);
+        nextBtn.onclick = () => show(current + 1);
+        prevBtn.onclick = () => show(current - 1);
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight') show(current + 1);
+            if (e.key === 'ArrowLeft') show(current - 1);
         });
 
-        // Fullscreen Logic
-        function handleFullscreen() {
+        function syncFS() {
             const isFull = window.innerHeight >= screen.height - 10 || document.fullscreenElement;
-            header.style.setProperty('display', isFull ? 'none' : 'flex', 'important');
-            footer.style.setProperty('display', isFull ? 'none' : 'block', 'important');
+            header.style.display = isFull ? 'none' : 'flex';
+            footer.style.display = isFull ? 'none' : 'block';
         }
+        window.addEventListener('resize', syncFS);
+        document.addEventListener('fullscreenchange', syncFS);
 
-        window.addEventListener('resize', handleFullscreen);
-        document.addEventListener('fullscreenchange', handleFullscreen);
-
-        showSlide(0);
-        handleFullscreen();
+        show(0);
+        syncFS();
     </script>
 </body>
 </html>

@@ -884,3 +884,33 @@ DESCRIPCIÓN DE CAMBIOS:
 - III_BTP_A/dw_II/personalizacion_contenedores.html: Creada nueva presentación (16 slides) unificando temas de personalización (fondo, dimensiones, bordes, enlaces) del 17 y 24 de mayo.
 - js/data.js: Integración de los nuevos temas en el menú de Cursos.
 - sw.js: Actualización del manifiesto de caché para incluir los nuevos archivos de presentación y elevar la versión de la app.
+
+14/05/2026 (v14.4 - Local Design System & Precision UI)
+- Archivo: css/style.css
+  - Evolución a v14.4: Implementación de un "Design System" institucional local sin dependencias de frameworks externos.
+  - Añadido soporte nativo para utilidades de diseño (flex, grid, spacing, typography) para mantener compatibilidad con layouts previos.
+  - Refinamiento de la sección Hero con gradientes dinámicos y animaciones de "blobs" para una apariencia moderna y profesional.
+  - Estandarización de componentes institucionales (.btn-ima-primary, .nav-link-ima, .header-refined).
+- Archivo: index.html
+  - Refactorización completa usando el nuevo sistema de diseño local.
+  - Optimización de la sección de "Recursos Educativos" con tarjetas de acción clara.
+  - Mejora de la navegación móvil y soporte PWA integrado.
+- Archivo: js/data.js
+  - Registro de las presentaciones del 17 de mayo de 2026.
+  - Sincronización de versiones de caché a v=14.4.
+- Archivos de Presentación (logica_bucle_repetir.html, personalizacion_contenedores.html):
+  - Aplicado el nuevo estándar visual y verificado el funcionamiento de los quizzes de 10 preguntas.
+
+14/05/2026 (v15.0 - Institutional Local Independence)
+- Global: Eliminación total de dependencias externas (Tailwind CSS, Bootstrap 5 CDN, Google Fonts) en 60+ archivos HTML.
+- Archivo: css/style.css
+  - Expansión masiva del Sistema de Diseño Local (v15.0) para cubrir utilidades de layout, espaciado, tipografía y componentes (botones, tablas, badges, modales) de forma nativa.
+- Archivo: index.html
+  - Refactorización para alineación 100% con el sistema de diseño local, eliminando redundancias de Bootstrap.
+- Archivo: student-dashboard.html
+  - Actualizado para operar sin frameworks externos, manteniendo la integridad de las tarjetas expandibles y el sistema de pestañas.
+- Archivos de Presentación:
+  - II_BTP_A/Programacion/logica_bucle_repetir.html: Actualizada al estándar visual local.
+  - III_BTP_A/dw_II/personalizacion_contenedores.html: Actualizada al estándar visual local.
+- Archivo: sw.js
+  - Actualización de la versión del Service Worker a 'informatic-app-v15' y sincronización de manifiesto de caché.
