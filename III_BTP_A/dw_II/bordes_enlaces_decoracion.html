@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programación Lógica / Bucle Repetir</title>
+    <title>Bordes, Enlaces y text-decoration en CSS</title>
     <!-- CDN de Tailwind CSS v4 -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Google Fonts - Inter & Poppins -->
@@ -75,13 +75,13 @@
         }
 
         /* Tipografía proyectable (Estándar 2026) */
-        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3rem; color: #0d6efd; margin-bottom: 1.5rem; }
+        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3rem; color: #fd7e14; margin-bottom: 1.5rem; }
         h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.25rem; line-height: 1.4; color: #1f2937; margin-bottom: 1.5rem; }
         p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 900px; }
 
         .concept-box {
-            background-color: #f9fafb;
-            border-left: 8px solid #0d6efd;
+            background-color: #fffaf0;
+            border-left: 8px solid #fd7e14;
             padding: 2rem;
             border-radius: 0.5rem;
             text-align: left;
@@ -92,7 +92,7 @@
 
         /* Botones de navegación */
         .nav-button {
-            background-color: #0d6efd;
+            background-color: #fd7e14;
             color: #ffffff;
             padding: 0.75rem 1.5rem;
             border-radius: 6px;
@@ -102,7 +102,7 @@
             border: none;
         }
 
-        .nav-button:hover { background-color: #0b5ed7; transform: scale(1.05); }
+        .nav-button:hover { background-color: #e67300; transform: scale(1.05); }
         .nav-button:disabled { background-color: #d1d5db; cursor: not-allowed; transform: scale(1); }
 
         #slide-counter {
@@ -126,22 +126,15 @@
             background: white;
             font-size: 1.1rem;
         }
-        .quiz-option:hover { background-color: #eff6ff; border-color: #3b82f6; }
+        .quiz-option:hover { background-color: #fff7ed; border-color: #fd7e14; }
         .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
         .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
 
-        /* Adaptación Móvil */
         @media (max-width: 768px) {
             .slide { padding: 2rem 1.5rem; }
             h2 { font-size: 1.75rem; }
             h3 { font-size: 1.4rem; }
             p, li { font-size: 1rem; line-height: 1.4; }
-            .concept-box { padding: 1rem; border-left-width: 4px; margin-top: 1rem; }
-            .nav-button { padding: 0.5rem 1rem; font-size: 0.875rem; }
-            #slide-counter { bottom: 1rem; right: 1rem; font-size: 0.75rem; }
-            .quiz-option { padding: 0.75rem; font-size: 0.9rem; }
-            #page-header h1 { font-size: 1rem; }
-            #page-header img { width: 100px !important; }
         }
     </style>
 </head>
@@ -150,10 +143,10 @@
     <header id="page-header" class="w-full bg-white p-4 shadow-sm flex justify-between items-center z-50">
         <div class="flex items-center space-x-4">
             <img src="../../imagenes/logo.png" alt="Logo IMA" style="width: 150px; height: auto;">
-            <h1 class="text-xl font-bold text-gray-800">Programación I</h1>
+            <h1 class="text-xl font-bold text-gray-800">Diseño Web</h1>
         </div>
         <nav>
-            <a href="../../index.html" class="text-gray-600 hover:text-blue-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
+            <a href="../../index.html" class="text-gray-600 hover:text-orange-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
         </nav>
     </header>
 
@@ -162,153 +155,155 @@
             <!-- Diapositiva 1: Portada -->
             <div class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
-                <h2>Programación Lógica / Bucle Repetir</h2>
+                <h2>Bordes / Enlaces y text-decoration en CSS</h2>
                 <div class="mt-8 text-lg text-gray-500">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 17 de mayo de 2026</p>
-                    <p>Grado: II BTP Informática Sección "A"</p>
+                    <p>Fecha: 24 de mayo de 2026</p>
+                    <p>Grado: III BTP Informática Sección "A"</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: Concepto de Programación Lógica (PDF p.58) -->
+            <!-- Diapositiva 2: Propiedad Border -->
             <div class="slide">
-                <h3>Programación Lógica</h3>
-                <p>Consiste en emplear la lógica como lenguaje de programación. Es <strong>declarativa</strong> porque sirve para especificar <strong>qué</strong> problema resolver (condiciones).</p>
+                <h3>Propiedad Border</h3>
+                <p>Muchos elementos HTML admiten la propiedad borde (border). Es especialmente útil para definir límites y organizar tablas.</p>
                 <div class="concept-box">
-                    <p>Se especifican las condiciones que satisfacen las soluciones, y estas se deducen a partir de las mismas.</p>
+                    <p>La propiedad <strong>border</strong> requiere tres valores fundamentales: ancho, estilo y color.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 3: Relación entre Entidades (PDF p.58) -->
+            <!-- Diapositiva 3: Sintaxis y Valores -->
             <div class="slide">
-                <h3>Relaciones y Entidades</h3>
-                <p>En la programación lógica se trabaja de forma descriptiva, estableciendo relaciones entre entidades.</p>
-                <div class="concept-box border-blue-400">
-                    <p><strong>Relación:</strong> El vínculo o propiedad que une a los elementos.<br><strong>Entidad (Objeto):</strong> Los elementos o sujetos sobre los que recae la relación.</p>
+                <h3>Sintaxis del Borde</h3>
+                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-orange-500">
+                    selector { <br>
+                    &nbsp;&nbsp;border: 2px solid red;<br>
+                    }
                 </div>
-            </div>
-
-            <!-- Diapositiva 4: Algoritmos = Lógica + Control (PDF p.58) -->
-            <div class="slide">
-                <h3>Idea Esencial</h3>
-                <p class="font-bold text-2xl text-blue-600 italic">Algoritmos = Lógica + Control</p>
-                <div class="concept-box">
-                    <ul class="list-disc list-inside space-y-4">
-                        <li><strong>Lógica:</strong> El conocimiento especificado en un lenguaje formal (Lógica de primer orden).</li>
-                        <li><strong>Control:</strong> Mecanismo de inferencia que actúa sobre el conocimiento.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Ventajas de la Programación Lógica -->
-            <div class="slide">
-                <h3>Ventajas Principales</h3>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><strong>Alto nivel de abstracción:</strong> Cercanía al lenguaje natural humano.</li>
-                    <li><strong>Representación de conocimiento:</strong> Eficiencia para manejar reglas y hechos complejos.</li>
-                    <li><strong>Mantenimiento:</strong> Facilidad para modificar la lógica sin alterar el motor de ejecución.</li>
+                <ul class="text-left mt-6 list-disc list-inside space-y-2">
+                    <li><strong>2px:</strong> El grosor de la línea.</li>
+                    <li><strong>solid:</strong> El estilo (liso, punteado, etc.).</li>
+                    <li><strong>red:</strong> El color del borde.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 6: Desventajas y Limitaciones -->
+            <!-- Diapositiva 4: Estilos de Borde -->
             <div class="slide">
-                <h3>Limitaciones del Paradigma</h3>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><strong>Eficiencia computacional:</strong> Suele requerir más recursos que el modelo imperativo.</li>
-                    <li><strong>Control de flujo:</strong> Menor control sobre la secuencia exacta de operaciones de la CPU.</li>
-                    <li><strong>Especialización:</strong> Muy eficaz para IA y bases de datos, pero menos para sistemas de bajo nivel.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 7: Ejercicio 1: Identificación -->
-            <div class="slide">
-                <h3>Ejercicio 1: Lógica</h3>
-                <p>Identifica los objetos (entidades) y la relación en las siguientes sentencias lógicas:</p>
+                <h3>Tipos de Estilos Comunes</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div class="bg-gray-100 p-4 rounded text-left font-mono">es_un(perro, mamifero).</div>
-                    <div class="bg-gray-100 p-4 rounded text-left font-mono">color(cielo, azul).</div>
+                    <div class="p-4 border-2 border-dashed border-gray-400">dashed (punteado)</div>
+                    <div class="p-4 border-2 border-dotted border-gray-400">dotted (puntos)</div>
+                    <div class="p-4 border-2 border-solid border-gray-400">solid (liso)</div>
+                    <div class="p-4 border-2 border-double border-gray-400">double (doble)</div>
                 </div>
-                <p class="mt-4 text-sm italic">Escribe el análisis detallado en tu cuaderno de clase.</p>
             </div>
 
-            <!-- Diapositiva 8: Bucle Repetir (Concepto General) -->
+            <!-- Diapositiva 5: Border-Radius -->
             <div class="slide">
-                <h3>El Bucle "Repetir"</h3>
-                <p>Es una estructura iterativa que ejecuta un bloque de código y luego evalúa una condición.</p>
+                <h3>Esquinas Redondeadas</h3>
+                <p>Puedes conseguir bordes más redondos o rectos al modificar el valor de <strong>border-radius</strong>.</p>
+                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-orange-400">
+                    div { <br>
+                    &nbsp;&nbsp;border: 2px solid blue;<br>
+                    &nbsp;&nbsp;border-radius: 10px;<br>
+                    }
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: Uso en Tablas -->
+            <div class="slide">
+                <h3>Bordes en Tablas</h3>
+                <p>Para visualizar mejor una tabla, es común aplicar bordes a las celdas (td) y a la tabla misma.</p>
+                <div class="concept-box bg-orange-50">
+                    <p>Ejemplo: `td { border: 1px dashed blue; }` crea celdas con bordes azules punteados.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Ejercicio 1 -->
+            <div class="slide">
+                <h3>Ejercicio 1: Bordes</h3>
+                <p>Crea un archivo HTML con una tabla de 3x3 y aplica estilos diferentes:</p>
+                <ul class="text-left mt-4 list-disc list-inside">
+                    <li>Tabla con borde sólido negro de 1px.</li>
+                    <li>Celdas (td) con borde punteado azul.</li>
+                    <li>Un encabezado (th) con texto en color rojo.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 8: Enlaces y Decoración -->
+            <div class="slide">
+                <h3>Personalización de Enlaces</h3>
+                <p>Los enlaces (etiqueta &lt;a&gt;) tienen propiedades de texto normal, pero incluyen la propiedad especial <strong>text-decoration</strong>.</p>
                 <div class="concept-box">
-                    <p><strong>Diferencia clave:</strong> A diferencia del "Mientras", el bloque de instrucciones se ejecuta <strong>al menos una vez</strong>.</p>
+                    <p>Por defecto, los enlaces son azules y están subrayados, pero esto se puede cambiar para personalizar el diseño.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 9: Sintaxis del Repetir -->
+            <!-- Diapositiva 9: Valores de text-decoration -->
             <div class="slide">
-                <h3>Sintaxis en Pseudocódigo</h3>
+                <h3>Valores de Decoración</h3>
+                <ul class="text-left mt-6 list-none space-y-4">
+                    <li><span class="underline">underline</span>: Subrayado normal (por defecto).</li>
+                    <li><span class="overline">overline</span>: Línea sobre el texto.</li>
+                    <li><span class="line-through">line-through</span>: Texto tachado.</li>
+                    <li><span class="no-underline">none</span>: Quita cualquier decoración.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 10: Pseudoclases de Enlace -->
+            <div class="slide">
+                <h3>Estados de un Enlace</h3>
+                <p>Las pseudoclases permiten cambiar el estilo según la interacción del usuario:</p>
+                <ul class="text-left mt-6 list-disc list-inside space-y-2">
+                    <li><strong>a:link</strong>: Un enlace que aún no ha sido visitado.</li>
+                    <li><strong>a:visited</strong>: Un enlace que el usuario ya visitó.</li>
+                    <li><strong>a:hover</strong>: Cuando el usuario pasa el cursor por encima.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 11: Ejemplo de Enlace Personalizado -->
+            <div class="slide">
+                <h3>Botón con Enlace</h3>
+                <p>Podemos quitar el subrayado y cambiar el color para que parezca un botón real:</p>
+                <div class="bg-gray-800 text-white p-6 rounded text-left mt-4 font-mono">
+                    a { <br>
+                    &nbsp;&nbsp;color: #cc0000;<br>
+                    &nbsp;&nbsp;text-decoration: none;<br>
+                    }<br>
+                    a:hover {<br>
+                    &nbsp;&nbsp;font-weight: bold;<br>
+                    }
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Selectores Múltiples -->
+            <div class="slide">
+                <h3>Foco en Elementos Específicos</h3>
+                <p>¿Y si quieres enfocarte en las &lt;p&gt; que están dentro de varios &lt;div&gt;?</p>
                 <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-green-500">
-                    Repetir<br>
-                    &nbsp;&nbsp;Instrucciones...<br>
-                    Hasta Que (condición)
+                    div div p { <br>
+                    &nbsp;&nbsp;color: red;<br>
+                    }
                 </div>
-                <p class="mt-6 text-sm italic">Se repite el proceso MIENTRAS la condición sea falsa, y se sale cuando sea verdadera.</p>
+                <p class="mt-4 text-sm">Esto solo afectará a los párrafos anidados en dos capas de divs.</p>
             </div>
 
-            <!-- Diapositiva 10: Funcionamiento Lógico -->
+            <!-- Diapositiva 13: Ejercicio 2 -->
             <div class="slide">
-                <h3>Flujo de Ejecución</h3>
-                <ol class="text-left mt-6 list-decimal list-inside space-y-4">
-                    <li>Se ejecutan las instrucciones una vez.</li>
-                    <li>Se evalúa la condición al final.</li>
-                    <li>Si es <strong>Falsa</strong>, vuelve al paso 1.</li>
-                    <li>Si es <strong>Verdadera</strong>, termina el bucle.</li>
-                </ol>
-            </div>
-
-            <!-- Diapositiva 11: Ejemplo Desarrollado -->
-            <div class="slide">
-                <h3>Ejemplo: Validar número positivo</h3>
-                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono">
-                    Repetir<br>
-                    &nbsp;&nbsp;Escribir "Ingrese un número mayor a 0:"<br>
-                    &nbsp;&nbsp;Leer n<br>
-                    Hasta Que (n > 0)
-                </div>
-                <p class="mt-4 text-sm">El programa seguirá pidiendo el número hasta que el usuario ingrese uno correcto.</p>
-            </div>
-
-            <!-- Diapositiva 12: Mientras vs Repetir -->
-            <div class="slide">
-                <h3>Comparativa de Bucles</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <div class="text-left bg-blue-50 p-4 rounded">
-                        <p class="font-bold">Mientras (While):</p>
-                        <ul class="text-sm list-disc list-inside">
-                            <li>Evalúa al inicio del bloque.</li>
-                            <li>Puede ejecutarse 0 veces si la condición es falsa inicialmente.</li>
-                        </ul>
-                    </div>
-                    <div class="text-left bg-green-50 p-4 rounded">
-                        <p class="font-bold">Repetir (Repeat):</p>
-                        <ul class="text-sm list-disc list-inside">
-                            <li>Evalúa al final del bloque.</li>
-                            <li>Garantiza al menos 1 ejecución del código interno.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Ejercicio 2: Algoritmos -->
-            <div class="slide">
-                <h3>Ejercicio 2: Práctica</h3>
-                <p>Diseña un algoritmo que sume números ingresados por el usuario hasta que la suma total sea mayor a 100.</p>
-                <div class="concept-box bg-green-50 border-green-400">
-                    <p><strong>Criterio:</strong> Utiliza la estructura <strong>Repetir</strong> para asegurar que se pida al menos un dato.</p>
-                </div>
+                <h3>Ejercicio 2: Navegación</h3>
+                <p>Diseña tres botones de navegación que cumplan lo siguiente:</p>
+                <ul class="text-left mt-4 list-decimal list-inside">
+                    <li>Sin subrayado predeterminado.</li>
+                    <li>Con bordes sólidos de 2px y esquinas redondeadas.</li>
+                    <li>Que cambien de color al pasar el cursor (hover).</li>
+                </ul>
             </div>
 
             <!-- Diapositiva 14: Cuestionario (Parte 1) -->
             <div class="slide">
                 <h3>Cuestionario: Evaluación</h3>
                 <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
                     <div class="quiz-options flex flex-col gap-2"></div>
                     <p class="quiz-feedback mt-4 font-bold text-lg"></p>
                 </div>
@@ -318,7 +313,7 @@
             <div class="slide">
                 <h3>Cuestionario: Continuación</h3>
                 <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
                     <div class="quiz-options flex flex-col gap-2"></div>
                     <p class="quiz-feedback mt-4 font-bold text-lg"></p>
                 </div>
@@ -327,9 +322,9 @@
             <!-- Diapositiva 16: Fin y Asignación -->
             <div class="slide">
                 <h2>¡Muchas Gracias!</h2>
-                <div class="concept-box border-blue-600">
-                    <p><strong>Asignación:</strong> Realizar en el cuaderno tres ejercicios de algoritmos que utilicen el bucle "Repetir".</p>
-                    <p class="mt-4 text-sm">Fecha de entrega: Próxima clase presencial.</p>
+                <div class="concept-box border-orange-600">
+                    <p><strong>Asignación:</strong> Diseñar botones con enlaces personalizados (sin subrayado, con bordes y efectos básicos).</p>
+                    <p class="mt-4 text-sm">Fecha de entrega: Próxima semana.</p>
                 </div>
             </div>
         </div>
@@ -359,16 +354,16 @@
         let currentSlide = 0;
 
         const quizData = [
-            { q: "¿Qué caracteriza a la programación lógica?", options: ["Uso de órdenes", "Es declarativa", "Manejo de memoria", "Pasos secuenciales"], a: "Es declarativa" },
-            { q: "¿Qué especifica el programador en este paradigma?", options: ["Cómo se debe resolver", "Qué problema resolver", "El hardware a utilizar", "Instrucciones de pasos"], a: "Qué problema resolver" },
-            { q: "¿Cuál es la idea esencial de la prog. lógica?", options: ["Entrada + Salida", "Lógica + Control", "Datos + Procesos", "Memoria + Código"], a: "Lógica + Control" },
-            { q: "¿En qué lenguaje se basa la prog. lógica?", options: ["Java++", "Prolog", "Python", "Kotlin"], a: "Prolog" },
-            { q: "¿Qué es una 'entidad' en este contexto?", options: ["Una relación", "Un objeto", "Un fallo técnico", "Una función"], a: "Un objeto" },
-            { q: "¿Cuántas veces corre mínimo el bucle 'Repetir'?", options: ["0 veces", "1 vez", "10 veces", "Infinitas"], a: "1 vez" },
-            { q: "¿Cuándo se evalúa la condición en 'Repetir'?", options: ["Evaluación inicial", "Al final", "Proceso intermedio", "Evaluación previa"], a: "Al final" },
-            { q: "¿Qué lenguaje es clásico de la IA?", options: ["Assembly", "Prolog", "Python", "Fortran"], a: "Prolog" },
-            { q: "¿Cuándo sale el flujo del bucle 'Repetir'?", options: ["Si la condición es falsa", "Condición es verdadera", "Error en el algoritmo", "Fallas de comunicación"], a: "Condición es verdadera" },
-            { q: "¿Cómo se describen los algoritmos según el PDF?", options: ["Manual de instrucciones", "Conocimiento formal", "Esquemas de procesos", "Secuencias numéricas"], a: "Conocimiento formal" }
+            { q: "¿Qué propiedad controla el borde de un elemento?", options: ["margin", "border", "padding", "outline"], a: "border" },
+            { q: "¿Qué valor hace que un borde sea una línea lisa?", options: ["dashed", "dotted", "solid", "double"], a: "solid" },
+            { q: "¿Cómo se redondean las esquinas de una caja?", options: ["corner-style", "border-radius", "box-shadow", "round-border"], a: "border-radius" },
+            { q: "¿Qué propiedad quita el subrayado de un enlace?", options: ["text-style", "font-decoration", "text-decoration", "link-style"], a: "text-decoration" },
+            { q: "¿Qué pseudoclase aplica al pasar el cursor?", options: ["a:link", "a:hover", "a:visited", "a:active"], a: "a:hover" },
+            { q: "¿Cuál es un valor válido de estilo de borde?", options: ["none", "dashed", "thick", "color"], a: "dashed" },
+            { q: "¿Qué hace 'text-decoration: line-through'?", options: ["Subraya el texto", "Tacha el texto", "Pone línea arriba", "Quita estilos"], a: "Tacha el texto" },
+            { q: "¿Cómo se define un borde rojo sólido de 1px?", options: ["solid 1px red", "1px red solid", "1px solid red", "red 1px solid"], a: "1px solid red" },
+            { q: "¿Qué pseudoclase es para un enlace visitado?", options: ["a:link", "a:visited", "a:hover", "a:focus"], a: "a:visited" },
+            { q: "¿En qué etiqueta se aplican mayormente bordes?", options: ["p", "div", "span", "br"], a: "div" }
         ];
         let currentQuiz = 0;
 

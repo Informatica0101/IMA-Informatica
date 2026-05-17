@@ -24,6 +24,16 @@ ESTADO DE LAS TAREAS (RESUMEN)
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
 
+TAREA: [A-57]
+TÍTULO: Presentaciones Mayo 17 y 24 (Prog Lógica y Bordes/Enlaces)
+ÁREA: Frontend / Contenido
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Reestructurada presentación de Programación (May 17) con foco en Programación Lógica (PDF p.58) y Repetir.
+- Creada nueva presentación de Diseño Web (May 24) sobre Bordes, Enlaces y text-decoration.
+- Aplicado estándar de 16 diapositivas, quiz de 10 preguntas y Tailwind v4.
+- Verificado el cumplimiento de la restricción de longitud de respuestas en el quiz.
+
 TAREA: [A-56]
 TÍTULO: Presentaciones Semana 03 de Mayo (Bucle Mientras y Medidas CSS)
 ÁREA: Frontend / Contenido / Lógica

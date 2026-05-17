@@ -86,7 +86,8 @@ window.presentationData = [
                     { title: "Introducción a CSS", file: "III_BTP_A/dw_II/introduccion_css.html" },
                     { title: "Enlazar estilos CSS / Etiquetas autocerrables", file: "III_BTP_A/dw_II/enlazar_estilos_autocerrables.html" },
                     { title: "Medidas en CSS (px, em, %)", file: "III_BTP_A/dw_II/medidas_css.html" },
-                    { title: "Modelo de Caja y Dimensiones", file: "III_BTP_A/dw_II/modelo_caja_dimensiones.html" }
+                    { title: "Modelo de Caja y Dimensiones", file: "III_BTP_A/dw_II/modelo_caja_dimensiones.html" },
+                    { title: "Bordes, Enlaces y Decoración", file: "III_BTP_A/dw_II/bordes_enlaces_decoracion.html" }
                 ]
             }
             /* {
