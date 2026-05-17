@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introducción a CSS</title>
+    <title>Enlazar estilos CSS / Etiquetas autocerrables</title>
     <!-- CDN de Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Google Fonts - Inter & Poppins -->
@@ -178,179 +178,172 @@
             <!-- Diapositiva 1: Portada -->
             <div class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
-                <h2>Introducción a CSS</h2>
+                <h2>Enlazar estilos CSS / Etiquetas autocerrables</h2>
                 <div class="mt-8 text-lg text-gray-500">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 19 de abril de 2026</p>
+                    <p>Fecha: 26 de abril de 2026</p>
                     <p>Grado: III BTP Informática Sección "A"</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: ¿Qué es CSS? -->
+            <!-- Diapositiva 2: Importancia del Enlace Externo -->
             <div class="slide">
-                <h3>¿Qué es CSS?</h3>
-                <p><strong>Cascading Style Sheets</strong> (Hojas de Estilo en Cascada).</p>
+                <h3>El Método de Enlace Externo</h3>
+                <p>En lugar de escribir estilos dentro de cada etiqueta, los centralizamos en un archivo <strong>.css</strong>.</p>
                 <div class="concept-box">
-                    <p>Es un lenguaje que se usa para describir la <strong>apariencia</strong> y el <strong>formato</strong> de tu HTML.</p>
-                </div>
-                <p class="mt-6">Una hoja de estilo es un archivo que describe cómo debe verse un archivo HTML.</p>
-            </div>
-
-            <!-- Diapositiva 3: ¿Por qué en Cascada? -->
-            <div class="slide">
-                <h3>¿Por qué "en Cascada"?</h3>
-                <p>Se llaman así porque las reglas pueden usarse unas sobre otras para sumarse y aplicarse a un mismo documento.</p>
-                <div class="concept-box bg-orange-50 border-orange-400">
-                    <p>Si indicas que todos los párrafos deben tener la fuente azul, pero luego señalas que un párrafo específico debe ser rojo, ¡CSS lo puede hacer!</p>
+                    <p><strong>¿Por qué es superior?</strong> Permite que un solo cambio en el archivo CSS actualice instantáneamente cientos de páginas HTML vinculadas.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 4: Separación de Forma y Función -->
+            <!-- Diapositiva 3: Atributos de la Etiqueta Link -->
             <div class="slide">
-                <h3>¿Por qué separar la forma de la función?</h3>
-                <p>Existen dos razones principales para separar el CSS (Formato) del HTML (Estructura):</p>
-                <ul class="text-left mt-6 list-decimal list-inside space-y-4">
-                    <li><strong>Reutilización:</strong> Puedes aplicarle el mismo formato a diversos elementos sin tener que volver a escribir el código.</li>
-                    <li><strong>Apariencia global:</strong> Puedes aplicarle un formato parecido a varias páginas desde un solo archivo CSS.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 5: Tipos de Aplicación (Inline) -->
-            <div class="slide">
-                <h3>Estilos en Línea (Inline)</h3>
-                <p>Se aplican directamente en la etiqueta HTML usando el atributo <code>style</code>.</p>
-                <pre><code>&lt;p style="color:red"&gt;Red font!&lt;/p&gt;</code></pre>
-                <p class="mt-4 text-red-600 font-bold">¡No es la mejor forma!</p>
-                <p class="text-sm italic">Si quieres cambiar el estilo de varios elementos, tendrías que cambiar cada etiqueta una por una.</p>
-            </div>
-
-            <!-- Diapositiva 6: Estilos Internos -->
-            <div class="slide">
-                <h3>Estilos Internos</h3>
-                <p>Se colocan justo en el mismo archivo de código HTML, dentro de las etiquetas <code>&lt;style&gt;</code>.</p>
-                <pre><code>&lt;head&gt;
-  &lt;style&gt;
-    p { color: purple; }
-  &lt;/style&gt;
-&lt;/head&gt;</code></pre>
-            </div>
-
-            <!-- Diapositiva 7: Estilos Externos -->
-            <div class="slide">
-                <h3>Estilos Externos (Fuera de línea)</h3>
-                <p>Es la forma más eficiente. Se escribe el código en un archivo aparte (con extensión .css) y se conecta al HTML.</p>
-                <div class="concept-box border-green-500">
-                    <p>Permite que un único archivo controle el diseño de todo tu sitio web.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Cómo enlazar un CSS (La etiqueta link) -->
-            <div class="slide">
-                <h3>¿Cómo se enlaza?</h3>
-                <p>Se agrega la etiqueta <code>&lt;link&gt;</code> entre las etiquetas <code>&lt;head&gt;</code> de tu página HTML.</p>
-                <ul class="text-left mt-6 list-disc list-inside space-y-2">
-                    <li><strong>type:</strong> Siempre debe ser "text/css".</li>
-                    <li><strong>rel:</strong> Siempre debe ser "stylesheet".</li>
-                    <li><strong>href:</strong> La dirección de tu archivo CSS.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 9: Ejemplo de Enlace -->
-            <div class="slide">
-                <h3>Sintaxis de enlace</h3>
-                <pre><code>&lt;link type="text/css" rel="stylesheet"
-      href="stylesheet.css" /&gt;</code></pre>
-                <p class="mt-6 italic">Notarás que termina en <code>/&gt;</code> porque es una etiqueta autocerrable.</p>
-            </div>
-
-            <!-- Diapositiva 10: Etiquetas Autocerrables -->
-            <div class="slide">
-                <h3>Etiquetas Autocerrables</h3>
-                <p>No todas las etiquetas HTML tienen una etiqueta de cierre separada. Ejemplos comunes:</p>
+                <h3>Atributos del Elemento &lt;link&gt;</h3>
+                <p>Esta etiqueta se ubica siempre dentro de la sección <code>&lt;head&gt;</code> y requiere tres parámetros:</p>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><code>&lt;link /&gt;</code></li>
-                    <li><code>&lt;img /&gt;</code> (para insertar imágenes)</li>
-                    <li><code>&lt;br /&gt;</code> (para saltos de línea)</li>
-                    <li><code>&lt;hr /&gt;</code> (para líneas horizontales)</li>
+                    <li><strong>rel="stylesheet":</strong> Define la relación entre el HTML y el archivo vinculado.</li>
+                    <li><strong>type="text/css":</strong> Indica el tipo de contenido que el navegador debe esperar.</li>
+                    <li><strong>href:</strong> La ruta de ubicación del archivo CSS.</li>
                 </ul>
             </div>
 
-            <!-- Diapositiva 11: Sintaxis CSS -->
+            <!-- Diapositiva 4: Rutas Relativas vs Absolutas -->
             <div class="slide">
-                <h3>Sintaxis Básica</h3>
-                <div class="flex flex-col items-center">
-                    <pre><code>selector {
-  propiedad: valor;
-}</code></pre>
-                    <ul class="text-left mt-6 list-disc list-inside">
-                        <li><strong>Selector:</strong> Indica a qué elemento aplicamos el estilo (ej: p, h1, div).</li>
-                        <li><strong>Propiedad:</strong> La característica que queremos cambiar (ej: color).</li>
-                        <li><strong>Valor:</strong> El ajuste que le damos (ej: red).</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Ejemplo Práctico 1 -->
-            <div class="slide">
-                <h3>Ejemplo: Colorear Párrafos</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="text-left">
-                        <p class="font-bold">Código CSS:</p>
-                        <pre><code>p {
-  color: red;
-}</code></pre>
+                <h3>Entendiendo el atributo 'href'</h3>
+                <p>El valor de <code>href</code> depende de dónde esté guardado el archivo:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-orange-50 p-4 rounded text-left">
+                        <strong>Ruta Relativa:</strong> <code>href="estilos.css"</code> (Si están en la misma carpeta).
                     </div>
-                    <div class="text-left">
-                        <p class="font-bold">Resultado:</p>
-                        <div class="p-4 bg-white border rounded">
-                            <p style="color: red; font-size: 1rem;">¡Soy un párrafo escrito en rojo!</p>
-                        </div>
+                    <div class="bg-gray-100 p-4 rounded text-left">
+                        <strong>Ruta Absoluta:</strong> <code>href="https://sitio.com/estilos.css"</code> (Carga desde internet).
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 13: Ejemplo Práctico 2 (Etiqueta span) -->
+            <!-- Diapositiva 5: Ejemplo Completo de Enlace -->
             <div class="slide">
-                <h3>Uso de span para detalles</h3>
-                <p>Si queremos cambiar solo una parte de un texto:</p>
-                <pre><code>span { color: blue; }</code></pre>
+                <h3>Sintaxis Correcta</h3>
+                <pre><code>&lt;head&gt;
+  &lt;title&gt;Mi Proyecto&lt;/title&gt;
+  &lt;link rel="stylesheet"
+        type="text/css"
+        href="css/style.css" /&gt;
+&lt;/head&gt;</code></pre>
+                <p class="mt-4 italic text-sm">Nota: En este ejemplo, el archivo CSS está dentro de una carpeta llamada 'css'.</p>
+            </div>
+
+            <!-- Diapositiva 6: Mantenimiento y Organización -->
+            <div class="slide">
+                <h3>Ventaja: Código Limpio</h3>
+                <p>Al separar la <strong>estructura</strong> (HTML) del <strong>diseño</strong> (CSS):</p>
+                <ul class="text-left mt-6 list-decimal list-inside space-y-4">
+                    <li>El archivo HTML es más legible y corto.</li>
+                    <li>Varios diseñadores pueden trabajar en el mismo proyecto sin interferir.</li>
+                    <li>Se reduce el peso de carga total del sitio web.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 7: Ejercicio 1 -->
+            <div class="slide">
+                <h3>Ejercicio 1: Estructura de Proyecto</h3>
+                <p>Dibuja un diagrama de carpetas para un proyecto que tenga un archivo 'index.html' en la raíz y un archivo 'main.css' dentro de una subcarpeta 'activos'.</p>
+                <div class="concept-box bg-orange-50 border-orange-400">
+                    <p><strong>Reto:</strong> Escribe la etiqueta &lt;link&gt; correcta para conectar esos dos archivos.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: ¿Qué son las Etiquetas Autocerrables? -->
+            <div class="slide">
+                <h3>Etiquetas Autocerrables (Void Elements)</h3>
+                <p>En HTML, la mayoría de las etiquetas vienen en pares (apertura y cierre). Sin embargo, hay excepciones.</p>
                 <div class="concept-box">
-                    <p>Texto normal <span>¡Texto azul!</span> texto normal.</p>
+                    <p>Son etiquetas que no contienen texto u otros elementos dentro, por lo que no necesitan una etiqueta de cierre separada como <code>&lt;/tag&gt;</code>.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 14: Actividad en Clase 1 -->
+            <!-- Diapositiva 9: Sintaxis de Autocierre -->
             <div class="slide">
-                <h3>Actividad: Análisis en Cuaderno</h3>
-                <p>Escribe en tu cuaderno la estructura básica de una regla CSS identificando sus 3 partes fundamentales.</p>
-                <div class="concept-box bg-blue-50 border-blue-400">
-                    <p><strong>Reto:</strong> Escribe una regla que cambie el color de todos los encabezados h1 a verde.</p>
+                <h3>La Barra Diagonal (/)</h3>
+                <p>Aunque en HTML5 moderno la barra al final es opcional, se recomienda usarla por compatibilidad y claridad:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <div class="bg-gray-100 p-4 rounded font-mono">
+                        &lt;img src="foto.jpg"&gt;
+                        <p class="text-xs mt-2 italic">(Válido en HTML5)</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded font-mono">
+                        &lt;img src="foto.jpg" /&gt;
+                        <p class="text-xs mt-2 italic">(Recomendado/Estándar)</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 15: Actividad en Clase 2 -->
+            <!-- Diapositiva 10: Lista de Etiquetas Comunes (I) -->
             <div class="slide">
-                <h3>Ejercicio: Enlace de Archivos</h3>
-                <p>Imagina que tienes un archivo CSS llamado "mis_estilos.css". Escribe la etiqueta HTML completa necesaria para conectarlo a tu página.</p>
-                <p class="mt-6 italic text-sm">Recuerda los 3 atributos necesarios vistos anteriormente.</p>
+                <h3>Ejemplos Esenciales I</h3>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li><code>&lt;br /&gt;</code>: Inserta un salto de línea forzado.</li>
+                    <li><code>&lt;hr /&gt;</code>: Crea una línea divisoria horizontal.</li>
+                    <li><code>&lt;img /&gt;</code>: Inserta una imagen mediante el atributo src.</li>
+                </ul>
             </div>
 
-            <!-- Diapositiva 16: Cuestionario Interactivo -->
+            <!-- Diapositiva 11: Lista de Etiquetas Comunes (II) -->
             <div class="slide">
-                <h3>¡Evalúa tu aprendizaje!</h3>
-                <div id="quiz-container" class="max-w-2xl w-full">
-                    <p id="quiz-question" class="mb-4 font-bold text-xl text-orange-800 text-left"></p>
-                    <div id="quiz-options" class="flex flex-col gap-2"></div>
-                    <p id="quiz-feedback" class="mt-4 font-bold text-lg"></p>
+                <h3>Ejemplos Esenciales II</h3>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li><code>&lt;meta /&gt;</code>: Define metadatos (como el conjunto de caracteres).</li>
+                    <li><code>&lt;input /&gt;</code>: Crea campos de entrada en formularios.</li>
+                    <li><code>&lt;link /&gt;</code>: Vincula recursos externos como hojas de estilo.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 12: Errores Comunes -->
+            <div class="slide">
+                <h3>¿Qué NO hacer?</h3>
+                <p>Intentar cerrar una etiqueta autocerrable con una etiqueta de cierre separada es un error de sintaxis:</p>
+                <div class="concept-box border-red-500 bg-red-50">
+                    <p class="text-red-700 font-bold">Incorrecto:</p>
+                    <code>&lt;br&gt; Contenido &lt;/br&gt;</code>
+                    <p class="mt-4 text-gray-700">El navegador ignorará el cierre o podría renderizar mal la página.</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 17: Fin -->
+            <!-- Diapositiva 13: Ejercicio 2 -->
+            <div class="slide">
+                <h3>Ejercicio 2: Identificación Técnica</h3>
+                <p>De la siguiente lista, identifica cuáles etiquetas son autocerrables y cuáles requieren cierre manual:</p>
+                <p class="mt-4 font-mono">div, img, p, br, section, hr, meta, h1</p>
+                <div class="concept-box bg-green-50 border-green-400">
+                    <p><strong>Práctica:</strong> Escribe en tu cuaderno la forma correcta de usar las 4 etiquetas autocerrables de la lista.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 14: Cuestionario Interactivo (Parte 1) -->
+            <div class="slide">
+                <h3>¡Evaluación de conceptos!</h3>
+                <div class="quiz-container max-w-2xl w-full">
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <div class="quiz-options flex flex-col gap-2"></div>
+                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 15: Cuestionario Interactivo (Parte 2) -->
+            <div class="slide">
+                <h3>Cuestionario: Continuación</h3>
+                <div class="quiz-container max-w-2xl w-full">
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <div class="quiz-options flex flex-col gap-2"></div>
+                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 16: Fin y Asignación -->
             <div class="slide">
                 <h2>¡Muchas Gracias!</h2>
-                <p class="text-xl">Plan de clase del 19 de abril completado.</p>
-                <div class="mt-8">
-                    <p class="text-sm">Tarea: Crear HTML aplicando estilos en línea, internos y externos y comparar resultados.</p>
+                <div class="concept-box border-orange-600">
+                    <p><strong>Asignación:</strong> Ejercicios enlazando una página HTML con imágenes y etiquetas autocerrables. Deben crear una estructura de carpetas correcta.</p>
+                    <p class="mt-4 text-sm">Fecha de entrega: Próxima clase.</p>
                 </div>
             </div>
         </div>
@@ -360,7 +353,7 @@
             <button id="prev-btn" class="nav-button">Anterior</button>
             <button id="next-btn" class="nav-button">Siguiente</button>
         </div>
-        <div id="slide-counter">1 / 17</div>
+        <div id="slide-counter">1 / 16</div>
     </main>
 
     <footer id="page-footer" class="w-full bg-gray-900 text-white text-center p-2 text-sm">
@@ -380,16 +373,16 @@
         let currentSlide = 0;
 
         const quizData = [
-            { q: "¿Qué significan las siglas CSS?", options: ["Computer Style Sheets", "Cascading Style Sheets", "Color System Sheets", "Creative Syntax Sheet"], a: "Cascading Style Sheets" },
-            { q: "¿Qué describe una hoja de estilo?", options: ["La base de datos", "Cómo debe verse un archivo HTML", "La lógica de programación", "El nombre del servidor"], a: "Cómo debe verse un archivo HTML" },
-            { q: "¿Por qué se llaman 'en cascada'?", options: ["Porque caen del cielo", "Porque se pueden usar unas sobre otras", "Porque son transparentes", "Por su velocidad"], a: "Porque se pueden usar unas sobre otras" },
-            { q: "¿Cuál es una ventaja de separar forma de función?", options: ["Reutilización de código", "Ocupa más espacio", "Es más difícil de leer", "Solo funciona en Windows"], a: "Reutilización de código" },
-            { q: "¿Cómo se llama el atributo para estilos en línea?", options: ["format", "class", "style", "css"], a: "style" },
-            { q: "¿Dónde se ubican los estilos internos?", options: ["Dentro de <body>", "Dentro de <head>", "En un archivo .jpg", "Al final del servidor"], a: "Dentro de <head>" },
-            { q: "¿Qué etiqueta enlaza un CSS externo?", options: ["<a>", "<link>", "<style>", "<script>"], a: "<link>" },
-            { q: "¿Qué valor debe tener el atributo 'rel'?", options: ["stylesheet", "css-file", "link-style", "text/css"], a: "stylesheet" },
-            { q: "¿Qué es una etiqueta autocerrable?", options: ["Se cierra sola al abrirse", "No tiene una etiqueta de cierre separada", "Cierra el navegador", "Es obligatoria"], a: "No tiene una etiqueta de cierre separada" },
-            { q: "¿Qué parte de la regla CSS indica qué característica cambiar?", options: ["Selector", "Valor", "Propiedad", "Llave"], a: "Propiedad" }
+            { q: "¿En qué sección del HTML se coloca la etiqueta <link>?", options: ["Dentro del <body>", "Dentro del <head>", "Al final del footer", "En el título"], a: "Dentro del <head>" },
+            { q: "¿Qué atributo de <link> define la ruta del archivo?", options: ["Atributo rel", "Atributo href", "Atributo type", "Atributo src"], a: "Atributo href" },
+            { q: "¿Qué valor debe tener 'rel' para enlazar un CSS?", options: ["Relation", "Stylesheet", "CSS-File", "Link"], a: "Stylesheet" },
+            { q: "¿Cuál es una ventaja de los archivos CSS externos?", options: ["Diseño más lento", "Mantenimiento fácil", "Más líneas de HTML", "Solo para imágenes"], a: "Mantenimiento fácil" },
+            { q: "¿Qué es una etiqueta autocerrable?", options: ["Se cierra al azar", "Carece de cierre manual", "No tiene atributos", "Es solo para texto"], a: "Carece de cierre manual" },
+            { q: "¿Cómo se cierra formalmente una etiqueta void?", options: ["Usando </tag>", "Usando /> final", "No se cierra nada", "Con un punto"], a: "Usando /> final" },
+            { q: "¿Cuál de estas etiquetas es autocerrable?", options: ["La etiqueta div", "La etiqueta img", "La etiqueta p", "La etiqueta h1"], a: "La etiqueta img" },
+            { q: "¿Qué hace la etiqueta <br />?", options: ["Borra una línea", "Salto de línea", "Dibuja un círculo", "Cambia el color"], a: "Salto de línea" },
+            { q: "¿Qué etiqueta define metadatos?", options: ["Etiqueta title", "Etiqueta meta", "Etiqueta link", "Etiqueta html"], a: "Etiqueta meta" },
+            { q: "¿Qué sucede si cierras mal una etiqueta void?", options: ["El código se borra", "Error de renderizado", "El browser explota", "No sucede nada"], a: "Error de renderizado" }
         ];
         let currentQuiz = 0;
 
@@ -404,20 +397,27 @@
             prevBtn.disabled = currentSlide === 0;
             nextBtn.disabled = currentSlide === slides.length - 1;
 
-            if (currentSlide === 15) loadQuiz();
+            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
         }
 
         function loadQuiz() {
-            const questionEl = document.getElementById('quiz-question');
-            const optionsEl = document.getElementById('quiz-options');
-            const feedbackEl = document.getElementById('quiz-feedback');
+            const currentSlideEl = slides[currentSlide];
+            const questionEl = currentSlideEl.querySelector('.quiz-question');
+            const optionsEl = currentSlideEl.querySelector('.quiz-options');
+            const feedbackEl = currentSlideEl.querySelector('.quiz-feedback');
+
+            if (!questionEl) return;
 
             if (currentQuiz >= quizData.length) {
                 questionEl.textContent = "¡Cuestionario completado!";
                 optionsEl.innerHTML = "";
-                feedbackEl.textContent = "";
+                feedbackEl.textContent = "Has respondido todas las preguntas.";
                 return;
             }
+
+            if (currentSlide === 13 && currentQuiz >= 5) { showSlide(14); return; }
+            if (currentSlide === 14 && currentQuiz < 5) { showSlide(13); return; }
+
             const data = quizData[currentQuiz];
             questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
             optionsEl.innerHTML = "";
@@ -433,16 +433,20 @@
                     if (opt === data.a) {
                         btn.classList.add('correct');
                         feedbackEl.textContent = "¡Correcto!";
-                        feedbackEl.className = "mt-4 font-bold text-lg text-green-600";
+                        feedbackEl.style.color = "#16a34a"; // Verde
                     } else {
                         btn.classList.add('incorrect');
                         feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
-                        feedbackEl.className = "mt-4 font-bold text-lg text-red-600";
+                        feedbackEl.style.color = "#dc2626"; // Rojo
                     }
                     setTimeout(() => {
                         currentQuiz++;
-                        loadQuiz();
-                    }, 1500);
+                        if (currentQuiz === 5 && currentSlide === 13) {
+                            showSlide(14);
+                        } else {
+                            loadQuiz();
+                        }
+                    }, 2000);
                 };
                 optionsEl.appendChild(btn);
             });

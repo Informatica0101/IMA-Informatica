@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introducción a CSS</title>
+    <title>Medidas en CSS</title>
     <!-- CDN de Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Google Fonts - Inter & Poppins -->
@@ -178,179 +178,178 @@
             <!-- Diapositiva 1: Portada -->
             <div class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
-                <h2>Introducción a CSS</h2>
+                <h2>Medidas en CSS</h2>
                 <div class="mt-8 text-lg text-gray-500">
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 19 de abril de 2026</p>
+                    <p>Fecha: 03 de mayo de 2026</p>
                     <p>Grado: III BTP Informática Sección "A"</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 2: ¿Qué es CSS? -->
+            <!-- Diapositiva 2: Introducción a las Unidades -->
             <div class="slide">
-                <h3>¿Qué es CSS?</h3>
-                <p><strong>Cascading Style Sheets</strong> (Hojas de Estilo en Cascada).</p>
+                <h3>Unidades de Medida</h3>
+                <p>En CSS, necesitamos especificar el tamaño de diversos elementos: fuentes, márgenes, anchos y altos.</p>
                 <div class="concept-box">
-                    <p>Es un lenguaje que se usa para describir la <strong>apariencia</strong> y el <strong>formato</strong> de tu HTML.</p>
+                    <p>Existen dos tipos principales de unidades: <strong>Absolutas</strong> (fijas) y <strong>Relativas</strong> (flexibles).</p>
                 </div>
-                <p class="mt-6">Una hoja de estilo es un archivo que describe cómo debe verse un archivo HTML.</p>
             </div>
 
-            <!-- Diapositiva 3: ¿Por qué en Cascada? -->
+            <!-- Diapositiva 3: Unidades Absolutas (Píxeles) -->
             <div class="slide">
-                <h3>¿Por qué "en Cascada"?</h3>
-                <p>Se llaman así porque las reglas pueden usarse unas sobre otras para sumarse y aplicarse a un mismo documento.</p>
+                <h3>Píxeles (px)</h3>
+                <p>Un píxel es un punto físico en la pantalla de la computadora.</p>
+                <div class="concept-box">
+                    <p><strong>Uso:</strong> Son geniales cuando quieres que el usuario vea exactamente lo mismo que tú diseñaste. Sin embargo, no se adaptan bien a pantallas muy diferentes (como smartphones).</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: Ejemplo de Píxeles -->
+            <div class="slide">
+                <h3>Sintaxis con px</h3>
+                <pre><code>p {
+  font-size: 16px;
+  width: 300px;
+}</code></pre>
+                <p class="mt-6 italic">Define un tamaño fijo que no cambiará independientemente del dispositivo.</p>
+            </div>
+
+            <!-- Diapositiva 5: Unidades Relativas (em) -->
+            <div class="slide">
+                <h3>Unidades Relativas: em</h3>
+                <p>Un <strong>em</strong> es igual al tamaño de fuente predeterminado de la pantalla o del elemento padre.</p>
                 <div class="concept-box bg-orange-50 border-orange-400">
-                    <p>Si indicas que todos los párrafos deben tener la fuente azul, pero luego señalas que un párrafo específico debe ser rojo, ¡CSS lo puede hacer!</p>
+                    <p><strong>Ventaja:</strong> Son ideales para smartphones porque se escalan proporcionalmente. "1em es el tamaño normal, 2em es el doble, 0.5em es la mitad".</p>
                 </div>
             </div>
 
-            <!-- Diapositiva 4: Separación de Forma y Función -->
+            <!-- Diapositiva 6: Comparativa px vs em -->
             <div class="slide">
-                <h3>¿Por qué separar la forma de la función?</h3>
-                <p>Existen dos razones principales para separar el CSS (Formato) del HTML (Estructura):</p>
-                <ul class="text-left mt-6 list-decimal list-inside space-y-4">
-                    <li><strong>Reutilización:</strong> Puedes aplicarle el mismo formato a diversos elementos sin tener que volver a escribir el código.</li>
-                    <li><strong>Apariencia global:</strong> Puedes aplicarle un formato parecido a varias páginas desde un solo archivo CSS.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 5: Tipos de Aplicación (Inline) -->
-            <div class="slide">
-                <h3>Estilos en Línea (Inline)</h3>
-                <p>Se aplican directamente en la etiqueta HTML usando el atributo <code>style</code>.</p>
-                <pre><code>&lt;p style="color:red"&gt;Red font!&lt;/p&gt;</code></pre>
-                <p class="mt-4 text-red-600 font-bold">¡No es la mejor forma!</p>
-                <p class="text-sm italic">Si quieres cambiar el estilo de varios elementos, tendrías que cambiar cada etiqueta una por una.</p>
-            </div>
-
-            <!-- Diapositiva 6: Estilos Internos -->
-            <div class="slide">
-                <h3>Estilos Internos</h3>
-                <p>Se colocan justo en el mismo archivo de código HTML, dentro de las etiquetas <code>&lt;style&gt;</code>.</p>
-                <pre><code>&lt;head&gt;
-  &lt;style&gt;
-    p { color: purple; }
-  &lt;/style&gt;
-&lt;/head&gt;</code></pre>
-            </div>
-
-            <!-- Diapositiva 7: Estilos Externos -->
-            <div class="slide">
-                <h3>Estilos Externos (Fuera de línea)</h3>
-                <p>Es la forma más eficiente. Se escribe el código en un archivo aparte (con extensión .css) y se conecta al HTML.</p>
-                <div class="concept-box border-green-500">
-                    <p>Permite que un único archivo controle el diseño de todo tu sitio web.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Cómo enlazar un CSS (La etiqueta link) -->
-            <div class="slide">
-                <h3>¿Cómo se enlaza?</h3>
-                <p>Se agrega la etiqueta <code>&lt;link&gt;</code> entre las etiquetas <code>&lt;head&gt;</code> de tu página HTML.</p>
-                <ul class="text-left mt-6 list-disc list-inside space-y-2">
-                    <li><strong>type:</strong> Siempre debe ser "text/css".</li>
-                    <li><strong>rel:</strong> Siempre debe ser "stylesheet".</li>
-                    <li><strong>href:</strong> La dirección de tu archivo CSS.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 9: Ejemplo de Enlace -->
-            <div class="slide">
-                <h3>Sintaxis de enlace</h3>
-                <pre><code>&lt;link type="text/css" rel="stylesheet"
-      href="stylesheet.css" /&gt;</code></pre>
-                <p class="mt-6 italic">Notarás que termina en <code>/&gt;</code> porque es una etiqueta autocerrable.</p>
-            </div>
-
-            <!-- Diapositiva 10: Etiquetas Autocerrables -->
-            <div class="slide">
-                <h3>Etiquetas Autocerrables</h3>
-                <p>No todas las etiquetas HTML tienen una etiqueta de cierre separada. Ejemplos comunes:</p>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><code>&lt;link /&gt;</code></li>
-                    <li><code>&lt;img /&gt;</code> (para insertar imágenes)</li>
-                    <li><code>&lt;br /&gt;</code> (para saltos de línea)</li>
-                    <li><code>&lt;hr /&gt;</code> (para líneas horizontales)</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 11: Sintaxis CSS -->
-            <div class="slide">
-                <h3>Sintaxis Básica</h3>
-                <div class="flex flex-col items-center">
-                    <pre><code>selector {
-  propiedad: valor;
-}</code></pre>
-                    <ul class="text-left mt-6 list-disc list-inside">
-                        <li><strong>Selector:</strong> Indica a qué elemento aplicamos el estilo (ej: p, h1, div).</li>
-                        <li><strong>Propiedad:</strong> La característica que queremos cambiar (ej: color).</li>
-                        <li><strong>Valor:</strong> El ajuste que le damos (ej: red).</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Ejemplo Práctico 1 -->
-            <div class="slide">
-                <h3>Ejemplo: Colorear Párrafos</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="text-left">
-                        <p class="font-bold">Código CSS:</p>
-                        <pre><code>p {
-  color: red;
-}</code></pre>
+                <h3>px vs em</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-gray-100 p-6 rounded text-left">
+                        <p class="font-bold">Píxeles (px):</p>
+                        <ul class="text-sm list-disc list-inside">
+                            <li>Medida absoluta y fija.</li>
+                            <li>Precisión exacta.</li>
+                            <li>Dificultad en móviles.</li>
+                        </ul>
                     </div>
-                    <div class="text-left">
-                        <p class="font-bold">Resultado:</p>
-                        <div class="p-4 bg-white border rounded">
-                            <p style="color: red; font-size: 1rem;">¡Soy un párrafo escrito en rojo!</p>
-                        </div>
+                    <div class="bg-orange-50 p-6 rounded text-left">
+                        <p class="font-bold">Em (em):</p>
+                        <ul class="text-sm list-disc list-inside">
+                            <li>Medida relativa y flexible.</li>
+                            <li>Escalabilidad proporcional.</li>
+                            <li>Ideal para diseño adaptativo.</li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 13: Ejemplo Práctico 2 (Etiqueta span) -->
+            <!-- Diapositiva 7: Ejercicio 1 -->
             <div class="slide">
-                <h3>Uso de span para detalles</h3>
-                <p>Si queremos cambiar solo una parte de un texto:</p>
-                <pre><code>span { color: blue; }</code></pre>
+                <h3>Ejercicio 1: Cálculo Visual</h3>
+                <p>Si el tamaño de fuente base de un navegador es de 16px, ¿a cuántos píxeles equivalen 1.5em?</p>
                 <div class="concept-box">
-                    <p>Texto normal <span>¡Texto azul!</span> texto normal.</p>
+                    <p class="text-center font-mono text-2xl">1.5 * 16 = ?</p>
+                </div>
+                <p class="mt-4 italic">Anota la respuesta y el razonamiento en tu cuaderno.</p>
+            </div>
+
+            <!-- Diapositiva 8: Porcentajes (%) -->
+            <div class="slide">
+                <h3>Unidad Relativa: Porcentaje (%)</h3>
+                <p>Se utiliza comúnmente para anchos (width) y alturas (height), tomando como referencia el elemento contenedor.</p>
+                <pre><code>div {
+  width: 50%;
+}</code></pre>
+                <p class="mt-4 text-sm">El contenedor ocupará la mitad del espacio disponible de su padre.</p>
+            </div>
+
+            <!-- Diapositiva 9: Fuentes Predeterminadas -->
+            <div class="slide">
+                <h3>Fuentes en CSS</h3>
+                <p>CSS incluye familias de fuentes genéricas para asegurar que el usuario vea algo similar a tu intención:</p>
+                <ul class="text-left mt-6 list-decimal list-inside space-y-4">
+                    <li><strong>serif:</strong> Con remates decorativos (ej: Times New Roman).</li>
+                    <li><strong>sans-serif:</strong> Sin adornos, limpia (ej: Arial).</li>
+                    <li><strong>cursive:</strong> Estilo hecho a mano alzada.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 10: Propiedad font-family -->
+            <div class="slide">
+                <h3>Definiendo Tipografías</h3>
+                <pre><code>h1 {
+  font-family: Verdana, sans-serif;
+}</code></pre>
+                <p class="mt-4 text-sm">Si el sistema no tiene "Verdana", usará cualquier fuente "sans-serif" disponible.</p>
+            </div>
+
+            <!-- Diapositiva 11: Múltiples Propiedades -->
+            <div class="slide">
+                <h3>Combinando Estilos</h3>
+                <p>Un solo selector puede tener muchas propiedades agrupadas:</p>
+                <pre><code>p {
+  font-family: Arial;
+  color: blue;
+  font-size: 24px;
+}</code></pre>
+                <p class="mt-4 italic">¡No olvides los puntos y comas (;)!</p>
+            </div>
+
+            <!-- Diapositiva 12: Comentarios en Código -->
+            <div class="slide">
+                <h3>La Importancia de los Comentarios</h3>
+                <p>Ayudan a recordar por qué hiciste algo de cierta manera.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <div class="bg-blue-50 p-4 rounded text-left font-mono">
+                        &lt;!-- Comentario HTML --&gt;
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded text-left font-mono">
+                        /* Comentario CSS */
+                    </div>
                 </div>
             </div>
 
-            <!-- Diapositiva 14: Actividad en Clase 1 -->
+            <!-- Diapositiva 13: Ejercicio 2 -->
             <div class="slide">
-                <h3>Actividad: Análisis en Cuaderno</h3>
-                <p>Escribe en tu cuaderno la estructura básica de una regla CSS identificando sus 3 partes fundamentales.</p>
-                <div class="concept-box bg-blue-50 border-blue-400">
-                    <p><strong>Reto:</strong> Escribe una regla que cambie el color de todos los encabezados h1 a verde.</p>
+                <h3>Ejercicio 2: Estilos Mixtos</h3>
+                <p>Crea una regla CSS para un <code>h2</code> que tenga:</p>
+                <ul class="list-disc list-inside mt-4">
+                    <li>Fuente: Courier.</li>
+                    <li>Tamaño: 2.5em.</li>
+                    <li>Color: Violeta (purple).</li>
+                </ul>
+                <p class="mt-6 italic">Escríbelo en tu cuaderno incluyendo un comentario que diga "Título Principal".</p>
+            </div>
+
+            <!-- Diapositiva 14: Cuestionario Interactivo (Parte 1) -->
+            <div class="slide">
+                <h3>¡Evaluación de conceptos!</h3>
+                <div class="quiz-container max-w-2xl w-full">
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <div class="quiz-options flex flex-col gap-2"></div>
+                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
                 </div>
             </div>
 
-            <!-- Diapositiva 15: Actividad en Clase 2 -->
+            <!-- Diapositiva 15: Cuestionario Interactivo (Parte 2) -->
             <div class="slide">
-                <h3>Ejercicio: Enlace de Archivos</h3>
-                <p>Imagina que tienes un archivo CSS llamado "mis_estilos.css". Escribe la etiqueta HTML completa necesaria para conectarlo a tu página.</p>
-                <p class="mt-6 italic text-sm">Recuerda los 3 atributos necesarios vistos anteriormente.</p>
-            </div>
-
-            <!-- Diapositiva 16: Cuestionario Interactivo -->
-            <div class="slide">
-                <h3>¡Evalúa tu aprendizaje!</h3>
-                <div id="quiz-container" class="max-w-2xl w-full">
-                    <p id="quiz-question" class="mb-4 font-bold text-xl text-orange-800 text-left"></p>
-                    <div id="quiz-options" class="flex flex-col gap-2"></div>
-                    <p id="quiz-feedback" class="mt-4 font-bold text-lg"></p>
+                <h3>Cuestionario: Continuación</h3>
+                <div class="quiz-container max-w-2xl w-full">
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <div class="quiz-options flex flex-col gap-2"></div>
+                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
                 </div>
             </div>
 
-            <!-- Diapositiva 17: Fin -->
+            <!-- Diapositiva 16: Fin y Asignación -->
             <div class="slide">
                 <h2>¡Muchas Gracias!</h2>
-                <p class="text-xl">Plan de clase del 19 de abril completado.</p>
-                <div class="mt-8">
-                    <p class="text-sm">Tarea: Crear HTML aplicando estilos en línea, internos y externos y comparar resultados.</p>
+                <div class="concept-box border-orange-600">
+                    <p><strong>Asignación:</strong> Ejercicios usando px, %, y em para definir tamaños de texto y contenedores en una página HTML personal.</p>
+                    <p class="mt-4 text-sm">Fecha de entrega: Próxima clase.</p>
                 </div>
             </div>
         </div>
@@ -360,7 +359,7 @@
             <button id="prev-btn" class="nav-button">Anterior</button>
             <button id="next-btn" class="nav-button">Siguiente</button>
         </div>
-        <div id="slide-counter">1 / 17</div>
+        <div id="slide-counter">1 / 16</div>
     </main>
 
     <footer id="page-footer" class="w-full bg-gray-900 text-white text-center p-2 text-sm">
@@ -380,16 +379,16 @@
         let currentSlide = 0;
 
         const quizData = [
-            { q: "¿Qué significan las siglas CSS?", options: ["Computer Style Sheets", "Cascading Style Sheets", "Color System Sheets", "Creative Syntax Sheet"], a: "Cascading Style Sheets" },
-            { q: "¿Qué describe una hoja de estilo?", options: ["La base de datos", "Cómo debe verse un archivo HTML", "La lógica de programación", "El nombre del servidor"], a: "Cómo debe verse un archivo HTML" },
-            { q: "¿Por qué se llaman 'en cascada'?", options: ["Porque caen del cielo", "Porque se pueden usar unas sobre otras", "Porque son transparentes", "Por su velocidad"], a: "Porque se pueden usar unas sobre otras" },
-            { q: "¿Cuál es una ventaja de separar forma de función?", options: ["Reutilización de código", "Ocupa más espacio", "Es más difícil de leer", "Solo funciona en Windows"], a: "Reutilización de código" },
-            { q: "¿Cómo se llama el atributo para estilos en línea?", options: ["format", "class", "style", "css"], a: "style" },
-            { q: "¿Dónde se ubican los estilos internos?", options: ["Dentro de <body>", "Dentro de <head>", "En un archivo .jpg", "Al final del servidor"], a: "Dentro de <head>" },
-            { q: "¿Qué etiqueta enlaza un CSS externo?", options: ["<a>", "<link>", "<style>", "<script>"], a: "<link>" },
-            { q: "¿Qué valor debe tener el atributo 'rel'?", options: ["stylesheet", "css-file", "link-style", "text/css"], a: "stylesheet" },
-            { q: "¿Qué es una etiqueta autocerrable?", options: ["Se cierra sola al abrirse", "No tiene una etiqueta de cierre separada", "Cierra el navegador", "Es obligatoria"], a: "No tiene una etiqueta de cierre separada" },
-            { q: "¿Qué parte de la regla CSS indica qué característica cambiar?", options: ["Selector", "Valor", "Propiedad", "Llave"], a: "Propiedad" }
+            { q: "¿Qué es un píxel (px) en diseño web?", options: ["Punto en la pantalla", "Un tipo de color", "Una fuente genérica", "Un archivo CSS"], a: "Punto en la pantalla" },
+            { q: "¿Por qué los px son una unidad absoluta?", options: ["Cambian con la pantalla", "Son de tamaño fijo", "Son solo para texto", "No existen físicamente"], a: "Son de tamaño fijo" },
+            { q: "¿A qué es igual un 1em?", options: ["Exactamente a 10px", "Al tamaño base fuente", "Al ancho de pantalla", "A 100 píxeles"], a: "Al tamaño base fuente" },
+            { q: "¿Qué unidad es mejor para smartphones?", options: ["Píxeles (px)", "Puntos (pt)", "Unidad relativa em", "Centímetros (cm)"], a: "Unidad relativa em" },
+            { q: "¿Cómo se escribe un comentario en CSS?", options: ["// comentario", "/* comentario */", "<!-- comentario -->", "# comentario"], a: "/* comentario */" },
+            { q: "¿Qué fuente tiene adornos decorativos?", options: ["serif", "sans-serif", "monospace", "digital"], a: "serif" },
+            { q: "¿Qué fuente es limpia y sin adornos?", options: ["cursive", "serif", "sans-serif", "fantasy"], a: "sans-serif" },
+            { q: "¿Para qué sirve el punto y coma en CSS?", options: ["Para abrir llaves", "Cerrar propiedad", "Borrar el código", "Cambiar el color"], a: "Cerrar propiedad" },
+            { q: "¿Qué unidad mide porcentajes del padre?", options: ["px", "em", "Simbolo %", "pt"], a: "Simbolo %" },
+            { q: "¿Qué sucede si una fuente no está instalada?", options: ["El browser falla", "Usa la siguiente", "No muestra texto", "Borra el archivo"], a: "Usa la siguiente" }
         ];
         let currentQuiz = 0;
 
@@ -404,20 +403,27 @@
             prevBtn.disabled = currentSlide === 0;
             nextBtn.disabled = currentSlide === slides.length - 1;
 
-            if (currentSlide === 15) loadQuiz();
+            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
         }
 
         function loadQuiz() {
-            const questionEl = document.getElementById('quiz-question');
-            const optionsEl = document.getElementById('quiz-options');
-            const feedbackEl = document.getElementById('quiz-feedback');
+            const currentSlideEl = slides[currentSlide];
+            const questionEl = currentSlideEl.querySelector('.quiz-question');
+            const optionsEl = currentSlideEl.querySelector('.quiz-options');
+            const feedbackEl = currentSlideEl.querySelector('.quiz-feedback');
+
+            if (!questionEl) return;
 
             if (currentQuiz >= quizData.length) {
                 questionEl.textContent = "¡Cuestionario completado!";
                 optionsEl.innerHTML = "";
-                feedbackEl.textContent = "";
+                feedbackEl.textContent = "Has respondido todas las preguntas.";
                 return;
             }
+
+            if (currentSlide === 13 && currentQuiz >= 5) { showSlide(14); return; }
+            if (currentSlide === 14 && currentQuiz < 5) { showSlide(13); return; }
+
             const data = quizData[currentQuiz];
             questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
             optionsEl.innerHTML = "";
@@ -433,16 +439,20 @@
                     if (opt === data.a) {
                         btn.classList.add('correct');
                         feedbackEl.textContent = "¡Correcto!";
-                        feedbackEl.className = "mt-4 font-bold text-lg text-green-600";
+                        feedbackEl.style.color = "#16a34a";
                     } else {
                         btn.classList.add('incorrect');
                         feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
-                        feedbackEl.className = "mt-4 font-bold text-lg text-red-600";
+                        feedbackEl.style.color = "#dc2626";
                     }
                     setTimeout(() => {
                         currentQuiz++;
-                        loadQuiz();
-                    }, 1500);
+                        if (currentQuiz === 5 && currentSlide === 13) {
+                            showSlide(14);
+                        } else {
+                            loadQuiz();
+                        }
+                    }, 2000);
                 };
                 optionsEl.appendChild(btn);
             });
