@@ -881,10 +881,12 @@ DESCRIPCIÓN DE CAMBIOS:
 - Archivos: Presentaciones 2026 (Global, 8 archivos)
   - Actualización del CDN de Tailwind CSS a la versión 4 (@tailwindcss/browser@4).
 - Archivo: II_BTP_A/Programacion/prog_logica_repetir.html
-  - Creada presentación de 16 diapositivas para el tema "Programación Lógica / Bucle Repetir".
-  - Implementado cuestionario interactivo de 10 preguntas con avance automático.
-- Archivo: III_BTP_A/dw_II/modelo_caja_dimensiones.html
-  - Creada presentación unificada para los temas de "Modelo de Caja" y "Dimensiones" (17 y 24 de mayo).
-  - Incluye visualizador gráfico del Box Model y cuestionario de 10 preguntas.
+  - Reestructurada presentación de 16 diapositivas para el tema "Programación Lógica / Bucle Repetir" (17 de mayo).
+  - Integrado contenido teórico de p.58 del PDF (Entidades, Relaciones, Ventajas/Desventajas).
+- Archivo: II_BTP_A/Programacion/prog_bd_modelos.html
+  - Creada presentación de 16 diapositivas para el tema "Programación orientada a bases de datos" (24 de mayo).
+- Archivo: III_BTP_A/dw_II/bordes_enlaces_decoracion.html
+  - Creada presentación de 16 diapositivas para el tema "Bordes, Enlaces y Decoración" (24 de mayo).
+  - Incluye contenido de Sección 4 y 5 del PDF base.
 - Archivo: js/data.js
-  - Integración de los nuevos temas en el menú de Cursos.
+  - Inserción de las nuevas presentaciones de Programación y Diseño Web en el menú de Cursos.

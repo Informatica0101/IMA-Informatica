@@ -1,0 +1,1117 @@
+Unidad 4 | Introducción a la programación web CSS
+Expectativas de logro Contenidos
+1. Conocen distintas formas de combinar código CSS con
+código HTLM5
+1. Qué es CSS
+1.1 Mejor fuera de línea que en línea
+1.2 Enlazar estilos CSS
+1.3 Etiquetas autocerrables
+1.4 Sintaxis
+2. Medidas
+3. Color de fondo, altura y ancho
+4. Bordes
+5. Enlaces y "text-decoration" (decoración de
+texto)
+6. Elementos HTLM como selectores
+6.1 Selectores múltiples
+6.2 Un selector para controlar los demas
+selectores
+7. Ramificación
+7.1 Clases
+7.2 Identificadores
+7.4 Selectores de pseudoclase
+7.5 Enlaces
+7.6 Pseudoclase first-child y nth-child
+8. Posicionamiento
+9. Layout o bosquejo
+9.1 Márgenes
+9.2.1 Margen superior, derecho, inferior,
+izquierdo
+9.2 Padding (relleno)
+9.2.1 Valores negativos
+10. Floats
+10.1 Colocar un elemento estatico de forma
+determinada
+10.2 Posicionamiento absoluto
+10.3 Posicionamiento relativo
+10.3 Posicionamiento fijo
+2. Saben utilizar las nuevas etiquetas de código CSS
+aprendidas.
+
+3. Aprenden como mejorar el estilo de las páginas web
+usando CSS
+
+4. Crean páginas web mediante el uso de código htlm5 y CSS.
+5. Ponen en práctica lo aprendido para desarrollar nuevos
+estilos de páginas web.
+
+6. Son capaces de crear un sitio web moderno.
+Procesos y actividades sugeridas
+1. Crear sitios web modernos con menús, hipertextos, enlaces a otros sitios
+2. Explican el funcionamiento de un sitio web y de dónde proviene cada elemento del mismo y son capaces de
+elaborar elementos personalizados.
+3.1 Qué es CSS
+CSS (cuyas siglas significan "Cascading Style Sheets" [Hojas de estilo en cascada]) es un lenguaje
+que se usa para describir la apariencia y el formato de tu HTML.
+Una hoja de estilo es un archivo que describe como debe verse un archivo HTML.
+Las hojas de estilo en cascada se llaman así porque pueden usarse unas sobre otras para sumar
+reglas y aplicarlas todas a un mismo documento. Por ejemplo, si indicas que todos los párrafos
+deben tener la fuente de color azul, pero señalas que un párrafo es pecífico debe tener fuente de
+color rojo, ¡CSS lo puede hacer!.
+Ejemplo de código CSS:
+Código CSS Código HTLM
+p {
+color: red;
+}
+
+span {
+color: blue;
+}
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" rel= "stylesheet" href="stylesheet.css"/>
+        <title>Fuentes atractivas</title>
+    </head>
+    <body>
+        <p> ¡Soy un párrafo escrito en rojo pero una de mis palabras es
+    <span>azul</span>!</p>
+    </body>
+</html>
+
+En el ejemplo vemos una parte de codigo  CSS que nos dice que los parrafos <p> van a estar en
+color rojo (p { color: red }) y que las etiquetas <span> seran de color azul (span { color: blue }).
+Cuando usamos estilos CSS, nos ahorramos escribir código htlm, ya que en pocas lineas de código
+CSS podemos definir que elementos repetitivos de la página como: fotos, parrafos, encabezados,
+etc. lleven el mismo estilo de fuente, color o tamaños, sin tener que escribir en cada elemento de
+la pagina los atributos de cada uno de ellos.
+¿Por qué separar la forma de la función?
+Existen dos razones principales para separar tu forma/formato (CSS) de tu contenido/estructura
+funcional (HTML):
+Puedes aplicarle el mismo formato a diversos elementos de HTML sin tener que volver a escribir el
+código (p.ej.: style="color:red") una y otra vez.
+Puedes aplicarle una apariencia y un formato parecido a varias páginas de HTML desde un solo
+archivo CSS.
+Ejercicio practico
+Objetivo enlasar un estilo CSS a una pagina htlm
+1. Abrimos Visual Studio Code y creamos un documento HTLM
+
+2. Escribimos el siguiente código:
+
+3. Guarda el archivo en una carpeta a la cual nombraras ejercicio 5, y guarda el archivo como
+ejercicio estilos css.htlm, abre el documento HTLM en el navegador.
+4. Ahora vamos a crear un nuevo documento (shortcut Control + N) y esta ves no escogeremos
+HTLM, escogeremos HOJA DE ESTILOS y damos clic en abrir.
+5. Escribe el siguiente código en el nuevo documento que has creado.
+6. Guarda el archivo con el nombre stylesheet.css, es importante que lleve ese nombre y que
+lo guardes en la misma carpeta donde has guardado el codigo htlm que escribimos
+anteriormente.
+7. Ahora refresca la pantalla del navegador observa que ha cambiado.
+
+Has notado que todas las palabras bajo la etiqueta <span></span> cambiaron de color y se
+pusieron en italica. Prueba hacer otras modificaciones de color y de fuente dentro del archivo
+Stylesheets.css guarda el archivo y refresca el navegador con tu pagina web abierta.
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="stylesheet.css" />
+    <title>Fuentes mucho más bonitas</title>
+</head>
+<body>
+    <p> Mucho de esto es texto común pero una parte es <span>atractiva</span>!
+        Podemos usar la fuente <span>que hicimos másbonita</span> para darle
+        <span>estilo</span> a nuestro sitio web. Sería un <span>lío</span>
+        hacer cada una de estas etiquetas <span>bonitas</span> una por una,
+        pero es una papa con <span>CSS</span>!
+    </p>
+</body>
+</html>
+
+span {
+  color: red;
+  font-family: cursive;
+}
+
+1.1 Mejor fuera de línea que en línea
+
+Antes te mostramos cómo dar estilo inline (en línea) con HTML, así:
+<p style="color:red">Red font!</p>
+Esta no es la mejor forma de darle estilo a tu sitio web por las razones que acabamos de mencionar:
+tienes que escribir el mismo código una y otra vez, y si querés hacer un cambio de estilo importante
+en varios elementos tienes que cambiar cada una de las etiquetas de estilo. Con un único archivo
+CSS haces el cambio en un solo lugar. Existen dos formas de ubicar las CSS en un solo lugar. La
+primera es colocar tu CSS entre etiquetas, justo en el mismo archivo de código HTML. Estas
+etiquetas van dentro de las etiquetas de encabezado de tu página web; revisá el ejemplo:
+
+
+
+
+
+
+
+
+
+
+
+
+1.2 Enlazar estilos CSS
+
+Ya sabes que deberías escribir tu CSS en un archivo aparte. Pero, ¿cómo te asegurás de que tu
+archivo HTML pueda ver esa información en CSS?
+Lo puedes hacer agregando una etiqueta de enlace <link> (tal como viste en el primer ejercicio 5)
+entre las etiquetas de encabezado <head>...</head> de tu página HTML. Tu etiqueta de enlace
+<link> necesita tres atributos:
+1. Un atributo type que siempre debe ser igual a "text/css"
+2. Un atributo rel que siempre debe ser igual a "stylesheet"
+3. Un atributo href que debe apuntar a la dirección web de tu archivo CSS (cuando trabajas
+offline guarda en la misma carpeta el archivo CSS)
+Ejemplo: este fue el link que utilizamos para enlazar el codigo CSS con la página web del ejercicio
+5 notarás que incluye los tres atributos.
+
+<link type="text/css" rel="stylesheet" href="stylesheet.css" />
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            p {
+                color: purple;
+            }
+        </style>
+        <title>Resultado</title>
+    </head>
+    <body>
+        <p>¡Mirá! ¡Soy violeta!</p>
+    </body>
+</html>
+1.3 Etiquetas autocerrables
+
+Esto nos hace acordar de algo que no podemos dejar de mencionar en HTML: las etiquetas
+autocerrables. Como nunca se agrega nada entre las etiquetas de enlace, está bien usar un solo
+par de < > para que sirvan como etiquetas de inicio y de cierre. Esto lo hacés de esta forma:
+
+<link type=”text/css” rel=”stylesheet” href=”dirección de archivo CSS”/>
+
+Tal vez te hayas dado cuenta de que hacemos algo parecido con la etiqueta de imagen <img>:
+<img src="dirección web"/>
+La mayoría de las etiquetas no se autocierran, pero te vamos a mostrar cuáles sí, para ahorrarte
+tiempo y esfuerzo.
+
+1.4 Sintaxis
+
+La sintaxis de CSS es distinta de la de HTML a la que estás acostumbrado, pero no te preocupes:
+¡es fácil de aprender! El formato general se ve así:
+
+
+
+
+Un selector puede ser cualquier elemento de HTML, como <p>, <img>, o <table>. ¡Simplemente
+no lleva los < >!. Por ejemplo para hacer que el texto de un párrafo tenga color rojo con CSS, se
+escribe:
+
+
+
+
+Una propiedad es un aspecto de un selector. Por ejemplo, puedes cambiar el tipo de fuente (font-
+family), el color (color) y el tamaño de fuente (font-size) del texto en tus páginas web (además
+de otras cosas).
+Un valor es una posible configuración de una propiedad. El color puede ser rojo, azul, negro, o casi
+cualquier color; el tipo de fuente (font-family) puede ser un montón de fuentes diferentes, y así
+sucesivamente.
+Debés finalizar cada propiedad-valor con un punto y coma (;) para que CSS sepa que ya terminaste
+de trabajar con un par y que estás listo para trabajar con el siguiente.
+
+selector {
+    propiedad: valor;
+}
+
+p {
+  color: red;
+}
+
+1.5 Propiedades del selector
+Otra ventaja genial de CSS es que puedes hacer que un selector tenga muchas propiedades. Por
+ejemplo, si quieres establecer la fuente, el color de fuente y el tamaño de fuente de un párrafo, solo
+tienes que escribir:
+Código Descripción
+p {
+font-family: Arial;
+color: blue;
+font-size: 24px;
+}
+Tres propiedades agrupadas en un solo selector, en este ejemplo
+hace que la fuente sea Arial color azul y 24px de tamaño
+
+Recuerda: ¡termina cada par propiedad-valor con un punto y coma!
+Ejercicio Práctico
+Combinar selectores y propiedades
+1. Escribe el siguiente código como htlm
+
+2. Intenta que el color de todos los encabezados h3 sea red (rojo).
+3. Haz que el tipo de letra (font-family) sea Courier en todos los párrafos. (Asegurate de
+escribir "Courier" con mayúscula inicial.)
+4. El segundo párrafo tiene texto en medio de las etiquetas <span>. Haz que el color de fondo
+(background-color) de esa sea amarillo (yellow).
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+        <title>Escribe un titulo</title>
+    </head>
+    <body>
+        <div>
+            <h3>¿Para qué sirve CSS?</h3>
+            <p>CSS sirve para darle estilo a las páginas de HTML</p>
+            <h3>¿Por qué hay que usarlo?</h3>
+            <p>Porque hace que las páginas web queden <span>realmente
+atractivas</span>. </p>
+            <h3>¿Que qué me parece?</h3>
+            <p>¡Me parece muy bueno!</p>
+        </div>
+    </body>
+</html>
+
+NOTA: Escribe el código CSS y recueda guardalo con el nombre stylesheets.css, si cambias el
+nombre del archivo tambien cambia el nombre que coloques en la etiqueta link por el nombre con
+que guardaste la hoja de estilos, recuerda guardar ambos archivos en una misma carpeta.
+Ejemplo:
+
+
+
+
+Resumen
+1. A medida que empiezas a agregar más y más pares propiedad-valor para cada selector
+CSS es importante que te recuerdes de poner punto y coma (;) al final de cada línea.
+2. El punto y coma le indica a las CSS que es el fin de un par propiedad -valor y que es el
+momento de continuar con el siguiente. Si no pones punto y coma, se confundirá todo y tu
+página no se verá correctamente.
+3. Además, no te olvides de que todos los pares propiedad -valor para un selector están en
+medio de llaves ({})
+Ejercicios: Encuentra los errores en el código y corrígelos.
+Código con error Escribe el código correcto
+h3 {
+font-family: Verdana;
+color: blue;
+}
+
+p {
+font-family: Garamond;
+font-size: 16px;
+}
+
+h3 {
+font-family: Verdana
+color: blue
+}
+
+. {
+font-family: Garamond;
+font-size: 16px;
+}
+
+h3
+fontfamily: Verdana;
+color blue
+}
+
+p {
+font-family: garamond;
+font-size: 16px;
+}
+
+
+selector {
+    propiedad: valor;
+}
+
+Si bien es importante que tu sintaxis sea correcta, también es una buena idea escribir comentarios
+a medida que avanzas. Los buenos comentarios te van a ayudar a recordar de por qué hiciste algo
+de cierta manera (o van a ayudar a otra persona, si está leye ndo tu código y no estás ahí para
+explicarlo).
+Como ya viste, los comentarios de HTML se ven así:
+<!-- ¡Soy un comentario! -->
+Pero, los comentarios de CSS se ven así:
+/* ¡Soy un comentario! */
+La computadora ignora los comentarios cuando intenta resolver lo que deben hacer tus códigos
+HTML y CSS, pero escribir buenos comentarios es un buen hábito que deberías adquirir.
+Ejercicio Práctico
+1. Crea un documento HTLM nombralo Ejercicio 6.htlm , crea una nueva carpeta donde
+guardarlo.
+2. Escribe este código
+
+
+
+
+
+
+
+
+
+
+
+
+3. Crea un documento CSS nuevo con el nombre stylesheet.css
+4. Agrega una etiqueta <link> a stylesheet.css en medio de tus etiquetas <head></head>.
+5. Usa Código CSS para lo siguiente
+• Cambia la fuente (font-family) del encabezado <h1> por Verdana. (Revisa de que
+la primera letra de Verdana esté en mayúscula). Usando código CSS
+• Cambia la fuente (font-family) del encabezado <h3> por Courier.
+• Haz que el color del texto del párrafo sea purple ("violeta" en inglés).
+• ¡Agrega un comentario (/* CSS comment */ ) a la pestaña CSS! Podés escribir lo
+que quieras. (No olvidar que los comentarios de HTML y los comentarios de CSS se
+escriben de forma diferente).
+<!DOCTYPE html>
+<html>
+<head>
+    <!--Coloca aquí la etiqueta de tu enlace-->
+    <title>Resultado</title>
+</head>
+<body>
+    <h1>Cambiar por Verdana.</h1>
+    <h3>Cambiar por Courier.</h3>
+    <p>para a color violeta.</p>
+</body>
+</html>
+2. Medidas
+Cuando te pedimos que ajustaras el tamaño de la fuente, especificamos que la unidad que tenías
+que usar era px (por "píxeles"), así:
+
+Un píxel es un punto en la pantalla de tu computadora. Especificar los tamaños de la fuente en
+píxeles es genial cuando quieres que el usuario vea en su pantalla exactamente lo que diseñaste
+en la tuya, pero se supone que ambas pantallas tienen el mismo tamaño.
+Pero, ¿si el tamaño de la pantalla del usuario es muy diferente del tuyo (como la pantalla de un
+smartphone)? Acá aparecen los em. (No hay que confundirlos con las etiquetas <em> </em> que
+usamos para énfasis).
+La unidad de tamaño de fuente font-size em es una medida relativa: un em es igual al tamaño de
+fuente predeterminado en cualquier pantalla que el usuario esté usando. Esto los convierte en algo
+genial para las pantallas de los smartphones, ya que no tratan de decirle al smartphone
+exactamente cuál debe ser el tamaño de la fuente: sencillamente le indican, "Mirá: 1em es el tamaño
+de fuente que usás casi siempre, así que 2em es el doble de grande y 0,5em es la mitad de ese
+tamaño".
+Ten en cuenta que incluimos tres párrafos diferentes con font -size 1em, 0,5em, y 2em. Por ahora,
+puedes usar la unidad con la que te sientas más cómodo ( px o em); nosotros solo queríamos que
+conocieras los em ahora para más adelante cuando los ocupes ya sepas de que hablamos.
+También te pedimos que cambiaras el tipo de letra ( font-family) de ciertos elementos usando
+CSS. Nos viste usar las fuentes Verdana, Courier y Garamond.
+¿Pero cuántas fuentes conoce CSS?
+La respuesta es: depende. La mayoría de las computadoras van a entender las fuentes más
+comunes, como Verdana, Courier y Garamond, pero cada computadora tiene instaladas diferentes
+fuentes. Lo bueno es que CSS tiene algunas fuentes predeterminadas incorporadas para que tus
+usuarios vean lo que vos querés. Son:
+1. serif: una fuente con pequeños remates decorativos en los finales de los trazos que
+componen las letras. Busca "serif" para ver a qué nos referimos.
+2. sans-serif: una fuente sin adornos, como esta. No tiene las cositas de los extremos de las
+letras que tiene la fuente serif.
+3. cursive: es una fuente que parece hecha a mano alzada. Se ve como escritura cursiva.
+
+
+
+
+
+p {
+font-size: 10px;
+}
+
+Ejemplos:
+h1 {
+font-family: serif;
+}
+h2 {
+font-family: sans-serif;
+}
+h3 {
+font-family: cursive;
+}
+No tienes que usar obligatoriamente un valor predeterminado como cursive o sans-serif:
+puedes indicarle a CSS que pruebe varias fuentes, yendo de una a la siguiente si la que estás
+buscando no está disponible.
+Por ejemplo, si escribes:
+p {
+font-family: Tahoma, Verdana, sans-serif;
+}
+CSS intentará primero aplicar Tahoma a tus párrafos. Si la PC del usuario no tiene esa fuente, a
+continuación probará con Verdana, y si esa no funciona, mostrará una fuente sans-serif
+predeterminada.
+3. Color de fondo, altura y ancho
+¿Recuerdas a la etiqueta <div> y cómo lo usamos para hacer esos bloques multicolores?
+Hay tres propiedades para las cuales deberás determinar valores:
+• Color de fondo (background-color), que se determina con un color o valor hexa
+• Altura (height), que se determina con un valor en píxeles
+• Ancho (width), que también se mide en píxeles
+
+La mejor manera de aprender es practicar realiza el siguiente ejercicio.
+Ejercicio práctico
+1. Crea un documento HTLM nombralo Ejercicio 7.htlm, crea una nueva carpeta donde
+guardarlo.
+2. Escribe este código
+
+3. Crea un documento CSS nuevo con el nombre stylesheet.css
+4. Haz que background-color tenga como valor #cc0000,
+así: background-color: #cc0000;
+5. Haz que height tenga como valor 100px,
+así: height: 100px;
+6. Haz que width también tenga como valor 100px.
+así: width: 100px;
+Nota: La clave esta en usar la etiqueta <div>.
+4. Bordes
+Muchos elementos de HTML admiten la propiedad borde (border). Esta puede ser especialmente
+útil con las tablas. La propiedad border a su vez admite varios valores. Por ejemplo, para hacer un
+borde de 2 píxeles de ancho, sólido, y de color rojo, tienes que escribir por ejemplo:
+selector {
+    border: 2px solid red;
+}
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet"
+href="stylesheet.css"/>
+        <title>Resultado</title>
+    </head>
+    <body>
+        <div></div>
+    </body>
+</html>
+
+Repasemos: El uso de tablas
+1. Crea un documento HTLM nombralo Ejercicio 8.htlm, crea una nueva carpeta donde
+guardarlo.
+2. Escribe este código
+
+3. Crea un documento CSS nuevo con el nombre stylesheet.css
+4. En código CSS haz lo siguiente:
+o Haz que tus selectores td (celdas de datos de tabla) tengan una altura de 50 píxeles
+(height de 50px), de manera que podamos verlos mejor cuando agreguemos nuestro
+borde.
+5. Dale a tus td una propiedad border de 1px de color azul punteado (dashed blue).
+6. Dale a tu tabla (table) una propiedad border de 1px de color negro liso (solid black).
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet"
+href="stylesheet.css"/>
+        <title></title>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <th colspan="3">Nueve bloques</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
+
+Ejemplo:
+
+5. Enlaces y "text-decoration" (decoración de texto)
+Los enlaces tienen muchas de las propiedades que tiene el texto normal: puedes cambiarles la
+fuente, el color, el tamaño, etc. Pero los enlaces también tienen la propiedad text-decoration, que se
+puede modificar para darles un toque un poco más personalizado. Probablemente estés
+acostumbrado a ver enlaces que son de color azul y están subrayados, ¿no? Bueno, no tiene que
+ser sí o sí de esa manera.
+Para cambiar la decoración haces los siguiente:
+Ejemplo: Código en HTLM En CSS:
+<!DOCTYPE html>
+<html>
+     <head>
+            <link type="text/css" rel="stylesheet"
+href="stylesheet.css"/>
+           <title>Resultado</title>
+     </head>
+ <body>
+     <p> ¡El siguiente enlace te lleva a Google! </p>
+     <a href="http://www.google.com/">Google</a>
+ </body>
+</html>
+a {
+  color: #cc0000;
+  text-decoration: none
+   }
+Escribe ambos códigos para que vea como funciona estas decoraciones: overline, line-
+through, underline.
+
+td{
+height:50px; border: 1px dashed blue;
+   }
+table{
+border:1px solid black;
+     }
+th{
+color:red;
+  }
+
+6. Crear botones
+Vamos a empezar. Lo primero es lo primero: necesitamos crear nuestro botón. Esto lo hacemos
+con las etiquetas <div></div>.
+Como crear un boton que redireccione a facebook por ejemplo:
+Este seria el código htlm
+
+Y asi el complemento en CSS
+CSS
+HTML
+<!DOCTYPE html>
+<html>
+      <head>
+            <link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+            <title>Titulo</title>
+      </head>
+      <body>
+            <img src="https://www.facebook.com/images/fb_icon_325x325.png"/>
+            <p>Esta es mi pagina de facebook.</p><br/><br/>
+            <div>
+
+            </div>
+      </body>
+</html>
+img {
+      display: block;
+      height: 100px;
+      width: 300px;
+      margin: auto;
+}
+
+p {
+      text-align: center;
+      font-family: Garamond, serif;
+      font-size: 18px;
+}
+
+div {
+     height: 50px;
+     width: 120px;
+border-color: #6495ED;
+     background-color: #BCD2EE;
+     border-style: solid
+}
+Dar forma al botón
+Este ejercicio incluye una nueva propiedad llamada border-radius (radio del borde). Esta
+propiedad modifica las esquinas de los objetos de HTML; es así como se consigue hacer esos
+geniales botones redondos.
+Ejemplo:
+border-radius: 5px;
+Posición del botón
+Así es como funciona:
+1. margin: auto;  es el estilo que usás para decirle al navegador: “Asegurate de dejar
+márgenes iguales a ambos lados de este elemento de HTML”. Cuando los márgenes son
+iguales, el objeto queda centrado.
+2. text-align: center; se usa para centrar elementos de texto.
+Este seria el código en CSS del boton terminado
+img {
+      display: block;
+      height: 100px;
+      width: 300px;
+      margin: auto;
+}
+
+p {
+      text-align: center;
+      font-family: Garamond, serif;
+      font-size: 18px;
+}
+
+div {
+      height: 50px;
+      width: 120px;
+      border-color: #6495ED;
+      background-color: #BCD2EE;
+      margin: auto;
+      text-align: center;
+      border-radius: 5px;
+      border-style: solid
+}
+
+div {
+      font-family: Verdana;
+      color: blue;
+}
+
+      a {
+      color: blue;
+      text-decoration: none
+}
+
+Escribe este código modificalo a tu gusto prueba con distintas combinaciones de colores y letras
+así como radios del borde, puedes conseguir bordes más redondos o rectos al modificar el valor de
+border-radius.
+
+6. Elementos HTLM como selectores
+Ya usamos varios elementos de HTML como selectores de CSS: le dimos estilo a las etiquetas de
+HTML <h1></h1> con el selector de CSS h1, a <p></p> con p, y así sucesivamente.
+Quizás ya adivinaste esta parte, pero si no, vamos a decirla de una vez: ¡cualquier elemento de
+HTML puede ser un selector de CSS! Podés modificar las <ul>, <table>, e incluso la etiqueta
+<body> completa, seleccionando ul, table, y body, respectivamente.
+Ejemplo: Para cambiar el color del cuerpo de la pagina web:
+body {
+      background-color: black;
+}
+
+
+
+6.1 Selectores múltiples
+Como ya hemos visto, es posible anidar elementos HTML dentro de otros, así:
+<div>
+¿Y si quieres enfocarte en las <p> que están dentro de dos <div>, y no en todas las <p>?
+Puedes seleccionarlas en la pestaña CSS de esta forma:
+div div p {
+      /* ¡Lo de CSS! */
+}
+HTLM CSS
+<!DOCTYPE html>
+<html>
+<head>
+      <link type="text/css" rel="stylesheet"
+href="stylesheet.css"/>
+<title>Result</title>
+</head>
+   <body>
+        <h3>Soy una simple letra antigua</h3>
+        <div>
+            <h3>Y yo también</h3>
+            <div>
+                 <h3>¿y yo?</h3>
+                 <div>
+                 <h3>¡Estoy a punto de ser roja!</h3>
+                 </div>
+           </div>
+     </div>
+</body>
+</html>
+div div div h3 {
+color: red;
+}
+Intenta escribir ambos código para que veas su resultado.
+
+
+6.2 Un selector para controlar los demas selectores
+También existe un selector muy especial que puedes usar para aplicar el estilo de CSS a cada
+elemento de la página: el selector *. Por ejemplo, si escribes:
+CSS
+* {
+      border: 2px solid black;
+}
+Vas a crear un borde continuo de dos píxeles de ancho alrededor de cada elemento en la página
+de HTML.
+
+
+Ejercicio 1:
+Usá el selector universal para colocar un borde azul punteado de valor 1px dashed blue alrededor
+de cada elemento de la página.
+Usa este código HTLM
+
+Escribe el código CSS.
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+      <head>
+            <link type="text/css" rel="stylesheet"
+href="stylesheet.css"/>
+            <title>Resultado</title>
+      </head>
+      <body>
+            <h3>Cajas dentro de cajas</h3>
+            <div>
+                  <p>Párrafo uno</p>
+            </div>
+            <div>
+                  <p>Párrafo dos</p>
+            </div>
+            <div>
+                  <p>Párrafo tres</p>
+            </div>
+      </body>
+</html>
+
+Ejercicio 2
+1. Escribe este código HTLM en visual studio code.
+2. Guarda el ejercicio.
+3. Crea el archivo Stylesheet.css
+4. En el archivo CSS haz lo siguiente:
+• Que todos los textos de párrafo tengan el color hexadecimal #00E5EE.
+• Todos los textos de párrafo para los párrafos anidados dentro de las etiquetas div tengan el
+color hex #CC0000. (¿De qué color serán si en el paso 1 ya se les cambió el color a #00E5EE?
+• Agrega un borde con el color #3A5FCD alrededor de cada elemento HTML. Puede ser línea
+continua, punteada, discontinua, 2px, 3px, lo que quieras.
+Ayudate de estos consejos:
+Al texto del párrafo que está dentro de las etiquetas div se le da un tratamiento con el selector p
+de esta forma:
+A todo el texto del párrafo que está dentro de las etiquetas div se le da un tratamiento con el
+selector div p de esta forma:
+
+<!DOCTYPE html>
+<html>
+      <head>
+            <link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+            <title>Mostrá lo que sabés hacer</title>
+      </head>
+      <body>
+            <p>Estoy a punto de tener un adorable color verde azulado.</p>
+            <p>¡Yo también!</p>
+            <p>Yo creo que voy a hacer lo mismo.</p>
+            <div>
+                  <p>¡Vamos a tener un color escarlata muy llamativo!</p>
+                  <p>Estaba pensando más en un color bermellón.</p>
+                  <p>¡No, color carmesí!</p>
+            </div>
+      </body>
+</html>
+
+p {
+      /* aqui colocas tus estilos */
+}
+
+div p {
+      /* aqui colocas tus estilos */
+}
+
+
+A cada elemento de HTML se le da un tratamiento con el selector universal de esta forma:
+
+Ya que decir "las <p> dentro de las <div>" es más específico que decir "todas las <p>", los párrafos
+fuera de los div tendrán color verde azulado y aquellos dentro de los div tendrán color rojo oscuro.
+Este comportamiento se llama cascada, y vamos a hablar de eso en la siguiente sección.
+
+7. Ramificación
+Imaginá que un documento de HTML es como un árbol: los elementos se "ramifican" desde el tronco
+principal (las etiquetas <html></html>). Las dos primeras ramas más grandes son <head> y
+<body>, y las ramas se multiplican y se hacen más delgadas a medida que agregas elementos
+como las <div>, <title>, y el texto (encabezados y párrafos). Si imaginás que la etiqueta <html>
+es el tronco del árbol, puedes imaginarte que sus ramas principales <head> y <body> son sus hijos.
+Ambas etiquetas son hijos de <html>, y <html> es su elemento padre. Como ambos son hijos
+directos de <html> (es decir que tienen solamente un elemento de distancia), son hermanos. Como
+en una familia de verdad, los elementos tienen hijos, nietos, bisnietos, y así sucesivamente (aunque
+nosotros no hacemos esta distinción con HTML; un hijo de un elemento, y todos los hijos de ese hijo,
+son hijos del primer padre).
+Ejemplo:
+
+Nota: un elemento es hijo de CADA elemento que lo encierra, ¡incluso si ese elemento está a
+algunas "ramas" de distancia. Ahora que ya tienes una idea de cómo están estructurados los
+documentos HTML, es hora de ver si has entendido como saltar de rama en rama.
+
+* {
+      /* aqui colocas tus estilos */
+}
+
+
+<!DOCTYPE html>
+<html> <!-- El tronco del árbol -->
+<head> <!-- Hijo de html, pariente del titulo,
+  hermano del cuerpo -->
+<title></title> <!-- Hijo directo del encabezado,
+hijo del encabezado Y de html -->
+</head>
+<body> <!-- Hijo de html, pariente de p,
+hermano del encabezado -->
+<p></p> <!-- Hijo directo del cuerpo,
+hijo del cuerpo Y de html -->
+</body>
+</html>
+Ejercicio:
+No olvides, puedes referirte a un elemento que es hijo de otro elemento así:
+En este caso, vamos a tomar cualquier <p> que esté anidada en algún lugar dentro de una <div>
+que está anidada en algún lugar dentro de otra <div>. Si quieres tomar hijos directos (es decir, los
+elementos que están directamente anidados dentro de otro elemento, sin elementos intermedios)
+puedes usar el símbolo >, así:
+
+Esto se refiere únicamente en las <p> que estén anidadas directamente dentro de las <div>; no
+tomará los párrafos que estén anidados dentro de listas que, a su vez, estén anidadas dentro de
+las <div>.
+Usaremos este código HTLM para practicar:
+
+
+
+div div p { /* Código de CSS */ }
+
+
+div > p { /* Código de CSS */ }
+
+
+<html>
+<head>
+<link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+<title>Máximo desafío de texto</title>
+</head>
+<body>
+<p>Introducción: Efecto cascada con CSS</p>
+<div>
+<p>Sinopsis: Cuando estableces una propiedad de un selector como 'p'
+con un cierto valor, ese valor se aplica a <em>todas</em> las etiquetas
+p. Sin embargo, si cambiás esa misma propiedad a un valor diferente
+para una instancia de p más específica, ese cambio<em> sobreescribirá
+</em> la 'regla general'.
+</p>
+<ul>
+<li><p>Si dices: p { font-family: Garamond}, todas las 'p' tendrán
+fuente Garamond.
+</p></li>
+<li><p>PERO si dices li p {font-family: Verdana}, las 'p' fuera de  las
+'li' tendrán fuente Garamond, y las 'p' DENTRO de las 'li'tendrán fuente
+Verdana.
+</p></li>
+<li><p>Cuanto más específicos sean tus selectores, más importancia
+le da CSS al estilo que apliques.</p></li>
+</ul>
+</div>
+<p>Resumen: Una mayor especificidad hace que CSS le dé prioridad a ese
+estilo particular.</p>
+</body>
+</html>
+
+Lo que debes hacer desde CSS
+1. Haz que todas las etiquetas <p> tengan propiedad font-family con valor Garamond. (¡NO
+uses el selector universal para hacerlo!)
+2. Haz que el párrafo de introducción y el de resumen tengan la propiedad font-weight con
+valor bold (esta propiedad es nueva, pero funciona igual que las otras que has aprendido).
+3. Haz que los párrafos en la lista no ordenada tengan la propiedad decoración de texto con
+valor underline.
+
+Buena suerte
+
+Así sería el aspecto final:
+
+Introducción: Efecto cascada con CSS
+Sinopsis: Cuando establecés una propiedad de un selector como 'p' con un cierto valor, ese valor se
+aplica a todas las etiquetas p. Sin embargo, si cambiás esa misma propiedad a un valor diferente para
+una instancia de p más específica, ese cambio sobreescribirá la 'regla general'.
+• Si decís: p { font-family: Garamond}, todas las 'p' tendrán fuente Garamond.
+• PERO si decís li p {font-family: Verdana}, las 'p' fuera de las 'li' tendrán fuente Garamond, y las 'p'
+DENTRO de las 'li' tendrán fuente Verdana.
+• Cuanto más específicos sean tus selectores, más importancia le da CSS al estilo que apliques.
+Resumen: Una mayor especificidad hace que CSS le dé prioridad a ese estilo particular.
+
+7.1 Clases
+Como hemos visto, ciertos selectores "sobreescribirán" otros si tienen un valor de especificidad
+mayor. ul li p { es CSS más específico que simplemente p {, así que, cuando CSS ve etiquetas
+que son <p> y están dentro de listas no ordenadas, aplicará el estilo más específico (ul li p {})
+al texto dentro de las listas.
+Existen dos selectores que son aún más específicos que los selectores anidados como los que
+aparecen en el ejemplo:
+
+Selectores de clase (class) y de identificadores (id).
+
+<p id="intro">Efecto cascada con CSS</p>
+<li><p class="list_item">PERO si dices li p {font-family: Verdana}
+
+Los elementos de HTML pueden ser selectores de CSS, pero como vimos con el selector universal
+*, no son los únicos selectores disponibles. Existen dos selectores importantes que puedes usar,
+además del selector universal y de los elementos de HTML: los selectores de clase y de
+identificadores.
+Ejemplo:
+
+
+
+
+
+
+
+.red {
+color: red;
+}
+#rogue {
+color: #FF00FF;
+font-weight: bold;
+font-family: cursive;
+}
+
+Las clases son útiles cuando tienes un montón de elementos que deberían tener el mismo estilo.
+En vez de aplicar las mismas reglas a varios selectores, simplemente puedes aplicar la misma clase
+a todos esos elementos de HTML y luego definir el estilo para esa clase en la pestaña de CSS.
+Las clases son asignadas a los elementos de HTML usando la palabra class y un signo de igual
+(=), así:
+<div class="cuadrado"></div>
+<img class="cuadrado"/>
+<td class="cuadrado"></td>
+
+En CSS, las clases se identifican con un punto (.), así:
+
+Esto te permite tomar elementos de diferentes tipos y darles el mismo estilo.
+
+Ejercicio práctico
+1. Escribe este código HTLM
+2. Crea la clase elegante
+3. Escribe el código CSS para la clase elegante
+4. Agrega los estilos que quieras a la clase que creaste, puede ser color, fuente, tamaño, fondo,
+etc.
+
+7.2 Identificadores
+Por otra parte, los identificadores son geniales cuando tienes exactamente un elemento que tiene
+que tener cierto estilo. Los identificadores son asignados a los elementos de HTML usando la
+palabra id y un signo de igual (=):
+<div id="primero"></div>
+<div id="segundo"></div>
+<p id="intro"></p>
+
+
+
+.cuadrado {
+height: 100px;
+width: 100px;
+}
+<!DOCTYPE html>
+<html>
+<head>
+<link type="text/css" rel= "stylesheet" href="stylesheet.css"/>
+<title>Resultado</title>
+</head>
+<body>
+<!--Agrega tus elementos HTML con la clase "elegante" a continuación.-->
+   `</body>`
+
+</html>
+Los identificadores se reconocen en CSS con un signo de numeral (#):
+
+Esto te permite aplicarle estilo a una sola instancia de un selector, en vez de a todas las instancias.
+
+Ejercicio práctico
+
+Utiliza este código htlm para el ejercicio.
+
+2. Crea el archivo stylesheet.css
+3. Escribe el código nesesario para realizar lo siguiente:
+
+En el código HTLM hacer lo siguiente
+
+• Dale al encabezado h2 el identificador "intro".
+• Dale al primer encabezado h3 y al primer p una clase de "destacado". No les hagas nada ni
+al segundo h3 ni a p.
+
+y en codigo CSS
+• Establece el color del identificador #intro en #B83C3A. Establecé el color de la clase
+.destacado en #F7AC5F y su propiedad font-family como Verdana.
+#primero {
+height: 50px;
+}
+#segundo {
+height: 100px;
+}
+#intro {
+color: #FF0000;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+<link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+<title>Resultado</title>
+</head>
+<body>
+<h2>Introducción</h2>
+<h3>Clases e identificadores en CSS</h3>
+<p>Las clases e identificadores en CSS son superfáciles. ¡En este momento
+los estás usando!</p>
+<h3>Selectores regulares de HTML</h3>
+<p>Si no usás una clase o un identificador, un elemento de HTML simplemente
+tendrá el estilo regular de CSS para ese elemento, o el estilo
+predeterminado, si no especificás ninguno en particular en la hoja de
+estilos. </p>
+</body>
+</html>
+
+Algo de ayuda:
+HTLM
+class= "nombredeclase"
+id="nombredeidentificador"
+
+CSS
+.nombre de clase { /* ¡Código de CSS! */ }
+#nombredeidentificador { /* ¡Código de CSS! */ }
+
+7.4 Selectores de pseudoclase
+
+Ya aprendiste sobre los selectores de clase. Ahora vamos a aprender sobre los selectores de
+pseudoclase. Un selector de pseudoclase es una forma de acceder a los elementos de HTML
+que no son parte del árbol del documento (¿recuerdas la estructura de árbol sobre la que hablamos
+anteriormente?).
+Por ejemplo, es muy fácil ver en qué lugar del árbol va un enlace. Pero, ¿en qué lugar encontrarías
+la información que dice si se ha hecho clic o no sobre un enlace? ¡Eso no está ahí!
+
+Los selectores de pseudoclase nos permiten darle un estilo a este tipo de cambios en nuestro
+documento de HTML. Por ejemplo, vimos que podemos cambiar la propiedad decoración de texto
+de un enlace para que no se vea siempre azul y subrayado. Usando los pse udo-selectores se
+controla la apariencia de enlaces que han sido y que no han sido visitados; e incluso de aquellos
+sobre los que el usuario pasa el cursor pero en los que aún no ha hecho clic.
+
+La sintaxis de CSS para los pseudoselectores es:
+
+selector:selector_de_pseudoclase {
+propiedad: valor;
+}
+
+Simplemente es un signo adicional de dos puntos (:).
+
+Otro ejemplo:
+
+a:hover {
+color: #cc0000;
+font-weight: bold;
+text-decoration: none;
+}
+
+7.5 Enlaces
+Existe una cantidad de selectores de pseudoclases útiles para los enlaces, incluidos los siguientes:
+1. a:link: Un enlace sin visitar.
+2. a:visited: Un enlace que ha sido visitado.
+3. a:hover: Un enlace sobre el que pasás el cursor.
+
+
+Ejercicio
+
+1. Usa el siguiente código HTLM para el ejercicio
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+<title></title>
+</head>
+<body>
+<div>
+   </div>
+  </body>
+</html>
