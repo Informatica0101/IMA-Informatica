@@ -18,12 +18,20 @@ ESTADO DE LAS TAREAS (RESUMEN)
 [A-45] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-51] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-53] COMPLETADA (PENDIENTE DE REVISIÓN)
-[A-58 a A-63] COMPLETADAS (PENDIENTE DE REVISIÓN)
+[A-58 a A-64] COMPLETADAS (PENDIENTE DE REVISIÓN)
 
 ------------------------------------------------------------------------------------------------
 
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
+
+TAREA: [A-64]
+TÍTULO: Actualización de Endpoints Microservicios (Mayo 20)
+ÁREA: Backend / Configuración
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Actualizadas las URLs de TASK, USER y EXAM en js/config.js.
+- Sincronizada versión global de caché a v=16.
 
 TAREA: [A-63]
 TÍTULO: Auditoría Técnica y Estabilización PWA

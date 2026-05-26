@@ -166,6 +166,15 @@ AUDITORÍA CIERRE DE PROYECTO (MAYO 2026)
   - Hallazgo: La función `getAllStudentProjects` era ineficiente (O(n^3)).
   - Resolución: Refactorizada usando `rootFolder.searchFiles()` con query de DriveApp, logrando una búsqueda recursiva de alto rendimiento.
 
+AUDITORÍA FINAL DE PRODUCCIÓN (MAYO 20, 2026)
+-------------------------------------------
+- Archivo: js/config.js
+  - Tarea: Actualizar endpoints a la versión final de producción.
+  - Resolución: URLs de TASK, USER y EXAM actualizadas con los nuevos despliegues de Google Apps Script.
+- Global:
+  - Tarea: Asegurar limpieza de caché en clientes.
+  - Resolución: Incrementada versión global a v=16. Verificada sincronización entre HTML y sw.js.
+
 AUDITORÍA TÉCNICA INTEGRAL (MAYO 2026)
 --------------------------------------
 - Estado General: Sistema estable con arquitectura de microservicios robusta.

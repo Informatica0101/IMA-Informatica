@@ -917,3 +917,9 @@ MAYO 2026 (Portal Optimization & Security Patch)
 - Corrección de Errores (Fixes):
   - Archivo: login.html: Corregido enlace de recuperación a `forgot-password.html`.
   - Archivo: sw.js: Sincronizada versión `v=15` y corregido manifiesto de archivos.
+
+20/05/2026
+- Archivo: js/config.js
+  - Actualización de los endpoints de producción para los microservicios USER, TASK y EXAM con las nuevas URLs proporcionadas por el usuario.
+- Global:
+  - Incremento de la versión de caché a 'v16' para asegurar el despliegue inmediato de las nuevas configuraciones y optimizaciones.

@@ -716,8 +716,8 @@ FinAlgoritmo</div>
         </div>
     </div>
 
-    <script src="js/config.js?v=15"></script>
-    <script src="js/api.js?v=15"></script>
+    <script src="js/config.js?v=16"></script>
+    <script src="js/api.js?v=16"></script>
     <script>
         const editor = document.getElementById('codeEditor');
         const highlight = document.getElementById('syntaxHighlight');
@@ -2554,7 +2554,7 @@ FinAlgoritmo</div>
         // PWA update logic
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=15')
+                navigator.serviceWorker.register('sw.js?v=16')
                     .then(reg => {
                         reg.onupdatefound = () => {
                             const installingWorker = reg.installing;
