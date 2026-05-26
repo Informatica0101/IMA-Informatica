@@ -5,7 +5,8 @@
 const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
 const FRONTEND_URL = "https://informatica0101.github.io";
 const DEBUG_MODE = true;
-const SECRET_KEY = "IMA-PORTAL-SECURE-KEY-2026"; // Clave para firmar tokens
+// SECRET_KEY se obtiene de ScriptProperties para mayor seguridad
+const SECRET_KEY = PropertiesService.getScriptProperties().getProperty('SECRET_KEY') || "IMA-PORTAL-DEVELOPMENT-KEY-UNSECURE";
 
 // ---------------------------------------------------------------------------
 // UTILIDADES
@@ -73,6 +74,10 @@ function doPost(e) {
       case "saveGameResult": result = saveGameResult(payload); break;
       case "getGameStats": result = getGameStats(payload); break;
       case "getNews": result = getNews(payload); break;
+      case "createNews": result = createNews(payload); break;
+      case "uploadNewsImage": result = uploadNewsImage(payload); break;
+      case "saveWhatsAppLink": result = saveWhatsAppLink(payload); break;
+      case "getWhatsAppLink": result = getWhatsAppLink(payload); break;
       default:
         result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -210,7 +215,7 @@ function resetPassword(payload) {
 }
 
 function updateUserProfile(payload) {
-  const { userId, nombre, telefono, numeroLista, password } = payload || {};
+  const { userId, nombre, telefono, numeroLista, currentPassword, password } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
   const data = sheet.getDataRange().getValues();
@@ -218,14 +223,23 @@ function updateUserProfile(payload) {
   if (rowIndex === -1) throw new Error("Usuario no encontrado.");
 
   const userRow = data[rowIndex];
+
+  // Si intenta cambiar password, validar la actual
+  if (password) {
+    if (!currentPassword) throw new Error("Debe proporcionar la contraseña actual.");
+    const currentHashed = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, currentPassword)
+      .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+
+    if (userRow[5] !== currentHashed) throw new Error("La contraseña actual es incorrecta.");
+
+    const newHashed = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password)
+      .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    userRow[5] = newHashed;
+  }
+
   if (nombre) userRow[1] = nombre;
   if (telefono !== undefined) userRow[7] = telefono;
   if (numeroLista !== undefined) userRow[8] = numeroLista;
-  if (password) {
-    const hashedPassword = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password)
-      .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
-    userRow[5] = hashedPassword;
-  }
 
   // Optimización: Una sola llamada de escritura para toda la fila
   sheet.getRange(rowIndex + 1, 1, 1, userRow.length).setValues([userRow]);
@@ -268,14 +282,103 @@ function getNews(payload) {
 
   const news = data.map(r => ({
     fecha: r[0],
-    titulo: r[1],
-    contenido: r[2],
-    imagenUrl: r[3],
-    categoria: r[4] || "General"
+    hora: r[1],
+    titulo: r[2],
+    contenido: r[3],
+    imagenUrl: r[4],
+    categoria: r[5] || "General"
   })).filter(n => n.titulo && n.contenido);
 
-  news.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  // Ordenar por fecha y hora descendente
+  news.sort((a, b) => {
+    const dateA = new Date(a.fecha);
+    const dateB = new Date(b.fecha);
+    if (dateA - dateB !== 0) return dateB - dateA;
+    // Si la fecha es igual, comparar hora
+    return (b.hora || "").localeCompare(a.hora || "");
+  });
+
   return { status: "success", data: news };
+}
+
+function createNews(payload) {
+  const { titulo, contenido, imagenUrl, categoria } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "NoticiasPortal");
+
+  const now = new Date();
+  const fecha = now.toISOString().split('T')[0];
+  const hora = now.toTimeString().split(' ')[0];
+
+  sheet.appendRow([fecha, hora, titulo, contenido, imagenUrl || "", categoria || "General"]);
+  return { status: "success", message: "Noticia publicada." };
+}
+
+function uploadNewsImage(payload) {
+  const { fileName, fileData } = payload;
+  // Usar carpeta raíz o una específica para noticias
+  const rootFolderId = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB"; // Tomado de Task-Service
+  const rootFolder = DriveApp.getFolderById(rootFolderId);
+  const newsFolder = getOrCreateFolderNews(rootFolder, "Noticias_Imagenes");
+
+  const fileInfo = fileData.split(',');
+  const mimeType = fileInfo[0].match(/:(.*?);/)[1];
+  const base64Content = fileInfo[1];
+  const blob = Utilities.newBlob(Utilities.base64Decode(base64Content), mimeType, fileName);
+
+  const file = newsFolder.createFile(blob);
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+  return { status: "success", data: { fileId: file.getId() } };
+}
+
+function saveWhatsAppLink(payload) {
+  const { grado, seccion, link } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "Clases");
+  const data = sheet.getDataRange().getValues();
+
+  const sGrado = normalizeString(grado);
+  const sSeccion = normalizeString(seccion);
+
+  let rowIndex = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (normalizeString(data[i][0]) === sGrado && normalizeString(data[i][1]) === sSeccion) {
+      rowIndex = i;
+      break;
+    }
+  }
+
+  if (rowIndex !== -1) {
+    sheet.getRange(rowIndex + 1, 3).setValue(link);
+  } else {
+    sheet.appendRow([grado, seccion, link]);
+  }
+
+  return { status: "success", message: "Enlace de WhatsApp guardado." };
+}
+
+function getWhatsAppLink(payload) {
+  const { grado, seccion } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "Clases");
+  const data = sheet.getDataRange().getValues();
+
+  const sGrado = normalizeString(grado);
+  const sSeccion = normalizeString(seccion);
+
+  for (let i = 1; i < data.length; i++) {
+    if (normalizeString(data[i][0]) === sGrado && normalizeString(data[i][1]) === sSeccion) {
+      return { status: "success", link: data[i][2] };
+    }
+  }
+
+  return { status: "success", link: "" };
+}
+
+function getOrCreateFolderNews(parentFolder, folderName) {
+  const folders = parentFolder.getFoldersByName(folderName);
+  return folders.hasNext() ? folders.next() : parentFolder.createFolder(folderName);
 }
 
 function getOrCreateSheet(ss, name) {
@@ -283,7 +386,8 @@ function getOrCreateSheet(ss, name) {
   if (!sheet) {
     sheet = ss.insertSheet(name);
     if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Logro", "Puntaje"]);
-    if (name === "NoticiasPortal") sheet.appendRow(["Fecha", "Título", "Contenido", "ImagenUrl", "Categoría"]);
+    if (name === "NoticiasPortal") sheet.appendRow(["Fecha", "Hora", "Título", "Contenido", "ImagenUrl", "Categoría"]);
+    if (name === "Clases") sheet.appendRow(["Grado", "Seccion", "WhatsAppLink"]);
   }
   return sheet;
 }

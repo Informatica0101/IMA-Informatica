@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="assignment-content overflow-hidden max-h-0 transition-all duration-500 ease-in-out group-[.is-expanded]:max-h-[1000px]">
                         <div class="pt-4 border-t border-gray-100 mt-2">
-                            <p class="text-gray-700 font-medium mb-4">${activity.descripcion || 'Sin descripción.'}</p>
+                            <div class="text-gray-700 font-medium mb-4 quill-content">${activity.descripcion || 'Sin descripción.'}</div>
                             <div class="mt-4">
                                 ${actionButtonHtml}
                             </div>
@@ -588,12 +588,21 @@ document.addEventListener('DOMContentLoaded', () => {
         profileForm.onsubmit = async (e) => {
             e.preventDefault();
             const submitBtn = profileForm.querySelector('button[type="submit"]');
+            const newPassword = document.getElementById('profile-password').value;
+            const currentPassword = document.getElementById('profile-current-password').value;
+
+            if (newPassword && !currentPassword) {
+                alert('Debe ingresar su contraseña actual para realizar cambios de seguridad.');
+                return;
+            }
+
             const payload = {
                 userId: currentUser.userId,
                 nombre: document.getElementById('profile-nombre').value,
                 telefono: document.getElementById('profile-telefono').value,
                 numeroLista: document.getElementById('profile-numeroLista').value,
-                password: document.getElementById('profile-password').value || undefined
+                currentPassword: currentPassword || undefined,
+                password: newPassword || undefined
             };
 
             submitBtn.disabled = true;
@@ -623,3 +632,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchAllActivities();
 });
+
+/**
+ * WhatsApp Group Button Logic
+ */
+async function initWhatsAppButton() {
+    const waActive = document.getElementById('wa-group-btn');
+    const waDisabled = document.getElementById('wa-group-btn-disabled');
+    if (!waActive || !waDisabled) return;
+
+    try {
+        const res = await fetchApi('USER', 'getWhatsAppLink', {
+            grado: currentUser.grado,
+            seccion: currentUser.seccion
+        });
+
+        if (res.status === 'success' && res.link) {
+            waActive.href = res.link;
+            waActive.classList.remove('hidden');
+            waDisabled.classList.add('hidden');
+        } else {
+            waActive.classList.add('hidden');
+            waDisabled.classList.remove('hidden');
+        }
+    } catch (e) {
+        console.error("Error fetching WhatsApp link:", e);
+        waActive.classList.add('hidden');
+        waDisabled.classList.remove('hidden');
+    }
+}
+initWhatsAppButton();

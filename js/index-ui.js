@@ -241,6 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderInitialActivityButton();
     setupGlobalAuth();
     loadNews();
+    renderWelcomeMessage();
 
     // --- Handle Action from URL (A-28) ---
     function processUrlAction() {
@@ -253,6 +254,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Escuchar el evento de que la UI común está lista para disparar acciones
     document.addEventListener('common-ui-ready', processUrlAction, { once: true });
+
+    // --- Welcome Message Logic ---
+    function renderWelcomeMessage() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const welcomeHeader = document.querySelector('section.relative h1');
+        if (currentUser && welcomeHeader) {
+            const firstName = currentUser.nombre.split(' ')[0];
+            welcomeHeader.textContent = `¡Bienvenido, ${firstName}!`;
+        }
+    }
 
     // --- Guest Mode Logic ---
     const guestPromptModal = document.getElementById('guest-prompt-modal');
@@ -370,23 +381,35 @@ async function loadNews() {
         const res = await fetchApi('USER', 'getNews', {});
         if (res.status === 'success' && res.data.length > 0) {
             newsSection.classList.remove('hidden');
-            newsContainer.innerHTML = res.data.map(n => `
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all">
-                    ${n.imagenUrl ? `
-                        <div class="h-48 overflow-hidden">
-                            <img src="${window.convertDriveLink ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            // Identificar la noticia más reciente para un estilo destacado si se desea,
+            // pero el requerimiento pide: Título, Primera Imagen, Primer Párrafo, Fecha.
+            newsContainer.innerHTML = res.data.map((n, idx) => {
+                // Extraer el primer párrafo del contenido HTML
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = n.contenido;
+                const firstP = tempDiv.querySelector('p') ? tempDiv.querySelector('p').innerText : tempDiv.innerText.substring(0, 150) + '...';
+
+                return `
+                <div class="${idx === 0 ? 'md:col-span-2 lg:col-span-2' : ''} bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all">
+                    <div class="${idx === 0 ? 'flex flex-col md:flex-row' : ''}">
+                        ${n.imagenUrl ? `
+                            <div class="${idx === 0 ? 'md:w-1/2 h-64 md:h-full' : 'h-48'} overflow-hidden">
+                                <img src="${window.convertDriveLink ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            </div>
+                        ` : ''}
+                        <div class="p-6 ${idx === 0 ? 'md:w-1/2 flex flex-col justify-center' : ''}">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-1 rounded">${n.categoria}</span>
+                                <span class="text-xs text-gray-400">${new Date(n.fecha).toLocaleDateString()}</span>
+                            </div>
+                            <h3 class="${idx === 0 ? 'text-2xl' : 'text-xl'} font-bold text-gray-800 mb-2">${n.titulo}</h3>
+                            <p class="text-gray-600 text-sm ${idx === 0 ? 'line-clamp-4 mb-4' : 'line-clamp-3'}">${firstP}</p>
+                            ${idx === 0 ? `<div class="mt-auto"><span class="text-blue-600 font-bold text-sm">Leer noticia completa &rsaquo;</span></div>` : ''}
                         </div>
-                    ` : ''}
-                    <div class="p-6">
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-1 rounded">${n.categoria}</span>
-                            <span class="text-xs text-gray-400">${new Date(n.fecha).toLocaleDateString()}</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">${n.titulo}</h3>
-                        <p class="text-gray-600 text-sm line-clamp-3">${n.contenido}</p>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
     } catch (e) {
         console.error("Error loading news:", e);

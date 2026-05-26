@@ -923,3 +923,36 @@ MAYO 2026 (Portal Optimization & Security Patch)
   - Actualización de los endpoints de producción para los microservicios USER, TASK y EXAM con las nuevas URLs proporcionadas por el usuario.
 - Global:
   - Incremento de la versión de caché a 'v16' para asegurar el despliegue inmediato de las nuevas configuraciones y optimizaciones.
+
+26/05/2026
+- Archivo: backend/user-service/Code.gs
+  - Implementadas acciones 'saveWhatsAppLink', 'getWhatsAppLink', 'createNews' y 'uploadNewsImage'.
+  - Refactorizada la función 'getNews' para incluir metadatos de hora y ordenamiento cronológico preciso (descendente).
+  - Integrada la creación de la carpeta 'Noticias_Imagenes' en Drive para almacenamiento de activos de prensa.
+- Archivo: teacher-dashboard.html
+  - Añadido botón 'Noticias' al menú de navegación principal.
+  - Implementada sección 'section-news' para la gestión de publicaciones.
+  - Creado modal 'news-modal' con formulario completo y editor enriquecido Quill.js.
+  - Integrada previsualización de imágenes de portada en la gestión de noticias.
+- Archivo: js/teacher.js
+  - Implementada integración de Grupos de WhatsApp en la vista de alumnos:
+    - El profesor puede asignar un enlace de invitación por clase.
+    - Se incluyó validación de dominio 'whatsapp.com'.
+    - Persistencia bidireccional con el backend mediante fetchApi.
+  - Implementado CRUD de Noticias:
+    - Los profesores pueden redactar, subir imágenes y publicar noticias.
+    - Las imágenes se suben automáticamente a Drive y se vinculan a la publicación.
+  - Exportación de funciones pushNav y popNav al objeto window para permitir automatizaciones de navegación.
+- Archivo: student-dashboard.html
+  - Añadido botón 'Grupo de WhatsApp' dinámico en el encabezado del panel.
+  - Implementado estado deshabilitado ('Grupo no disponible') cuando no existe enlace asignado.
+- Archivo: js/student.js
+  - Implementada función initWhatsAppButton para la sincronización del enlace de clase del estudiante logueado.
+- Archivo: js/index-ui.js
+  - Refinado el sistema de noticias de la página principal:
+    - La noticia más reciente se destaca con un diseño de tarjeta doble (2 columnas).
+    - Implementada extracción inteligente del primer párrafo para excerpts.
+    - Visualización de categoría, fecha y foto de portada optimizada.
+- Global:
+  - Incremento de la versión de caché a 'v17' en todos los recursos HTML y sw.js.
+  - Actualizada la versión del Service Worker a 'informatic-app-v17' para forzar la actualización de los nuevos módulos de WhatsApp y Noticias.

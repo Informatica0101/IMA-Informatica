@@ -587,10 +587,17 @@ function endGame() {
 
     if (finalCorrectWords) finalCorrectWords.textContent = correctWordsCount;
     if (finalErrors) finalErrors.textContent = totalErrors;
-    if (finalWPM) finalWPM.textContent = calculateWPM();
+    const wpm = calculateWPM();
+    if (finalWPM) finalWPM.textContent = wpm;
+
+    // Integración con GamesAdapter
+    if (window.GamesAdapter) {
+        GamesAdapter.saveResult("Destreza Teclado", `Completado con ${correctWordsCount} palabras y ${wpm} WPM`, correctWordsCount);
+    }
+
     console.log(`Final Correct Words: ${correctWordsCount}`); // Log de depuración
     console.log(`Final Errors: ${totalErrors}`); // Log de depuración
-    console.log(`Final WPM: ${calculateWPM()}`); // Log de depuración
+    console.log(`Final WPM: ${wpm}`); // Log de depuración
 }
 
 // Sale del juego y regresa al menú principal de actividades

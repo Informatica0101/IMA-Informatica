@@ -16,20 +16,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Elementos de Navegación y Secciones ---
     const navDashboard = document.getElementById('nav-dashboard');
+    const navTareas = document.getElementById('nav-tareas');
     const navProyectos = document.getElementById('nav-proyectos');
     const navLogros = document.getElementById('nav-logros');
-    const navGestion = document.getElementById('nav-gestion');
+    const navNews = document.getElementById('nav-news');
     const navReportes = document.getElementById('nav-reportes');
-    const navCrear = document.getElementById('nav-crear');
-    const navCrearExamen = document.getElementById('nav-crear-examen');
 
     const sectionDashboard = document.getElementById('section-dashboard');
+    const sectionTareas = document.getElementById('section-tareas');
     const sectionProyectos = document.getElementById('section-proyectos');
     const sectionLogros = document.getElementById('section-logros');
-    const sectionGestion = document.getElementById('section-gestion');
+    const sectionNews = document.getElementById('section-news');
     const sectionReportes = document.getElementById('section-reportes');
-    const sectionCrear = document.getElementById('section-crear');
-    const sectionCrearExamen = document.getElementById('section-crear-examen');
+
+    const tareasListView = document.getElementById('tareas-list-view');
+    const tareasCreateView = document.getElementById('tareas-create-view');
+    const formContainerTarea = document.getElementById('form-container-crear-tarea');
+    const formContainerExamen = document.getElementById('form-container-crear-examen');
 
     const createAssignmentForm = document.getElementById('create-assignment-form');
     const createExamForm = document.getElementById('create-exam-form');
@@ -48,8 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionDashboard, sectionProyectos, sectionLogros, sectionGestion, sectionReportes, sectionCrear, sectionCrearExamen];
-    const allNavLinks = [navDashboard, navProyectos, navLogros, navGestion, navReportes, navCrear, navCrearExamen];
+    const allSections = [sectionDashboard, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionReportes];
+    const allNavLinks = [navDashboard, navTareas, navProyectos, navLogros, navNews, navReportes];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -58,6 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function navigateTo(targetSection, navElement) {
         allSections.forEach(section => section && section.classList.add('hidden'));
         targetSection.classList.remove('hidden');
+
+        // Hide WhatsApp container if moving away from Dashboard
+        const waContainer = document.querySelector('.bg-green-50');
+        if (waContainer && targetSection !== sectionDashboard) waContainer.classList.add('hidden');
+
         allNavLinks.forEach(link => {
             if (link) {
                 link.classList.remove('bg-blue-600', 'text-white');
@@ -73,6 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
         navStack = [{ level: 'Grados', data: null }];
         fetchTeacherActivity();
     });
+    navTareas.addEventListener('click', () => {
+        navigateTo(sectionTareas, navTareas);
+        tareasListView.classList.remove('hidden');
+        tareasCreateView.classList.add('hidden');
+        fetchManagementData();
+    });
     navProyectos.addEventListener('click', () => {
         navigateTo(sectionProyectos, navProyectos);
         fetchProjects();
@@ -81,9 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
         navigateTo(sectionLogros, navLogros);
         fetchLogros();
     });
-    navGestion.addEventListener('click', () => {
-        navigateTo(sectionGestion, navGestion);
-        fetchManagementData();
+    navNews.addEventListener('click', () => {
+        navigateTo(sectionNews, navNews);
+        fetchNewsManagement();
     });
     navReportes.addEventListener('click', () => {
         navigateTo(sectionReportes, navReportes);
@@ -115,8 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sRejected) sRejected.textContent = rejected;
     }
 
-    navCrear.addEventListener('click', () => navigateTo(sectionCrear, navCrear));
-    navCrearExamen.addEventListener('click', () => navigateTo(sectionCrearExamen, navCrearExamen));
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('currentUser');
         window.location.href = 'login.html';
@@ -132,8 +144,50 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
+    // --- Inicialización de Editores Quill ---
+    let quillTask, quillExam, quillEdit, quillNews;
+    function initEditors() {
+        if (!quillTask && document.getElementById('editor-task-container')) {
+            quillTask = new Quill('#editor-task-container', { theme: 'snow', placeholder: 'Escribe la descripción de la tarea...' });
+        }
+        if (!quillExam && document.getElementById('editor-exam-container')) {
+            quillExam = new Quill('#editor-exam-container', { theme: 'snow', placeholder: 'Escribe las instrucciones del examen...' });
+        }
+        if (!quillEdit && document.getElementById('editor-edit-container')) {
+            quillEdit = new Quill('#editor-edit-container', { theme: 'snow' });
+        }
+        if (!quillNews && document.getElementById('editor-news-container')) {
+            quillNews = new Quill('#editor-news-container', { theme: 'snow', placeholder: 'Contenido de la noticia...' });
+        }
+    }
+    initEditors();
+
+    // --- Lógica de Navegación de Tareas ---
+    const btnShowCreateTask = document.getElementById('btn-show-create-task');
+    const btnShowCreateExam = document.getElementById('btn-show-create-exam');
+    const btnBackToTareas = document.getElementById('btn-back-to-tareas');
+
+    if (btnShowCreateTask) btnShowCreateTask.onclick = () => {
+        tareasListView.classList.add('hidden');
+        tareasCreateView.classList.remove('hidden');
+        formContainerTarea.classList.remove('hidden');
+        formContainerExamen.classList.add('hidden');
+        document.getElementById('tareas-form-title').textContent = "Crear Nueva Tarea";
+    };
+    if (btnShowCreateExam) btnShowCreateExam.onclick = () => {
+        tareasListView.classList.add('hidden');
+        tareasCreateView.classList.remove('hidden');
+        formContainerTarea.classList.add('hidden');
+        formContainerExamen.classList.remove('hidden');
+        document.getElementById('tareas-form-title').textContent = "Crear Nuevo Examen";
+    };
+    if (btnBackToTareas) btnBackToTareas.onclick = () => {
+        tareasListView.classList.remove('hidden');
+        tareasCreateView.classList.add('hidden');
+    };
+
     // --- Lógica de Navegación Jerárquica ---
-    async function pushNav(level, data) {
+    window.pushNav = async function(level, data) {
         if (isNavigating) return;
         isNavigating = true;
         if (studentSearchInput) studentSearchInput.value = '';
@@ -155,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isNavigating = false;
     }
 
-    function popNav() {
+    window.popNav = function() {
         if (isNavigating) return;
         if (navStack.length > 1) {
             if (studentSearchInput) studentSearchInput.value = '';
@@ -245,7 +299,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit-id').value = item.tareaId || item.examenId;
         document.getElementById('edit-tipo-orig').value = item.tipoReal;
         document.getElementById('edit-titulo').value = item.titulo;
-        document.getElementById('edit-descripcion').value = item.descripcion || '';
+
+        if (quillEdit) quillEdit.root.innerHTML = item.descripcion || '';
+
         document.getElementById('edit-asignatura').value = item.asignatura;
         document.getElementById('edit-parcial').value = item.parcial || 'Primer Parcial';
         document.getElementById('edit-grado').value = item.grado;
@@ -276,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tipo = document.getElementById('edit-tipo-orig').value;
         const payload = {
             titulo: document.getElementById('edit-titulo').value,
-            descripcion: document.getElementById('edit-descripcion').value,
+            descripcion: quillEdit ? quillEdit.root.innerHTML : document.getElementById('edit-descripcion').value,
             asignatura: document.getElementById('edit-asignatura').value,
             parcial: document.getElementById('edit-parcial').value,
             gradoAsignado: document.getElementById('edit-grado').value,
@@ -501,71 +557,130 @@ document.addEventListener('DOMContentLoaded', () => {
         const students = current.data.students || [];
         const parcial = current.data.parcial;
 
-        // Enriquecer alumnos con status de actividad
-        const studentsWithStatus = students.map(s => {
-            // Filtramos la actividad del alumno por asignatura y parcial
-            // Eliminamos la validación redundante de grado/sección aquí ya que el alumnoId es unívoco
-            const studentActivity = allActivityRaw.filter(i => i.alumnoId == s.userId && norm(i.asignatura) === norm(asignatura) && norm(i.parcial) === norm(parcial));
-            let hasPending = false;
-            studentActivity.forEach(item => {
-                const isDelivered = !!(item.fileId || item.respuestas || item.entregaId);
-                const isGraded = (item.estado === 'Completada' || item.estado === 'Revisada' || item.estado === 'Rechazada');
-                if (isDelivered && !isGraded) hasPending = true;
-            });
-            return { ...s, hasPending, statusText: hasPending ? 'Pendiente' : 'Al día' };
-        });
+        // WhatsApp Group Integration
+        const waContainer = document.createElement('div');
+        waContainer.className = "bg-green-50 p-4 rounded-xl mb-6 border border-green-100 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in";
+        waContainer.innerHTML = `
+            <div>
+                <h4 class="font-bold text-green-800 text-sm mb-1">Grupo de WhatsApp de la Clase</h4>
+                <p class="text-green-600 text-[10px]">Comparte el enlace con tus alumnos para este parcial.</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <input type="text" id="wa-link-input" readonly class="bg-white border border-green-200 rounded-lg p-2 text-xs w-64 focus:ring-2 focus:ring-green-400 outline-none transition-all text-gray-500" placeholder="https://chat.whatsapp.com/...">
+                <button id="btn-edit-wa" class="bg-white text-green-700 border border-green-200 px-3 py-2 rounded-lg text-xs font-bold hover:bg-green-100 transition-colors">Editar</button>
+                <button id="btn-save-wa" class="hidden bg-green-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-green-700 transition-colors">Guardar</button>
+            </div>
+        `;
 
-        let filtered = studentsWithStatus.filter(s => norm(s.nombre).includes(norm(search)));
+        // Insert waContainer before filters if not already present
+        const existingWa = document.querySelector('.bg-green-50');
+        if (existingWa) existingWa.remove();
+        filtersContainer.parentNode.insertBefore(waContainer, filtersContainer);
+        if (navStack[navStack.length - 1].level !== "Alumnos") waContainer.classList.add("hidden");
 
-        // Aplicar ordenamiento
-        filtered.sort((a, b) => {
-            let valA = a[studentSort.column];
-            let valB = b[studentSort.column];
-            if (studentSort.column === 'statusText') {
-                valA = a.hasPending ? 'A_Pendiente' : 'B_AlDia';
-                valB = b.hasPending ? 'A_Pendiente' : 'B_AlDia';
+        const waInput = document.getElementById('wa-link-input');
+        const btnEditWa = document.getElementById('btn-edit-wa');
+        const btnSaveWa = document.getElementById('btn-save-wa');
+
+        // Fetch current link
+        fetchApi('USER', 'getWhatsAppLink', { grado, seccion }).then(res => {
+            if (res.status === 'success' && res.link) {
+                waInput.value = res.link;
             }
-            if (valA < valB) return studentSort.direction === 'asc' ? -1 : 1;
-            if (valA > valB) return studentSort.direction === 'asc' ? 1 : -1;
-            return 0;
         });
+
+        btnEditWa.onclick = () => {
+            waInput.readOnly = false;
+            waInput.classList.remove('text-gray-500');
+            waInput.focus();
+            btnEditWa.classList.add('hidden');
+            btnSaveWa.classList.remove('hidden');
+        };
+
+        btnSaveWa.onclick = async () => {
+            const link = waInput.value.trim();
+            if (link && !link.includes('whatsapp.com')) {
+                alert('Por favor, ingresa un enlace válido de WhatsApp.');
+                return;
+            }
+            btnSaveWa.disabled = true;
+            btnSaveWa.textContent = 'Guardando...';
+            try {
+                const res = await fetchApi('USER', 'saveWhatsAppLink', { grado, seccion, link });
+                if (res.status === 'success') {
+                    waInput.readOnly = true;
+                    waInput.classList.add('text-gray-500');
+                    btnEditWa.classList.remove('hidden');
+                    btnSaveWa.classList.add('hidden');
+                } else {
+                    alert(res.message);
+                }
+            } catch (e) {
+                alert('Error al guardar el enlace.');
+            } finally {
+                btnSaveWa.disabled = false;
+                btnSaveWa.textContent = 'Guardar';
+            }
+        };
+
+        // Tareas y exámenes correspondientes a este contexto
+        const relevantAssignments = allAssignmentsRaw.filter(a =>
+            norm(a.grado) === norm(grado) &&
+            (norm(a.seccion) === norm(seccion) || !a.seccion || norm(a.seccion) === 'todas') &&
+            norm(a.asignatura) === norm(asignatura) &&
+            norm(a.parcial) === norm(parcial)
+        );
+
+        // Sort students by list number
+        students.sort((a, b) => (parseInt(a.numeroLista) || 999) - (parseInt(b.numeroLista) || 999));
+        let filtered = students.filter(s => norm(s.nombre).includes(norm(search)));
 
         currentFilteredItems = filtered;
 
-        const sortIcon = (col) => {
-            if (studentSort.column !== col) return '↕';
-            return studentSort.direction === 'asc' ? '↑' : '↓';
-        };
-
-        dashboardTableHead.innerHTML = `
+        // Render Horizontal Academic Table
+        let headHtml = `
             <tr class="bg-gray-50 border-b border-gray-100">
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer hover:bg-gray-100 sort-btn" data-sort="nombre">
-                    Nombre del Alumno ${sortIcon('nombre')}
-                </th>
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer hover:bg-gray-100 sort-btn" data-sort="statusText">
-                    Estado ${sortIcon('statusText')}
-                </th>
-                <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th>
-            </tr>`;
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Nº</th>
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Alumno</th>`;
+
+        relevantAssignments.forEach(a => {
+            headHtml += `<th class="p-4 text-center font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${a.titulo}">${a.titulo.substring(0, 10)}${a.titulo.length > 10 ? '...' : ''}</th>`;
+        });
+
+        headHtml += `<th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Total</th></tr>`;
+        dashboardTableHead.innerHTML = headHtml;
 
         if (filtered.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-500">No hay alumnos inscritos en esta sección.</td></tr>';
+            submissionsTableBody.innerHTML = `<tr><td colspan="${relevantAssignments.length + 3}" class="text-center p-8 text-gray-500">No hay alumnos inscritos.</td></tr>`;
             return;
         }
 
         submissionsTableBody.innerHTML = filtered.map((s, idx) => {
-            const statusHtml = s.hasPending
-                ? '<span class="text-yellow-600 font-bold">Pendiente</span>'
-                : '<span class="text-green-600 font-bold">Al día</span>';
-
-            return `
+            let total = 0;
+            let rowsHtml = `
                 <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
-                    <td class="p-4 font-bold text-blue-700">${s.nombre}</td>
-                    <td class="p-4 text-sm">${statusHtml}</td>
-                    <td class="p-4 text-right">
-                        <span class="text-blue-600 font-bold text-sm">Ver detalles &rsaquo;</span>
-                    </td>
-                </tr>`;
+                    <td class="p-4 text-gray-400 font-mono text-xs">${s.numeroLista || '-'}</td>
+                    <td class="p-4">
+                        <div class="font-bold text-blue-700">${s.nombre}</div>
+                        <div class="text-[10px] text-gray-400 flex items-center gap-1">
+                            <span>${s.email || ''}</span>
+                            ${s.telefono ? `| <a href="https://wa.me/504${s.telefono.replace(/\D/g, '')}" target="_blank" class="text-green-600 hover:underline">WhatsApp</a>` : ''}
+                        </div>
+                    </td>`;
+
+            relevantAssignments.forEach(a => {
+                const sub = allActivityRaw.find(sub =>
+                    sub.alumnoId == s.userId &&
+                    sub.titulo === a.titulo &&
+                    norm(sub.asignatura) === norm(a.asignatura)
+                );
+                const score = sub ? parseFloat(sub.calificacion || 0) : 0;
+                total += score;
+                rowsHtml += `<td class="p-4 text-center font-bold ${score > 0 ? 'text-green-600' : 'text-gray-300'}">${score}</td>`;
+            });
+
+            rowsHtml += `<td class="p-4 text-right font-black text-blue-800">${total}</td></tr>`;
+            return rowsHtml;
         }).join('');
     }
 
@@ -595,10 +710,17 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Actividad</th><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Estado</th><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Archivo</th><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Calificación</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
         if (finalFiltered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-500">Sin entregas.</td></tr>'; return; }
         submissionsTableBody.innerHTML = finalFiltered.map((item, idx) => {
-            let statusClass = 'bg-gray-100 text-gray-600'; let statusText = 'Pendiente';
-            if (item.estado === 'Completada' || item.estado === 'Revisada') { statusText = 'Completada'; statusClass = 'bg-green-100 text-green-700'; }
-            else if (item.estado === 'Rechazada') { statusText = 'Rechazada'; statusClass = 'bg-red-100 text-red-700'; }
-            else if (item.fileId || item.respuestas || item.entregaId) { statusText = 'Por calificar'; statusClass = 'bg-yellow-100 text-yellow-700'; }
+            let statusClass = 'bg-gray-100 text-gray-600'; let statusText = item.estado || 'Pendiente';
+
+            if (item.estado === 'Completada' || item.estado === 'Revisada') {
+                statusText = 'Completada';
+                statusClass = 'bg-green-100 text-green-700';
+            } else if (item.estado === 'Rechazada' || item.estado === 'Tarea incompleta') {
+                statusClass = 'bg-red-100 text-red-700';
+            } else if (item.estado === 'Pendiente de revisión' || item.fileId || item.respuestas || item.entregaId) {
+                statusText = item.estado === 'Pendiente de revisión' ? 'Pendiente de revisión' : 'Por calificar';
+                statusClass = 'bg-yellow-100 text-yellow-700';
+            }
 
             let fileHtml = 'N/A';
             if (item.fileId) {
@@ -772,10 +894,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- CRUD Forms ---
     if (createAssignmentForm) createAssignmentForm.onsubmit = async (e) => {
-        e.preventDefault(); const btn = e.target.querySelector('button[type="submit"]'); btn.classList.add('btn-loading');
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        const formData = Object.fromEntries(new FormData(e.target).entries());
+
+        // Obtener contenido de Quill
+        if (quillTask) formData.descripcion = quillTask.root.innerHTML;
+
+        btn.classList.add('btn-loading');
         try {
-            const res = await fetchApi('TASK', 'createTask', { ...Object.fromEntries(new FormData(e.target).entries()), profesorId: currentUser.userId });
-            if (res.status === 'success') { alert('Creada.'); e.target.reset(); navDashboard.click(); }
+            const res = await fetchApi('TASK', 'createTask', { ...formData, profesorId: currentUser.userId });
+            if (res.status === 'success') {
+                alert('Tarea creada correctamente.');
+                e.target.reset();
+                if (quillTask) quillTask.setContents([]);
+                navTareas.click();
+            }
             else throw new Error(res.message);
         } catch (error) { alert(error.message); } finally { btn.classList.remove('btn-loading'); }
     };
@@ -794,7 +928,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (questionsContainer) questionsContainer.onclick = (e) => { if (e.target.classList.contains('remove-question-btn')) e.target.closest('.question-block').remove(); };
 
     if (createExamForm) createExamForm.onsubmit = async (e) => {
-        e.preventDefault(); const btn = e.target.querySelector('button[type="submit"]'); const payload = { ...Object.fromEntries(new FormData(e.target).entries()), preguntas: [], profesorId: currentUser.userId };
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        const formData = Object.fromEntries(new FormData(e.target).entries());
+
+        const payload = {
+            ...formData,
+            preguntas: [],
+            profesorId: currentUser.userId
+        };
+
+        if (quillExam) payload.descripcion = quillExam.root.innerHTML;
+
         questionsContainer.querySelectorAll('.question-block').forEach(block => {
             const type = block.querySelector('.question-type-select').value;
             const q = { preguntaTipo: type, textoPregunta: block.querySelector('.question-text').value, respuestaCorrecta: block.querySelector('.correct-answer').value, opciones: {} };
@@ -802,11 +947,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (type === 'opcion_multiple' || type === 'verdadero_falso') opts.split(',').forEach((p, i) => { const L = ['A', 'B', 'C', 'D'][i]; if (L) q.opciones[L] = p.trim(); });
             payload.preguntas.push(q);
         });
-        if (payload.preguntas.length === 0) { alert('Vacío.'); return; }
+
+        if (payload.preguntas.length === 0) { alert('Debe añadir al menos una pregunta.'); return; }
+
         btn.classList.add('btn-loading');
         try {
             const res = await fetchApi('EXAM', 'createExam', payload);
-            if (res.status === 'success') { alert('Examen creado.'); e.target.reset(); questionsContainer.innerHTML = ''; qCounter = 0; navDashboard.click(); }
+            if (res.status === 'success') {
+                alert('Examen creado correctamente.');
+                e.target.reset();
+                if (quillExam) quillExam.setContents([]);
+                questionsContainer.innerHTML = '';
+                qCounter = 0;
+                navTareas.click();
+            }
             else throw new Error(res.message);
         } catch (error) { alert(error.message); } finally { btn.classList.remove('btn-loading'); }
     };
@@ -917,3 +1071,111 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchTeacherActivity();
 });
+
+// --- MÓDULO: Gestión de Noticias ---
+const newsModal = document.getElementById('news-modal');
+const closeNewsModal = document.getElementById('close-news-modal');
+const cancelNewsBtn = document.getElementById('cancel-news-btn');
+const btnCreateNews = document.getElementById('btn-create-news');
+const newsForm = document.getElementById('news-form');
+const newsManagementContainer = document.getElementById('news-management-container');
+
+if (btnCreateNews) {
+    btnCreateNews.onclick = () => {
+        newsForm.reset();
+        document.getElementById('news-image-url').value = '';
+        if (quillNews) quillNews.setContents([]);
+        newsModal.classList.remove('hidden');
+    };
+}
+
+if (closeNewsModal) closeNewsModal.onclick = () => newsModal.classList.add('hidden');
+if (cancelNewsBtn) cancelNewsBtn.onclick = () => newsModal.classList.add('hidden');
+
+async function fetchNewsManagement() {
+    newsManagementContainer.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500">Cargando noticias...</div>';
+    try {
+        const res = await fetchApi('USER', 'getNews', {});
+        if (res.status === 'success') {
+            const data = res.data || [];
+            if (data.length === 0) {
+                newsManagementContainer.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500">No hay noticias publicadas.</div>';
+                return;
+            }
+            newsManagementContainer.innerHTML = data.map(n => `
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all">
+                    ${n.imagenUrl ? `
+                        <div class="h-40 overflow-hidden">
+                            <img src="${window.convertDriveLink ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl}" class="w-full h-full object-cover">
+                        </div>
+                    ` : ''}
+                    <div class="p-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${n.categoria}</span>
+                            <span class="text-[10px] text-gray-400">${n.fecha}</span>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-2 line-clamp-2">${n.titulo}</h3>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (e) {
+        newsManagementContainer.innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error al cargar noticias.</div>';
+    }
+}
+
+if (newsForm) {
+    newsForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const saveBtn = document.getElementById('save-news-btn');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Publicando...';
+
+        try {
+            let imageUrl = document.getElementById('news-image-url').value;
+            const imageInput = document.getElementById('news-image-input');
+
+            if (imageInput.files.length > 0) {
+                const file = imageInput.files[0];
+                const base64 = await toBase64(file);
+                const uploadRes = await fetchApi('USER', 'uploadNewsImage', {
+                    fileName: file.name,
+                    fileData: base64
+                });
+                if (uploadRes.status === 'success') {
+                    imageUrl = uploadRes.data.fileId;
+                }
+            }
+
+            const payload = {
+                titulo: document.getElementById('news-title').value,
+                categoria: document.getElementById('news-category').value,
+                imagenUrl: imageUrl,
+                contenido: quillNews.root.innerHTML
+            };
+
+            const res = await fetchApi('USER', 'createNews', payload);
+            if (res.status === 'success') {
+                alert('Noticia publicada exitosamente.');
+                newsModal.classList.add('hidden');
+                fetchNewsManagement();
+            } else {
+                alert(res.message);
+            }
+        } catch (error) {
+            alert('Error al publicar noticia.');
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Publicar';
+        }
+    };
+}
+
+function toBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}

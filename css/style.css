@@ -425,3 +425,26 @@ span.rounded-full {
     scrollbar-width: thin;
     scrollbar-color: #ccc #f1f1f1;
 }
+
+/* Quill Editor custom styling to match system */
+.ql-toolbar.ql-snow {
+    border-radius: 12px 12px 0 0 !important;
+    border: 1px solid #e5e7eb !important;
+    background: #f9fafb !important;
+}
+
+.ql-container.ql-snow {
+    border-radius: 0 0 12px 12px !important;
+    border: 1px solid #e5e7eb !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+.ql-editor {
+    font-size: 0.95rem !important;
+    min-height: 100px;
+}
+
+.quill-content h1, .quill-content h2, .quill-content h3 { font-weight: bold; margin-bottom: 0.5rem; }
+.quill-content p { margin-bottom: 0.5rem; }
+.quill-content ul, .quill-content ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+.quill-content blockquote { border-left: 4px solid #3b82f6; padding-left: 1rem; font-style: italic; color: #4b5563; }

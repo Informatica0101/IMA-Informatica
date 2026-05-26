@@ -196,3 +196,31 @@ AUDITORÍA TÉCNICA INTEGRAL (MAYO 2026)
   - Archivos: Validación de tipos MIME y manejo de carpetas temporales (`.temp_uploads`) funcional.
 - Minijuegos:
   - Adaptador: `GamesAdapter` integra correctamente el guardado persistente para usuarios y el local para invitados.
+
+AUDITORÍA INTEGRACIÓN WHATSAPP Y NOTICIAS (26/05/2026)
+------------------------------------------------------
+- Archivos involucrados: backend/user-service/Code.gs, teacher-dashboard.html, js/teacher.js, student-dashboard.html, js/student.js, js/index-ui.js
+- Hallazgo WhatsApp: Se requería un método centralizado para que el profesor asigne grupos.
+- Resolución: Implementado input en el nivel 'Alumnos' de la navegación. Se usa fetchApi para persistir en la hoja 'Clases'.
+- Hallazgo Noticias: El sistema previo era limitado. Se requería subida de imágenes y edición HTML.
+- Resolución:
+  - Integrado Quill.js en 'news-modal'.
+  - Implementada función toBase64 para la subida de imágenes a Drive.
+  - Refactorizada la función getNews para retornar fecha y hora, permitiendo un sort exacto.
+- Hallazgo Landing Page: Se solicitó destacar la noticia más reciente.
+- Resolución: Modificado map en js/index-ui.js para aplicar clases de grid span (col-span-2) al índice 0 y extraer el primer párrafo del HTML para el excerpt.
+- Validación Técnica: Verificada la visibilidad de los nuevos elementos mediante Playwright. Se confirmó que el botón de WhatsApp en el dashboard del estudiante se habilita/deshabilita correctamente según la respuesta del servidor.
+
+AUDITORÍA INTEGRACIÓN WHATSAPP Y NOTICIAS (26/05/2026)
+------------------------------------------------------
+- Archivos involucrados: backend/user-service/Code.gs, teacher-dashboard.html, js/teacher.js, student-dashboard.html, js/student.js, js/index-ui.js
+- Hallazgo WhatsApp: Se requería un método centralizado para que el profesor asigne grupos.
+- Resolución: Implementado input en el nivel 'Alumnos' de la navegación. Se usa fetchApi para persistir en la hoja 'Clases'.
+- Hallazgo Noticias: El sistema previo era limitado. Se requería subida de imágenes y edición HTML.
+- Resolución:
+  - Integrado Quill.js en 'news-modal'.
+  - Implementada función toBase64 para la subida de imágenes a Drive.
+  - Refactorizada la función getNews para retornar fecha y hora, permitiendo un sort exacto.
+- Hallazgo Landing Page: Se solicitó destacar la noticia más reciente.
+- Resolución: Modificado map en js/index-ui.js para aplicar clases de grid span (col-span-2) al índice 0 y extraer el primer párrafo del HTML para el excerpt.
+- Validación Técnica: Verificada la visibilidad de los nuevos elementos mediante Playwright. Se confirmó que el botón de WhatsApp en el dashboard del estudiante se habilita/deshabilita correctamente según la respuesta del servidor.

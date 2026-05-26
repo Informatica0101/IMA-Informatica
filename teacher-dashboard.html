@@ -14,8 +14,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- SheetJS for Excel export -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=16">
+    <link rel="stylesheet" href="css/style.css?v=17">
 </head>
 <body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
 
@@ -124,15 +127,14 @@
 
             <nav class="flex flex-nowrap overflow-x-auto gap-2 md:gap-3 mb-6 pb-2 scroll-horizontal-clean">
                 <button id="nav-dashboard" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-blue-600 text-white">Dashboard</button>
+                <button id="nav-tareas" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Tareas y Exámenes</button>
                 <button id="nav-proyectos" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Proyectos PSeInt</button>
                 <button id="nav-logros" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Logros/Juegos</button>
-                <button id="nav-gestion" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Gestión de Tareas</button>
+                <button id="nav-news" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Noticias</button>
                 <button id="nav-reportes" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Reportes Excel</button>
-                <button id="nav-crear" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Tarea</button>
-                <button id="nav-crear-examen" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Examen</button>
             </nav>
 
-            <!-- Sección de Dashboard (Entregas) -->
+            <!-- Sección de Dashboard (Cuadro de Notas) -->
             <section id="section-dashboard" class="animate-fade-in-up">
                  <div class="flex flex-col space-y-4 mb-6">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -183,10 +185,18 @@
                 </div>
             </section>
 
-            <!-- Sección de Gestión de Tareas -->
-            <section id="section-gestion" class="hidden animate-fade-in-up">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Gestión de Tareas y Exámenes</h2>
-                <div class="table-container overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100">
+            <!-- Sección de Tareas (Unificada) -->
+            <section id="section-tareas" class="hidden animate-fade-in-up">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Gestión de Tareas y Exámenes</h2>
+                    <div class="flex gap-2">
+                        <button id="btn-show-create-task" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold text-sm shadow hover:bg-blue-700 transition-all">+ Nueva Tarea</button>
+                        <button id="btn-show-create-exam" class="bg-purple-600 text-white px-4 py-2 rounded-xl font-bold text-sm shadow hover:bg-purple-700 transition-all">+ Nuevo Examen</button>
+                    </div>
+                </div>
+
+                <!-- Lista de Tareas Existentes -->
+                <div id="tareas-list-view" class="table-container overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100 mb-8">
                     <table class="w-full">
                         <thead class="bg-gray-50 border-b border-gray-100">
                             <tr>
@@ -201,6 +211,104 @@
                             <!-- Las tareas/exámenes se cargarán aquí -->
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Formulario Unificado (Crear Tarea) -->
+                <div id="tareas-create-view" class="hidden animate-fade-in-up">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <button id="btn-back-to-tareas" class="text-blue-600 font-bold flex items-center hover:underline">
+                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                            Volver a la lista
+                        </button>
+                        <h3 class="text-xl font-bold text-gray-800" id="tareas-form-title">Crear Nueva Tarea</h3>
+                    </div>
+
+                    <div id="form-container-crear-tarea" class="hidden">
+                        <div class="dashboard-card">
+                            <form id="create-assignment-form">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-2">Título</label>
+                                        <input type="text" name="titulo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-2">Asignatura</label>
+                                        <input type="text" name="asignatura" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block font-bold text-gray-700 mb-2">Descripción (Editor Enriquecido)</label>
+                                        <div id="editor-task-container" style="height: 200px;" class="bg-white rounded-xl"></div>
+                                        <input type="hidden" name="descripcion" id="hidden-task-description">
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-2">Parcial</label>
+                                        <select name="parcial" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                            <option value="Primer Parcial">Primer Parcial</option>
+                                            <option value="Segundo Parcial">Segundo Parcial</option>
+                                            <option value="Tercer Parcial">Tercer Parcial</option>
+                                            <option value="Cuarto Parcial">Cuarto Parcial</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-2">Grado</label>
+                                        <select name="gradoAsignado" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                            <option value="Décimo">Décimo</option>
+                                            <option value="Undécimo">Undécimo</option>
+                                            <option value="Duodécimo">Duodécimo</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-2">Sección (Opcional)</label>
+                                        <input type="text" name="seccionAsignada" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-2">Fecha Límite</label>
+                                        <input type="date" name="fechaLimite" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="mt-8 bg-blue-600 text-white font-bold py-4 px-10 rounded-2xl shadow-lg hover:shadow-xl transition-all">Crear Tarea</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div id="form-container-crear-examen" class="hidden">
+                        <div class="dashboard-card">
+                            <form id="create-exam-form">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 border-b pb-6">
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-2">Título del Examen</label>
+                                        <input type="text" name="titulo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-2">Asignatura</label>
+                                        <input type="text" name="asignatura" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block font-bold text-gray-700 mb-2">Instrucciones (Editor Enriquecido)</label>
+                                        <div id="editor-exam-container" style="height: 150px;" class="bg-white rounded-xl"></div>
+                                        <input type="hidden" name="descripcion" id="hidden-exam-description">
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-2">Grado</label>
+                                        <select name="gradoAsignado" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                            <option value="Décimo">Décimo</option>
+                                            <option value="Undécimo">Undécimo</option>
+                                            <option value="Duodécimo">Duodécimo</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-2">Fecha Límite</label>
+                                        <input type="date" name="fechaLimite" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                    </div>
+                                </div>
+                                <div id="questions-container" class="space-y-4"></div>
+                                <div class="flex flex-col sm:flex-row items-center justify-between mt-8 gap-4">
+                                    <button type="button" id="add-question-btn" class="w-full sm:w-auto bg-green-500 text-white font-bold py-3 px-6 rounded-xl shadow hover:bg-green-600 transition-all">Añadir Pregunta</button>
+                                    <button type="submit" class="w-full sm:w-auto bg-purple-600 text-white font-bold py-4 px-10 rounded-2xl shadow-lg hover:shadow-xl transition-all">Guardar Examen</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -281,6 +389,18 @@
                 </div>
             </section>
 
+            <!-- Sección de Noticias -->
+            <section id="section-news" class="hidden animate-fade-in-up">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Gestión de Noticias</h2>
+                    <button id="btn-create-news" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-sm">Nueva Noticia</button>
+                </div>
+
+                <div id="news-management-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Noticias cargadas para gestión -->
+                </div>
+            </section>
+
             <!-- Sección de Reportes -->
             <section id="section-reportes" class="hidden animate-fade-in-up">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Exportación de Reportes a Excel</h2>
@@ -322,131 +442,56 @@
                 </div>
             </section>
 
-            <!-- Sección de Crear Tarea -->
-            <section id="section-crear" class="hidden animate-fade-in-up">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Crear Nueva Tarea</h2>
-                <div class="dashboard-card">
-                    <form id="create-assignment-form">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            <div>
-                                <label for="titulo" class="block font-bold text-gray-700 mb-2">Título</label>
-                                <input type="text" id="titulo" name="titulo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
-                            </div>
-                            <div>
-                                <label for="tipo" class="block font-bold text-gray-700 mb-2">Tipo</label>
-                                <select id="tipo" name="tipo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all">
-                                    <option value="Tarea">Tarea</option>
-                                    <option value="Examen">Examen</option>
-                                    <option value="Credito Extra">Crédito Extra</option>
-                                </select>
-                            </div>
-                            <div id="credito-extra-fields" class="hidden md:col-span-2">
-                                <label for="tareaOriginalId" class="block font-bold text-gray-700 mb-2">Seleccionar Tarea Original</label>
-                                <select id="tareaOriginalId" name="tareaOriginalId" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all">
-                                    <option value="">Seleccione una tarea...</option>
-                                </select>
-                            </div>
-                            <div class="md:col-span-2">
-                                <label for="descripcion" class="block font-bold text-gray-700 mb-2">Descripción</label>
-                                <textarea id="descripcion" name="descripcion" rows="4" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all"></textarea>
-                            </div>
-                             <div>
-                                <label for="parcial" class="block font-bold text-gray-700 mb-2">Parcial</label>
-                                <select id="parcial" name="parcial" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
-                                    <option value="Primer Parcial">Primer Parcial</option>
-                                    <option value="Segundo Parcial">Segundo Parcial</option>
-                                    <option value="Tercer Parcial">Tercer Parcial</option>
-                                    <option value="Cuarto Parcial">Cuarto Parcial</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="asignatura" class="block font-bold text-gray-700 mb-2">Asignatura</label>
-                                <input type="text" id="asignatura" name="asignatura" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
-                            </div>
-                            <div>
-                                <label for="gradoAsignado" class="block font-bold text-gray-700 mb-2">Grado Asignado</label>
-                                <select id="gradoAsignado" name="gradoAsignado" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
-                                    <option value="">Selecciona un Grado</option>
-                                    <option value="Décimo">Décimo</option>
-                                    <option value="Undécimo">Undécimo</option>
-                                    <option value="Duodécimo">Duodécimo</option>
-                                </select>
-                            </div>
-                             <div>
-                                <label for="seccionAsignada" class="block font-bold text-gray-700 mb-2">Sección (Opcional)</label>
-                                <input type="text" id="seccionAsignada" name="seccionAsignada" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all">
-                            </div>
-                            <div>
-                                <label for="fechaLimite" class="block font-bold text-gray-700 mb-2">Fecha Límite</label>
-                                <input type="date" id="fechaLimite" name="fechaLimite" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="mt-10 bg-blue-600 text-white font-bold py-4 px-10 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">Crear Tarea</button>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Sección de Crear Examen -->
-            <section id="section-crear-examen" class="hidden animate-fade-in-up">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Crear Nuevo Examen</h2>
-                <div class="dashboard-card">
-                    <form id="create-exam-form">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 border-b border-gray-100 pb-4 mb-4">
-                            <div>
-                                <label for="exam-titulo" class="block font-bold text-gray-700 mb-2">Título del Examen</label>
-                                <input type="text" id="exam-titulo" name="titulo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" required>
-                            </div>
-                            <div>
-                                <label for="exam-parcial" class="block font-bold text-gray-700 mb-2">Parcial</label>
-                                <select id="exam-parcial" name="parcial" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
-                                    <option value="Primer Parcial">Primer Parcial</option>
-                                    <option value="Segundo Parcial">Segundo Parcial</option>
-                                    <option value="Tercer Parcial">Tercer Parcial</option>
-                                    <option value="Cuarto Parcial">Cuarto Parcial</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="exam-asignatura" class="block font-bold text-gray-700 mb-2">Asignatura</label>
-                                <input type="text" id="exam-asignatura" name="asignatura" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" required>
-                            </div>
-                            <div>
-                                <label for="exam-grado" class="block font-bold text-gray-700 mb-2">Grado Asignado</label>
-                                <select id="exam-grado" name="gradoAsignado" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" required>
-                                    <option value="">Selecciona un Grado</option>
-                                    <option value="Décimo">Décimo</option>
-                                    <option value="Undécimo">Undécimo</option>
-                                    <option value="Duodécimo">Duodécimo</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="exam-seccion" class="block font-bold text-gray-700 mb-2">Sección (Opcional)</label>
-                                <input type="text" id="exam-seccion" name="seccionAsignada" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all">
-                            </div>
-                            <div>
-                                <label for="exam-fechaLimite" class="block font-bold text-gray-700 mb-2">Fecha Límite</label>
-                                <input type="date" id="exam-fechaLimite" name="fechaLimite" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" required>
-                            </div>
-                             <div>
-                                <label for="exam-tiempoLimite" class="block font-bold text-gray-700 mb-2">Tiempo Límite (minutos)</label>
-                                <input type="number" id="exam-tiempoLimite" name="tiempoLimite" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" min="1">
-                            </div>
-                        </div>
-
-                        <div id="questions-container" class="space-y-2">
-                            <!-- Las preguntas se añadirán aquí dinámicamente -->
-                        </div>
-
-                        <div class="flex flex-col sm:flex-row items-center justify-between mt-12 gap-4">
-                            <button type="button" id="add-question-btn" class="w-full sm:w-auto bg-green-500 text-white font-bold py-3 px-6 rounded-xl shadow hover:shadow-lg transition-all">Añadir Pregunta</button>
-                            <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white font-bold py-4 px-10 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">Guardar Examen</button>
-                        </div>
-                    </form>
-                </div>
-            </section>
         </div>
     </main>
 
     <!-- Lightbox Modal -->
+    <!-- Modal de Noticias -->
+    <div id="news-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[60] backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col overflow-hidden animate-fade-in-up">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Publicar Noticia</h2>
+                <button id="close-news-modal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <form id="news-form" class="space-y-4 overflow-y-auto pr-2">
+                <div>
+                    <label for="news-title" class="block font-bold text-gray-700 mb-1">Título</label>
+                    <input type="text" id="news-title" required class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" placeholder="Título de la noticia">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="news-category" class="block font-bold text-gray-700 mb-1">Categoría</label>
+                        <select id="news-category" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
+                            <option value="General">General</option>
+                            <option value="Aviso">Aviso</option>
+                            <option value="Evento">Evento</option>
+                            <option value="Académico">Académico</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="news-image-input" class="block font-bold text-gray-700 mb-1">Imagen de Portada</label>
+                        <input type="file" id="news-image-input" accept="image/*" class="w-full p-2.5 border rounded-xl text-sm">
+                        <input type="hidden" id="news-image-url">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-gray-700 mb-2">Contenido de la Noticia</label>
+                    <div id="editor-news-container" class="bg-white h-64 rounded-xl border"></div>
+                </div>
+
+                <div class="flex gap-3 pt-4 sticky bottom-0 bg-white py-2">
+                    <button type="button" id="cancel-news-btn" class="flex-1 px-4 py-3 rounded-xl font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors">Cancelar</button>
+                    <button type="submit" id="save-news-btn" class="flex-1 px-4 py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="image-lightbox-modal" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center hidden z-[70] backdrop-blur-md">
         <div class="bg-white p-6 rounded-3xl shadow-2xl w-full max-w-4xl mx-4 relative">
             <div class="flex justify-between items-center border-b pb-4 mb-6">
@@ -486,8 +531,10 @@
                 <div>
                     <label for="estado" class="block font-bold text-gray-700 mb-2">Estado</label>
                     <select id="estado" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
+                        <option value="Pendiente de revisión">Pendiente de revisión</option>
                         <option value="Completada">Completada</option>
                         <option value="Rechazada">Rechazada</option>
+                        <option value="Tarea incompleta">Tarea incompleta</option>
                     </select>
                 </div>
 
@@ -595,8 +642,9 @@
                         <input type="text" id="edit-titulo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block font-bold text-gray-700 mb-1">Descripción</label>
-                        <textarea id="edit-descripcion" rows="4" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400"></textarea>
+                        <label class="block font-bold text-gray-700 mb-1">Descripción (Editor Enriquecido)</label>
+                        <div id="editor-edit-container" style="height: 150px;" class="bg-white rounded-xl mb-2"></div>
+                        <input type="hidden" id="edit-descripcion">
                     </div>
                     <div>
                         <label class="block font-bold text-gray-700 mb-1">Asignatura</label>
@@ -648,11 +696,11 @@
         </div>
     </div>
 
-    <script src="js/ui-common.js?v=16"></script>
-    <script src="js/data.js?v=16"></script>
-    <script src="js/config.js?v=16"></script>
-    <script src="js/api.js?v=16"></script>
-    <script src="js/teacher.js?v=16"></script>
+    <script src="js/ui-common.js?v=17"></script>
+    <script src="js/data.js?v=17"></script>
+    <script src="js/config.js?v=17"></script>
+    <script src="js/api.js?v=17"></script>
+    <script src="js/teacher.js?v=17"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (window.setupCommonUI) window.setupCommonUI();

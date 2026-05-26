@@ -206,3 +206,16 @@ ESTADO: PENDIENTE DE REVISIÓN
 - Generadas nuevas presentaciones para la semana del 22 de marzo de 2026: "Tablas y etiquetas div/span" (Diseño Web I) y "Diagramas de flujo" (Programación I).
 - Normalizados los IDs de los elementos estructurales de la página en todos los archivos del año 2026.
 - Integradas las nuevas presentaciones en el menú de navegación del encabezado (js/data.js).
+
+----------------------------
+
+TAREA: [A-65]
+TÍTULO: Integración WhatsApp y Sistema de Noticias Pro
+ÁREA: Frontend / Backend / Drive
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Implementada gestión de enlaces de WhatsApp por grado y sección desde el Dashboard del Profesor.
+- Añadido botón de acceso directo al grupo en el Dashboard del Estudiante con estados dinámicos.
+- Desarrollado sistema de noticias completo con editor enriquecido (Quill) y subida de imágenes a Drive.
+- Refinada la visualización de noticias en la landing page con destaque de la publicación más reciente.
+- Sincronizada versión global de caché a v=17.
