@@ -374,7 +374,7 @@ async function loadNews() {
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all">
                     ${n.imagenUrl ? `
                         <div class="h-48 overflow-hidden">
-                            <img src="${convertDriveLink(n.imagenUrl)}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <img src="${window.convertDriveLink ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         </div>
                     ` : ''}
                     <div class="p-6">
@@ -391,18 +391,4 @@ async function loadNews() {
     } catch (e) {
         console.error("Error loading news:", e);
     }
-}
-
-function convertDriveLink(url) {
-    if (!url || !url.includes('drive.google.com')) return url;
-
-    // Handle /file/d/ID/view
-    let match = url.match(/\/file\/d\/(.+?)\//);
-    if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-
-    // Handle ?id=ID
-    match = url.match(/[?&]id=(.+?)(&|$)/);
-    if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-
-    return url;
 }

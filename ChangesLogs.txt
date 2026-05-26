@@ -890,3 +890,30 @@ DESCRIPCIÓN DE CAMBIOS:
   - Incluye contenido de Sección 4 y 5 del PDF base.
 - Archivo: js/data.js
   - Inserción de las nuevas presentaciones de Programación y Diseño Web en el menú de Cursos.
+
+MAYO 2026 (Portal Optimization & Security Patch)
+- Seguridad de Autenticación:
+  - Archivo: backend/user-service/Code.gs
+    - Implementado sistema de firmas HMAC-SHA256 con clave secreta (SECRET_KEY) para la recuperación de contraseña.
+    - Los tokens de recuperación ahora incluyen firma digital y tiempo de expiración (1 hora) para prevenir ataques de falsificación.
+- Optimización de Rendimiento (Backend):
+  - Archivos: backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+    - Refactorizadas funciones de actualización de perfil, creación de exámenes y calificación para utilizar `setValues()` en lugar de múltiples `setValue()`, reduciendo significativamente el tiempo de ejecución en Google Sheets.
+- Autenticación Global y News Feed:
+  - Archivos: index.html, js/index-ui.js, js/ui-common.js
+    - Implementada persistencia de sesión global en la página principal.
+    - La UI se adapta dinámicamente: reemplazo de "Login" por "Logout/Perfil" y segmentación de recursos basada en el grado del estudiante logueado.
+    - Centralizada la función `convertDriveLink` para uso global.
+- Mejoras en Pseudocódigo (PSeInt):
+  - Archivo: pseudocode.html
+    - Añadido soporte para el comando `Dimension` (Arreglos/Vectores) en el intérprete y el parser.
+    - Implementado selector de perfiles: "Flexible" y "Estricto".
+- Gestión Estudiantil y Perfiles:
+  - Archivo: register.html, js/auth.js
+    - Añadidos campos obligatorios: Teléfono y Número de Lista.
+    - Los estudiantes se ordenan automáticamente por número de lista.
+  - Archivo: teacher-dashboard.html
+    - Añadida cuadrícula de estadísticas (Total, Pendiente, Completada, Rechazada).
+- Corrección de Errores (Fixes):
+  - Archivo: login.html: Corregido enlace de recuperación a `forgot-password.html`.
+  - Archivo: sw.js: Sincronizada versión `v=15` y corregido manifiesto de archivos.

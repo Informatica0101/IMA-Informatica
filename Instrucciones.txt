@@ -18,11 +18,30 @@ ESTADO DE LAS TAREAS (RESUMEN)
 [A-45] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-51] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-53] COMPLETADA (PENDIENTE DE REVISIÓN)
+[A-58 a A-63] COMPLETADAS (PENDIENTE DE REVISIÓN)
 
 ------------------------------------------------------------------------------------------------
 
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
+
+TAREA: [A-63]
+TÍTULO: Auditoría Técnica y Estabilización PWA
+ÁREA: Frontend / Backend / PWA
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Realizada auditoría técnica integral (Sintaxis, Lógica, Rendimiento).
+- Sincronizada versión de activos a v=15.
+- Centralizada lógica de enlaces de Drive.
+- Optimizada la gestión de caché en el Service Worker.
+
+TAREA: [A-62]
+TÍTULO: Optimización de Rendimiento Exámenes (Backend)
+ÁREA: Backend / Google Apps Script
+PRIORIDAD: MEDIA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Implementadas escrituras setValues() en el servicio de exámenes.
+- Reducción de latencia en creación y calificación de evaluaciones.
 
 TAREA: [A-57]
 TÍTULO: Presentaciones Mayo 17 y 24 (Prog Lógica y Bordes/Enlaces)

@@ -106,16 +106,18 @@ function createExam(p) {
     p.parcial || "Primer Parcial"
   ]);
 
-  (p.preguntas || []).forEach((q, i) => {
-    preguntas.appendRow([
-      `PRE-${examenId}-${i}`,
-      examenId,
-      q.preguntaTipo,
-      q.textoPregunta,
-      JSON.stringify(q.opciones || {}),
-      q.respuestaCorrecta
-    ]);
-  });
+  const preguntasData = (p.preguntas || []).map((q, i) => [
+    `PRE-${examenId}-${i}`,
+    examenId,
+    q.preguntaTipo,
+    q.textoPregunta,
+    JSON.stringify(q.opciones || {}),
+    q.respuestaCorrecta
+  ]);
+
+  if (preguntasData.length > 0) {
+    preguntas.getRange(preguntas.getLastRow() + 1, 1, preguntasData.length, 6).setValues(preguntasData);
+  }
 
   return { status: "success", examenId };
 }
@@ -143,14 +145,16 @@ function updateExam(payload) {
 
   if (rowIndex === -1) throw new Error("Examen no encontrado.");
 
-  const row = rowIndex + 1;
-  if (titulo !== undefined) sheet.getRange(row, 2).setValue(titulo);
-  if (asignatura !== undefined) sheet.getRange(row, 3).setValue(asignatura);
-  if (gradoAsignado !== undefined) sheet.getRange(row, 4).setValue(gradoAsignado);
-  if (seccionAsignada !== undefined) sheet.getRange(row, 5).setValue(seccionAsignada);
-  if (fechaLimite !== undefined) sheet.getRange(row, 6).setValue(fechaLimite);
-  if (tiempoLimite !== undefined) sheet.getRange(row, 7).setValue(tiempoLimite);
-  if (parcial !== undefined) sheet.getRange(row, 10).setValue(parcial);
+  const examRow = data[rowIndex];
+  if (titulo !== undefined) examRow[1] = titulo;
+  if (asignatura !== undefined) examRow[2] = asignatura;
+  if (gradoAsignado !== undefined) examRow[3] = gradoAsignado;
+  if (seccionAsignada !== undefined) examRow[4] = seccionAsignada;
+  if (fechaLimite !== undefined) examRow[5] = fechaLimite;
+  if (tiempoLimite !== undefined) examRow[6] = tiempoLimite;
+  if (parcial !== undefined) examRow[9] = parcial;
+
+  sheet.getRange(rowIndex + 1, 1, 1, examRow.length).setValues([examRow]);
 
   return { status: "success", message: "Examen actualizado." };
 }
@@ -486,12 +490,12 @@ function gradeExamSubmission(payload) {
   const rowIndex = data.findIndex(row => row[0] === entregaId);
 
   if (rowIndex !== -1) {
-    entregasSheet.getRange(rowIndex + 1, 6).setValue(calificacion); // Columna F: Nota
-    entregasSheet.getRange(rowIndex + 1, 7).setValue(estado);       // Columna G: Estado
-    if (data[0].length < 8) {
-      entregasSheet.getRange(1, 8).setValue("Comentario");
-    }
-    entregasSheet.getRange(rowIndex + 1, 8).setValue(comentario);   // Columna H: Comentario
+    const rowData = data[rowIndex];
+    rowData[5] = calificacion; // Columna F: Nota
+    rowData[6] = estado;       // Columna G: Estado
+    rowData[7] = comentario;   // Columna H: Comentario
+
+    entregasSheet.getRange(rowIndex + 1, 1, 1, rowData.length).setValues([rowData]);
     return { status: "success", message: "Examen calificado." };
   }
   throw new Error("Entrega de examen no encontrada.");
