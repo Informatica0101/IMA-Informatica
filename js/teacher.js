@@ -16,12 +16,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Elementos de Navegación y Secciones ---
     const navDashboard = document.getElementById('nav-dashboard');
+    const navProyectos = document.getElementById('nav-proyectos');
+    const navLogros = document.getElementById('nav-logros');
     const navGestion = document.getElementById('nav-gestion');
     const navReportes = document.getElementById('nav-reportes');
     const navCrear = document.getElementById('nav-crear');
     const navCrearExamen = document.getElementById('nav-crear-examen');
 
     const sectionDashboard = document.getElementById('section-dashboard');
+    const sectionProyectos = document.getElementById('section-proyectos');
+    const sectionLogros = document.getElementById('section-logros');
     const sectionGestion = document.getElementById('section-gestion');
     const sectionReportes = document.getElementById('section-reportes');
     const sectionCrear = document.getElementById('section-crear');
@@ -44,8 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionDashboard, sectionGestion, sectionReportes, sectionCrear, sectionCrearExamen];
-    const allNavLinks = [navDashboard, navGestion, navReportes, navCrear, navCrearExamen];
+    const allSections = [sectionDashboard, sectionProyectos, sectionLogros, sectionGestion, sectionReportes, sectionCrear, sectionCrearExamen];
+    const allNavLinks = [navDashboard, navProyectos, navLogros, navGestion, navReportes, navCrear, navCrearExamen];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -69,13 +73,48 @@ document.addEventListener('DOMContentLoaded', () => {
         navStack = [{ level: 'Grados', data: null }];
         fetchTeacherActivity();
     });
+    navProyectos.addEventListener('click', () => {
+        navigateTo(sectionProyectos, navProyectos);
+        fetchProjects();
+    });
+    navLogros.addEventListener('click', () => {
+        navigateTo(sectionLogros, navLogros);
+        fetchLogros();
+    });
     navGestion.addEventListener('click', () => {
         navigateTo(sectionGestion, navGestion);
         fetchManagementData();
     });
     navReportes.addEventListener('click', () => {
         navigateTo(sectionReportes, navReportes);
+        updateReportsSummary();
     });
+    function updateReportsSummary() {
+        const total = allActivityRaw.length;
+        const pending = allActivityRaw.filter(i => {
+            const status = (i.estado || "").toLowerCase();
+            return status.includes("pendiente") || status.includes("por calificar");
+        }).length;
+        const completed = allActivityRaw.filter(i => {
+            const status = (i.estado || "").toLowerCase();
+            return status === "completada" || status === "revisada";
+        }).length;
+        const rejected = allActivityRaw.filter(i => {
+            const status = (i.estado || "").toLowerCase();
+            return status === "rechazada" || status === "tarea incompleta";
+        }).length;
+
+        const sTotal = document.getElementById('stat-total');
+        const sPending = document.getElementById('stat-pending');
+        const sCompleted = document.getElementById('stat-completed');
+        const sRejected = document.getElementById('stat-rejected');
+
+        if (sTotal) sTotal.textContent = total;
+        if (sPending) sPending.textContent = pending;
+        if (sCompleted) sCompleted.textContent = completed;
+        if (sRejected) sRejected.textContent = rejected;
+    }
+
     navCrear.addEventListener('click', () => navigateTo(sectionCrear, navCrear));
     navCrearExamen.addEventListener('click', () => navigateTo(sectionCrearExamen, navCrearExamen));
     logoutButton.addEventListener('click', () => {
@@ -771,6 +810,110 @@ document.addEventListener('DOMContentLoaded', () => {
             else throw new Error(res.message);
         } catch (error) { alert(error.message); } finally { btn.classList.remove('btn-loading'); }
     };
+
+    // --- MÓDULO 4: Proyectos PSeInt ---
+    let allProjectsRaw = [];
+    async function fetchProjects() {
+        const tbody = document.getElementById('projects-table-body');
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8">Cargando proyectos...</td></tr>';
+        const grado = document.getElementById('proj-filter-grado').value;
+        const seccion = document.getElementById('proj-filter-seccion').value;
+        try {
+            const res = await fetchApi('TASK', 'getAllStudentProjects', { grado, seccion });
+            allProjectsRaw = res.data || [];
+            renderProjects();
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-red-500">Error: ${e.message}</td></tr>`;
+        }
+    }
+
+    function renderProjects() {
+        const tbody = document.getElementById('projects-table-body');
+        if (allProjectsRaw.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-500">No se encontraron proyectos.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = allProjectsRaw.map((p, idx) => `
+            <tr class="hover:bg-gray-50 transition-colors">
+                <td class="p-4 font-bold text-gray-800">${p.alumnoNombre}</td>
+                <td class="p-4 text-blue-600 font-medium">${p.projectName}</td>
+                <td class="p-4 text-xs text-gray-500">${p.grado} - ${p.seccion}</td>
+                <td class="p-4 text-xs text-gray-400">${new Date(p.lastUpdated).toLocaleString()}</td>
+                <td class="p-4 text-right">
+                    <button onclick="window.viewProjectCode('${p.fileId}', '${p.projectName}')" class="bg-blue-600 text-white px-3 py-1 rounded-xl text-xs font-bold">Ver Código</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    window.viewProjectCode = async (fileId, name) => {
+        const modal = document.getElementById('project-code-modal');
+        const content = document.getElementById('project-code-content');
+        document.getElementById('project-code-title').textContent = `Proyecto: ${name}`;
+        content.textContent = "Cargando código...";
+        modal.classList.remove('hidden');
+        try {
+            const res = await fetchApi('TASK', 'loadProject', { fileId });
+            content.textContent = res.data.code;
+        } catch (e) {
+            content.textContent = "Error al cargar el código.";
+        }
+    };
+    document.getElementById('close-project-modal').onclick = () => document.getElementById('project-code-modal').classList.add('hidden');
+    document.getElementById('refresh-projects-btn').onclick = fetchProjects;
+    document.getElementById('proj-filter-grado').onchange = fetchProjects;
+    document.getElementById('proj-filter-seccion').onchange = fetchProjects;
+
+    // --- MÓDULO 5: Logros y Minijuegos ---
+    async function fetchLogros() {
+        const tbody = document.getElementById('logros-table-body');
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8">Cargando logros...</td></tr>';
+        const grado = document.getElementById('logros-filter-grado').value;
+        const seccion = document.getElementById('logros-filter-seccion').value;
+        try {
+            const res = await fetchApi('USER', 'getGameStats', { grado, seccion });
+            const data = res.data || [];
+
+            // Agrupar por alumno y juego para encontrar el récord máximo
+            const records = {};
+            data.forEach(r => {
+                const key = `${r[1]}_${r[3]}`; // userId + juego
+                const score = parseFloat(r[5] || 0);
+                if (!records[key] || score > records[key].maxScore) {
+                    records[key] = {
+                        alumno: r[2],
+                        juego: r[3],
+                        maxScore: score,
+                        lastLogro: r[4],
+                        fecha: r[0]
+                    };
+                }
+            });
+
+            const sortedRecords = Object.values(records).sort((a, b) => b.maxScore - a.maxScore);
+
+            if (sortedRecords.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-500">No hay registros de juegos.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = sortedRecords.map((r, idx) => `
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4 text-gray-400 font-mono">${idx + 1}</td>
+                    <td class="p-4 font-bold text-gray-800">${r.alumno}</td>
+                    <td class="p-4 text-purple-600 font-bold">${r.juego}</td>
+                    <td class="p-4"><span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-black">${r.maxScore}</span></td>
+                    <td class="p-4 text-xs italic text-gray-600">${r.lastLogro}</td>
+                    <td class="p-4 text-xs text-gray-400">${new Date(r.fecha).toLocaleString()}</td>
+                </tr>
+            `).join('');
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-red-500">Error: ${e.message}</td></tr>`;
+        }
+    }
+    document.getElementById('refresh-logros-btn').onclick = fetchLogros;
+    document.getElementById('logros-filter-grado').onchange = fetchLogros;
+    document.getElementById('logros-filter-seccion').onchange = fetchLogros;
 
     fetchTeacherActivity();
 });

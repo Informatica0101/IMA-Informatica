@@ -143,6 +143,26 @@
             margin: 0 5px;
         }
 
+        /* Context Menu */
+        #contextMenu {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            z-index: 2000;
+            min-width: 150px;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .menu-bar { display: none; }
+            .side-panel { width: 40px; }
+            .expanded-content { width: 100%; position: absolute; left: 0; top: 0; bottom: 0; z-index: 50; }
+            .toolbar { overflow-x: auto; flex-wrap: nowrap; }
+            .tool-btn { flex-shrink: 0; }
+        }
+
         /* Main Layout */
         .main-layout {
             flex: 1;
@@ -477,10 +497,25 @@
             </div>
         </div>
         <div class="menu-item">
-            Configurar
+            Ver
             <div class="dropdown-content">
-                <div class="dropdown-item">Opciones del Lenguaje (Perfiles)...</div>
-                <div class="dropdown-item">Presentación...</div>
+                <div class="dropdown-item" onclick="toggleLeftPanel()">Lista de Variables</div>
+                <div class="dropdown-item" onclick="toggleRightPanel()">Panel de Comandos</div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="showBottomTab('consola')">Terminal / Salida</div>
+            </div>
+        </div>
+        <div class="menu-item">
+            Herramientas
+            <div class="dropdown-content">
+                <div class="dropdown-item" onclick="setProfile('flexible')">
+                    Modo Flexible <span id="check-flexible">✓</span>
+                </div>
+                <div class="dropdown-item" onclick="setProfile('strict')">
+                    Modo Estricto <span id="check-strict" class="hidden">✓</span>
+                </div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item">Opciones de Presentación...</div>
             </div>
         </div>
         <div class="menu-item">
@@ -495,10 +530,11 @@
         <div class="menu-item">
             Ayuda
             <div class="dropdown-content">
-                <div class="dropdown-item">Índice <span class="shortcut">F1</span></div>
-                <div class="dropdown-item">Ejemplos...</div>
+                <div class="dropdown-item" onclick="alert('Manual de PSeInt: Consulta los comandos en el panel lateral.')">Índice <span class="shortcut">F1</span></div>
+                <div class="dropdown-item" onclick="loadExample('suma')">Ejemplo: Suma de dos números</div>
+                <div class="dropdown-item" onclick="loadExample('promedio')">Ejemplo: Promedio de notas</div>
                 <div class="dropdown-divider"></div>
-                <div class="dropdown-item">Acerca de PSeInt...</div>
+                <div class="dropdown-item" onclick="alert('Simulador de Pseudocódigo PSeInt Online\nDesarrollado para el Área de Informática.')">Acerca de PSeInt...</div>
             </div>
         </div>
     </nav>
@@ -527,6 +563,7 @@
         <div class="side-panel" id="leftPanelToggle" onclick="toggleLeftPanel()">
             <div class="vertical-text" onclick="setLeftPanelTab('variables')">lista de variables</div>
             <div class="vertical-text" onclick="setLeftPanelTab('operadores')">operadores y funciones</div>
+            <div class="vertical-text" onclick="setLeftPanelTab('proyectos')">mis proyectos</div>
         </div>
         <div class="expanded-content hidden" id="leftPanel">
             <div class="panel-header">
@@ -542,6 +579,17 @@
                         <b>Operadores:</b> + - * / ^ % MOD = < > <= >= <> Y O NO
                         <br><br>
                         <b>Funciones:</b> RC ABS LN EXP SEN COS ATAN TRUNC REDON AZAR
+                    </div>
+                </div>
+                <div id="tabProyectos" class="hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold uppercase text-gray-500">Proyectos Guardados</span>
+                        <button onclick="loadProjectsList()" class="text-blue-600 hover:text-blue-800">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.001 0 01-15.357-2m15.357 2H15"></path></svg>
+                        </button>
+                    </div>
+                    <div id="projectsList" class="space-y-1">
+                        <p class="text-gray-400 text-center py-4">Cargando...</p>
                     </div>
                 </div>
             </div>
@@ -634,6 +682,18 @@ FinAlgoritmo</div>
         </div>
     </div>
 
+    <!-- Context Menu -->
+    <div id="contextMenu">
+        <div class="dropdown-item" onclick="undo()">Deshacer</div>
+        <div class="dropdown-item" onclick="redo()">Rehacer</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-item" onclick="cut()">Cortar</div>
+        <div class="dropdown-item" onclick="copy()">Copiar</div>
+        <div class="dropdown-item" onclick="paste()">Pegar</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-item" onclick="selectAll()">Seleccionar todo</div>
+    </div>
+
     <!-- Flowchart Modal -->
     <div id="flowchartOverlay">
         <div class="flowchart-modal">
@@ -656,6 +716,8 @@ FinAlgoritmo</div>
         </div>
     </div>
 
+    <script src="js/config.js?v=15"></script>
+    <script src="js/api.js?v=15"></script>
     <script>
         const editor = document.getElementById('codeEditor');
         const highlight = document.getElementById('syntaxHighlight');
@@ -672,15 +734,20 @@ FinAlgoritmo</div>
             const title = document.getElementById('leftPanelTitle');
             const tabV = document.getElementById('tabVariables');
             const tabO = document.getElementById('tabOperadores');
+            const tabP = document.getElementById('tabProyectos');
+
+            [tabV, tabO, tabP].forEach(t => t.classList.add('hidden'));
 
             if (tab === 'variables') {
                 title.textContent = 'Variables';
                 tabV.classList.remove('hidden');
-                tabO.classList.add('hidden');
-            } else {
+            } else if (tab === 'operadores') {
                 title.textContent = 'Operadores y Funciones';
-                tabV.classList.add('hidden');
                 tabO.classList.remove('hidden');
+            } else if (tab === 'proyectos') {
+                title.textContent = 'Mis Proyectos';
+                tabP.classList.remove('hidden');
+                loadProjectsList();
             }
         }
 
@@ -1236,7 +1303,7 @@ FinAlgoritmo</div>
             reader.readAsText(file);
         }
 
-        function saveToFile() {
+        async function saveToFile() {
             const code = editor.innerText;
             const match = code.match(/(?:Algoritmo|Proceso)\s+([a-zA-Z0-9_]+)/i);
             const filename = (match && match[1] ? match[1] : 'sin_titulo') + '.psc';
@@ -1250,6 +1317,64 @@ FinAlgoritmo</div>
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+
+            // También guardar en la nube si hay usuario
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                try {
+                    await fetchApi('TASK', 'saveProject', {
+                        userId: currentUser.userId,
+                        fileName: filename,
+                        code: code
+                    });
+                    console.log("Proyecto guardado en la nube.");
+                    loadProjectsList();
+                } catch (e) {
+                    console.error("Error guardando en la nube:", e);
+                }
+            }
+        }
+
+        async function loadProjectsList() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const listContainer = document.getElementById('projectsList');
+            if (!currentUser) {
+                listContainer.innerHTML = '<p class="text-red-500 text-center py-4">Inicia sesión para ver tus proyectos.</p>';
+                return;
+            }
+
+            try {
+                const res = await fetchApi('TASK', 'listProjects', { userId: currentUser.userId });
+                if (res.status === 'success' && res.data.length > 0) {
+                    listContainer.innerHTML = res.data.map(p => `
+                        <div class="p-2 border rounded hover:bg-blue-50 cursor-pointer group flex justify-between items-center" onclick="loadProjectCloud('${p.id}')">
+                            <div class="truncate flex-grow">
+                                <p class="font-bold text-blue-700 truncate">${p.name}</p>
+                                <p class="text-[10px] text-gray-400">${new Date(p.lastUpdated).toLocaleDateString()}</p>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-300 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    `).join('');
+                } else {
+                    listContainer.innerHTML = '<p class="text-gray-400 text-center py-4">No tienes proyectos guardados.</p>';
+                }
+            } catch (e) {
+                listContainer.innerHTML = '<p class="text-red-500 text-center py-4">Error al cargar proyectos.</p>';
+            }
+        }
+
+        async function loadProjectCloud(fileId) {
+            if (!confirm('¿Deseas cargar este proyecto? Se perderán los cambios no guardados.')) return;
+            try {
+                const res = await fetchApi('TASK', 'loadProject', { fileId });
+                if (res.status === 'success') {
+                    editor.innerText = res.data.code;
+                    updateEditor();
+                    alert('Proyecto cargado correctamente.');
+                }
+            } catch (e) {
+                alert('Error al cargar proyecto: ' + e.message);
+            }
         }
 
         function clearConsole() {
@@ -1507,6 +1632,14 @@ FinAlgoritmo</div>
                 return token;
             }
 
+            expectSemicolon() {
+                if (currentProfile === 'strict') {
+                    this.expect('PUNCTUATION', ';');
+                } else {
+                    this.match('PUNCTUATION', ';');
+                }
+            }
+
             parse() {
                 const program = [];
                 while (this.pos < this.tokens.length) {
@@ -1621,7 +1754,7 @@ FinAlgoritmo</div>
                 }
                 this.expect('KEYWORD', 'como');
                 const dataType = this.consume().value;
-                this.match('PUNCTUATION', ';');
+                this.expectSemicolon();
                 return { type: 'DEFINIR', variables: vars, dataType };
             }
 
@@ -1632,7 +1765,7 @@ FinAlgoritmo</div>
                 while (this.match('PUNCTUATION', ',')) {
                     expressions.push(this.parseExpression());
                 }
-                this.match('PUNCTUATION', ';');
+                this.expectSemicolon();
                 return { type: 'ESCRIBIR', expressions };
             }
 
@@ -1643,7 +1776,7 @@ FinAlgoritmo</div>
                 while (this.match('PUNCTUATION', ',')) {
                     vars.push(this.consume().value);
                 }
-                this.match('PUNCTUATION', ';');
+                this.expectSemicolon();
                 return { type: 'LEER', variables: vars };
             }
 
@@ -1677,7 +1810,7 @@ FinAlgoritmo</div>
                     if (stmt) body.push(stmt); else break;
                 }
                 this.expect('KEYWORD', 'finmientras');
-                this.match('PUNCTUATION', ';');
+                this.expectSemicolon();
                 return { type: 'MIENTRAS', condition, body };
             }
 
@@ -1823,7 +1956,7 @@ FinAlgoritmo</div>
                 }
                 if (!this.match('OPERATOR', '<-') && !this.match('OPERATOR', '=')) return null;
                 const expr = this.parseExpression();
-                this.match('PUNCTUATION', ';');
+                this.expectSemicolon();
                 return { type: 'ASSIGN', variable, indices, expression: expr };
             }
 
@@ -1985,6 +2118,11 @@ FinAlgoritmo</div>
                 const stmt = this.program[this.pc];
                 if (!stmt) { this.pc++; return; }
 
+                // Perfil Estricto: Definición obligatoria
+                if (currentProfile === 'strict' && stmt.type === 'ASSIGN' && !this.variables[stmt.variable]) {
+                    throw new Error(`Perfil Estricto: La variable '${stmt.variable}' no ha sido definida.`);
+                }
+
                 // Infinite loop protection
                 if (!this._stepCount) this._stepCount = 0;
                 this._stepCount++;
@@ -1996,6 +2134,17 @@ FinAlgoritmo</div>
                 switch (stmt.type) {
                     case 'CALL_STMT':
                         await this.evaluate(stmt.expression);
+                        break;
+                    case 'DIMENSION':
+                        for (const arr of stmt.arrays) {
+                            const dims = [];
+                            for (const d of arr.dims) {
+                                const val = await this.evaluate(d);
+                                if (isNaN(val) || val <= 0) throw new Error("Las dimensiones deben ser números positivos.");
+                                dims.push(val);
+                            }
+                            this.variables[arr.name] = { type: 'arreglo', value: this.createArray(dims), dims };
+                        }
                         break;
                     case 'FUNCTION_DEF':
                         this.functions[stmt.name.toLowerCase()] = stmt;
@@ -2340,6 +2489,41 @@ FinAlgoritmo</div>
                 submitInput();
             }
         }
+
+        function loadExample(type) {
+            let code = '';
+            if (type === 'suma') {
+                code = "Algoritmo SumarDosNumeros\n\tDefinir num1, num2, resultado como Entero;\n\tEscribir \"Ingrese primer número:\";\n\tLeer num1;\n\tEscribir \"Ingrese segundo número:\";\n\tLeer num2;\n\tresultado <- num1 + num2;\n\tEscribir \"El resultado es: \", resultado;\nFinAlgoritmo";
+            } else if (type === 'promedio') {
+                code = "Algoritmo PromedioNotas\n\tDefinir n1, n2, n3, prom como Real;\n\tEscribir \"Nota 1:\"; Leer n1;\n\tEscribir \"Nota 2:\"; Leer n2;\n\tEscribir \"Nota 3:\"; Leer n3;\n\tprom <- (n1+n2+n3)/3;\n\tEscribir \"Promedio: \", prom;\nFinAlgoritmo";
+            }
+            if (code) {
+                editor.innerText = code;
+                updateEditor();
+            }
+        }
+
+        // --- Custom Profiles ---
+        let currentProfile = 'flexible';
+        function setProfile(mode) {
+            currentProfile = mode;
+            document.getElementById('check-flexible').classList.toggle('hidden', mode !== 'flexible');
+            document.getElementById('check-strict').classList.toggle('hidden', mode !== 'strict');
+            updateEditor();
+        }
+
+        // --- Context Menu Logic ---
+        const contextMenu = document.getElementById('contextMenu');
+        editor.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            contextMenu.style.display = 'block';
+            contextMenu.style.left = e.pageX + 'px';
+            contextMenu.style.top = e.pageY + 'px';
+        });
+
+        document.addEventListener('click', () => {
+            contextMenu.style.display = 'none';
+        });
 
         // Initialize
         updateEditor();

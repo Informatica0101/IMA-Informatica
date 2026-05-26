@@ -2505,11 +2505,17 @@ function endQuiz() {
     if (quizCorrectAnswers) quizCorrectAnswers.textContent = answeredCorrectly;
     if (quizIncorrectAnswers) quizIncorrectAnswers.textContent = answeredIncorrectly;
     if (quizFinalScore) quizFinalScore.textContent = currentScore;
+
+    const minutes = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
+    const seconds = String(timeElapsed % 60).padStart(2, '0');
+    const finalTimeFormatted = `${minutes}:${seconds}`;
+
     if (quizFinalTime) {
-        const minutes = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
-        const seconds = String(timeElapsed % 60).padStart(2, '0');
-        quizFinalTime.textContent = `${minutes}:${seconds}`;
+        quizFinalTime.textContent = finalTimeFormatted;
     }
+
+    // Guardar en el portal
+    GamesAdapter.saveResult("WebMaster Quiz", `${selectedTopic.toUpperCase()} - ${selectedDifficulty} (${currentScore} pts)`, currentScore);
 
     // Check if there's a next level
     const difficultyOrder = ['basico', 'intermedio', 'avanzado'];
@@ -2540,7 +2546,23 @@ function shuffleArray(array) {
 
 // --- Global Initialization Function for the Quiz Game ---
 // This function will be called by index.html after the quiz HTML content is loaded.
-window.initQuizGame = function() {
+window.initQuizGame = async function() {
+    // Cargar récord personal
+    try {
+        const records = await GamesAdapter.getPersonalRecord();
+        const myRecord = records["WebMaster Quiz"];
+        if (myRecord) {
+            const recordDiv = document.getElementById('personal-record-init');
+            const scoreSpan = document.getElementById('init-max-score');
+            if (recordDiv && scoreSpan) {
+                recordDiv.classList.remove('hidden');
+                scoreSpan.textContent = myRecord.maxScore;
+            }
+        }
+    } catch(e) {
+        console.error("Error loading record:", e);
+    }
+
     // Assign DOM elements now that they are guaranteed to be in the document
     quizStartMenu = document.getElementById('quiz-start-menu');
     startQuizButton = document.getElementById('start-quiz-button');

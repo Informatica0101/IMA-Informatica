@@ -43,6 +43,8 @@ function doPost(e) {
       case "createTask": response = createTask(payload); break;
       case "getStudentTasks": response = getStudentTasks(payload); break;
       case "uploadFile": response = uploadFile(payload); break;
+      case "uploadChunk": response = uploadChunk(payload); break;
+      case "finishChunkedUpload": response = finishChunkedUpload(payload); break;
       case "deleteFile": response = deleteFile(payload); break;
       case "submitAssignment": response = submitAssignment(payload); break;
       case "gradeSubmission": response = gradeSubmission(payload); break;
@@ -51,6 +53,10 @@ function doPost(e) {
       case "updateTask": response = updateTask(payload); break;
       case "deleteTask": response = deleteTask(payload); break;
       case "deleteSubmission": response = deleteSubmission(payload); break;
+      case "saveProject": response = saveProject(payload); break;
+      case "listProjects": response = listProjects(payload); break;
+      case "loadProject": response = loadProject(payload); break;
+      case "getAllStudentProjects": response = getAllStudentProjects(payload); break;
       default:
         response = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
@@ -83,16 +89,18 @@ function updateTask(payload) {
 
   if (rowIndex === -1) throw new Error("Tarea no encontrada.");
 
-  const row = rowIndex + 1;
-  if (titulo !== undefined) sheet.getRange(row, 3).setValue(titulo);
-  if (descripcion !== undefined) sheet.getRange(row, 4).setValue(descripcion);
-  if (parcial !== undefined) sheet.getRange(row, 5).setValue(parcial);
-  if (asignatura !== undefined) sheet.getRange(row, 6).setValue(asignatura);
-  if (gradoAsignado !== undefined) sheet.getRange(row, 7).setValue(gradoAsignado);
-  if (seccionAsignada !== undefined) sheet.getRange(row, 8).setValue(seccionAsignada);
-  if (fechaLimite !== undefined) sheet.getRange(row, 9).setValue(fechaLimite);
-  if (puntaje !== undefined) sheet.getRange(row, 13).setValue(puntaje);
-  if (archivoUrl !== undefined) sheet.getRange(row, 14).setValue(archivoUrl);
+  const taskRow = data[rowIndex];
+  if (titulo !== undefined) taskRow[2] = titulo;
+  if (descripcion !== undefined) taskRow[3] = descripcion;
+  if (parcial !== undefined) taskRow[4] = parcial;
+  if (asignatura !== undefined) taskRow[5] = asignatura;
+  if (gradoAsignado !== undefined) taskRow[6] = gradoAsignado;
+  if (seccionAsignada !== undefined) taskRow[7] = seccionAsignada;
+  if (fechaLimite !== undefined) taskRow[8] = fechaLimite;
+  if (puntaje !== undefined) taskRow[12] = puntaje;
+  if (archivoUrl !== undefined) taskRow[13] = archivoUrl;
+
+  sheet.getRange(rowIndex + 1, 1, 1, taskRow.length).setValues([taskRow]);
 
   return { status: "success", message: "Tarea actualizada." };
 }
@@ -147,7 +155,8 @@ function getStudentTasks(payload) {
       if (!entregaOriginal) return false;
 
       const estadoEntrega = (entregaOriginal[6] || "").toString().trim().toLowerCase();
-      const isRejected = (estadoEntrega === 'rechazada' || estadoEntrega === 'revisada_rechazada');
+      // (A-X) Soportar nuevos estados de rechazo
+      const isRejected = (estadoEntrega === 'rechazada' || estadoEntrega === 'revisada_rechazada' || estadoEntrega === 'tarea incompleta');
 
       if (isRejected) {
         seenOriginalTasksForEC.add(originalTaskId);
@@ -157,7 +166,10 @@ function getStudentTasks(payload) {
     }
     return true;
   }).map(task => {
-    const entrega = entregasData.find(e => e[1] === task[0] && e[2] === userId);
+    // Buscar la última entrega (la más reciente)
+    const matchingSubmissions = entregasData.filter(e => e[1] === task[0] && e[2] === userId);
+    const entrega = matchingSubmissions.length > 0 ? matchingSubmissions[matchingSubmissions.length - 1] : null;
+
     let fechaLimite = task[8] ? new Date(task[8]).toISOString() : null;
 
     // Si es Credito Extra, forzamos que la fecha coincida con la de la tarea rechazada
@@ -220,10 +232,27 @@ function uploadFile(payload) {
   const taskDeliveryFolder = getOrCreateFolder(asignaturaFolder, `${String(tituloTarea)}_${String(userId)}`);
 
   const fileInfo = fileData.split(',');
+  let mimeType = "application/octet-stream";
+  let base64Content = fileInfo[1];
+
   const mimeMatch = fileInfo[0].match(/:(.*?);/);
-  if (!mimeMatch || !mimeMatch[1]) throw new Error("No se pudo extraer el tipo MIME del archivo.");
-  const mimeType = mimeMatch[1];
-  const blob = Utilities.newBlob(Utilities.base64Decode(fileInfo[1]), mimeType, fileName);
+  if (mimeMatch && mimeMatch[1]) {
+    mimeType = mimeMatch[1];
+  } else {
+    // Si no viene en el dataUrl, intentamos por extensión
+    const ext = fileName.split('.').pop().toLowerCase();
+    const mimeMap = {
+      'js': 'text/javascript',
+      'css': 'text/css',
+      'html': 'text/html',
+      'txt': 'text/plain',
+      'psc': 'text/plain' // Pseudocódigo (PSeInt)
+    };
+    mimeType = mimeMap[ext] || mimeType;
+    base64Content = fileData; // En caso de que no sea DataURL
+  }
+
+  const blob = Utilities.newBlob(Utilities.base64Decode(base64Content), mimeType, fileName);
 
   const file = taskDeliveryFolder.createFile(blob);
 
@@ -243,13 +272,82 @@ function uploadFile(payload) {
   };
 }
 
+/**
+ * Recibe un trozo de archivo y lo guarda temporalmente.
+ */
+function uploadChunk(payload) {
+  const { uploadId, chunkIndex, chunkData } = payload;
+
+  const tempRoot = getOrCreateFolder(DriveApp.getRootFolder(), ".temp_uploads");
+  const uploadFolder = getOrCreateFolder(tempRoot, uploadId);
+
+  const blob = Utilities.newBlob(Utilities.base64Decode(chunkData), "application/octet-stream", `chunk_${chunkIndex}`);
+  uploadFolder.createFile(blob);
+
+  return { status: "success", message: `Chunk ${chunkIndex} recibido.` };
+}
+
+/**
+ * Une todos los chunks y crea el archivo final.
+ */
+function finishChunkedUpload(payload) {
+  const { uploadId, userId, tareaId, parcial, asignatura, fileName, mimeType, totalChunks } = payload;
+
+  const tempRoot = getOrCreateFolder(DriveApp.getRootFolder(), ".temp_uploads");
+  const uploadFolder = getOrCreateFolder(tempRoot, uploadId);
+  const chunks = uploadFolder.getFiles();
+
+  const chunkMap = {};
+  while (chunks.hasNext()) {
+    const file = chunks.next();
+    const idx = parseInt(file.getName().split('_')[1]);
+    chunkMap[idx] = file.getBlob().getBytes();
+  }
+
+  let combinedBytes = [];
+  for (let i = 0; i < totalChunks; i++) {
+    if (!chunkMap[i]) throw new Error(`Falta el chunk ${i}`);
+    combinedBytes = combinedBytes.concat(chunkMap[i]);
+  }
+
+  const finalBlob = Utilities.newBlob(combinedBytes, mimeType, fileName);
+
+  const alumnoFolder = getStudentFolder(userId);
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const tareasSheet = getSheetOrThrow(ss, "Tareas");
+  const taskData = tareasSheet.getDataRange().getValues().find(row => row[0] === tareaId);
+  const tituloTarea = taskData ? taskData[2] : "Tarea Sin Titulo";
+
+  const parcialFolder = getOrCreateFolder(alumnoFolder, String(parcial || "General"));
+  const asignaturaFolder = getOrCreateFolder(parcialFolder, String(asignatura || "General"));
+  const taskDeliveryFolder = getOrCreateFolder(asignaturaFolder, `${String(tituloTarea)}_${String(userId)}`);
+
+  const file = taskDeliveryFolder.createFile(finalBlob);
+
+  uploadFolder.setTrashed(true);
+
+  try {
+    taskDeliveryFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (e) {}
+
+  return {
+    status: "success",
+    data: {
+      fileId: file.getId(),
+      folderId: taskDeliveryFolder.getId(),
+      mimeType: mimeType
+    }
+  };
+}
+
 function submitAssignment(payload) {
   const { userId, tareaId, fileId, mimeType } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const entregasSheet = getSheetOrThrow(ss, "Entregas");
 
   const entregaId = "ENT-" + new Date().getTime();
-  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente', '', mimeType]);
+  // Estado inicial: Pendiente de revisión
+  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente de revisión', '', mimeType]);
   return { status: "success", message: "Tarea entregada." };
 }
 
@@ -290,9 +388,12 @@ function gradeSubmission(payload) {
   const rowIndex = data.findIndex(row => row[0] === entregaId);
 
   if (rowIndex !== -1) {
-    entregasSheet.getRange(rowIndex + 1, calificacionCol + 1).setValue(calificacion);
-    entregasSheet.getRange(rowIndex + 1, estadoCol + 1).setValue(estado);
-    entregasSheet.getRange(rowIndex + 1, comentarioCol + 1).setValue(comentario);
+    const rowData = data[rowIndex];
+    rowData[calificacionCol] = calificacion;
+    rowData[estadoCol] = estado;
+    rowData[comentarioCol] = comentario;
+
+    entregasSheet.getRange(rowIndex + 1, 1, 1, rowData.length).setValues([rowData]);
     return { status: "success", message: "Calificación actualizada." };
   }
 
@@ -429,6 +530,136 @@ function isInTeacherList(value, listString) {
   const sList = normalizeString(listString);
   const list = sList.split(',').map(s => s.trim());
   return list.includes(sValue);
+}
+
+/**
+ * Obtiene la carpeta raíz de un estudiante.
+ */
+function getStudentFolder(userId) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
+  const userData = usuariosSheet.getDataRange().getValues().find(row => row[0] === userId);
+  if (!userData) throw new Error("Usuario no encontrado.");
+  const [, nombre, grado, seccion] = userData;
+
+  const rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+  const sGrado = String(grado || "General");
+  const sSeccion = String(seccion || "General");
+  const sNombre = String(nombre || "Usuario");
+
+  const gradoFolder = getOrCreateFolder(rootFolder, sGrado);
+  const seccionFolder = getOrCreateFolder(gradoFolder, sSeccion);
+  const alumnoFolder = getOrCreateFolder(seccionFolder, sNombre);
+  return alumnoFolder;
+}
+
+function saveProject(payload) {
+  const { userId, fileName, code } = payload;
+  if (!userId || !fileName) throw new Error("ID de usuario y nombre de archivo requeridos.");
+
+  const alumnoFolder = getStudentFolder(userId);
+  const projectsFolder = getOrCreateFolder(alumnoFolder, "Proyectos_PSeInt");
+
+  let finalFileName = fileName;
+  if (!finalFileName.toLowerCase().endsWith(".psc")) {
+    finalFileName += ".psc";
+  }
+
+  const files = projectsFolder.getFilesByName(finalFileName);
+  let file;
+  if (files.hasNext()) {
+    file = files.next();
+    file.setContent(code);
+  } else {
+    file = projectsFolder.createFile(finalFileName, code, "text/plain");
+  }
+
+  return { status: "success", message: "Proyecto guardado.", data: { fileId: file.getId() } };
+}
+
+function listProjects(payload) {
+  const { userId } = payload;
+  if (!userId) throw new Error("ID de usuario requerido.");
+
+  const alumnoFolder = getStudentFolder(userId);
+  const projectsFolder = getOrCreateFolder(alumnoFolder, "Proyectos_PSeInt");
+  const files = projectsFolder.getFiles();
+  const result = [];
+
+  while (files.hasNext()) {
+    const file = files.next();
+    if (file.getName().toLowerCase().endsWith(".psc")) {
+      result.push({
+        name: file.getName(),
+        id: file.getId(),
+        lastUpdated: file.getLastUpdated().toISOString()
+      });
+    }
+  }
+
+  result.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
+  return { status: "success", data: result };
+}
+
+function loadProject(payload) {
+  const { fileId } = payload;
+  if (!fileId) throw new Error("ID de archivo requerido.");
+
+  const file = DriveApp.getFileById(fileId);
+  return {
+    status: "success",
+    data: {
+      name: file.getName(),
+      code: file.getBlob().getDataAsString()
+    }
+  };
+}
+
+function getAllStudentProjects(payload) {
+  const { grado, seccion } = payload;
+  const rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+
+  const projects = [];
+
+  // Optimización: Usar búsqueda de archivos con filtro de nombre y ubicación
+  // Buscamos archivos .psc que estén dentro de carpetas llamadas "Proyectos_PSeInt"
+  // Para filtrar por grado/sección, aún necesitamos navegar un poco, pero podemos ser más eficientes.
+
+  const query = "title contains '.psc' and trashed = false";
+  // Folder.searchFiles es recursivo y mucho más eficiente
+  const files = rootFolder.searchFiles(query);
+
+  while (files.hasNext()) {
+    const file = files.next();
+    const parents = file.getParents();
+    if (!parents.hasNext()) continue;
+
+    const parentFolder = parents.next();
+    if (parentFolder.getName() !== "Proyectos_PSeInt") continue;
+
+    const alumnoFolder = parentFolder.getParents().next();
+    const seccionFolder = alumnoFolder.getParents().next();
+    const gradoFolder = seccionFolder.getParents().next();
+
+    const gName = gradoFolder.getName();
+    const sName = seccionFolder.getName();
+
+    // Aplicar filtros de grado y sección si se proporcionan
+    if (grado && gName !== grado) continue;
+    if (seccion && sName !== seccion) continue;
+
+    projects.push({
+      alumnoNombre: alumnoFolder.getName(),
+      grado: gName,
+      seccion: sName,
+      projectName: file.getName(),
+      fileId: file.getId(),
+      lastUpdated: file.getLastUpdated().toISOString()
+    });
+  }
+
+  projects.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
+  return { status: "success", data: projects };
 }
 
 // --- HELPERS DE DRIVE ---

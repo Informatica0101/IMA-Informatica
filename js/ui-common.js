@@ -141,6 +141,15 @@ window.setupCommonUI = function() {
     document.dispatchEvent(new CustomEvent('common-ui-ready'));
 };
 
+window.convertDriveLink = function(url) {
+    if (!url || !url.includes('drive.google.com')) return url;
+    let match = url.match(/\/file\/d\/(.+?)\//);
+    if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    match = url.match(/[?&]id=(.+?)(&|$)/);
+    if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    return url;
+};
+
 /**
  * PWA Logic: Installation and Service Worker registration
  */
@@ -278,8 +287,13 @@ window.renderMobileNav = function() {
     const mobileAdditionalMenu = document.getElementById('mobile-additional-resources-menu');
     if (!mobileGradesMenu || !window.presentationData) return;
 
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
     mobileGradesMenu.innerHTML = '';
     window.presentationData.forEach(gradeData => {
+        // Filtrado por Grado (A-51)
+        if (currentUser && currentUser.grado && gradeData.grade !== currentUser.grado) return;
+
         const gradeToggle = document.createElement('button');
         gradeToggle.className = 'mobile-nav-link justify-between bg-white';
         gradeToggle.innerHTML = `${gradeData.grade} <span class="transform transition-transform duration-300">&#9656;</span>`;
@@ -297,6 +311,9 @@ window.renderMobileNav = function() {
         });
 
         gradeData.subjects.forEach(subjectData => {
+            // Filtrado por Sección (A-51)
+            if (currentUser && currentUser.seccion && subjectData.sections && !subjectData.sections.split(',').map(s => s.trim()).includes(currentUser.seccion)) return;
+
             const subjectToggle = document.createElement('button');
             subjectToggle.className = 'w-full text-gray-700 font-medium text-left px-8 py-3 flex justify-between items-center bg-gray-50 border-b border-gray-100';
             subjectToggle.innerHTML = `${subjectData.name} <span class="transform transition-transform duration-300">&#9656;</span>`;
@@ -373,6 +390,8 @@ window.renderCommonNav = function() {
 
     if (!window.presentationData) return;
 
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
     // Helper for submenus
     function closeSubMenu(element) {
         element.classList.add('hidden-height');
@@ -385,6 +404,9 @@ window.renderCommonNav = function() {
     if (desktopGradesMenu) {
         desktopGradesMenu.innerHTML = '';
         window.presentationData.forEach(gradeData => {
+            // Filtrado por Grado
+            if (currentUser && currentUser.grado && gradeData.grade !== currentUser.grado) return;
+
             const gradeDiv = document.createElement('div');
             gradeDiv.className = 'relative group/grade';
             gradeDiv.innerHTML = `
@@ -392,7 +414,12 @@ window.renderCommonNav = function() {
                     ${gradeData.grade} <span class="float-right text-xs mt-1">&#9656;</span>
                 </button>
                 <div class="absolute left-full top-0 mt-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/grade:scale-100 origin-left border border-gray-100">
-                    ${gradeData.subjects.map(subject => `
+                    ${gradeData.subjects.filter(subject => {
+                        if (currentUser && currentUser.seccion && subject.sections) {
+                            return subject.sections.split(',').map(s => s.trim()).includes(currentUser.seccion);
+                        }
+                        return true;
+                    }).map(subject => `
                         <div class="relative group/subject">
                             <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 focus:outline-none">
                                 ${subject.name} <span class="float-right text-xs mt-1">&#9656;</span>

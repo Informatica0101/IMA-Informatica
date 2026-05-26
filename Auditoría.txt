@@ -139,3 +139,29 @@ AUDITORÍA PRESENTACIONES SEMANA 10-24 MAYO (10/05/2026)
 - Hallazgo Contenido (Programación): Se corrigió la presentación del 17 de mayo para enfocarse exclusivamente en "Programación Lógica" y "Bucle Repetir", integrando definiciones exactas de "objeto" y "relación" del PDF base (p.58).
 - Hallazgo Contenido (Programación 24 Mayo): Se generó la presentación sobre Bases de Datos utilizando la Sección 7 del PDF "Programación Segunda Unidad", siguiendo el esquema de 16 slides y el plan de clases.
 - Hallazgo UX: Se validó que el quiz interactivo de 10 preguntas funcione correctamente con el nuevo motor de Tailwind v4 y mantenga la retroalimentación visual cromática.
+
+AUDITORÍA FINAL OPTIMIZACIÓN Y SEGURIDAD (MAYO 2026)
+---------------------------------------------------
+- Archivos involucrados: backend/user-service/Code.gs, js/student.js, js/teacher.js, pseudocode.html, index.html, js/index-ui.js
+- Hallazgo Lógico: El sistema de recuperación de contraseña usaba tokens Base64 sin firma, lo que permitía la falsificación de identidad para el reseteo.
+- Resolución: Implementado HMAC-SHA256 con SECRET_KEY en el backend para firmar y verificar tokens de recuperación. Se añadió validación de expiración (1 hora).
+- Hallazgo UX: El PSeInt interpreter no soportaba arreglos (Dimension), limitando las tareas de programación avanzada.
+- Resolución: Actualizado el parser y el intérprete para soportar la palabra clave 'Dimension' y acceso a arreglos por índice.
+- Hallazgo Rendimiento: Múltiples llamadas a `setValue()` en el backend impactaban la velocidad del portal.
+- Resolución: Refactorizadas las funciones de actualización de perfil y calificación de tareas para usar `setValues()` (escritura en lote).
+- Hallazgo UX Global: La landing page (index.html) no reflejaba el estado de la sesión, obligando a los usuarios a navegar al portal para verificar si estaban logueados.
+- Resolución: Implementado sistema de autenticación global en index.html que adapta la UI (Login/Logout/Profile) y segmenta el acceso a recursos según el grado del usuario logueado.
+- Hallazgo Funcional: El sistema de noticias era estático.
+- Resolución: Implementado backend para noticias dinámicas desde una hoja de cálculo con conversor automático de enlaces de Drive.
+
+AUDITORÍA CIERRE DE PROYECTO (MAYO 2026)
+---------------------------------------
+- Archivo: login.html
+  - Hallazgo: El enlace de recuperación apuntaba a recovery.html (inexistente).
+  - Resolución: Corregido a forgot-password.html.
+- Archivo: teacher-dashboard.html
+  - Hallazgo: Faltaban los contenedores de estadísticas (stat-total, etc.) que el JS intentaba poblar.
+  - Resolución: Añadida cuadrícula de 4 estadísticas en el encabezado del panel.
+- Archivo: backend/task-service/Code.gs
+  - Hallazgo: La función `getAllStudentProjects` era ineficiente (O(n^3)).
+  - Resolución: Refactorizada usando `rootFolder.searchFiles()` con query de DriveApp, logrando una búsqueda recursiva de alto rendimiento.

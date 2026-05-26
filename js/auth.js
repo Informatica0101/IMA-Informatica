@@ -54,7 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 grado: e.target.grado.value,
                 seccion: e.target.seccion.value,
                 email: e.target.email.value,
-                password: e.target.password.value
+                password: e.target.password.value,
+                telefono: e.target.telefono.value,
+                numeroLista: e.target.numeroLista.value
             };
 
             submitBtn.classList.add('btn-loading');
@@ -70,7 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         nombre: payload.nombre,
                         grado: payload.grado,
                         seccion: payload.seccion,
-                        rol: 'Estudiante'
+                        rol: 'Estudiante',
+                        telefono: payload.telefono,
+                        numeroLista: payload.numeroLista
                     };
                     localStorage.setItem('currentUser', JSON.stringify(userData));
                     alert('¡Registro exitoso! Bienvenido.');

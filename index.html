@@ -29,8 +29,10 @@
 
             <nav class="hidden md:flex space-x-6 items-center">
                 <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Inicio</a>
-                <a href="login.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Portal</a>
-                <div class="relative group">
+                <div id="desktop-portal-link">
+                    <a href="login.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Portal</a>
+                </div>
+                <div class="relative group" id="desktop-courses-nav">
                     <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
                         Cursos <span class="ml-1 text-xs">&#9662;</span>
                     </button>
@@ -38,13 +40,16 @@
                         <div id="desktop-grades-menu"></div>
                     </div>
                 </div>
-                <div class="relative group">
+                <div class="relative group" id="desktop-resources-nav">
                     <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
                         Recursos Adicionales <span class="ml-1 text-xs">&#9662;</span>
                     </button>
                     <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
                         <div id="desktop-additional-resources-menu"></div>
                     </div>
+                </div>
+                <div id="desktop-user-menu" class="hidden">
+                    <button id="desktop-logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1.5 px-4 rounded-xl transition-all duration-200 shadow-sm text-sm">Cerrar Sesión</button>
                 </div>
                 <a href="pseudocode.html" target="_blank" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Pseudocódigo</a>
                 <a href="https://wa.me/50488422786" target="_blank" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Contacto</a>
@@ -117,6 +122,16 @@
                 <div class="absolute w-52 h-52 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob top-8 left-8"></div>
                 <div class="absolute w-56 h-56 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000 bottom-16 right-16"></div>
                 <div class="absolute w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000 top-32 right-8"></div>
+            </div>
+        </section>
+
+        <!-- Sección de Noticias -->
+        <section id="news-section" class="py-12 bg-white hidden border-b border-gray-100">
+            <div class="container mx-auto px-5">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center md:text-left">Noticias y Avisos</h2>
+                <div id="news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Las noticias se cargarán aquí -->
+                </div>
             </div>
         </section>
 
@@ -207,6 +222,22 @@
             </div>
         </section>
     </main>
+
+    <!-- Modal de Invitado (Prompt Login) -->
+    <div id="guest-prompt-modal" class="fixed inset-0 z-[80] flex items-center justify-center bg-black bg-opacity-75 hidden">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full mx-4 text-center animate-fade-in-up">
+            <div class="bg-yellow-100 text-yellow-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">¿Quieres guardar tu récord?</h3>
+            <p class="text-gray-600 mb-6">Has obtenido un gran puntaje. Inicia sesión o regístrate para que tus logros queden guardados en tu perfil estudiantil.</p>
+            <div class="grid grid-cols-1 gap-3">
+                <a href="login.html" class="bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-all">Iniciar Sesión</a>
+                <a href="register.html" class="bg-gray-100 text-gray-800 font-bold py-3 rounded-xl hover:bg-gray-200 transition-all">Crear Cuenta</a>
+                <button id="close-guest-modal" class="text-gray-400 text-sm hover:text-gray-600 mt-2">Continuar como invitado</button>
+            </div>
+        </div>
+    </div>
 
     <footer class="bg-gray-900 text-white py-4 mt-auto">
         <div class="container mx-auto px-5 text-center">

@@ -55,8 +55,24 @@ let localGameStorage; // Variable to hold the gameDataStorage object passed from
 
 // Function to initialize DOM elements and attach event listeners
 // This function now accepts the gameDataStorage object
-function initializePeripheralsGame(gameDataStorage) {
+async function initializePeripheralsGame(gameDataStorage) {
     localGameStorage = gameDataStorage; // Store the passed object
+
+    // Cargar récord personal
+    try {
+        const records = await GamesAdapter.getPersonalRecord();
+        const myRecord = records["Periféricos"];
+        if (myRecord) {
+            const recordDiv = document.getElementById('personal-record-init');
+            const scoreSpan = document.getElementById('init-max-score');
+            if (recordDiv && scoreSpan) {
+                recordDiv.classList.remove('hidden');
+                scoreSpan.textContent = myRecord.maxScore;
+            }
+        }
+    } catch(e) {
+        console.error("Error loading record:", e);
+    }
 
     // Use a setTimeout to ensure all DOM elements are parsed and available
     // before attempting to get their references and attach listeners.
@@ -77,14 +93,14 @@ function initializePeripheralsGame(gameDataStorage) {
         correctAnswersDisplay = document.getElementById('correct-answers');
         incorrectAnswersDisplay = document.getElementById('incorrect-answers');
         finalTimeDisplay = document.getElementById('final-time');
-        totalAttemptsDisplay = document.getElementById('total-attempts'); 
-        bestScoreDisplay = document.getElementById('best-score');         
-        gameHistoryList = document.getElementById('game-history-list');   
+        totalAttemptsDisplay = document.getElementById('total-attempts');
+        bestScoreDisplay = document.getElementById('best-score');
+        gameHistoryList = document.getElementById('game-history-list');
 
         // Console log to confirm initialization and element finding
         console.log("initializePeripheralsGame: Elementos DOM inicializados.");
-        if (!startMenu || !startGameButton || !correctAnswersDisplay || !totalAttemptsDisplay) {
-            console.error("initializePeripheralsGame: ¡ERROR! No se encontraron todos los elementos DOM esperados. Esto podría causar errores.");
+        if (!startMenu || !startGameButton || !correctAnswersDisplay) {
+            console.error("initializePeripheralsGame: ¡ERROR! No se encontraron todos los elementos DOM esperados.");
         }
 
         // Attach Event Listeners - MOVED INSIDE THIS setTimeout
@@ -93,7 +109,7 @@ function initializePeripheralsGame(gameDataStorage) {
         // Ensure retryGameButton is not null before attaching listener
         const retryGameButton = document.getElementById('retry-game-button'); // Re-get inside here
         if (retryGameButton) retryGameButton.addEventListener('click', resetGame);
-        
+
         // Simplified exit logic: reset game state and then return to main content
         const exitGameButton = document.getElementById('exit-game-button'); // Re-get inside here
         if (exitGameButton) {
@@ -158,7 +174,7 @@ function displayPeripheral() {
             peripheralImage.classList.add('hidden');
         }
         if (peripheralCard) peripheralCard.classList.remove('border-green-500', 'border-red-500'); // Reset border color
-        
+
         // Ensure answerButtons is not null before iterating
         if (answerButtons) {
             answerButtons.forEach(button => {
@@ -269,46 +285,14 @@ function endGame() {
     if (resultScreen) resultScreen.classList.add('flex');
 
     const finalTimeSeconds = Math.floor((Date.now() - startTime) / 1000);
-    const sessionData = {
-        score: score,
-        errors: errors,
-        time: formatTime(finalTimeSeconds),
-        timestamp: new Date().toISOString() // ISO string for easy sorting and display
-    };
-
-    // Console log to verify values before display
-    console.log(`endGame: Puntuación final: ${score}, Errores finales: ${errors}, Tiempo final: ${formatTime(finalTimeSeconds)}`);
-
-    // Save the current game session
-    if (localGameStorage) {
-        localGameStorage.saveGameSession('peripheralsGame', sessionData);
-        // Update display with aggregated stats
-        if (totalAttemptsDisplay) totalAttemptsDisplay.textContent = localGameStorage.getTotalAttempts('peripheralsGame');
-        if (bestScoreDisplay) bestScoreDisplay.textContent = localGameStorage.getBestScore('peripheralsGame');
-        
-        // Display recent history
-        const history = localGameStorage.getGameHistory('peripheralsGame').slice(-5).reverse(); // Last 5, most recent first
-        if (gameHistoryList) {
-            gameHistoryList.innerHTML = ''; // Clear previous history
-            if (history.length > 0) {
-                history.forEach((session, index) => {
-                    const listItem = document.createElement('li');
-                    listItem.className = 'text-sm text-gray-600 mb-1';
-                    const date = new Date(session.timestamp).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                    const time = new Date(session.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-                    listItem.textContent = `Intento ${history.length - index}: Puntos: ${session.score}, Errores: ${session.errors}, Tiempo: ${session.time} (${date} ${time})`;
-                    gameHistoryList.appendChild(listItem);
-                });
-            } else {
-                gameHistoryList.innerHTML = '<li class="text-sm text-gray-500">No hay historial de juegos.</li>';
-            }
-        }
-    }
-
+    const finalTimeFormatted = formatTime(finalTimeSeconds);
 
     if (correctAnswersDisplay) correctAnswersDisplay.textContent = score;
     if (incorrectAnswersDisplay) incorrectAnswersDisplay.textContent = errors;
-    if (finalTimeDisplay) finalTimeDisplay.textContent = timerDisplay.textContent;
+    if (finalTimeDisplay) finalTimeDisplay.textContent = finalTimeFormatted;
+
+    // Guardar en el portal
+    GamesAdapter.saveResult("Periféricos", `Completado con ${score} aciertos en ${finalTimeFormatted}`, score);
 }
 
 function resetGame() {
@@ -322,12 +306,6 @@ function resetGame() {
     if (peripheralCard) peripheralCard.classList.remove('border-green-500', 'border-red-500'); // Reset border color
     clearInterval(timerInterval); // Ensure timer is stopped
 
-    // Update initial stats display
-    if (localGameStorage) {
-        if (totalAttemptsDisplay) totalAttemptsDisplay.textContent = localGameStorage.getTotalAttempts('peripheralsGame');
-        if (bestScoreDisplay) bestScoreDisplay.textContent = localGameStorage.getBestScore('peripheralsGame');
-        if (gameHistoryList) gameHistoryList.innerHTML = '<li class="text-sm text-gray-500">No hay historial de juegos.</li>'; // Clear history on reset
-    }
     // Also reset correct/incorrect answers display on reset
     if (correctAnswersDisplay) correctAnswersDisplay.textContent = 0;
     if (incorrectAnswersDisplay) incorrectAnswersDisplay.textContent = 0;

@@ -7,7 +7,10 @@
 
 <!-- Start Menu -->
 <div id="quiz-start-menu" class="flex flex-col items-center justify-center min-h-[300px] animate-fade-in-down">
-    <p class="text-xl text-gray-700 mb-6">Demuestra tus conocimientos en HTML, CSS y JavaScript.</p>
+    <p class="text-xl text-gray-700 mb-2">Demuestra tus conocimientos en HTML, CSS y JavaScript.</p>
+    <div id="personal-record-init" class="mb-6 bg-yellow-50 p-3 rounded-xl border border-yellow-200 hidden">
+        <p class="text-sm font-bold text-yellow-800">Récord Personal: <span id="init-max-score">0</span> pts</p>
+    </div>
     <button id="start-quiz-button" class="px-8 py-4 rounded-xl font-bold text-xl
                 bg-blue-600 text-white hover:bg-blue-700
                 transition-all duration-300 ease-in-out

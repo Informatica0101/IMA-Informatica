@@ -68,7 +68,13 @@ document.addEventListener('DOMContentLoaded', () => {
         contentDisplayArea.innerHTML = '';
         const gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg';
+
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
         window.downloadContentData.forEach(gradeData => {
+            // Filtrado por Grado
+            if (currentUser && currentUser.grado && gradeData.grade !== currentUser.grado) return;
+
             gridDiv.appendChild(createCustomButton(gradeData.grade, () => {
                 selectedGradeData = gradeData;
                 animateContentTransition(renderDownloadSubjects);
@@ -233,6 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderInitialContentButton();
     renderInitialActivityButton();
+    setupGlobalAuth();
+    loadNews();
 
     // --- Handle Action from URL (A-28) ---
     function processUrlAction() {
@@ -245,6 +253,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Escuchar el evento de que la UI común está lista para disparar acciones
     document.addEventListener('common-ui-ready', processUrlAction, { once: true });
+
+    // --- Guest Mode Logic ---
+    const guestPromptModal = document.getElementById('guest-prompt-modal');
+    const closeGuestModal = document.getElementById('close-guest-modal');
+
+    document.addEventListener('guest-game-finished', (e) => {
+        if (guestPromptModal) {
+            guestPromptModal.classList.remove('hidden');
+        }
+    });
+
+    if (closeGuestModal) {
+        closeGuestModal.onclick = () => guestPromptModal.classList.add('hidden');
+    }
 });
 
 /**
@@ -304,3 +326,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderAccessButton();
 })();
+
+/**
+ * Global Authentication Helper
+ */
+function setupGlobalAuth() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const desktopPortalLink = document.getElementById('desktop-portal-link');
+    const desktopCoursesNav = document.getElementById('desktop-courses-nav');
+    const desktopResourcesNav = document.getElementById('desktop-resources-nav');
+    const desktopUserMenu = document.getElementById('desktop-user-menu');
+    const desktopLogoutBtn = document.getElementById('desktop-logout-btn');
+    const downloadSection = document.getElementById('download-section');
+
+    if (currentUser) {
+        // Logged in
+        if (desktopPortalLink) desktopPortalLink.classList.add('hidden');
+        if (desktopUserMenu) desktopUserMenu.classList.remove('hidden');
+
+        if (desktopLogoutBtn) {
+            desktopLogoutBtn.onclick = () => {
+                localStorage.removeItem('currentUser');
+                window.location.reload();
+            };
+        }
+    } else {
+        // Guest
+        if (desktopCoursesNav) desktopCoursesNav.classList.add('hidden');
+        if (desktopResourcesNav) desktopResourcesNav.classList.add('hidden');
+        if (downloadSection) downloadSection.classList.add('hidden');
+    }
+}
+
+/**
+ * News System
+ */
+async function loadNews() {
+    const newsSection = document.getElementById('news-section');
+    const newsContainer = document.getElementById('news-container');
+    if (!newsSection || !newsContainer) return;
+
+    try {
+        const res = await fetchApi('USER', 'getNews', {});
+        if (res.status === 'success' && res.data.length > 0) {
+            newsSection.classList.remove('hidden');
+            newsContainer.innerHTML = res.data.map(n => `
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all">
+                    ${n.imagenUrl ? `
+                        <div class="h-48 overflow-hidden">
+                            <img src="${convertDriveLink(n.imagenUrl)}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                    ` : ''}
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-1 rounded">${n.categoria}</span>
+                            <span class="text-xs text-gray-400">${new Date(n.fecha).toLocaleDateString()}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">${n.titulo}</h3>
+                        <p class="text-gray-600 text-sm line-clamp-3">${n.contenido}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (e) {
+        console.error("Error loading news:", e);
+    }
+}
+
+function convertDriveLink(url) {
+    if (!url || !url.includes('drive.google.com')) return url;
+
+    // Handle /file/d/ID/view
+    let match = url.match(/\/file\/d\/(.+?)\//);
+    if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+
+    // Handle ?id=ID
+    match = url.match(/[?&]id=(.+?)(&|$)/);
+    if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+
+    return url;
+}

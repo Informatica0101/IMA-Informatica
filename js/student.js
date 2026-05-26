@@ -9,6 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const tasksList = document.getElementById('tasks-list');
     const logoutButton = document.getElementById('logout-button');
 
+    // --- Elementos de Perfil ---
+    const profileModal = document.getElementById('profile-modal');
+    const openProfileBtn = document.getElementById('open-profile-btn');
+    const closeProfileModal = document.getElementById('close-profile-modal');
+    const profileForm = document.getElementById('profile-form');
+
+    const CHUNK_SIZE = 1024 * 1024 * 2; // 1MB chunks
     const PARCIAL_ORDER = {
         "Cuarto Parcial": 4,
         "Tercer Parcial": 3,
@@ -164,8 +171,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (activity.type === 'Tarea' || activity.type === 'Credito Extra') {
                 if (activity.entrega) {
                     const status = activity.entrega.estado;
-                    const isPending = (status === 'Pendiente' || !status);
-                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    const isPending = (status === 'Pendiente de revisión' || status === 'Pendiente' || !status);
+                    const isResubmittable = (status === 'Rechazada' || status === 'Tarea incompleta');
+
+                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' || status === 'Tarea incompleta' ? 'text-red-600' : 'text-yellow-600');
                     const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
 
                     let fileLinkHtml = '';
@@ -181,6 +190,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         ? `<button class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
                         : '';
 
+                    let resubmitBtnHtml = '';
+                    if (isResubmittable) {
+                        resubmitBtnHtml = `<button class="mt-3 w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-bold open-submission-modal"
+                            data-task-id="${activity.tareaId}"
+                            data-task-title="${activity.titulo} (Re-entrega)"
+                            data-parcial="${activity.parcial || ''}"
+                            data-asignatura="${activity.asignatura || ''}">Subir Parte Pendiente / Nueva Versión</button>`;
+                    }
+
                     feedbackHtml = `
                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                             <div class="flex justify-between items-start">
@@ -193,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
                             ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
+                            ${resubmitBtnHtml}
                         </div>`;
                 } else {
                     actionButtonHtml = `<button class="bg-blue-500 text-white px-4 py-2 rounded-lg open-submission-modal"
@@ -385,7 +404,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     <span class="truncate">${currentFileName}</span>
                 </div>
-                <span class="text-xs text-blue-500 font-medium">Subiendo...</span>
+                <div class="flex items-center space-x-2">
+                    <span class="text-[10px] text-blue-500 font-medium" id="upload-progress-text">Subiendo...</span>
+                </div>
             `;
             uploadedFilesList.appendChild(li);
             uploadedFilesContainer.classList.remove('hidden');
@@ -396,66 +417,84 @@ document.addEventListener('DOMContentLoaded', () => {
             activeUploads++;
             updateConfirmButtonState();
 
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-                const fileData = reader.result;
-                const payload = {
-                    userId: currentUser.userId,
-                    tareaId: currentTaskId,
-                    fileName: currentFileName,
-                    fileData: fileData,
-                    parcial: currentTaskParcial,
-                    asignatura: currentTaskAsignatura
-                };
+            try {
+                let uploadResult;
+                const progressSpan = li.querySelector('#upload-progress-text');
 
-                try {
-                    const result = await fetchApi('TASK', 'uploadFile', payload);
+                // Si el archivo es mayor a 2MB, usar subida por partes (Chunks)
+                if (currentFile.size > CHUNK_SIZE) {
+                    const totalChunks = Math.ceil(currentFile.size / CHUNK_SIZE);
+                    const uploadId = "UP-" + Date.now();
 
-                    acceptFileBtn.disabled = false;
-                    acceptFileBtn.classList.remove('btn-loading');
+                    for (let i = 0; i < totalChunks; i++) {
+                        progressSpan.textContent = `Punto ${i+1}/${totalChunks}`;
+                        const start = i * CHUNK_SIZE;
+                        const end = Math.min(currentFile.size, start + CHUNK_SIZE);
+                        const chunk = currentFile.slice(start, end);
 
-                    if (result.status === 'success') {
-                        const uploadedData = result.data;
-                        uploadedFiles.push({
-                            fileId: uploadedData.fileId,
-                            fileName: currentFileName,
-                            mimeType: uploadedData.mimeType
+                        const chunkData = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = () => resolve(reader.result.split(',')[1]);
+                            reader.readAsDataURL(chunk);
                         });
-                        currentFolderId = uploadedData.folderId;
 
-                        li.innerHTML = `
-                            <div class="flex items-center space-x-2 truncate">
-                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                <span class="truncate">${currentFileName}</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <span class="text-xs text-green-600 font-medium">Listo</span>
-                                <button type="button" class="text-red-500 hover:text-red-700 remove-file-btn" data-file-id="${uploadedData.fileId}">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </button>
-                            </div>
-                        `;
-                    } else {
-                        li.innerHTML = `
-                            <div class="flex items-center space-x-2 truncate">
-                                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                <span class="truncate text-red-600">${currentFileName}</span>
-                            </div>
-                            <span class="text-xs text-red-600 font-medium">Error</span>
-                        `;
-                        alert('Error al subir ' + currentFileName + ': ' + result.message);
+                        await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData });
                     }
-                } catch (error) {
-                    acceptFileBtn.disabled = false;
-                    acceptFileBtn.classList.remove('btn-loading');
-                    li.innerHTML = `<span class="text-red-600">Error: ${currentFileName}</span>`;
-                    alert('Error de conexión al subir ' + currentFileName + ': ' + error.message);
-                } finally {
-                    activeUploads--;
-                    updateConfirmButtonState();
+
+                    progressSpan.textContent = "Finalizando...";
+                    uploadResult = await fetchApi('TASK', 'finishChunkedUpload', {
+                        uploadId, userId: currentUser.userId, tareaId: currentTaskId,
+                        parcial: currentTaskParcial, asignatura: currentTaskAsignatura,
+                        fileName: currentFileName, mimeType: currentFile.type, totalChunks
+                    });
+                } else {
+                    // Subida normal para archivos pequeños
+                    const fileData = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.readAsDataURL(currentFile);
+                    });
+
+                    uploadResult = await fetchApi('TASK', 'uploadFile', {
+                        userId: currentUser.userId, tareaId: currentTaskId,
+                        fileName: currentFileName, fileData: fileData,
+                        parcial: currentTaskParcial, asignatura: currentTaskAsignatura
+                    });
                 }
-            };
-            reader.readAsDataURL(currentFile);
+
+                if (uploadResult.status === 'success') {
+                    const uploadedData = uploadResult.data;
+                    uploadedFiles.push({
+                        fileId: uploadedData.fileId,
+                        fileName: currentFileName,
+                        mimeType: uploadedData.mimeType
+                    });
+                    currentFolderId = uploadedData.folderId;
+
+                    li.innerHTML = `
+                        <div class="flex items-center space-x-2 truncate">
+                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="truncate">${currentFileName}</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-xs text-green-600 font-medium">Listo</span>
+                            <button type="button" class="text-red-500 hover:text-red-700 remove-file-btn" data-file-id="${uploadedData.fileId}">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(uploadResult.message);
+                }
+            } catch (error) {
+                li.innerHTML = `<span class="text-red-600">Error: ${currentFileName}</span>`;
+                alert('Error al subir ' + currentFileName + ': ' + error.message);
+            } finally {
+                acceptFileBtn.disabled = false;
+                acceptFileBtn.classList.remove('btn-loading');
+                activeUploads--;
+                updateConfirmButtonState();
+            }
         });
     }
 
@@ -529,6 +568,57 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateConfirmButtonState();
             }
         });
+    }
+
+    // --- Lógica de Perfil ---
+    if (openProfileBtn) {
+        openProfileBtn.onclick = () => {
+            document.getElementById('profile-nombre').value = currentUser.nombre;
+            document.getElementById('profile-telefono').value = currentUser.telefono || '';
+            document.getElementById('profile-numeroLista').value = currentUser.numeroLista || '';
+            profileModal.classList.remove('hidden');
+        };
+    }
+
+    if (closeProfileModal) {
+        closeProfileModal.onclick = () => profileModal.classList.add('hidden');
+    }
+
+    if (profileForm) {
+        profileForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const submitBtn = profileForm.querySelector('button[type="submit"]');
+            const payload = {
+                userId: currentUser.userId,
+                nombre: document.getElementById('profile-nombre').value,
+                telefono: document.getElementById('profile-telefono').value,
+                numeroLista: document.getElementById('profile-numeroLista').value,
+                password: document.getElementById('profile-password').value || undefined
+            };
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Guardando...';
+
+            try {
+                const result = await fetchApi('USER', 'updateUserProfile', payload);
+                if (result.status === 'success') {
+                    currentUser.nombre = payload.nombre;
+                    currentUser.telefono = payload.telefono;
+                    currentUser.numeroLista = payload.numeroLista;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    document.getElementById('student-name').textContent = currentUser.nombre;
+                    alert('Perfil actualizado correctamente.');
+                    profileModal.classList.add('hidden');
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (err) {
+                alert('Error de conexión.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Guardar Cambios';
+            }
+        };
     }
 
     fetchAllActivities();
