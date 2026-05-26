@@ -224,3 +224,17 @@ AUDITORÍA INTEGRACIÓN WHATSAPP Y NOTICIAS (26/05/2026)
 - Hallazgo Landing Page: Se solicitó destacar la noticia más reciente.
 - Resolución: Modificado map en js/index-ui.js para aplicar clases de grid span (col-span-2) al índice 0 y extraer el primer párrafo del HTML para el excerpt.
 - Validación Técnica: Verificada la visibilidad de los nuevos elementos mediante Playwright. Se confirmó que el botón de WhatsApp en el dashboard del estudiante se habilita/deshabilita correctamente según la respuesta del servidor.
+
+AUDITORÍA CORRECCIÓN WHATSAPP Y DASHBOARD (26/05/2026)
+-----------------------------------------------------
+- Archivos involucrados: backend/user-service/Code.gs, teacher-dashboard.html, js/teacher.js, js/student.js
+- Hallazgo WhatsApp: La gestión por sección/parcial era redundante. Se solicitó unificación por grado.
+- Resolución:
+  - Backend ahora usa la hoja 'GruposWhatsApp' ignorando la sección.
+  - El frontend del profesor muestra el grado en el título del bloque de WhatsApp.
+  - El estudiante ya no envía la sección al consultar el link.
+- Hallazgo Estadísticas: El panel superior estorbaba la vista principal.
+- Resolución:
+  - Eliminado el bloque HTML en teacher-dashboard.html.
+  - Limpieza de lógica en js/teacher.js para evitar errores de 'Element not found'.
+- Validación Visual: Confirmada la eliminación del panel mediante Playwright.

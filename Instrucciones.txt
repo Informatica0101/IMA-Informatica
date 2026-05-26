@@ -219,3 +219,14 @@ ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
 - Desarrollado sistema de noticias completo con editor enriquecido (Quill) y subida de imágenes a Drive.
 - Refinada la visualización de noticias en la landing page con destaque de la publicación más reciente.
 - Sincronizada versión global de caché a v=17.
+
+----------------------------
+
+TAREA: [A-66]
+TÍTULO: Corrección WhatsApp por Grado y Limpieza Dashboard
+ÁREA: Frontend / Backend
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Refactorizada la gestión de WhatsApp: ahora es 1 grupo por grado (Décimo, Undécimo, Duodécimo).
+- Eliminado el panel de estadísticas superiores del Dashboard del Profesor.
+- Sincronizada versión global de caché a v=18.

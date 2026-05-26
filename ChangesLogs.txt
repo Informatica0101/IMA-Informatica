@@ -956,3 +956,18 @@ MAYO 2026 (Portal Optimization & Security Patch)
 - Global:
   - Incremento de la versión de caché a 'v17' en todos los recursos HTML y sw.js.
   - Actualizada la versión del Service Worker a 'informatic-app-v17' para forzar la actualización de los nuevos módulos de WhatsApp y Noticias.
+
+26/05/2026 (Corrección Grupos WhatsApp y Dashboard)
+- Archivo: backend/user-service/Code.gs
+  - Migrada la lógica de grupos de WhatsApp para operar exclusivamente por 'grado'.
+  - Implementada la hoja 'GruposWhatsApp' con metadatos de auditoría (Fecha y Profesor).
+  - Refactorizadas 'saveWhatsAppLink' y 'getWhatsAppLink' para eliminar la dependencia de sección/parcial.
+- Archivo: teacher-dashboard.html
+  - Eliminado por completo el panel de estadísticas superiores (Entregas Totales, Por Calificar, etc.) para simplificar la interfaz.
+- Archivo: js/teacher.js
+  - Eliminada la función 'updateReportsSummary' y todas sus referencias.
+  - Actualizada la integración de WhatsApp en la vista de alumnos para reflejar el alcance por grado.
+- Archivo: js/student.js
+  - Actualizada la función 'initWhatsAppButton' para obtener el enlace de grupo basado únicamente en el grado del estudiante.
+- Global:
+  - Incremento de versión de caché a 'v18'.

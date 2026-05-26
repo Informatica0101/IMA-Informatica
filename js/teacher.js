@@ -101,33 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     navReportes.addEventListener('click', () => {
         navigateTo(sectionReportes, navReportes);
-        updateReportsSummary();
     });
-    function updateReportsSummary() {
-        const total = allActivityRaw.length;
-        const pending = allActivityRaw.filter(i => {
-            const status = (i.estado || "").toLowerCase();
-            return status.includes("pendiente") || status.includes("por calificar");
-        }).length;
-        const completed = allActivityRaw.filter(i => {
-            const status = (i.estado || "").toLowerCase();
-            return status === "completada" || status === "revisada";
-        }).length;
-        const rejected = allActivityRaw.filter(i => {
-            const status = (i.estado || "").toLowerCase();
-            return status === "rechazada" || status === "tarea incompleta";
-        }).length;
-
-        const sTotal = document.getElementById('stat-total');
-        const sPending = document.getElementById('stat-pending');
-        const sCompleted = document.getElementById('stat-completed');
-        const sRejected = document.getElementById('stat-rejected');
-
-        if (sTotal) sTotal.textContent = total;
-        if (sPending) sPending.textContent = pending;
-        if (sCompleted) sCompleted.textContent = completed;
-        if (sRejected) sRejected.textContent = rejected;
-    }
 
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('currentUser');
