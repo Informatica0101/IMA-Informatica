@@ -230,3 +230,18 @@ ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
 - Refactorizada la gestión de WhatsApp: ahora es 1 grupo por grado (Décimo, Undécimo, Duodécimo).
 - Eliminado el panel de estadísticas superiores del Dashboard del Profesor.
 - Sincronizada versión global de caché a v=18.
+
+----------------------------
+
+TAREA: [A-67]
+TÍTULO: Rediseño Estructural, Perfiles y Gestión de Pendientes
+ÁREA: Frontend / UI / Navegación
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Implementada separación real entre Dashboard Operativo (Pendientes) y Reportes Académicos (Jerarquía).
+- Añadido botón "Mi Perfil" con formulario completo (Nombre, Correo, Tel, Pass) en ambos dashboards.
+- Corregida navegación: Grados -> Secciones -> Parcial -> Asignatura -> Alumnos.
+- Implementado Modal "Ver Detalles" con filtro estricto por asignatura/parcial.
+- Añadidos indicadores visuales de pendientes en la lista de alumnos.
+- Habilitado ordenamiento por Nombre, Lista y Estado.
+- Sincronizada versión global de caché a v=19.

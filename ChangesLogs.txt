@@ -971,3 +971,22 @@ MAYO 2026 (Portal Optimization & Security Patch)
   - Actualizada la función 'initWhatsAppButton' para obtener el enlace de grupo basado únicamente en el grado del estudiante.
 - Global:
   - Incremento de versión de caché a 'v18'.
+
+27/05/2026 (Rediseño y Perfiles)
+- Archivo: student-dashboard.html, teacher-dashboard.html
+  - Añadido botón "Mi Perfil" en el encabezado (desktop y móvil).
+  - Implementado modal de perfil con campos para Nombre, Correo, Teléfono, Contraseña Actual, Nueva Contraseña y Confirmación.
+- Archivo: teacher-dashboard.html, js/teacher.js
+  - Rediseño estructural: Separación del Dashboard en "Panel Operativo" (Tareas por calificar) y "Reportes Académicos" (Navegación jerárquica).
+  - La sección Dashboard ahora muestra únicamente pendientes globales para agilizar el trabajo docente.
+  - La navegación jerárquica (Grados -> Secciones -> Parcial -> Asignatura -> Alumnos) se movió a la pestaña de Reportes.
+  - Implementado modal "Ver Detalles" para alumnos que muestra el historial completo de la asignatura/parcial seleccionado.
+  - Añadidos indicadores visuales (barras amarillas) y resaltado de texto para identificar alumnos con tareas pendientes en la lista.
+  - Habilitado el ordenamiento dinámico por Nº Lista, Nombre y Estado de Tareas en la vista de alumnos.
+- Archivo: js/student.js, js/teacher.js
+  - Implementada lógica de validación de perfil (email, teléfonos, coincidencia de contraseñas).
+  - Sincronización automática de cambios de perfil con el backend y localStorage.
+- Archivo: backend/user-service/Code.gs
+  - Actualizada 'updateUserProfile' para soportar el cambio de correo electrónico.
+- Global:
+  - Incremento de versión de caché a 'v19'.
