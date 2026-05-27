@@ -100,4 +100,19 @@ Esta sección unifica la visualización académica en tiempo real con la herrami
 | **Grado** | Texto (Clave Única) | Grado académico (e.g., "10", "11", "12") |
 | **EnlaceGrupo** | Texto (URL) | Enlace de invitación oficial de WhatsApp |
 | **FechaActualizacion** | Timestamp | Fecha y hora del último registro |
-| **ProfesorAutor** | Texto | Identificador o nombre del docente que modificó el enlace | <br> #### Hoja 
+| **ProfesorAutor** | Texto | Identificador o nombre del docente que modificó el enlace | 
+
+<br> #### Hoja 2: NoticiasPortal
+
+| Columna | Tipo de Datos | Descripción |
+| :--- | :--- | :--- |
+| **IDNoticia** | Numérico / UUID | Identificador exclusivo de la publicación |
+| **FechaPublicacion** | Fecha (DD/MM/YYYY) | Fecha programada o de emisión |
+| **HoraPublicacion** | Hora (HH:MM) | Hora de lanzamiento de la noticia |
+| **Titulo** | Texto | Título destacado |
+| **ContenidoHTML** | Texto largo | Cuerpo del texto con formato enriquecido |
+| **ImagenesDriveID** | Array de IDs | Enlaces de imágenes almacenados en Google Drive |
+
+### 7.3 Arquitectura del Servidor e Infraestructura
+ * **Gestión de Carpetas por Alumno:** Lógica en el servidor o drive para la creación automatizada de un directorio único por cada alumno registrado. Al registrarse un usuario, el backend debe aprovisionar su estructura de directorios privados para el almacenamiento de avances y el histórico de proyectos de pseudocode.html.
+ * **Sanitización y Seguridad en Archivos:** Implementar filtros MIME de verificación para denegar la subida de scripts maliciosos disfrazados de imágenes o PDF.
