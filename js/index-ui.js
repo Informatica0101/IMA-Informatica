@@ -24,6 +24,117 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentContentView = 'initial';
     let selectedGradeData = null;
     let selectedSubjectData = null;
+    let allNoticias = [];
+
+    // --- Personalized Greeting ---
+    function setupWelcome() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const welcomeTitle = document.getElementById('welcome-title');
+        if (!welcomeTitle) return;
+
+        if (currentUser && currentUser.nombre) {
+            const firstName = currentUser.nombre.split(' ')[0];
+            welcomeTitle.textContent = `¡Bienvenido, ${firstName}!`;
+        } else {
+            welcomeTitle.textContent = 'Bienvenidos';
+        }
+    }
+    setupWelcome();
+
+    // --- News System ---
+    async function loadNoticias() {
+        const container = document.getElementById('noticias-container');
+        const section = document.getElementById('noticias-section');
+        if (!container) return;
+
+        try {
+            const res = await window.fetchApi('TASK', 'getNoticias');
+            if (res.status === 'success' && res.data.length > 0) {
+                allNoticias = res.data;
+                section.classList.remove('hidden');
+                renderNoticias();
+            } else {
+                section.classList.add('hidden');
+            }
+        } catch (err) {
+            console.error("Error cargando noticias:", err);
+            section.classList.add('hidden');
+        }
+    }
+
+    function convertDriveLink(id) {
+        if (!id) return '';
+        if (id.startsWith('http')) return id;
+        return `https://lh3.googleusercontent.com/d/${id}=w800`;
+    }
+
+    function renderNoticias() {
+        const container = document.getElementById('noticias-container');
+        container.innerHTML = '';
+
+        // Mostrar solo las 3 primeras (más recientes)
+        allNoticias.slice(0, 3).forEach((noticia, idx) => {
+            const card = document.createElement('div');
+            card.className = `bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col ${idx > 0 ? 'hidden md:flex' : 'flex'} ${idx > 1 ? 'lg:flex' : ''}`;
+
+            const imageId = noticia.imagenesDriveID && noticia.imagenesDriveID[0];
+            const imageUrl = imageId ? convertDriveLink(imageId) : 'imagenes/logo.png';
+
+            card.innerHTML = `
+                <div class="h-48 overflow-hidden relative">
+                    <img src="${imageUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${noticia.titulo}">
+                    <div class="absolute top-4 left-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                        ${noticia.fechaPublicacion}
+                    </div>
+                </div>
+                <div class="p-6 flex-grow flex flex-col">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">${noticia.titulo}</h3>
+                    <div class="text-gray-600 text-sm mb-6 line-clamp-3 overflow-hidden flex-grow">
+                        ${noticia.contenidoHTML.replace(/<[^>]*>/g, '').substring(0, 150)}...
+                    </div>
+                    <button class="text-blue-600 font-bold flex items-center group/btn" onclick="openNoticiaModal('${noticia.idNoticia}')">
+                        Leer más
+                        <svg class="w-4 h-4 ml-2 transform group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    window.openNoticiaModal = function(id) {
+        const noticia = allNoticias.find(n => n.idNoticia === id);
+        if (!noticia) return;
+
+        const modalHtml = `
+            <div id="noticia-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70 p-4 animate-fade-in">
+                <div class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-scale-up">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+                        <h3 class="text-2xl font-black text-gray-900 line-clamp-1">${noticia.titulo}</h3>
+                        <button onclick="document.getElementById('noticia-modal').remove()" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    <div class="p-8 overflow-y-auto">
+                        ${noticia.imagenesDriveID.length > 0 ? `
+                            <div class="grid grid-cols-1 gap-4 mb-8">
+                                ${noticia.imagenesDriveID.map(imgId => `<img src="${convertDriveLink(imgId)}" class="w-full rounded-2xl shadow-lg" alt="Imagen">`).join('')}
+                            </div>
+                        ` : ''}
+                        <div class="prose prose-blue max-w-none text-gray-700 leading-relaxed text-lg">
+                            ${noticia.contenidoHTML}
+                        </div>
+                        <div class="mt-12 pt-6 border-t border-gray-100 text-sm text-gray-400">
+                            Publicado el ${noticia.fechaPublicacion} a las ${noticia.horaPublicacion}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    };
+
+    loadNoticias();
 
     // --- Utility Functions ---
     function createCustomButton(text, onClickHandler, className = '') {
@@ -66,9 +177,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderDownloadGrades() {
         contentBackButtonContainer.classList.add('hidden');
         contentDisplayArea.innerHTML = '';
+
+        // Lógica de Filtrado por Grado si el usuario está autenticado
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        let gradesToShow = window.downloadContentData;
+
+        if (currentUser && currentUser.rol === 'Estudiante' && currentUser.grado) {
+            gradesToShow = window.downloadContentData.filter(g =>
+                g.grade.toLowerCase().includes(currentUser.grado.toLowerCase())
+            );
+        }
+
         const gridDiv = document.createElement('div');
-        gridDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg';
-        window.downloadContentData.forEach(gradeData => {
+        gridDiv.className = 'grid grid-cols-1 gap-4 w-full max-w-sm';
+        gradesToShow.forEach(gradeData => {
             gridDiv.appendChild(createCustomButton(gradeData.grade, () => {
                 selectedGradeData = gradeData;
                 animateContentTransition(renderDownloadSubjects);
@@ -137,6 +259,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Rediseño de Cursos (Menu de Cursos en Landing) ---
+    function renderHomeCursos() {
+        // Esta lógica podría extenderse para mostrar tarjetas de cursos en el index
+    }
+
     // --- Activities & Games Logic ---
     function showMainContentSections() {
         if (!mainContentSections) return;
@@ -149,6 +276,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadGame(gameId, htmlPath, jsPath, initFnName, title) {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            if (confirm("Estás jugando como invitado. Para registrar tus récords y logros, necesitas iniciar sesión. ¿Deseas ir al portal ahora?")) {
+                window.location.href = 'login.html';
+                return;
+            }
+        }
+
         const mainHeader = document.getElementById('main-header');
         if (mainHeader) mainHeader.classList.add('header-hidden');
         mainContentSections.classList.add('hidden');

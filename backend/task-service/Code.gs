@@ -51,6 +51,12 @@ function doPost(e) {
       case "updateTask": response = updateTask(payload); break;
       case "deleteTask": response = deleteTask(payload); break;
       case "deleteSubmission": response = deleteSubmission(payload); break;
+      case "getWhatsAppGroups": response = getWhatsAppGroups(payload); break;
+      case "updateWhatsAppGroup": response = updateWhatsAppGroup(payload); break;
+      case "getNoticias": response = getNoticias(payload); break;
+      case "createNoticia": response = createNoticia(payload); break;
+      case "updateNoticia": response = updateNoticia(payload); break;
+      case "deleteNoticia": response = deleteNoticia(payload); break;
       default:
         response = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
@@ -157,7 +163,7 @@ function getStudentTasks(payload) {
     }
     return true;
   }).map(task => {
-    const entrega = entregasData.find(e => e[1] === task[0] && e[2] === userId);
+    const entrega = [...entregasData].reverse().find(e => e[1] === task[0] && e[2] === userId);
     let fechaLimite = task[8] ? new Date(task[8]).toISOString() : null;
 
     // Si es Credito Extra, forzamos que la fecha coincida con la de la tarea rechazada
@@ -432,6 +438,108 @@ function isInTeacherList(value, listString) {
 }
 
 // --- HELPERS DE DRIVE ---
+function getWhatsAppGroups() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "GruposWhatsApp");
+  const data = sheet.getDataRange().getValues().slice(1);
+  return {
+    status: "success",
+    data: data.map(r => ({
+      grado: r[0],
+      enlaceGrupo: r[1],
+      fechaActualizacion: r[2],
+      profesorAutor: r[3]
+    }))
+  };
+}
+
+function updateWhatsAppGroup(payload) {
+  const { grado, enlaceGrupo, profesorAutor } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "GruposWhatsApp");
+  const data = sheet.getDataRange().getValues();
+
+  const sGrado = String(grado).trim();
+  const rowIndex = data.findIndex(r => String(r[0]).trim() === sGrado);
+
+  if (rowIndex !== -1) {
+    sheet.getRange(rowIndex + 1, 2).setValue(enlaceGrupo);
+    sheet.getRange(rowIndex + 1, 3).setValue(new Date());
+    sheet.getRange(rowIndex + 1, 4).setValue(profesorAutor);
+  } else {
+    sheet.appendRow([sGrado, enlaceGrupo, new Date(), profesorAutor]);
+  }
+
+  return { status: "success", message: "Enlace de WhatsApp actualizado." };
+}
+
+function getNoticias() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "NoticiasPortal");
+  const data = sheet.getDataRange().getValues().slice(1);
+  return {
+    status: "success",
+    data: data.map(r => ({
+      idNoticia: r[0],
+      fechaPublicacion: r[1],
+      horaPublicacion: r[2],
+      titulo: r[3],
+      contenidoHTML: r[4],
+      imagenesDriveID: r[5] ? JSON.parse(r[5]) : []
+    })).reverse()
+  };
+}
+
+function createNoticia(payload) {
+  const { titulo, contenidoHTML, imagenesDriveID, fechaPublicacion, horaPublicacion } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "NoticiasPortal");
+  const idNoticia = "NOT-" + Date.now();
+
+  sheet.appendRow([
+    idNoticia,
+    fechaPublicacion || new Date().toLocaleDateString(),
+    horaPublicacion || new Date().toLocaleTimeString(),
+    titulo,
+    contenidoHTML,
+    JSON.stringify(imagenesDriveID || [])
+  ]);
+
+  return { status: "success", message: "Noticia publicada." };
+}
+
+function updateNoticia(payload) {
+  const { idNoticia, titulo, contenidoHTML, imagenesDriveID, fechaPublicacion, horaPublicacion } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "NoticiasPortal");
+  const data = sheet.getDataRange().getValues();
+  const rowIndex = data.findIndex(r => r[0] === idNoticia);
+
+  if (rowIndex === -1) throw new Error("Noticia no encontrada.");
+
+  const row = rowIndex + 1;
+  if (titulo !== undefined) sheet.getRange(row, 4).setValue(titulo);
+  if (contenidoHTML !== undefined) sheet.getRange(row, 5).setValue(contenidoHTML);
+  if (imagenesDriveID !== undefined) sheet.getRange(row, 6).setValue(JSON.stringify(imagenesDriveID));
+  if (fechaPublicacion !== undefined) sheet.getRange(row, 2).setValue(fechaPublicacion);
+  if (horaPublicacion !== undefined) sheet.getRange(row, 3).setValue(horaPublicacion);
+
+  return { status: "success", message: "Noticia actualizada." };
+}
+
+function deleteNoticia(payload) {
+  const { idNoticia } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "NoticiasPortal");
+  const data = sheet.getDataRange().getValues();
+  const rowIndex = data.findIndex(r => r[0] === idNoticia);
+
+  if (rowIndex === -1) throw new Error("Noticia no encontrada.");
+
+  sheet.deleteRow(rowIndex + 1);
+  return { status: "success", message: "Noticia eliminada." };
+}
+
 function getOrCreateFolder(parentFolder, folderName) {
   // Convertimos a string por si viene de una celda con formato número (ej. 10, 11)
   const name = String(folderName || "").trim() || "Sin Nombre";

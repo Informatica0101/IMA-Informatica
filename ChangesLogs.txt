@@ -890,3 +890,31 @@ DESCRIPCIÓN DE CAMBIOS:
   - Incluye contenido de Sección 4 y 5 del PDF base.
 - Archivo: js/data.js
   - Inserción de las nuevas presentaciones de Programación y Diseño Web en el menú de Cursos.
+
+25/05/2026 (Modernización Integral V3.0)
+- Archivos Backend (user-service, task-service, exam-service):
+  - Implementada recuperación de contraseña con tokens HMAC-SHA256 y expiración.
+  - Implementada actualización de perfil y cambio de contraseña seguro.
+  - Implementado CRUD de Noticias y gestión de enlaces de WhatsApp por grado.
+  - Añadido soporte para campos 'Teléfono' y 'Número de Lista' en registro y listados.
+- Archivo index.html y js/index-ui.js:
+  - Rediseño completo con Hero Section modernizada y paleta institucional.
+  - Implementado sistema de Noticias dinámicas con carga desde Spreadsheet.
+  - Añadido saludo personalizado y filtrado de contenido (Descargas/Cursos) por grado del alumno.
+- Archivo student-dashboard.html y js/student.js:
+  - Implementado multi-subidor secuencial de alta fidelidad con compresión de imágenes y barra de progreso.
+  - Añadido soporte para archivos .psc, .html, .js, .css y PDF de hasta 50MB.
+  - Integrado botón de WhatsApp dinámico por grado.
+  - Implementado flujo de "Tarea incompleta" con opción de re-entrega parcial.
+- Archivo teacher-dashboard.html y js/teacher.js:
+  - Reestructuración total en 4 secciones: Entregas, Reportes, Tareas y Noticias.
+  - Integrado editor Quill.js para textos enriquecidos en tareas y noticias.
+  - Implementada exportación a Excel multi-hoja con SheetJS respetando formato de libreta escolar.
+  - Añadido botón de WhatsApp directo en lista de alumnos y gestión centralizada de grupos.
+- Archivo pseudocode.html:
+  - Menús de barra de herramientas 100% funcionales (Archivo, Editar, Configurar, Ejecutar, Ayuda).
+  - Implementados perfiles de sintaxis (Flexible/Estricto) en el Parser.
+  - Implementado sistema de guardado silencioso automático a Drive por alumno.
+- Global:
+  - Estandarizada paleta de colores institucional y tipografía Inter.
+  - Actualizada PWA a v12 con manifest y sw.js sincronizados.

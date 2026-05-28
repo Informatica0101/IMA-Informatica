@@ -15,20 +15,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('teacher-name').textContent = currentUser.nombre;
 
     // --- Elementos de Navegación y Secciones ---
-    const navDashboard = document.getElementById('nav-dashboard');
-    const navGestion = document.getElementById('nav-gestion');
+    const navEntregas = document.getElementById('nav-entregas');
     const navReportes = document.getElementById('nav-reportes');
-    const navCrear = document.getElementById('nav-crear');
-    const navCrearExamen = document.getElementById('nav-crear-examen');
+    const navTareas = document.getElementById('nav-tareas');
+    const navNoticias = document.getElementById('nav-noticias');
 
-    const sectionDashboard = document.getElementById('section-dashboard');
-    const sectionGestion = document.getElementById('section-gestion');
+    const sectionEntregas = document.getElementById('section-entregas');
     const sectionReportes = document.getElementById('section-reportes');
-    const sectionCrear = document.getElementById('section-crear');
-    const sectionCrearExamen = document.getElementById('section-crear-examen');
+    const sectionTareas = document.getElementById('section-tareas');
+    const sectionNoticias = document.getElementById('section-noticias');
 
-    const createAssignmentForm = document.getElementById('create-assignment-form');
-    const createExamForm = document.getElementById('create-exam-form');
+    const createActividadForm = document.getElementById('create-actividad-form');
+    const formActividadContainer = document.getElementById('form-actividad-container');
+    const formActividadTitle = document.getElementById('form-actividad-title');
     const logoutButton = document.getElementById('logout-button');
     const studentSearchInput = document.getElementById('student-search');
     const backNavBtn = document.getElementById('back-nav-btn');
@@ -44,8 +43,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionDashboard, sectionGestion, sectionReportes, sectionCrear, sectionCrearExamen];
-    const allNavLinks = [navDashboard, navGestion, navReportes, navCrear, navCrearExamen];
+    const allSections = [sectionEntregas, sectionReportes, sectionTareas, sectionNoticias];
+    const allNavLinks = [navEntregas, navReportes, navTareas, navNoticias];
+
+    let quillTarea = null;
+    let quillNoticia = null;
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -64,20 +66,22 @@ document.addEventListener('DOMContentLoaded', () => {
         navElement.classList.remove('bg-white', 'text-gray-700');
     }
 
-    navDashboard.addEventListener('click', () => {
-        navigateTo(sectionDashboard, navDashboard);
+    navEntregas.addEventListener('click', () => {
+        navigateTo(sectionEntregas, navEntregas);
         navStack = [{ level: 'Grados', data: null }];
         fetchTeacherActivity();
-    });
-    navGestion.addEventListener('click', () => {
-        navigateTo(sectionGestion, navGestion);
-        fetchManagementData();
     });
     navReportes.addEventListener('click', () => {
         navigateTo(sectionReportes, navReportes);
     });
-    navCrear.addEventListener('click', () => navigateTo(sectionCrear, navCrear));
-    navCrearExamen.addEventListener('click', () => navigateTo(sectionCrearExamen, navCrearExamen));
+    navTareas.addEventListener('click', () => {
+        navigateTo(sectionTareas, navTareas);
+        fetchManagementData();
+    });
+    navNoticias.addEventListener('click', () => {
+        navigateTo(sectionNoticias, navNoticias);
+        fetchNoticiasManagement();
+    });
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('currentUser');
         window.location.href = 'login.html';
@@ -127,7 +131,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (backNavBtn) backNavBtn.addEventListener('click', popNav);
 
-    // --- MÓDULO 1: Gestión de Tareas y Exámenes ---
+    // --- MÓDULO 1: Gestión de Entregas (Operativo) ---
+    async function fetchTeacherActivity() {
+        if (!submissionsTableBody) return;
+        submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8"><div class="loading-spinner"></div> Cargando actividad...</td></tr>';
+        try {
+            const payload = { profesorId: currentUser.userId };
+            const [taskSubmissions, examSubmissions, tasksRes, examsRes] = await Promise.all([
+                fetchApi('TASK', 'getTeacherActivity', payload),
+                fetchApi('EXAM', 'getTeacherExamActivity', payload),
+                fetchApi('TASK', 'getAllTasks', payload),
+                fetchApi('EXAM', 'getAllExams', payload)
+            ]);
+
+            allActivityRaw = [
+                ...((taskSubmissions.data || [])).map(s => ({ ...s, tipo: 'Tarea' })),
+                ...((examSubmissions.data || [])).map(s => ({ ...s, tipo: 'Examen' }))
+            ];
+
+            allAssignmentsRaw = [
+                ...((tasksRes.data || [])).map(t => ({ ...t, tipoReal: 'Tarea' })),
+                ...((examsRes.data || [])).map(e => ({ ...e, tipoReal: 'Examen' }))
+            ].filter(a => a.estado !== 'Inactiva');
+
+            renderCurrentLevel();
+        } catch (error) {
+            submissionsTableBody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500">Error: ${error.message}</td></tr>`;
+        }
+    }
+
+    // --- MÓDULO 3: Gestión de Actividades ---
     let allTasksExams = [];
 
     async function fetchManagementData() {
@@ -462,15 +495,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const students = current.data.students || [];
         const parcial = current.data.parcial;
 
-        // Enriquecer alumnos con status de actividad
         const studentsWithStatus = students.map(s => {
-            // Filtramos la actividad del alumno por asignatura y parcial
-            // Eliminamos la validación redundante de grado/sección aquí ya que el alumnoId es unívoco
             const studentActivity = allActivityRaw.filter(i => i.alumnoId == s.userId && norm(i.asignatura) === norm(asignatura) && norm(i.parcial) === norm(parcial));
             let hasPending = false;
             studentActivity.forEach(item => {
                 const isDelivered = !!(item.fileId || item.respuestas || item.entregaId);
-                const isGraded = (item.estado === 'Completada' || item.estado === 'Revisada' || item.estado === 'Rechazada');
+                const isGraded = (item.estado === 'Completada' || item.estado === 'Revisada' || item.estado === 'Rechazada' || item.estado === 'Tarea incompleta');
                 if (isDelivered && !isGraded) hasPending = true;
             });
             return { ...s, hasPending, statusText: hasPending ? 'Pendiente' : 'Al día' };
@@ -478,7 +508,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let filtered = studentsWithStatus.filter(s => norm(s.nombre).includes(norm(search)));
 
-        // Aplicar ordenamiento
         filtered.sort((a, b) => {
             let valA = a[studentSort.column];
             let valB = b[studentSort.column];
@@ -500,29 +529,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
         dashboardTableHead.innerHTML = `
             <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer hover:bg-gray-100 sort-btn" data-sort="numeroLista">
+                    Nº ${sortIcon('numeroLista')}
+                </th>
                 <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer hover:bg-gray-100 sort-btn" data-sort="nombre">
-                    Nombre del Alumno ${sortIcon('nombre')}
+                    Alumno ${sortIcon('nombre')}
                 </th>
                 <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer hover:bg-gray-100 sort-btn" data-sort="statusText">
                     Estado ${sortIcon('statusText')}
                 </th>
+                <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">WhatsApp</th>
                 <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th>
             </tr>`;
 
         if (filtered.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-500">No hay alumnos inscritos en esta sección.</td></tr>';
+            submissionsTableBody.innerHTML = '<tr><td colspan="4" class="text-center p-8 text-gray-500">No hay alumnos inscritos.</td></tr>';
             return;
         }
 
         submissionsTableBody.innerHTML = filtered.map((s, idx) => {
             const statusHtml = s.hasPending
-                ? '<span class="text-yellow-600 font-bold">Pendiente</span>'
-                : '<span class="text-green-600 font-bold">Al día</span>';
+                ? '<span class="text-yellow-600 font-bold uppercase text-[10px]">Por Revisar</span>'
+                : '<span class="text-green-600 font-bold uppercase text-[10px]">Al día</span>';
+
+            const phone = s.telefono ? s.telefono.toString().replace(/\D/g, '') : '';
+            const waLink = phone ? `https://wa.me/504${phone}` : null;
+            const waBtn = waLink ? `<a href="${waLink}" target="_blank" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-500 text-white hover:bg-green-600 transition-all shadow-sm"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.438 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.438-9.889 9.886 0 2.225.587 3.841 1.578 5.49l-.903 3.303 3.393-.89zm11.375-7.679c-.161-.268-.589-.428-1.232-.75-.643-.321-3.793-1.872-4.382-2.086-.589-.214-1.018-.321-1.446.321-.428.643-1.661 2.089-2.036 2.518-.375.429-.75.482-1.393.161-.643-.321-2.712-1.001-5.166-3.192-1.91-1.704-3.199-3.808-3.573-4.451-.375-.643-.041-.991.28-1.31.289-.287.643-.75.964-1.125.321-.375.429-.643.643-1.071.214-.428.107-.803-.054-1.125-.161-.321-1.446-3.482-1.982-4.768-.522-1.253-1.054-1.081-1.446-1.101-.375-.02-1.101-.023-1.101-.023s-.75 0-1.125.428c-.375.429-1.446 1.411-1.446 3.442s2.089 3.991 2.303 4.286c.214.295 4.114 6.279 9.957 8.796 1.39.599 2.474.957 3.319 1.224 1.398.444 2.671.381 3.677.23 1.12-.168 3.793-1.554 4.329-3.054.536-1.5 0-2.839-.161-3.107z"/></svg></a>` : '';
 
             return `
                 <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
+                    <td class="p-4 text-gray-400 font-medium">${s.numeroLista || '-'}</td>
                     <td class="p-4 font-bold text-blue-700">${s.nombre}</td>
                     <td class="p-4 text-sm">${statusHtml}</td>
+                    <td class="p-4 text-right">${waBtn}</td>
                     <td class="p-4 text-right">
                         <span class="text-blue-600 font-bold text-sm">Ver detalles &rsaquo;</span>
                     </td>
@@ -541,7 +580,6 @@ document.addEventListener('DOMContentLoaded', () => {
             (isGlobalSearch || (norm(i.asignatura) === norm(asignatura) && norm(i.parcial) === norm(parcial))) &&
             norm(i.titulo).includes(norm(search))
         );
-        // Ordenar por fecha más reciente primero
         filtered.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
         const finalFiltered = filtered.filter(item => {
@@ -549,6 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let itemEstado = 'Pendiente';
             if (item.estado === 'Completada' || item.estado === 'Revisada') itemEstado = 'Completada';
             else if (item.estado === 'Rechazada') itemEstado = 'Rechazada';
+            else if (item.estado === 'Tarea incompleta') itemEstado = 'Tarea incompleta';
             else if (item.fileId || item.respuestas || item.entregaId) itemEstado = 'Por calificar';
             return itemEstado === fEstado;
         });
@@ -559,12 +598,14 @@ document.addEventListener('DOMContentLoaded', () => {
             let statusClass = 'bg-gray-100 text-gray-600'; let statusText = 'Pendiente';
             if (item.estado === 'Completada' || item.estado === 'Revisada') { statusText = 'Completada'; statusClass = 'bg-green-100 text-green-700'; }
             else if (item.estado === 'Rechazada') { statusText = 'Rechazada'; statusClass = 'bg-red-100 text-red-700'; }
+            else if (item.estado === 'Tarea incompleta') { statusText = 'Incompleta'; statusClass = 'bg-pink-100 text-pink-600'; }
             else if (item.fileId || item.respuestas || item.entregaId) { statusText = 'Por calificar'; statusClass = 'bg-yellow-100 text-yellow-700'; }
 
             let fileHtml = 'N/A';
             if (item.fileId) {
                 const fId = extractDriveId(item.fileId);
-                fileHtml = `<a href="https://drive.google.com/uc?id=${fId}" target="_blank" class="text-blue-600 font-bold hover:underline">Ver</a>`;
+                const url = item.mimeType === 'folder' ? `https://drive.google.com/drive/folders/${fId}` : `https://drive.google.com/uc?id=${fId}`;
+                fileHtml = `<a href="${url}" target="_blank" class="text-blue-600 font-bold hover:underline">Ver</a>`;
             }
 
             return `
@@ -676,12 +717,12 @@ document.addEventListener('DOMContentLoaded', () => {
             subjects.forEach(subject => {
                 const subTasks = allTasks.filter(t => t.asignatura === subject);
                 const subExams = allExams.filter(e => e.asignatura === subject);
-                const headers = ['ID Usuario', 'Nombre del Alumno'];
+                const headers = ['Nº Lista', 'ID Usuario', 'Nombre del Alumno'];
                 subTasks.forEach(t => headers.push(t.titulo));
                 subExams.forEach((e, i) => headers.push(`Examen ${i + 1}: ${e.titulo}`));
                 headers.push('TOTAL DE PUNTOS');
                 const data = students.map(student => {
-                    const row = [student.userId, student.nombre]; let total = 0;
+                    const row = [student.numeroLista || '', student.userId, student.nombre]; let total = 0;
                     subTasks.forEach(task => {
                         const sub = taskSubmissions.find(s => s.alumnoId === student.userId && s.titulo === task.titulo);
                         const points = sub ? parseFloat(sub.calificacion || 0) : 0; row.push(points); total += points;
@@ -711,10 +752,22 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('student-name-modal').textContent = entrega.alumnoNombre;
         const flm = document.getElementById('file-link-modal');
         if (entrega.tipo === 'Examen') { flm.href = `results.html?entregaExamenId=${entrega.entregaId}`; flm.textContent = "Ver Respuestas"; }
-        else if (entrega.fileId) { flm.href = `https://drive.google.com/uc?id=${extractDriveId(entrega.fileId)}`; flm.textContent = "Ver Archivo"; }
+        else if (entrega.fileId) {
+            const fId = extractDriveId(entrega.fileId);
+            flm.href = entrega.mimeType === 'folder' ? `https://drive.google.com/drive/folders/${fId}` : `https://drive.google.com/uc?id=${fId}`;
+            flm.textContent = "Ver Archivo";
+        }
         else { flm.href = '#'; flm.textContent = "N/A"; }
         document.getElementById('calificacion').value = entrega.calificacion || '';
-        document.getElementById('estado').value = (entrega.estado === 'Revisada' ? 'Completada' : (entrega.estado || 'Completada'));
+
+        const estadoSelect = document.getElementById('estado');
+        estadoSelect.innerHTML = `
+            <option value="Completada">Completada</option>
+            <option value="Rechazada">Rechazada</option>
+            <option value="Tarea incompleta">Tarea incompleta</option>
+        `;
+        estadoSelect.value = (entrega.estado === 'Revisada' ? 'Completada' : (entrega.estado || 'Completada'));
+
         document.getElementById('comentario').value = entrega.comentario || '';
         gradeModal.classList.remove('hidden');
     }
@@ -731,7 +784,318 @@ document.addEventListener('DOMContentLoaded', () => {
         finally { saveGradeBtn.classList.remove('btn-loading'); }
     };
 
+    // --- MÓDULO 4: Noticias ---
+    let noticiasRaw = [];
+
+    async function fetchNoticiasManagement() {
+        const container = document.getElementById('noticias-management-container');
+        container.innerHTML = '<p class="text-center col-span-3 p-8">Cargando noticias...</p>';
+        try {
+            const res = await fetchApi('TASK', 'getNoticias');
+            if (res.status === 'success') {
+                noticiasRaw = res.data;
+                renderNoticiasManagement();
+            }
+        } catch (e) {
+            container.innerHTML = `<p class="text-red-500 col-span-3 text-center">${e.message}</p>`;
+        }
+    }
+
+    function renderNoticiasManagement() {
+        const container = document.getElementById('noticias-management-container');
+        container.innerHTML = noticiasRaw.map(n => {
+            const imgId = n.imagenesDriveID && n.imagenesDriveID[0];
+            const url = imgId ? `https://lh3.googleusercontent.com/d/${imgId}=w400` : 'imagenes/logo.png';
+            return `
+                <div class="dashboard-card group">
+                    <div class="h-32 rounded-xl overflow-hidden mb-4 relative">
+                        <img src="${url}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all"></div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 line-clamp-1">${n.titulo}</h4>
+                    <p class="text-xs text-gray-400 mb-4">${n.fechaPublicacion}</p>
+                    <div class="flex space-x-2">
+                        <button onclick="window.openEditNoticia('${n.idNoticia}')" class="flex-1 bg-blue-50 text-blue-600 font-bold py-2 rounded-lg text-xs hover:bg-blue-100">Editar</button>
+                        <button onclick="window.deleteNoticia('${n.idNoticia}')" class="bg-red-50 text-red-600 font-bold px-3 py-2 rounded-lg text-xs hover:bg-red-100">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    const formNoticiaContainer = document.getElementById('form-noticia-container');
+    const closeNoticiaForm = document.getElementById('close-noticia-form');
+    const openCreateNoticiaBtn = document.getElementById('open-create-noticia-btn');
+
+    if (openCreateNoticiaBtn) openCreateNoticiaBtn.onclick = () => {
+        document.getElementById('noticia-form').reset();
+        document.getElementById('noticia-id').value = '';
+        document.getElementById('form-noticia-title').textContent = 'Nueva Noticia';
+        document.getElementById('noticia-fecha').value = new Date().toISOString().split('T')[0];
+        document.getElementById('noticia-hora').value = new Date().toTimeString().split(' ')[0].substring(0, 5);
+        if (quillNoticia) quillNoticia.setText('');
+        formNoticiaContainer.classList.remove('hidden');
+    };
+
+    if (closeNoticiaForm) closeNoticiaForm.onclick = () => formNoticiaContainer.classList.add('hidden');
+
+    window.openEditNoticia = (id) => {
+        const n = noticiasRaw.find(x => x.idNoticia === id);
+        if (!n) return;
+        document.getElementById('noticia-id').value = n.idNoticia;
+        document.getElementById('noticia-titulo').value = n.titulo;
+        document.getElementById('noticia-fecha').value = n.fechaPublicacion;
+        document.getElementById('noticia-hora').value = n.horaPublicacion;
+        if (quillNoticia) quillNoticia.root.innerHTML = n.contenidoHTML;
+        document.getElementById('form-noticia-title').textContent = 'Editar Noticia';
+        formNoticiaContainer.classList.remove('hidden');
+    };
+
+    window.deleteNoticia = async (id) => {
+        if (!confirm('¿Eliminar esta noticia?')) return;
+        try {
+            const res = await fetchApi('TASK', 'deleteNoticia', { idNoticia: id });
+            if (res.status === 'success') { fetchNoticiasManagement(); }
+        } catch (e) { alert(e.message); }
+    };
+
+    const noticiaForm = document.getElementById('noticia-form');
+    if (noticiaForm) noticiaForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('noticia-id').value;
+        const btn = document.getElementById('save-noticia-btn');
+        const files = document.getElementById('noticia-images').files;
+
+        btn.disabled = true; btn.textContent = 'Procesando...';
+
+        try {
+            let imagenesDriveID = [];
+            // Si hay archivos, subirlos
+            if (files.length > 0) {
+                for (let file of files) {
+                    const reader = new FileReader();
+                    const data = await new Promise(r => { reader.onload = () => r(reader.result); reader.readAsDataURL(file); });
+                    const uploadRes = await fetchApi('TASK', 'uploadFile', {
+                        userId: currentUser.userId,
+                        tareaId: 'NOTICIA',
+                        parcial: 'NOTICIAS',
+                        asignatura: 'NOTICIAS',
+                        fileName: file.name,
+                        fileData: data
+                    });
+                    if (uploadRes.status === 'success') imagenesDriveID.push(uploadRes.data.fileId);
+                }
+            }
+
+            const payload = {
+                titulo: document.getElementById('noticia-titulo').value,
+                fechaPublicacion: document.getElementById('noticia-fecha').value,
+                horaPublicacion: document.getElementById('noticia-hora').value,
+                contenidoHTML: quillNoticia ? quillNoticia.root.innerHTML : '',
+                imagenesDriveID: imagenesDriveID.length > 0 ? imagenesDriveID : undefined
+            };
+
+            const action = id ? 'updateNoticia' : 'createNoticia';
+            if (id) payload.idNoticia = id;
+
+            const res = await fetchApi('TASK', action, payload);
+            if (res.status === 'success') {
+                alert('Éxito.');
+                formNoticiaContainer.classList.add('hidden');
+                fetchNoticiasManagement();
+            }
+        } catch (e) { alert(e.message); }
+        finally { btn.disabled = false; btn.textContent = 'PUBLICAR NOTICIA'; }
+    };
+
+    // --- MÓDULO: WhatsApp Grupos ---
+    const manageWhatsappBtn = document.getElementById('manage-whatsapp-btn');
+    if (manageWhatsappBtn) manageWhatsappBtn.onclick = async () => {
+        const grado = prompt('Ingrese el grado a configurar (Décimo, Undécimo, Duodécimo):');
+        if (!grado) return;
+        const enlace = prompt(`Ingrese el enlace de invitación para ${grado}:`);
+        if (!enlace) return;
+
+        try {
+            const res = await fetchApi('TASK', 'updateWhatsAppGroup', {
+                grado,
+                enlaceGrupo: enlace,
+                profesorAutor: currentUser.nombre
+            });
+            alert(res.message);
+        } catch (e) { alert(e.message); }
+    };
+
     // --- CRUD Forms ---
+    // Inicializar Quills
+    if (document.getElementById('noticia-editor')) {
+        quillNoticia = new Quill('#noticia-editor', { theme: 'snow', modules: { toolbar: [['bold', 'italic', 'underline'], [{ 'list': 'ordered'}, { 'list': 'bullet' }], ['link', 'image']] } });
+    }
+
+    // Re-estructurar creación de actividades para usar un solo formulario dinámico
+    const openCreateTaskBtn = document.getElementById('open-create-task-btn');
+    const openCreateExamBtn = document.getElementById('open-create-exam-btn');
+
+    function setupActividadForm(tipo) {
+        formActividadTitle.textContent = tipo === 'Tarea' ? 'Nueva Tarea' : 'Nuevo Examen';
+        createActividadForm.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                    <label class="block font-bold text-gray-700 mb-2">Título</label>
+                    <input type="text" name="titulo" class="w-full p-4 border rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none" required>
+                </div>
+                ${tipo === 'Tarea' ? `
+                <div>
+                    <label class="block font-bold text-gray-700 mb-2">Tipo de Tarea</label>
+                    <select name="tipo" class="w-full p-4 border rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none">
+                        <option value="Tarea">Tarea Normal</option>
+                        <option value="Credito Extra">Crédito Extra</option>
+                    </select>
+                </div>
+                ` : ''}
+                <div>
+                    <label class="block font-bold text-gray-700 mb-2">Asignatura</label>
+                    <input type="text" name="asignatura" class="w-full p-4 border rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none" required>
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-2">Grado</label>
+                    <select name="gradoAsignado" class="w-full p-4 border rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none" required>
+                        <option value="Décimo">Décimo</option>
+                        <option value="Undécimo">Undécimo</option>
+                        <option value="Duodécimo">Duodécimo</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-2">Sección (Opcional)</label>
+                    <input type="text" name="seccionAsignada" placeholder="A, B o C" class="w-full p-4 border rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none">
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-2">Parcial</label>
+                    <select name="parcial" class="w-full p-4 border rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none">
+                        <option value="Primer Parcial">Primer Parcial</option>
+                        <option value="Segundo Parcial">Segundo Parcial</option>
+                        <option value="Tercer Parcial">Tercer Parcial</option>
+                        <option value="Cuarto Parcial">Cuarto Parcial</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-2">Fecha Límite</label>
+                    <input type="date" name="fechaLimite" class="w-full p-4 border rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none" required>
+                </div>
+                ${tipo === 'Examen' ? `
+                <div>
+                    <label class="block font-bold text-gray-700 mb-2">Tiempo Límite (min)</label>
+                    <input type="number" name="tiempoLimite" class="w-full p-4 border rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none" value="60">
+                </div>
+                ` : ''}
+                <div class="md:col-span-2">
+                    <label class="block font-bold text-gray-700 mb-2">Descripción / Instrucciones</label>
+                    <div id="actividad-editor" class="h-48 mb-12"></div>
+                </div>
+                ${tipo === 'Examen' ? `
+                <div class="md:col-span-2 border-t pt-6">
+                    <h4 class="text-xl font-bold mb-4">Preguntas del Examen</h4>
+                    <div id="preguntas-container" class="space-y-4 mb-6"></div>
+                    <button type="button" id="add-question-btn" class="bg-gray-800 text-white px-4 py-2 rounded-xl text-sm font-bold">+ Añadir Pregunta</button>
+                </div>
+                ` : ''}
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl hover:bg-blue-700 transition-all text-xl mt-8">CREAR ${tipo.toUpperCase()}</button>
+        `;
+
+        quillTarea = new Quill('#actividad-editor', { theme: 'snow' });
+
+        if (tipo === 'Examen') {
+            const aqb = document.getElementById('add-question-btn');
+            const pc = document.getElementById('preguntas-container');
+            aqb.onclick = () => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'p-4 border rounded-2xl bg-gray-50 relative question-block';
+                qDiv.innerHTML = `
+                    <button type="button" class="absolute top-4 right-4 text-red-500" onclick="this.parentElement.remove()">✕</button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="text-xs font-bold uppercase text-gray-400">Texto de la Pregunta</label>
+                            <input type="text" class="w-full p-2 border rounded-lg question-text" required>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold uppercase text-gray-400">Tipo</label>
+                            <select class="w-full p-2 border rounded-lg question-type-select">
+                                <option value="opcion_multiple">Opción Múltiple</option>
+                                <option value="verdadero_falso">Verdadero/Falso</option>
+                                <option value="completacion">Completación</option>
+                            </select>
+                        </div>
+                        <div class="options-area"></div>
+                        <div class="md:col-span-2">
+                            <label class="text-xs font-bold uppercase text-gray-400">Respuesta Correcta</label>
+                            <input type="text" class="w-full p-2 border rounded-lg correct-answer" required>
+                        </div>
+                    </div>
+                `;
+                pc.appendChild(qDiv);
+                const s = qDiv.querySelector('.question-type-select');
+                const oa = qDiv.querySelector('.options-area');
+                s.onchange = () => {
+                    if (s.value === 'opcion_multiple') oa.innerHTML = `<label class="text-xs font-bold uppercase text-gray-400">Opciones (sep. por comas)</label><input type="text" class="w-full p-2 border rounded-lg question-options" placeholder="A, B, C, D">`;
+                    else if (s.value === 'verdadero_falso') oa.innerHTML = `<input type="hidden" class="question-options" value="Verdadero, Falso">`;
+                    else oa.innerHTML = '';
+                };
+                s.onchange();
+            };
+        }
+
+        formActividadContainer.classList.remove('hidden');
+        formActividadContainer.dataset.tipo = tipo;
+        window.scrollTo({ top: formActividadContainer.offsetTop - 100, behavior: 'smooth' });
+    }
+
+    if (openCreateTaskBtn) openCreateTaskBtn.onclick = () => setupActividadForm('Tarea');
+    if (openCreateExamBtn) openCreateExamBtn.onclick = () => setupActividadForm('Examen');
+    if (document.getElementById('close-actividad-form')) document.getElementById('close-actividad-form').onclick = () => formActividadContainer.classList.add('hidden');
+
+    if (createActividadForm) createActividadForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const tipo = formActividadContainer.dataset.tipo;
+        const formData = new FormData(e.target);
+        const basePayload = Object.fromEntries(formData.entries());
+        basePayload.descripcion = quillTarea.root.innerHTML;
+        basePayload.profesorId = currentUser.userId;
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.textContent = 'Guardando...';
+
+        try {
+            let res;
+            if (tipo === 'Tarea') {
+                res = await fetchApi('TASK', 'createTask', basePayload);
+            } else {
+                const preguntas = [];
+                document.querySelectorAll('.question-block').forEach(qb => {
+                    const t = qb.querySelector('.question-type-select').value;
+                    const q = {
+                        preguntaTipo: t,
+                        textoPregunta: qb.querySelector('.question-text').value,
+                        respuestaCorrecta: qb.querySelector('.correct-answer').value,
+                        opciones: {}
+                    };
+                    const o = qb.querySelector('.question-options')?.value || '';
+                    if (t === 'opcion_multiple' || t === 'verdadero_falso') o.split(',').forEach((opt, i) => { q.opciones[['A','B','C','D'][i]] = opt.trim(); });
+                    preguntas.push(q);
+                });
+                res = await fetchApi('EXAM', 'createExam', { ...basePayload, preguntas });
+            }
+            if (res.status === 'success') {
+                alert('Creado con éxito.');
+                formActividadContainer.classList.add('hidden');
+                fetchManagementData();
+            }
+        } catch (err) { alert(err.message); }
+        finally { btn.disabled = false; btn.textContent = `CREAR ${tipo.toUpperCase()}`; }
+    };
+
     if (createAssignmentForm) createAssignmentForm.onsubmit = async (e) => {
         e.preventDefault(); const btn = e.target.querySelector('button[type="submit"]'); btn.classList.add('btn-loading');
         try {

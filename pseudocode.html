@@ -953,6 +953,7 @@ FinAlgoritmo</div>
             const tokens = tokenizer.tokenize();
             const parser = new Parser(tokens);
             try {
+                parser.profile = currentProfile;
                 stepProgram = parser.parse();
             } catch (e) {
                 printToConsole(`ERROR ${e.type || "Sintáctico"}: ${e.message} (Línea ${e.line || '?'})`);
@@ -2283,6 +2284,7 @@ FinAlgoritmo</div>
             const parser = new Parser(tokens);
             let program;
             try {
+                parser.profile = currentProfile;
                 program = parser.parse();
             } catch (e) {
                 printToConsole(`ERROR ${e.type || "Sintáctico"}: ${e.message} (Línea ${e.line || '?'})`);

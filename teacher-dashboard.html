@@ -14,8 +14,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- SheetJS for Excel export -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <!-- Quill for Rich Text Editing -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=11">
+    <link rel="stylesheet" href="css/style.css?v=12">
 </head>
 <body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
 
@@ -104,15 +107,14 @@
             </div>
 
             <nav class="flex flex-nowrap overflow-x-auto gap-2 md:gap-3 mb-6 pb-2 scroll-horizontal-clean">
-                <button id="nav-dashboard" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-blue-600 text-white">Dashboard</button>
-                <button id="nav-gestion" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Gestión de Tareas</button>
-                <button id="nav-reportes" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Reportes Excel</button>
-                <button id="nav-crear" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Tarea</button>
-                <button id="nav-crear-examen" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Crear Examen</button>
+                <button id="nav-entregas" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-blue-600 text-white">1. Entregas</button>
+                <button id="nav-reportes" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">2. Reportes</button>
+                <button id="nav-tareas" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">3. Tareas</button>
+                <button id="nav-noticias" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">4. Noticias</button>
             </nav>
 
-            <!-- Sección de Dashboard (Entregas) -->
-            <section id="section-dashboard" class="animate-fade-in-up">
+            <!-- Sección 1: Entregas (Operativo) -->
+            <section id="section-entregas" class="animate-fade-in-up">
                  <div class="flex flex-col space-y-4 mb-6">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <h2 class="text-2xl font-bold text-gray-800" id="dashboard-level-title">Control de Entregas</h2>
@@ -162,28 +164,7 @@
                 </div>
             </section>
 
-            <!-- Sección de Gestión de Tareas -->
-            <section id="section-gestion" class="hidden animate-fade-in-up">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Gestión de Tareas y Exámenes</h2>
-                <div class="table-container overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100">
-                    <table class="w-full">
-                        <thead class="bg-gray-50 border-b border-gray-100">
-                            <tr>
-                                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Título</th>
-                                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Materia</th>
-                                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado/Secc</th>
-                                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Fecha Límite</th>
-                                <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tasks-management-table-body" class="divide-y divide-gray-100 text-sm">
-                            <!-- Las tareas/exámenes se cargarán aquí -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Sección de Reportes -->
+            <!-- Sección 2: Reportes (Académico) -->
             <section id="section-reportes" class="hidden animate-fade-in-up">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Exportación de Reportes a Excel</h2>
                 <div class="dashboard-card max-w-2xl mx-auto">
@@ -224,125 +205,97 @@
                 </div>
             </section>
 
-            <!-- Sección de Crear Tarea -->
-            <section id="section-crear" class="hidden animate-fade-in-up">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Crear Nueva Tarea</h2>
-                <div class="dashboard-card">
-                    <form id="create-assignment-form">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            <div>
-                                <label for="titulo" class="block font-bold text-gray-700 mb-2">Título</label>
-                                <input type="text" id="titulo" name="titulo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
-                            </div>
-                            <div>
-                                <label for="tipo" class="block font-bold text-gray-700 mb-2">Tipo</label>
-                                <select id="tipo" name="tipo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all">
-                                    <option value="Tarea">Tarea</option>
-                                    <option value="Examen">Examen</option>
-                                    <option value="Credito Extra">Crédito Extra</option>
-                                </select>
-                            </div>
-                            <div id="credito-extra-fields" class="hidden md:col-span-2">
-                                <label for="tareaOriginalId" class="block font-bold text-gray-700 mb-2">Seleccionar Tarea Original</label>
-                                <select id="tareaOriginalId" name="tareaOriginalId" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all">
-                                    <option value="">Seleccione una tarea...</option>
-                                </select>
-                            </div>
-                            <div class="md:col-span-2">
-                                <label for="descripcion" class="block font-bold text-gray-700 mb-2">Descripción</label>
-                                <textarea id="descripcion" name="descripcion" rows="4" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all"></textarea>
-                            </div>
-                             <div>
-                                <label for="parcial" class="block font-bold text-gray-700 mb-2">Parcial</label>
-                                <select id="parcial" name="parcial" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
-                                    <option value="Primer Parcial">Primer Parcial</option>
-                                    <option value="Segundo Parcial">Segundo Parcial</option>
-                                    <option value="Tercer Parcial">Tercer Parcial</option>
-                                    <option value="Cuarto Parcial">Cuarto Parcial</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="asignatura" class="block font-bold text-gray-700 mb-2">Asignatura</label>
-                                <input type="text" id="asignatura" name="asignatura" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
-                            </div>
-                            <div>
-                                <label for="gradoAsignado" class="block font-bold text-gray-700 mb-2">Grado Asignado</label>
-                                <select id="gradoAsignado" name="gradoAsignado" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
-                                    <option value="">Selecciona un Grado</option>
-                                    <option value="Décimo">Décimo</option>
-                                    <option value="Undécimo">Undécimo</option>
-                                    <option value="Duodécimo">Duodécimo</option>
-                                </select>
-                            </div>
-                             <div>
-                                <label for="seccionAsignada" class="block font-bold text-gray-700 mb-2">Sección (Opcional)</label>
-                                <input type="text" id="seccionAsignada" name="seccionAsignada" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all">
-                            </div>
-                            <div>
-                                <label for="fechaLimite" class="block font-bold text-gray-700 mb-2">Fecha Límite</label>
-                                <input type="date" id="fechaLimite" name="fechaLimite" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="mt-10 bg-blue-600 text-white font-bold py-4 px-10 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">Crear Tarea</button>
+            <!-- Sección 3: Tareas (Gestión y Creación) -->
+            <section id="section-tareas" class="hidden animate-fade-in-up">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                    <h2 class="text-2xl font-black text-gray-900 tracking-tight">Gestión de Actividades</h2>
+                    <div class="flex space-x-3">
+                        <button id="open-create-task-btn" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md hover:bg-blue-700 transition-all">+ Nueva Tarea</button>
+                        <button id="open-create-exam-btn" class="bg-purple-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md hover:bg-purple-700 transition-all">+ Nuevo Examen</button>
+                        <button id="manage-whatsapp-btn" class="bg-green-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md hover:bg-green-600 transition-all">WhatsApp Grupos</button>
+                    </div>
+                </div>
+
+                <div id="tareas-list-container" class="table-container bg-white rounded-3xl shadow-sm border border-gray-100 mb-10 overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 border-b border-gray-100">
+                            <tr>
+                                <th class="p-4 text-left">Asignación</th>
+                                <th class="p-4 text-left">Materia</th>
+                                <th class="p-4 text-left">Grado/Secc</th>
+                                <th class="p-4 text-left">Fecha Límite</th>
+                                <th class="p-4 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasks-management-table-body" class="divide-y divide-gray-100">
+                            <!-- Las tareas/exámenes se cargarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Formulario de Creación (Modal u oculto) -->
+                <div id="form-actividad-container" class="hidden dashboard-card bg-white p-8 rounded-3xl shadow-xl border border-gray-100 animate-fade-in-up">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 id="form-actividad-title" class="text-2xl font-black text-gray-900">Crear Tarea</h3>
+                        <button id="close-actividad-form" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    <form id="create-actividad-form" class="space-y-6">
+                        <!-- Campos dinámicos según tipo -->
                     </form>
                 </div>
             </section>
 
-            <!-- Sección de Crear Examen -->
-            <section id="section-crear-examen" class="hidden animate-fade-in-up">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Crear Nuevo Examen</h2>
-                <div class="dashboard-card">
-                    <form id="create-exam-form">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 border-b border-gray-100 pb-4 mb-4">
-                            <div>
-                                <label for="exam-titulo" class="block font-bold text-gray-700 mb-2">Título del Examen</label>
-                                <input type="text" id="exam-titulo" name="titulo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" required>
-                            </div>
-                            <div>
-                                <label for="exam-parcial" class="block font-bold text-gray-700 mb-2">Parcial</label>
-                                <select id="exam-parcial" name="parcial" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all" required>
-                                    <option value="Primer Parcial">Primer Parcial</option>
-                                    <option value="Segundo Parcial">Segundo Parcial</option>
-                                    <option value="Tercer Parcial">Tercer Parcial</option>
-                                    <option value="Cuarto Parcial">Cuarto Parcial</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="exam-asignatura" class="block font-bold text-gray-700 mb-2">Asignatura</label>
-                                <input type="text" id="exam-asignatura" name="asignatura" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" required>
-                            </div>
-                            <div>
-                                <label for="exam-grado" class="block font-bold text-gray-700 mb-2">Grado Asignado</label>
-                                <select id="exam-grado" name="gradoAsignado" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" required>
-                                    <option value="">Selecciona un Grado</option>
-                                    <option value="Décimo">Décimo</option>
-                                    <option value="Undécimo">Undécimo</option>
-                                    <option value="Duodécimo">Duodécimo</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="exam-seccion" class="block font-bold text-gray-700 mb-2">Sección (Opcional)</label>
-                                <input type="text" id="exam-seccion" name="seccionAsignada" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all">
-                            </div>
-                            <div>
-                                <label for="exam-fechaLimite" class="block font-bold text-gray-700 mb-2">Fecha Límite</label>
-                                <input type="date" id="exam-fechaLimite" name="fechaLimite" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" required>
-                            </div>
-                             <div>
-                                <label for="exam-tiempoLimite" class="block font-bold text-gray-700 mb-2">Tiempo Límite (minutos)</label>
-                                <input type="number" id="exam-tiempoLimite" name="tiempoLimite" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 transition-all" min="1">
-                            </div>
-                        </div>
+            <!-- Sección 4: Noticias (Módulo de Creación) -->
+            <section id="section-noticias" class="hidden animate-fade-in-up">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-black text-gray-900 tracking-tight">Publicación de Noticias</h2>
+                    <button id="open-create-noticia-btn" class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg hover:bg-blue-700 transition-all">+ Nueva Noticia</button>
+                </div>
 
-                        <div id="questions-container" class="space-y-2">
-                            <!-- Las preguntas se añadirán aquí dinámicamente -->
-                        </div>
+                <div id="noticias-management-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Lista de noticias editables -->
+                </div>
 
-                        <div class="flex flex-col sm:flex-row items-center justify-between mt-12 gap-4">
-                            <button type="button" id="add-question-btn" class="w-full sm:w-auto bg-green-500 text-white font-bold py-3 px-6 rounded-xl shadow hover:shadow-lg transition-all">Añadir Pregunta</button>
-                            <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white font-bold py-4 px-10 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">Guardar Examen</button>
+                <div id="form-noticia-container" class="hidden fixed inset-0 z-[80] bg-black bg-opacity-50 flex items-center justify-center p-4">
+                    <div class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh] animate-scale-up">
+                        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+                            <h3 id="form-noticia-title" class="text-2xl font-black text-gray-900">Nueva Noticia</h3>
+                            <button id="close-noticia-form" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
                         </div>
-                    </form>
+                        <div class="p-8 overflow-y-auto">
+                            <form id="noticia-form" class="space-y-6">
+                                <input type="hidden" id="noticia-id">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="md:col-span-2">
+                                        <label class="block font-bold text-gray-700 mb-2">Título de la Noticia</label>
+                                        <input type="text" id="noticia-titulo" class="w-full p-4 border rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none" required>
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-2">Fecha de Publicación</label>
+                                        <input type="date" id="noticia-fecha" class="w-full p-4 border rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none" required>
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-2">Hora de Publicación</label>
+                                        <input type="time" id="noticia-hora" class="w-full p-4 border rounded-2xl focus:ring-2 focus:ring-blue-400 outline-none" required>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block font-bold text-gray-700 mb-2">Cuerpo de la Noticia (Formato Enriquecido)</label>
+                                        <div id="noticia-editor" class="h-64 mb-12"></div>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block font-bold text-gray-700 mb-2">Imágenes (Subir a Drive)</label>
+                                        <input type="file" id="noticia-images" multiple accept="image/*" class="w-full p-4 border-2 border-dashed rounded-2xl">
+                                        <div id="noticia-images-preview" class="flex flex-wrap gap-4 mt-4"></div>
+                                    </div>
+                                </div>
+                                <button type="submit" id="save-noticia-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl hover:bg-blue-700 transition-all text-xl">PUBLICAR NOTICIA</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>

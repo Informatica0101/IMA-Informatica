@@ -338,6 +338,7 @@ select.p-2.border.rounded-xl,
 .open-submission-modal,
 .grade-btn,
 #nav-dashboard.bg-blue-600,
+#nav-entregas.bg-blue-600,
 .bg-blue-600.text-white {
     background: linear-gradient(180deg, #2563eb 0%, #f3f4f6 250%) !important;
     box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
@@ -346,7 +347,8 @@ select.p-2.border.rounded-xl,
 
 .open-submission-modal:hover,
 .grade-btn:hover,
-#nav-dashboard.bg-blue-600:hover {
+#nav-dashboard.bg-blue-600:hover,
+#nav-entregas.bg-blue-600:hover {
     background: linear-gradient(180deg, #1d4ed8 0%, #e5e7eb 250%) !important;
     transform: none !important;
 }

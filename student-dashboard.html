@@ -96,9 +96,14 @@
 
     <main class="mt-[5rem] md:mt-[5rem] pb-12 flex-grow">
         <div class="container mx-auto px-5">
-            <div class="mb-8 text-center md:text-left">
-                <h1 class="text-3xl font-extrabold text-gray-800">Panel de Estudiante</h1>
-                <p class="text-lg text-gray-600 font-medium">Hola, <span id="student-name" class="text-blue-600 font-bold"></span>! Bienvenido a tu portal.</p>
+            <div class="mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-center md:text-left">
+                    <h1 class="text-3xl font-black text-gray-900 tracking-tight">Panel de Estudiante</h1>
+                    <p class="text-lg text-gray-600 font-medium">¡Hola, <span id="student-name" class="text-blue-600 font-bold"></span>! Bienvenido a tu portal.</p>
+                </div>
+                <div id="whatsapp-group-container">
+                    <!-- Botón de WhatsApp dinámico -->
+                </div>
             </div>
 
             <div class="grid grid-cols-1 gap-8">
@@ -131,9 +136,10 @@
 
             <form id="submission-form" class="space-y-6">
                 <div>
-                    <label for="file-input" class="block font-semibold text-gray-700 mb-3">Seleccionar Archivo (Imagen, PDF, Word)</label>
+                    <label for="file-input" class="block font-semibold text-gray-700 mb-3">Seleccionar Archivos (Imágenes, PDF, Programación)</label>
                     <div class="relative group">
-                        <input type="file" id="file-input" name="file-input" accept="image/*,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="w-full p-3 border-2 border-dashed border-gray-300 rounded-xl focus:border-blue-500 transition-colors">
+                        <input type="file" id="file-input" name="file-input" multiple accept="image/*,application/pdf,.psc,.html,.js,.css" class="w-full p-3 border-2 border-dashed border-gray-300 rounded-xl focus:border-blue-500 transition-colors">
+                        <p class="mt-2 text-xs text-gray-500">Soportado: Imágenes (JPG, PNG), PDF (hasta 50MB), PSeInt (.psc), HTML, JS, CSS.</p>
                     </div>
                 </div>
 

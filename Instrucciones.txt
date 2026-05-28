@@ -18,11 +18,27 @@ ESTADO DE LAS TAREAS (RESUMEN)
 [A-45] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-51] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-53] COMPLETADA (PENDIENTE DE REVISIÓN)
+[A-58] COMPLETADA (PENDIENTE DE REVISIÓN)
 
 ------------------------------------------------------------------------------------------------
 
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
+
+TAREA: [A-58]
+TÍTULO: Modernización y Reestructuración Integral de la Plataforma (V3.0)
+ÁREA: Fullstack (Frontend, Backend, UI/UX)
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Implementado sistema de recuperación de contraseña con tokens HMAC.
+- Desarrollado módulo global "Mi Perfil" con actualización de campos y cambio de contraseña.
+- Rediseñada Landing Page con Hero profesional, noticias dinámicas y filtrado por grado.
+- Optimizado Dashboard Estudiante con multi-subidor secuencial, compresión y nuevos formatos (.psc, .js, etc).
+- Reestructurado Dashboard Docente en 4 secciones obligatorias con Editor RTF (Quill).
+- Integración completa con WhatsApp (Botones directos y gestión de grupos por grado).
+- Potenciado entorno PSeInt con perfiles de sintaxis y guardado silencioso a Drive.
+- Estandarizada paleta de colores institucional y tipografía Inter.
+- Actualizada PWA (sw.js v12) con todos los nuevos activos.
 
 TAREA: [A-57]
 TÍTULO: Presentaciones Mayo 17 y 24 (Prog Lógica y Bordes/Enlaces)

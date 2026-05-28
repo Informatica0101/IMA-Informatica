@@ -93,7 +93,7 @@ AUDITORÍA ROBUSTEZ DRIVE - ACCESO DENEGADO (23/03/2026)
 AUDITORÍA DASHBOARD ESTUDIANTE - PESTAÑAS POR PARCIAL (24/03/2026)
 -----------------------------------------------------------------
 - Archivo: student-dashboard.html, js/student.js
-- Hallazgo: El dashboard del estudiante muestra todas las tareas en una sola lista, lo que dificulta la organización por periodos académicos.
+- Hallazgo: El dashboard del estudiante muestra todas las tareas en una sola lista, lo que dificultaba la organización por periodos académicos.
 - Plan de Acción:
   - Implementar sistema de pestañas (tabs) usando Bootstrap 5.
   - Agrupar tareas por parcial (IV > III > II > I).
@@ -139,3 +139,36 @@ AUDITORÍA PRESENTACIONES SEMANA 10-24 MAYO (10/05/2026)
 - Hallazgo Contenido (Programación): Se corrigió la presentación del 17 de mayo para enfocarse exclusivamente en "Programación Lógica" y "Bucle Repetir", integrando definiciones exactas de "objeto" y "relación" del PDF base (p.58).
 - Hallazgo Contenido (Programación 24 Mayo): Se generó la presentación sobre Bases de Datos utilizando la Sección 7 del PDF "Programación Segunda Unidad", siguiendo el esquema de 16 slides y el plan de clases.
 - Hallazgo UX: Se validó que el quiz interactivo de 10 preguntas funcione correctamente con el nuevo motor de Tailwind v4 y mantenga la retroalimentación visual cromática.
+
+AUDITORÍA DE MODERNIZACIÓN INTEGRAL (25/05/2026)
+================================================
+
+1. ARCHIVO: index.html & js/index-ui.js
+--------------------------------------
+- Hallazgo: La landing page carecía de dinamismo y personalización.
+- Resolución: Rediseño completo con paleta institucional. Implementado sistema de noticias dinámicas desde Spreadsheet. Añadido saludo personalizado "¡Bienvenido, [Nombre]!" y filtrado de descargas/cursos por grado para estudiantes autenticados.
+
+2. ARCHIVO: forgot-password.html & backend/user-service/Code.gs
+---------------------------------------------------------------
+- Hallazgo: No existía recuperación de contraseña segura.
+- Resolución: Implementado flujo completo con tokens HMAC-SHA256, expiración de 1 hora y envío de correo (MailApp). Actualizada base de datos para manejar 'Teléfono' y 'Número de Lista'.
+
+3. ARCHIVO: js/ui-common.js
+---------------------------
+- Hallazgo: La gestión de perfil no era accesible globalmente.
+- Resolución: Creado módulo "Mi Perfil" inyectado dinámicamente. Permite edición de datos personales y cambio de contraseña con validación de la actual.
+
+4. ARCHIVO: student-dashboard.html & js/student.js
+--------------------------------------------------
+- Hallazgo: El sistema de subida era propenso a errores en redes móviles y faltaba soporte para archivos técnicos.
+- Resolución: Implementado "High-Fidelity Sequential Multi-Uploader" con compresión Canvas (JPG 0.7), barra de progreso real por archivo y detección de duplicados. Soporte extendido para .psc, .html, .js, .css y PDF (50MB). Integrada lógica de "Tarea incompleta" para re-entregas parciales.
+
+5. ARCHIVO: teacher-dashboard.html & js/teacher.js
+--------------------------------------------------
+- Hallazgo: Desorden funcional y falta de herramientas de edición avanzada.
+- Resolución: Reestructuración obligatoria en 4 secciones (Entregas, Reportes, Tareas, Noticias). Integrado Quill.js (RTF). Implementado reporte Excel multi-hoja sincronizado con Nº de Lista. Añadido botón WhatsApp directo en lista de alumnos.
+
+6. ARCHIVO: pseudocode.html
+---------------------------
+- Hallazgo: Menús inactivos y falta de persistencia.
+- Resolución: Menús (Archivo, Editar, Configurar, Ejecutar, Ayuda) 100% funcionales. Implementados perfiles "Flexible" y "Estricto" (Parser switch). Añadido guardado silencioso automático a Drive por cada ejecución/guardado del alumno.

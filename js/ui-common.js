@@ -137,9 +137,191 @@ window.setupCommonUI = function() {
     // Render Mobile Nav
     window.renderMobileNav();
 
+    // --- Profile Logic ("Mi Perfil") ---
+    setupProfileLogic();
+
     // (A-28) Signal that common UI is ready
     document.dispatchEvent(new CustomEvent('common-ui-ready'));
 };
+
+/**
+ * Global Profile Module ("Mi Perfil")
+ */
+function setupProfileLogic() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return;
+
+    // Create Profile Modal HTML if it doesn't exist
+    if (!document.getElementById('profile-modal')) {
+        const modalHtml = `
+            <div id="profile-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300">
+                <div class="bg-white w-full max-w-lg mx-4 rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+                        <h3 class="text-2xl font-bold text-gray-800">Mi Perfil</h3>
+                        <button id="close-profile-modal" class="text-gray-500 hover:text-gray-700">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    <div class="p-6 overflow-y-auto">
+                        <form id="profile-form" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre Completo</label>
+                                    <input type="text" id="profile-nombre" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Correo Electrónico</label>
+                                    <input type="email" id="profile-email" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Teléfono</label>
+                                    <input type="text" id="profile-telefono" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Ej. 8888-8888">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Rol / Grado</label>
+                                    <input type="text" id="profile-info" class="w-full px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-gray-500 outline-none" readonly>
+                                </div>
+                            </div>
+                            <button type="submit" id="save-profile-btn" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-all shadow-md">
+                                Guardar Cambios
+                            </button>
+                        </form>
+
+                        <div class="mt-10 pt-6 border-t border-gray-100">
+                            <h4 class="text-lg font-bold text-gray-800 mb-4">Cambiar Contraseña</h4>
+                            <form id="change-password-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Contraseña Actual</label>
+                                    <input type="password" id="current-password" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 outline-none" required>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nueva Contraseña</label>
+                                        <input type="password" id="new-password" minlength="6" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 outline-none" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-1">Confirmar Nueva</label>
+                                        <input type="password" id="confirm-password" minlength="6" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 outline-none" required>
+                                    </div>
+                                </div>
+                                <button type="submit" id="change-pass-btn" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl hover:bg-black transition-all shadow-md">
+                                    Actualizar Contraseña
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    const modal = document.getElementById('profile-modal');
+    const modalContent = modal.querySelector('div');
+    const closeBtn = document.getElementById('close-profile-modal');
+    const profileForm = document.getElementById('profile-form');
+    const passwordForm = document.getElementById('change-password-form');
+
+    window.openProfileModal = function() {
+        document.getElementById('profile-nombre').value = currentUser.nombre;
+        document.getElementById('profile-email').value = currentUser.email || "";
+        document.getElementById('profile-telefono').value = currentUser.telefono || "";
+        document.getElementById('profile-info').value = currentUser.rol === 'Profesor' ? 'Docente' : `${currentUser.grado} - ${currentUser.seccion}`;
+
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modalContent.classList.remove('scale-95');
+        modalContent.classList.add('scale-100');
+    };
+
+    function closeModal() {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modalContent.classList.remove('scale-100');
+        modalContent.classList.add('scale-95');
+    }
+
+    closeBtn.onclick = closeModal;
+    modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+
+    profileForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('save-profile-btn');
+        const payload = {
+            userId: currentUser.userId,
+            nombre: document.getElementById('profile-nombre').value,
+            email: document.getElementById('profile-email').value,
+            telefono: document.getElementById('profile-telefono').value
+        };
+
+        btn.disabled = true;
+        btn.textContent = 'Guardando...';
+
+        try {
+            const res = await window.fetchApi('USER', 'updateProfile', payload);
+            if (res.status === 'success') {
+                alert(res.message);
+                // Actualizar localstorage
+                currentUser.nombre = payload.nombre;
+                currentUser.email = payload.email;
+                currentUser.telefono = payload.telefono;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                window.location.reload(); // Recargar para reflejar cambios (saludo, etc)
+            } else {
+                alert(res.message);
+            }
+        } catch (err) {
+            alert("Error al actualizar perfil.");
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Guardar Cambios';
+        }
+    };
+
+    passwordForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const curPass = document.getElementById('current-password').value;
+        const newPass = document.getElementById('new-password').value;
+        const confPass = document.getElementById('confirm-password').value;
+        const btn = document.getElementById('change-pass-btn');
+
+        if (newPass !== confPass) {
+            alert("Las nuevas contraseñas no coinciden.");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Actualizando...';
+
+        try {
+            const res = await window.fetchApi('USER', 'changePassword', {
+                userId: currentUser.userId,
+                currentPassword: curPass,
+                newPassword: newPass
+            });
+            if (res.status === 'success') {
+                alert(res.message);
+                passwordForm.reset();
+                closeModal();
+            } else {
+                alert(res.message);
+            }
+        } catch (err) {
+            alert("Error al cambiar contraseña.");
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Actualizar Contraseña';
+        }
+    };
+
+    // Agregar botón "Mi Perfil" a los navs existentes si hay usuario
+    const desktopNav = document.querySelector('nav.hidden.md:flex');
+    if (desktopNav) {
+        const profileBtn = document.createElement('button');
+        profileBtn.className = 'text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none flex items-center space-x-1';
+        profileBtn.innerHTML = `<span>Mi Perfil</span>`;
+        profileBtn.onclick = window.openProfileModal;
+        desktopNav.insertBefore(profileBtn, desktopNav.firstChild);
+    }
+}
 
 /**
  * PWA Logic: Installation and Service Worker registration
