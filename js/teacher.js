@@ -20,16 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const navProyectos = document.getElementById('nav-proyectos');
     const navLogros = document.getElementById('nav-logros');
     const navNews = document.getElementById('nav-news');
-    const navReportes = document.getElementById('nav-reportes');
-    const navExcel = document.getElementById('nav-excel');
+    const navReportsOld = document.getElementById('nav-reportes');
 
-    const sectionDashboard = document.getElementById('section-dashboard');
+    const sectionAcademicReports = document.getElementById('section-dashboard');
     const sectionTareas = document.getElementById('section-tareas');
     const sectionProyectos = document.getElementById('section-proyectos');
     const sectionLogros = document.getElementById('section-logros');
     const sectionNews = document.getElementById('section-news');
     const sectionReportes = document.getElementById('section-reportes');
-    const sectionOperationalDashboard = document.getElementById('section-operational-dashboard');
 
     const tareasListView = document.getElementById('tareas-list-view');
     const tareasCreateView = document.getElementById('tareas-create-view');
@@ -51,10 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFilteredItems = [];
     let navStack = [{ level: 'Grados', data: null }];
     let isNavigating = false;
-    let studentSort = { column: 'numeroLista', direction: 'asc' };
+    let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionOperationalDashboard, sectionDashboard, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionReportes];
-    const allNavLinks = [navDashboard, navTareas, navProyectos, navLogros, navNews, navExcel, navReportes];
+    const allSections = [sectionAcademicReports, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionReportes];
+    const allNavLinks = [navDashboard, navTareas, navProyectos, navLogros, navNews, navReportsOld];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -66,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Hide WhatsApp container if moving away from Dashboard
         const waContainer = document.querySelector('.bg-green-50');
-        if (waContainer && targetSection !== sectionDashboard) waContainer.classList.add('hidden');
+        if (waContainer && targetSection !== sectionAcademicReports) waContainer.classList.add('hidden');
 
         allNavLinks.forEach(link => {
             if (link) {
@@ -79,8 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     navDashboard.addEventListener('click', () => {
-        navigateTo(sectionOperationalDashboard, navDashboard);
-        fetchOperationalDashboard();
+        navigateTo(sectionEntregas, navDashboard);
+        fetchEntregasRecientes();
     });
     navTareas.addEventListener('click', () => {
         navigateTo(sectionTareas, navTareas);
@@ -100,15 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
         navigateTo(sectionNews, navNews);
         fetchNewsManagement();
     });
-        if (navExcel) {
-        navExcel.addEventListener('click', () => {
-            navigateTo(sectionReportes, navExcel);
-        });
-    }
-    navReportes.addEventListener('click', () => {
-        navigateTo(sectionDashboard, navReportes);
-        navStack = [{ level: 'Grados', data: null }];
-        renderCurrentLevel();
+    navReportsOld.addEventListener('click', () => {
+        navigateTo(sectionReportes, navReportsOld);
     });
 
     logoutButton.addEventListener('click', () => {
@@ -130,16 +121,40 @@ document.addEventListener('DOMContentLoaded', () => {
     let quillTask, quillExam, quillEdit, quillNews;
     function initEditors() {
         if (!quillTask && document.getElementById('editor-task-container')) {
-            quillTask = new Quill('#editor-task-container', { theme: 'snow', placeholder: 'Escribe la descripción de la tarea...' });
+            quillTask = new Quill('#editor-task-container', { theme: 'snow', placeholder: 'Escribe la descripción de la tarea...', modules: { toolbar: [
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link', 'image'],
+            ['clean']
+        ] } });
         }
         if (!quillExam && document.getElementById('editor-exam-container')) {
-            quillExam = new Quill('#editor-exam-container', { theme: 'snow', placeholder: 'Escribe las instrucciones del examen...' });
+            quillExam = new Quill('#editor-exam-container', { theme: 'snow', placeholder: 'Escribe las instrucciones del examen...', modules: { toolbar: [
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link', 'image'],
+            ['clean']
+        ] } });
         }
         if (!quillEdit && document.getElementById('editor-edit-container')) {
-            quillEdit = new Quill('#editor-edit-container', { theme: 'snow' });
+            quillEdit = new Quill('#editor-edit-container', { theme: 'snow', modules: { toolbar: [
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link', 'image'],
+            ['clean']
+        ] } });
         }
         if (!quillNews && document.getElementById('editor-news-container')) {
-            quillNews = new Quill('#editor-news-container', { theme: 'snow', placeholder: 'Contenido de la noticia...' });
+            quillNews = new Quill('#editor-news-container', { theme: 'snow', placeholder: 'Contenido de la noticia...', modules: { toolbar: [
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link', 'image'],
+            ['clean']
+        ] } });
         }
     }
     initEditors();
@@ -381,6 +396,63 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- MÓDULO 2: Gestión de Entregas (Navegación Jerárquica) ---
+
+    async function fetchEntregasRecientes() {
+        const tbody = document.getElementById('op-table-body');
+        const thead = document.getElementById('op-table-head');
+        if (!tbody || !thead) return;
+        tbody.innerHTML = '<tr><td class="text-center p-8">Cargando pendientes...</td></tr>';
+
+        try {
+            const res = await fetchApi('TASK', 'getTeacherActivity', { profesorId: currentUser.userId });
+            if (res.status === 'success') {
+                const pending = (res.data || []).filter(i =>
+                    (i.estado === 'Pendiente' || i.estado === 'Pendiente de revisión' || !i.estado) &&
+                    (i.fileId || i.respuestas || i.entregaId)
+                );
+
+                thead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100">
+                    <th class="p-4 text-left font-bold text-gray-500 text-[0.7rem] uppercase">Alumno</th>
+                    <th class="p-4 text-left font-bold text-gray-500 text-[0.7rem] uppercase">Actividad</th>
+                    <th class="p-4 text-left font-bold text-gray-500 text-[0.7rem] uppercase">Fecha</th>
+                    <th class="p-4 text-right font-bold text-gray-500 text-[0.7rem] uppercase">Acción</th>
+                </tr>`;
+
+                if (pending.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center p-8 text-gray-500">No hay tareas pendientes de revisión. ¡Buen trabajo!</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = pending.map((item, idx) => `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="p-4">
+                            <div class="font-bold text-gray-800">${item.alumnoNombre}</div>
+                            <div class="text-[10px] text-gray-400">${item.grado} - ${item.seccion}</div>
+                        </td>
+                        <td class="p-4">
+                            <div class="font-bold text-blue-700">${item.titulo}</div>
+                            <div class="text-[10px] text-gray-400">${item.asignatura} | ${item.tipo}</div>
+                        </td>
+                        <td class="p-4 text-xs text-gray-500">${new Date(item.fecha).toLocaleString()}</td>
+                        <td class="p-4 text-right">
+                            <button class="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-700 op-grade-btn" data-index="${idx}">Calificar</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                tbody.querySelectorAll('.op-grade-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        const item = pending[btn.dataset.index];
+                        openGradeModal(item);
+                    };
+                });
+            }
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-red-500">Error: ${e.message}</td></tr>`;
+        }
+    }
+
+
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
         submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8"><div class="loading-spinner"></div> Cargando actividad...</td></tr>';
@@ -436,9 +508,9 @@ document.addEventListener('DOMContentLoaded', () => {
         switch (current.level) {
             case 'Grados': renderGrados(searchTerm); break;
             case 'Secciones': renderSecciones(current.data.grado, searchTerm); break;
-            case 'Asignaturas': renderAsignaturas(current.data.grado, current.data.seccion, current.data.parcial, searchTerm); break;
-            case 'Parciales': renderParciales(current.data.grado, current.data.seccion, searchTerm); break;
-            case 'Alumnos': renderAlumnos(current.data.grado, current.data.seccion, current.data.parcial, current.data.asignatura, searchTerm); break;
+            case 'Asignaturas': renderAsignaturas(current.data.grado, current.data.seccion, searchTerm); break;
+            case 'Parciales': renderParciales(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
+            case 'Alumnos': renderAlumnos(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
             case 'Detalles': renderDetallesAlumno(current.data.alumnoId, current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
         }
     }
@@ -508,23 +580,22 @@ document.addEventListener('DOMContentLoaded', () => {
         submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${seccion}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Asignaturas &rsaquo;</span></td></tr>`).join('');
     }
 
-        function renderAsignaturas(grado, seccion, parcial, search) {
-        const asignaturas = [...new Set(allAssignmentsRaw.filter(a =>
-            norm(a.grado) === norm(grado) &&
-            (norm(a.seccion) === norm(seccion) || !a.seccion || norm(a.seccion) === 'todas') &&
-            norm(a.parcial) === norm(parcial)
-        ).map(a => a.asignatura))];
-
-        const filtered = asignaturas.filter(asig => norm(asig).includes(norm(search)));
+    function renderAsignaturas(grado, seccion, search) {
+        let asignaturas = [...new Set([
+            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado) && norm(i.seccion) === norm(seccion)).map(i => i.asignatura),
+            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado) && (norm(i.seccion) === norm(seccion) || !i.seccion || norm(i.seccion) === 'todas')).map(i => i.asignatura)
+        ].filter(s => s))];
+        const filtered = asignaturas.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Asignatura</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Alumnos &rsaquo;</span></td></tr>`).join('')
+        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Parciales &rsaquo;</span></td></tr>`).join('');
     }
 
-        function renderParciales(grado, seccion, search) {
-        const parciales = [...new Set(allAssignmentsRaw.filter(a =>
-            norm(a.grado) === norm(grado) && (norm(a.seccion) === norm(seccion) || !a.seccion || norm(a.seccion) === 'todas')
-        ).map(a => a.parcial))].filter(p => p);
+    function renderParciales(grado, seccion, asignatura, search) {
+        let parciales = [...new Set([
+            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado) && norm(i.seccion) === norm(seccion) && norm(i.asignatura) === norm(asignatura)).map(i => i.parcial),
+            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado) && (norm(i.seccion) === norm(seccion) || !i.seccion || norm(i.seccion) === 'todas') && norm(i.asignatura) === norm(asignatura)).map(i => i.parcial)
+        ].filter(p => p))];
 
         const PARCIAL_ORDER = ['Primer Parcial', 'Segundo Parcial', 'Tercer Parcial', 'Cuarto Parcial'];
         parciales.sort((a, b) => PARCIAL_ORDER.indexOf(a) - PARCIAL_ORDER.indexOf(b));
@@ -532,92 +603,139 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = parciales.filter(p => norm(p).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Parcial</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((parcial, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${parcial}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Asignaturas &rsaquo;</span></td></tr>`).join('')
+        submissionsTableBody.innerHTML = filtered.map((parcial, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${parcial}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
     }
 
-        function renderAlumnos(grado, seccion, parcial, asignatura, search) {
+    function renderAlumnos(grado, seccion, asignatura, search) {
         const current = navStack[navStack.length - 1];
         const students = current.data.students || [];
+        const parcial = current.data.parcial;
 
-        // Sorting Logic
-        students.sort((a, b) => {
-            let valA = a[studentSort.column];
-            let valB = b[studentSort.column];
+        // WhatsApp Group Integration
+        const waContainer = document.createElement('div');
+        waContainer.className = "bg-green-50 p-4 rounded-xl mb-6 border border-green-100 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in";
+        waContainer.innerHTML = `
+            <div>
+                <h4 class="font-bold text-green-800 text-sm mb-1">Grupo de WhatsApp de la Clase</h4>
+                <p class="text-green-600 text-[10px]">Comparte el enlace con tus alumnos para este parcial.</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <input type="text" id="wa-link-input" readonly class="bg-white border border-green-200 rounded-lg p-2 text-xs w-64 focus:ring-2 focus:ring-green-400 outline-none transition-all text-gray-500" placeholder="https://chat.whatsapp.com/...">
+                <button id="btn-edit-wa" class="bg-white text-green-700 border border-green-200 px-3 py-2 rounded-lg text-xs font-bold hover:bg-green-100 transition-colors">Editar</button>
+                <button id="btn-save-wa" class="hidden bg-green-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-green-700 transition-colors">Guardar</button>
+            </div>
+        `;
 
-            if (studentSort.column === 'numeroLista') {
-                valA = parseInt(valA) || 999;
-                valB = parseInt(valB) || 999;
-            } else if (studentSort.column === 'estadoTasks') {
-                valA = getStudentSummaryStatus(a.userId, grado, seccion, parcial, asignatura);
-                valB = getStudentSummaryStatus(b.userId, grado, seccion, parcial, asignatura);
-            } else {
-                valA = norm(valA);
-                valB = norm(valB);
+        // Insert waContainer before filters if not already present
+        const existingWa = document.querySelector('.bg-green-50');
+        if (existingWa) existingWa.remove();
+        filtersContainer.parentNode.insertBefore(waContainer, filtersContainer);
+        if (navStack[navStack.length - 1].level !== "Alumnos") waContainer.classList.add("hidden");
+
+        const waInput = document.getElementById('wa-link-input');
+        const btnEditWa = document.getElementById('btn-edit-wa');
+        const btnSaveWa = document.getElementById('btn-save-wa');
+
+        // Fetch current link
+        fetchApi('USER', 'getWhatsAppLink', { grado, seccion }).then(res => {
+            if (res.status === 'success' && res.link) {
+                waInput.value = res.link;
             }
-
-            if (valA < valB) return studentSort.direction === 'asc' ? -1 : 1;
-            if (valA > valB) return studentSort.direction === 'asc' ? 1 : -1;
-            return 0;
         });
 
+        btnEditWa.onclick = () => {
+            waInput.readOnly = false;
+            waInput.classList.remove('text-gray-500');
+            waInput.focus();
+            btnEditWa.classList.add('hidden');
+            btnSaveWa.classList.remove('hidden');
+        };
+
+        btnSaveWa.onclick = async () => {
+            const link = waInput.value.trim();
+            if (link && !link.includes('whatsapp.com')) {
+                alert('Por favor, ingresa un enlace válido de WhatsApp.');
+                return;
+            }
+            btnSaveWa.disabled = true;
+            btnSaveWa.textContent = 'Guardando...';
+            try {
+                const res = await fetchApi('USER', 'saveWhatsAppLink', { grado, seccion, link });
+                if (res.status === 'success') {
+                    waInput.readOnly = true;
+                    waInput.classList.add('text-gray-500');
+                    btnEditWa.classList.remove('hidden');
+                    btnSaveWa.classList.add('hidden');
+                } else {
+                    alert(res.message);
+                }
+            } catch (e) {
+                alert('Error al guardar el enlace.');
+            } finally {
+                btnSaveWa.disabled = false;
+                btnSaveWa.textContent = 'Guardar';
+            }
+        };
+
+        // Tareas y exámenes correspondientes a este contexto
+        const relevantAssignments = allAssignmentsRaw.filter(a =>
+            norm(a.grado) === norm(grado) &&
+            (norm(a.seccion) === norm(seccion) || !a.seccion || norm(a.seccion) === 'todas') &&
+            norm(a.asignatura) === norm(asignatura) &&
+            norm(a.parcial) === norm(parcial)
+        );
+
+        // Sort students by list number
+        students.sort((a, b) => (parseInt(a.numeroLista) || 999) - (parseInt(b.numeroLista) || 999));
         let filtered = students.filter(s => norm(s.nombre).includes(norm(search)));
+
         currentFilteredItems = filtered;
 
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100">
-            <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="numeroLista">Nº</th>
-            <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="nombre">Alumno</th>
-            <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="estadoTasks">Estado Tareas</th>
-            <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th>
-        </tr>`;
+        // Render Horizontal Academic Table
+        let headHtml = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Nº</th>
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Alumno</th>`;
+
+        relevantAssignments.forEach(a => {
+            headHtml += `<th class="p-4 text-center font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${a.titulo}">${a.titulo.substring(0, 10)}${a.titulo.length > 10 ? '...' : ''}</th>`;
+        });
+
+        headHtml += `<th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Total</th></tr>`;
+        dashboardTableHead.innerHTML = headHtml;
 
         if (filtered.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="4" class="text-center p-8 text-gray-500">No hay alumnos.</td></tr>';
+            submissionsTableBody.innerHTML = `<tr><td colspan="${relevantAssignments.length + 3}" class="text-center p-8 text-gray-500">No hay alumnos inscritos.</td></tr>`;
             return;
         }
 
         submissionsTableBody.innerHTML = filtered.map((s, idx) => {
-            const status = getStudentSummaryStatus(s.userId, grado, seccion, parcial, asignatura);
-            let statusBadge = '';
-            if (status === 'Pendiente de revisión') statusBadge = '<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-lg font-bold text-[10px]">Pendiente de revisión</span>';
-            else if (status === 'Incompleta') statusBadge = '<span class="bg-orange-100 text-orange-700 px-2 py-1 rounded-lg font-bold text-[10px]">Incompleta</span>';
-            else if (status === 'Rechazada') statusBadge = '<span class="bg-red-100 text-red-700 px-2 py-1 rounded-lg font-bold text-[10px]">Rechazada</span>';
-            else if (status === 'Completada') statusBadge = '<span class="bg-green-100 text-green-700 px-2 py-1 rounded-lg font-bold text-[10px]">Completada</span>';
-            else statusBadge = '<span class="bg-gray-100 text-gray-500 px-2 py-1 rounded-lg font-bold text-[10px]">Al día</span>';
-
-            return `
-                <tr class="hover:bg-gray-50">
+            let total = 0;
+            let rowsHtml = `
+                <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
                     <td class="p-4 text-gray-400 font-mono text-xs">${s.numeroLista || '-'}</td>
-                    <td class="p-4 font-bold text-blue-700 cursor-pointer show-details-btn" data-index="${idx}">${s.nombre}</td>
-                    <td class="p-4">${statusBadge}</td>
-                    <td class="p-4 text-right">
-                        <button class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white transition-all show-details-btn" data-index="${idx}">Ver Detalles</button>
-                    </td>
-                </tr>`;
+                    <td class="p-4">
+                        <div class="font-bold text-blue-700">${s.nombre}</div>
+                        <div class="text-[10px] text-gray-400 flex items-center gap-1">
+                            <span>${s.email || ''}</span>
+                            ${s.telefono ? `| <a href="https://wa.me/504${s.telefono.replace(/\D/g, '')}" target="_blank" class="text-green-600 hover:underline">WhatsApp</a>` : ''}
+                        </div>
+                    </td>`;
+
+            relevantAssignments.forEach(a => {
+                const sub = allActivityRaw.find(sub =>
+                    sub.alumnoId == s.userId &&
+                    sub.titulo === a.titulo &&
+                    norm(sub.asignatura) === norm(a.asignatura)
+                );
+                const score = sub ? parseFloat(sub.calificacion || 0) : 0;
+                total += score;
+                rowsHtml += `<td class="p-4 text-center font-bold ${score > 0 ? 'text-green-600' : 'text-gray-300'}">${score}</td>`;
+            });
+
+            rowsHtml += `<td class="p-4 text-right font-black text-blue-800">${total}</td></tr>`;
+            return rowsHtml;
         }).join('');
-
-        submissionsTableBody.querySelectorAll('.show-details-btn').forEach(btn => {
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                const item = filtered[btn.dataset.index];
-                openStudentDetailsModal(item.userId, item.nombre, grado, seccion, parcial, asignatura);
-            };
-        });
-    }
-
-    function getStudentSummaryStatus(alumnoId, grado, seccion, parcial, asignatura) {
-        const studentTasks = allActivityRaw.filter(i =>
-            i.alumnoId == alumnoId &&
-            norm(i.grado) === norm(grado) &&
-            norm(i.seccion) === norm(seccion) &&
-            norm(i.parcial) === norm(parcial) &&
-            norm(i.asignatura) === norm(asignatura)
-        );
-
-        if (studentTasks.some(i => i.estado === 'Pendiente' || i.estado === 'Pendiente de revisión' || !i.estado)) return 'Pendiente de revisión';
-        if (studentTasks.some(i => i.estado === 'Tarea incompleta')) return 'Incompleta';
-        if (studentTasks.some(i => i.estado === 'Rechazada')) return 'Rechazada';
-        if (studentTasks.length > 0 && studentTasks.every(i => i.estado === 'Completada' || i.estado === 'Revisada')) return 'Completada';
-        return 'Al día';
     }
 
     function renderDetallesAlumno(alumnoId, grado, seccion, asignatura, search) {
@@ -721,13 +839,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         const service = item.tipo === 'Tarea' ? 'TASK' : 'EXAM';
                         const action = item.tipo === 'Tarea' ? 'deleteSubmission' : 'deleteExamSubmission';
                         const res = await fetchApi(service, action, { entregaId: item.entregaId });
-                        if (res.status === 'success') { alert(res.message); fetchTeacherActivity().then(() => { navigateTo(sectionOperationalDashboard, navDashboard); fetchOperationalDashboard(); }); }
+                        if (res.status === 'success') { alert(res.message); fetchTeacherActivity(); }
                         else throw new Error(res.message);
                     } catch (error) { alert("Error: " + error.message); target.disabled = false; target.textContent = "Eliminar"; }
                 }
                 return;
             }
-                                    const navBtn = target.closest('.nav-btn');
+            const navBtn = target.closest('.nav-btn');
             if (navBtn) {
                 const idx = navBtn.dataset.index;
                 const item = currentFilteredItems[idx];
@@ -739,9 +857,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (current.level === 'Grados') await pushNav('Secciones', { grado: item });
-                else if (current.level === 'Secciones') await pushNav('Parciales', { grado: current.data.grado, seccion: item });
-                else if (current.level === 'Parciales') await pushNav('Asignaturas', { grado: current.data.grado, seccion: current.data.seccion, parcial: item });
-                else if (current.level === 'Asignaturas') await pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, parcial: current.data.parcial, asignatura: item });
+                else if (current.level === 'Secciones') await pushNav('Asignaturas', { grado: current.data.grado, seccion: item });
+                else if (current.level === 'Asignaturas') await pushNav('Parciales', { grado: current.data.grado, seccion: current.data.seccion, asignatura: item });
+                else if (current.level === 'Parciales') await pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: item });
+                else if (current.level === 'Alumnos') await pushNav('Detalles', { alumnoId: item.userId, alumnoNombre: item.nombre, grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: current.data.parcial });
             }
         });
     }
@@ -821,7 +940,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveGradeBtn.classList.add('btn-loading');
         try {
             const res = await fetchApi(type === 'Tarea' ? 'TASK' : 'EXAM', type === 'Tarea' ? 'gradeSubmission' : 'gradeExamSubmission', payload);
-            if (res.status === 'success') { alert('Guardado.'); gradeModal.classList.add('hidden'); fetchTeacherActivity().then(() => { navigateTo(sectionOperationalDashboard, navDashboard); fetchOperationalDashboard(); }); }
+            if (res.status === 'success') { alert('Guardado.'); gradeModal.classList.add('hidden'); fetchTeacherActivity(); }
             else throw new Error(res.message);
         } catch (error) { alert('Error: ' + error.message); }
         finally { saveGradeBtn.classList.remove('btn-loading'); }
@@ -1004,8 +1123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('logros-filter-grado').onchange = fetchLogros;
     document.getElementById('logros-filter-seccion').onchange = fetchLogros;
 
-    fetchTeacherActivity().then(() => { navigateTo(sectionOperationalDashboard, navDashboard); fetchOperationalDashboard(); });
-});
+
 
 // --- MÓDULO: Gestión de Noticias ---
 const newsModal = document.getElementById('news-modal');
@@ -1115,133 +1233,5 @@ function toBase64(file) {
     });
 }
 
-/**
- * MÓDULO: Gestión de Perfil del Profesor
- */
-const profileModal = document.getElementById('profile-modal');
-const openProfileBtn = document.getElementById('open-profile-btn');
-const mobileOpenProfileBtn = document.getElementById('mobile-open-profile-btn');
-const closeProfileModal = document.getElementById('close-profile-modal');
-const profileForm = document.getElementById('profile-form');
-
-const openProfile = () => {
-    document.getElementById('profile-nombre').value = currentUser.nombre;
-    document.getElementById('profile-email').value = currentUser.email || '';
-    profileModal.classList.remove('hidden');
-};
-
-if (openProfileBtn) openProfileBtn.onclick = openProfile;
-if (mobileOpenProfileBtn) mobileOpenProfileBtn.onclick = () => {
-    openProfile();
-    const menu = document.getElementById('mobile-menu-overlay');
-    if (menu) menu.classList.add('hidden');
-};
-
-if (closeProfileModal) closeProfileModal.onclick = () => profileModal.classList.add('hidden');
-
-if (profileForm) {
-    profileForm.onsubmit = async (e) => {
-        e.preventDefault();
-        const submitBtn = profileForm.querySelector('button[type="submit"]');
-        const newPassword = document.getElementById('profile-password').value;
-        const currentPassword = document.getElementById('profile-current-password').value;
-
-
-            if (newPassword !== document.getElementById('profile-password-confirm').value) {
-                alert('Las contraseñas no coinciden.');
-                return;
-            }
-
-        if (newPassword && !currentPassword) {
-            alert('Debe ingresar su contraseña actual para realizar cambios de seguridad.');
-            return;
-        }
-
-        const payload = {
-            userId: currentUser.userId,
-            nombre: document.getElementById('profile-nombre').value,
-            email: document.getElementById('profile-email').value,
-            currentPassword: currentPassword || undefined,
-            password: newPassword || undefined
-        };
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Guardando...';
-
-        try {
-            const res = await fetchApi('USER', 'updateUserProfile', payload);
-            if (res.status === 'success') {
-                alert('Perfil actualizado correctamente.');
-                // Actualizar localstorage
-                currentUser.nombre = payload.nombre;
-                currentUser.email = payload.email;
-                currentUser.telefono = payload.telefono;
-                currentUser.numeroLista = payload.numeroLista;
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                location.reload();
-            } else {
-                alert(res.message);
-            }
-        } catch (error) {
-            alert('Error al actualizar perfil.');
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Guardar Cambios';
-        }
-    };
-}
-
-    async function fetchOperationalDashboard() {
-        const tbody = document.getElementById('op-table-body');
-        const thead = document.getElementById('op-table-head');
-        tbody.innerHTML = '<tr><td class="text-center p-8">Cargando pendientes...</td></tr>';
-
-        try {
-            const res = await fetchApi('TASK', 'getTeacherActivity', { profesorId: currentUser.userId });
-            if (res.status === 'success') {
-                const pending = (res.data || []).filter(i =>
-                    (i.estado === 'Pendiente' || i.estado === 'Pendiente de revisión' || !i.estado) &&
-                    (i.fileId || i.respuestas || i.entregaId)
-                );
-
-                thead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100">
-                    <th class="p-4 text-left font-bold text-gray-500 text-[0.7rem] uppercase">Alumno</th>
-                    <th class="p-4 text-left font-bold text-gray-500 text-[0.7rem] uppercase">Actividad</th>
-                    <th class="p-4 text-left font-bold text-gray-500 text-[0.7rem] uppercase">Fecha</th>
-                    <th class="p-4 text-right font-bold text-gray-500 text-[0.7rem] uppercase">Acción</th>
-                </tr>`;
-
-                if (pending.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center p-8 text-gray-500">No hay tareas pendientes de revisión. ¡Buen trabajo!</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = pending.map((item, idx) => `
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="p-4">
-                            <div class="font-bold text-gray-800">${item.alumnoNombre}</div>
-                            <div class="text-[10px] text-gray-400">${item.grado} - ${item.seccion}</div>
-                        </td>
-                        <td class="p-4">
-                            <div class="font-bold text-blue-700">${item.titulo}</div>
-                            <div class="text-[10px] text-gray-400">${item.asignatura} | ${item.tipo}</div>
-                        </td>
-                        <td class="p-4 text-xs text-gray-500">${new Date(item.fecha).toLocaleString()}</td>
-                        <td class="p-4 text-right">
-                            <button class="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-700 op-grade-btn" data-index="${idx}">Calificar</button>
-                        </td>
-                    </tr>
-                `).join('');
-
-                // Add event listeners for op-grade-btn
-                tbody.querySelectorAll('.op-grade-btn').forEach(btn => {
-                    btn.onclick = () => {
-                        const item = pending[btn.dataset.index];
-                        openGradeModal(item);
-                    };
-                });
-            }
-        } catch (e) {
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-red-500">Error: ${e.message}</td></tr>`;
-        }
-    }
+    navigateTo(sectionEntregas, navDashboard); fetchEntregasRecientes(); fetchTeacherActivity();
+});

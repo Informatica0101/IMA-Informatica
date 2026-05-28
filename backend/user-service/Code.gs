@@ -215,7 +215,7 @@ function resetPassword(payload) {
 }
 
 function updateUserProfile(payload) {
-  const { userId, nombre, email, telefono, numeroLista, currentPassword, password } = payload || {};
+  const { userId, nombre, telefono, numeroLista, currentPassword, password } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
   const data = sheet.getDataRange().getValues();
@@ -238,7 +238,6 @@ function updateUserProfile(payload) {
   }
 
   if (nombre) userRow[1] = nombre;
-  if (email) userRow[4] = email;
   if (telefono !== undefined) userRow[7] = telefono;
   if (numeroLista !== undefined) userRow[8] = numeroLista;
 

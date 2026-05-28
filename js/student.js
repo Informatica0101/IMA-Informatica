@@ -571,22 +571,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Lógica de Perfil ---
-    const openProfile = () => {
-        document.getElementById('profile-nombre').value = currentUser.nombre;
-        document.getElementById('profile-telefono').value = currentUser.telefono || '';
-        document.getElementById('profile-email').value = currentUser.email || '';
-        document.getElementById('profile-numeroLista').value = currentUser.numeroLista || '';
-        profileModal.classList.remove('hidden');
-    };
-
-    if (openProfileBtn) openProfileBtn.onclick = openProfile;
-    const mobileOpenProfileBtn = document.getElementById('mobile-open-profile-btn');
-    if (mobileOpenProfileBtn) mobileOpenProfileBtn.onclick = () => {
-        openProfile();
-        // Cerrar menú móvil
-        const menu = document.getElementById('mobile-menu-overlay');
-        if (menu) menu.classList.add('hidden');
-    };
+    if (openProfileBtn) {
+        openProfileBtn.onclick = () => {
+            document.getElementById('profile-nombre').value = currentUser.nombre;
+            document.getElementById('profile-telefono').value = currentUser.telefono || '';
+            document.getElementById('profile-numeroLista').value = currentUser.numeroLista || '';
+            profileModal.classList.remove('hidden');
+        };
+    }
 
     if (closeProfileModal) {
         closeProfileModal.onclick = () => profileModal.classList.add('hidden');
@@ -599,12 +591,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const newPassword = document.getElementById('profile-password').value;
             const currentPassword = document.getElementById('profile-current-password').value;
 
-
-            if (newPassword !== document.getElementById('profile-password-confirm').value) {
-                alert('Las contraseñas no coinciden.');
-                return;
-            }
-
             if (newPassword && !currentPassword) {
                 alert('Debe ingresar su contraseña actual para realizar cambios de seguridad.');
                 return;
@@ -613,7 +599,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const payload = {
                 userId: currentUser.userId,
                 nombre: document.getElementById('profile-nombre').value,
-                email: document.getElementById('profile-email').value,
                 telefono: document.getElementById('profile-telefono').value,
                 numeroLista: document.getElementById('profile-numeroLista').value,
                 currentPassword: currentPassword || undefined,
@@ -627,7 +612,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await fetchApi('USER', 'updateUserProfile', payload);
                 if (result.status === 'success') {
                     currentUser.nombre = payload.nombre;
-                currentUser.email = payload.email;
                     currentUser.telefono = payload.telefono;
                     currentUser.numeroLista = payload.numeroLista;
                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
