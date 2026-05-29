@@ -1017,3 +1017,15 @@ MAYO 2026 (Portal Optimization & Security Patch)
   - Actualizadas las especificaciones de PSeInt para reflejar las nuevas capacidades de matrices y gestión de archivos.
 - Archivo: Auditoría.txt
   - Registrada la finalización de las mejoras de PSeInt y la restauración del perfil docente.
+
+29/05/2026 (Fix Conectividad y Mejora de Subida)
+- Archivo: js/config.js
+  - Corregida la URL del microservicio TASK (de /dev a /exec de producción).
+  - Resuelto el error "Failed to fetch" que impedía cargar actividades en ambos dashboards.
+- Archivo: js/student.js
+  - Refinado el Optimizador de Subida (Req 3.3):
+    - Implementada grilla de miniaturas para múltiples archivos seleccionados simultáneamente.
+    - Añadida funcionalidad de eliminación individual de archivos antes de iniciar la subida.
+    - Mejorado el filtro anti-duplicados para considerar también archivos ya en la cola de espera.
+- Archivo: Auditoría.txt
+  - Registrada la corrección del fallo de red y la finalización de las mejoras de alta fidelidad en el sistema de subida.

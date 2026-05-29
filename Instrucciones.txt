@@ -378,6 +378,16 @@ ESTADO DE LAS TAREAS (RESUMEN)
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
 
+TAREA: [A-68]
+TÍTULO: Corrección Conectividad TASK y Refinamiento Optimizador Subida
+ÁREA: General / Frontend / Conectividad
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Corregido error "Failed to fetch" mediante actualización de URL TASK a /exec en js/config.js.
+- Implementada previsualización múltiple en el Optimizador de Subida (Req 3.3).
+- Añadida eliminación individual pre-subida en la cola del estudiante.
+- Sincronizada versión global de caché a v=19.
+
 TAREA: [A-67]
 TÍTULO: Auditoría de Cumplimiento Requerimientos Mayo 2026
 ÁREA: General / Frontend / Backend

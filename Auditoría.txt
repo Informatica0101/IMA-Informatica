@@ -64,3 +64,30 @@ ACTUALIZACIÓN DE AUDITORÍA - 22 DE MAYO 2026 (FASE 2)
 6. MINIJUEGOS
 -------------
 - [VERIFICADO] Cálculo de Precisión (%) y Puntaje Ponderado implementado en 'js/destreza_teclado.js'.
+
+AUDITORÍA DE REQUERIMIENTOS - 27 DE MAYO 2026 (FASE 3)
+=====================================================
+
+1. SISTEMA DE AUTENTICACIÓN Y CONECTIVIDAD
+------------------------------------------
+- [VERIFICADO] Error "Failed to fetch" resuelto actualizando URL de TASK a versión /exec.
+- [VERIFICADO] Módulo "Mi Perfil" funcional en Dashboard del Profesor.
+
+2. PORTAL DE INICIO
+-------------------
+- [VERIFICADO] Visualización de hora implementada en tarjetas de noticias.
+
+3. PORTAL DEL ESTUDIANTE
+------------------------
+- [HALLAZGO] El Optimizador de Subida (Req 3.3) muestra miniaturas solo para el primer archivo de la selección.
+- [HALLAZGO] No existe la opción de eliminar archivos de la cola de subida antes de iniciar el proceso (solo después de subidos).
+
+4. PORTAL DEL DOCENTE
+---------------------
+- [VERIFICADO] Sección de Reportes Académicos restaurada y funcional.
+- [VERIFICADO] Exportación a Excel implementada.
+
+5. PSEINT
+---------
+- [VERIFICADO] Soporte para matrices bidimensionales [i,j] implementado en Parser e Intérprete.
+- [VERIFICADO] Gestión de archivos (Nube/Local) integrada.

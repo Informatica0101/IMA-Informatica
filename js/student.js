@@ -399,26 +399,52 @@ document.addEventListener('DOMContentLoaded', () => {
             filePreviewContainer.classList.remove('hidden');
 
             // Filtro Anti-Duplicados (Req 3.3)
-            const newFiles = files.filter(f => !uploadedFiles.some(u => u.fileName === f.name && u.size === f.size));
-            if (newFiles.length < files.length) {
-                console.warn("Algunos archivos duplicados fueron omitidos.");
-            }
+            const newFiles = files.filter(f => !uploadedFiles.some(u => u.fileName === f.name && u.size === f.size) && !uploadQueue.some(q => q.name === f.name && q.size === f.size));
 
             if (newFiles.length === 0) return;
 
-            // Mostrar previsualización del primero de la tanda seleccionada
-            const first = newFiles[0];
-            if (first.type.startsWith('image/')) {
-                imagePreview.classList.remove('hidden');
-                fileInfoPreview.classList.add('hidden');
-                const reader = new FileReader();
-                reader.onload = (e) => imagePreview.querySelector('img').src = e.target.result;
-                reader.readAsDataURL(first);
-            } else {
-                imagePreview.classList.add('hidden');
-                fileInfoPreview.classList.remove('hidden');
-                fileInfoPreview.textContent = `Listos para subir: ${newFiles.length} archivo(s)`;
+            // Renderizar miniaturas para todos los archivos nuevos (Req 3.3)
+            const previewGrid = document.createElement('div');
+            previewGrid.className = 'grid grid-cols-3 sm:grid-cols-4 gap-2 mt-3';
+
+            for (const file of newFiles) {
+                const item = document.createElement('div');
+                item.className = 'relative group aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200';
+
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.className = 'w-full h-full object-cover';
+                    const reader = new FileReader();
+                    reader.onload = (e) => img.src = e.target.result;
+                    reader.readAsDataURL(file);
+                    item.appendChild(img);
+                } else {
+                    item.innerHTML = `<div class="w-full h-full flex items-center justify-center text-[10px] font-bold text-gray-400 p-1 text-center truncate">${file.name.split('.').pop().toUpperCase()}</div>`;
+                }
+
+                // Botón eliminación individual PRE-SUBIDA (Req 3.3)
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity';
+                removeBtn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                removeBtn.onclick = (event) => {
+                    event.stopPropagation();
+                    uploadQueue = uploadQueue.filter(q => q !== file);
+                    item.remove();
+                    if (uploadQueue.length === 0) {
+                        filePreviewContainer.classList.add('hidden');
+                        imagePreview.classList.add('hidden');
+                        fileInfoPreview.classList.add('hidden');
+                    }
+                };
+                item.appendChild(removeBtn);
+                previewGrid.appendChild(item);
             }
+
+            // Limpiar previsualización anterior y mostrar nueva
+            imagePreview.classList.add('hidden');
+            fileInfoPreview.classList.remove('hidden');
+            fileInfoPreview.innerHTML = '';
+            fileInfoPreview.appendChild(previewGrid);
 
             uploadQueue = [...uploadQueue, ...newFiles];
         });
