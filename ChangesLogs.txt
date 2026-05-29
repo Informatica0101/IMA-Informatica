@@ -971,3 +971,83 @@ MAYO 2026 (Portal Optimization & Security Patch)
   - Actualizada la función 'initWhatsAppButton' para obtener el enlace de grupo basado únicamente en el grado del estudiante.
 - Global:
   - Incremento de versión de caché a 'v18'.
+
+27/05/2026 (Auditoría de Cumplimiento y Mejoras de Alta Fidelidad)
+- Archivo: teacher-dashboard.html
+  - Restaurada la 'Sección 2: Reportes' con filtros y tabla académica.
+  - Implementado modal 'Mi Perfil' para profesores.
+  - Sincronizados IDs estructurales para navegación jerárquica.
+- Archivo: js/teacher.js
+  - Implementada lógica de generación de reportes académicos en tiempo real.
+  - Añadida lógica de actualización de perfil para docentes.
+  - Integrado botón circular de WhatsApp con lógica +504 en la lista de alumnos.
+- Archivo: js/student.js
+  - Refactorizado módulo de subida a 'Optimizador de Alta Fidelidad'.
+  - Implementada cola secuencial para múltiples archivos con progreso individual.
+  - Integrada compresión de imágenes en el frontend vía Canvas (1200px max, 80% calidad).
+  - Añadido filtro anti-duplicados por nombre y tamaño.
+- Archivo: js/index-ui.js
+  - Actualizadas tarjetas de noticias para mostrar la hora de publicación.
+- Archivo: pseudocode.html
+  - Implementado 'Guardado Silencioso' automático al ejecutar algoritmos.
+  - Añadida lógica operativa (simulación) para Exportar (HTML/JS), Buscar y Zoom.
+- Archivo: js/destreza_teclado.js
+  - Actualizado algoritmo de puntuación: ahora incluye Porcentaje de Precisión.
+  - Implementado cálculo de KPM y puntaje ponderado (60% WPM, 40% Precisión + Bonos).
+- Archivo: backend/user-service/Code.gs
+  - Refactorizadas 'saveWhatsAppLink' y 'getWhatsAppLink' para asegurar compatibilidad estricta con búsqueda por Grado.
+
+27/05/2026 (Fase 2 - PSeInt Matrices y Gestión de Archivos)
+- Archivo: pseudocode.html
+  - Implementado soporte para matrices bidimensionales en el Parser e Intérprete.
+  - El motor ahora maneja indexación múltiple (ej. `matriz[i,j]`) tanto para lectura como para asignación.
+  - Rediseñada la gestión de archivos:
+    - Nuevo: Limpieza del editor.
+    - Abrir (Nube): Modal interactivo con acceso a Drive.
+    - Abrir desde...: Selector de archivos local para cargar .psc.
+    - Guardar: Sincronización con Drive (Guardado en la nube).
+    - Guardar como...: Descarga local de archivo físico con extensión .psc.
+  - Corregido error en el parser que impedía el cierre correcto de bloques Segun y Funcion al detectar punto y coma.
+  - Implementado modal de filtrado para docentes en la apertura de archivos Drive, permitiendo auditar proyectos de alumnos.
+- Archivo: teacher-dashboard.html
+  - Restaurado el modal '#profile-modal' para permitir a los docentes actualizar sus datos.
+- Archivo: js/teacher.js
+  - Vinculado el botón 'cancel-profile-btn' para cerrar el modal de perfil.
+- Archivo: Requerimientos_nuevos.md
+  - Actualizadas las especificaciones de PSeInt para reflejar las nuevas capacidades de matrices y gestión de archivos.
+- Archivo: Auditoría.txt
+  - Registrada la finalización de las mejoras de PSeInt y la restauración del perfil docente.
+
+29/05/2026 (Fix Conectividad y Mejora de Subida)
+- Archivo: js/config.js
+  - Corregida la URL del microservicio TASK (de /dev a /exec de producción).
+  - Resuelto el error "Failed to fetch" que impedía cargar actividades en ambos dashboards.
+- Archivo: js/student.js
+  - Refinado el Optimizador de Subida (Req 3.3):
+    - Implementada grilla de miniaturas para múltiples archivos seleccionados simultáneamente.
+    - Añadida funcionalidad de eliminación individual de archivos antes de iniciar la subida.
+    - Mejorado el filtro anti-duplicados para considerar también archivos ya en la cola de espera.
+- Archivo: Auditoría.txt
+  - Registrada la corrección del fallo de red y la finalización de las mejoras de alta fidelidad en el sistema de subida.
+
+29/05/2026 (Fix Crítico Conectividad y Scoping)
+- Archivo: js/student.js
+  - Corregido ReferenceError en initWhatsAppButton mediante el re-alcance (scoping) de la función dentro del listener de carga del DOM.
+- Archivo: js/config.js
+  - Actualizadas URLs de TASK y EXAM a versiones /exec de producción para eliminar errores de CORS y "Failed to fetch".
+  - Aplicada nueva URL para USER microservice proporcionada por el usuario.
+
+TAREA: [A-70]
+TÍTULO: Rediseño de Entregas, Automatización de Subida y Refinamiento UX
+ÁREA: Frontend / UI / Usabilidad
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Reestructurada la sección de Entregas en el Dashboard del Profesor: reemplazada la tabla horizontal por una lista de alumnos (No. de fila, Nombre, Estado, Acción).
+- Implementado cálculo dinámico del "Estado" del alumno (Pendiente/Al día) en el flujo del docente.
+- Añadida interactividad y ordenamiento (Nombre, Estado, Lista) en la lista de alumnos del docente.
+- Mejorado el Modal de Entrega del Estudiante con scroll interno (max-h-[90vh]) y diseño responsivo.
+- Automatizado el flujo de subida de archivos en el portal estudiantil, eliminando el paso manual "Aceptar y subir".
+- Implementados indicadores de progreso visuales individuales para cargas automáticas secuenciales.
+- Unificada la visibilidad global del botón "Mi Perfil" en el encabezado mediante js/ui-common.js.
+- Aplicado el Sistema de Diseño Institucional con espaciado estricto de 4px en css/style.css.
+- Sincronizada versión global de caché a v=21.

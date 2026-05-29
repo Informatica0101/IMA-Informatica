@@ -139,6 +139,12 @@ window.setupCommonUI = function() {
 
     // (A-28) Signal that common UI is ready
     document.dispatchEvent(new CustomEvent('common-ui-ready'));
+
+    // Global "Mi Perfil" Button Visibility
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser && openProfileBtn) {
+        openProfileBtn.classList.remove('hidden');
+    }
 };
 
 window.convertDriveLink = function(url) {

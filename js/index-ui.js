@@ -400,7 +400,7 @@ async function loadNews() {
                         <div class="p-6 ${idx === 0 ? 'md:w-1/2 flex flex-col justify-center' : ''}">
                             <div class="flex justify-between items-center mb-3">
                                 <span class="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-1 rounded">${n.categoria}</span>
-                                <span class="text-xs text-gray-400">${new Date(n.fecha).toLocaleDateString()}</span>
+                                <span class="text-[10px] text-gray-400">${new Date(n.fecha).toLocaleDateString()} ${n.hora ? '| ' + n.hora.substring(0,5) : ''}</span>
                             </div>
                             <h3 class="${idx === 0 ? 'text-2xl' : 'text-xl'} font-bold text-gray-800 mb-2">${n.titulo}</h3>
                             <p class="text-gray-600 text-sm ${idx === 0 ? 'line-clamp-4 mb-4' : 'line-clamp-3'}">${firstP}</p>

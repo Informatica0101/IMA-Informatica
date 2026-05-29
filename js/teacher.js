@@ -77,8 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     navDashboard.addEventListener('click', () => {
-        navigateTo(sectionEntregas, navDashboard);
-        fetchEntregasRecientes();
+        navigateTo(sectionAcademicReports, navDashboard);
+        fetchTeacherActivity();
     });
     navTareas.addEventListener('click', () => {
         navigateTo(sectionTareas, navTareas);
@@ -101,6 +101,151 @@ document.addEventListener('DOMContentLoaded', () => {
     navReportsOld.addEventListener('click', () => {
         navigateTo(sectionReportes, navReportsOld);
     });
+
+    // --- Mi Perfil (Profesor) ---
+    const profileModal = document.getElementById('profile-modal');
+    const openProfileBtn = document.getElementById('open-profile-btn');
+    const closeProfileModal = document.getElementById('close-profile-modal');
+    const profileForm = document.getElementById('profile-form');
+
+    if (openProfileBtn) {
+        openProfileBtn.onclick = () => {
+            document.getElementById('profile-nombre').value = currentUser.nombre;
+            document.getElementById('profile-telefono').value = currentUser.telefono || '';
+            profileModal.classList.remove('hidden');
+        };
+    }
+
+    if (closeProfileModal) {
+        closeProfileModal.onclick = () => profileModal.classList.add('hidden');
+    }
+
+    const cancelProfileBtn = document.getElementById('cancel-profile-btn');
+    if (cancelProfileBtn) {
+        cancelProfileBtn.onclick = () => profileModal.classList.add('hidden');
+    }
+
+    if (profileForm) {
+        profileForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const submitBtn = profileForm.querySelector('button[type="submit"]');
+            const newPassword = document.getElementById('profile-password').value;
+            const currentPassword = document.getElementById('profile-current-password').value;
+
+            if (newPassword && !currentPassword) {
+                alert('Debe ingresar su contraseña actual para realizar cambios de seguridad.');
+                return;
+            }
+
+            const payload = {
+                userId: currentUser.userId,
+                nombre: document.getElementById('profile-nombre').value,
+                telefono: document.getElementById('profile-telefono').value,
+                currentPassword: currentPassword || undefined,
+                password: newPassword || undefined
+            };
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Guardando...';
+
+            try {
+                const result = await fetchApi('USER', 'updateUserProfile', payload);
+                if (result.status === 'success') {
+                    currentUser.nombre = payload.nombre;
+                    currentUser.telefono = payload.telefono;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    document.getElementById('teacher-name').textContent = currentUser.nombre;
+                    alert('Perfil actualizado correctamente.');
+                    profileModal.classList.add('hidden');
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (err) {
+                alert('Error de conexión.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Guardar Cambios';
+            }
+        };
+    }
+
+    // --- Lógica de Reporte Académico ---
+    const btnGenerateReport = document.getElementById('btn-generate-report');
+    if (btnGenerateReport) {
+        btnGenerateReport.onclick = async () => {
+            const grado = document.getElementById('report-grado').value;
+            const seccion = document.getElementById('report-seccion').value;
+            const parcial = document.getElementById('report-parcial').value;
+            const tbody = document.getElementById('report-table-body');
+            const thead = document.getElementById('report-table-head');
+
+            tbody.innerHTML = '<tr><td colspan="10" class="text-center p-8">Cargando reporte...</td></tr>';
+
+            try {
+                const [studentsRes, tasksRes, examsRes, taskSubRes, examSubRes] = await Promise.all([
+                    fetchApi('USER', 'getStudentsByGradoSeccion', { grado, seccion }),
+                    fetchApi('TASK', 'getAllTasks', { profesorId: currentUser.userId }),
+                    fetchApi('EXAM', 'getAllExams', { profesorId: currentUser.userId }),
+                    fetchApi('TASK', 'getTeacherActivity', { profesorId: currentUser.userId, grado, seccion }),
+                    fetchApi('EXAM', 'getTeacherExamActivity', { profesorId: currentUser.userId, grado, seccion })
+                ]);
+
+                const students = studentsRes.data || [];
+                const allTasks = (tasksRes.data || []).filter(t => norm(t.grado) === norm(grado) && (!t.seccion || norm(t.seccion) === norm(seccion)) && norm(t.parcial) === norm(parcial));
+                const allExams = (examsRes.data || []).filter(e => norm(e.grado) === norm(grado) && (!e.seccion || norm(e.seccion) === norm(seccion) || norm(e.seccion) === 'todas'));
+                const taskSubmissions = taskSubRes.data || [];
+                const examSubmissions = examSubRes.data || [];
+
+                // Solo tareas y exámenes que tengan entregas o existan para este parcial
+                let headHtml = `<tr class="bg-gray-50 border-b border-gray-100">
+                    <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Nº</th>
+                    <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Alumno</th>`;
+
+                allTasks.forEach(t => {
+                    headHtml += `<th class="p-4 text-center font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${t.titulo}">${t.titulo.substring(0,10)}...</th>`;
+                });
+                allExams.forEach(e => {
+                    headHtml += `<th class="p-4 text-center font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${e.titulo}">EX: ${e.titulo.substring(0,8)}...</th>`;
+                });
+
+                headHtml += `<th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Total</th></tr>`;
+                thead.innerHTML = headHtml;
+
+                if (students.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="10" class="p-8 text-center text-gray-400">No se encontraron alumnos para los filtros seleccionados.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = students.map((s, idx) => {
+                    let total = 0;
+                    let rowHtml = `<tr class="hover:bg-gray-50 transition-colors">
+                        <td class="p-4 text-gray-400 font-mono text-xs">${s.numeroLista || idx+1}</td>
+                        <td class="p-4 font-bold text-gray-800">${s.nombre}</td>`;
+
+                    allTasks.forEach(t => {
+                        const sub = taskSubmissions.find(sub => sub.alumnoId == s.userId && sub.titulo === t.titulo);
+                        const score = sub ? parseFloat(sub.calificacion || 0) : 0;
+                        total += score;
+                        rowHtml += `<td class="p-4 text-center font-bold ${score > 0 ? 'text-green-600' : 'text-gray-300'}">${score}</td>`;
+                    });
+
+                    allExams.forEach(e => {
+                        const sub = examSubmissions.find(sub => sub.alumnoId == s.userId && sub.titulo === e.titulo);
+                        const score = sub ? parseFloat(sub.calificacion || 0) : 0;
+                        total += score;
+                        rowHtml += `<td class="p-4 text-center font-bold ${score > 0 ? 'text-purple-600' : 'text-gray-300'}">${score}</td>`;
+                    });
+
+                    const approved = total >= 70;
+                    rowHtml += `<td class="p-4 text-right font-black ${approved ? 'text-blue-700' : 'text-red-600'}">${total}%</td></tr>`;
+                    return rowHtml;
+                }).join('');
+
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center p-8 text-red-500">Error: ${e.message}</td></tr>`;
+            }
+        };
+    }
 
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('currentUser');
@@ -636,8 +781,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnEditWa = document.getElementById('btn-edit-wa');
         const btnSaveWa = document.getElementById('btn-save-wa');
 
-        // Fetch current link
-        fetchApi('USER', 'getWhatsAppLink', { grado, seccion }).then(res => {
+        // Fetch current link (by Grade as per A-66 memory)
+        fetchApi('USER', 'getWhatsAppLink', { grado }).then(res => {
             if (res.status === 'success' && res.link) {
                 waInput.value = res.link;
             }
@@ -660,7 +805,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnSaveWa.disabled = true;
             btnSaveWa.textContent = 'Guardando...';
             try {
-                const res = await fetchApi('USER', 'saveWhatsAppLink', { grado, seccion, link });
+                const res = await fetchApi('USER', 'saveWhatsAppLink', { grado, link });
                 if (res.status === 'success') {
                     waInput.readOnly = true;
                     waInput.classList.add('text-gray-500');
@@ -677,64 +822,92 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // Tareas y exámenes correspondientes a este contexto
-        const relevantAssignments = allAssignmentsRaw.filter(a =>
-            norm(a.grado) === norm(grado) &&
-            (norm(a.seccion) === norm(seccion) || !a.seccion || norm(a.seccion) === 'todas') &&
-            norm(a.asignatura) === norm(asignatura) &&
-            norm(a.parcial) === norm(parcial)
-        );
-
-        // Sort students by list number
-        students.sort((a, b) => (parseInt(a.numeroLista) || 999) - (parseInt(b.numeroLista) || 999));
+        // Filtrado por búsqueda
         let filtered = students.filter(s => norm(s.nombre).includes(norm(search)));
 
-        currentFilteredItems = filtered;
-
-        // Render Horizontal Academic Table
-        let headHtml = `
-            <tr class="bg-gray-50 border-b border-gray-100">
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Nº</th>
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Alumno</th>`;
-
-        relevantAssignments.forEach(a => {
-            headHtml += `<th class="p-4 text-center font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${a.titulo}">${a.titulo.substring(0, 10)}${a.titulo.length > 10 ? '...' : ''}</th>`;
+        // Calcular estado y preparar datos
+        const studentsWithStatus = filtered.map(s => {
+            const studentSubmissions = allActivityRaw.filter(sub =>
+                sub.alumnoId == s.userId &&
+                norm(sub.grado) === norm(grado) &&
+                norm(sub.seccion) === norm(seccion) &&
+                norm(sub.asignatura) === norm(asignatura) &&
+                norm(sub.parcial) === norm(parcial)
+            );
+            const isPending = studentSubmissions.some(sub => {
+                const status = sub.estado;
+                return (status === 'Pendiente' || status === 'Pendiente de revisión' || !status) &&
+                       (sub.fileId || sub.respuestas || sub.entregaId);
+            });
+            return {
+                ...s,
+                statusText: isPending ? 'Pendiente' : 'Al día',
+                isPending: isPending
+            };
         });
 
-        headHtml += `<th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Total</th></tr>`;
-        dashboardTableHead.innerHTML = headHtml;
+        // Aplicar ordenamiento
+        studentsWithStatus.sort((a, b) => {
+            let valA, valB;
+            if (studentSort.column === 'estado') {
+                valA = a.statusText;
+                valB = b.statusText;
+            } else if (studentSort.column === 'numeroLista') {
+                valA = parseInt(a.numeroLista) || 999;
+                valB = parseInt(b.numeroLista) || 999;
+            } else {
+                valA = norm(a[studentSort.column]);
+                valB = norm(b[studentSort.column]);
+            }
 
-        if (filtered.length === 0) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="${relevantAssignments.length + 3}" class="text-center p-8 text-gray-500">No hay alumnos inscritos.</td></tr>`;
+            if (valA < valB) return studentSort.direction === 'asc' ? -1 : 1;
+            if (valA > valB) return studentSort.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        currentFilteredItems = studentsWithStatus;
+
+        // Render Student List (Simplified as per requirements)
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="numeroLista">No. Lista</th>
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="nombre">Nombre del alumno</th>
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="estado">estado</th>
+                <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">acción</th>
+            </tr>`;
+
+        if (studentsWithStatus.length === 0) {
+            submissionsTableBody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-gray-500">No hay alumnos inscritos.</td></tr>`;
             return;
         }
 
-        submissionsTableBody.innerHTML = filtered.map((s, idx) => {
-            let total = 0;
-            let rowsHtml = `
+        submissionsTableBody.innerHTML = studentsWithStatus.map((s, idx) => {
+            const waPhone = s.telefono ? s.telefono.replace(/\D/g, '') : '';
+            const waLink = waPhone ? `https://wa.me/504${waPhone}` : '#';
+            const statusClass = s.isPending ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700';
+
+            return `
                 <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
                     <td class="p-4 text-gray-400 font-mono text-xs">${s.numeroLista || '-'}</td>
                     <td class="p-4">
-                        <div class="font-bold text-blue-700">${s.nombre}</div>
-                        <div class="text-[10px] text-gray-400 flex items-center gap-1">
-                            <span>${s.email || ''}</span>
-                            ${s.telefono ? `| <a href="https://wa.me/504${s.telefono.replace(/\D/g, '')}" target="_blank" class="text-green-600 hover:underline">WhatsApp</a>` : ''}
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="font-bold text-blue-700">${s.nombre}</div>
+                                <div class="text-[10px] text-gray-400 truncate max-w-[150px]">${s.email || ''} ${s.telefono ? '| ' + s.telefono : ''}</div>
+                            </div>
+                            ${waPhone ? `
+                            <a href="${waLink}" target="_blank" onclick="event.stopPropagation()" class="ml-2 bg-green-500 hover:bg-green-600 text-white p-2 rounded-full shadow-sm transition-all" title="Contactar por WhatsApp">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                            </a>` : ''}
                         </div>
-                    </td>`;
-
-            relevantAssignments.forEach(a => {
-                const sub = allActivityRaw.find(sub =>
-                    sub.alumnoId == s.userId &&
-                    sub.titulo === a.titulo &&
-                    norm(sub.asignatura) === norm(a.asignatura)
-                );
-                const score = sub ? parseFloat(sub.calificacion || 0) : 0;
-                total += score;
-                rowsHtml += `<td class="p-4 text-center font-bold ${score > 0 ? 'text-green-600' : 'text-gray-300'}">${score}</td>`;
-            });
-
-            rowsHtml += `<td class="p-4 text-right font-black text-blue-800">${total}</td></tr>`;
-            return rowsHtml;
+                    </td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded-full text-[10px] font-bold ${statusClass}">${s.statusText}</span>
+                    </td>
+                    <td class="p-4 text-right">
+                        <button class="bg-blue-600 text-white px-4 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors">Ver detalles</button>
+                    </td>
+                </tr>`;
         }).join('');
     }
 
@@ -1233,5 +1406,5 @@ function toBase64(file) {
     });
 }
 
-    navigateTo(sectionEntregas, navDashboard); fetchEntregasRecientes(); fetchTeacherActivity();
+    navigateTo(sectionAcademicReports, navDashboard); fetchTeacherActivity();
 });

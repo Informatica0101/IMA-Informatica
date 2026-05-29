@@ -36,9 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('file-input');
     const cancelSubmissionBtn = document.getElementById('cancel-submission-btn');
     const filePreviewContainer = document.getElementById('file-preview-container');
-    const imagePreview = document.getElementById('image-preview');
     const fileInfoPreview = document.getElementById('file-info-preview');
-    const acceptFileBtn = document.getElementById('accept-file-btn');
     const uploadedFilesContainer = document.getElementById('uploaded-files-container');
     const uploadedFilesList = document.getElementById('uploaded-files-list');
     const confirmSubmissionBtn = document.getElementById('confirm-submission-btn');
@@ -362,57 +360,61 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (fileInput) {
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) {
-                filePreviewContainer.classList.add('hidden');
-                return;
-            }
-            filePreviewContainer.classList.remove('hidden');
-            if (file.type.startsWith('image/')) {
-                imagePreview.classList.remove('hidden');
-                fileInfoPreview.classList.add('hidden');
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.querySelector('img').src = e.target.result;
+    // --- (Req 3.3) Optimizador de Subida de Alta Fidelidad ---
+    let uploadQueue = [];
+
+    async function compressImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const MAX_SIZE = 1200;
+                    if (width > height) {
+                        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+                    } else {
+                        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+                    }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.8));
                 };
-                reader.readAsDataURL(file);
-            } else {
-                imagePreview.classList.add('hidden');
-                fileInfoPreview.classList.remove('hidden');
-                fileInfoPreview.textContent = `Archivo seleccionado: ${file.name}`;
-            }
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         });
     }
 
-    if (acceptFileBtn) {
-        acceptFileBtn.addEventListener('click', async () => {
-            const file = fileInput.files[0];
-            if (!file || activeUploads > 0) return;
+    async function startAutomatedUpload(files) {
+        if (files.length === 0 || activeUploads > 0) return;
 
-            acceptFileBtn.disabled = true;
-            acceptFileBtn.classList.add('btn-loading');
+        filePreviewContainer.classList.remove('hidden');
+        uploadedFilesContainer.classList.remove('hidden');
 
-            const currentFile = file;
+        // Procesar Cola Secuencialmente (Req 3.3)
+        for (const currentFile of files) {
+            // Filtro Anti-Duplicados
+            if (uploadedFiles.some(u => u.fileName === currentFile.name && u.size === currentFile.size)) continue;
+
             const currentFileName = currentFile.name;
+            const currentFileSize = currentFile.size;
 
             const li = document.createElement('li');
-            li.className = 'flex items-center justify-between text-sm text-gray-700 bg-white p-2 rounded border shadow-sm';
+            li.className = 'flex items-center justify-between text-sm text-gray-700 bg-white p-2 rounded border shadow-sm animate-fade-in-up';
             li.innerHTML = `
                 <div class="flex items-center space-x-2 truncate">
                     <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <span class="truncate">${currentFileName}</span>
+                    <span class="truncate text-xs">${currentFileName}</span>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <span class="text-[10px] text-blue-500 font-medium" id="upload-progress-text">Subiendo...</span>
+                    <span class="text-[10px] text-blue-500 font-medium" id="upload-progress-text">Preparando...</span>
                 </div>
             `;
             uploadedFilesList.appendChild(li);
-            uploadedFilesContainer.classList.remove('hidden');
-
-            filePreviewContainer.classList.add('hidden');
-            fileInput.value = '';
 
             activeUploads++;
             updateConfirmButtonState();
@@ -420,41 +422,43 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 let uploadResult;
                 const progressSpan = li.querySelector('#upload-progress-text');
+                let fileData;
+                let mimeType = currentFile.type;
 
-                // Si el archivo es mayor a 2MB, usar subida por partes (Chunks)
-                if (currentFile.size > CHUNK_SIZE) {
-                    const totalChunks = Math.ceil(currentFile.size / CHUNK_SIZE);
+                // Optimización Móvil: Compresión de imágenes (Req 3.3)
+                if (currentFile.type.startsWith('image/')) {
+                    progressSpan.textContent = "Optimizando...";
+                    fileData = await compressImage(currentFile);
+                } else {
+                    fileData = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.readAsDataURL(currentFile);
+                    });
+                }
+
+                const blobSize = Math.floor((fileData.length - (fileData.indexOf(',') + 1)) * 0.75);
+
+                if (blobSize > CHUNK_SIZE) {
+                    const totalChunks = Math.ceil(blobSize / CHUNK_SIZE);
                     const uploadId = "UP-" + Date.now();
+                    const rawBase64 = fileData.split(',')[1];
 
                     for (let i = 0; i < totalChunks; i++) {
-                        progressSpan.textContent = `Punto ${i+1}/${totalChunks}`;
-                        const start = i * CHUNK_SIZE;
-                        const end = Math.min(currentFile.size, start + CHUNK_SIZE);
-                        const chunk = currentFile.slice(start, end);
-
-                        const chunkData = await new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onload = () => resolve(reader.result.split(',')[1]);
-                            reader.readAsDataURL(chunk);
-                        });
-
-                        await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData });
+                        progressSpan.textContent = `${Math.round((i/totalChunks)*100)}%`;
+                        const start = i * (CHUNK_SIZE * 1.33);
+                        const chunk = rawBase64.substring(start, start + (CHUNK_SIZE * 1.33));
+                        await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData: chunk });
                     }
 
                     progressSpan.textContent = "Finalizando...";
                     uploadResult = await fetchApi('TASK', 'finishChunkedUpload', {
                         uploadId, userId: currentUser.userId, tareaId: currentTaskId,
                         parcial: currentTaskParcial, asignatura: currentTaskAsignatura,
-                        fileName: currentFileName, mimeType: currentFile.type, totalChunks
+                        fileName: currentFileName, mimeType: mimeType, totalChunks
                     });
                 } else {
-                    // Subida normal para archivos pequeños
-                    const fileData = await new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.readAsDataURL(currentFile);
-                    });
-
+                    progressSpan.textContent = "Subiendo...";
                     uploadResult = await fetchApi('TASK', 'uploadFile', {
                         userId: currentUser.userId, tareaId: currentTaskId,
                         fileName: currentFileName, fileData: fileData,
@@ -467,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     uploadedFiles.push({
                         fileId: uploadedData.fileId,
                         fileName: currentFileName,
+                        size: currentFileSize,
                         mimeType: uploadedData.mimeType
                     });
                     currentFolderId = uploadedData.folderId;
@@ -474,27 +479,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     li.innerHTML = `
                         <div class="flex items-center space-x-2 truncate">
                             <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="truncate">${currentFileName}</span>
+                            <span class="truncate text-xs font-bold text-gray-800">${currentFileName}</span>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <span class="text-xs text-green-600 font-medium">Listo</span>
-                            <button type="button" class="text-red-500 hover:text-red-700 remove-file-btn" data-file-id="${uploadedData.fileId}">
+                            <span class="text-[10px] text-green-600 font-bold uppercase tracking-tighter">Listo</span>
+                            <button type="button" class="text-red-400 hover:text-red-600 remove-file-btn p-1" data-file-id="${uploadedData.fileId}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
                     `;
-                } else {
-                    throw new Error(uploadResult.message);
-                }
+                } else throw new Error(uploadResult.message);
+
             } catch (error) {
-                li.innerHTML = `<span class="text-red-600">Error: ${currentFileName}</span>`;
-                alert('Error al subir ' + currentFileName + ': ' + error.message);
+                li.innerHTML = `<div class="flex items-center justify-between w-full p-1 bg-red-50 rounded"><span class="text-red-600 text-[10px] truncate font-bold">FALLÓ: ${currentFileName}</span><button class="text-[10px] text-red-800 font-black ml-2" onclick="this.closest('li').remove()">✕</button></div>`;
             } finally {
-                acceptFileBtn.disabled = false;
-                acceptFileBtn.classList.remove('btn-loading');
                 activeUploads--;
                 updateConfirmButtonState();
             }
+        }
+        filePreviewContainer.classList.add('hidden');
+        fileInput.value = '';
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+            startAutomatedUpload(files);
         });
     }
 
@@ -630,36 +641,36 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    fetchAllActivities();
-});
+    /**
+     * WhatsApp Group Button Logic
+     */
+    window.initWhatsAppButton = async function() {
+        const waActive = document.getElementById('wa-group-btn');
+        const waDisabled = document.getElementById('wa-group-btn-disabled');
+        if (!waActive || !waDisabled) return;
 
-/**
- * WhatsApp Group Button Logic
- */
-window.initWhatsAppButton = async function() {
-    const waActive = document.getElementById('wa-group-btn');
-    const waDisabled = document.getElementById('wa-group-btn-disabled');
-    if (!waActive || !waDisabled) return;
+        try {
+            // WhatsApp links are now assigned by GRADO only
+            const res = await fetchApi('USER', 'getWhatsAppLink', {
+                grado: currentUser.grado
+            });
 
-    try {
-        // WhatsApp links are now assigned by GRADO only
-        const res = await fetchApi('USER', 'getWhatsAppLink', {
-            grado: currentUser.grado
-        });
-
-        if (res.status === 'success' && res.link) {
-            waActive.href = res.link;
-            waActive.classList.remove('hidden');
-            waDisabled.classList.add('hidden');
-        } else {
+            if (res.status === 'success' && res.link) {
+                waActive.href = res.link;
+                waActive.classList.remove('hidden');
+                waDisabled.classList.add('hidden');
+            } else {
+                waActive.classList.add('hidden');
+                waDisabled.classList.remove('hidden');
+                waDisabled.innerHTML = '<svg class="w-6 h-6 fill-current opacity-50" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg> Grupo no disponible para tu grado';
+            }
+        } catch (e) {
+            console.error("Error fetching WhatsApp link:", e);
             waActive.classList.add('hidden');
             waDisabled.classList.remove('hidden');
-            waDisabled.innerHTML = '<svg class="w-6 h-6 fill-current opacity-50" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg> Grupo no disponible para tu grado';
         }
-    } catch (e) {
-        console.error("Error fetching WhatsApp link:", e);
-        waActive.classList.add('hidden');
-        waDisabled.classList.remove('hidden');
-    }
-}
-initWhatsAppButton();
+    };
+
+    fetchAllActivities();
+    initWhatsAppButton();
+});
