@@ -38,6 +38,16 @@ function normalizeString(str) {
     .trim();
 }
 
+function safeIsoDate(dateVal) {
+  if (!dateVal) return null;
+  try {
+    const d = new Date(dateVal);
+    return isNaN(d.getTime()) ? null : d.toISOString();
+  } catch (e) {
+    return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // ENDPOINTS
 // ---------------------------------------------------------------------------
@@ -173,14 +183,12 @@ function deleteExam(payload) {
     examenesSheet.getRange(rowIndex + 1, 8).setValue("Inactivo");
     return { status: "success", message: "Examen desactivado (existen entregas)." };
   } else {
-    // Eliminar preguntas
     const preguntasData = preguntasSheet.getDataRange().getValues();
     for (let i = preguntasData.length - 1; i >= 1; i--) {
       if (preguntasData[i][1] === examenId) {
         preguntasSheet.deleteRow(i + 1);
       }
     }
-    // Eliminar examen
     examenesSheet.deleteRow(rowIndex + 1);
     return { status: "success", message: "Examen eliminado." };
   }
@@ -205,7 +213,7 @@ function getAllExams(payload) {
       asignatura: r[2],
       grado: r[3],
       seccion: r[4],
-      fechaLimite: r[5] ? new Date(r[5]).toISOString() : null,
+      fechaLimite: safeIsoDate(r[5]),
       estado: r[7],
       parcial: r[9] || "Primer Parcial"
     }))
@@ -215,7 +223,6 @@ function getAllExams(payload) {
 function getExamQuestions({ examenId }) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
-  // 1. Obtener los detalles del examen
   const examenesSheet = getSheetOrThrow(ss, "Examenes");
   const examenData = examenesSheet.getDataRange().getValues();
   const examenRow = examenData.find(row => row[0] === examenId);
@@ -229,7 +236,6 @@ function getExamQuestions({ examenId }) {
     tiempoLimite: examenRow[6]
   };
 
-  // 2. Obtener las preguntas del examen
   const preguntasSheet = getSheetOrThrow(ss, "PreguntasExamen");
   const preguntasData = preguntasSheet.getDataRange().getValues();
   const preguntas = preguntasData.slice(1)
@@ -239,10 +245,8 @@ function getExamQuestions({ examenId }) {
       tipo: p[2],
       texto: p[3],
       opciones: JSON.parse(p[4] || "{}")
-      // No se incluye la respuesta correcta para la vista del estudiante
     }));
 
-  // 3. Combinar y devolver la estructura de datos correcta
   return {
     status: "success",
     data: {
@@ -278,7 +282,6 @@ function submitExam({ examenId, userId, respuestas }) {
         points = totalPairs > 0 ? (correctPairs / totalPairs) : 0;
       } catch (e) { points = 0; }
     } else {
-      // Tarea 1: Normalizar comparación para Verdadero/Falso y Completación
       const ok = (q[2] === "completacion" || q[2] === "verdadero_falso")
         ? normalizeString(r.respuestaEstudiante) === normalizeString(q[5])
         : r.respuestaEstudiante === q[5];
@@ -302,7 +305,6 @@ function submitExam({ examenId, userId, respuestas }) {
     "Pendiente"
   ]);
 
-  // Se devuelve el ID en un objeto data para que el frontend pueda redirigir
   return {
     status: "success",
     data: {
@@ -336,7 +338,7 @@ function getStudentExams({ userId, grado, seccion }) {
         return {
           examenId: e[0],
           titulo: e[1],
-          fechaLimite: e[5] ? new Date(e[5]).toISOString() : null,
+          fechaLimite: safeIsoDate(e[5]),
           estado: estado,
           entrega: ent ? {
             estado: estado,
@@ -359,12 +361,10 @@ function getExamResult({ entregaExamenId }) {
   const examenId = entregaRow[1];
   const respuestasEstudiante = JSON.parse(entregaRow[4] || "[]");
 
-  // Obtener detalles del examen
   const examenesSheet = getSheetOrThrow(ss, "Examenes");
   const examenRow = examenesSheet.getDataRange().getValues().find(r => r[0] === examenId);
   const examenTitulo = examenRow ? examenRow[1] : "Examen Desconocido";
 
-  // Obtener preguntas para comparar
   const preguntasSheet = getSheetOrThrow(ss, "PreguntasExamen");
   const preguntasData = preguntasSheet.getDataRange().getValues().slice(1).filter(p => p[1] === examenId);
 
@@ -390,7 +390,6 @@ function getExamResult({ entregaExamenId }) {
         score = total > 0 ? (hits / total) : 0;
       } catch (e) {}
     } else if (tipo === "completacion" || tipo === "verdadero_falso") {
-      // Tarea 1: Normalizar comparación para Verdadero/Falso y Completación en resultados
       esCorrecta = normalizeString(respuestaEstudiante) === normalizeString(respuestaCorrecta);
       score = esCorrecta ? 1 : 0;
     } else {
@@ -430,16 +429,12 @@ function getTeacherExamActivity(payload) {
   const entregasValues = entregasSheet.getDataRange().getValues();
 
   const submissions = entregasValues.slice(1).map(entrega => {
-    // Uso de == para ser resiliente a tipos (string vs number)
     const examen = examenesData.find(t => t[0] == entrega[1]);
-
-    // SI EL EXAMEN NO EXISTE O NO PERTENECE AL PROFESOR -> DESCARTAR
     if (!examen) return null;
     if (profesorId && examen[8] && examen[8] != profesorId) return null;
 
     const usuario = usuariosData.find(u => u[0] == entrega[2]);
 
-    // Filtro por Grado y Sección del Profesor
     if (usuario) {
       if (grado && !isInTeacherList(usuario[2], grado)) return null;
       if (seccion && !isInTeacherList(usuario[3], seccion)) return null;
@@ -449,8 +444,8 @@ function getTeacherExamActivity(payload) {
       tipo: 'Examen',
       entregaId: entrega[0],
       examenId: entrega[1],
-      titulo: examen[1], // Examen ya verificado arriba
-      alumnoId: entrega[2], // Columna C: userId
+      titulo: examen[1],
+      alumnoId: entrega[2],
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
       grado: usuario ? usuario[2] : "N/A",
       seccion: usuario ? usuario[3] : "N/A",
@@ -464,7 +459,7 @@ function getTeacherExamActivity(payload) {
   }).filter(item => item !== null);
 
   submissions.sort((a, b) => b.fecha - a.fecha);
-  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
+  const formattedActivity = submissions.map(item => ({ ...item, fecha: safeIsoDate(item.fecha) }));
   return { status: "success", data: formattedActivity };
 }
 
@@ -486,12 +481,12 @@ function gradeExamSubmission(payload) {
   const rowIndex = data.findIndex(row => row[0] === entregaId);
 
   if (rowIndex !== -1) {
-    entregasSheet.getRange(rowIndex + 1, 6).setValue(calificacion); // Columna F: Nota
-    entregasSheet.getRange(rowIndex + 1, 7).setValue(estado);       // Columna G: Estado
+    entregasSheet.getRange(rowIndex + 1, 6).setValue(calificacion);
+    entregasSheet.getRange(rowIndex + 1, 7).setValue(estado);
     if (data[0].length < 8) {
       entregasSheet.getRange(1, 8).setValue("Comentario");
     }
-    entregasSheet.getRange(rowIndex + 1, 8).setValue(comentario);   // Columna H: Comentario
+    entregasSheet.getRange(rowIndex + 1, 8).setValue(comentario);
     return { status: "success", message: "Examen calificado." };
   }
   throw new Error("Entrega de examen no encontrada.");

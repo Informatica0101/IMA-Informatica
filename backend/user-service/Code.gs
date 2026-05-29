@@ -47,7 +47,6 @@ function doGet() {
 }
 
 function doOptions() {
-  // GAS no soporta headers CORS → respuesta mínima
   return textResponse({ status: "ok" });
 }
 
@@ -122,7 +121,6 @@ function registerUser(payload) {
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
   const data = usuariosSheet.getDataRange().getValues();
 
-  // Validación de duplicados (Email y Nombre de Usuario)
   const lowerEmail = email.toString().toLowerCase().trim();
   const lowerNombre = nombre.toString().toLowerCase().trim();
 
@@ -151,7 +149,7 @@ function registerUser(payload) {
     seccion || "",
     email,
     hashedPassword,
-    "Estudiante", // Siempre se registra como Estudiante. El cambio a Profesor se hace manual en la spreadsheet.
+    "Estudiante",
     telefono || "",
     numeroLista || ""
   ]);
@@ -175,7 +173,6 @@ function updateProfile(payload) {
   const row = rowIndex + 1;
   if (nombre) sheet.getRange(row, 2).setValue(nombre);
   if (email) {
-    // Validar email no duplicado
     const lowerEmail = email.toString().toLowerCase().trim();
     for (let i = 1; i < data.length; i++) {
       if (i === rowIndex) continue;
@@ -186,7 +183,6 @@ function updateProfile(payload) {
     sheet.getRange(row, 5).setValue(email);
   }
 
-  // Asegurar que existe columna para teléfono (Columna H = 8)
   if (sheet.getLastColumn() < 8) {
     sheet.getRange(1, 8).setValue("Teléfono");
   }
@@ -235,8 +231,6 @@ function requestPasswordRecovery(payload) {
   const user = data.find(r => r[4]?.toString().toLowerCase().trim() === lowerEmail);
 
   if (!user) {
-    // Por seguridad no informamos si el email no existe, pero en este contexto educativo podemos ser descriptivos o no.
-    // Siguiendo mejores prácticas:
     return { status: "success", message: "Si el correo está registrado, recibirás un enlace de recuperación." };
   }
 
@@ -249,7 +243,6 @@ function requestPasswordRecovery(payload) {
 
   const token = Utilities.base64EncodeWebSafe(`${tokenPayload}:${signature}`);
 
-  // Enviar correo (Simulado para este entorno, pero funcional en GAS real)
   const recoveryUrl = `https://informatica0101.github.io/forgot-password.html?token=${token}`;
 
   try {
@@ -260,7 +253,6 @@ function requestPasswordRecovery(payload) {
     });
   } catch (e) {
     logDebug("Error enviando email", e.message);
-    // Para propósitos de la tarea, devolvemos el link en debug si falla el envío real
     return { status: "success", message: "Enlace generado (ver logs)", debugLink: recoveryUrl };
   }
 

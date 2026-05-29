@@ -24,15 +24,28 @@ function getSheetOrThrow(ss, name) {
   return sheet;
 }
 
+function textResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
+function safeIsoDate(dateVal) {
+  if (!dateVal) return null;
+  try {
+    const d = new Date(dateVal);
+    return isNaN(d.getTime()) ? null : d.toISOString();
+  } catch (e) {
+    return null;
+  }
+}
+
 // --- PUNTOS DE ENTRADA ---
 function doGet(e) {
-  return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Tareas funcionando." }))
-    .setMimeType(ContentService.MimeType.JSON);
+  return textResponse({ status: "success", message: "Microservicio de Tareas funcionando." });
 }
 
 function doOptions(e) {
-  // Apps Script no permite setHeaders directamente, se ignora para CORS básico
-  return ContentService.createTextOutput("");
+  return textResponse({ status: "ok" });
 }
 
 function doPost(e) {
@@ -68,8 +81,7 @@ function doPost(e) {
     response = { status: "error", message: error.message || "Error interno del servidor." };
   }
 
-  return ContentService.createTextOutput(JSON.stringify(response))
-    .setMimeType(ContentService.MimeType.JSON);
+  return textResponse(response);
 }
 
 // --- LÓGICA DEL SERVICIO ---
@@ -78,7 +90,6 @@ function createTask(payload) {
   const tareaId = "TSK-" + new Date().getTime();
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
-  // Columnas: 0:tareaId, 1:tipo, 2:titulo, 3:descripcion, 4:parcial, 5:asignatura, 6:grado, 7:seccion, 8:fecha, 9:originalId, 10:profesorId, 11:estado, 12:puntaje, 13:archivoUrl
   tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId || '', profesorId || '', 'Activa', puntaje || 100, archivoUrl || '']);
   return { status: "success", message: "Tarea creada." };
 }
@@ -120,11 +131,9 @@ function deleteTask(payload) {
   const hasSubmissions = entregasData.some(r => r[1] === tareaId);
 
   if (hasSubmissions) {
-    // Marcar como inactiva
     tareasSheet.getRange(rowIndex + 1, 12).setValue("Inactiva");
     return { status: "success", message: "Tarea marcada como inactiva (existen entregas)." };
   } else {
-    // Eliminar fila
     tareasSheet.deleteRow(rowIndex + 1);
     return { status: "success", message: "Tarea eliminada." };
   }
@@ -140,10 +149,7 @@ function getStudentTasks(payload) {
 
   const seenOriginalTasksForEC = new Set();
   const studentTasks = tasksData.filter(task => {
-    // task[6] es gradoAsignado, task[7] es seccionAsignada
     const matchGrado = (task[6] || "").toString().trim().toLowerCase() === (grado || "").toString().trim().toLowerCase();
-    // Si seccionAsignada está vacío, aplica a todas las secciones del grado.
-    // Si tiene valor, el estudiante debe estar en esa lista (A, B, etc).
     const matchSeccion = !task[7] || task[7].trim() === "" || isInTeacherList(seccion, task[7]);
 
     if (!matchGrado || !matchSeccion) return false;
@@ -167,14 +173,13 @@ function getStudentTasks(payload) {
     return true;
   }).map(task => {
     const entrega = [...entregasData].reverse().find(e => e[1] === task[0] && e[2] === userId);
-    let fechaLimite = task[8] ? new Date(task[8]).toISOString() : null;
+    let fechaLimite = safeIsoDate(task[8]);
 
-    // Si es Credito Extra, forzamos que la fecha coincida con la de la tarea rechazada
     if (task[1] === 'Credito Extra') {
       const originalTaskId = (task[9] || "").toString().trim();
       const originalTask = tasksData.find(t => t[0] === originalTaskId);
       if (originalTask && originalTask[8]) {
-        fechaLimite = new Date(originalTask[8]).toISOString();
+        fechaLimite = safeIsoDate(originalTask[8]);
       }
     }
 
@@ -194,10 +199,6 @@ function getStudentTasks(payload) {
   return { status: "success", data: studentTasks.reverse() };
 }
 
-/**
- * Sube un archivo individualmente a Drive sin registrar la entrega aún.
- * Crea una carpeta específica para la entrega del alumno en esa tarea.
- */
 function uploadFile(payload) {
   const { userId, tareaId, parcial, asignatura, fileData, fileName } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -213,7 +214,6 @@ function uploadFile(payload) {
   const tituloTarea = taskData[2] || "Tarea Sin Titulo";
 
   const rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
-  // Normalizar metadatos a string antes de crear carpetas
   const sGrado = String(grado || "General");
   const sSeccion = String(seccion || "General");
   const sNombre = String(nombre || "Usuario");
@@ -262,9 +262,6 @@ function submitAssignment(payload) {
   return { status: "success", message: "Tarea entregada." };
 }
 
-/**
- * Elimina un archivo de Drive (lo mueve a la papelera) (A-30).
- */
 function deleteFile(payload) {
   const { fileId } = payload;
   if (!fileId) throw new Error("ID de archivo no proporcionado.");
@@ -275,7 +272,6 @@ function deleteFile(payload) {
     return { status: "success", message: "Archivo eliminado." };
   } catch (e) {
     logDebug("Error al eliminar archivo:", { fileId, error: e.message });
-    // No lanzamos error para que la UX no se rompa si el archivo ya no existe
     return { status: "success", message: "Archivo no encontrado o ya eliminado." };
   }
 }
@@ -317,14 +313,13 @@ function deleteSubmission(payload) {
 
   if (rowIndex === -1) throw new Error("Entrega no encontrada.");
 
-  const fileId = data[rowIndex][4]; // Columna E: fileId
+  const fileId = data[rowIndex][4];
   if (fileId) {
     try {
       const file = DriveApp.getFileById(fileId);
       file.setTrashed(true);
     } catch (e) {
       logDebug("Error al borrar archivo de Drive:", e.message);
-      // No lanzamos error para permitir borrar el registro si el archivo ya no existe
     }
   }
 
@@ -350,16 +345,12 @@ function getTeacherActivity(payload) {
   const mimeTypeIndex = entregasHeaders.indexOf("mimeType");
 
   const submissions = entregasValues.map(entrega => {
-    // Uso de == para ser resiliente a tipos (string vs number)
     const tarea = tareasData.find(t => t[0] == entrega[1]);
-
-    // SI LA TAREA NO EXISTE O NO PERTENECE AL PROFESOR -> DESCARTAR
     if (!tarea) return null;
     if (profesorId && tarea[10] && tarea[10] != profesorId) return null;
 
     const usuario = usuariosData.find(u => u[0] == entrega[2]);
 
-    // Filtro por Grado y Sección del Profesor (si se especifican en el payload)
     if (usuario) {
       if (grado && !isInTeacherList(usuario[2], grado)) return null;
       if (seccion && !isInTeacherList(usuario[3], seccion)) return null;
@@ -368,8 +359,8 @@ function getTeacherActivity(payload) {
     return {
       tipo: 'Tarea',
       entregaId: entrega[0],
-      titulo: tarea[2], // Tarea ya verificada arriba
-      alumnoId: entrega[2], // Columna C: userId
+      titulo: tarea[2],
+      alumnoId: entrega[2],
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
       grado: usuario ? usuario[2] : "N/A",
       seccion: usuario ? usuario[3] : "N/A",
@@ -384,8 +375,13 @@ function getTeacherActivity(payload) {
     };
   }).filter(item => item !== null);
 
-  submissions.sort((a, b) => b.fecha - a.fecha);
-  const formattedActivity = submissions.map(item => ({ ...item, fecha: item.fecha.toISOString() }));
+  submissions.sort((a, b) => {
+    const dateA = a.fecha.getTime();
+    const dateB = b.fecha.getTime();
+    return isNaN(dateB) || isNaN(dateA) ? 0 : dateB - dateA;
+  });
+
+  const formattedActivity = submissions.map(item => ({ ...item, fecha: safeIsoDate(item.fecha) }));
   return { status: "success", data: formattedActivity };
 }
 
@@ -411,7 +407,7 @@ function getAllTasks(payload) {
       asignatura: r[5],
       grado: r[6],
       seccion: r[7],
-      fechaLimite: r[8] ? new Date(r[8]).toISOString() : null,
+      fechaLimite: safeIsoDate(r[8]),
       tareaOriginalId: r[9],
       profesorId: r[10],
       estado: r[11] || 'Activa',
@@ -450,7 +446,7 @@ function getWhatsAppGroups() {
     data: data.map(r => ({
       grado: r[0],
       enlaceGrupo: r[1],
-      fechaActualizacion: r[2],
+      fechaActualizacion: safeIsoDate(r[2]),
       profesorAutor: r[3]
     }))
   };
@@ -544,7 +540,6 @@ function deleteNoticia(payload) {
 }
 
 function getOrCreateFolder(parentFolder, folderName) {
-  // Convertimos a string por si viene de una celda con formato número (ej. 10, 11)
   const name = String(folderName || "").trim() || "Sin Nombre";
   try {
     const folders = parentFolder.getFoldersByName(name);
@@ -558,9 +553,6 @@ function getOrCreateFolder(parentFolder, folderName) {
 
 // --- LÓGICA DE PSEUDOCÓDIGO ---
 
-/**
- * Obtiene la carpeta de proyectos de un alumno específico.
- */
 function getStudentProjectsFolder(userId) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
@@ -619,7 +611,7 @@ function listPseudocodeFiles(payload) {
       result.push({
         id: file.getId(),
         name: file.getName(),
-        updated: file.getLastUpdated().toISOString()
+        updated: safeIsoDate(file.getLastUpdated())
       });
     }
   }
