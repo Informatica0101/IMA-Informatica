@@ -372,10 +372,23 @@ ESTADO DE LAS TAREAS (RESUMEN)
 [A-53] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-58 a A-64] COMPLETADAS (PENDIENTE DE REVISIÓN)
 [A-67] COMPLETADA (PENDIENTE DE REVISIÓN)
+[A-72] COMPLETADA (PENDIENTE DE REVISIÓN)
 
 ------------------------------------------------------------------------------------------------
 
 TAREAS PENDIENTES DE REVISIÓN
+
+TAREA: [A-72]
+TÍTULO: Refactorización Visual, Tarjeta de Alumno y Modernización de Layout
+ÁREA: UI/UX / Frontend / Experiencia de Usuario
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Rediseño integral de la Tarjeta del Alumno en la vista docente con jerarquía modular y barra de progreso.
+- Implementada limpieza de estados visuales y desmontaje correcto de la tarjeta en la navegación del profesor.
+- Refactorización completa de index.html: nuevo Hero Anti-Template, sistema de noticias moderno y footer corporativo.
+- Unificación global de encabezados y pies de página profesionales en todos los módulos.
+- Estandarización de botones y refinamiento del editor Quill para optimización móvil.
+----------------------------
 
 TAREA: [A-69]
 TÍTULO: Diagnóstico y Resolución de Errores de Conectividad y Scoping

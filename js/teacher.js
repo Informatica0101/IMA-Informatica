@@ -632,6 +632,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderCurrentLevel() {
         const current = navStack[navStack.length - 1];
         let title = current.level;
+
+        // Limpieza de estados visuales persistentes (A-72)
+        const infoCard = document.getElementById('student-details-info-card');
+        if (infoCard) infoCard.remove();
+        const waContainer = document.querySelector('.bg-green-50');
+        if (waContainer) waContainer.classList.add('hidden');
+
         if (current.level === 'Detalles') title = `Actividades de ${current.data.alumnoNombre}`;
         if (dashboardLevelTitle) dashboardLevelTitle.textContent = title;
 
@@ -909,7 +916,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const current = navStack[navStack.length - 1];
         const parcial = current.data.parcial;
 
-        // Mostrar información del alumno en la parte superior (A-71)
+        // Rediseño completo de la Tarjeta del Alumno (A-72)
         const studentInfo = current.data.studentInfo || null;
         const existingInfoCard = document.getElementById('student-details-info-card');
         if (existingInfoCard) existingInfoCard.remove();
@@ -917,27 +924,82 @@ document.addEventListener('DOMContentLoaded', () => {
         if (studentInfo) {
             const infoCard = document.createElement('div');
             infoCard.id = 'student-details-info-card';
-            infoCard.className = "bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 animate-fade-in-up";
+            infoCard.className = "bg-white rounded-3xl shadow-sm border border-gray-100 mb-8 overflow-hidden animate-fade-in-up";
 
             const waPhone = studentInfo.telefono ? studentInfo.telefono.replace(/\D/g, '') : '';
             const waLink = waPhone ? `https://wa.me/504${waPhone}` : '#';
 
+            // Calcular resumen de estados para este parcial/asignatura
+            const studentSubmissions = allActivityRaw.filter(sub =>
+                sub.alumnoId == alumnoId &&
+                (isGlobalSearch || (norm(sub.asignatura) === norm(asignatura) && norm(sub.parcial) === norm(parcial)))
+            );
+            const total = studentSubmissions.length;
+            const completed = studentSubmissions.filter(s => s.estado === 'Completada' || s.estado === 'Revisada').length;
+            const pending = studentSubmissions.filter(s => s.estado === 'Pendiente' || s.estado === 'Pendiente de revisión' || !s.estado).length;
+
             infoCard.innerHTML = `
-                <div class="flex-grow">
-                    <h3 class="text-xl font-bold text-gray-800 mb-1">${studentInfo.nombre}</h3>
-                    <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500">
-                        <span class="flex items-center gap-1"><b class="text-gray-400 uppercase text-[10px]">No. Lista:</b> ${studentInfo.numeroLista || '-'}</span>
-                        <span class="flex items-center gap-1"><b class="text-gray-400 uppercase text-[10px]">Correo:</b> ${studentInfo.email || 'No registrado'}</span>
-                        <span class="flex items-center gap-1"><b class="text-gray-400 uppercase text-[10px]">Teléfono:</b> ${studentInfo.telefono || 'No registrado'}</span>
+                <div class="p-6 md:p-8 flex flex-col md:flex-row gap-8">
+                    <!-- Sección 1: Información del Alumno -->
+                    <div class="flex-grow space-y-6">
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-3">Expediente Académico</span>
+                            <h3 class="text-2xl font-black text-gray-800 leading-tight">${studentInfo.nombre}</h3>
+                            <p class="text-sm text-gray-400 mt-1">${grado} • ${seccion} • ${parcial}</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                <span class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Contacto Directo</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-semibold text-gray-700">${studentInfo.telefono || 'No registrado'}</span>
+                                    ${waPhone ? `<a href="${waLink}" target="_blank" class="text-green-500 hover:text-green-600 transition-colors"><svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></a>` : ''}
+                                </div>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                <span class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Identificación</span>
+                                <span class="text-sm font-semibold text-gray-700">No. Lista: ${studentInfo.numeroLista || '-'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección 2: Estado de Tareas -->
+                    <div class="md:w-72 flex flex-col justify-center space-y-4 border-l border-gray-100 md:pl-8">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-bold text-gray-500">Progreso del Parcial</span>
+                            <span class="text-sm font-black text-blue-600">${total > 0 ? Math.round((completed/total)*100) : 0}%</span>
+                        </div>
+                        <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-blue-600 h-full transition-all duration-1000" style="width: ${total > 0 ? (completed/total)*100 : 0}%"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-2">
+                            <div class="text-center p-2 rounded-xl bg-green-50 border border-green-100">
+                                <span class="block text-lg font-black text-green-700">${completed}</span>
+                                <span class="text-[9px] font-bold text-green-600 uppercase">Listas</span>
+                            </div>
+                            <div class="text-center p-2 rounded-xl bg-yellow-50 border border-yellow-100">
+                                <span class="block text-lg font-black text-yellow-700">${pending}</span>
+                                <span class="text-[9px] font-bold text-yellow-600 uppercase">Pendientes</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                ${waPhone ? `
-                <a href="${waLink}" target="_blank" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all flex items-center gap-2">
-                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
-                    Contactar WhatsApp
-                </a>` : ''}
+
+                <!-- Sección 3: Acciones Rápidas -->
+                <div class="bg-gray-50 px-6 py-4 flex flex-wrap items-center gap-4 border-t border-gray-100">
+                    <button class="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1" onclick="window.print()">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        Imprimir Reporte
+                    </button>
+                    ${waPhone ? `
+                    <a href="${waLink}" target="_blank" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl font-bold text-xs shadow-sm transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                        WhatsApp
+                    </a>` : ''}
+                </div>
             `;
-            submissionsTableBody.parentNode.insertBefore(infoCard, submissionsTableBody.parentNode.firstChild);
+            const table = submissionsTableBody.closest('table');
+            if (table) table.parentNode.insertBefore(infoCard, table);
         }
 
         const filtered = allActivityRaw.filter(i =>

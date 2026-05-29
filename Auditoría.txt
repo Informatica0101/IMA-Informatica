@@ -124,3 +124,33 @@ AUDITORÍA DE REDISEÑO Y USABILIDAD - 30 DE MAYO 2026
 -------------------------
 - [HALLAZGO] El botón 'Mi Perfil' está presente en los HTMLs pero a veces oculto o inconsistente en su visualización inicial. Debe ser inyectado o forzado globalmente.
 - [HALLAZGO] 'css/style.css' utiliza Tailwind en gran parte, pero los componentes personalizados (como .dashboard-card) necesitan un ajuste fino para respetar el sistema de espaciado de 4px de forma estricta.
+
+AUDITORÍA DE REFACTORIZACIÓN VISUAL Y UX - 10 DE JUNIO 2026
+===========================================================
+
+1. TARJETA DE ALUMNO (js/teacher.js)
+------------------------------------
+- [HALLAZGO] La función 'renderDetallesAlumno' (líneas 635-654) inyecta dinámicamente un 'infoCard' mediante 'insertBefore'.
+- [HALLAZGO] Al inyectar fuera de 'submissionsTableBody', el elemento persiste si 'renderCurrentLevel' no lo elimina explícitamente al cambiar de vista.
+- [HALLAZGO] La estructura actual de la tarjeta es plana y amontonada (flex-wrap con gaps genéricos). Falta jerarquía visual clara (uso de bordes, fondos diferenciados por sección).
+- [HALLAZGO] No hay separación entre información personal, estado y archivos. Todo está en un solo bloque flex.
+
+2. LAYOUT DE INDEX.HTML
+-----------------------
+- [HALLAZGO] El header (líneas 21-65) tiene redundancia de botones y mala distribución en móviles.
+- [HALLAZGO] El Hero (líneas 114-127) utiliza gradientes y animaciones 'blob' que pueden sentirse como plantilla genérica.
+- [HALLAZGO] La sección de noticias (líneas 130-138) y actividades (líneas 140-192) carecen de una separación visual fuerte (bordes o sombras sutiles).
+
+3. GLOBAL HEADER Y FOOTER
+-------------------------
+- [HALLAZGO] El footer (líneas 272-283 en index.html) tiene una distribución de enlaces muy básica.
+- [HALLAZGO] Falta unificación de botones de acción rápida en el header (Mi Perfil, Logout).
+
+4. DASHBOARDS (Student/Teacher)
+-------------------------------
+- [HALLAZGO] Las tarjetas de asignación (.assignment-card) en student.js tienen un diseño muy lineal.
+- [HALLAZGO] El editor Quill en teacher-dashboard.html tiene botones grandes que ocupan demasiado espacio vertical.
+
+5. SISTEMA DE ESPACIADO (css/style.css)
+---------------------------------------
+- [HALLAZGO] Aunque existe un sistema de 4px, muchas clases inline en el HTML usan gaps de Tailwind (gap-4, gap-8) que no siempre respetan la jerarquía académica profesional.

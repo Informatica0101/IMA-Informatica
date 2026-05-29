@@ -31,10 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
         button.textContent = text;
         button.onclick = onClickHandler;
         button.className = `
-            px-5 py-2.5 rounded-xl font-semibold text-base
+            px-6 py-3 rounded-xl font-bold text-sm uppercase tracking-widest
             bg-blue-600 text-white hover:bg-blue-700
             transition-all duration-300 ease-in-out
-            shadow-lg hover:shadow-xl transform hover:-translate-y-1
+            shadow-lg shadow-blue-100 hover:shadow-xl hover:shadow-blue-200 transform hover:-translate-y-0.5
             focus:outline-none focus:ring-4 focus:ring-blue-300
             ${className}
         `;
@@ -111,15 +111,17 @@ document.addEventListener('DOMContentLoaded', () => {
             link.href = topic.file;
             link.target = '_blank';
             link.className = `
-                flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl font-semibold text-base
-                bg-green-600 text-white hover:bg-green-700
+                flex items-center justify-between px-6 py-4 rounded-2xl font-bold text-sm
+                bg-gray-50 text-gray-800 border border-gray-100
                 transition-all duration-300 ease-in-out
-                shadow-lg hover:shadow-xl transform hover:-translate-y-1
-                focus:outline-none focus:ring-4 focus:ring-green-300 w-full
+                hover:bg-white hover:shadow-xl hover:border-blue-200 transform hover:-translate-y-0.5
+                focus:outline-none focus:ring-4 focus:ring-green-300 w-full group/link
             `;
             link.innerHTML = `
-                <span>${topic.title}</span>
-                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l3-3m-3 3l-3-3m0 6h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                <span class="truncate pr-4">${topic.title}</span>
+                <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs group-hover/link:bg-blue-600 group-hover/link:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 10v6m0 0l3-3m-3 3l-3-3m0 6h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                </span>
             `;
             gridDiv.appendChild(link);
         });
@@ -463,21 +465,26 @@ async function loadNews() {
                 const firstP = tempDiv.querySelector('p') ? tempDiv.querySelector('p').innerText : tempDiv.innerText.substring(0, 150) + '...';
 
                 return `
-                <div class="${idx === 0 ? 'md:col-span-2 lg:col-span-2' : ''} bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all">
-                    <div class="${idx === 0 ? 'flex flex-col md:flex-row' : ''}">
+                <div class="${idx === 0 ? 'md:col-span-2 lg:col-span-2' : ''} bg-white rounded-[2rem] border border-gray-100 overflow-hidden group hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50 transition-all duration-500">
+                    <div class="${idx === 0 ? 'flex flex-col md:flex-row h-full' : 'flex flex-col'}">
                         ${n.imagenUrl ? `
-                            <div class="${idx === 0 ? 'md:w-1/2 h-64 md:h-full' : 'h-48'} overflow-hidden">
-                                <img src="${window.convertDriveLink ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="${idx === 0 ? 'md:w-1/2 h-72 md:h-full' : 'h-56'} overflow-hidden">
+                                <img src="${window.convertDriveLink ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
                             </div>
                         ` : ''}
-                        <div class="p-6 ${idx === 0 ? 'md:w-1/2 flex flex-col justify-center' : ''}">
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-1 rounded">${n.categoria}</span>
-                                <span class="text-[10px] text-gray-400">${new Date(n.fecha).toLocaleDateString()} ${n.hora ? '| ' + n.hora.substring(0,5) : ''}</span>
+                        <div class="p-8 ${idx === 0 ? 'md:w-1/2 flex flex-col justify-center' : 'flex-grow flex flex-col'}">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="text-[9px] font-black uppercase tracking-[0.2em] text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">${n.categoria}</span>
+                                <span class="text-[10px] font-bold text-gray-300 uppercase tracking-wider">${new Date(n.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} ${n.hora ? '• ' + n.hora.substring(0,5) : ''}</span>
                             </div>
-                            <h3 class="${idx === 0 ? 'text-2xl' : 'text-xl'} font-bold text-gray-800 mb-2">${n.titulo}</h3>
-                            <p class="text-gray-600 text-sm ${idx === 0 ? 'line-clamp-4 mb-4' : 'line-clamp-3'}">${firstP}</p>
-                            ${idx === 0 ? `<div class="mt-auto"><span class="text-blue-600 font-bold text-sm">Leer noticia completa &rsaquo;</span></div>` : ''}
+                            <h3 class="${idx === 0 ? 'text-2xl md:text-3xl' : 'text-xl'} font-black text-gray-900 mb-4 leading-tight group-hover:text-blue-600 transition-colors">${n.titulo}</h3>
+                            <p class="text-gray-500 text-sm leading-relaxed mb-6 ${idx === 0 ? 'line-clamp-4' : 'line-clamp-3'}">${firstP}</p>
+                            <div class="mt-auto pt-6 border-t border-gray-50">
+                                <span class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-blue-600 transition-all">
+                                    Seguir Leyendo
+                                    <svg class="w-3 h-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
