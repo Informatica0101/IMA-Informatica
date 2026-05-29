@@ -1,11 +1,15 @@
-/* Global scale */
+/* Global scale and Anti-Template Typography */
 html {
-    font-size: 85%; /* Slightly larger than the original 80% to address "too small" complaint */
+    font-size: 16px; /* Standardizing to 16px as base */
     scroll-behavior: smooth;
 }
 
+@media (max-width: 768px) {
+    html { font-size: 14px; }
+}
+
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #1a202c; /* gray-900 */
@@ -47,10 +51,19 @@ body {
 .animation-delay-2000 { animation-delay: 2s; }
 .animation-delay-4000 { animation-delay: 4s; }
 
-/* Header and Scroll State */
+/* Header and Scroll State (Compact & Professional) */
 #main-header {
     top: 0 !important;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+@media (min-width: 768px) {
+    #main-header {
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+    }
 }
 
 .header-hidden {
@@ -172,13 +185,18 @@ body {
     backdrop-filter: blur(10px);
 }
 
-/* 4px-based Spacing System */
-.p-4px { padding: 4px; }
-.p-8px { padding: 8px; }
-.p-12px { padding: 12px; }
-.p-16px { padding: 16px; }
-.p-24px { padding: 24px; }
-.p-32px { padding: 32px; }
+/* 4px-based Spacing System (Strict Anti-Template) */
+.p-4px { padding: 4px !important; }
+.p-8px { padding: 8px !important; }
+.p-12px { padding: 12px !important; }
+.p-16px { padding: 16px !important; }
+.p-24px { padding: 24px !important; }
+.p-32px { padding: 32px !important; }
+
+.pt-8px { padding-top: 8px !important; }
+.pb-8px { padding-bottom: 8px !important; }
+.pt-12px { padding-top: 12px !important; }
+.pb-12px { padding-bottom: 12px !important; }
 
 .m-4px { margin: 4px; }
 .m-8px { margin: 8px; }
@@ -194,11 +212,12 @@ body {
 .gap-24px { gap: 24px; }
 .gap-32px { gap: 32px; }
 
-/* Dashboard Specific Styles */
+/* Dashboard Specific Styles (Compact & Professional) */
 .assignment-card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid #f3f4f6;
-    margin-bottom: 8px; /* 8px spacing */
+    transition: all 0.2s ease-in-out;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 12px;
+    border-radius: 12px;
 }
 
 .assignment-card.is-expanded {

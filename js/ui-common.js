@@ -11,16 +11,15 @@ window.setupCommonUI = function() {
 
     const mobileCoursesToggle = document.getElementById('mobile-courses-toggle');
     const mobileCoursesArrow = document.getElementById('mobile-courses-arrow');
-    const mobileGradesContainer = document.getElementById('mobile-grades-container');
-    const mobileGradesMenu = document.getElementById('mobile-grades-menu');
+    const mobileCoursesContainer = document.getElementById('mobile-courses-container');
 
-    const mobileAdditionalResourcesToggle = document.getElementById('mobile-additional-resources-toggle');
-    const mobileAdditionalResourcesArrow = document.getElementById('mobile-additional-resources-arrow');
-    const mobileAdditionalResourcesContainer = document.getElementById('mobile-additional-resources-container');
-    const mobileAdditionalResourcesMenu = document.getElementById('mobile-additional-resources-menu');
+    const mobileContentToggle = document.getElementById('mobile-content-toggle');
+    const mobileContentArrow = document.getElementById('mobile-content-arrow');
+    const mobileContentContainer = document.getElementById('mobile-content-container');
 
-    let activeMobileGradeElement = null;
-    let activeMobileSubjectElement = null;
+    const openProfileBtn = document.getElementById('open-profile-btn');
+    const mobileProfileBtn = document.getElementById('mobile-profile-btn-nav');
+
     let lastScrollTop = 0;
     const scrollThreshold = 10;
 
@@ -28,21 +27,16 @@ window.setupCommonUI = function() {
     if (mainHeader) {
         window.addEventListener('scroll', () => {
             const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-            // Header Hide/Show on scroll
             if (currentScrollTop > lastScrollTop && currentScrollTop > mainHeader.offsetHeight + 50) {
                 mainHeader.classList.add('header-hidden');
             } else if (currentScrollTop < lastScrollTop) {
                 mainHeader.classList.remove('header-hidden');
             }
-
-            // Header visual state change (scrolled)
             if (currentScrollTop > scrollThreshold) {
                 mainHeader.classList.add('header-scrolled');
             } else {
                 mainHeader.classList.remove('header-scrolled');
             }
-
             lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
         });
     }
@@ -67,10 +61,10 @@ window.setupCommonUI = function() {
         }
 
         function resetMobileMenuState() {
-            [mobileGradesContainer, mobileAdditionalResourcesContainer].forEach(el => {
+            [mobileCoursesContainer, mobileContentContainer].forEach(el => {
                 if (el) { el.classList.add('hidden-height'); el.classList.remove('visible-height'); }
             });
-            [mobileCoursesArrow, mobileAdditionalResourcesArrow].forEach(el => {
+            [mobileCoursesArrow, mobileContentArrow].forEach(el => {
                 if (el) el.classList.remove('rotate-90');
             });
         }
@@ -78,387 +72,223 @@ window.setupCommonUI = function() {
         if (mobileMenuButton) mobileMenuButton.addEventListener('click', toggleMobileMenu);
         if (mobileMenuCloseButton) mobileMenuCloseButton.addEventListener('click', toggleMobileMenu);
 
-        document.addEventListener('mousedown', (e) => {
-            if (!mobileMenuOverlay.classList.contains('hidden') &&
-                !mobileMenuOverlay.contains(e.target) &&
-                !mobileMenuButton.contains(e.target)) {
-                closeMobileMenu();
-            }
-        });
-
         if (mobileCoursesToggle) {
             mobileCoursesToggle.addEventListener('click', () => {
-                const isExpanding = mobileGradesContainer.classList.contains('hidden-height');
-                mobileGradesContainer.classList.toggle('hidden-height');
-                mobileGradesContainer.classList.toggle('visible-height');
-                if (mobileCoursesArrow) mobileCoursesArrow.classList.toggle('rotate-90');
-                if (isExpanding && mobileAdditionalResourcesContainer) {
-                    mobileAdditionalResourcesContainer.classList.add('hidden-height');
-                    mobileAdditionalResourcesContainer.classList.remove('visible-height');
-                    if (mobileAdditionalResourcesArrow) mobileAdditionalResourcesArrow.classList.remove('rotate-90');
-                }
+                mobileCoursesContainer.classList.toggle('hidden-height');
+                mobileCoursesContainer.classList.toggle('visible-height');
+                mobileCoursesArrow.classList.toggle('rotate-90');
             });
         }
-
-        if (mobileAdditionalResourcesToggle) {
-            mobileAdditionalResourcesToggle.addEventListener('click', () => {
-                const isExpanding = mobileAdditionalResourcesContainer.classList.contains('hidden-height');
-                mobileAdditionalResourcesContainer.classList.toggle('hidden-height');
-                mobileAdditionalResourcesContainer.classList.toggle('visible-height');
-                if (mobileAdditionalResourcesArrow) mobileAdditionalResourcesArrow.classList.toggle('rotate-90');
-                if (isExpanding && mobileGradesContainer) {
-                    mobileGradesContainer.classList.add('hidden-height');
-                    mobileGradesContainer.classList.remove('visible-height');
-                    if (mobileCoursesArrow) mobileCoursesArrow.classList.remove('rotate-90');
-                }
+        if (mobileContentToggle) {
+            mobileContentToggle.addEventListener('click', () => {
+                mobileContentContainer.classList.toggle('hidden-height');
+                mobileContentContainer.classList.toggle('visible-height');
+                mobileContentArrow.classList.toggle('rotate-90');
             });
         }
     }
 
-    // --- Logout Logic ---
-    const logoutBtn = document.getElementById('logout-button');
-    const mobileLogoutBtn = document.getElementById('mobile-logout-button');
-    if (logoutBtn || mobileLogoutBtn) {
-        const handleLogout = () => {
-            localStorage.removeItem('currentUser');
-            window.location.href = 'login.html';
-        };
-        if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
-        if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
+    // --- Profile Modal Logic ---
+    const handleProfileClick = () => {
+        if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+             // If on index, the modal might already be there and handled by index-ui.js
+             // But we need a global way. Let's assume we trigger an event or call a function if available.
+             const btn = document.getElementById('open-profile-btn');
+             if (btn && btn.onclick) btn.onclick();
+        } else {
+            // On dashboards, the modal is in the HTML.
+            const modal = document.getElementById('profile-modal');
+            if (modal) {
+                // Populate data if user exists
+                const user = JSON.parse(localStorage.getItem('currentUser'));
+                if (user) {
+                    document.getElementById('profile-nombre').value = user.nombre || '';
+                    document.getElementById('profile-email').value = user.email || '';
+                    document.getElementById('profile-telefono').value = user.telefono || '';
+                }
+                modal.classList.remove('hidden');
+            }
+        }
+        if (window.closeMobileMenu) window.closeMobileMenu();
+    };
+
+    if (openProfileBtn) openProfileBtn.addEventListener('click', handleProfileClick);
+    if (mobileProfileBtn) mobileProfileBtn.addEventListener('click', handleProfileClick);
+
+    // --- Logout Logic (Global) ---
+    window.handleLogout = () => {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
+    };
+
+    // Portal Redirect Logic
+    const portalLink = document.getElementById('nav-portal-link');
+    const mobilePortalLink = document.getElementById('mobile-portal-link');
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    if (currentUser) {
+        const dest = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
+        if (portalLink) portalLink.href = dest;
+        if (mobilePortalLink) mobilePortalLink.href = dest;
     }
 
     // Set Year
     const yearSpan = document.getElementById('current-year');
     if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
-    // --- PWA Logic ---
-    setupPWALogic();
-
-    // Render Mobile Nav
-    window.renderMobileNav();
-
-    // (A-28) Signal that common UI is ready
-    document.dispatchEvent(new CustomEvent('common-ui-ready'));
-
-    // Global "Mi Perfil" Button Visibility
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (currentUser && openProfileBtn) {
-        openProfileBtn.classList.remove('hidden');
-    }
+    // Render Navigation
+    window.renderCommonNav();
 };
-
-window.convertDriveLink = function(url) {
-    if (!url || !url.includes('drive.google.com')) return url;
-    let match = url.match(/\/file\/d\/(.+?)\//);
-    if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    match = url.match(/[?&]id=(.+?)(&|$)/);
-    if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    return url;
-};
-
-/**
- * PWA Logic: Installation and Service Worker registration
- */
-function setupPWALogic() {
-    let deferredPrompt;
-    const installBtnMobile = document.getElementById("pwa-install-button-mobile");
-    const installBtnFooter = document.getElementById("pwa-install-button-footer");
-    const iosModal = document.getElementById("ios-install-modal");
-
-    // Detect platforms
-    const ua = navigator.userAgent;
-    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-    const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
-
-    // Logic to show install buttons
-    function showInstallButtons() {
-        if (isStandalone) return;
-
-        // iOS always shows the button if not standalone (manual instructions)
-        if (isIOS) {
-            if (installBtnMobile) installBtnMobile.classList.remove("hidden");
-            if (installBtnFooter) installBtnFooter.classList.remove("hidden");
-        }
-    }
-
-    // Initial check
-    showInstallButtons();
-
-    window.addEventListener("beforeinstallprompt", (e) => {
-        // Prevent Chrome from automatically showing the prompt
-        e.preventDefault();
-        // Stash the event so it can be triggered later.
-        deferredPrompt = e;
-        // Show the buttons now that we know we can prompt
-        if (!isStandalone) {
-            if (installBtnMobile) installBtnMobile.classList.remove("hidden");
-            if (installBtnFooter) installBtnFooter.classList.remove("hidden");
-        }
-    });
-
-    async function handleInstall() {
-        // If iOS, show the special instructions modal
-        if (isIOS) {
-            if (iosModal) iosModal.classList.remove("opacity-0", "pointer-events-none");
-
-            // Atajo para iOS: Intentar abrir el menú de compartir directamente
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'InformaticApp',
-                        text: 'Instalar plataforma educativa en tu pantalla de inicio',
-                        url: window.location.origin + window.location.pathname
-                    });
-                } catch (err) {
-                    // El usuario canceló o el navegador no lo soporta
-                    console.log('Share sheet dismissed', err);
-                }
-            }
-            return;
-        }
-
-        // If we have the deferredPrompt (Android/Chrome/PC), use it
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === "accepted") {
-                if (installBtnMobile) installBtnMobile.classList.add("hidden");
-                if (installBtnFooter) installBtnFooter.classList.add("hidden");
-                deferredPrompt = null;
-            }
-        } else {
-            // Fallback for mobile browsers where prompt is not available
-            alert("Para instalar esta aplicación, usa la opción 'Añadir a la pantalla de inicio' en el menú de tu navegador.");
-        }
-    }
-
-    if (installBtnMobile) installBtnMobile.addEventListener("click", handleInstall);
-    if (installBtnFooter) installBtnFooter.addEventListener("click", handleInstall);
-
-    const closeIosModal = document.getElementById("close-ios-modal");
-    if (closeIosModal) {
-        closeIosModal.addEventListener("click", () => {
-            if (iosModal) iosModal.classList.add("opacity-0", "pointer-events-none");
-        });
-    }
-
-    // Service Worker Registration
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js?v=18')
-                .then(reg => {
-                    console.log('SW registrado', reg);
-                    // Forzar actualización si hay un nuevo SW esperando
-                    reg.onupdatefound = () => {
-                        const installingWorker = reg.installing;
-                        installingWorker.onstatechange = () => {
-                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                console.log('Nuevo contenido disponible; por favor refresca.');
-                                if(confirm("Nueva versión disponible. ¿Deseas actualizar ahora?")) {
-                                    window.location.reload();
-                                }
-                            }
-                        };
-                    };
-                })
-                .catch(err => console.log('SW error', err));
-        });
-
-        // Asegurar que los cambios se apliquen al recargar
-        let refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (!refreshing) {
-                window.location.reload();
-                refreshing = true;
-            }
-        });
-    }
-}
 
 window.handleHeaderAction = function(action) {
-    if (!window.showMainContentSections) {
-        // Si no estamos en la home, redirigir a index.html con el parámetro de acción
-        window.location.href = `index.html?action=${action}`;
-        return;
+    if (action === 'show-activities') {
+        if (window.showMainContentSections) {
+            window.showMainContentSections();
+            if (window.renderActivityList) window.renderActivityList();
+        } else {
+            window.location.href = 'index.html?action=show-activities';
+        }
     }
-    window.showMainContentSections();
-    if (action === 'load-peripherals-game') { if(window.loadPeripheralsGame) window.loadPeripheralsGame(); }
-    else if (action === 'load-webmaster-quiz') { if(window.loadWebMasterQuiz) window.loadWebMasterQuiz(); }
-    else if (action === 'load-dexterity-game') { if(window.loadDexterityGame) window.loadDexterityGame(); }
     if (window.closeMobileMenu) window.closeMobileMenu();
 };
 
-window.renderMobileNav = function() {
-    const mobileGradesMenu = document.getElementById('mobile-grades-menu');
-    const mobileAdditionalMenu = document.getElementById('mobile-additional-resources-menu');
-    if (!mobileGradesMenu || !window.presentationData) return;
-
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    mobileGradesMenu.innerHTML = '';
-    window.presentationData.forEach(gradeData => {
-        // Filtrado por Grado (A-51)
-        if (currentUser && currentUser.grado && gradeData.grade !== currentUser.grado) return;
-
-        const gradeToggle = document.createElement('button');
-        gradeToggle.className = 'mobile-nav-link justify-between bg-white';
-        gradeToggle.innerHTML = `${gradeData.grade} <span class="transform transition-transform duration-300">&#9656;</span>`;
-        mobileGradesMenu.appendChild(gradeToggle);
-
-        const subjectsContainer = document.createElement('div');
-        subjectsContainer.className = 'mobile-menu-item-container hidden-height';
-        mobileGradesMenu.appendChild(subjectsContainer);
-
-        gradeToggle.addEventListener('click', () => {
-            subjectsContainer.classList.toggle('hidden-height');
-            subjectsContainer.classList.toggle('visible-height');
-            const arrow = gradeToggle.querySelector('span');
-            if (arrow) arrow.classList.toggle('rotate-90');
-        });
-
-        gradeData.subjects.forEach(subjectData => {
-            // Filtrado por Sección (A-51)
-            if (currentUser && currentUser.seccion && subjectData.sections && !subjectData.sections.split(',').map(s => s.trim()).includes(currentUser.seccion)) return;
-
-            const subjectToggle = document.createElement('button');
-            subjectToggle.className = 'w-full text-gray-700 font-medium text-left px-8 py-3 flex justify-between items-center bg-gray-50 border-b border-gray-100';
-            subjectToggle.innerHTML = `${subjectData.name} <span class="transform transition-transform duration-300">&#9656;</span>`;
-            subjectsContainer.appendChild(subjectToggle);
-
-            const topicsContainer = document.createElement('div');
-            topicsContainer.className = 'mobile-menu-item-container hidden-height bg-gray-100';
-            subjectsContainer.appendChild(topicsContainer);
-
-            subjectToggle.addEventListener('click', () => {
-                topicsContainer.classList.toggle('hidden-height');
-                topicsContainer.classList.toggle('visible-height');
-                const arrow = subjectToggle.querySelector('span');
-                if (arrow) arrow.classList.toggle('rotate-90');
-            });
-
-            subjectData.topics.forEach(topic => {
-                const topicLink = document.createElement('a');
-                topicLink.href = topic.file;
-                topicLink.className = 'block px-12 py-3 text-gray-600 text-sm border-b border-gray-200';
-                topicLink.textContent = topic.title;
-                topicLink.onclick = () => { if(window.closeMobileMenu) window.closeMobileMenu(); };
-                topicsContainer.appendChild(topicLink);
-            });
-        });
-    });
-
-    // Recursos Adicionales Mobile
-    if (mobileAdditionalMenu && window.additionalResourcesData) {
-        mobileAdditionalMenu.innerHTML = '';
-        window.additionalResourcesData.forEach(cat => {
-            const catToggle = document.createElement('button');
-            catToggle.className = 'mobile-nav-link justify-between bg-white';
-            catToggle.innerHTML = `${cat.category} <span class="transform transition-transform duration-300">&#9656;</span>`;
-            mobileAdditionalMenu.appendChild(catToggle);
-
-            const itemsContainer = document.createElement('div');
-            itemsContainer.className = 'mobile-menu-item-container hidden-height';
-            mobileAdditionalMenu.appendChild(itemsContainer);
-
-            catToggle.addEventListener('click', () => {
-                itemsContainer.classList.toggle('hidden-height');
-                itemsContainer.classList.toggle('visible-height');
-                const arrow = catToggle.querySelector('span');
-                if (arrow) arrow.classList.toggle('rotate-90');
-            });
-
-            cat.items.forEach(item => {
-                const itemLink = document.createElement('a');
-                itemLink.className = 'block px-8 py-3 text-gray-700 font-medium bg-gray-50 border-b border-gray-100';
-                itemLink.textContent = item.title;
-                if (item.action) {
-                    itemLink.href = '#';
-                    itemLink.onclick = (e) => {
-                        e.preventDefault();
-                        window.handleHeaderAction(item.action);
-                    };
-                } else {
-                    itemLink.href = item.file;
-                    itemLink.target = '_blank';
-                    itemLink.onclick = () => { if(window.closeMobileMenu) window.closeMobileMenu(); };
-                }
-                itemsContainer.appendChild(itemLink);
-            });
-        });
-    }
-};
-
 window.renderCommonNav = function() {
-    const desktopGradesMenu = document.getElementById('desktop-grades-menu');
-    const desktopAdditionalMenu = document.getElementById('desktop-additional-resources-menu');
-    const mobileGradesMenu = document.getElementById('mobile-grades-menu');
-    const mobileAdditionalMenu = document.getElementById('mobile-additional-resources-menu');
-
-    if (!window.presentationData) return;
+    const desktopCoursesMenu = document.getElementById('desktop-courses-menu');
+    const desktopContentMenu = document.getElementById('desktop-content-menu');
+    const mobileCoursesMenu = document.getElementById('mobile-courses-menu');
+    const mobileContentMenu = document.getElementById('mobile-content-menu');
 
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const isProfesor = currentUser && currentUser.rol === 'Profesor';
 
-    // Helper for submenus
-    function closeSubMenu(element) {
-        element.classList.add('hidden-height');
-        element.classList.remove('visible-height');
-        const arrow = element.previousElementSibling.querySelector('span');
-        if (arrow) arrow.classList.remove('rotate-90');
-    }
+    function buildHierarchy(data, type) {
+        // type: 'courses' or 'content'
+        if (!data) return '';
 
-    // Render Desktop
-    if (desktopGradesMenu) {
-        desktopGradesMenu.innerHTML = '';
-        window.presentationData.forEach(gradeData => {
-            // Filtrado por Grado
-            if (currentUser && currentUser.grado && gradeData.grade !== currentUser.grado) return;
+        return data.map(grade => {
+            // Student filtering: only their grade
+            if (!isProfesor && currentUser && currentUser.grado && grade.grade !== currentUser.grado) return '';
 
-            const gradeDiv = document.createElement('div');
-            gradeDiv.className = 'relative group/grade';
-            gradeDiv.innerHTML = `
-                <button class="block w-full text-left px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
-                    ${gradeData.grade} <span class="float-right text-xs mt-1">&#9656;</span>
+            // Teacher view: Full hierarchy
+            let html = `<div class="relative group/grade">
+                <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-600 font-medium transition-colors focus:outline-none">
+                    ${grade.grade} <span class="float-right text-xs mt-1">&#9656;</span>
                 </button>
-                <div class="absolute left-full top-0 mt-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/grade:scale-100 origin-left border border-gray-100">
-                    ${gradeData.subjects.filter(subject => {
-                        if (currentUser && currentUser.seccion && subject.sections) {
-                            return subject.sections.split(',').map(s => s.trim()).includes(currentUser.seccion);
-                        }
-                        return true;
-                    }).map(subject => `
-                        <div class="relative group/subject">
-                            <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 focus:outline-none">
-                                ${subject.name} <span class="float-right text-xs mt-1">&#9656;</span>
+                <div class="absolute left-full top-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible border border-gray-100">`;
+
+            // Filter subjects by section if student
+            const filteredSubjects = grade.subjects.filter(subj => {
+                if (!isProfesor && currentUser && currentUser.seccion) {
+                    return subj.sections.includes(currentUser.seccion);
+                }
+                return true;
+            });
+
+            // Find current partial for student
+            let studentPartial = "";
+            if (!isProfesor && filteredSubjects.length > 0) {
+                const partials = ["Cuarto Parcial", "Tercer Parcial", "Segundo Parcial", "Primer Parcial"];
+                for (const p of partials) {
+                    if (filteredSubjects.some(s => s.partial === p)) {
+                        studentPartial = p;
+                        break;
+                    }
+                }
+            }
+
+            // Group subjects by partial for Teacher, or filter for Student
+            const partialGroups = {};
+            filteredSubjects.forEach(subj => {
+                if (!isProfesor && subj.partial !== studentPartial) return;
+                if (!partialGroups[subj.partial]) partialGroups[subj.partial] = [];
+                partialGroups[subj.partial].push(subj);
+            });
+
+            if (isProfesor) {
+                // Teacher: Grade > Section (from data) > Partial > Subject > Topic
+                // Since data is simplified, let's use what we have: Grade > Partial > Subject > Topic
+                Object.keys(partialGroups).forEach(partial => {
+                    html += `<div class="relative group/partial">
+                        <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
+                            ${partial} <span class="float-right text-xs mt-1">&#9656;</span>
+                        </button>
+                        <div class="absolute left-full top-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/partial:opacity-100 group-hover/partial:visible border border-gray-100">`;
+
+                    partialGroups[partial].forEach(subj => {
+                        html += `<div class="relative group/subj">
+                            <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
+                                ${subj.name} <span class="float-right text-xs mt-1">&#9656;</span>
                             </button>
-                            <div class="absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/subject:opacity-100 group-hover/subject:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/subject:scale-100 origin-left border border-gray-100">
-                                ${subject.topics.map(topic => `
-                                    <a href="${topic.file}" class="block px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 text-sm">${topic.title}</a>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            desktopGradesMenu.appendChild(gradeDiv);
-        });
+                            <div class="absolute left-full top-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">`;
+                        subj.topics.forEach(topic => {
+                            html += `<a href="${topic.file}" class="block px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">${topic.title}</a>`;
+                        });
+                        html += `</div></div>`;
+                    });
+                    html += `</div></div>`;
+                });
+            } else {
+                // Student: Subject > Topic (Directly for current partial)
+                filteredSubjects.filter(s => s.partial === studentPartial).forEach(subj => {
+                    html += `<div class="relative group/subj">
+                        <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
+                            ${subj.name} <span class="float-right text-xs mt-1">&#9656;</span>
+                        </button>
+                        <div class="absolute left-full top-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">`;
+                    subj.topics.forEach(topic => {
+                        html += `<a href="${topic.file}" class="block px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">${topic.title}</a>`;
+                    });
+                    html += `</div></div>`;
+                });
+            }
+
+            html += `</div></div>`;
+            return html;
+        }).join('');
     }
 
-    if (desktopAdditionalMenu) {
-        desktopAdditionalMenu.innerHTML = '';
-        window.additionalResourcesData.forEach(cat => {
-            const catDiv = document.createElement('div');
-            catDiv.className = 'relative group/resource-cat';
-            catDiv.innerHTML = `
-                <button class="block w-full text-left px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
-                    ${cat.category} <span class="float-right text-xs mt-1">&#9656;</span>
+    function buildMobileHierarchy(data) {
+        if (!data) return '';
+        return data.map(grade => {
+            if (!isProfesor && currentUser && currentUser.grado && grade.grade !== currentUser.grado) return '';
+
+            let html = `<button class="w-full text-left px-6 py-3 font-bold border-b border-gray-50 flex justify-between items-center" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                ${grade.grade} <span>&#9662;</span>
+            </button>
+            <div class="hidden bg-gray-50">`;
+
+            const filteredSubjects = grade.subjects.filter(subj => {
+                if (!isProfesor && currentUser && currentUser.seccion) return subj.sections.includes(currentUser.seccion);
+                return true;
+            });
+
+            let studentPartial = "";
+            if (!isProfesor && filteredSubjects.length > 0) {
+                const partials = ["Cuarto Parcial", "Tercer Parcial", "Segundo Parcial", "Primer Parcial"];
+                for (const p of partials) {
+                    if (filteredSubjects.some(s => s.partial === p)) { studentPartial = p; break; }
+                }
+            }
+
+            filteredSubjects.forEach(subj => {
+                if (!isProfesor && subj.partial !== studentPartial) return;
+                html += `<button class="w-full text-left px-8 py-2 font-medium border-b border-gray-100 flex justify-between items-center" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                    ${isProfesor ? `[${subj.partial}] ` : ''}${subj.name} <span>&#9662;</span>
                 </button>
-                <div class="absolute left-full top-0 mt-0 w-64 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/resource-cat:opacity-100 group-hover/resource-cat:visible transition-all duration-300 ease-in-out transform scale-95 group-hover/resource-cat:scale-100 origin-left border border-gray-100">
-                    ${cat.items.map(item => `
-                        <a href="${item.action ? '#' : item.file}" ${item.action ? `onclick="handleHeaderAction('${item.action}')"` : 'target="_blank"'} class="block px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 text-sm">${item.title}</a>
-                    `).join('')}
-                </div>
-            `;
-            desktopAdditionalMenu.appendChild(catDiv);
-        });
+                <div class="hidden bg-white">`;
+                subj.topics.forEach(topic => {
+                    html += `<a href="${topic.file}" class="block px-10 py-2 text-sm text-gray-600 border-b border-gray-50" onclick="closeMobileMenu()">${topic.title}</a>`;
+                });
+                html += `</div>`;
+            });
+
+            html += `</div>`;
+            return html;
+        }).join('');
     }
+
+    if (desktopCoursesMenu) desktopCoursesMenu.innerHTML = buildHierarchy(window.presentationData, 'courses');
+    if (desktopContentMenu) desktopContentMenu.innerHTML = buildHierarchy(window.downloadContentData, 'content');
+    if (mobileCoursesMenu) mobileCoursesMenu.innerHTML = buildMobileHierarchy(window.presentationData);
+    if (mobileContentMenu) mobileContentMenu.innerHTML = buildMobileHierarchy(window.downloadContentData);
 };

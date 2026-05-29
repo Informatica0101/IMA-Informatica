@@ -3,11 +3,14 @@
  */
 
 window.presentationData = [
-    /* {
+    {
         grade: "Décimo",
+        sections: ["A", "B"],
         subjects: [
             {
                 name: "Informática I",
+                partial: "Primer Parcial",
+                sections: "A, B",
                 topics: [
                     { title: "Procesadores de Texto", file: "Informatica_I/prosesadores_texto.html" },
                     { title: "Formato de texto y tablas", file: "Informatica_I/texto_tablas.html" },
@@ -16,12 +19,15 @@ window.presentationData = [
                 ]
             }
         ]
-    }, */
+    },
     {
         grade: "Undécimo",
+        sections: ["A"],
         subjects: [
-            /* {
+            {
                 name: "Programación (I Parcial)",
+                partial: "Primer Parcial",
+                sections: "A",
                 topics: [
                     { title: "Introducción a la Programación", file: "II_BTP_A/Programacion/introduccion_programacion.html" },
                     { title: "Clasificación y etapas de algoritmos", file: "II_BTP_A/Programacion/clasificacion_etapas_algoritmos.html" },
@@ -31,9 +37,11 @@ window.presentationData = [
                     { title: "Pseudocódigo y ordenación simbólica", file: "II_BTP_A/Programacion/pseudocodigo_ordenacion.html" },
                     { title: "Diagramas de flujo", file: "II_BTP_A/Programacion/diagramas_flujo.html" }
                 ]
-            }, */
+            },
             {
                 name: "Programación",
+                partial: "Segundo Parcial",
+                sections: "A",
                 topics: [
                     { title: "Introducción a los Lenguajes de Programación", file: "II_BTP_A/Programacion/intro_lenguajes_programacion.html" },
                     { title: "Lenguajes compilados e interpretados / Bucles", file: "II_BTP_A/Programacion/lenguajes_compilados_interpretados.html" },
@@ -42,35 +50,16 @@ window.presentationData = [
                     { title: "Bases de Datos: Tipos y Modelos", file: "II_BTP_A/Programacion/prog_bd_modelos.html" }
                 ]
             }
-            /* {
-                name: "Informática Aplicada I",
-                topics: [
-                    { title: "Sistemas de Numeración", file: "II_BTP_A/Informatica_Aplicada_I/sistemas_numeracion.html" },
-                    { title: "Numeración Hexadecimal", file: "II_BTP_A/Informatica_Aplicada_I/hexadecimales.html" },
-                    { title: "Manejo de Archivos", file: "II_BTP_A/Informatica_Aplicada_I/manejo_archivos.html" }
-                ]
-            },
-            {
-                name: "Ofimática I",
-                topics: [
-                    { title: "Referencias Relativas y Absolutas", file: "II_BTP_A/Ofimatica_I/referencias_relayabso.html" },
-                    { title: "Formato Condicional", file: "II_BTP_A/Ofimatica_I/formato_condicional.html" },
-                    { title: "Formato de tabla dinamica", file: "II_BTP_A/Ofimatica_I/tablas_dinamicas.html" },
-                    { title: "Validación y Filtrado de Datos", file: "II_BTP_A/Ofimatica_I/validacion-datos.html" },
-                    { title: "Fundamentos de VBA", file: "II_BTP_A/Ofimatica_I/fundamentos_VBA.html" }
-                ]
-            },
-            {
-                name: "Análisis y Diseño de Sistemas",
-                topics: []
-            } */
         ]
     },
     {
         grade: "Duodécimo",
+        sections: ["A"],
         subjects: [
-            /* {
+            {
                 name: "Diseño Web (I Parcial)",
+                partial: "Primer Parcial",
+                sections: "A",
                 topics: [
                     { title: "Introducción al Diseño Web", file: "III_BTP_A/introduccion_diseno_web.html" },
                     { title: "HTML y CSS - Terminología básica", file: "III_BTP_A/terminologia_basica_html_css.html" },
@@ -80,9 +69,11 @@ window.presentationData = [
                     { title: "Alineación y formato de texto", file: "III_BTP_A/alineacion_formato_texto.html" },
                     { title: "Tablas y etiquetas div/span", file: "III_BTP_A/tablas_div_span.html" }
                 ]
-            }, */
+            },
             {
                 name: "Diseño Web",
+                partial: "Segundo Parcial",
+                sections: "A",
                 topics: [
                     { title: "Introducción a CSS", file: "III_BTP_A/dw_II/introduccion_css.html" },
                     { title: "Enlazar estilos CSS / Etiquetas autocerrables", file: "III_BTP_A/dw_II/enlazar_estilos_autocerrables.html" },
@@ -91,13 +82,6 @@ window.presentationData = [
                     { title: "Bordes, Enlaces y Decoración", file: "III_BTP_A/dw_II/bordes_enlaces_decoracion.html" }
                 ]
             }
-            /* {
-                name: "Diseño Web II",
-                topics: [
-                    { title: "Grid vs Flexbox", file: "III_BTP_A/dw_II/tablas_columnas.html" },
-                    { title: "Eventos de JavaScript", file: "III_BTP_A/dw_II/eventos_javascript.html" }
-                ]
-            } */
         ]
     }
 ];
@@ -107,7 +91,6 @@ window.additionalResourcesData = [
         category: "Artículos",
         items: [
             { title: "Destreza en el teclado", file: "II_BTP_A/Ofimatica_I/articulo-destreza.html" },
-            // { title: "Línea de tiempo de la computación", file: "Informatica_I/articulo_lineadetiempo.html" },
             { title: "Evolución de Suites Informáticas", file: "II_BTP_A/Ofimatica_I/articulo-evolucion-suite.html" },
             { title: "Propiedades CSS", file: "III_BTP_A/dw_II/propiedades_css.html" }
         ]
@@ -124,11 +107,14 @@ window.additionalResourcesData = [
 ];
 
 window.downloadContentData = [
-    /* {
+    {
         grade: "Décimo",
+        sections: ["A", "B"],
         subjects: [
             {
                 name: "Informática I",
+                partial: "Primer Parcial",
+                sections: "A, B",
                 topics: [
                     { title: "Procesadores de Texto", file: "Informatica_I/procesadores_palabras.pdf" },
                     { title: "Formato de texto y tablas", file: "Informatica_I/texto_tablas.pdf" },
@@ -138,78 +124,49 @@ window.downloadContentData = [
                 ]
             }
         ]
-    }, */
+    },
     {
         grade: "Undécimo",
+        sections: ["A"],
         subjects: [
-            /* {
+            {
                 name: "Programación (I Parcial)",
+                partial: "Primer Parcial",
+                sections: "A",
                 topics: [
-                    { title: "Introduccion a programacion", file: "II_BTP_A/Programacion/Programación_2026.pdf" },
-                    { title: "Pseudocódigo y ordenación simbólica", file: "II_BTP_A/Programacion/pseudocodigo_ordenacion.html" }
+                    { title: "Introduccion a programacion", file: "II_BTP_A/Programacion/Programación_2026.pdf" }
                 ]
-            }, */
+            },
             {
                 name: "Programación",
+                partial: "Segundo Parcial",
+                sections: "A",
                 topics: [
                     { title: "Contenido II Parcial (PDF)", file: "II_BTP_A/Programacion/II Parcial/Programacion Segunda Unidad.pdf" }
                 ]
             }
-            /* {
-                name: "Informática Aplicada I",
-                topics: [
-                    { title: "Sistemas de Numeración", file: "II_BTP_A/Informatica_Aplicada_I/sistemas_numeracion.pdf" },
-                    { title: "Numeración Hexadecimal", file: "II_BTP_A/Informatica_Aplicada_I/hexadecimales.pdf" },
-                    { title: "Manejo de Archivos", file: "II_BTP_A/Informatica_Aplicada_I/manejo_archivos.pdf" },
-                    { title: "Guia de Estudio", file: "guia_estudios/GE_Info_Apli.pdf" }
-                ]
-            },
-            {
-                name: "Ofimática I",
-                topics: [
-                    { title: "Referencias Relativas y Absolutas", file: "II_BTP_A/Ofimatica_I/referencias_relayabso.pdf" },
-                    { title: "Formato Condicional", file: "II_BTP_A/Ofimatica_I/formato_condicional.pdf" },
-                    { title: "Formato de Tabla Dinámica", file: "II_BTP_A/Ofimatica_I/formato_tablas.pdf" },
-                    { title: "Validación y Filtrado de Datos", file: "II_BTP_A/Ofimatica_I/validacion_filtrado.pdf" },
-                    { title: "Fundamentos de VBA", file: "II_BTP_A/Ofimatica_I/fundamentos_VBA.pdf" },
-                    { title: "Guia de Estudio", file: "guia_estudios/GE_OFIMATICA.pdf" }
-                ]
-            },
-            {
-                name: "Análisis y Diseño de Sistemas",
-                topics: [
-                    { title: "Metodologías Ágiles", file: "II_BTP_A/analisis_diseno/metodologias_agiles.pdf" },
-                    { title: "Documentación en el D.S.", file: "II_BTP_A/analisis_diseno/documentacion.pdf" },
-                    { title: "Creación de Bases de Datos", file: "II_BTP_A/analisis_diseno/Base_de_datos.pdf" },
-                    { title: "Guia de Estudio", file: "guia_estudios/GE_AYD.pdf" }
-                ]
-            } */
         ]
     },
     {
         grade: "Duodécimo",
+        sections: ["A"],
         subjects: [
-            /* {
+            {
                 name: "Diseño Web (I Parcial)",
+                partial: "Primer Parcial",
+                sections: "A",
                 topics: [
-                    { title: "Introduccion a Html", file: "III_BTP_A/introducción a HTML.pdf" },
-                    { title: "Alineación y formato de texto", file: "III_BTP_A/alineacion_formato_texto.html" }
+                    { title: "Introduccion a Html", file: "III_BTP_A/introducción a HTML.pdf" }
                 ]
-            }, */
+            },
             {
                 name: "Diseño Web",
+                partial: "Segundo Parcial",
+                sections: "A",
                 topics: [
                     { title: "Contenido II Parcial (PDF)", file: "III_BTP_A/dw_II/contenido/Unidad 4 Diseño Web.pdf" }
                 ]
             }
-            /* {
-                name: "Diseño Web II",
-                topics: [
-                    { title: "Grid vs Flexbox", file: "III_BTP_A/dw_II/tablas_columnas.pdf" },
-                    { title: "Eventos de JavaScript", file: "III_BTP_A/dw_II/eventosJS.pdf" },
-                    { title: "Guía de Estudios IV Parcial", file: "guia_estudios/GDESR-DW-IIIBTP_4parcial.pdf" }
-                ]
-            } */
         ]
     }
 ];

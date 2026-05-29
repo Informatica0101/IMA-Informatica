@@ -154,3 +154,27 @@ AUDITORÍA DE REFACTORIZACIÓN VISUAL Y UX - 10 DE JUNIO 2026
 5. SISTEMA DE ESPACIADO (css/style.css)
 ---------------------------------------
 - [HALLAZGO] Aunque existe un sistema de 4px, muchas clases inline en el HTML usan gaps de Tailwind (gap-4, gap-8) que no siempre respetan la jerarquía académica profesional.
+
+AUDITORÍA DE NAVEGACIÓN Y ESTRUCTURA GLOBAL - 11 DE JUNIO 2026
+==============================================================
+
+1. ENCABEZADO (HEADER)
+----------------------
+- [HALLAZGO] El encabezado actual en index.html, student-dashboard.html y teacher-dashboard.html no cumple con el orden estrictamente requerido (Logo, Título, Nav, Bandera).
+- [HALLAZGO] El botón "Portal" no tiene lógica de redirección dinámica por rol en el HTML estático; se maneja parcialmente en js/index-ui.js pero debe globalizarse.
+- [HALLAZGO] Falta la inclusión de los botones "Contenido", "Actividades" y "Mi perfil" directamente en la lista de navegación principal del header según el requerimiento.
+- [HALLAZGO] La lógica de menús desplegables en js/ui-common.js (renderCommonNav) no diferencia correctamente la jerarquía por rol para "Cursos" y "Contenido". El estudiante debe ver solo el parcial actual.
+
+2. PIE DE PÁGINA (FOOTER)
+-------------------------
+- [HALLAZGO] El pie de página actual es demasiado extenso y contiene secciones de "Soporte" y "Navegación" que deben eliminarse para volver a la versión simplificada (Copyright, Año, Privacidad, Términos).
+
+3. LÓGICA DE CURSOS Y CONTENIDO
+-------------------------------
+- [HALLAZGO] js/data.js contiene arrays presentationData y downloadContentData que no están estructurados por "Parcial" en el nivel superior, lo que dificulta el filtrado por "Parcial actual" para estudiantes.
+- [HALLAZGO] No existe una distinción clara en js/ui-common.js entre la vista de árbol para profesor (completa) y la vista simplificada para estudiante.
+
+4. ESTILOS Y UI (ANTI-TEMPLATE)
+-------------------------------
+- [HALLAZGO] Se detectan espaciados inconsistentes en el header (gap-8, md:py-3) que deben normalizarse al sistema de 4px.
+- [HALLAZGO] La tipografía principal ya es Inter, pero falta reforzar la jerarquía visual compacta en los menús desplegables.
