@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedSubjectData = null;
     let allNoticias = [];
 
+    const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
     // --- Personalized Greeting ---
     function setupWelcome() {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));

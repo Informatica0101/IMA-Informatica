@@ -538,12 +538,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer hover:bg-gray-100 sort-btn" data-sort="statusText">
                     Estado ${sortIcon('statusText')}
                 </th>
-                <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">WhatsApp</th>
+
                 <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th>
             </tr>`;
 
         if (filtered.length === 0) {
-            submissionsTableBody.innerHTML = '<tr><td colspan="4" class="text-center p-8 text-gray-500">No hay alumnos inscritos.</td></tr>';
+            submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-500">No hay alumnos inscritos.</td></tr>';
             return;
         }
 
@@ -552,16 +552,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? '<span class="text-yellow-600 font-bold uppercase text-[10px]">Por Revisar</span>'
                 : '<span class="text-green-600 font-bold uppercase text-[10px]">Al día</span>';
 
-            const phone = s.telefono ? s.telefono.toString().replace(/\D/g, '') : '';
-            const waLink = phone ? `https://wa.me/504${phone}` : null;
-            const waBtn = waLink ? `<a href="${waLink}" target="_blank" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-500 text-white hover:bg-green-600 transition-all shadow-sm"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.438 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.438-9.889 9.886 0 2.225.587 3.841 1.578 5.49l-.903 3.303 3.393-.89zm11.375-7.679c-.161-.268-.589-.428-1.232-.75-.643-.321-3.793-1.872-4.382-2.086-.589-.214-1.018-.321-1.446.321-.428.643-1.661 2.089-2.036 2.518-.375.429-.75.482-1.393.161-.643-.321-2.712-1.001-5.166-3.192-1.91-1.704-3.199-3.808-3.573-4.451-.375-.643-.041-.991.28-1.31.289-.287.643-.75.964-1.125.321-.375.429-.643.643-1.071.214-.428.107-.803-.054-1.125-.161-.321-1.446-3.482-1.982-4.768-.522-1.253-1.054-1.081-1.446-1.101-.375-.02-1.101-.023-1.101-.023s-.75 0-1.125.428c-.375.429-1.446 1.411-1.446 3.442s2.089 3.991 2.303 4.286c.214.295 4.114 6.279 9.957 8.796 1.39.599 2.474.957 3.319 1.224 1.398.444 2.671.381 3.677.23 1.12-.168 3.793-1.554 4.329-3.054.536-1.5 0-2.839-.161-3.107z"/></svg></a>` : '';
-
             return `
                 <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
                     <td class="p-4 text-gray-400 font-medium">${s.numeroLista || '-'}</td>
                     <td class="p-4 font-bold text-blue-700">${s.nombre}</td>
                     <td class="p-4 text-sm">${statusHtml}</td>
-                    <td class="p-4 text-right">${waBtn}</td>
                     <td class="p-4 text-right">
                         <span class="text-blue-600 font-bold text-sm">Ver detalles &rsaquo;</span>
                     </td>
@@ -700,22 +695,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!reportTableBody) return;
 
         // Lógica de "Grado más cercano": Buscar el primer grado que tenga alguna tarea calificada
-        // Pero primero necesitamos cargar los datos si no están.
         if (allActivityRaw.length === 0) {
             await fetchTeacherActivity();
         }
 
         let bestGrado = "";
-        let bestSeccion = "";
+        let bestSeccion = "A";
         let bestParcial = "Primer Parcial";
 
-        // Prioridad: Décimo A, luego Undécimo A, etc.
         const priority = ['Décimo', 'Undécimo', 'Duodécimo'];
         for (const g of priority) {
             const hasData = allActivityRaw.some(i => norm(i.grado) === norm(g) && i.calificacion);
             if (hasData) {
                 bestGrado = g;
-                bestSeccion = "A";
                 break;
             }
         }
