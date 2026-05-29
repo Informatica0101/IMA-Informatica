@@ -976,3 +976,7 @@ DESCRIPCIÓN DE CAMBIOS:
   - El botón de WhatsApp se habilita automáticamente si el alumno tiene un número registrado.
 - Archivo: forgot-password.html
   - Integrados scripts de UI común para asegurar la disponibilidad del botón "Mi Perfil" y la navegación estandarizada.
+- Correcciones de Errores Críticos:
+  - Archivo: js/config.js: Renombrada constante `CONFIG` a `SERVICE_URLS` para resolver error de referencia en `js/api.js`.
+  - Archivo: js/ui-common.js: Escapado el selector CSS `md:flex` en `querySelector` para evitar `SyntaxError`.
+  - Archivo: js/student.js: Corregida truncación de archivo que causaba `Unexpected end of input`.

@@ -313,7 +313,7 @@ function setupProfileLogic() {
     };
 
     // Agregar botón "Mi Perfil" a los navs existentes si hay usuario
-    const desktopNav = document.querySelector('nav.hidden.md:flex');
+    const desktopNav = document.querySelector('nav.hidden.md\\:flex') || document.querySelector('nav.hidden');
     if (desktopNav) {
         const profileBtn = document.createElement('button');
         profileBtn.className = 'text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none flex items-center space-x-1';
