@@ -1078,3 +1078,21 @@ MODIFICACIONES:
   - Mejora de la distribución de botones de acción rápida en la barra superior.
 - Archivo: js/index-ui.js
   - Refinamiento de la función loadNews para renderizar tarjetas de noticias con diseño modular, soporte de imágenes de alta fidelidad y extractos de texto optimizados.
+
+29/05/2026
+- Archivo: index.html, teacher-dashboard.html, student-dashboard.html, login.html, register.html
+  - Refactorización total del pie de página: implementado diseño corporativo de 2 niveles, tipografía text-[9px]/[10px] y tracking expandido.
+  - Unificación de la jerarquía visual del encabezado siguiendo el orden: Logo -> Título -> Menú -> Bandera.
+- Archivo: index.html
+  - Restaurado lema institucional oficial en el Hero.
+  - Implementada sección de noticias dinámicas con diseño modular.
+- Archivo: js/index-ui.js
+  - Refinada lógica de bienvenida para usar badge '#user-welcome-badge'.
+  - Implementado sistema de carga y renderizado de noticias desde microservicio USER.
+- Archivo: js/teacher.js
+  - Rediseño integral de la Tarjeta de Detalles del Alumno con métricas de progreso y contacto directo.
+  - Robustecimiento de la navegación jerárquica con flags de bloqueo y sincronización de datos.
+  - Mejora visual de la tabla de gestión y vista de grados.
+- Archivo: css/style.css
+  - Ajuste de dimensiones del editor Quill (iconos 20px) para optimización móvil.
+  - Aplicación de reglas Anti-Template en espaciados y sombras.

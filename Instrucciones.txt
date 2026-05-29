@@ -382,12 +382,14 @@ TAREA: [A-72]
 TÍTULO: Refactorización Visual, Tarjeta de Alumno y Modernización de Layout
 ÁREA: UI/UX / Frontend / Experiencia de Usuario
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: PENDIENTE DE REVISIÓN
 - Rediseño integral de la Tarjeta del Alumno en la vista docente con jerarquía modular y barra de progreso.
 - Implementada limpieza de estados visuales y desmontaje correcto de la tarjeta en la navegación del profesor.
+- Sincronización de navegación jerárquica y bloqueo de estados asíncronos en Dashboard Docente.
 - Refactorización completa de index.html: nuevo Hero Anti-Template, sistema de noticias moderno y footer corporativo.
-- Unificación global de encabezados y pies de página profesionales en todos los módulos.
-- Estandarización de botones y refinamiento del editor Quill para optimización móvil.
+- Restauración del lema institucional y refinamiento de lógica de bienvenida (badge dedicado).
+- Unificación global de encabezados y pies de página profesionales en todos los módulos (ISEMED standard).
+- Estandarización de botones (Anti-Template) y refinamiento del editor Quill (iconos 20px) para optimización móvil.
 ----------------------------
 
 TAREA: [A-69]

@@ -223,14 +223,31 @@
         </div>
     </div>
 
-    <footer class="bg-white border-t border-gray-100 py-8 mt-auto">
-        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                &copy; <span id="current-year"></span> Área de Informática ISEMED. Todos los derechos reservados.
-            </p>
-            <div class="flex gap-6">
-                <a href="index.html" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-widest transition-colors">Privacidad</a>
-                <a href="index.html" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-widest transition-colors">Términos y condiciones</a>
+    <footer class="bg-white border-t border-gray-100 py-10 mt-auto">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
+                <div class="flex items-center gap-4">
+                    <img src="imagenes/logo.png" alt="Logo" width="60" class="opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
+                    <div class="text-left border-l border-gray-100 pl-4">
+                        <h4 class="text-[11px] font-black text-gray-900 uppercase tracking-widest">ISEMED</h4>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Área de Informática</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap justify-center gap-x-8 gap-y-4">
+                    <a href="index.html" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-[0.2em] transition-all">Inicio</a>
+                    <a href="login.html" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-[0.2em] transition-all">Portal</a>
+                    <a href="#" onclick="handleHeaderAction('show-activities')" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-[0.2em] transition-all">Actividades</a>
+                    <a href="pseudocode.html" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-[0.2em] transition-all">Pseudocódigo</a>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-50 gap-4">
+                <p class="text-[9px] font-black text-gray-300 uppercase tracking-[0.2em]">
+                    &copy; <span id="current-year"></span> Área de Informática ISEMED. <span class="hidden md:inline">Hecho con fe y tecnología.</span>
+                </p>
+                <div class="flex gap-6">
+                    <a href="index.html" class="text-[9px] font-black text-gray-300 hover:text-blue-600 uppercase tracking-[0.2em] transition-colors">Privacidad</a>
+                    <a href="index.html" class="text-[9px] font-black text-gray-300 hover:text-blue-600 uppercase tracking-[0.2em] transition-colors">Términos</a>
+                </div>
             </div>
         </div>
     </footer>

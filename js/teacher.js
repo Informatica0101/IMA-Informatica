@@ -62,6 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
         allSections.forEach(section => section && section.classList.add('hidden'));
         targetSection.classList.remove('hidden');
 
+        // Limpieza de estados visuales persistentes al cambiar de sección
+        const infoCard = document.getElementById('student-details-info-card');
+        if (infoCard) infoCard.remove();
+
         // Hide WhatsApp container if moving away from Dashboard
         const waContainer = document.querySelector('.bg-green-50');
         if (waContainer && targetSection !== sectionAcademicReports) waContainer.classList.add('hidden');
@@ -335,31 +339,38 @@ document.addEventListener('DOMContentLoaded', () => {
     window.pushNav = async function(level, data) {
         if (isNavigating) return;
         isNavigating = true;
-        if (studentSearchInput) studentSearchInput.value = '';
+        try {
+            if (studentSearchInput) studentSearchInput.value = '';
 
-        if (level === 'Alumnos') {
-            if (submissionsTableBody) submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8">Cargando lista de alumnos...</td></tr>';
-            // Cargamos la lista real de alumnos inscritos para este grado y sección
-            try {
-                const res = await fetchApi('USER', 'getStudentsByGradoSeccion', { grado: data.grado, seccion: data.seccion });
-                data.students = res.data || [];
-            } catch (e) {
-                console.error("Error al cargar alumnos:", e);
-                data.students = [];
+            if (level === 'Alumnos') {
+                if (submissionsTableBody) submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8">Cargando lista de alumnos...</td></tr>';
+                // Cargamos la lista real de alumnos inscritos para este grado y sección
+                try {
+                    const res = await fetchApi('USER', 'getStudentsByGradoSeccion', { grado: data.grado, seccion: data.seccion });
+                    data.students = res.data || [];
+                } catch (e) {
+                    console.error("Error al cargar alumnos:", e);
+                    data.students = [];
+                }
             }
-        }
 
-        navStack.push({ level, data });
-        renderCurrentLevel();
-        isNavigating = false;
+            navStack.push({ level, data });
+            renderCurrentLevel();
+        } finally {
+            isNavigating = false;
+        }
     }
 
     window.popNav = function() {
         if (isNavigating) return;
         if (navStack.length > 1) {
-            if (studentSearchInput) studentSearchInput.value = '';
-            navStack.pop();
-            renderCurrentLevel();
+            try {
+                if (studentSearchInput) studentSearchInput.value = '';
+                navStack.pop();
+                renderCurrentLevel();
+            } catch (e) {
+                console.error("Error en popNav:", e);
+            }
         }
     }
 
@@ -394,14 +405,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const tbody = document.getElementById('tasks-management-table-body');
         tbody.innerHTML = allTasksExams.map((item, idx) => `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.openTaskDetail(${idx})">
-                <td class="p-4 font-bold text-blue-700">${item.titulo}</td>
-                <td class="p-4">${item.asignatura}</td>
-                <td class="p-4 text-xs">${item.grado} - ${item.seccion || 'Todas'}</td>
-                <td class="p-4 text-xs font-medium ${new Date(item.fechaLimite) < new Date() ? 'text-red-500' : 'text-gray-600'}">
+                <td class="p-4">
+                    <div class="font-bold text-blue-700">${item.titulo}</div>
+                    <div class="text-[9px] font-black text-gray-400 uppercase tracking-widest">${item.tipoReal}</div>
+                </td>
+                <td class="p-4">
+                    <div class="text-sm font-bold text-gray-800">${item.asignatura}</div>
+                    <div class="text-[10px] text-gray-500">${item.parcial || 'Sin parcial'}</div>
+                </td>
+                <td class="p-4 text-xs font-medium text-gray-600">${item.grado} - ${item.seccion || 'Todas'}</td>
+                <td class="p-4 text-xs font-bold ${new Date(item.fechaLimite) < new Date() ? 'text-red-500' : 'text-green-600'}">
                     ${new Date(item.fechaLimite).toLocaleDateString()}
                 </td>
                 <td class="p-4 text-right">
-                    <button class="bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-100 transition-colors">
+                    <button class="bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     </button>
                 </td>
@@ -639,6 +656,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const waContainer = document.querySelector('.bg-green-50');
         if (waContainer) waContainer.classList.add('hidden');
 
+        // Reiniciar buscador si volvemos a niveles superiores para evitar inconsistencias
+        if (current.level === 'Grados' && studentSearchInput && !isNavigating) {
+             // studentSearchInput.value = ''; // No limpiar forzosamente para permitir persistencia de búsqueda si el usuario lo desea, pero sincronizar
+        }
+
         if (current.level === 'Detalles') title = `Actividades de ${current.data.alumnoNombre}`;
         if (dashboardLevelTitle) dashboardLevelTitle.textContent = title;
 
@@ -709,9 +731,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fGrado) grados = grados.filter(g => norm(g) === norm(fGrado));
         const filtered = grados.filter(g => norm(g).includes(norm(search)));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Seleccionar Grado Académico</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Navegación</th></tr>`;
         if (filtered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-8 text-gray-500">No hay grados.</td></tr>'; return; }
-        submissionsTableBody.innerHTML = filtered.map((grado, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${grado}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Secciones &rsaquo;</span></td></tr>`).join('');
+        submissionsTableBody.innerHTML = filtered.map((grado, idx) => `
+            <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn group" data-index="${idx}">
+                <td class="p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-black group-hover:bg-blue-600 group-hover:text-white transition-all">${grado.charAt(0)}</div>
+                        <span class="font-black text-gray-800 uppercase tracking-tight">${grado}</span>
+                    </div>
+                </td>
+                <td class="p-4 text-right"><span class="text-blue-600 font-black text-[10px] uppercase tracking-widest bg-blue-50 px-3 py-1.5 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-all">Ver Secciones &rsaquo;</span></td>
+            </tr>`).join('');
     }
 
     function renderSecciones(grado, search) {
@@ -924,7 +955,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (studentInfo) {
             const infoCard = document.createElement('div');
             infoCard.id = 'student-details-info-card';
-            infoCard.className = "bg-white rounded-3xl shadow-sm border border-gray-100 mb-8 overflow-hidden animate-fade-in-up";
+            infoCard.className = "bg-white rounded-[2.5rem] shadow-xl border border-gray-100 mb-8 overflow-hidden animate-fade-in-up transition-all hover:shadow-2xl hover:shadow-blue-50";
 
             const waPhone = studentInfo.telefono ? studentInfo.telefono.replace(/\D/g, '') : '';
             const waLink = waPhone ? `https://wa.me/504${waPhone}` : '#';
@@ -939,63 +970,104 @@ document.addEventListener('DOMContentLoaded', () => {
             const pending = studentSubmissions.filter(s => s.estado === 'Pendiente' || s.estado === 'Pendiente de revisión' || !s.estado).length;
 
             infoCard.innerHTML = `
-                <div class="p-6 md:p-8 flex flex-col md:flex-row gap-8">
-                    <!-- Sección 1: Información del Alumno -->
-                    <div class="flex-grow space-y-6">
-                        <div>
-                            <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-3">Expediente Académico</span>
-                            <h3 class="text-2xl font-black text-gray-800 leading-tight">${studentInfo.nombre}</h3>
-                            <p class="text-sm text-gray-400 mt-1">${grado} • ${seccion} • ${parcial}</p>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                <span class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Contacto Directo</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-semibold text-gray-700">${studentInfo.telefono || 'No registrado'}</span>
-                                    ${waPhone ? `<a href="${waLink}" target="_blank" class="text-green-500 hover:text-green-600 transition-colors"><svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></a>` : ''}
+                <div class="p-6 md:p-10">
+                    <!-- Sección 1: Encabezado y Acciones -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-10 pb-8 border-b border-gray-100">
+                        <div class="flex items-center gap-8">
+                            <div class="w-24 h-24 bg-blue-600 rounded-[2.2rem] flex items-center justify-center text-white text-4xl font-black shadow-2xl shadow-blue-200 relative transform hover:rotate-3 transition-transform">
+                                ${studentInfo.nombre.charAt(0)}
+                                <div class="absolute -bottom-1 -right-1 w-10 h-10 bg-green-500 border-4 border-white rounded-full flex items-center justify-center text-white shadow-md" title="Alumno Activo">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>
                                 </div>
                             </div>
-                            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                <span class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Identificación</span>
-                                <span class="text-sm font-semibold text-gray-700">No. Lista: ${studentInfo.numeroLista || '-'}</span>
+                            <div>
+                                <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-3">Expediente Académico ISEMED</span>
+                                <h3 class="text-3xl md:text-4xl font-black text-gray-900 leading-tight tracking-tight">${studentInfo.nombre}</h3>
+                                <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-2 text-xs text-gray-400 font-black uppercase tracking-[0.1em]">
+                                    <span class="flex items-center gap-2"><div class="w-2 h-2 bg-blue-600 rounded-full"></div> ${grado} - ${seccion}</span>
+                                    <span class="flex items-center gap-2"><div class="w-2 h-2 bg-purple-500 rounded-full"></div> ${parcial}</span>
+                                    <span class="flex items-center gap-2"><div class="w-2 h-2 bg-teal-500 rounded-full"></div> LISTA #${studentInfo.numeroLista || '-'}</span>
+                                </div>
                             </div>
+                        </div>
+                        <div class="flex flex-wrap gap-4">
+                            <button onclick="window.print()" class="px-6 py-4 bg-white text-gray-700 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-gray-50 transition-all border border-gray-200 flex items-center gap-3 shadow-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                Imprimir Reporte
+                            </button>
+                            ${waPhone ? `<a href="${waLink}" target="_blank" class="px-6 py-4 bg-green-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-green-700 transition-all shadow-xl shadow-green-100 flex items-center gap-3">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                                WhatsApp
+                            </a>` : ''}
                         </div>
                     </div>
 
-                    <!-- Sección 2: Estado de Tareas -->
-                    <div class="md:w-72 flex flex-col justify-center space-y-4 border-l border-gray-100 md:pl-8">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm font-bold text-gray-500">Progreso del Parcial</span>
-                            <span class="text-sm font-black text-blue-600">${total > 0 ? Math.round((completed/total)*100) : 0}%</span>
-                        </div>
-                        <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                            <div class="bg-blue-600 h-full transition-all duration-1000" style="width: ${total > 0 ? (completed/total)*100 : 0}%"></div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3 mt-2">
-                            <div class="text-center p-2 rounded-xl bg-green-50 border border-green-100">
-                                <span class="block text-lg font-black text-green-700">${completed}</span>
-                                <span class="text-[9px] font-bold text-green-600 uppercase">Listas</span>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                        <!-- Columna 2: Información del Alumno -->
+                        <div class="lg:col-span-4 space-y-8">
+                            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-6 border-l-4 border-blue-600 pl-4">Información Personal</h4>
+                            <div class="space-y-4">
+                                <div class="p-6 bg-gray-50 rounded-[1.5rem] border border-gray-100 shadow-sm group hover:border-blue-200 transition-all">
+                                    <span class="block text-[10px] font-black text-gray-400 uppercase mb-2">Correo Institucional</span>
+                                    <span class="text-sm font-black text-gray-700 break-all">${studentInfo.email || 'N/A'}</span>
+                                </div>
+                                <div class="p-6 bg-gray-50 rounded-[1.5rem] border border-gray-100 shadow-sm group hover:border-green-200 transition-all">
+                                    <span class="block text-[10px] font-black text-gray-400 uppercase mb-2">Contacto Directo</span>
+                                    <span class="text-sm font-black text-gray-700">${studentInfo.telefono || 'No registrado'}</span>
+                                </div>
                             </div>
-                            <div class="text-center p-2 rounded-xl bg-yellow-50 border border-yellow-100">
-                                <span class="block text-lg font-black text-yellow-700">${pending}</span>
-                                <span class="text-[9px] font-bold text-yellow-600 uppercase">Pendientes</span>
+                        </div>
+
+                        <!-- Columna 3: Estado de Tareas -->
+                        <div class="lg:col-span-4 space-y-8 lg:border-x lg:border-gray-100 lg:px-10 px-0">
+                            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-6 border-l-4 border-purple-500 pl-4">Progreso del Parcial</h4>
+                            <div class="space-y-6">
+                                <div>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Nivel de Entrega</span>
+                                        <span class="text-sm font-black text-blue-600">${total > 0 ? Math.round((completed/total)*100) : 0}%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 h-4 rounded-full overflow-hidden border border-gray-200 p-1">
+                                        <div class="bg-blue-600 h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(37,99,235,0.4)]" style="width: ${total > 0 ? (completed/total)*100 : 0}%"></div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-5 bg-white rounded-[1.5rem] border border-gray-100 text-center shadow-sm">
+                                        <span class="block text-3xl font-black text-green-600">${completed}</span>
+                                        <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Completas</span>
+                                    </div>
+                                    <div class="p-5 bg-white rounded-[1.5rem] border border-gray-100 text-center shadow-sm">
+                                        <span class="block text-3xl font-black text-yellow-500">${pending}</span>
+                                        <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Pendientes</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Columna 4: Observaciones y Archivos -->
+                        <div class="lg:col-span-4 space-y-8">
+                            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-6 border-l-4 border-teal-500 pl-4">Estado Académico</h4>
+                            <div class="bg-gray-900 rounded-[2rem] p-8 flex flex-col justify-between h-full relative overflow-hidden group">
+                                <div class="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+                                <div class="text-center py-4 relative z-10">
+                                    ${pending === 0 && total > 0 ?
+                                        `<div class="inline-flex p-4 bg-green-500/20 text-green-400 rounded-2xl mb-4 border border-green-500/30"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg></div>
+                                         <div class="text-xl font-black text-white tracking-tight uppercase">EXPEDIENTE AL DÍA</div>
+                                         <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest mt-2">Sin revisiones pendientes</p>` :
+                                        `<div class="inline-flex p-4 bg-yellow-500/20 text-yellow-400 rounded-2xl mb-4 border border-yellow-500/30"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                                         <div class="text-xl font-black text-white tracking-tight uppercase">CON PENDIENTES</div>
+                                         <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest mt-2">${pending} Tareas por calificar</p>`
+                                    }
+                                </div>
+                                <div class="mt-6 pt-6 border-t border-white/10 relative z-10">
+                                    <button class="w-full py-4 bg-white/5 border border-white/10 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-gray-900 transition-all flex items-center justify-center gap-3" onclick="window.scrollTo({top: document.querySelector('table').offsetTop - 100, behavior: 'smooth'})">
+                                        Explorar evidencias
+                                        <svg class="w-4 h-4 transform group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Sección 3: Acciones Rápidas -->
-                <div class="bg-gray-50 px-6 py-4 flex flex-wrap items-center gap-4 border-t border-gray-100">
-                    <button class="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1" onclick="window.print()">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        Imprimir Reporte
-                    </button>
-                    ${waPhone ? `
-                    <a href="${waLink}" target="_blank" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl font-bold text-xs shadow-sm transition-all flex items-center gap-2">
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
-                        WhatsApp
-                    </a>` : ''}
                 </div>
             `;
             const table = submissionsTableBody.closest('table');
@@ -1081,52 +1153,84 @@ document.addEventListener('DOMContentLoaded', () => {
     if (submissionsTableBody) {
         submissionsTableBody.addEventListener('click', async (e) => {
             const target = e.target;
+
+            // 1. Manejo de Calificación / Eliminación
             if (target.classList.contains('grade-btn')) {
                 const idx = target.dataset.index;
                 const item = currentFilteredItems[idx];
+                if (!item) return;
                 if (saveGradeBtn) saveGradeBtn.dataset.type = item.tipo;
                 openGradeModal(item);
                 return;
             }
+
             if (target.classList.contains('delete-submission-btn')) {
                 const idx = target.dataset.index;
                 const item = currentFilteredItems[idx];
+                if (!item) return;
                 if (confirm(`¿Eliminar entrega de "${item.titulo}"?`)) {
                     target.disabled = true; target.textContent = "...";
                     try {
                         const service = item.tipo === 'Tarea' ? 'TASK' : 'EXAM';
                         const action = item.tipo === 'Tarea' ? 'deleteSubmission' : 'deleteExamSubmission';
                         const res = await fetchApi(service, action, { entregaId: item.entregaId });
-                        if (res.status === 'success') { alert(res.message); fetchTeacherActivity(); }
+                        if (res.status === 'success') {
+                            alert(res.message);
+                            await fetchTeacherActivity();
+                        }
                         else throw new Error(res.message);
-                    } catch (error) { alert("Error: " + error.message); target.disabled = false; target.textContent = "Eliminar"; }
+                    } catch (error) {
+                        alert("Error: " + error.message);
+                        target.disabled = false;
+                        target.textContent = "Eliminar";
+                    }
                 }
                 return;
             }
-            const navBtn = target.closest('.nav-btn');
-            if (navBtn) {
-                const idx = navBtn.dataset.index;
-                const item = currentFilteredItems[idx];
-                const current = navStack[navStack.length - 1];
 
-                if (dashboardLevelTitle.textContent === "Resultados de Búsqueda Global") {
-                    await pushNav('Detalles', { alumnoId: item.id, alumnoNombre: item.nombre, grado: item.grado, seccion: item.seccion, asignatura: 'Búsqueda Global' });
+            // 2. Manejo de Navegación Jerárquica
+            const navBtn = target.closest('.nav-btn');
+            if (navBtn && !isNavigating) {
+                const idx = parseInt(navBtn.dataset.index);
+                const item = currentFilteredItems[idx];
+                if (item === undefined) {
+                    console.error("Error de sincronización: Item no encontrado en currentFilteredItems con índice", idx);
                     return;
                 }
 
-                if (current.level === 'Grados') await pushNav('Secciones', { grado: item });
-                else if (current.level === 'Secciones') await pushNav('Asignaturas', { grado: current.data.grado, seccion: item });
-                else if (current.level === 'Asignaturas') await pushNav('Parciales', { grado: current.data.grado, seccion: current.data.seccion, asignatura: item });
-                else if (current.level === 'Parciales') await pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: item });
-                else if (current.level === 'Alumnos') await pushNav('Detalles', {
-                    alumnoId: item.userId,
-                    alumnoNombre: item.nombre,
-                    grado: current.data.grado,
-                    seccion: current.data.seccion,
-                    asignatura: current.data.asignatura,
-                    parcial: current.data.parcial,
-                    studentInfo: item
-                });
+                const current = navStack[navStack.length - 1];
+
+                if (dashboardLevelTitle.textContent === "Resultados de Búsqueda Global") {
+                    await pushNav('Detalles', {
+                        alumnoId: item.id,
+                        alumnoNombre: item.nombre,
+                        grado: item.grado,
+                        seccion: item.seccion,
+                        asignatura: 'Búsqueda Global',
+                        parcial: 'Todos los Parciales'
+                    });
+                    return;
+                }
+
+                if (current.level === 'Grados') {
+                    await pushNav('Secciones', { grado: item });
+                } else if (current.level === 'Secciones') {
+                    await pushNav('Asignaturas', { grado: current.data.grado, seccion: item });
+                } else if (current.level === 'Asignaturas') {
+                    await pushNav('Parciales', { grado: current.data.grado, seccion: current.data.seccion, asignatura: item });
+                } else if (current.level === 'Parciales') {
+                    await pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: item });
+                } else if (current.level === 'Alumnos') {
+                    await pushNav('Detalles', {
+                        alumnoId: item.userId,
+                        alumnoNombre: item.nombre,
+                        grado: current.data.grado,
+                        seccion: current.data.seccion,
+                        asignatura: current.data.asignatura,
+                        parcial: current.data.parcial,
+                        studentInfo: item
+                    });
+                }
             }
         });
     }
@@ -1533,5 +1637,7 @@ function toBase64(file) {
     });
 }
 
-    navigateTo(sectionAcademicReports, navDashboard); fetchTeacherActivity();
+    // Inicialización automática de la sección de entregas (A-73)
+    navigateTo(sectionAcademicReports, navDashboard);
+    fetchTeacherActivity();
 });

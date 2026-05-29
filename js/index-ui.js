@@ -260,10 +260,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Welcome Message Logic ---
     function renderWelcomeMessage() {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        const welcomeHeader = document.querySelector('section.relative h1');
-        if (currentUser && welcomeHeader) {
+        const welcomeBadge = document.getElementById('user-welcome-badge');
+        if (currentUser && welcomeBadge) {
             const firstName = currentUser.nombre.split(' ')[0];
-            welcomeHeader.textContent = `¡Bienvenido, ${firstName}!`;
+            welcomeBadge.innerHTML = `
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                </span>
+                Hola, ${firstName}!
+            `;
+            welcomeBadge.classList.remove('hidden');
         }
     }
 

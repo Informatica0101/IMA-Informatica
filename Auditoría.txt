@@ -1,180 +1,29 @@
-AUDITORÍA DE CUMPLIMIENTO - REQUERIMIENTOS NUEVOS (MAYO 2026)
-===========================================================
+AUDITORÍA DE REFACTORIZACIÓN VISUAL Y UX - 29/05/2026
+======================================================
 
-1. SISTEMA DE AUTENTICACIÓN, PERFILES Y ACCESO GLOBAL
------------------------------------------------------
-- [HALLAZGO] El botón "Mi Perfil" y su modal correspondiente están ausentes en 'teacher-dashboard.html'. El requerimiento 1.3 exige que AMBOS portales (Estudiantil y Docente) incorporen este módulo.
-- [HALLAZGO] La lógica de actualización de perfil en 'js/teacher.js' no está implementada, aunque existe en 'js/student.js'.
-
-2. PORTAL DE INICIO (INDEX PRINCIPAL)
--------------------------------------
-- [HALLAZGO] La sección de noticias no muestra la 'hora' de publicación. El requerimiento 2.2 especifica: "Muestra: Título, la primera imagen destacada, el primer párrafo del contenido, la fecha y la hora de publicación". Actualmente solo se muestra la fecha.
-
-3. PORTAL DEL ESTUDIANTE (DASHBOARD)
-------------------------------------
-- [HALLAZGO] El "Optimizador de Subida Múltiple de Imágenes" (Req 3.3) está incompleto:
-  - Solo procesa 'files[0]' en 'js/student.js', ignorando la selección múltiple real.
-  - No existe una "Cola de Carga Secuencial" con barras de progreso individuales.
-  - No se realiza la "Optimización Móvil" (compresión frontend vía Canvas).
-  - No existe el "Filtro Anti-Duplicados" basado en hash o tamaño/nombre.
-
-4. PORTAL DEL DOCENTE (DASHBOARD)
----------------------------------
-- [HALLAZGO CRÍTICO] La "Sección 2: Reportes" y su tabla académica están ausentes en 'teacher-dashboard.html'. Aunque el JS hace referencia a 'section-reportes' y 'export-excel-btn', los elementos no existen en el DOM.
-- [HALLAZGO] Falta la integración del botón circular de WhatsApp con lógica +504 en la lista de tareas del docente (Req 4.5).
-
-5. ENTORNO INTERACTIVO DE PSEUDOCÓDIGO
---------------------------------------
-- [HALLAZGO] Los menús de "Archivo" (Exportar), "Editar" (Buscar y Reemplazar) y "Ver" (Zoom) no tienen lógica operativa implementada.
-- [HALLAZGO] El "Guardado Silencioso" al ejecutar (Req 5.4) no se dispara automáticamente en cada ejecución.
-
-6. INTEGRACIÓN Y OPTIMIZACIÓN DE MINIJUEGOS
--------------------------------------------
-- [HALLAZGO] El juego de 'Destreza en el Teclado' no calcula el "Porcentaje de Precisión" ni el "Puntaje Total" ponderado según el algoritmo requerido (Req 6.2). Actualmente solo reporta palabras y errores totales.
-
-7. ESPECIFICACIONES TÉCNICAS Y AUDITORÍA
-----------------------------------------
-- [VERIFICADO] HMAC-SHA256 para recuperación implementado.
-- [VERIFICADO] Escrituras en lote (setValues) implementadas en backend.
-- [VERIFICADO] Jerarquía de carpetas Drive automatizada funcional.
-
----
-REVISIÓN FINAL DE AUDITORÍA: El repositorio requiere una intervención correctiva en los módulos de Reportes (Docente), Subida (Estudiante) y Métricas (Juegos) para alcanzar el 100% de cumplimiento.
-
-ACTUALIZACIÓN DE AUDITORÍA - 22 DE MAYO 2026 (FASE 2)
-====================================================
-
-1. SISTEMA DE AUTENTICACIÓN Y PERFILES
---------------------------------------
-- [HALLAZGO PERSISTENTE] El modal '#profile-modal' sigue ausente en 'teacher-dashboard.html' a pesar de los intentos de inserción previos. La navegación en 'js/teacher.js' falla al intentar abrirlo.
-
-4. PORTAL DEL DOCENTE (DASHBOARD)
----------------------------------
-- [VERIFICADO] 'section-reportes' y 'section-academic-reports' han sido restaurados en el HTML.
-- [VERIFICADO] Lógica de exportación Excel vinculada.
-- [VERIFICADO] Botón de WhatsApp con prefijo +504 implementado en el backend y frontend.
-
-5. ENTORNO INTERACTIVO DE PSEUDOCÓDIGO
---------------------------------------
-- [HALLAZGO] El intérprete no soporta indexación de matrices bidimensionales (ej. matriz[i,j]). El parser actual solo maneja un índice.
-- [HALLAZGO] Los menús "Abrir" y "Abrir desde..." carecen de lógica de integración con Drive y local file system respectivamente.
-- [HALLAZGO] El menú "Guardar" debe unificar la lógica de "Guardado Silencioso" con una acción explícita de usuario.
-- [HALLAZGO] El menú "Guardar como..." debe implementar la descarga de archivos .psc.
-
-6. MINIJUEGOS
--------------
-- [VERIFICADO] Cálculo de Precisión (%) y Puntaje Ponderado implementado en 'js/destreza_teclado.js'.
-
-AUDITORÍA DE REQUERIMIENTOS - 27 DE MAYO 2026 (FASE 3)
-=====================================================
-
-1. SISTEMA DE AUTENTICACIÓN Y CONECTIVIDAD
-------------------------------------------
-- [VERIFICADO] Error "Failed to fetch" resuelto actualizando URL de TASK a versión /exec.
-- [VERIFICADO] Módulo "Mi Perfil" funcional en Dashboard del Profesor.
-
-2. PORTAL DE INICIO
--------------------
-- [VERIFICADO] Visualización de hora implementada en tarjetas de noticias.
-
-3. PORTAL DEL ESTUDIANTE
-------------------------
-- [HALLAZGO] El Optimizador de Subida (Req 3.3) muestra miniaturas solo para el primer archivo de la selección.
-- [HALLAZGO] No existe la opción de eliminar archivos de la cola de subida antes de iniciar el proceso (solo después de subidos).
-
-4. PORTAL DEL DOCENTE
----------------------
-- [VERIFICADO] Sección de Reportes Académicos restaurada y funcional.
-- [VERIFICADO] Exportación a Excel implementada.
-
-5. PSEINT
----------
-- [VERIFICADO] Soporte para matrices bidimensionales [i,j] implementado en Parser e Intérprete.
-- [VERIFICADO] Gestión de archivos (Nube/Local) integrada.
-
-AUDITORÍA DE DIAGNÓSTICO DE ERRORES - 29 DE MAYO 2026
-=====================================================
-
-1. PORTAL DEL ESTUDIANTE (js/student.js)
-----------------------------------------
-- [HALLAZGO] ReferenceError: currentUser is not defined. La función initWhatsAppButton se invocaba fuera del alcance de la variable local currentUser definida en el listener DOMContentLoaded.
-- [RESOLUCIÓN] Se movió la función y su llamada dentro del listener para asegurar acceso a currentUser.
-
-2. CONECTIVIDAD DE MICROSERVICIOS (js/config.js)
-------------------------------------------------
-- [HALLAZGO] Error "Failed to fetch" y bloqueo de CORS. El microservicio TASK apuntaba a una URL con sufijo /dev, lo cual genera fallos de origen cruzado en Google Apps Script cuando se llama desde un dominio externo.
-- [RESOLUCIÓN] Se actualizaron las URLs de USER (proporcionada), TASK y EXAM a sus versiones /exec de producción.
-
-AUDITORÍA DE REDISEÑO Y USABILIDAD - 30 DE MAYO 2026
-===================================================
-
-1. SECCIÓN DE ENTREGAS (TEACHER DASHBOARD)
-------------------------------------------
-- [HALLAZGO] La función 'renderAlumnos' en 'js/teacher.js' genera una tabla horizontal con puntuaciones de tareas. Según el requerimiento, esta vista es incorrecta para "Entregas" y pertenece a "Reportes".
-- [HALLAZGO] Falta lógica para calcular el estado general del alumno ("Al día" vs "Pendiente") basado en si existen entregas con estado 'Pendiente' o 'Por calificar'.
-- [HALLAZGO] El modal de detalles del alumno ya existe ('renderDetallesAlumno'), por lo que la transición desde la nueva lista debe disparar este nivel de navegación.
-
-2. MODAL DE ENTREGA (STUDENT DASHBOARD)
----------------------------------------
-- [HALLAZGO] El modal '#submission-modal' en 'student-dashboard.html' no tiene un contenedor con scroll interno, lo que causa desbordamiento en móviles cuando hay muchos archivos.
-- [HALLAZGO] El flujo de subida requiere interacción manual con '#accept-file-btn'. El requerimiento exige subida automática al seleccionar archivos.
-- [HALLAZGO] El botón de confirmación final se llama actualmente "Confirmar Entrega", debe renombrarse a "Entregar Tarea".
-
-3. DISEÑO GLOBAL Y PERFIL
--------------------------
-- [HALLAZGO] El botón 'Mi Perfil' está presente en los HTMLs pero a veces oculto o inconsistente en su visualización inicial. Debe ser inyectado o forzado globalmente.
-- [HALLAZGO] 'css/style.css' utiliza Tailwind en gran parte, pero los componentes personalizados (como .dashboard-card) necesitan un ajuste fino para respetar el sistema de espaciado de 4px de forma estricta.
-
-AUDITORÍA DE REFACTORIZACIÓN VISUAL Y UX - 10 DE JUNIO 2026
-===========================================================
-
-1. TARJETA DE ALUMNO (js/teacher.js)
-------------------------------------
-- [HALLAZGO] La función 'renderDetallesAlumno' (líneas 635-654) inyecta dinámicamente un 'infoCard' mediante 'insertBefore'.
-- [HALLAZGO] Al inyectar fuera de 'submissionsTableBody', el elemento persiste si 'renderCurrentLevel' no lo elimina explícitamente al cambiar de vista.
-- [HALLAZGO] La estructura actual de la tarjeta es plana y amontonada (flex-wrap con gaps genéricos). Falta jerarquía visual clara (uso de bordes, fondos diferenciados por sección).
-- [HALLAZGO] No hay separación entre información personal, estado y archivos. Todo está en un solo bloque flex.
-
-2. LAYOUT DE INDEX.HTML
------------------------
-- [HALLAZGO] El header (líneas 21-65) tiene redundancia de botones y mala distribución en móviles.
-- [HALLAZGO] El Hero (líneas 114-127) utiliza gradientes y animaciones 'blob' que pueden sentirse como plantilla genérica.
-- [HALLAZGO] La sección de noticias (líneas 130-138) y actividades (líneas 140-192) carecen de una separación visual fuerte (bordes o sombras sutiles).
-
-3. GLOBAL HEADER Y FOOTER
--------------------------
-- [HALLAZGO] El footer (líneas 272-283 en index.html) tiene una distribución de enlaces muy básica.
-- [HALLAZGO] Falta unificación de botones de acción rápida en el header (Mi Perfil, Logout).
-
-4. DASHBOARDS (Student/Teacher)
--------------------------------
-- [HALLAZGO] Las tarjetas de asignación (.assignment-card) en student.js tienen un diseño muy lineal.
-- [HALLAZGO] El editor Quill en teacher-dashboard.html tiene botones grandes que ocupan demasiado espacio vertical.
-
-5. SISTEMA DE ESPACIADO (css/style.css)
----------------------------------------
-- [HALLAZGO] Aunque existe un sistema de 4px, muchas clases inline en el HTML usan gaps de Tailwind (gap-4, gap-8) que no siempre respetan la jerarquía académica profesional.
-
-AUDITORÍA DE NAVEGACIÓN Y ESTRUCTURA GLOBAL - 11 DE JUNIO 2026
-==============================================================
-
-1. ENCABEZADO (HEADER)
+ARCHIVO: js/teacher.js
 ----------------------
-- [HALLAZGO] El encabezado actual en index.html, student-dashboard.html y teacher-dashboard.html no cumple con el orden estrictamente requerido (Logo, Título, Nav, Bandera).
-- [HALLAZGO] El botón "Portal" no tiene lógica de redirección dinámica por rol en el HTML estático; se maneja parcialmente en js/index-ui.js pero debe globalizarse.
-- [HALLAZGO] Falta la inclusión de los botones "Contenido", "Actividades" y "Mi perfil" directamente en la lista de navegación principal del header según el requerimiento.
-- [HALLAZGO] La lógica de menús desplegables en js/ui-common.js (renderCommonNav) no diferencia correctamente la jerarquía por rol para "Cursos" y "Contenido". El estudiante debe ver solo el parcial actual.
+- Hallazgo 1: Lógica de navegación jerárquica corregida. Se implementó un bloqueo de estado 'isNavigating' con bloque 'finally' para asegurar que la interfaz no quede bloqueada ante errores asíncronos.
+- Hallazgo 2: Sincronización de 'currentFilteredItems'. Se añadieron validaciones de integridad en el listener de clics para prevenir errores de referencia 'undefined'.
+- Hallazgo 3: Rediseño total de la Tarjeta del Alumno (renderDetallesAlumno). Se implementó un diseño modular con expediente, progreso visual (barra) y acciones rápidas.
+- Hallazgo 4: Limpieza de componentes. Se aseguró que '#student-details-info-card' se elimine al retroceder o cambiar de sección.
 
-2. PIE DE PÁGINA (FOOTER)
--------------------------
-- [HALLAZGO] El pie de página actual es demasiado extenso y contiene secciones de "Soporte" y "Navegación" que deben eliminarse para volver a la versión simplificada (Copyright, Año, Privacidad, Términos).
+ARCHIVO: index.html
+-------------------
+- Hallazgo 5: Restauración de Branding. Se recuperó el lema "Formando Corazones con amor, fe, alegría y tecnología".
+- Hallazgo 6: Sistema de Noticias. Se integró la sección dinámica con tarjetas modernas.
+- Hallazgo 7: Footer Profesional. Se implementó el nuevo diseño de 2 niveles con tipografía compacta.
 
-3. LÓGICA DE CURSOS Y CONTENIDO
--------------------------------
-- [HALLAZGO] js/data.js contiene arrays presentationData y downloadContentData que no están estructurados por "Parcial" en el nivel superior, lo que dificulta el filtrado por "Parcial actual" para estudiantes.
-- [HALLAZGO] No existe una distinción clara en js/ui-common.js entre la vista de árbol para profesor (completa) y la vista simplificada para estudiante.
+ARCHIVO: js/index-ui.js
+-----------------------
+- Hallazgo 8: Lógica de Bienvenida. Se movió el mensaje de saludo a un badge dedicado '#user-welcome-badge', protegiendo el branding institucional.
+- Hallazgo 9: Renderizado de Noticias. Implementada la función 'loadNews' con soporte de imágenes y extracción de extractos.
 
-4. ESTILOS Y UI (ANTI-TEMPLATE)
--------------------------------
-- [HALLAZGO] Se detectan espaciados inconsistentes en el header (gap-8, md:py-3) que deben normalizarse al sistema de 4px.
-- [HALLAZGO] La tipografía principal ya es Inter, pero falta reforzar la jerarquía visual compacta en los menús desplegables.
+ARCHIVO: css/style.css
+----------------------
+- Hallazgo 10: Sistema 4px. Se verificó la aplicación de espaciados consistentes.
+- Hallazgo 11: Refinamiento Quill. Se redujeron los botones a 20px y se ajustó el espaciado para mejor usabilidad móvil.
+
+ARCHIVO: Global (HTMLs)
+-----------------------
+- Hallazgo 12: Consistencia de Footer. Se actualizó el pie de página en login, register y dashboards para total uniformidad corporativa.
