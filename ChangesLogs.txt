@@ -1096,3 +1096,7 @@ MODIFICACIONES:
 - Archivo: css/style.css
   - Ajuste de dimensiones del editor Quill (iconos 20px) para optimización móvil.
   - Aplicación de reglas Anti-Template en espaciados y sombras.
+
+29/05/2026 (Fix Inicialización)
+- Archivo: js/teacher.js
+  - Se añadió validación de existencia para el elemento 'logout-button' antes de asignar el listener de cierre de sesión. Esto resuelve el fallo crítico que impedía la carga automática de la sección de Entregas al ingresar al Dashboard.

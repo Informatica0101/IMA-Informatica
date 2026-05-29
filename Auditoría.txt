@@ -7,6 +7,7 @@ ARCHIVO: js/teacher.js
 - Hallazgo 2: Sincronización de 'currentFilteredItems'. Se añadieron validaciones de integridad en el listener de clics para prevenir errores de referencia 'undefined'.
 - Hallazgo 3: Rediseño total de la Tarjeta del Alumno (renderDetallesAlumno). Se implementó un diseño modular con expediente, progreso visual (barra) y acciones rápidas.
 - Hallazgo 4: Limpieza de componentes. Se aseguró que '#student-details-info-card' se elimine al retroceder o cambiar de sección.
+- Hallazgo 13: Error de inicialización detectado. El script fallaba silenciosamente debido a una referencia inexistente a 'logout-button' en el HTML, impidiendo la ejecución de 'fetchTeacherActivity'. (CORREGIDO con verificación de existencia).
 
 ARCHIVO: index.html
 -------------------

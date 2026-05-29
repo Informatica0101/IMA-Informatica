@@ -254,10 +254,12 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    logoutButton.addEventListener('click', () => {
-        localStorage.removeItem('currentUser');
-        window.location.href = 'login.html';
-    });
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        });
+    }
 
     function extractDriveId(urlOrId) {
         if (!urlOrId) return null;
