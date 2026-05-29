@@ -174,8 +174,12 @@ function setupProfileLogic() {
                                     <input type="email" id="profile-email" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 outline-none" required>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Teléfono</label>
-                                    <input type="text" id="profile-telefono" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Ej. 8888-8888">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">WhatsApp (Teléfono)</label>
+                                    <input type="text" id="profile-telefono" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Ej. 9999-9999" maxlength="15">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nº de Lista</label>
+                                    <input type="number" id="profile-lista" class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-100 outline-none" placeholder="01">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-1">Rol / Grado</label>
@@ -226,6 +230,7 @@ function setupProfileLogic() {
         document.getElementById('profile-nombre').value = currentUser.nombre;
         document.getElementById('profile-email').value = currentUser.email || "";
         document.getElementById('profile-telefono').value = currentUser.telefono || "";
+        document.getElementById('profile-lista').value = currentUser.numeroLista || "";
         document.getElementById('profile-info').value = currentUser.rol === 'Profesor' ? 'Docente' : `${currentUser.grado} - ${currentUser.seccion}`;
 
         modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -249,7 +254,8 @@ function setupProfileLogic() {
             userId: currentUser.userId,
             nombre: document.getElementById('profile-nombre').value,
             email: document.getElementById('profile-email').value,
-            telefono: document.getElementById('profile-telefono').value
+            telefono: document.getElementById('profile-telefono').value,
+            numeroLista: document.getElementById('profile-lista').value
         };
 
         btn.disabled = true;
@@ -263,6 +269,7 @@ function setupProfileLogic() {
                 currentUser.nombre = payload.nombre;
                 currentUser.email = payload.email;
                 currentUser.telefono = payload.telefono;
+                currentUser.numeroLista = payload.numeroLista;
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 window.location.reload(); // Recargar para reflejar cambios (saludo, etc)
             } else {

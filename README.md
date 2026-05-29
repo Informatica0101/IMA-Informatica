@@ -46,6 +46,21 @@ El repositorio está organizado de la siguiente manera para separar claramente l
 └── README.md               # Este documento
 ```
 
+---
+
+## 🛡️ ZONA PROTEGIDA - PROTOCOLO DE DESARROLLO
+
+**ESTADO: PROTEGIDO (PROHIBIDO EDITAR SIN PERMISO EXPLÍCITO)**
+
+Los siguientes módulos se consideran el núcleo estable de la plataforma. Cualquier modificación debe ser autorizada y auditada bajo el protocolo de la Fase 3:
+
+1. **Gestión de Sesión (Auth Guard):** `js/auth.js` y persistencia en `localStorage`.
+2. **Infraestructura de Microservicios:** `js/api.js` y `js/config.js`.
+3. **Módulo de Navegación Jerárquica:** Lógica `navStack` en `js/teacher.js`.
+4. **Sistema de Cache PWA:** `sw.js` y versionamiento global.
+
+---
+
 - **`backend/`**: Contiene los microservicios. Cada subcarpeta es un proyecto de Google Apps Script independiente y autocontenido.
 - **`css/`**: Almacena hojas de estilo.
 - **`js/`**: Contiene la lógica del frontend.

@@ -19,11 +19,23 @@ ESTADO DE LAS TAREAS (RESUMEN)
 [A-51] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-53] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-58] COMPLETADA (PENDIENTE DE REVISIÓN)
+[A-59] COMPLETADA (PENDIENTE DE REVISIÓN)
+[A-60] PENDIENTE DE REVISIÓN
 
 ------------------------------------------------------------------------------------------------
 
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
+
+TAREA: [A-60]
+TÍTULO: Mi Perfil Global e Interacción WhatsApp Docente-Alumno
+ÁREA: Fullstack / Comunicación
+PRIORIDAD: CRÍTICA
+ESTADO: EN DESARROLLO
+- Implementado botón "Mi Perfil" con capacidad de agregar/editar Teléfono (WhatsApp).
+- Rediseñada vista de detalles del alumno para profesores incluyendo banner informativo.
+- Integrado chat de WhatsApp directo desde el panel docente hacia el alumno.
+- Declarada ZONA PROTEGIDA en módulos core.
 
 TAREA: [A-59]
 TÍTULO: Mejoras Obligatorias y Modernización UI (Mayo 29)

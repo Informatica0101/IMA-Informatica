@@ -980,3 +980,15 @@ DESCRIPCIÓN DE CAMBIOS:
   - Archivo: js/config.js: Renombrada constante `CONFIG` a `SERVICE_URLS` para resolver error de referencia en `js/api.js`.
   - Archivo: js/ui-common.js: Escapado el selector CSS `md:flex` en `querySelector` para evitar `SyntaxError`.
   - Archivo: js/student.js: Corregida truncación de archivo que causaba `Unexpected end of input`.
+- Backend: Estandarización de respuestas `text/plain` para CORS y manejo robusto de fechas ISO.
+
+29/05/2026 (Segunda Fase)
+- Archivo: js/ui-common.js
+  - Rediseñado el módulo global "Mi Perfil" con integración mejorada de Teléfono/WhatsApp.
+  - Asegurada la disponibilidad global del botón en escritorio y móvil mediante inyección dinámica.
+- Archivo: js/teacher.js
+  - Implementado banner informativo del alumno en la vista de historial de actividades.
+  - Añadido botón de contacto WhatsApp directo en el perfil del alumno (vista docente).
+  - Enriquecida la información del alumno en el banner (Teléfono visible).
+- Archivo: backend/user-service/Code.gs: Agregada persistencia para Nº de Lista en actualización de perfil.
+- Módulo de Protección: Se declara el núcleo de la plataforma como ZONA PROTEGIDA.

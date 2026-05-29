@@ -162,7 +162,7 @@ function registerUser(payload) {
 }
 
 function updateProfile(payload) {
-  const { userId, nombre, email, telefono } = payload;
+  const { userId, nombre, email, telefono, numeroLista } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
   const data = sheet.getDataRange().getValues();

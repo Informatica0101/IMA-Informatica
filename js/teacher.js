@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="flex-grow">
                         <p class="text-blue-800 font-black text-lg">${current.data.alumnoNombre}</p>
                         <p class="text-blue-600 text-xs font-medium uppercase tracking-wider">
-                            Nº Lista: ${s.numeroLista || '-'} | ${s.email || 'Sin correo'}
+                            Nº Lista: ${s.numeroLista || '-'} | Tel: ${s.telefono || 'Sin registro'} | ${s.email || 'Sin correo'}
                         </p>
                     </div>
                     ${waBtn}
