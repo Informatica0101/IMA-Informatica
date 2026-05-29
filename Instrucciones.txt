@@ -616,6 +616,19 @@ ESTADO: COMPLETADA
 - Eliminado el panel de estadísticas superiores del Dashboard del Profesor.
 - Sincronizada versión global de caché a v=18.
 
-TAREA: [A-70]
+[A-70] COMPLETADA
+ESTADO: COMPLETADA
+- Zona protegida: PROHIBIDO EDITAR SIN PERMISO EXPLICITO.
 TÍTULO: Rediseño de Entregas, Automatización de Subida y Refinamiento UX
 ESTADO: PENDIENTE DE REVISIÓN
+
+[A-71] COMPLETADA
+ESTADO: COMPLETADA
+- Zona protegida: PROHIBIDO EDITAR SIN PERMISO EXPLICITO.
+TÍTULO: Gestión de Perfil Global y Contacto WhatsApp Estudiante
+ÁREA: Frontend / UX / Perfil
+PRIORIDAD: ALTA
+ESTADO: EN PROCESO
+- Implementar campo de WhatsApp en el modal global 'Mi Perfil'.
+- Mostrar información del alumno en la vista de detalles del docente.
+- Integrar botón de inicio de chat de WhatsApp en los detalles del alumno (Vista Docente).

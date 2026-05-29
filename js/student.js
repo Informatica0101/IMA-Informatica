@@ -585,6 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (openProfileBtn) {
         openProfileBtn.onclick = () => {
             document.getElementById('profile-nombre').value = currentUser.nombre;
+            document.getElementById('profile-email').value = currentUser.email || '';
             document.getElementById('profile-telefono').value = currentUser.telefono || '';
             document.getElementById('profile-numeroLista').value = currentUser.numeroLista || '';
             profileModal.classList.remove('hidden');
@@ -610,6 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const payload = {
                 userId: currentUser.userId,
                 nombre: document.getElementById('profile-nombre').value,
+                email: document.getElementById('profile-email').value,
                 telefono: document.getElementById('profile-telefono').value,
                 numeroLista: document.getElementById('profile-numeroLista').value,
                 currentPassword: currentPassword || undefined,
@@ -623,6 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await fetchApi('USER', 'updateUserProfile', payload);
                 if (result.status === 'success') {
                     currentUser.nombre = payload.nombre;
+                    currentUser.email = payload.email;
                     currentUser.telefono = payload.telefono;
                     currentUser.numeroLista = payload.numeroLista;
                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
