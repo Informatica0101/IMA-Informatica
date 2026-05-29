@@ -313,7 +313,8 @@ function setupProfileLogic() {
     };
 
     // Agregar botón "Mi Perfil" a los navs existentes si hay usuario
-    const desktopNav = document.querySelector('nav.hidden.md\\:flex') || document.querySelector('nav.hidden');
+    // Usamos un selector más seguro para evitar problemas con el caracter ":"
+    const desktopNav = Array.from(document.querySelectorAll('nav')).find(el => el.classList.contains('md:flex')) || document.querySelector('nav.hidden');
     if (desktopNav) {
         const profileBtn = document.createElement('button');
         profileBtn.className = 'text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none flex items-center space-x-1';
@@ -424,7 +425,7 @@ function setupPWALogic() {
     // Service Worker Registration
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js?v=10')
+            navigator.serviceWorker.register('sw.js?v=21')
                 .then(reg => {
                     console.log('SW registrado', reg);
                     // Forzar actualización si hay un nuevo SW esperando
