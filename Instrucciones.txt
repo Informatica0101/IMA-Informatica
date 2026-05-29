@@ -376,13 +376,22 @@ ESTADO DE LAS TAREAS (RESUMEN)
 ------------------------------------------------------------------------------------------------
 
 TAREAS PENDIENTES DE REVISIÓN
+
+TAREA: [A-69]
+TÍTULO: Diagnóstico y Resolución de Errores de Conectividad y Scoping
+ÁREA: General / Frontend / Conectividad
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Corregido ReferenceError: currentUser is not defined en js/student.js moviendo initWhatsAppButton al alcance correcto.
+- Actualizadas URLs de TASK y EXAM a /exec de producción para resolver bloqueos de CORS y fallos de fetch.
+- Sincronizada nueva URL del microservicio USER proporcionada por el usuario.
 ----------------------------
 
 TAREA: [A-68]
 TÍTULO: Corrección Conectividad TASK y Refinamiento Optimizador Subida
 ÁREA: General / Frontend / Conectividad
 PRIORIDAD: CRÍTICA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Corregido error "Failed to fetch" mediante actualización de URL TASK a /exec en js/config.js.
 - Implementada previsualización múltiple en el Optimizador de Subida (Req 3.3).
 - Añadida eliminación individual pre-subida en la cola del estudiante.
@@ -392,7 +401,7 @@ TAREA: [A-67]
 TÍTULO: Auditoría de Cumplimiento Requerimientos Mayo 2026
 ÁREA: General / Frontend / Backend
 PRIORIDAD: CRÍTICA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Restaurada la sección de Reportes Académicos en el Dashboard del Profesor con exportación Excel.
 - Implementado el módulo 'Mi Perfil' para profesores (Req 1.3).
 - Refactorizado el sistema de subida del estudiante a un 'Optimizador de Alta Fidelidad' con cola secuencial, compresión y anti-duplicados (Req 3.3).
@@ -405,7 +414,7 @@ TAREA: [A-64]
 TÍTULO: Actualización de Endpoints Microservicios (Mayo 20)
 ÁREA: Backend / Configuración
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Actualizadas las URLs de TASK, USER y EXAM en js/config.js.
 - Sincronizada versión global de caché a v=16.
 
@@ -413,7 +422,7 @@ TAREA: [A-63]
 TÍTULO: Auditoría Técnica y Estabilización PWA
 ÁREA: Frontend / Backend / PWA
 PRIORIDAD: MEDIA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Realizada auditoría técnica integral (Sintaxis, Lógica, Rendimiento).
 - Sincronizada versión de activos a v=15.
 - Centralizada lógica de enlaces de Drive.
@@ -423,7 +432,7 @@ TAREA: [A-62]
 TÍTULO: Optimización de Rendimiento Exámenes (Backend)
 ÁREA: Backend / Google Apps Script
 PRIORIDAD: MEDIA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Implementadas escrituras setValues() en el servicio de exámenes.
 - Reducción de latencia en creación y calificación de evaluaciones.
 
@@ -431,7 +440,7 @@ TAREA: [A-57]
 TÍTULO: Presentaciones Mayo 17 y 24 (Prog Lógica y Bordes/Enlaces)
 ÁREA: Frontend / Contenido
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Reestructurada presentación de Programación (May 17) con foco en Programación Lógica (PDF p.58) y Repetir.
 - Creada nueva presentación de Programación (May 24) sobre Bases de Datos (PDF Sec 7).
 - Creada nueva presentación de Diseño Web (May 24) sobre Bordes, Enlaces y text-decoration.
@@ -442,7 +451,7 @@ TAREA: [A-56]
 TÍTULO: Presentaciones Semana 03 de Mayo (Bucle Mientras y Medidas CSS)
 ÁREA: Frontend / Contenido / Lógica
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Generadas presentaciones de 16 slides para Programación y Diseño Web.
 - Programación: Lenguajes Declarativos y Bucle Mientras.
 - Diseño Web: Medidas en CSS (px, em, %).
@@ -452,7 +461,7 @@ TAREA: [A-55]
 TÍTULO: Presentaciones Semana 26 de Abril (Bucle Para y CSS Link)
 ÁREA: Frontend / Contenido / Lógica
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Generadas presentaciones de 16 slides para Programación y Diseño Web.
 - Programación: Foco exclusivo en Bucle Para (PSeInt, JS, C, C++).
 - Implementados quizzes de 10 preguntas con retroalimentación cromática (Verde/Rojo) y avance automático.
@@ -464,7 +473,7 @@ TAREA: [A-53]
 TÍTULO: Dashboard Profesor: Jerarquía por Parcial
 ÁREA: Frontend / UI / Navegación
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Insertado el nivel "Parcial" en la navegación jerárquica: Asignaturas -> Parcial -> Alumnos.
 - Implementada la función `renderParciales` para extracción dinámica de periodos desde la data de la API.
 - Actualizada la lógica de status de alumno (Pendiente/Al día) para que sea específica al parcial seleccionado.
@@ -475,14 +484,14 @@ TAREA: [A-54]
 TÍTULO: Actualización de URLs de Microservicios (Abril 20)
 ÁREA: Backend / Configuración
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Actualizadas las URLs de TASK y EXAM en js/config.js.
 
 TAREA: [A-52]
 TÍTULO: Transición al II Parcial y Presentaciones (19 de abril)
 ÁREA: Frontend / Contenido
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Creadas nuevas presentaciones de 2026 para Programación ("Introducción a los lenguajes") y Diseño Web ("Introducción a CSS").
 - Ocultado el contenido del I Parcial en el menú de navegación y descargas.
 - Integrados los folletos PDF del II Parcial en el área de descargas.
@@ -493,7 +502,7 @@ TAREA: [A-51]
 TÍTULO: Dashboard Estudiante: Pestañas por Parcial
 ÁREA: Frontend / UI
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Implementado sistema de navegación por pestañas en student-dashboard.html.
 - Las tareas se agrupan por parcial (IV > III > II > I) mediante PARCIAL_ORDER en js/student.js.
 - Selección automática del parcial actual (valor mayor presente en la data).
@@ -507,7 +516,7 @@ TAREA: [A-50]
 TÍTULO: Diagnóstico y Estabilización de Subida de Tareas (Backend)
 ÁREA: Backend / Drive API
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Solucionado el "Error del servidor" causado por tipos de datos numéricos (Grados) en la creación de carpetas de Drive.
 - Implementada normalización forzada a String de todos los metadatos del estudiante en `task-service`.
 - Refactorizada `getOrCreateFolder` para ser resiliente a nombres nulos o no-string.
@@ -519,7 +528,7 @@ TAREA: [A-48]
 TÍTULO: Refinamiento de UI de Precisión (Dashboards)
 ÁREA: UI/UX / Frontend
 PRIORIDAD: MEDIA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Implementada compactación de botones con gradientes profesionales y border-radius de 6px.
 - Aumentada la jerarquía tipográfica en listas y tablas para mejor legibilidad.
 - Implementado scroll interno en tarjetas de asignación expandidas (max-height: 350px).
@@ -530,7 +539,7 @@ TAREA: [A-47]
 TÍTULO: Rediseño Dashboard Profesor (Estilo Califik) y Refinamiento Estudiante
 ÁREA: Frontend / Backend / Reportes
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Rediseño completo de teacher-dashboard.html siguiendo el layout de Califik.
 - Implementación de CRUD para tareas y exámenes en la nueva sección de Gestión.
 - Generación de reportes Excel consolidados por parcial, grado y sección (una hoja por materia).
@@ -543,7 +552,7 @@ TAREA: [A-46]
 TÍTULO: Guía de Propiedades CSS y Actualización de Artículos
 ÁREA: Frontend / Contenido
 PRIORIDAD: MEDIA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Reescritura completa de III_BTP_A/dw_II/propiedades_css.html con Tailwind CSS y estilo estandarizado.
 - Adición de contenido teórico y ejemplos prácticos (previsualizaciones) para Flexbox, Grid y Modelo de Caja.
 - Integración del artículo en el menú de Recursos Adicionales en js/data.js.
@@ -562,7 +571,7 @@ TAREA: [A-44]
 TÍTULO: Parche de Estabilidad y Robustez del Intérprete
 ÁREA: Frontend / Lógica
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Corregida la detección de bloques multisentencia en la estructura SEGUN.
 - Mejorado el Tokenizer para manejar operadores multi-carácter (<>, <=, >=, ==).
 - Añadido reconocimiento nativo de literales lógicos (Verdadero/Falso).
@@ -589,7 +598,7 @@ TAREA: [A-65]
 TÍTULO: Integración WhatsApp y Sistema de Noticias Pro
 ÁREA: Frontend / Backend / Drive
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Implementada gestión de enlaces de WhatsApp por grado y sección desde el Dashboard del Profesor.
 - Añadido botón de acceso directo al grupo en el Dashboard del Estudiante con estados dinámicos.
 - Desarrollado sistema de noticias completo con editor enriquecido (Quill) y subida de imágenes a Drive.
@@ -602,7 +611,7 @@ TAREA: [A-66]
 TÍTULO: Corrección WhatsApp por Grado y Limpieza Dashboard
 ÁREA: Frontend / Backend
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Refactorizada la gestión de WhatsApp: ahora es 1 grupo por grado (Décimo, Undécimo, Duodécimo).
 - Eliminado el panel de estadísticas superiores del Dashboard del Profesor.
 - Sincronizada versión global de caché a v=18.

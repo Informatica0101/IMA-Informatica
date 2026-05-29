@@ -91,3 +91,16 @@ AUDITORÍA DE REQUERIMIENTOS - 27 DE MAYO 2026 (FASE 3)
 ---------
 - [VERIFICADO] Soporte para matrices bidimensionales [i,j] implementado en Parser e Intérprete.
 - [VERIFICADO] Gestión de archivos (Nube/Local) integrada.
+
+AUDITORÍA DE DIAGNÓSTICO DE ERRORES - 29 DE MAYO 2026
+=====================================================
+
+1. PORTAL DEL ESTUDIANTE (js/student.js)
+----------------------------------------
+- [HALLAZGO] ReferenceError: currentUser is not defined. La función initWhatsAppButton se invocaba fuera del alcance de la variable local currentUser definida en el listener DOMContentLoaded.
+- [RESOLUCIÓN] Se movió la función y su llamada dentro del listener para asegurar acceso a currentUser.
+
+2. CONECTIVIDAD DE MICROSERVICIOS (js/config.js)
+------------------------------------------------
+- [HALLAZGO] Error "Failed to fetch" y bloqueo de CORS. El microservicio TASK apuntaba a una URL con sufijo /dev, lo cual genera fallos de origen cruzado en Google Apps Script cuando se llama desde un dominio externo.
+- [RESOLUCIÓN] Se actualizaron las URLs de USER (proporcionada), TASK y EXAM a sus versiones /exec de producción.

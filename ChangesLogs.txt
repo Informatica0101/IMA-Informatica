@@ -1029,3 +1029,10 @@ MAYO 2026 (Portal Optimization & Security Patch)
     - Mejorado el filtro anti-duplicados para considerar también archivos ya en la cola de espera.
 - Archivo: Auditoría.txt
   - Registrada la corrección del fallo de red y la finalización de las mejoras de alta fidelidad en el sistema de subida.
+
+29/05/2026 (Fix Crítico Conectividad y Scoping)
+- Archivo: js/student.js
+  - Corregido ReferenceError en initWhatsAppButton mediante el re-alcance (scoping) de la función dentro del listener de carga del DOM.
+- Archivo: js/config.js
+  - Actualizadas URLs de TASK y EXAM a versiones /exec de producción para eliminar errores de CORS y "Failed to fetch".
+  - Aplicada nueva URL para USER microservice proporcionada por el usuario.
