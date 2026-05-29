@@ -615,3 +615,7 @@ ESTADO: COMPLETADA
 - Refactorizada la gestión de WhatsApp: ahora es 1 grupo por grado (Décimo, Undécimo, Duodécimo).
 - Eliminado el panel de estadísticas superiores del Dashboard del Profesor.
 - Sincronizada versión global de caché a v=18.
+
+TAREA: [A-70]
+TÍTULO: Rediseño de Entregas, Automatización de Subida y Refinamiento UX
+ESTADO: PENDIENTE DE REVISIÓN

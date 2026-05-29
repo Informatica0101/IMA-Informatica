@@ -822,44 +822,71 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // Tareas y exámenes correspondientes a este contexto
-        const relevantAssignments = allAssignmentsRaw.filter(a =>
-            norm(a.grado) === norm(grado) &&
-            (norm(a.seccion) === norm(seccion) || !a.seccion || norm(a.seccion) === 'todas') &&
-            norm(a.asignatura) === norm(asignatura) &&
-            norm(a.parcial) === norm(parcial)
-        );
-
-        // Sort students by list number
-        students.sort((a, b) => (parseInt(a.numeroLista) || 999) - (parseInt(b.numeroLista) || 999));
+        // Filtrado por búsqueda
         let filtered = students.filter(s => norm(s.nombre).includes(norm(search)));
 
-        currentFilteredItems = filtered;
-
-        // Render Horizontal Academic Table
-        let headHtml = `
-            <tr class="bg-gray-50 border-b border-gray-100">
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Nº</th>
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Alumno</th>`;
-
-        relevantAssignments.forEach(a => {
-            headHtml += `<th class="p-4 text-center font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${a.titulo}">${a.titulo.substring(0, 10)}${a.titulo.length > 10 ? '...' : ''}</th>`;
+        // Calcular estado y preparar datos
+        const studentsWithStatus = filtered.map(s => {
+            const studentSubmissions = allActivityRaw.filter(sub =>
+                sub.alumnoId == s.userId &&
+                norm(sub.grado) === norm(grado) &&
+                norm(sub.seccion) === norm(seccion) &&
+                norm(sub.asignatura) === norm(asignatura) &&
+                norm(sub.parcial) === norm(parcial)
+            );
+            const isPending = studentSubmissions.some(sub => {
+                const status = sub.estado;
+                return (status === 'Pendiente' || status === 'Pendiente de revisión' || !status) &&
+                       (sub.fileId || sub.respuestas || sub.entregaId);
+            });
+            return {
+                ...s,
+                statusText: isPending ? 'Pendiente' : 'Al día',
+                isPending: isPending
+            };
         });
 
-        headHtml += `<th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Total</th></tr>`;
-        dashboardTableHead.innerHTML = headHtml;
+        // Aplicar ordenamiento
+        studentsWithStatus.sort((a, b) => {
+            let valA, valB;
+            if (studentSort.column === 'estado') {
+                valA = a.statusText;
+                valB = b.statusText;
+            } else if (studentSort.column === 'numeroLista') {
+                valA = parseInt(a.numeroLista) || 999;
+                valB = parseInt(b.numeroLista) || 999;
+            } else {
+                valA = norm(a[studentSort.column]);
+                valB = norm(b[studentSort.column]);
+            }
 
-        if (filtered.length === 0) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="${relevantAssignments.length + 3}" class="text-center p-8 text-gray-500">No hay alumnos inscritos.</td></tr>`;
+            if (valA < valB) return studentSort.direction === 'asc' ? -1 : 1;
+            if (valA > valB) return studentSort.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        currentFilteredItems = studentsWithStatus;
+
+        // Render Student List (Simplified as per requirements)
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="numeroLista">No. de fila</th>
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="nombre">Nombre del Alumno</th>
+                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="estado">Estado</th>
+                <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th>
+            </tr>`;
+
+        if (studentsWithStatus.length === 0) {
+            submissionsTableBody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-gray-500">No hay alumnos inscritos.</td></tr>`;
             return;
         }
 
-        submissionsTableBody.innerHTML = filtered.map((s, idx) => {
-            let total = 0;
+        submissionsTableBody.innerHTML = studentsWithStatus.map((s, idx) => {
             const waPhone = s.telefono ? s.telefono.replace(/\D/g, '') : '';
             const waLink = waPhone ? `https://wa.me/504${waPhone}` : '#';
+            const statusClass = s.isPending ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700';
 
-            let rowsHtml = `
+            return `
                 <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
                     <td class="p-4 text-gray-400 font-mono text-xs">${s.numeroLista || '-'}</td>
                     <td class="p-4">
@@ -873,21 +900,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
                             </a>` : ''}
                         </div>
-                    </td>`;
-
-            relevantAssignments.forEach(a => {
-                const sub = allActivityRaw.find(sub =>
-                    sub.alumnoId == s.userId &&
-                    sub.titulo === a.titulo &&
-                    norm(sub.asignatura) === norm(a.asignatura)
-                );
-                const score = sub ? parseFloat(sub.calificacion || 0) : 0;
-                total += score;
-                rowsHtml += `<td class="p-4 text-center font-bold ${score > 0 ? 'text-green-600' : 'text-gray-300'}">${score}</td>`;
-            });
-
-            rowsHtml += `<td class="p-4 text-right font-black text-blue-800">${total}</td></tr>`;
-            return rowsHtml;
+                    </td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded-full text-[10px] font-bold ${statusClass}">${s.statusText}</span>
+                    </td>
+                    <td class="p-4 text-right">
+                        <button class="bg-blue-600 text-white px-4 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors">Ver detalles</button>
+                    </td>
+                </tr>`;
         }).join('');
     }
 

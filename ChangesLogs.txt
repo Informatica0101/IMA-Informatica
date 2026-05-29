@@ -1036,3 +1036,18 @@ MAYO 2026 (Portal Optimization & Security Patch)
 - Archivo: js/config.js
   - Actualizadas URLs de TASK y EXAM a versiones /exec de producción para eliminar errores de CORS y "Failed to fetch".
   - Aplicada nueva URL para USER microservice proporcionada por el usuario.
+
+TAREA: [A-70]
+TÍTULO: Rediseño de Entregas, Automatización de Subida y Refinamiento UX
+ÁREA: Frontend / UI / Usabilidad
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Reestructurada la sección de Entregas en el Dashboard del Profesor: reemplazada la tabla horizontal por una lista de alumnos (No. de fila, Nombre, Estado, Acción).
+- Implementado cálculo dinámico del "Estado" del alumno (Pendiente/Al día) en el flujo del docente.
+- Añadida interactividad y ordenamiento (Nombre, Estado, Lista) en la lista de alumnos del docente.
+- Mejorado el Modal de Entrega del Estudiante con scroll interno (max-h-[90vh]) y diseño responsivo.
+- Automatizado el flujo de subida de archivos en el portal estudiantil, eliminando el paso manual "Aceptar y subir".
+- Implementados indicadores de progreso visuales individuales para cargas automáticas secuenciales.
+- Unificada la visibilidad global del botón "Mi Perfil" en el encabezado mediante js/ui-common.js.
+- Aplicado el Sistema de Diseño Institucional con espaciado estricto de 4px en css/style.css.
+- Sincronizada versión global de caché a v=21.

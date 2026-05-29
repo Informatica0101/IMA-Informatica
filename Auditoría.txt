@@ -104,3 +104,23 @@ AUDITORÍA DE DIAGNÓSTICO DE ERRORES - 29 DE MAYO 2026
 ------------------------------------------------
 - [HALLAZGO] Error "Failed to fetch" y bloqueo de CORS. El microservicio TASK apuntaba a una URL con sufijo /dev, lo cual genera fallos de origen cruzado en Google Apps Script cuando se llama desde un dominio externo.
 - [RESOLUCIÓN] Se actualizaron las URLs de USER (proporcionada), TASK y EXAM a sus versiones /exec de producción.
+
+AUDITORÍA DE REDISEÑO Y USABILIDAD - 30 DE MAYO 2026
+===================================================
+
+1. SECCIÓN DE ENTREGAS (TEACHER DASHBOARD)
+------------------------------------------
+- [HALLAZGO] La función 'renderAlumnos' en 'js/teacher.js' genera una tabla horizontal con puntuaciones de tareas. Según el requerimiento, esta vista es incorrecta para "Entregas" y pertenece a "Reportes".
+- [HALLAZGO] Falta lógica para calcular el estado general del alumno ("Al día" vs "Pendiente") basado en si existen entregas con estado 'Pendiente' o 'Por calificar'.
+- [HALLAZGO] El modal de detalles del alumno ya existe ('renderDetallesAlumno'), por lo que la transición desde la nueva lista debe disparar este nivel de navegación.
+
+2. MODAL DE ENTREGA (STUDENT DASHBOARD)
+---------------------------------------
+- [HALLAZGO] El modal '#submission-modal' en 'student-dashboard.html' no tiene un contenedor con scroll interno, lo que causa desbordamiento en móviles cuando hay muchos archivos.
+- [HALLAZGO] El flujo de subida requiere interacción manual con '#accept-file-btn'. El requerimiento exige subida automática al seleccionar archivos.
+- [HALLAZGO] El botón de confirmación final se llama actualmente "Confirmar Entrega", debe renombrarse a "Entregar Tarea".
+
+3. DISEÑO GLOBAL Y PERFIL
+-------------------------
+- [HALLAZGO] El botón 'Mi Perfil' está presente en los HTMLs pero a veces oculto o inconsistente en su visualización inicial. Debe ser inyectado o forzado globalmente.
+- [HALLAZGO] 'css/style.css' utiliza Tailwind en gran parte, pero los componentes personalizados (como .dashboard-card) necesitan un ajuste fino para respetar el sistema de espaciado de 4px de forma estricta.
