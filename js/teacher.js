@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (openProfileBtn) {
         openProfileBtn.onclick = () => {
             document.getElementById('profile-nombre').value = currentUser.nombre;
+            document.getElementById('profile-email').value = currentUser.email || '';
             document.getElementById('profile-telefono').value = currentUser.telefono || '';
             profileModal.classList.remove('hidden');
         };
@@ -140,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const payload = {
                 userId: currentUser.userId,
                 nombre: document.getElementById('profile-nombre').value,
+                email: document.getElementById('profile-email').value,
                 telefono: document.getElementById('profile-telefono').value,
                 currentPassword: currentPassword || undefined,
                 password: newPassword || undefined
@@ -152,6 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await fetchApi('USER', 'updateUserProfile', payload);
                 if (result.status === 'success') {
                     currentUser.nombre = payload.nombre;
+                    currentUser.email = payload.email;
                     currentUser.telefono = payload.telefono;
                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
                     document.getElementById('teacher-name').textContent = currentUser.nombre;
@@ -882,24 +885,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         submissionsTableBody.innerHTML = studentsWithStatus.map((s, idx) => {
-            const waPhone = s.telefono ? s.telefono.replace(/\D/g, '') : '';
-            const waLink = waPhone ? `https://wa.me/504${waPhone}` : '#';
             const statusClass = s.isPending ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700';
 
             return `
                 <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
                     <td class="p-4 text-gray-400 font-mono text-xs">${s.numeroLista || '-'}</td>
-                    <td class="p-4">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <div class="font-bold text-blue-700">${s.nombre}</div>
-                                <div class="text-[10px] text-gray-400 truncate max-w-[150px]">${s.email || ''} ${s.telefono ? '| ' + s.telefono : ''}</div>
-                            </div>
-                            ${waPhone ? `
-                            <a href="${waLink}" target="_blank" onclick="event.stopPropagation()" class="ml-2 bg-green-500 hover:bg-green-600 text-white p-2 rounded-full shadow-sm transition-all" title="Contactar por WhatsApp">
-                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
-                            </a>` : ''}
-                        </div>
+                    <td class="p-4 font-bold text-blue-700">
+                        ${s.nombre}
                     </td>
                     <td class="p-4">
                         <span class="px-2 py-1 rounded-full text-[10px] font-bold ${statusClass}">${s.statusText}</span>
@@ -916,6 +908,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const isGlobalSearch = (asignatura === 'Búsqueda Global');
         const current = navStack[navStack.length - 1];
         const parcial = current.data.parcial;
+
+        // Mostrar información del alumno en la parte superior (A-71)
+        const studentInfo = current.data.studentInfo || null;
+        const existingInfoCard = document.getElementById('student-details-info-card');
+        if (existingInfoCard) existingInfoCard.remove();
+
+        if (studentInfo) {
+            const infoCard = document.createElement('div');
+            infoCard.id = 'student-details-info-card';
+            infoCard.className = "bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 animate-fade-in-up";
+
+            const waPhone = studentInfo.telefono ? studentInfo.telefono.replace(/\D/g, '') : '';
+            const waLink = waPhone ? `https://wa.me/504${waPhone}` : '#';
+
+            infoCard.innerHTML = `
+                <div class="flex-grow">
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">${studentInfo.nombre}</h3>
+                    <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500">
+                        <span class="flex items-center gap-1"><b class="text-gray-400 uppercase text-[10px]">No. Lista:</b> ${studentInfo.numeroLista || '-'}</span>
+                        <span class="flex items-center gap-1"><b class="text-gray-400 uppercase text-[10px]">Correo:</b> ${studentInfo.email || 'No registrado'}</span>
+                        <span class="flex items-center gap-1"><b class="text-gray-400 uppercase text-[10px]">Teléfono:</b> ${studentInfo.telefono || 'No registrado'}</span>
+                    </div>
+                </div>
+                ${waPhone ? `
+                <a href="${waLink}" target="_blank" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all flex items-center gap-2">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                    Contactar WhatsApp
+                </a>` : ''}
+            `;
+            submissionsTableBody.parentNode.insertBefore(infoCard, submissionsTableBody.parentNode.firstChild);
+        }
 
         const filtered = allActivityRaw.filter(i =>
             i.alumnoId == alumnoId &&
@@ -1033,7 +1056,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (current.level === 'Secciones') await pushNav('Asignaturas', { grado: current.data.grado, seccion: item });
                 else if (current.level === 'Asignaturas') await pushNav('Parciales', { grado: current.data.grado, seccion: current.data.seccion, asignatura: item });
                 else if (current.level === 'Parciales') await pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: item });
-                else if (current.level === 'Alumnos') await pushNav('Detalles', { alumnoId: item.userId, alumnoNombre: item.nombre, grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: current.data.parcial });
+                else if (current.level === 'Alumnos') await pushNav('Detalles', {
+                    alumnoId: item.userId,
+                    alumnoNombre: item.nombre,
+                    grado: current.data.grado,
+                    seccion: current.data.seccion,
+                    asignatura: current.data.asignatura,
+                    parcial: current.data.parcial,
+                    studentInfo: item
+                });
             }
         });
     }
@@ -1097,6 +1128,40 @@ document.addEventListener('DOMContentLoaded', () => {
     function openGradeModal(entrega) {
         currentEditingEntregaId = entrega.entregaId;
         document.getElementById('student-name-modal').textContent = entrega.alumnoNombre;
+
+        // Populate extra info (A-71)
+        const current = navStack[navStack.length - 1];
+        let student = null;
+        if (current.level === 'Detalles' && current.data.studentInfo) {
+            student = current.data.studentInfo;
+        } else if (current.level === 'Alumnos' && current.data.students) {
+            student = current.data.students.find(s => s.userId == entrega.alumnoId);
+        }
+
+        const listEl = document.getElementById('student-list-modal');
+        const emailEl = document.getElementById('student-email-modal');
+        const phoneEl = document.getElementById('student-phone-modal');
+        const waBtn = document.getElementById('wa-direct-btn');
+
+        if (student) {
+            if (listEl) listEl.textContent = student.numeroLista || '-';
+            if (emailEl) emailEl.textContent = student.email || 'N/A';
+            if (phoneEl) phoneEl.textContent = student.telefono || 'N/A';
+            if (waBtn) {
+                const waPhone = student.telefono ? student.telefono.replace(/\D/g, '') : '';
+                if (waPhone) {
+                    waBtn.href = `https://wa.me/504${waPhone}`;
+                    waBtn.classList.remove('hidden');
+                } else {
+                    waBtn.classList.add('hidden');
+                }
+            }
+        } else {
+            if (listEl) listEl.textContent = '-';
+            if (emailEl) emailEl.textContent = 'N/A';
+            if (phoneEl) phoneEl.textContent = 'N/A';
+            if (waBtn) waBtn.classList.add('hidden');
+        }
         const flm = document.getElementById('file-link-modal');
         if (entrega.tipo === 'Examen') { flm.href = `results.html?entregaExamenId=${entrega.entregaId}`; flm.textContent = "Ver Respuestas"; }
         else if (entrega.fileId) { flm.href = `https://drive.google.com/uc?id=${extractDriveId(entrega.fileId)}`; flm.textContent = "Ver Archivo"; }

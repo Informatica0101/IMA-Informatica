@@ -278,6 +278,79 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeGuestModal) {
         closeGuestModal.onclick = () => guestPromptModal.classList.add('hidden');
     }
+
+    // --- Mi Perfil (Global) ---
+    const profileModal = document.getElementById('profile-modal');
+    const openProfileBtn = document.getElementById('open-profile-btn');
+    const closeProfileModal = document.getElementById('close-profile-modal');
+    const profileForm = document.getElementById('profile-form');
+
+    if (openProfileBtn) {
+        openProfileBtn.onclick = () => {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) return;
+            document.getElementById('profile-nombre').value = user.nombre;
+            document.getElementById('profile-email').value = user.email || '';
+            document.getElementById('profile-telefono').value = user.telefono || '';
+            profileModal.classList.remove('hidden');
+        };
+    }
+
+    if (closeProfileModal) {
+        closeProfileModal.onclick = () => profileModal.classList.add('hidden');
+    }
+
+    const cancelProfileBtn = document.getElementById('cancel-profile-btn');
+    if (cancelProfileBtn) {
+        cancelProfileBtn.onclick = () => profileModal.classList.add('hidden');
+    }
+
+    if (profileForm) {
+        profileForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const submitBtn = profileForm.querySelector('button[type="submit"]');
+            const newPassword = document.getElementById('profile-password').value;
+            const currentPassword = document.getElementById('profile-current-password').value;
+
+            if (newPassword && !currentPassword) {
+                alert('Debe ingresar su contraseña actual para realizar cambios de seguridad.');
+                return;
+            }
+
+            const payload = {
+                userId: user.userId,
+                nombre: document.getElementById('profile-nombre').value,
+                email: document.getElementById('profile-email').value,
+                telefono: document.getElementById('profile-telefono').value,
+                currentPassword: currentPassword || undefined,
+                password: newPassword || undefined
+            };
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Guardando...';
+
+            try {
+                const result = await fetchApi('USER', 'updateUserProfile', payload);
+                if (result.status === 'success') {
+                    user.nombre = payload.nombre;
+                    user.email = payload.email;
+                    user.telefono = payload.telefono;
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    renderWelcomeMessage();
+                    alert('Perfil actualizado correctamente.');
+                    profileModal.classList.add('hidden');
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (err) {
+                alert('Error de conexión.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Guardar Cambios';
+            }
+        };
+    }
 });
 
 /**

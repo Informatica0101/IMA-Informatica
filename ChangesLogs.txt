@@ -1041,7 +1041,7 @@ TAREA: [A-70]
 TÍTULO: Rediseño de Entregas, Automatización de Subida y Refinamiento UX
 ÁREA: Frontend / UI / Usabilidad
 PRIORIDAD: ALTA
-ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+ESTADO: COMPLETADA
 - Reestructurada la sección de Entregas en el Dashboard del Profesor: reemplazada la tabla horizontal por una lista de alumnos (No. de fila, Nombre, Estado, Acción).
 - Implementado cálculo dinámico del "Estado" del alumno (Pendiente/Al día) en el flujo del docente.
 - Añadida interactividad y ordenamiento (Nombre, Estado, Lista) en la lista de alumnos del docente.
