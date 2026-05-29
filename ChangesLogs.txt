@@ -917,4 +917,23 @@ DESCRIPCIÓN DE CAMBIOS:
   - Implementado sistema de guardado silencioso automático a Drive por alumno.
 - Global:
   - Estandarizada paleta de colores institucional y tipografía Inter.
-  - Actualizada PWA a v12 con manifest y sw.js sincronizados.
+  - Actualizada PWA a v21 con manifest y sw.js sincronizados.
+
+28/05/2026 (Segunda Fase de Modernización - Cumplimiento Total)
+- Minijuegos:
+  - Implementada sincronización real con backend (Hoja RecordsJuegos).
+  - Carga de Récord Personal al iniciar y guardado de estadísticas (Score, WPM/KPM, Precisión).
+  - Actualizada UI de juegos para mostrar mejor puntaje.
+- Dashboard Docente:
+  - Vinculado enlace directo a Proyectos PSeInt del alumno (búsqueda Drive) en modal de calificación.
+- Pseudocódigo:
+  - Implementado Menú Contextual (clic derecho) con acciones rápidas.
+  - Implementado Perfil Personalizado con modal de configuración de reglas sintácticas.
+  - Soporte Completo para Matrices: Actualizada la lógica de parsing y ejecución para manejar arreglos bidimensionales (N-índices) con base 1.
+  - Visualización de Variables: Implementado formateador recursivo para mostrar el contenido de matrices y arreglos de forma legible en el panel lateral.
+  - Gestión de Archivos en Drive: Implementadas acciones `savePseudocode`, `listPseudocodeFiles` y `getPseudocodeFile` en el backend.
+  - UI de Archivos: Separadas funciones "Guardar en Drive" y "Guardar local". Implementado modal de apertura desde Drive con filtrado por estudiante para profesores.
+  - Modo Estricto: Implementada validación obligatoria de punto y coma en el parser cuando el perfil "Estricto" está activo.
+- Seguridad e Integridad:
+  - Implementado sistema de Checksums (Adler-32) para validación de integridad en subidas de archivos.
+  - Corregida vulnerabilidad en recuperación de contraseña: eliminada fuga de tokens en respuesta API y migrada clave secreta a `PropertiesService`.

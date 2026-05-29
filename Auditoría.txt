@@ -172,3 +172,21 @@ AUDITORÍA DE MODERNIZACIÓN INTEGRAL (25/05/2026)
 ---------------------------
 - Hallazgo: Menús inactivos y falta de persistencia.
 - Resolución: Menús (Archivo, Editar, Configurar, Ejecutar, Ayuda) 100% funcionales. Implementados perfiles "Flexible" y "Estricto" (Parser switch). Añadido guardado silencioso automático a Drive por cada ejecución/guardado del alumno.
+
+AUDITORÍA DE MEJORAS PSEUDOCÓDIGO Y DRIVE (28/05/2026)
+======================================================
+
+1. ARCHIVO: backend/task-service/Code.gs
+----------------------------------------
+- Hallazgo: El servicio TASK no cuenta con acciones específicas para listar archivos de una carpeta específica de Drive que no sean entregas de tareas.
+- Requerimiento: Implementar `savePseudocode`, `listPseudocodeFiles` y `getPseudocodeFile`.
+- Riesgo: La jerarquía de carpetas debe ser consistente con `uploadFile` pero redirigida a una carpeta fija "Proyectos_PSeInt" en lugar de por Parcial/Asignatura.
+
+2. ARCHIVO: pseudocode.html
+---------------------------
+- Hallazgo (Parser): El parser actual tiene `this.match('PUNCTUATION', ';')` en varios puntos, lo que hace que el punto y coma sea opcional (consume si existe, no falla si no).
+- Requerimiento (Strict): Cambiar a `this.expect('PUNCTUATION', ';')` condicionalmente si `this.profile === 'Estricto'`.
+- Hallazgo (Matrices): `createArray` ya es recursivo. `setArrayValue` y `getArrayValue` manejan N índices. Se debe verificar la integración en `evaluate` y `parseAssignment`.
+- Hallazgo (Variables): El renderizado de la lista de variables no es recursivo, lo que impide ver el contenido de matrices de forma amigable.
+- Hallazgo (Archivos): Los botones de la toolbar están mezclados. "Guardar" y "Guardar como" llaman a la misma función `saveToFile` que descarga localmente.
+- Requerimiento: Separar lógica de guardado (Drive vs Local) y apertura (Drive Modal vs Local). Implementar modal de selección de archivos con filtro de estudiantes para profesores.

@@ -57,6 +57,9 @@ function doPost(e) {
       case "createNoticia": response = createNoticia(payload); break;
       case "updateNoticia": response = updateNoticia(payload); break;
       case "deleteNoticia": response = deleteNoticia(payload); break;
+      case "savePseudocode": response = savePseudocode(payload); break;
+      case "listPseudocodeFiles": response = listPseudocodeFiles(payload); break;
+      case "getPseudocodeFile": response = getPseudocodeFile(payload); break;
       default:
         response = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
@@ -551,4 +554,89 @@ function getOrCreateFolder(parentFolder, folderName) {
     logDebug(errorMsg);
     throw new Error(errorMsg);
   }
+}
+
+// --- LÓGICA DE PSEUDOCÓDIGO ---
+
+/**
+ * Obtiene la carpeta de proyectos de un alumno específico.
+ */
+function getStudentProjectsFolder(userId) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
+  const userData = usuariosSheet.getDataRange().getValues().find(row => row[0] === userId);
+
+  if (!userData) throw new Error("Usuario no encontrado.");
+  const [, nombre, grado, seccion] = userData;
+
+  const rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+  const sGrado = String(grado || "General");
+  const sSeccion = String(seccion || "General");
+  const sNombre = String(nombre || "Usuario");
+
+  const gradoFolder = getOrCreateFolder(rootFolder, sGrado);
+  const seccionFolder = getOrCreateFolder(gradoFolder, sSeccion);
+  const alumnoFolder = getOrCreateFolder(seccionFolder, sNombre);
+
+  return getOrCreateFolder(alumnoFolder, "Proyectos_PSeInt");
+}
+
+function savePseudocode(payload) {
+  const { userId, fileName, code } = payload;
+  if (!userId || !fileName || !code) throw new Error("Datos incompletos para guardar.");
+
+  const projectsFolder = getStudentProjectsFolder(userId);
+  const existingFiles = projectsFolder.getFilesByName(fileName);
+
+  let file;
+  if (existingFiles.hasNext()) {
+    file = existingFiles.next();
+    file.setContent(code);
+  } else {
+    file = projectsFolder.createFile(fileName, code, MimeType.PLAIN_TEXT);
+  }
+
+  return {
+    status: "success",
+    message: "Proyecto guardado en Drive.",
+    data: { fileId: file.getId() }
+  };
+}
+
+function listPseudocodeFiles(payload) {
+  const { requesterId, studentId } = payload;
+  const targetId = studentId || requesterId;
+
+  if (!targetId) throw new Error("ID de usuario no proporcionado.");
+
+  const projectsFolder = getStudentProjectsFolder(targetId);
+  const files = projectsFolder.getFiles();
+  const result = [];
+
+  while (files.hasNext()) {
+    const file = files.next();
+    if (file.getName().endsWith('.psc')) {
+      result.push({
+        id: file.getId(),
+        name: file.getName(),
+        updated: file.getLastUpdated().toISOString()
+      });
+    }
+  }
+
+  return { status: "success", data: result };
+}
+
+function getPseudocodeFile(payload) {
+  const { fileId } = payload;
+  if (!fileId) throw new Error("ID de archivo no proporcionado.");
+
+  const file = DriveApp.getFileById(fileId);
+  return {
+    status: "success",
+    data: {
+      name: file.getName(),
+      content: file.getBlob().getDataAsString()
+    }
+  };
 }
