@@ -64,6 +64,8 @@ let correctWordsCount = 0; // Contador acumulativo de palabras correctas (global
 let wordsCorrectInCurrentDifficulty = 0; // Contador de palabras correctas en el nivel de dificultad actual (para ajuste de tiempo)
 let consecutiveErrors = 0;
 let totalErrors = 0; // Contador global de errores
+let correctKeys = 0; // Pulsaciones correctas (Req 6.2)
+let totalKeys = 0; // Pulsaciones totales
 let gameStartTime;
 let gameTimerInterval;
 let timeRemainingSeconds; // Usaremos segundos con decimales para mayor precisión
@@ -227,6 +229,8 @@ function resetGame() {
     wordsCorrectInCurrentDifficulty = 0; // Reiniciar contador para el ajuste de tiempo
     consecutiveErrors = 0;
     totalErrors = 0;
+    correctKeys = 0;
+    totalKeys = 0;
     wordIndex = 0;
     // timeRemainingSeconds se inicializa en loadNewWord basado en la palabra
 
@@ -538,6 +542,11 @@ function handleCorrectInputLogic() {
     }
     correctWordsCount++; // Siempre acumulativo
     wordsCorrectInCurrentDifficulty++; // Solo para el ajuste de tiempo en el nivel actual
+
+    // (Req 6.2) Sumar teclas correctas
+    correctKeys += currentWord.word.length;
+    totalKeys += currentWord.word.length;
+
     consecutiveErrors = 0; // Reiniciar errores consecutivos
     if (correctWordsDisplay) correctWordsDisplay.textContent = correctWordsCount;
     // totalErrorsDisplay no se actualiza aquí, solo en handleIncorrectInputLogic y resetGame
@@ -553,6 +562,10 @@ function handleIncorrectInputLogic() {
         return; // No actualizar si el juego no está activo
     }
     totalErrors++; // Siempre acumulativo
+
+    // (Req 6.2) Sumar teclas erradas (aproximado por palabra fallida)
+    totalKeys += currentWord.word.length;
+
     consecutiveErrors++;
     if (totalErrorsDisplay) totalErrorsDisplay.textContent = totalErrors; // Actualizar display de errores totales
     if (correctWordsDisplay) correctWordsDisplay.textContent = correctWordsCount; // Asegurarse de que se mantenga actualizado
@@ -587,12 +600,21 @@ function endGame() {
 
     if (finalCorrectWords) finalCorrectWords.textContent = correctWordsCount;
     if (finalErrors) finalErrors.textContent = totalErrors;
+
+    // (Req 6.2) Cálculos de Precisión y Puntaje Ponderado
     const wpm = calculateWPM();
-    if (finalWPM) finalWPM.textContent = wpm;
+    const precision = totalKeys > 0 ? Math.round((correctKeys / totalKeys) * 100) : 0;
+    const totalScore = Math.round((wpm * 0.6) + (precision * 0.4) + (correctWordsCount * 2));
+
+    if (finalWPM) finalWPM.textContent = `${wpm} WPM | ${precision}% Precisión`;
+
+    // Actualizar visualmente el puntaje si existe un elemento
+    const scoreTitle = gameResultScreen.querySelector('h3');
+    if (scoreTitle) scoreTitle.textContent = `¡Juego Terminado! Puntaje: ${totalScore}`;
 
     // Integración con GamesAdapter
     if (window.GamesAdapter) {
-        GamesAdapter.saveResult("Destreza Teclado", `Completado con ${correctWordsCount} palabras y ${wpm} WPM`, correctWordsCount);
+        GamesAdapter.saveResult("Destreza Teclado", `Puntaje: ${totalScore} (WPM: ${wpm}, Precisión: ${precision}%)`, totalScore);
     }
 
     console.log(`Final Correct Words: ${correctWordsCount}`); // Log de depuración

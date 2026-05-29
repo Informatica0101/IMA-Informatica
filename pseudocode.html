@@ -475,10 +475,14 @@
             Archivo
             <div class="dropdown-content">
                 <div class="dropdown-item" onclick="newProject()">Nuevo <span class="shortcut">Ctrl+N</span></div>
-                <div class="dropdown-item" onclick="triggerOpenFile()">Abrir... <span class="shortcut">Ctrl+O</span></div>
+                <div class="dropdown-item" onclick="openDriveModal()">Abrir (Nube)... <span class="shortcut">Ctrl+O</span></div>
+                <div class="dropdown-item" onclick="triggerOpenFile()">Abrir desde...</div>
                 <div class="dropdown-divider"></div>
-                <div class="dropdown-item" onclick="saveToFile()">Guardar <span class="shortcut">Ctrl+S</span></div>
+                <div class="dropdown-item" onclick="saveToCloud()">Guardar <span class="shortcut">Ctrl+S</span></div>
                 <div class="dropdown-item" onclick="saveToFile()">Guardar como...</div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="exportCode('HTML')">Exportar a HTML</div>
+                <div class="dropdown-item" onclick="exportCode('JS')">Exportar a JavaScript</div>
                 <div class="dropdown-divider"></div>
                 <div class="dropdown-item" onclick="window.close()">Salir</div>
             </div>
@@ -493,6 +497,8 @@
                 <div class="dropdown-item" onclick="copy()">Copiar <span class="shortcut">Ctrl+C</span></div>
                 <div class="dropdown-item" onclick="paste()">Pegar <span class="shortcut">Ctrl+V</span></div>
                 <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="searchReplace()">Buscar y Reemplazar</div>
+                <div class="dropdown-divider"></div>
                 <div class="dropdown-item" onclick="selectAll()">Seleccionar todo <span class="shortcut">Ctrl+E</span></div>
             </div>
         </div>
@@ -501,6 +507,9 @@
             <div class="dropdown-content">
                 <div class="dropdown-item" onclick="toggleLeftPanel()">Lista de Variables</div>
                 <div class="dropdown-item" onclick="toggleRightPanel()">Panel de Comandos</div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="setZoom(2)">Aumentar Zoom</div>
+                <div class="dropdown-item" onclick="setZoom(-2)">Disminuir Zoom</div>
                 <div class="dropdown-divider"></div>
                 <div class="dropdown-item" onclick="showBottomTab('consola')">Terminal / Salida</div>
             </div>
@@ -541,10 +550,11 @@
 
     <div class="toolbar">
         <button class="tool-btn" title="Nuevo" onclick="newProject()"><span>📄</span></button>
-        <button class="tool-btn" title="Abrir" onclick="triggerOpenFile()"><span>📂</span></button>
+        <button class="tool-btn" title="Abrir (Nube)" onclick="openDriveModal()"><span>☁️</span></button>
+        <button class="tool-btn" title="Abrir desde local" onclick="triggerOpenFile()"><span>📂</span></button>
         <input type="file" id="fileInput" accept=".psc" style="display:none" onchange="loadFromFile(event)">
-        <button class="tool-btn" title="Guardar" onclick="saveToFile()"><span>💾</span></button>
-        <button class="tool-btn" title="Guardar como..." onclick="saveToFile()"><span>💾+</span></button>
+        <button class="tool-btn" title="Guardar en la nube" onclick="saveToCloud()"><span>💾</span></button>
+        <button class="tool-btn" title="Descargar como .psc" onclick="saveToFile()"><span>📥</span></button>
         <div class="separator"></div>
         <button class="tool-btn" title="Deshacer" onclick="undo()"><span>↩️</span></button>
         <button class="tool-btn" title="Rehacer" onclick="redo()"><span>↪️</span></button>
@@ -678,6 +688,31 @@ FinAlgoritmo</div>
             <div class="console-output" id="consoleOutput">
                 <div class="console-line">*** Ejecución Iniciada. ***</div>
                 <div class="console-line">*** Ejecución Finalizada. ***</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drive Open Modal -->
+    <div id="driveOpenModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[100] backdrop-blur-sm" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center;">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 flex flex-col max-h-[80vh]" style="background: white; padding: 20px; border-radius: 10px; width: 600px; max-height: 80vh; display: flex; flex-direction: column;">
+            <div class="flex justify-between items-center mb-4" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 class="text-xl font-bold text-gray-800" style="margin: 0; font-size: 1.25rem;">Abrir desde Google Drive</h2>
+                <button onclick="closeDriveModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+
+            <div id="teacher-filter-container" class="hidden" style="margin-bottom: 15px; display: none;">
+                <label style="font-weight: bold; display: block; margin-bottom: 5px;">Auditar Alumno:</label>
+                <select id="drive-student-select" onchange="loadProjectsList(this.value)" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                    <option value="">Mi Carpeta</option>
+                </select>
+            </div>
+
+            <div id="drive-projects-list" style="flex: 1; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
+                <p style="text-align: center; color: #666;">Cargando archivos...</p>
+            </div>
+
+            <div style="margin-top: 15px; text-align: right;">
+                <button onclick="closeDriveModal()" style="padding: 8px 20px; border-radius: 5px; border: 1px solid #ccc; cursor: pointer;">Cancelar</button>
             </div>
         </div>
     </div>
@@ -972,8 +1007,61 @@ FinAlgoritmo</div>
             document.getElementById('fileInput').click();
         }
 
+        function openDriveModal() {
+            const modal = document.getElementById('driveOpenModal');
+            modal.style.display = 'flex';
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser && currentUser.rol === 'Profesor') {
+                const filterContainer = document.getElementById('teacher-filter-container');
+                filterContainer.style.display = 'block';
+                loadStudentsForFilter();
+            }
+            loadProjectsList();
+        }
+
+        function closeDriveModal() {
+            document.getElementById('driveOpenModal').style.display = 'none';
+        }
+
+        async function loadStudentsForFilter() {
+            try {
+                const res = await fetchApi('USER', 'getStudents');
+                const select = document.getElementById('drive-student-select');
+                if (res.status === 'success') {
+                    res.data.forEach(s => {
+                        const opt = document.createElement('option');
+                        opt.value = s.userId;
+                        opt.textContent = `${s.numeroLista || ''} - ${s.nombre}`;
+                        select.appendChild(opt);
+                    });
+                }
+            } catch (e) { console.error(e); }
+        }
+
         function undo() { document.execCommand('undo'); }
         function redo() { document.execCommand('redo'); }
+
+        function exportCode(lang) {
+            const code = editor.innerText;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `export_${lang}.txt`;
+            a.click();
+            alert(`Código exportado como ${lang} (Simulación).`);
+        }
+
+        function searchReplace() {
+            const term = prompt("Buscar:");
+            if (term) alert(`Funcionalidad de búsqueda para '${term}' (Simulación).`);
+        }
+
+        let currentZoom = 14;
+        function setZoom(delta) {
+            currentZoom += delta;
+            editor.style.fontSize = currentZoom + 'px';
+            lineNumbers.style.fontSize = currentZoom + 'px';
+        }
         async function cut() {
             const selection = window.getSelection();
             if (selection.rangeCount > 0) {
@@ -1303,6 +1391,33 @@ FinAlgoritmo</div>
             reader.readAsText(file);
         }
 
+        async function saveToCloud() {
+            const code = editor.innerText;
+            const match = code.match(/(?:Algoritmo|Proceso)\s+([a-zA-Z0-9_]+)/i);
+            const filename = (match && match[1] ? match[1] : 'sin_titulo') + '.psc';
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+            if (!currentUser) {
+                alert("Debes iniciar sesión para guardar en la nube.");
+                return;
+            }
+
+            try {
+                printToConsole("Guardando en la nube...");
+                const res = await fetchApi('TASK', 'saveProject', {
+                    userId: currentUser.userId,
+                    fileName: filename,
+                    code: code
+                });
+                if (res.status === 'success') {
+                    printToConsole("✓ Proyecto guardado en Google Drive.");
+                    loadProjectsList();
+                }
+            } catch (e) {
+                printToConsole("✖ Error al guardar: " + e.message);
+            }
+        }
+
         async function saveToFile() {
             const code = editor.innerText;
             const match = code.match(/(?:Algoritmo|Proceso)\s+([a-zA-Z0-9_]+)/i);
@@ -1317,49 +1432,46 @@ FinAlgoritmo</div>
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-
-            // También guardar en la nube si hay usuario
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (currentUser) {
-                try {
-                    await fetchApi('TASK', 'saveProject', {
-                        userId: currentUser.userId,
-                        fileName: filename,
-                        code: code
-                    });
-                    console.log("Proyecto guardado en la nube.");
-                    loadProjectsList();
-                } catch (e) {
-                    console.error("Error guardando en la nube:", e);
-                }
-            }
+            printToConsole("✓ Archivo descargado localmente.");
         }
 
-        async function loadProjectsList() {
+        async function loadProjectsList(overrideUserId = null) {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             const listContainer = document.getElementById('projectsList');
-            if (!currentUser) {
-                listContainer.innerHTML = '<p class="text-red-500 text-center py-4">Inicia sesión para ver tus proyectos.</p>';
+            const modalListContainer = document.getElementById('drive-projects-list');
+
+            const userId = overrideUserId || (currentUser ? currentUser.userId : null);
+
+            if (!userId) {
+                const msg = '<p style="text-align: center; color: red;">Inicia sesión para ver proyectos.</p>';
+                if (listContainer) listContainer.innerHTML = msg;
+                if (modalListContainer) modalListContainer.innerHTML = msg;
                 return;
             }
 
             try {
-                const res = await fetchApi('TASK', 'listProjects', { userId: currentUser.userId });
+                const res = await fetchApi('TASK', 'listProjects', { userId });
+                let html = '';
                 if (res.status === 'success' && res.data.length > 0) {
-                    listContainer.innerHTML = res.data.map(p => `
-                        <div class="p-2 border rounded hover:bg-blue-50 cursor-pointer group flex justify-between items-center" onclick="loadProjectCloud('${p.id}')">
-                            <div class="truncate flex-grow">
-                                <p class="font-bold text-blue-700 truncate">${p.name}</p>
-                                <p class="text-[10px] text-gray-400">${new Date(p.lastUpdated).toLocaleDateString()}</p>
+                    html = res.data.map(p => `
+                        <div class="p-2 border rounded hover:bg-blue-50 cursor-pointer group flex justify-between items-center" style="padding: 10px; border: 1px solid #eee; border-radius: 5px; margin-bottom: 5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="loadProjectCloud('${p.id}')">
+                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <p style="font-weight: bold; color: #2563eb; margin: 0;">${p.name}</p>
+                                <p style="font-size: 10px; color: #999; margin: 0;">${new Date(p.lastUpdated).toLocaleString()}</p>
                             </div>
-                            <svg class="w-4 h-4 text-gray-300 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            <span style="color: #ccc;">&rarr;</span>
                         </div>
                     `).join('');
                 } else {
-                    listContainer.innerHTML = '<p class="text-gray-400 text-center py-4">No tienes proyectos guardados.</p>';
+                    html = '<p style="text-align: center; color: #999;">No hay proyectos.</p>';
                 }
+
+                if (listContainer) listContainer.innerHTML = html;
+                if (modalListContainer) modalListContainer.innerHTML = html;
             } catch (e) {
-                listContainer.innerHTML = '<p class="text-red-500 text-center py-4">Error al cargar proyectos.</p>';
+                const err = '<p style="text-align: center; color: red;">Error al cargar.</p>';
+                if (listContainer) listContainer.innerHTML = err;
+                if (modalListContainer) modalListContainer.innerHTML = err;
             }
         }
 
@@ -1370,7 +1482,8 @@ FinAlgoritmo</div>
                 if (res.status === 'success') {
                     editor.innerText = res.data.code;
                     updateEditor();
-                    alert('Proyecto cargado correctamente.');
+                    closeDriveModal();
+                    printToConsole("✓ Proyecto cargado desde la nube.");
                 }
             } catch (e) {
                 alert('Error al cargar proyecto: ' + e.message);
@@ -2422,7 +2535,19 @@ FinAlgoritmo</div>
         let interpreter;
         let inputResolver;
 
+        async function silentSaveCloud() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+            const code = editor.innerText;
+            const match = code.match(/(?:Algoritmo|Proceso)\s+([a-zA-Z0-9_]+)/i);
+            const filename = (match && match[1] ? match[1] : 'sin_titulo') + '.psc';
+            try {
+                await fetchApi('TASK', 'saveProject', { userId: currentUser.userId, fileName: filename, code: code });
+            } catch (e) {}
+        }
+
         function runAlgorithm() {
+            silentSaveCloud(); // (Req 5.4) Guardado silencioso
             showBottomTab('consola');
             clearConsole();
 
@@ -2533,8 +2658,8 @@ FinAlgoritmo</div>
             if (e.ctrlKey || e.metaKey) {
                 switch(e.key.toLowerCase()) {
                     case 'n': e.preventDefault(); newProject(); break;
-                    case 'o': e.preventDefault(); triggerOpenFile(); break;
-                    case 's': e.preventDefault(); saveToFile(); break;
+                    case 'o': e.preventDefault(); openDriveModal(); break;
+                    case 's': e.preventDefault(); saveToCloud(); break;
                     case 'z': e.preventDefault(); undo(); break;
                     case 'y': e.preventDefault(); redo(); break;
                     case 'x': cut(); break; // Default often works but we have custom

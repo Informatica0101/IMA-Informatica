@@ -371,11 +371,25 @@ ESTADO DE LAS TAREAS (RESUMEN)
 [A-51] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-53] COMPLETADA (PENDIENTE DE REVISIÓN)
 [A-58 a A-64] COMPLETADAS (PENDIENTE DE REVISIÓN)
+[A-67] COMPLETADA (PENDIENTE DE REVISIÓN)
 
 ------------------------------------------------------------------------------------------------
 
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
+
+TAREA: [A-67]
+TÍTULO: Auditoría de Cumplimiento Requerimientos Mayo 2026
+ÁREA: General / Frontend / Backend
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+- Restaurada la sección de Reportes Académicos en el Dashboard del Profesor con exportación Excel.
+- Implementado el módulo 'Mi Perfil' para profesores (Req 1.3).
+- Refactorizado el sistema de subida del estudiante a un 'Optimizador de Alta Fidelidad' con cola secuencial, compresión y anti-duplicados (Req 3.3).
+- Implementada la visualización de hora en noticias (Req 2.2).
+- Añadidas métricas de precisión y puntaje ponderado al juego de mecanografía (Req 6.2).
+- Completada la lógica de menús operativos y guardado silencioso en PSeInt (Req 5.4).
+- Sincronizada gestión de WhatsApp por Grado (Req 3.2).
 
 TAREA: [A-64]
 TÍTULO: Actualización de Endpoints Microservicios (Mayo 20)

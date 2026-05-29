@@ -1,240 +1,66 @@
-AUDITORÍA DETALLADA - DASHBOARD PROFESOR (ESTILO CALIFIK)
-=========================================================
+AUDITORÍA DE CUMPLIMIENTO - REQUERIMIENTOS NUEVOS (MAYO 2026)
+===========================================================
 
-Archivo: teacher-dashboard.html
--------------------------------
-- El header actual es estándar y está bien.
-- El main tiene botones de navegación (#nav-dashboard, #nav-crear, #nav-crear-examen).
-- Las secciones son #section-dashboard, #section-crear, #section-crear-examen.
-- El dashboard actual usa una tabla con #dashboard-table-head y #submissions-table-body.
-- Los modales son #image-lightbox-modal y #grade-modal.
-- Hallazgos UX: Los botones de navegación se ven un poco amontonados. Se requiere una organización más limpia tipo Califik. (SOLUCIONADO: Se implementó scroll horizontal y reducción de paddings).
-- Tarea: Añadir secciones para Gestión de Tareas y Reportes. (COMPLETADO)
-- Tarea: Añadir modales de edición. (COMPLETADO)
-- Tarea: Añadir script de XLSX (SheetJS). (COMPLETADO)
-- Hallazgo Estético: Los encabezados de las tablas carecían de jerarquía visual. (SOLUCIONADO: Se aplicó estilo uppercase, letter-spacing y text-xs).
-
-Archivo: css/style.css
-----------------------
-- Auditoría UI Refinement (10/03/2026):
-  - Botones: Se detectó que el padding vertical y el border-radius de 1rem (Bootstrap default) restaban profesionalismo. (SOLUCIONADO: Reducido a 0.4rem y 6px).
-  - Tipografía: Las listas de tareas y tablas tenían una fuente ligeramente pequeña para lectura prolongada. (SOLUCIONADO: Incrementado el tamaño en un nivel).
-  - Cards: Las descripciones largas de tareas rompían el grid al crecer infinitamente. (SOLUCIONADO: Implementado max-height: 350px con overflow-y: auto).
-  - Scroll: El scroll nativo del navegador era demasiado intrusivo para scrolls internos de componentes. (SOLUCIONADO: Implementada scrollbar minimalista).
-
-Archivo: js/teacher.js
-----------------------
-- Utiliza fetchApi para interactuar con los microservicios.
-- La navegación es jerárquica (Grados -> Secciones -> Asignaturas -> Alumnos -> Detalles).
-- Próxima actualización: Insertar nivel "Parcial" entre Asignaturas y Alumnos. (ACTUALIZADO: Implementado)
-- Hallazgo Crítico: El filtrado por Parcial en el frontend requiere normalización estricta (lowercase/trim) para evitar que las entregas desaparezcan por diferencias sutiles en los datos.
-- La búsqueda es global o local según el nivel.
-- Hay lógica para calificar tareas y exámenes.
-- Tarea: Refactorizar el dashboard para que sea una tabla plana con filtros. (COMPLETADO)
-- Tarea: Implementar Gestión de Tareas (CRUD). (COMPLETADO)
-- Tarea: Implementar lógica de Reporte Excel (Módulo 3). (COMPLETADO)
-- Hallazgo Lógico: Existía una condición de carrera al navegar rápidamente y el nivel "Asignaturas" se omitía en ciertos flujos. (SOLUCIONADO: Se añadió guardas isNavigating y se forzó el nivel Asignaturas en el navStack).
-- Hallazgo UX: El dashboard del estudiante se volvía muy largo con muchas tareas. (SOLUCIONADO: Se implementaron tarjetas expandibles con lógica exclusiva).
-- Hallazgo Navegación: La lista de alumnos era difícil de navegar sin ordenamiento. (SOLUCIONADO: Se añadió ordenamiento por Nombre y Estado).
-- Hallazgo Ordenamiento Estudiante: El orden de tareas no era intuitivo para ver lo nuevo. (SOLUCIONADO: Se implementó ordenamiento descendente agrupado por estado).
-
-Archivo: backend/task-service/Code.gs
--------------------------------------
-- Necesita: updateTask(payload), deleteTask(payload).
-- La hoja "Tareas" debe ser actualizada para soportar 'Inactiva'.
-- createTask debe inicializar el estado (opcional pero recomendado para consistencia).
-
-Archivo: backend/user-service/Code.gs
--------------------------------------
-- Necesita: getUsersByGradoSeccion(payload) para el reporte de Excel.
-
-Archivo: backend/exam-service/Code.gs
--------------------------------------
-- Necesita: updateExam(payload), deleteExam(payload).
-
-
-AUDITORÍA PRESENTACIONES 2026 - FULLSCREEN Y TIPOGRAFÍA (22/03/2026)
--------------------------------------------------------------------
-- Archivos involucrados: 12 archivos de 2026 existentes + 2 nuevos.
-- Hallazgo: El encabezado y pie de página no se ocultaban en modo F11 porque no tenían los IDs necesarios y la lógica del API de Fullscreen no detecta el modo de pantalla completa del navegador por sí sola.
-- Resolución:
-  - Se añadieron id="page-header" e id="page-footer" a todos los archivos.
-  - Se implementó handleFullscreenChange con heurística de dimensiones (window.innerHeight >= screen.height - 10).
-  - Se añadieron event listeners para 'resize'.
-- Hallazgo Tipografía: La letra era pequeña para presentaciones proyectadas.
-- Resolución: Aumento del 50% en p (1.5rem) y h3 (2.25rem) con line-height de 1.6 y 1.4 respectivamente.
-
-AUDITORÍA INTEGRACIÓN MENÚ (22/03/2026)
---------------------------------------
-- Archivo: js/data.js
-- Hallazgo: Las nuevas presentaciones no eran accesibles desde el menú de navegación principal.
-- Resolución: Se integraron los nuevos temas "Diagramas de flujo" y "Tablas y etiquetas div/span" en el objeto window.presentationData para su renderizado dinámico en el header.
-
-AUDITORÍA ROBUSTEZ BACKEND - ERROR SUBIDA DE TAREAS (23/03/2026)
----------------------------------------------------------------
-- Archivo: backend/task-service/Code.gs
-- Hallazgo Crítico: La función `getOrCreateFolder` lanza un error fatal si el `folderName` no es estrictamente de tipo 'string'. En la hoja de cálculo "Usuarios", los grados (ej. 10, 11) suelen ser interpretados como números por Apps Script, provocando el "Error interno del servidor" al intentar crear la carpeta del alumno.
-- Hallazgo Diagnóstico: El bloque `catch` en `doPost` oculta el error real tras un mensaje genérico, dificultando la depuración en producción.
-- Hallazgo Lógico: `isInTeacherList` y otros filtros de datos no realizan conversiones explícitas a string, lo que puede causar fallos de comparación si los datos en las celdas de Excel son numéricos.
-- Resolución Proyectada:
-  - Normalizar todos los metadatos a string en `uploadFile`.
-  - Flexibilizar `getOrCreateFolder` para aceptar cualquier tipo y proporcionar fallbacks.
-  - Exponer mensajes de error reales en `doPost` durante la fase de estabilización.
-
-AUDITORÍA ROBUSTEZ DRIVE - ACCESO DENEGADO (23/03/2026)
-------------------------------------------------------
-- Archivo: backend/task-service/Code.gs
-- Hallazgo: Error "Acceso denegado: DriveApp" reportado específicamente en tareas nuevas.
-- Análisis: El error ocurre probablemente en `taskDeliveryFolder.setSharing(...)` o al intentar crear carpetas si existen restricciones de cuotas o permisos en la cuenta institucional.
-- Acción:
-  - Envolver `setSharing` en un bloque `try-catch` para que la subida no falle si el permiso de compartir no se puede aplicar (el profesor aún puede ver el archivo en Drive).
-  - Mejorar el logging de `getOrCreateFolder` para identificar qué nivel de la jerarquía falla.
-
-AUDITORÍA DASHBOARD ESTUDIANTE - PESTAÑAS POR PARCIAL (24/03/2026)
------------------------------------------------------------------
-- Archivo: student-dashboard.html, js/student.js
-- Hallazgo: El dashboard del estudiante muestra todas las tareas en una sola lista, lo que dificulta la organización por periodos académicos.
-- Plan de Acción:
-  - Implementar sistema de pestañas (tabs) usando Bootstrap 5.
-  - Agrupar tareas por parcial (IV > III > II > I).
-  - El parcial activo por defecto será el de mayor valor presente en la data.
-  - Asegurar que la lógica de expansión de tarjetas y entrega de tareas sea compatible con el filtrado por pestañas.
-  - Condicionalidad de Pestañas: Se verificó que las pestañas solo se rendericen para parciales que contienen actividades en la respuesta de la API, evitando botones vacíos.
-
-AUDITORÍA PRESENTACIONES Y DESCARGAS II PARCIAL (19/04/2026)
------------------------------------------------------------
-- Archivos involucrados: js/data.js, II_BTP_A/Programacion/II Parcial/Programacion Segunda Unidad.pdf, III_BTP_A/dw_II/contenido/Unidad 4 Diseño Web.pdf
-- Hallazgo: Se requiere la transición al II Parcial. El contenido del I Parcial en el área de "Cursos" y "Descargas" debe ser ocultado (comentado).
-- Temas identificados para el 19 de abril:
-    - Programación: "Introducción a los lenguajes de programación y lenguajes de alto nivel" (basado en el plan de clases y PDF de contenido).
-    - Diseño Web: "Introducción a CSS" (basado en el plan de clases y PDF de contenido).
-- Plantilla: Se utilizará III_BTP_A/dw_II/tablas_columnas.html como base para las nuevas presentaciones, manteniendo el estilo 2026 (Fullscreen nativo y tipografía proyectable).
-- Tarea: Crear II_BTP_A/Programacion/intro_lenguajes_programacion.html. (COMPLETADA)
-- Tarea: Crear III_BTP_A/dw_II/introduccion_css.html. (COMPLETADA)
-- Tarea: Actualizar js/data.js para reflejar el cambio de parcial y nuevos archivos de descarga. (COMPLETADA)
-
-AUDITORÍA PRESENTACIONES SEMANA 26 DE ABRIL (26/04/2026)
--------------------------------------------------------
-- Archivos involucrados: II_BTP_A/Programacion/lenguajes_compilados_interpretados.html, III_BTP_A/dw_II/enlazar_estilos_autocerrables.html
-- Hallazgo: La información de bucles en Programación debe centrarse únicamente en el bucle "Para", omitiendo "Mientras" y "Repetir".
-- Hallazgo: Se requiere explicación de sintaxis del bucle "Para" en JavaScript, C y C++.
-- Hallazgo UX/Cuestionario: Los cuestionarios deben tener 10 preguntas divididas en dos diapositivas (14 y 15). (SOLUCIONADO)
-- Hallazgo Lógico: El quiz se bloqueaba; se implementó avance automático de 2 segundos. (SOLUCIONADO)
-- Hallazgo Estético: La retroalimentación del quiz debe usar verde (#16a34a) y rojo (#dc2626). (SOLUCIONADO)
-- Hallazgo Limpieza: Eliminar texto redundante de la diapositiva final. (SOLUCIONADO)
-
-AUDITORÍA PRESENTACIONES SEMANA 03 DE MAYO (03/05/2026)
-------------------------------------------------------
-- Archivos involucrados: II_BTP_A/Programacion/lenguajes_declarativos_mientras.html, III_BTP_A/dw_II/medidas_css.html
-- Hallazgo: Los temas para esta semana son Lenguajes Declarativos y Bucle Mientras (Programación) y Medidas en CSS (Diseño Web).
-- Hallazgo Lógico: Se mantiene el avance automático de 2 segundos y retroalimentación cromática en el quiz.
-- Tarea: Crear presentaciones siguiendo el estándar de 16 slides de 2026. (COMPLETADA)
-
-AUDITORÍA PRESENTACIONES SEMANA 10-24 MAYO (10/05/2026)
-------------------------------------------------------
-- Archivos: II_BTP_A/Programacion/prog_logica_repetir.html, III_BTP_A/dw_II/modelo_caja_dimensiones.html
-- Hallazgo Técnico: Se actualizó el motor de Tailwind CSS a la versión 4 (browser-based) en todas las presentaciones de 2026 para aprovechar las últimas optimizaciones y simplificar la carga de recursos externos.
-- Hallazgo Contenido: El tema "Bucle Repetir" no contaba con PDF base; se integró documentación técnica estándar (Sintaxis, Comparativa con Mientras) para asegurar la completitud pedagógica.
-- Hallazgo Unificación: Se detectó que el tema de Diseño Web del 24 de mayo (Bordes/Enlaces) no estaba implementado por separado. Se procedió a crear la presentación específica siguiendo el plan de clases.
-- Hallazgo Contenido (Programación): Se corrigió la presentación del 17 de mayo para enfocarse exclusivamente en "Programación Lógica" y "Bucle Repetir", integrando definiciones exactas de "objeto" y "relación" del PDF base (p.58).
-- Hallazgo Contenido (Programación 24 Mayo): Se generó la presentación sobre Bases de Datos utilizando la Sección 7 del PDF "Programación Segunda Unidad", siguiendo el esquema de 16 slides y el plan de clases.
-- Hallazgo UX: Se validó que el quiz interactivo de 10 preguntas funcione correctamente con el nuevo motor de Tailwind v4 y mantenga la retroalimentación visual cromática.
-
-AUDITORÍA FINAL OPTIMIZACIÓN Y SEGURIDAD (MAYO 2026)
----------------------------------------------------
-- Archivos involucrados: backend/user-service/Code.gs, js/student.js, js/teacher.js, pseudocode.html, index.html, js/index-ui.js
-- Hallazgo Lógico: El sistema de recuperación de contraseña usaba tokens Base64 sin firma, lo que permitía la falsificación de identidad para el reseteo.
-- Resolución: Implementado HMAC-SHA256 con SECRET_KEY en el backend para firmar y verificar tokens de recuperación. Se añadió validación de expiración (1 hora).
-- Hallazgo UX: El PSeInt interpreter no soportaba arreglos (Dimension), limitando las tareas de programación avanzada.
-- Resolución: Actualizado el parser y el intérprete para soportar la palabra clave 'Dimension' y acceso a arreglos por índice.
-- Hallazgo Rendimiento: Múltiples llamadas a `setValue()` en el backend impactaban la velocidad del portal.
-- Resolución: Refactorizadas las funciones de actualización de perfil y calificación de tareas para usar `setValues()` (escritura en lote).
-- Hallazgo UX Global: La landing page (index.html) no reflejaba el estado de la sesión, obligando a los usuarios a navegar al portal para verificar si estaban logueados.
-- Resolución: Implementado sistema de autenticación global en index.html que adapta la UI (Login/Logout/Profile) y segmenta el acceso a recursos según el grado del usuario logueado.
-- Hallazgo Funcional: El sistema de noticias era estático.
-- Resolución: Implementado backend para noticias dinámicas desde una hoja de cálculo con conversor automático de enlaces de Drive.
-
-AUDITORÍA CIERRE DE PROYECTO (MAYO 2026)
----------------------------------------
-- Archivo: login.html
-  - Hallazgo: El enlace de recuperación apuntaba a recovery.html (inexistente).
-  - Resolución: Corregido a forgot-password.html.
-- Archivo: teacher-dashboard.html
-  - Hallazgo: Faltaban los contenedores de estadísticas (stat-total, etc.) que el JS intentaba poblar.
-  - Resolución: Añadida cuadrícula de 4 estadísticas en el encabezado del panel.
-- Archivo: backend/task-service/Code.gs
-  - Hallazgo: La función `getAllStudentProjects` era ineficiente (O(n^3)).
-  - Resolución: Refactorizada usando `rootFolder.searchFiles()` con query de DriveApp, logrando una búsqueda recursiva de alto rendimiento.
-
-AUDITORÍA FINAL DE PRODUCCIÓN (MAYO 20, 2026)
--------------------------------------------
-- Archivo: js/config.js
-  - Tarea: Actualizar endpoints a la versión final de producción.
-  - Resolución: URLs de TASK, USER y EXAM actualizadas con los nuevos despliegues de Google Apps Script.
-- Global:
-  - Tarea: Asegurar limpieza de caché en clientes.
-  - Resolución: Incrementada versión global a v=16. Verificada sincronización entre HTML y sw.js.
-
-AUDITORÍA TÉCNICA INTEGRAL (MAYO 2026)
---------------------------------------
-- Estado General: Sistema estable con arquitectura de microservicios robusta.
-- Análisis de Sintaxis:
-  - Archivos .js y .gs verificados: Cero errores de sintaxis detectados.
-  - Variables: Todas las variables críticas (`currentUser`, `SERVICE_URLS`, `allActivitiesData`) están correctamente declaradas y scoped.
-  - Incompatibilidades: Resuelta la colisión entre el estado "Revisada" y "Completada".
-- Revisión de Lógica:
-  - Validaciones: El modo estricto de PSeInt valida correctamente el punto y coma y las definiciones.
-  - Concurrencia: `isNavigating` en `teacher.js` y `activeUploads` en `student.js` gestionan correctamente los procesos asíncronos.
-- Código Repetido:
-  - Hallazgo: Los microservicios GAS (`Code.gs`) comparten lógica idéntica para `normalizeString`, `isInTeacherList` y `getSheetOrThrow`.
-  - Recomendación: Mantener por ahora para asegurar independencia de despliegue, pero documentar para futura centralización en una librería GAS.
-- Rendimiento:
-  - Backend: Las escrituras en lote (`setValues`) han reducido la latencia en un 60% en operaciones de perfil y calificación.
-  - Frontend: La carga diferida de juegos y noticias dinámicas optimiza el tiempo de interactividad inicial (TTI).
-- Seguridad:
-  - Autenticación: HMAC-SHA256 implementado satisfactoriamente.
-  - Archivos: Validación de tipos MIME y manejo de carpetas temporales (`.temp_uploads`) funcional.
-- Minijuegos:
-  - Adaptador: `GamesAdapter` integra correctamente el guardado persistente para usuarios y el local para invitados.
-
-AUDITORÍA INTEGRACIÓN WHATSAPP Y NOTICIAS (26/05/2026)
-------------------------------------------------------
-- Archivos involucrados: backend/user-service/Code.gs, teacher-dashboard.html, js/teacher.js, student-dashboard.html, js/student.js, js/index-ui.js
-- Hallazgo WhatsApp: Se requería un método centralizado para que el profesor asigne grupos.
-- Resolución: Implementado input en el nivel 'Alumnos' de la navegación. Se usa fetchApi para persistir en la hoja 'Clases'.
-- Hallazgo Noticias: El sistema previo era limitado. Se requería subida de imágenes y edición HTML.
-- Resolución:
-  - Integrado Quill.js en 'news-modal'.
-  - Implementada función toBase64 para la subida de imágenes a Drive.
-  - Refactorizada la función getNews para retornar fecha y hora, permitiendo un sort exacto.
-- Hallazgo Landing Page: Se solicitó destacar la noticia más reciente.
-- Resolución: Modificado map en js/index-ui.js para aplicar clases de grid span (col-span-2) al índice 0 y extraer el primer párrafo del HTML para el excerpt.
-- Validación Técnica: Verificada la visibilidad de los nuevos elementos mediante Playwright. Se confirmó que el botón de WhatsApp en el dashboard del estudiante se habilita/deshabilita correctamente según la respuesta del servidor.
-
-AUDITORÍA INTEGRACIÓN WHATSAPP Y NOTICIAS (26/05/2026)
-------------------------------------------------------
-- Archivos involucrados: backend/user-service/Code.gs, teacher-dashboard.html, js/teacher.js, student-dashboard.html, js/student.js, js/index-ui.js
-- Hallazgo WhatsApp: Se requería un método centralizado para que el profesor asigne grupos.
-- Resolución: Implementado input en el nivel 'Alumnos' de la navegación. Se usa fetchApi para persistir en la hoja 'Clases'.
-- Hallazgo Noticias: El sistema previo era limitado. Se requería subida de imágenes y edición HTML.
-- Resolución:
-  - Integrado Quill.js en 'news-modal'.
-  - Implementada función toBase64 para la subida de imágenes a Drive.
-  - Refactorizada la función getNews para retornar fecha y hora, permitiendo un sort exacto.
-- Hallazgo Landing Page: Se solicitó destacar la noticia más reciente.
-- Resolución: Modificado map en js/index-ui.js para aplicar clases de grid span (col-span-2) al índice 0 y extraer el primer párrafo del HTML para el excerpt.
-- Validación Técnica: Verificada la visibilidad de los nuevos elementos mediante Playwright. Se confirmó que el botón de WhatsApp en el dashboard del estudiante se habilita/deshabilita correctamente según la respuesta del servidor.
-
-AUDITORÍA CORRECCIÓN WHATSAPP Y DASHBOARD (26/05/2026)
+1. SISTEMA DE AUTENTICACIÓN, PERFILES Y ACCESO GLOBAL
 -----------------------------------------------------
-- Archivos involucrados: backend/user-service/Code.gs, teacher-dashboard.html, js/teacher.js, js/student.js
-- Hallazgo WhatsApp: La gestión por sección/parcial era redundante. Se solicitó unificación por grado.
-- Resolución:
-  - Backend ahora usa la hoja 'GruposWhatsApp' ignorando la sección.
-  - El frontend del profesor muestra el grado en el título del bloque de WhatsApp.
-  - El estudiante ya no envía la sección al consultar el link.
-- Hallazgo Estadísticas: El panel superior estorbaba la vista principal.
-- Resolución:
-  - Eliminado el bloque HTML en teacher-dashboard.html.
-  - Limpieza de lógica en js/teacher.js para evitar errores de 'Element not found'.
-- Validación Visual: Confirmada la eliminación del panel mediante Playwright.
+- [HALLAZGO] El botón "Mi Perfil" y su modal correspondiente están ausentes en 'teacher-dashboard.html'. El requerimiento 1.3 exige que AMBOS portales (Estudiantil y Docente) incorporen este módulo.
+- [HALLAZGO] La lógica de actualización de perfil en 'js/teacher.js' no está implementada, aunque existe en 'js/student.js'.
+
+2. PORTAL DE INICIO (INDEX PRINCIPAL)
+-------------------------------------
+- [HALLAZGO] La sección de noticias no muestra la 'hora' de publicación. El requerimiento 2.2 especifica: "Muestra: Título, la primera imagen destacada, el primer párrafo del contenido, la fecha y la hora de publicación". Actualmente solo se muestra la fecha.
+
+3. PORTAL DEL ESTUDIANTE (DASHBOARD)
+------------------------------------
+- [HALLAZGO] El "Optimizador de Subida Múltiple de Imágenes" (Req 3.3) está incompleto:
+  - Solo procesa 'files[0]' en 'js/student.js', ignorando la selección múltiple real.
+  - No existe una "Cola de Carga Secuencial" con barras de progreso individuales.
+  - No se realiza la "Optimización Móvil" (compresión frontend vía Canvas).
+  - No existe el "Filtro Anti-Duplicados" basado en hash o tamaño/nombre.
+
+4. PORTAL DEL DOCENTE (DASHBOARD)
+---------------------------------
+- [HALLAZGO CRÍTICO] La "Sección 2: Reportes" y su tabla académica están ausentes en 'teacher-dashboard.html'. Aunque el JS hace referencia a 'section-reportes' y 'export-excel-btn', los elementos no existen en el DOM.
+- [HALLAZGO] Falta la integración del botón circular de WhatsApp con lógica +504 en la lista de tareas del docente (Req 4.5).
+
+5. ENTORNO INTERACTIVO DE PSEUDOCÓDIGO
+--------------------------------------
+- [HALLAZGO] Los menús de "Archivo" (Exportar), "Editar" (Buscar y Reemplazar) y "Ver" (Zoom) no tienen lógica operativa implementada.
+- [HALLAZGO] El "Guardado Silencioso" al ejecutar (Req 5.4) no se dispara automáticamente en cada ejecución.
+
+6. INTEGRACIÓN Y OPTIMIZACIÓN DE MINIJUEGOS
+-------------------------------------------
+- [HALLAZGO] El juego de 'Destreza en el Teclado' no calcula el "Porcentaje de Precisión" ni el "Puntaje Total" ponderado según el algoritmo requerido (Req 6.2). Actualmente solo reporta palabras y errores totales.
+
+7. ESPECIFICACIONES TÉCNICAS Y AUDITORÍA
+----------------------------------------
+- [VERIFICADO] HMAC-SHA256 para recuperación implementado.
+- [VERIFICADO] Escrituras en lote (setValues) implementadas en backend.
+- [VERIFICADO] Jerarquía de carpetas Drive automatizada funcional.
+
+---
+REVISIÓN FINAL DE AUDITORÍA: El repositorio requiere una intervención correctiva en los módulos de Reportes (Docente), Subida (Estudiante) y Métricas (Juegos) para alcanzar el 100% de cumplimiento.
+
+ACTUALIZACIÓN DE AUDITORÍA - 22 DE MAYO 2026 (FASE 2)
+====================================================
+
+1. SISTEMA DE AUTENTICACIÓN Y PERFILES
+--------------------------------------
+- [HALLAZGO PERSISTENTE] El modal '#profile-modal' sigue ausente en 'teacher-dashboard.html' a pesar de los intentos de inserción previos. La navegación en 'js/teacher.js' falla al intentar abrirlo.
+
+4. PORTAL DEL DOCENTE (DASHBOARD)
+---------------------------------
+- [VERIFICADO] 'section-reportes' y 'section-academic-reports' han sido restaurados en el HTML.
+- [VERIFICADO] Lógica de exportación Excel vinculada.
+- [VERIFICADO] Botón de WhatsApp con prefijo +504 implementado en el backend y frontend.
+
+5. ENTORNO INTERACTIVO DE PSEUDOCÓDIGO
+--------------------------------------
+- [HALLAZGO] El intérprete no soporta indexación de matrices bidimensionales (ej. matriz[i,j]). El parser actual solo maneja un índice.
+- [HALLAZGO] Los menús "Abrir" y "Abrir desde..." carecen de lógica de integración con Drive y local file system respectivamente.
+- [HALLAZGO] El menú "Guardar" debe unificar la lógica de "Guardado Silencioso" con una acción explícita de usuario.
+- [HALLAZGO] El menú "Guardar como..." debe implementar la descarga de archivos .psc.
+
+6. MINIJUEGOS
+-------------
+- [VERIFICADO] Cálculo de Precisión (%) y Puntaje Ponderado implementado en 'js/destreza_teclado.js'.

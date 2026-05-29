@@ -362,139 +362,183 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- (Req 3.3) Optimizador de Subida de Alta Fidelidad ---
+    let uploadQueue = [];
+
+    async function compressImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const MAX_SIZE = 1200;
+                    if (width > height) {
+                        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+                    } else {
+                        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+                    }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.8));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
     if (fileInput) {
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) {
-                filePreviewContainer.classList.add('hidden');
-                return;
-            }
+        fileInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+
             filePreviewContainer.classList.remove('hidden');
-            if (file.type.startsWith('image/')) {
+
+            // Filtro Anti-Duplicados (Req 3.3)
+            const newFiles = files.filter(f => !uploadedFiles.some(u => u.fileName === f.name && u.size === f.size));
+            if (newFiles.length < files.length) {
+                console.warn("Algunos archivos duplicados fueron omitidos.");
+            }
+
+            if (newFiles.length === 0) return;
+
+            // Mostrar previsualización del primero de la tanda seleccionada
+            const first = newFiles[0];
+            if (first.type.startsWith('image/')) {
                 imagePreview.classList.remove('hidden');
                 fileInfoPreview.classList.add('hidden');
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.querySelector('img').src = e.target.result;
-                };
-                reader.readAsDataURL(file);
+                reader.onload = (e) => imagePreview.querySelector('img').src = e.target.result;
+                reader.readAsDataURL(first);
             } else {
                 imagePreview.classList.add('hidden');
                 fileInfoPreview.classList.remove('hidden');
-                fileInfoPreview.textContent = `Archivo seleccionado: ${file.name}`;
+                fileInfoPreview.textContent = `Listos para subir: ${newFiles.length} archivo(s)`;
             }
+
+            uploadQueue = [...uploadQueue, ...newFiles];
         });
     }
 
     if (acceptFileBtn) {
         acceptFileBtn.addEventListener('click', async () => {
-            const file = fileInput.files[0];
-            if (!file || activeUploads > 0) return;
+            if (uploadQueue.length === 0 || activeUploads > 0) return;
 
             acceptFileBtn.disabled = true;
             acceptFileBtn.classList.add('btn-loading');
 
-            const currentFile = file;
-            const currentFileName = currentFile.name;
+            // Procesar Cola Secuencialmente (Req 3.3)
+            while (uploadQueue.length > 0) {
+                const currentFile = uploadQueue.shift();
+                const currentFileName = currentFile.name;
+                const currentFileSize = currentFile.size;
 
-            const li = document.createElement('li');
-            li.className = 'flex items-center justify-between text-sm text-gray-700 bg-white p-2 rounded border shadow-sm';
-            li.innerHTML = `
-                <div class="flex items-center space-x-2 truncate">
-                    <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <span class="truncate">${currentFileName}</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <span class="text-[10px] text-blue-500 font-medium" id="upload-progress-text">Subiendo...</span>
-                </div>
-            `;
-            uploadedFilesList.appendChild(li);
-            uploadedFilesContainer.classList.remove('hidden');
+                const li = document.createElement('li');
+                li.className = 'flex items-center justify-between text-sm text-gray-700 bg-white p-2 rounded border shadow-sm';
+                li.innerHTML = `
+                    <div class="flex items-center space-x-2 truncate">
+                        <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <span class="truncate">${currentFileName}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-[10px] text-blue-500 font-medium" id="upload-progress-text">Subiendo...</span>
+                    </div>
+                `;
+                uploadedFilesList.appendChild(li);
+                uploadedFilesContainer.classList.remove('hidden');
+                filePreviewContainer.classList.add('hidden');
 
-            filePreviewContainer.classList.add('hidden');
-            fileInput.value = '';
+                activeUploads++;
+                updateConfirmButtonState();
 
-            activeUploads++;
-            updateConfirmButtonState();
+                try {
+                    let uploadResult;
+                    const progressSpan = li.querySelector('#upload-progress-text');
+                    let fileData;
+                    let mimeType = currentFile.type;
 
-            try {
-                let uploadResult;
-                const progressSpan = li.querySelector('#upload-progress-text');
-
-                // Si el archivo es mayor a 2MB, usar subida por partes (Chunks)
-                if (currentFile.size > CHUNK_SIZE) {
-                    const totalChunks = Math.ceil(currentFile.size / CHUNK_SIZE);
-                    const uploadId = "UP-" + Date.now();
-
-                    for (let i = 0; i < totalChunks; i++) {
-                        progressSpan.textContent = `Punto ${i+1}/${totalChunks}`;
-                        const start = i * CHUNK_SIZE;
-                        const end = Math.min(currentFile.size, start + CHUNK_SIZE);
-                        const chunk = currentFile.slice(start, end);
-
-                        const chunkData = await new Promise((resolve) => {
+                    // Optimización Móvil: Compresión de imágenes (Req 3.3)
+                    if (currentFile.type.startsWith('image/')) {
+                        progressSpan.textContent = "Optimizando...";
+                        fileData = await compressImage(currentFile);
+                    } else {
+                        fileData = await new Promise((resolve) => {
                             const reader = new FileReader();
-                            reader.onload = () => resolve(reader.result.split(',')[1]);
-                            reader.readAsDataURL(chunk);
+                            reader.onload = () => resolve(reader.result);
+                            reader.readAsDataURL(currentFile);
                         });
-
-                        await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData });
                     }
 
-                    progressSpan.textContent = "Finalizando...";
-                    uploadResult = await fetchApi('TASK', 'finishChunkedUpload', {
-                        uploadId, userId: currentUser.userId, tareaId: currentTaskId,
-                        parcial: currentTaskParcial, asignatura: currentTaskAsignatura,
-                        fileName: currentFileName, mimeType: currentFile.type, totalChunks
-                    });
-                } else {
-                    // Subida normal para archivos pequeños
-                    const fileData = await new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.readAsDataURL(currentFile);
-                    });
+                    // El tamaño puede haber cambiado tras compresión, pero usamos el original para Chunks si aplica
+                    // Sin embargo, fileData tras compression es un DataURL.
+                    const blobSize = Math.floor((fileData.length - (fileData.indexOf(',') + 1)) * 0.75);
 
-                    uploadResult = await fetchApi('TASK', 'uploadFile', {
-                        userId: currentUser.userId, tareaId: currentTaskId,
-                        fileName: currentFileName, fileData: fileData,
-                        parcial: currentTaskParcial, asignatura: currentTaskAsignatura
-                    });
+                    if (blobSize > CHUNK_SIZE) {
+                        const totalChunks = Math.ceil(blobSize / CHUNK_SIZE);
+                        const uploadId = "UP-" + Date.now();
+                        const rawBase64 = fileData.split(',')[1];
+
+                        for (let i = 0; i < totalChunks; i++) {
+                            progressSpan.textContent = `${Math.round((i/totalChunks)*100)}%`;
+                            const start = i * (CHUNK_SIZE * 1.33); // Adjust for base64
+                            const chunk = rawBase64.substring(start, start + (CHUNK_SIZE * 1.33));
+                            await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData: chunk });
+                        }
+
+                        progressSpan.textContent = "Finalizando...";
+                        uploadResult = await fetchApi('TASK', 'finishChunkedUpload', {
+                            uploadId, userId: currentUser.userId, tareaId: currentTaskId,
+                            parcial: currentTaskParcial, asignatura: currentTaskAsignatura,
+                            fileName: currentFileName, mimeType: mimeType, totalChunks
+                        });
+                    } else {
+                        uploadResult = await fetchApi('TASK', 'uploadFile', {
+                            userId: currentUser.userId, tareaId: currentTaskId,
+                            fileName: currentFileName, fileData: fileData,
+                            parcial: currentTaskParcial, asignatura: currentTaskAsignatura
+                        });
+                    }
+
+                    if (uploadResult.status === 'success') {
+                        const uploadedData = uploadResult.data;
+                        uploadedFiles.push({
+                            fileId: uploadedData.fileId,
+                            fileName: currentFileName,
+                            size: currentFileSize,
+                            mimeType: uploadedData.mimeType
+                        });
+                        currentFolderId = uploadedData.folderId;
+
+                        li.innerHTML = `
+                            <div class="flex items-center space-x-2 truncate">
+                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="truncate text-xs">${currentFileName}</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-[10px] text-green-600 font-medium">Completada</span>
+                                <button type="button" class="text-red-500 hover:text-red-700 remove-file-btn" data-file-id="${uploadedData.fileId}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                        `;
+                    } else throw new Error(uploadResult.message);
+
+                } catch (error) {
+                    li.innerHTML = `<div class="flex items-center justify-between w-full"><span class="text-red-600 text-xs truncate">Error: ${currentFileName}</span><button class="text-[10px] bg-gray-100 px-2 py-1 rounded" onclick="this.closest('li').remove()">X</button></div>`;
+                    console.error('Error al subir:', error);
+                } finally {
+                    activeUploads--;
+                    updateConfirmButtonState();
                 }
-
-                if (uploadResult.status === 'success') {
-                    const uploadedData = uploadResult.data;
-                    uploadedFiles.push({
-                        fileId: uploadedData.fileId,
-                        fileName: currentFileName,
-                        mimeType: uploadedData.mimeType
-                    });
-                    currentFolderId = uploadedData.folderId;
-
-                    li.innerHTML = `
-                        <div class="flex items-center space-x-2 truncate">
-                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="truncate">${currentFileName}</span>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <span class="text-xs text-green-600 font-medium">Listo</span>
-                            <button type="button" class="text-red-500 hover:text-red-700 remove-file-btn" data-file-id="${uploadedData.fileId}">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    throw new Error(uploadResult.message);
-                }
-            } catch (error) {
-                li.innerHTML = `<span class="text-red-600">Error: ${currentFileName}</span>`;
-                alert('Error al subir ' + currentFileName + ': ' + error.message);
-            } finally {
-                acceptFileBtn.disabled = false;
-                acceptFileBtn.classList.remove('btn-loading');
-                activeUploads--;
-                updateConfirmButtonState();
             }
+
+            acceptFileBtn.disabled = false;
+            acceptFileBtn.classList.remove('btn-loading');
+            fileInput.value = '';
         });
     }
 

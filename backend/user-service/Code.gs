@@ -333,17 +333,16 @@ function uploadNewsImage(payload) {
 }
 
 function saveWhatsAppLink(payload) {
-  const { grado, seccion, link } = payload;
+  const { grado, link } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "Clases");
   const data = sheet.getDataRange().getValues();
 
   const sGrado = normalizeString(grado);
-  const sSeccion = normalizeString(seccion);
 
   let rowIndex = -1;
   for (let i = 1; i < data.length; i++) {
-    if (normalizeString(data[i][0]) === sGrado && normalizeString(data[i][1]) === sSeccion) {
+    if (normalizeString(data[i][0]) === sGrado) {
       rowIndex = i;
       break;
     }
@@ -352,23 +351,22 @@ function saveWhatsAppLink(payload) {
   if (rowIndex !== -1) {
     sheet.getRange(rowIndex + 1, 3).setValue(link);
   } else {
-    sheet.appendRow([grado, seccion, link]);
+    sheet.appendRow([grado, "Todas", link]);
   }
 
   return { status: "success", message: "Enlace de WhatsApp guardado." };
 }
 
 function getWhatsAppLink(payload) {
-  const { grado, seccion } = payload;
+  const { grado } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "Clases");
   const data = sheet.getDataRange().getValues();
 
   const sGrado = normalizeString(grado);
-  const sSeccion = normalizeString(seccion);
 
   for (let i = 1; i < data.length; i++) {
-    if (normalizeString(data[i][0]) === sGrado && normalizeString(data[i][1]) === sSeccion) {
+    if (normalizeString(data[i][0]) === sGrado) {
       return { status: "success", link: data[i][2] };
     }
   }
