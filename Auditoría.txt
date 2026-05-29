@@ -190,3 +190,40 @@ AUDITORÍA DE MEJORAS PSEUDOCÓDIGO Y DRIVE (28/05/2026)
 - Hallazgo (Variables): El renderizado de la lista de variables no es recursivo, lo que impide ver el contenido de matrices de forma amigable.
 - Hallazgo (Archivos): Los botones de la toolbar están mezclados. "Guardar" y "Guardar como" llaman a la misma función `saveToFile` que descarga localmente.
 - Requerimiento: Separar lógica de guardado (Drive vs Local) y apertura (Drive Modal vs Local). Implementar modal de selección de archivos con filtro de estudiantes para profesores.
+
+AUDITORÍA DE MODERNIZACIÓN Y MEJORAS OBLIGATORIAS (29/05/2026)
+============================================================
+
+1. ARCHIVO: js/config.js
+------------------------
+- Hallazgo: Las URLs de los microservicios USER y TASK están desactualizadas según las nuevas instrucciones.
+- Acción: Actualizar con los nuevos endpoints de Google Apps Script.
+
+2. ARCHIVO: index.html
+----------------------
+- Hallazgo: Se utilizan bordes redondeados extremos (rounded-3xl, rounded-2xl) que restan profesionalismo.
+- Hallazgo: Los botones del encabezado carecen de una distribución y alineación óptima en contenedores específicos.
+- Hallazgo: Existe exceso de espacio vertical en la versión móvil, especialmente en la sección Hero y contenedores de tarjetas.
+- Hallazgo: El botón "Mi Perfil" no está explícitamente en el HTML, se inyecta por JS, pero debe asegurarse su visibilidad prominente.
+
+3. ARCHIVO: css/style.css
+-------------------------
+- Hallazgo: La escala global font-size: 85% es adecuada, pero el sistema de espaciado no sigue una progresión estricta de 4px/8px/16px/24px.
+- Hallazgo: Las sombras y bordes redondeados en .dashboard-card y otros elementos necesitan ser más sutiles y profesionales.
+
+4. ARCHIVO: js/index-ui.js
+--------------------------
+- Hallazgo: La función renderDownloadGrades solo filtra por grado para estudiantes.
+- Hallazgo: No existe lógica para que los profesores visualicen solo el contenido de sus asignaturas administradas en la landing page.
+- Acción: Implementar filtro por asignaturas asignadas para el rol Profesor.
+
+5. ARCHIVO: js/teacher.js
+-------------------------
+- Hallazgo CRÍTICO: La función fetchTeacherActivity está declarada dos veces (líneas 104 y 209 aproximadamente), lo cual es redundante y propenso a errores.
+- Hallazgo: El flujo de carga inicial de la sección "Entregas" depende de la llamada al final del archivo, pero parece fallar en la primera carga según el reporte del usuario.
+- Acción: Asegurar la inicialización correcta en el DOMContentLoaded.
+
+6. ARCHIVO: teacher-dashboard.html
+----------------------------------
+- Hallazgo: La sección #section-reportes carece de una tabla visual para mostrar las calificaciones antes de exportar.
+- Hallazgo: Faltan contenedores para la lógica de "Grado más cercano" y los botones de ordenamiento solicitados.

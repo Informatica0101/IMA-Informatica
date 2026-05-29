@@ -1,11 +1,20 @@
 /* Global scale */
 html {
-    font-size: 85%; /* Slightly larger than the original 80% to address "too small" complaint */
+    font-size: 16px; /* Reset to standard 16px to better manage hierarchy */
     scroll-behavior: smooth;
 }
 
+:root {
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+    --space-8: 32px;
+}
+
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #1a202c; /* gray-900 */
@@ -209,9 +218,9 @@ body {
 
 .dashboard-card {
     background: white;
-    border-radius: 1rem;
-    padding: 0.75rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+    padding: var(--space-4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border: 1px solid #e5e7eb;
     transition: all 0.2s ease-in-out;
 }
@@ -312,8 +321,11 @@ textarea {
 .grade-btn,
 .nav-btn,
 #nav-dashboard,
+#nav-entregas,
 #nav-gestion,
 #nav-reportes,
+#nav-tareas,
+#nav-noticias,
 #nav-crear,
 #nav-crear-examen,
 .btn-ima-primary,
@@ -321,17 +333,21 @@ select.p-2.border.rounded-xl,
 #filters-container select,
 #report-grado,
 #report-seccion,
-#report-parcial {
-    padding: 0.4rem 1rem !important;
-    margin: 0.2rem 0 !important;
+#report-parcial,
+#show-activities-button,
+#select-peripherals-game-button,
+#select-webmaster-quiz-button,
+#select-dexterity-game-button,
+#back-to-main-activities-button {
+    padding: 8px 16px !important;
     border-radius: 6px !important;
-    font-size: 0.85rem !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
     min-height: auto !important;
     text-transform: none !important;
     letter-spacing: normal !important;
     border: 1px solid #d1d5db !important;
     transition: all 0.2s ease-in-out !important;
-    background-color: white !important;
 }
 
 /* Subtle Gradient for Primary Buttons (Blue to soft gray/lighter blue) */

@@ -20,9 +20,9 @@
 </head>
 <body class="font-inter antialiased text-gray-900 min-h-screen flex flex-col">
 
-    <header id="main-header" class="bg-white shadow-md py-2 md:py-2 px-1 md:px-3 fixed w-full z-50">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="index.html" class="flex items-center space-x-4 transition-transform duration-300 logo-container">
+    <header id="main-header" class="bg-white shadow-md py-1 md:py-2 px-2 md:px-4 fixed w-full z-50">
+        <div class="container mx-auto flex justify-between items-center h-14 md:h-16">
+            <a href="index.html" class="flex items-center space-x-3 transition-transform duration-300 logo-container">
                 <img src="imagenes/logo.png" alt="Logo" width="120" height="auto" class="logo-img transition-transform duration-300">
                 <span class="text-2xl font-bold text-blue-800 hidden sm:inline">Area de Informatica</span>
             </a>
@@ -103,14 +103,14 @@
         </div>
     </header>
 
-    <main class="mt-[5rem] md:mt-[5rem] flex-grow">
+    <main class="mt-[4rem] md:mt-[5rem] flex-grow">
         <!-- Hero Section con Saludo Personalizado -->
-        <section class="relative bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 text-white flex items-center justify-center py-12 md:py-20 min-h-[250px] overflow-hidden">
+        <section class="relative bg-blue-800 text-white flex items-center justify-center py-12 md:py-20 min-h-[200px] overflow-hidden">
             <div class="container mx-auto px-5 text-center z-10">
-                <h1 id="welcome-title" class="text-4xl md:text-6xl font-black leading-tight mb-4 animate-fade-in-up tracking-tight">
+                <h1 id="welcome-title" class="text-3xl md:text-5xl font-black leading-normal mb-2 animate-fade-in-up tracking-tight pt-4">
                     Bienvenidos
                 </h1>
-                <p class="text-lg md:text-2xl max-w-2xl mx-auto opacity-90 font-light animate-fade-in-up animation-delay-2000 leading-relaxed">
+                <p class="text-base md:text-xl max-w-2xl mx-auto opacity-90 font-light animate-fade-in-up animation-delay-2000 leading-relaxed">
                     Instituto María Auxiliadora: Formando con alegría, fe y tecnología.
                 </p>
             </div>
@@ -121,43 +121,39 @@
             </div>
         </section>
 
-        <!-- Sección de Noticias -->
-        <section id="noticias-section" class="py-16 bg-white border-b border-gray-100 hidden">
-            <div class="container mx-auto px-5">
-                <div class="flex items-center justify-between mb-10">
-                    <h2 class="text-3xl font-black text-gray-900 tracking-tight flex items-center">
-                        <span class="w-2 h-8 bg-blue-600 rounded-full mr-4"></span>
-                        Últimas Noticias
-                    </h2>
-                    <div class="flex space-x-2">
-                        <button id="prev-news" class="p-2 rounded-full border border-gray-200 hover:bg-gray-50 text-gray-400 hover:text-blue-600 transition-all">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                        </button>
-                        <button id="next-news" class="p-2 rounded-full border border-gray-200 hover:bg-gray-50 text-gray-400 hover:text-blue-600 transition-all">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </button>
-                    </div>
-                </div>
-                <div id="noticias-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Las noticias se cargan aquí -->
-                    <div class="animate-pulse bg-gray-100 h-64 rounded-3xl"></div>
-                    <div class="animate-pulse bg-gray-100 h-64 rounded-3xl hidden md:block"></div>
-                    <div class="animate-pulse bg-gray-100 h-64 rounded-3xl hidden lg:block"></div>
-                </div>
-            </div>
-        </section>
-
         <!-- Contenido y Actividades -->
-        <section class="py-16 md:py-24 bg-gray-50">
+        <section class="py-8 md:py-12 bg-gray-50">
             <div class="container mx-auto px-5 text-center">
-                <h2 id="main-content-title" class="text-3xl md:text-5xl font-black text-gray-900 mb-16 tracking-tight">
+
+                <!-- Sección de Noticias (Ahora integrada aquí) -->
+                <section id="noticias-section" class="mb-16 hidden">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-2xl md:text-3xl font-black text-gray-900 tracking-tight flex items-center">
+                            <span class="w-1.5 h-6 bg-blue-600 rounded-full mr-3"></span>
+                            Últimas Noticias
+                        </h2>
+                        <div class="flex space-x-2">
+                            <button id="prev-news" class="p-1.5 rounded-full border border-gray-200 hover:bg-gray-50 text-gray-400 hover:text-blue-600 transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </button>
+                            <button id="next-news" class="p-1.5 rounded-full border border-gray-200 hover:bg-gray-50 text-gray-400 hover:text-blue-600 transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="noticias-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Las noticias se cargan aquí -->
+                    </div>
+                </section>
+
+                <h2 id="main-content-title" class="text-2xl md:text-3xl font-black text-gray-900 mb-10 tracking-tight">
                     Plataforma Educativa
                 </h2>
 
-                <div id="main-content-sections" class="flex flex-col lg:flex-row justify-center items-stretch gap-8">
-                    <div id="download-section" class="w-full lg:w-1/2 max-w-2xl bg-white p-8 rounded-3xl shadow-xl border border-gray-100 transition-all duration-300 hover:shadow-2xl">
-                        <h3 class="text-2xl font-bold text-gray-800 mb-8 flex items-center justify-center">
-                            <span class="mr-3">📂</span> Contenido de Clases
+                <div id="main-content-sections" class="flex flex-col lg:flex-row justify-center items-stretch gap-6">
+                    <div id="download-section" class="w-full lg:w-1/2 max-w-lg bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center justify-center">
+                            <span class="mr-2">📂</span> Contenido de Clases
                         </h3>
                         <div id="content-back-button-container" class="text-left mb-6 hidden">
                             <button id="content-back-button" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-200 bg-blue-50 px-4 py-2 rounded-lg">
@@ -170,17 +166,13 @@
                             </div>
                     </div>
 
-                    <div id="activity-section" class="w-full lg:w-1/2 max-w-2xl bg-white p-8 rounded-3xl shadow-xl border border-gray-100 transition-all duration-300 hover:shadow-2xl">
-                        <h3 class="text-2xl font-bold text-gray-800 mb-8 flex items-center justify-center">
-                            <span class="mr-3">🎮</span> Actividades
+                    <div id="activity-section" class="w-full lg:w-1/2 max-w-lg bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center justify-center">
+                            <span class="mr-2">🎮</span> Actividades
                         </h3>
 
-                        <div id="initial-activity-menu" class="flex flex-col items-center justify-center min-h-[300px]">
-                            <button id="show-activities-button" class="px-10 py-5 rounded-2xl font-bold text-xl
-                                        bg-purple-600 text-white hover:bg-purple-700
-                                        transition-all duration-300 ease-in-out
-                                        shadow-lg hover:shadow-xl transform hover:-translate-y-1
-                                        focus:outline-none focus:ring-4 focus:ring-purple-300">
+                        <div id="initial-activity-menu" class="flex flex-col items-center justify-center min-h-[150px]">
+                            <button id="show-activities-button" class="bg-purple-600 text-white font-bold hover:bg-purple-700 transition-all shadow-sm">
                                 Ver Actividades Prácticas
                             </button>
                         </div>
@@ -221,13 +213,13 @@
                     </div>
             </div>
         </section>
-        <section class="py-12 bg-gray-100">
+        <section class="py-8 bg-gray-100">
             <div class="container mx-auto px-5 text-center">
-                <div id="access-section" class="max-w-2xl mx-auto bg-white p-8 rounded-3xl shadow-xl border border-gray-100 transition-all duration-300 hover:shadow-2xl">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center justify-center">
+                <div id="access-section" class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center justify-center">
                         <span class="mr-3">🔐</span> Acceso al Sistema
                     </h3>
-                    <p class="text-gray-600 mb-8">Ingresa a tu plataforma para gestionar tareas, exámenes y ver tu progreso educativo.</p>
+                    <p class="text-sm text-gray-600 mb-6">Ingresa a tu plataforma para gestionar tareas, exámenes y ver tu progreso educativo.</p>
                     <div id="access-button-container" class="flex justify-center">
                         <!-- El botón se renderiza dinámicamente -->
                     </div>

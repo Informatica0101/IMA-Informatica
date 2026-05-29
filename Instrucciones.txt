@@ -25,6 +25,18 @@ ESTADO DE LAS TAREAS (RESUMEN)
 TAREAS PENDIENTES DE REVISIÓN
 ----------------------------
 
+TAREA: [A-59]
+TÍTULO: Mejoras Obligatorias y Modernización UI (Mayo 29)
+ÁREA: Fullstack / UI-UX
+PRIORIDAD: CRÍTICA
+ESTADO: PENDIENTE DE REVISIÓN
+- Actualizadas URLs de microservicios USER y TASK.
+- Rediseñada Landing Page con estilo compacto, profesional y reglas Anti-Template.
+- Implementado filtrado de contenido para profesores basado en sus asignaturas asignadas.
+- Corregido error de carga inicial en la sección "Entregas" del Dashboard Docente.
+- Desarrollado Módulo de Reportes Visuales con tabla interactiva, ordenamiento y exportación.
+- Optimizado Modal de Entrega del Estudiante con scroll interno y subida automatizada.
+
 TAREA: [A-58]
 TÍTULO: Modernización y Reestructuración Integral de la Plataforma (V3.0)
 ÁREA: Fullstack (Frontend, Backend, UI/UX)

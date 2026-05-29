@@ -11,10 +11,10 @@
 
 const SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios.
-  USER: 'https://script.google.com/macros/s/AKfycbzlGhItbzXD2QyYWH-RfeWIIvM5G9aTy9Q-SSf8uNMSkbo6AfzZ24mcAEpPuy40N_Md/exec',
+  USER: 'https://script.google.com/macros/s/AKfycbzq4ApfdGiMktPy-Og4mikcA-GDQnlFXN31rOA8M-zrZfIzqZcZan7bWKUaPKlycDTi/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
-  TASK: 'https://script.google.com/macros/s/AKfycbyE80lx-UViuj5uGDqjxiRORVtH99NJcE9RaTKzYaK639z9E59So8sqpwpEe2W-NAXQ/exec',
+  TASK: 'https://script.google.com/macros/s/AKfycbyEdU7HittAJy6Z6XeGITVUwBGBjBDWtXp3iAWl7vTgozXJKCDvB51HOxH36UW5OfEB/exec',
 
   // Pega aquí la URL del despliegue del microservicio de exámenes.
   EXAM: 'https://script.google.com/macros/s/AKfycbxuQGu4HkulXimz4wCm_tIkTqRRhsMXXfXqRDtxvW1kgDGA-sjWyriUEAnDVDAmjso/exec'

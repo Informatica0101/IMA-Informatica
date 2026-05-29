@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const filePreviewContainer = document.getElementById('file-preview-container');
     const imagePreview = document.getElementById('image-preview');
     const fileInfoPreview = document.getElementById('file-info-preview');
-    const acceptFileBtn = document.getElementById('accept-file-btn');
     const uploadedFilesContainer = document.getElementById('uploaded-files-container');
     const uploadedFilesList = document.getElementById('uploaded-files-list');
     const confirmSubmissionBtn = document.getElementById('confirm-submission-btn');
@@ -348,125 +347,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-        });
-    }
-
-    if (fileInput) {
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) {
-                filePreviewContainer.classList.add('hidden');
-                return;
-            }
-            filePreviewContainer.classList.remove('hidden');
-            if (file.type.startsWith('image/')) {
-                imagePreview.classList.remove('hidden');
-                fileInfoPreview.classList.add('hidden');
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.querySelector('img').src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            } else {
-                imagePreview.classList.add('hidden');
-                fileInfoPreview.classList.remove('hidden');
-                fileInfoPreview.textContent = `Archivo seleccionado: ${file.name}`;
-            }
-        });
-    }
-
-    if (acceptFileBtn) {
-        acceptFileBtn.addEventListener('click', async () => {
-            const file = fileInput.files[0];
-            if (!file || activeUploads > 0) return;
-
-            acceptFileBtn.disabled = true;
-            acceptFileBtn.classList.add('btn-loading');
-
-            const currentFile = file;
-            const currentFileName = currentFile.name;
-
-            const li = document.createElement('li');
-            li.className = 'flex items-center justify-between text-sm text-gray-700 bg-white p-2 rounded border shadow-sm';
-            li.innerHTML = `
-                <div class="flex items-center space-x-2 truncate">
-                    <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <span class="truncate">${currentFileName}</span>
-                </div>
-                <span class="text-xs text-blue-500 font-medium">Subiendo...</span>
-            `;
-            uploadedFilesList.appendChild(li);
-            uploadedFilesContainer.classList.remove('hidden');
-
-            filePreviewContainer.classList.add('hidden');
-            fileInput.value = '';
-
-            activeUploads++;
-            updateConfirmButtonState();
-
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-                const fileData = reader.result;
-                const payload = {
-                    userId: currentUser.userId,
-                    tareaId: currentTaskId,
-                    fileName: currentFileName,
-                    fileData: fileData,
-                    parcial: currentTaskParcial,
-                    asignatura: currentTaskAsignatura
-                };
-
-                try {
-                    const result = await fetchApi('TASK', 'uploadFile', payload);
-
-                    acceptFileBtn.disabled = false;
-                    acceptFileBtn.classList.remove('btn-loading');
-
-                    if (result.status === 'success') {
-                        const uploadedData = result.data;
-                        uploadedFiles.push({
-                            fileId: uploadedData.fileId,
-                            fileName: currentFileName,
-                            mimeType: uploadedData.mimeType
-                        });
-                        currentFolderId = uploadedData.folderId;
-
-                        li.innerHTML = `
-                            <div class="flex items-center space-x-2 truncate">
-                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                <span class="truncate">${currentFileName}</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <span class="text-xs text-green-600 font-medium">Listo</span>
-                                <button type="button" class="text-red-500 hover:text-red-700 remove-file-btn" data-file-id="${uploadedData.fileId}">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </button>
-                            </div>
-                        `;
-                    } else {
-                        li.innerHTML = `
-                            <div class="flex items-center space-x-2 truncate">
-                                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                <span class="truncate text-red-600">${currentFileName}</span>
-                            </div>
-                            <span class="text-xs text-red-600 font-medium">Error</span>
-                        `;
-                        alert('Error al subir ' + currentFileName + ': ' + result.message);
-                    }
-                } catch (error) {
-                    acceptFileBtn.disabled = false;
-                    acceptFileBtn.classList.remove('btn-loading');
-                    li.innerHTML = `<span class="text-red-600">Error: ${currentFileName}</span>`;
-                    alert('Error de conexión al subir ' + currentFileName + ': ' + error.message);
-                } finally {
-                    activeUploads--;
-                    updateConfirmButtonState();
-                }
-            };
-            reader.readAsDataURL(currentFile);
-        });
-    }
-
     if (cancelSubmissionBtn) cancelSubmissionBtn.addEventListener('click', closeSubmissionModal);
 
     if (uploadedFilesList) {
@@ -597,11 +477,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const files = Array.from(e.target.files);
             if (files.length === 0) return;
 
+            filePreviewContainer.classList.remove('hidden');
+
             // Procesar secuencialmente
             for (const file of files) {
                 await processSingleFile(file);
             }
             fileInput.value = ''; // Limpiar input para permitir re-selección
+            filePreviewContainer.classList.add('hidden');
         });
     }
 

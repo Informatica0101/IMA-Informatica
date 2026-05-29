@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     navReportes.addEventListener('click', () => {
         navigateTo(sectionReportes, navReportes);
+        initReportes();
     });
     navTareas.addEventListener('click', () => {
         navigateTo(sectionTareas, navTareas);
@@ -130,35 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (backNavBtn) backNavBtn.addEventListener('click', popNav);
-
-    // --- MÓDULO 1: Gestión de Entregas (Operativo) ---
-    async function fetchTeacherActivity() {
-        if (!submissionsTableBody) return;
-        submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8"><div class="loading-spinner"></div> Cargando actividad...</td></tr>';
-        try {
-            const payload = { profesorId: currentUser.userId };
-            const [taskSubmissions, examSubmissions, tasksRes, examsRes] = await Promise.all([
-                fetchApi('TASK', 'getTeacherActivity', payload),
-                fetchApi('EXAM', 'getTeacherExamActivity', payload),
-                fetchApi('TASK', 'getAllTasks', payload),
-                fetchApi('EXAM', 'getAllExams', payload)
-            ]);
-
-            allActivityRaw = [
-                ...((taskSubmissions.data || [])).map(s => ({ ...s, tipo: 'Tarea' })),
-                ...((examSubmissions.data || [])).map(s => ({ ...s, tipo: 'Examen' }))
-            ];
-
-            allAssignmentsRaw = [
-                ...((tasksRes.data || [])).map(t => ({ ...t, tipoReal: 'Tarea' })),
-                ...((examsRes.data || [])).map(e => ({ ...e, tipoReal: 'Examen' }))
-            ].filter(a => a.estado !== 'Inactiva');
-
-            renderCurrentLevel();
-        } catch (error) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500">Error: ${error.message}</td></tr>`;
-        }
-    }
 
     // --- MÓDULO 3: Gestión de Actividades ---
     let allTasksExams = [];
@@ -368,7 +340,35 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderCurrentLevel() {
         const current = navStack[navStack.length - 1];
         let title = current.level;
-        if (current.level === 'Detalles') title = `Actividades de ${current.data.alumnoNombre}`;
+        const banner = document.getElementById('student-info-banner');
+
+        if (current.level === 'Detalles') {
+            title = `Historial de Actividades`;
+            if (banner) {
+                const s = current.data.studentInfo || {};
+                const phone = s.telefono ? s.telefono.toString().replace(/\D/g, '') : '';
+                const waLink = phone ? `https://wa.me/504${phone}` : null;
+                const waBtn = waLink ? `
+                    <a href="${waLink}" target="_blank" class="flex items-center space-x-2 bg-green-500 text-white px-3 py-1.5 rounded-lg font-bold text-xs hover:bg-green-600 transition-all shadow-sm">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.438 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.438-9.889 9.886 0 2.225.587 3.841 1.578 5.49l-.903 3.303 3.393-.89zm11.375-7.679c-.161-.268-.589-.428-1.232-.75-.643-.321-3.793-1.872-4.382-2.086-.589-.214-1.018-.321-1.446.321-.428.643-1.661 2.089-2.036 2.518-.375.429-.75.482-1.393.161-.643-.321-2.712-1.001-5.166-3.192-1.91-1.704-3.199-3.808-3.573-4.451-.375-.643-.041-.991.28-1.31.289-.287.643-.75.964-1.125.321-.375.429-.643.643-1.071.214-.428.107-.803-.054-1.125-.161-.321-1.446-3.482-1.982-4.768-.522-1.253-1.054-1.081-1.446-1.101-.375-.02-1.101-.023-1.101-.023s-.75 0-1.125.428c-.375.429-1.446 1.411-1.446 3.442s2.089 3.991 2.303 4.286c.214.295 4.114 6.279 9.957 8.796 1.39.599 2.474.957 3.319 1.224 1.398.444 2.671.381 3.677.23 1.12-.168 3.793-1.554 4.329-3.054.536-1.5 0-2.839-.161-3.107z"/></svg>
+                        <span>WhatsApp Alumno</span>
+                    </a>` : '';
+
+                banner.innerHTML = `
+                    <div class="flex-grow">
+                        <p class="text-blue-800 font-black text-lg">${current.data.alumnoNombre}</p>
+                        <p class="text-blue-600 text-xs font-medium uppercase tracking-wider">
+                            Nº Lista: ${s.numeroLista || '-'} | ${s.email || 'Sin correo'}
+                        </p>
+                    </div>
+                    ${waBtn}
+                `;
+                banner.classList.remove('hidden');
+            }
+        } else {
+            if (banner) banner.classList.add('hidden');
+        }
+
         if (dashboardLevelTitle) dashboardLevelTitle.textContent = title;
 
         if (backBtnContainer) {
@@ -686,10 +686,135 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (current.level === 'Secciones') await pushNav('Asignaturas', { grado: current.data.grado, seccion: item });
                 else if (current.level === 'Asignaturas') await pushNav('Parciales', { grado: current.data.grado, seccion: current.data.seccion, asignatura: item });
                 else if (current.level === 'Parciales') await pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: item });
-                else if (current.level === 'Alumnos') await pushNav('Detalles', { alumnoId: item.userId, alumnoNombre: item.nombre, grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: current.data.parcial });
+                else if (current.level === 'Alumnos') await pushNav('Detalles', { alumnoId: item.userId, alumnoNombre: item.nombre, studentInfo: item, grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: current.data.parcial });
             }
         });
     }
+
+    // --- MÓDULO 2: Reportes Visuales ---
+    let reportData = [];
+    let reportSort = { column: 'total', direction: 'desc' };
+
+    async function initReportes() {
+        const reportTableBody = document.getElementById('report-table-body');
+        if (!reportTableBody) return;
+
+        // Lógica de "Grado más cercano": Buscar el primer grado que tenga alguna tarea calificada
+        // Pero primero necesitamos cargar los datos si no están.
+        if (allActivityRaw.length === 0) {
+            await fetchTeacherActivity();
+        }
+
+        let bestGrado = "";
+        let bestSeccion = "";
+        let bestParcial = "Primer Parcial";
+
+        // Prioridad: Décimo A, luego Undécimo A, etc.
+        const priority = ['Décimo', 'Undécimo', 'Duodécimo'];
+        for (const g of priority) {
+            const hasData = allActivityRaw.some(i => norm(i.grado) === norm(g) && i.calificacion);
+            if (hasData) {
+                bestGrado = g;
+                bestSeccion = "A";
+                break;
+            }
+        }
+
+        if (bestGrado) {
+            document.getElementById('report-grado').value = bestGrado;
+            document.getElementById('report-seccion').value = bestSeccion;
+            document.getElementById('report-parcial').value = bestParcial;
+            loadReportData();
+        }
+    }
+
+    async function loadReportData() {
+        const grado = document.getElementById('report-grado').value;
+        const seccion = document.getElementById('report-seccion').value;
+        const parcial = document.getElementById('report-parcial').value;
+        const tbody = document.getElementById('report-table-body');
+
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center p-8"><div class="loading-spinner"></div> Cargando reporte...</td></tr>';
+
+        try {
+            const studentsRes = await fetchApi('USER', 'getStudentsByGradoSeccion', { grado, seccion });
+            const students = studentsRes.data || [];
+
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-500">No hay alumnos registrados en este grado/sección.</td></tr>';
+                return;
+            }
+
+            // Calcular totales
+            reportData = students.map(student => {
+                const activities = allActivityRaw.filter(i =>
+                    i.alumnoId == student.userId &&
+                    norm(i.grado) === norm(grado) &&
+                    norm(i.seccion) === norm(seccion) &&
+                    norm(i.parcial) === norm(parcial)
+                );
+                const total = activities.reduce((acc, curr) => acc + parseFloat(curr.calificacion || 0), 0);
+                return {
+                    numeroLista: student.numeroLista || 0,
+                    nombre: student.nombre,
+                    total: total,
+                    userId: student.userId
+                };
+            });
+
+            renderReportTable();
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="3" class="text-center p-8 text-red-500">Error: ${e.message}</td></tr>`;
+        }
+    }
+
+    function renderReportTable() {
+        const tbody = document.getElementById('report-table-body');
+
+        const sorted = [...reportData].sort((a, b) => {
+            let valA = a[reportSort.column];
+            let valB = b[reportSort.column];
+            if (typeof valA === 'string') {
+                valA = valA.toLowerCase();
+                valB = valB.toLowerCase();
+            }
+            if (valA < valB) return reportSort.direction === 'asc' ? -1 : 1;
+            if (valA > valB) return reportSort.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        tbody.innerHTML = sorted.map(row => `
+            <tr class="hover:bg-gray-50">
+                <td class="p-4 text-gray-500 font-medium">${row.numeroLista || '-'}</td>
+                <td class="p-4 font-bold text-gray-800">${row.nombre}</td>
+                <td class="p-4 text-right font-black text-blue-600">${row.total.toFixed(1)}%</td>
+            </tr>
+        `).join('');
+
+        // Actualizar iconos de ordenamiento
+        document.querySelectorAll('.report-sort').forEach(th => {
+            const col = th.dataset.sort;
+            const icon = reportSort.column === col ? (reportSort.direction === 'asc' ? '↑' : '↓') : '↕';
+            th.textContent = th.textContent.split(' ')[0] + ' ' + icon;
+        });
+    }
+
+    document.querySelectorAll('.report-sort').forEach(th => {
+        th.addEventListener('click', () => {
+            const col = th.dataset.sort;
+            if (reportSort.column === col) {
+                reportSort.direction = reportSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                reportSort.column = col;
+                reportSort.direction = 'asc';
+            }
+            renderReportTable();
+        });
+    });
+
+    ['report-grado', 'report-seccion', 'report-parcial'].forEach(id => {
+        document.getElementById(id).addEventListener('change', loadReportData);
+    });
 
     // --- MÓDULO 3: Exportación a Excel ---
     document.getElementById('export-excel-btn').addEventListener('click', async () => {
@@ -1096,45 +1221,8 @@ document.addEventListener('DOMContentLoaded', () => {
         finally { btn.disabled = false; btn.textContent = `CREAR ${tipo.toUpperCase()}`; }
     };
 
-    if (createAssignmentForm) createAssignmentForm.onsubmit = async (e) => {
-        e.preventDefault(); const btn = e.target.querySelector('button[type="submit"]'); btn.classList.add('btn-loading');
-        try {
-            const res = await fetchApi('TASK', 'createTask', { ...Object.fromEntries(new FormData(e.target).entries()), profesorId: currentUser.userId });
-            if (res.status === 'success') { alert('Creada.'); e.target.reset(); navDashboard.click(); }
-            else throw new Error(res.message);
-        } catch (error) { alert(error.message); } finally { btn.classList.remove('btn-loading'); }
-    };
-
-    const addQuestionBtn = document.getElementById('add-question-btn');
-    const questionsContainer = document.getElementById('questions-container');
-    let qCounter = 0;
-    if (addQuestionBtn) addQuestionBtn.onclick = () => {
-        qCounter++; const node = document.createElement('div');
-        node.innerHTML = `<div class="question-block border p-4 rounded-lg" data-question-id="${qCounter}"><div class="flex justify-between items-center mb-4"><h4 class="font-bold">Pregunta ${qCounter}</h4><button type="button" class="text-red-500 remove-question-btn">Eliminar</button></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block font-medium mb-1">Tipo</label><select class="w-full p-2 border rounded question-type-select"><option value="opcion_multiple">Opción Múltiple</option><option value="verdadero_falso">Verdadero/Falso</option><option value="completacion">Completación</option></select></div><div class="md:col-span-2"><label class="block font-medium mb-1">Texto</label><input type="text" class="w-full p-2 border rounded question-text"></div><div class="md:col-span-2 options-container"></div><div><label class="block font-medium mb-1">Respuesta</label><input type="text" class="w-full p-2 border rounded correct-answer"></div></div></div>`;
-        questionsContainer.appendChild(node);
-        const ts = node.querySelector('.question-type-select'); const oc = node.querySelector('.options-container');
-        const setOpts = (val) => oc.innerHTML = val === 'opcion_multiple' ? '<label class="block text-xs">Opciones (A,B,C)</label><input type="text" class="w-full p-2 border rounded question-options">' : (val === 'verdadero_falso' ? '<input type="text" value="Verdadero,Falso" readonly class="w-full p-2 border rounded bg-gray-100 question-options">' : '');
-        setOpts(ts.value); ts.onchange = (e) => setOpts(e.target.value);
-    };
-    if (questionsContainer) questionsContainer.onclick = (e) => { if (e.target.classList.contains('remove-question-btn')) e.target.closest('.question-block').remove(); };
-
-    if (createExamForm) createExamForm.onsubmit = async (e) => {
-        e.preventDefault(); const btn = e.target.querySelector('button[type="submit"]'); const payload = { ...Object.fromEntries(new FormData(e.target).entries()), preguntas: [], profesorId: currentUser.userId };
-        questionsContainer.querySelectorAll('.question-block').forEach(block => {
-            const type = block.querySelector('.question-type-select').value;
-            const q = { preguntaTipo: type, textoPregunta: block.querySelector('.question-text').value, respuestaCorrecta: block.querySelector('.correct-answer').value, opciones: {} };
-            const opts = block.querySelector('.question-options')?.value || '';
-            if (type === 'opcion_multiple' || type === 'verdadero_falso') opts.split(',').forEach((p, i) => { const L = ['A', 'B', 'C', 'D'][i]; if (L) q.opciones[L] = p.trim(); });
-            payload.preguntas.push(q);
-        });
-        if (payload.preguntas.length === 0) { alert('Vacío.'); return; }
-        btn.classList.add('btn-loading');
-        try {
-            const res = await fetchApi('EXAM', 'createExam', payload);
-            if (res.status === 'success') { alert('Examen creado.'); e.target.reset(); questionsContainer.innerHTML = ''; qCounter = 0; navDashboard.click(); }
-            else throw new Error(res.message);
-        } catch (error) { alert(error.message); } finally { btn.classList.remove('btn-loading'); }
-    };
-
+    // Inicialización automática de la sección Entregas
+    navEntregas.classList.add('bg-blue-600', 'text-white');
+    navEntregas.classList.remove('bg-white', 'text-gray-700');
     fetchTeacherActivity();
 });

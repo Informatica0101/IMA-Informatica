@@ -178,14 +178,24 @@ document.addEventListener('DOMContentLoaded', () => {
         contentBackButtonContainer.classList.add('hidden');
         contentDisplayArea.innerHTML = '';
 
-        // Lógica de Filtrado por Grado si el usuario está autenticado
+        // Lógica de Filtrado por Grado/Asignatura si el usuario está autenticado
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        let gradesToShow = window.downloadContentData;
+        let gradesToShow = JSON.parse(JSON.stringify(window.downloadContentData)); // Clonar para filtrar
 
-        if (currentUser && currentUser.rol === 'Estudiante' && currentUser.grado) {
-            gradesToShow = window.downloadContentData.filter(g =>
-                g.grade.toLowerCase().includes(currentUser.grado.toLowerCase())
-            );
+        if (currentUser) {
+            if (currentUser.rol === 'Estudiante' && currentUser.grado) {
+                gradesToShow = gradesToShow.filter(g =>
+                    g.grade.toLowerCase().includes(currentUser.grado.toLowerCase())
+                );
+            } else if (currentUser.rol === 'Profesor' && currentUser.asignaturas) {
+                // Filtro para profesores: solo ver sus asignaturas administradas
+                const adminAsigs = currentUser.asignaturas.split(',').map(s => norm(s));
+                gradesToShow.forEach(grade => {
+                    grade.subjects = grade.subjects.filter(sub => adminAsigs.includes(norm(sub.name)));
+                });
+                // Eliminar grados que quedaron sin asignaturas
+                gradesToShow = gradesToShow.filter(g => g.subjects.length > 0);
+            }
         }
 
         const gridDiv = document.createElement('div');

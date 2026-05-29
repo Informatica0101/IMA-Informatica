@@ -317,9 +317,21 @@ function setupProfileLogic() {
     if (desktopNav) {
         const profileBtn = document.createElement('button');
         profileBtn.className = 'text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none flex items-center space-x-1';
-        profileBtn.innerHTML = `<span>Mi Perfil</span>`;
+        profileBtn.innerHTML = `<svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg><span>Mi Perfil</span>`;
         profileBtn.onclick = window.openProfileModal;
         desktopNav.insertBefore(profileBtn, desktopNav.firstChild);
+    }
+
+    const mobileNav = document.querySelector('#mobile-menu-overlay nav');
+    if (mobileNav) {
+        const profileBtn = document.createElement('button');
+        profileBtn.className = 'mobile-nav-link text-blue-600 font-bold';
+        profileBtn.innerHTML = `<svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg><span>Mi Perfil</span>`;
+        profileBtn.onclick = () => {
+            window.openProfileModal();
+            if (window.closeMobileMenu) window.closeMobileMenu();
+        };
+        mobileNav.insertBefore(profileBtn, mobileNav.firstChild);
     }
 }
 

@@ -937,3 +937,42 @@ DESCRIPCIÓN DE CAMBIOS:
 - Seguridad e Integridad:
   - Implementado sistema de Checksums (Adler-32) para validación de integridad en subidas de archivos.
   - Corregida vulnerabilidad en recuperación de contraseña: eliminada fuga de tokens en respuesta API y migrada clave secreta a `PropertiesService`.
+
+29/05/2026
+- Archivo: js/config.js
+  - Actualizadas las URLs de los microservicios USER y TASK a los nuevos endpoints de producción.
+- Archivo: css/style.css
+  - Implementado sistema de espaciado estandarizado (4px, 8px, 12px, 16px, 24px, 32px) mediante variables CSS.
+  - Rediseño de botones para un estilo más compacto (padding 8px 16px) y profesional.
+  - Ajuste de bordes redondeados (8px) y sombras en .dashboard-card para eliminar estética "IA-template".
+  - Restaurado font-size base a 16px para mejor manejo de jerarquía tipográfica.
+- Archivo: index.html
+  - Rediseño de la Hero Section: reducción de padding vertical y altura mínima para eliminar espacio desperdiciado en móviles.
+  - Compactación de secciones de contenido y actividades con nuevos estilos de tarjeta y espaciado realista.
+  - Ajuste de alineación y distribución de botones en el encabezado.
+- Archivo: js/index-ui.js
+  - Implementada lógica de filtrado de contenido educativo para profesores: ahora visualizan únicamente material relacionado con las asignaturas que administran.
+- Archivo: js/teacher.js
+  - Eliminada función redundante 'fetchTeacherActivity' que causaba conflictos lógicos.
+  - Asegurada la carga inicial automática de la sección "Entregas" al entrar al dashboard.
+  - Implementado Módulo de Reportes Visuales: tabla de calificaciones con Nº Lista, Alumno y Nota Total.
+  - Añadida funcionalidad de ordenamiento dinámico por columnas en la tabla de reportes.
+  - Integrada lógica de "Grado más cercano" para pre-cargar el reporte más relevante al ingresar.
+- Archivo: teacher-dashboard.html
+  - Rediseño de la sección de reportes: añadida tabla visual interactiva con cabecera de ordenamiento.
+  - Reubicado el botón de "Exportar a Excel" debajo de la tabla de calificaciones.
+- Archivo: student-dashboard.html
+  - Corregido el modal de entrega: implementado scroll vertical interno y límite de altura (90vh) para permitir el acceso al botón de confirmación con múltiples archivos.
+  - Eliminado botón obsoleto "Aceptar y Subir".
+- Archivo: js/student.js
+  - Automatizada la subida de archivos al seleccionarlos, eliminando el paso manual intermedio.
+  - Mejorada la gestión de estados visuales durante la carga secuencial.
+
+29/05/2026 (Continuación)
+- Archivo: teacher-dashboard.html
+  - Añadido contenedor '#student-info-banner' para visualizar detalles del alumno y botón de WhatsApp en la vista de historial de actividades.
+- Archivo: js/teacher.js
+  - Actualizada la función 'renderCurrentLevel' para inyectar dinámicamente la información del alumno (Nombre, Nº Lista, Email) y el botón de WhatsApp cuando el profesor consulta los detalles de un estudiante.
+  - El botón de WhatsApp se habilita automáticamente si el alumno tiene un número registrado.
+- Archivo: forgot-password.html
+  - Integrados scripts de UI común para asegurar la disponibilidad del botón "Mi Perfil" y la navegación estandarizada.
