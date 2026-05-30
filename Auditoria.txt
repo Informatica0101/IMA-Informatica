@@ -1,0 +1,73 @@
+REGISTRO DE AUDITORÍA - PROCESO ESTÁNDAR
+=======================================
+
+ARCHIVO: index.html
+-------------------
+FECHA: 15/06/2026
+HALLAZGOS:
+1. [Crítico] Error de conexión en el módulo "Mi Perfil" debido a la falta de importación de `js/config.js` y `js/api.js`.
+2. [Crítico] El encabezado utiliza menús ocultos y hamburguesa, violando la directriz de navegación visible en escritorio.
+3. [Mejora] El botón de "Mi Perfil" no es consistente con los dashboards.
+4. [Diseño] El espaciado no sigue la regla de los 4px.
+5. [Visual] El logo institucional y la bandera de Honduras se ocultan en resoluciones móviles dentro de menús.
+
+ESTADO: Resuelto. Se agregaron las dependencias, se rediseñó el header para navegación horizontal en desktop y barra inferior en móvil, y se aplicó el sistema de 4px.
+
+ARCHIVO: js/index-ui.js
+-----------------------
+FECHA: 15/06/2026
+HALLAZGOS:
+1. [Lógica] La función `saveProfileChanges` no manejaba el campo `numeroLista`.
+2. [Lógica] Falta de sincronización de la UI tras actualizar el perfil.
+3. [UX] El cierre del modal de perfil no limpiaba los estados de error.
+
+ESTADO: Resuelto. Se integró `numeroLista` y se mejoró el feedback de guardado.
+
+ARCHIVO: js/ui-common.js
+------------------------
+FECHA: 15/06/2026
+HALLAZGOS:
+1. [Navegación] Lógica de menú hamburguesa obsoleta.
+2. [Identidad] El header dinámico no mantenía la visibilidad permanente de los logos institucionales.
+3. [Consistencia] El botón de perfil se inyectaba de forma inconsistente entre roles.
+
+ESTADO: Resuelto. Se centralizó la navegación horizontal/inferior y se garantizó la visibilidad de logos.
+
+ARCHIVO: backend/user-service/Code.gs
+-------------------------------------
+FECHA: 15/06/2026
+HALLAZGOS:
+1. [Persistencia] La función `updateUserProfile` solo actualizaba el teléfono de forma confiable.
+2. [Seguridad] No se validaba la unicidad del email al actualizar el perfil.
+3. [Esquema] El orden de columnas en la hoja Usuarios no estaba estrictamente forzado en las escrituras.
+4. [Identidad] La lógica dependía del correo electrónico como clave en algunos puntos, rompiendo el historial si el correo cambiaba.
+
+ESTADO: Resuelto. Se forzó el uso de `userId` como clave primaria, se validó el email y se corrigió el mapeo de columnas (A-I).
+
+ARCHIVO: js/teacher.js
+----------------------
+FECHA: 15/06/2026
+HALLAZGOS:
+1. [Visual] La tarjeta del alumno no mostraba el correo electrónico del estudiante.
+2. [Lógica] El cálculo de "Progreso del Parcial" era una simple tasa de entrega, ignorando la carga académica total y la puntualidad.
+3. [Navegación] El filtro de búsqueda global no poblaba el correo en el expediente del alumno.
+
+ESTADO: Resuelto. Se integró el email en la UI y se implementó la métrica compuesta (30/50/20) para el progreso.
+
+ARCHIVO: css/style.css
+----------------------
+FECHA: 15/06/2026
+HALLAZGOS:
+1. [UX] Efecto de blur excesivo en el módulo "Cursos" (backdrop-blur-xl) dificultaba la lectura.
+2. [Estilo] Botones con sombras neón y colores saturados no acordes al entorno académico.
+3. [Diseño] Falta de clases de utilidad para el sistema de espaciado de 4px.
+
+ESTADO: Resuelto. Se eliminó el blur excesivo, se normalizaron los colores a la paleta institucional y se crearon las utilidades de 4px.
+
+ARCHIVO: README.md
+------------------
+FECHA: 15/06/2026
+HALLAZGOS:
+1. [Documentación] El orden de las columnas de la hoja "Usuarios" no estaba especificado claramente.
+
+ESTADO: Resuelto. Se añadió la sección "Estructura de Base de Datos (Google Sheets)".

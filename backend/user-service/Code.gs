@@ -129,7 +129,7 @@ function loginUser(payload) {
     if ((row[4]?.toString().toLowerCase().trim() === lowerId || row[1]?.toString().toLowerCase().trim() === lowerId) && row[5] === hashedPassword) {
       return {
         status: "success",
-        data: { userId: row[0], nombre: row[1], grado: row[2], seccion: row[3], rol: row[6], telefono: row[7] || "", numeroLista: row[8] || "" }
+        data: { userId: row[0], nombre: row[1], grado: row[2], seccion: row[3], email: row[4], rol: row[6], telefono: row[7] || "", numeroLista: row[8] || "" }
       };
     }
   }
@@ -147,7 +147,7 @@ function getStudentsByGradoSeccion(payload) {
 
   const students = data.filter(r => {
     return String(r[6]).trim() === 'Estudiante' && normalizeString(r[2]) === sGrado && (!seccion || normalizeString(r[3]) === sSeccion);
-  }).map(r => ({ userId: r[0], nombre: r[1], grado: r[2], seccion: r[3], telefono: r[7] || "", numeroLista: r[8] || "" }));
+  }).map(r => ({ userId: r[0], nombre: r[1], grado: r[2], seccion: r[3], email: r[4], telefono: r[7] || "", numeroLista: r[8] || "" }));
 
   students.sort((a, b) => (parseInt(a.numeroLista) || 999) - (parseInt(b.numeroLista) || 999));
   return { status: "success", data: students };
@@ -215,7 +215,7 @@ function resetPassword(payload) {
 }
 
 function updateUserProfile(payload) {
-  const { userId, nombre, telefono, numeroLista, currentPassword, password } = payload || {};
+  const { userId, nombre, email, telefono, numeroLista, currentPassword, password } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
   const data = sheet.getDataRange().getValues();
@@ -238,6 +238,16 @@ function updateUserProfile(payload) {
   }
 
   if (nombre) userRow[1] = nombre;
+  if (email) {
+    // Validar si el email ya existe en otro usuario
+    const lowerEmail = email.toLowerCase().trim();
+    for (let i = 1; i < data.length; i++) {
+      if (i !== rowIndex && data[i][4]?.toString().toLowerCase().trim() === lowerEmail) {
+        throw new Error("El nuevo correo electrónico ya está registrado por otro usuario.");
+      }
+    }
+    userRow[4] = lowerEmail;
+  }
   if (telefono !== undefined) userRow[7] = telefono;
   if (numeroLista !== undefined) userRow[8] = numeroLista;
 

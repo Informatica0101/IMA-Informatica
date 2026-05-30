@@ -705,7 +705,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const key = `${item.alumnoId}`;
             if (!seen.has(key)) {
                 if (norm(item.alumnoNombre).includes(norm(search))) {
-                    alumnosGlobal.push({ id: item.alumnoId, nombre: item.alumnoNombre, grado: item.grado, seccion: item.seccion, total: 0 });
+                    alumnosGlobal.push({
+                        id: item.alumnoId,
+                        nombre: item.alumnoNombre,
+                        email: item.email,
+                        grado: item.grado,
+                        seccion: item.seccion,
+                        total: 0
+                    });
                     seen.add(key);
                 }
             }
@@ -964,14 +971,47 @@ document.addEventListener('DOMContentLoaded', () => {
             const waPhone = studentInfo.telefono ? studentInfo.telefono.replace(/\D/g, '') : '';
             const waLink = waPhone ? `https://wa.me/504${waPhone}` : '#';
 
-            // Calcular resumen de estados para este parcial/asignatura
+            // Calcular carga académica total (A-73)
+            const subjectAssignments = allAssignmentsRaw.filter(a =>
+                norm(a.grado) === norm(grado) &&
+                (!a.seccion || norm(a.seccion) === norm(seccion) || norm(a.seccion) === 'todas') &&
+                norm(a.asignatura) === norm(asignatura) &&
+                norm(a.parcial) === norm(parcial)
+            );
+
             const studentSubmissions = allActivityRaw.filter(sub =>
                 sub.alumnoId == alumnoId &&
-                (isGlobalSearch || (norm(sub.asignatura) === norm(asignatura) && norm(sub.parcial) === norm(parcial)))
+                norm(sub.grado) === norm(grado) &&
+                norm(sub.seccion) === norm(seccion) &&
+                norm(sub.asignatura) === norm(asignatura) &&
+                norm(sub.parcial) === norm(parcial)
             );
-            const total = studentSubmissions.length;
-            const completed = studentSubmissions.filter(s => s.estado === 'Completada' || s.estado === 'Revisada').length;
-            const pending = studentSubmissions.filter(s => s.estado === 'Pendiente' || s.estado === 'Pendiente de revisión' || !s.estado).length;
+
+            const totalAssigned = subjectAssignments.length;
+            const delivered = studentSubmissions.length;
+            const completed = studentSubmissions.filter(s => s.estado === 'Completada' || s.estado === 'Revisada' || s.estado === 'Finalizado').length;
+            const pending = studentSubmissions.filter(s => (s.estado === 'Pendiente' || s.estado === 'Pendiente de revisión' || !s.estado) && (s.fileId || s.respuestas || s.entregaId)).length;
+
+            // Métrica compuesta (Req 4.2 y 4.3)
+            const deliveryRate = totalAssigned > 0 ? (delivered / totalAssigned) : 0;
+            const gradeSum = studentSubmissions.reduce((sum, s) => sum + parseFloat(s.calificacion || 0), 0);
+            const maxGradePossible = subjectAssignments.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
+            const academicPerformance = maxGradePossible > 0 ? (gradeSum / maxGradePossible) : 0;
+
+            // Factor Puntualidad: Penalización por entregas tardías (si aplica)
+            let onTimeCount = 0;
+            studentSubmissions.forEach(sub => {
+                const assignment = subjectAssignments.find(a => norm(a.titulo) === norm(sub.titulo));
+                if (assignment && assignment.fechaLimite) {
+                    if (new Date(sub.fecha) <= new Date(assignment.fechaLimite)) onTimeCount++;
+                } else {
+                    onTimeCount++; // Si no hay fecha límite, se considera a tiempo
+                }
+            });
+            const punctualityRate = delivered > 0 ? (onTimeCount / delivered) : 1;
+
+            // Progreso = (Tasa de entrega * 0.3) + (Rendimiento académico * 0.5) + (Puntualidad * 0.2)
+            const compositeProgress = Math.round(((deliveryRate * 0.3) + (academicPerformance * 0.5) + (punctualityRate * 0.2)) * 100);
 
             infoCard.innerHTML = `
                 <div class="p-6 md:p-10">
@@ -1029,10 +1069,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div>
                                     <div class="flex items-center justify-between mb-3">
                                         <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Nivel de Entrega</span>
-                                        <span class="text-sm font-semibold text-blue-600">${total > 0 ? Math.round((completed/total)*100) : 0}%</span>
+                                        <span class="text-sm font-semibold text-blue-600">${compositeProgress}%</span>
                                     </div>
                                     <div class="w-full bg-gray-100 h-4 rounded-full overflow-hidden border border-gray-200 p-1">
-                                        <div class="bg-blue-600 h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(37,99,235,0.4)]" style="width: ${total > 0 ? (completed/total)*100 : 0}%"></div>
+                                        <div class="bg-blue-600 h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(37,99,235,0.4)]" style="width: ${compositeProgress}%"></div>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
@@ -1041,8 +1081,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <span class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Completas</span>
                                     </div>
                                     <div class="p-5 bg-white rounded-[1.5rem] border border-gray-100 text-center shadow-sm">
-                                        <span class="block text-3xl font-semibold text-yellow-500">${pending}</span>
-                                        <span class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Pendientes</span>
+                                        <span class="block text-3xl font-semibold text-yellow-500">${totalAssigned - completed}</span>
+                                        <span class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Faltantes</span>
                                     </div>
                                 </div>
                             </div>
@@ -1054,13 +1094,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="bg-gray-900 rounded-[2rem] p-8 flex flex-col justify-between h-full relative overflow-hidden group">
                                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
                                 <div class="text-center py-4 relative z-10">
-                                    ${pending === 0 && total > 0 ?
+                                    ${pending === 0 && (totalAssigned - completed) === 0 && totalAssigned > 0 ?
                                         `<div class="inline-flex p-4 bg-green-500/20 text-green-400 rounded-2xl mb-4 border border-green-500/30"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg></div>
                                          <div class="text-xl font-semibold text-white tracking-tight uppercase">EXPEDIENTE AL DÍA</div>
-                                         <p class="text-[10px] text-gray-500 uppercase font-semibold tracking-widest mt-2">Sin revisiones pendientes</p>` :
+                                         <p class="text-[10px] text-gray-500 uppercase font-semibold tracking-widest mt-2">Carga académica completada</p>` :
                                         `<div class="inline-flex p-4 bg-yellow-500/20 text-yellow-400 rounded-2xl mb-4 border border-yellow-500/30"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-                                         <div class="text-xl font-semibold text-white tracking-tight uppercase">CON PENDIENTES</div>
-                                         <p class="text-[10px] text-gray-500 uppercase font-semibold tracking-widest mt-2">${pending} Tareas por calificar</p>`
+                                         <div class="text-xl font-semibold text-white tracking-tight uppercase">ACTIVIDAD EN CURSO</div>
+                                         <p class="text-[10px] text-gray-500 uppercase font-semibold tracking-widest mt-2">${pending} por calificar / ${totalAssigned - completed} faltantes</p>`
                                     }
                                 </div>
                                 <div class="mt-6 pt-6 border-t border-white/10 relative z-10">
@@ -1211,7 +1251,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         grado: item.grado,
                         seccion: item.seccion,
                         asignatura: 'Búsqueda Global',
-                        parcial: 'Todos los Parciales'
+                        parcial: 'Todos los Parciales',
+                        studentInfo: { nombre: item.nombre, email: item.email, userId: item.id }
                     });
                     return;
                 }
@@ -1315,7 +1356,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (student) {
             if (listEl) listEl.textContent = student.numeroLista || '-';
-            if (emailEl) emailEl.textContent = student.email || 'N/A';
+            if (emailEl) emailEl.textContent = student.email || entrega.email || 'N/A';
             if (phoneEl) phoneEl.textContent = student.telefono || 'N/A';
             if (waBtn) {
                 const waPhone = student.telefono ? student.telefono.replace(/\D/g, '') : '';

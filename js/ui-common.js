@@ -4,10 +4,8 @@
 
 window.setupCommonUI = function() {
     const mainHeader = document.getElementById('main-header');
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
     const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-    const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+    const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
 
     const mobileCoursesToggle = document.getElementById('mobile-courses-toggle');
     const mobileCoursesArrow = document.getElementById('mobile-courses-arrow');
@@ -51,31 +49,21 @@ window.setupCommonUI = function() {
             backdrop.onclick = () => window.closeMobileMenu();
         }
 
-        function toggleMobileMenu(sectionToOpen = null) {
-            const isOpening = mobileMenuOverlay.classList.contains('hidden');
-            if (isOpening) {
-                mobileMenuOverlay.classList.remove('hidden');
-                backdrop.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                if (sectionToOpen === 'courses' && mobileCoursesToggle) {
-                    resetMobileMenuState();
-                    mobileCoursesContainer.classList.remove('hidden-height');
-                    mobileCoursesContainer.classList.add('visible-height');
-                    mobileCoursesArrow.classList.add('rotate-90');
-                }
-            } else {
-                window.closeMobileMenu();
-            }
-        }
-
         window.openMobileMenu = function(section = null) {
-            if (mobileMenuOverlay.classList.contains('hidden')) {
-                toggleMobileMenu(section);
-            } else if (section === 'courses') {
+            mobileMenuOverlay.classList.remove('hidden');
+            backdrop.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            if (section === 'courses') {
                 resetMobileMenuState();
                 mobileCoursesContainer.classList.remove('hidden-height');
                 mobileCoursesContainer.classList.add('visible-height');
                 mobileCoursesArrow.classList.add('rotate-90');
+            } else if (section === 'content') {
+                resetMobileMenuState();
+                mobileContentContainer.classList.remove('hidden-height');
+                mobileContentContainer.classList.add('visible-height');
+                mobileContentArrow.classList.add('rotate-90');
             }
         };
 
@@ -95,7 +83,6 @@ window.setupCommonUI = function() {
             });
         }
 
-        if (mobileMenuButton) mobileMenuButton.addEventListener('click', () => toggleMobileMenu());
         if (mobileMenuCloseButton) mobileMenuCloseButton.addEventListener('click', () => window.closeMobileMenu());
 
         if (mobileCoursesToggle) {

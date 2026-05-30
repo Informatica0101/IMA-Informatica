@@ -113,16 +113,18 @@ La hoja de cálculo con ID `1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww` es la 
 <details>
 <summary><strong>Estructura Detallada de Hojas</strong></summary>
 
-**Hoja: `Usuarios`**
+**Hoja: `Usuarios`** (Orden de columnas obligatorio)
 | Columna | Nombre | Tipo | Descripción |
 | :--- | :--- | :--- | :--- |
 | A | `userId` | `String` | ID único del usuario (ej. `USR-167...`). |
 | B | `nombre` | `String` | Nombre completo. |
 | C | `grado` | `String` | Grado del estudiante. |
 | D | `seccion` | `String` | Sección del estudiante. |
-| E | `email` | `String` | Correo para login. |
-| F | `password` | `String` | Contraseña hasheada (SHA-256). |
+| E | `email` | `String` | Correo para login / Notificaciones. |
+| F | `hashedPassword` | `String` | Contraseña hasheada (SHA-256). |
 | G | `rol` | `String` | "Estudiante" o "Profesor". |
+| H | `telefono` | `String` | WhatsApp / Teléfono. |
+| I | `No. de lista` | `String` | Número de lista asignado al alumno. |
 
 **Hoja: `Tareas`**
 | Columna | Nombre | Tipo | Descripción |

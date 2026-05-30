@@ -463,6 +463,7 @@ function getTeacherActivity(payload) {
       titulo: tarea[2], // Tarea ya verificada arriba
       alumnoId: entrega[2], // Columna C: userId
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
+      email: usuario ? usuario[4] : "N/A",
       grado: usuario ? usuario[2] : "N/A",
       seccion: usuario ? usuario[3] : "N/A",
       asignatura: tarea[5] || "N/A",

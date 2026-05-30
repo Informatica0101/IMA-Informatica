@@ -301,6 +301,15 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('profile-nombre').value = user.nombre;
             document.getElementById('profile-email').value = user.email || '';
             document.getElementById('profile-telefono').value = user.telefono || '';
+
+            const nlInput = document.getElementById('profile-numeroLista');
+            const nlContainer = document.getElementById('profile-numeroLista-container');
+            if (nlInput) nlInput.value = user.numeroLista || '';
+            if (nlContainer) {
+                if (user.rol === 'Profesor') nlContainer.classList.add('hidden');
+                else nlContainer.classList.remove('hidden');
+            }
+
             profileModal.classList.remove('hidden');
         };
     }
@@ -332,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 nombre: document.getElementById('profile-nombre').value,
                 email: document.getElementById('profile-email').value,
                 telefono: document.getElementById('profile-telefono').value,
+                numeroLista: document.getElementById('profile-numeroLista') ? document.getElementById('profile-numeroLista').value : undefined,
                 currentPassword: currentPassword || undefined,
                 password: newPassword || undefined
             };
@@ -345,6 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     user.nombre = payload.nombre;
                     user.email = payload.email;
                     user.telefono = payload.telefono;
+                    if (payload.numeroLista !== undefined) user.numeroLista = payload.numeroLista;
                     localStorage.setItem('currentUser', JSON.stringify(user));
                     renderWelcomeMessage();
                     alert('Perfil actualizado correctamente.');
