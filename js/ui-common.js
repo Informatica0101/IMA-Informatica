@@ -123,6 +123,29 @@ window.setupCommonUI = function() {
     // Render Navigation
     window.renderCommonNav();
 
+    // --- Dropdown Viewport Protection (A-76) ---
+    const handleDropdownOverflow = () => {
+        const submenus = document.querySelectorAll('.group .absolute.left-full');
+        submenus.forEach(menu => {
+            const parent = menu.parentElement;
+            parent.addEventListener('mouseenter', () => {
+                // Temporarily show to measure
+                menu.style.visibility = 'hidden';
+                menu.style.display = 'block';
+                const rect = menu.getBoundingClientRect();
+                menu.style.display = '';
+                menu.style.visibility = '';
+
+                if (rect.right > window.innerWidth) {
+                    menu.classList.add('dropdown-reverse');
+                } else {
+                    menu.classList.remove('dropdown-reverse');
+                }
+            });
+        });
+    };
+    handleDropdownOverflow();
+
     // --- Unified Profile Form Handler (A-73/75) ---
     // Sincronizar campos y asegurar que la lógica sea atómica para evitar "Error de conexión"
     const profileForm = document.getElementById('profile-form');
@@ -337,47 +360,53 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
     switch(level) {
         case 'Grado':
             label.textContent = 'Selecciona Grado';
-            items = [...new Set(sourceData.map(d => d.grado))];
+            items = [...new Set(sourceData.map(d => d.grade))].filter(Boolean);
             nextLevel = 'Sección';
             break;
         case 'Sección':
             label.textContent = 'Selecciona Sección';
-            items = [...new Set(sourceData.filter(d => d.grado === params.grado).map(d => d.seccion))];
+            const gradeObj = sourceData.find(d => d.grade === params.grado);
+            items = gradeObj ? gradeObj.sections : [];
             // Estudiante: Sección -> Parcial. Profesor: Sección -> Asignatura.
             nextLevel = (role === 'Profesor') ? 'Asignatura' : 'Parcial';
             break;
         case 'Asignatura':
             label.textContent = 'Selecciona Asignatura';
-            items = [...new Set(sourceData.filter(d =>
-                d.grado === params.grado &&
-                d.seccion === params.seccion &&
-                (!params.parcial || d.parcial === params.parcial)
-            ).map(d => d.asignatura))];
+            const gradeObjA = sourceData.find(d => d.grade === params.grado);
+            if (gradeObjA) {
+                items = [...new Set(gradeObjA.subjects
+                    .filter(s => s.sections.includes(params.seccion) && (!params.parcial || s.partial === params.parcial))
+                    .map(s => s.name)
+                )];
+            }
             nextLevel = (role === 'Profesor') ? 'Parcial' : 'Temas';
             if (type === 'Contenido' && role !== 'Profesor') nextLevel = 'Archivos';
             break;
         case 'Parcial':
             label.textContent = 'Selecciona Parcial';
-            items = [...new Set(sourceData.filter(d =>
-                d.grado === params.grado &&
-                d.seccion === params.seccion &&
-                (!params.asignatura || d.asignatura === params.asignatura)
-            ).map(d => d.parcial))];
+            const gradeObjP = sourceData.find(d => d.grade === params.grado);
+            if (gradeObjP) {
+                items = [...new Set(gradeObjP.subjects
+                    .filter(s => s.sections.includes(params.seccion) && (!params.asignatura || s.name === params.asignatura))
+                    .map(s => s.partial)
+                )];
+            }
             // Estudiante: Parcial -> Asignatura. Profesor: Parcial -> Temas.
             nextLevel = (role === 'Profesor') ? (type === 'Presentaciones' ? 'Temas' : 'Archivos') : 'Asignatura';
             break;
         case 'Temas':
         case 'Archivos':
             label.textContent = (type === 'Presentaciones') ? 'Selecciona Tema' : 'Descargar Archivos';
-            const finalFilter = { grado: params.grado, seccion: params.seccion, parcial: params.parcial };
-            if (params.asignatura) finalFilter.asignatura = params.asignatura;
-
-            const finalItems = sourceData.filter(d =>
-                d.grado === finalFilter.grado &&
-                d.seccion === finalFilter.seccion &&
-                d.parcial === finalFilter.parcial &&
-                (!finalFilter.asignatura || d.asignatura === finalFilter.asignatura)
-            );
+            const gradeObjT = sourceData.find(d => d.grade === params.grado);
+            let finalItems = [];
+            if (gradeObjT) {
+                const subject = gradeObjT.subjects.find(s =>
+                    s.name === params.asignatura &&
+                    s.partial === params.parcial &&
+                    s.sections.includes(params.seccion)
+                );
+                finalItems = subject ? subject.topics : [];
+            }
 
             if (finalItems.length === 0) {
                 container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay contenido disponible.</p>';
@@ -385,12 +414,12 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
             }
 
             container.innerHTML = finalItems.map(item => `
-                <a href="${item.url}" ${type === 'Contenido' ? 'download' : 'target="_blank"'} class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
+                <a href="${item.file}" ${type === 'Contenido' ? 'download' : 'target="_blank"'} class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 rounded-lg ${type === 'Presentaciones' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'} flex items-center justify-center text-xs">
                             <i class="fas ${type === 'Presentaciones' ? 'fa-desktop' : 'fa-download'}"></i>
                         </div>
-                        <span class="text-sm font-semibold text-gray-700">${item.titulo}</span>
+                        <span class="text-sm font-semibold text-gray-700">${item.title}</span>
                     </div>
                     <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
                 </a>
@@ -404,7 +433,7 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
     }
 
     container.innerHTML = items.map(item => `
-        <button onclick='window.renderHierarchyLevel("${type}", "${nextLevel}", ${JSON.stringify({...params, [level.toLowerCase() === 'sección' ? 'seccion' : level.toLowerCase()]: item})})'
+        <button onclick='window.renderHierarchyLevel("${type}", "${nextLevel}", ${JSON.stringify({...params, [level === 'Grado' ? 'grado' : (level === 'Sección' ? 'seccion' : (level === 'Asignatura' ? 'asignatura' : (level === 'Parcial' ? 'parcial' : level.toLowerCase())))]: item})})'
                 class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
             <span class="text-sm font-semibold text-gray-700">${item}</span>
             <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>

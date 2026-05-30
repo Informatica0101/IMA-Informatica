@@ -72,6 +72,18 @@ body {
     }
 }
 
+@media (min-width: 1280px) {
+    .container {
+        max-width: 95% !important;
+    }
+}
+
+@media (min-width: 1536px) {
+    .container {
+        max-width: 1440px !important;
+    }
+}
+
 .logo-img {
     height: auto;
     width: 50px;
@@ -211,7 +223,7 @@ p { font-size: 0.875rem; line-height: 1.6; color: var(--blue-grayish); font-weig
 }
 
 .nav-link-desktop {
-    padding: 8px 12px;
+    padding: 8px 8px;
     font-size: 10px;
     font-weight: 600;
     color: #4b5563;
@@ -232,6 +244,12 @@ p { font-size: 0.875rem; line-height: 1.6; color: var(--blue-grayish); font-weig
 }
 .group:hover .group-hover\:visible {
     visibility: visible !important;
+}
+
+.dropdown-reverse {
+    left: auto !important;
+    right: 100% !important;
+    margin-right: 0.5rem;
 }
 
 /* Footer Compact */
