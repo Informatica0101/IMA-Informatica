@@ -17,6 +17,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=21">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="font-inter antialiased text-gray-900 min-h-screen flex flex-col">
 
@@ -35,10 +36,30 @@
             </div>
 
             <!-- Navegación Escritorio: Horizontal y Permanente (Req 2) -->
-            <nav class="hidden lg:flex items-center gap-1">
+            <nav class="hidden md:flex items-center gap-1">
                 <a href="index.html" class="nav-link-desktop active">Inicio</a>
                 <a href="login.html" id="nav-portal-link" class="nav-link-desktop">Portal</a>
-                <button onclick="window.openAcademicMenu()" class="nav-link-desktop">Cursos</button>
+
+                <!-- Dropdown Cursos -->
+                <div class="relative group">
+                    <button class="nav-link-desktop flex items-center gap-1">
+                        Cursos <i class="fas fa-chevron-down text-[8px] opacity-50 group-hover:rotate-180 transition-transform"></i>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-56 bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 border border-gray-100 z-[110]">
+                        <div id="desktop-courses-menu"></div>
+                    </div>
+                </div>
+
+                <!-- Dropdown Contenido -->
+                <div class="relative group">
+                    <button class="nav-link-desktop flex items-center gap-1">
+                        Contenido <i class="fas fa-chevron-down text-[8px] opacity-50 group-hover:rotate-180 transition-transform"></i>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-64 bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 border border-gray-100 z-[110]">
+                        <div id="desktop-content-menu"></div>
+                    </div>
+                </div>
+
                 <a href="#" onclick="handleHeaderAction('show-activities')" class="nav-link-desktop">Actividades</a>
                 <a href="pseudocode.html" class="nav-link-desktop">Pseudocódigo</a>
                 <button id="open-profile-btn" class="nav-link-desktop">Mi perfil</button>
@@ -251,15 +272,18 @@
     </div>
 
     <!-- NAVEGACIÓN MÓVIL (Req 3 / A-75): Barra Inferior Icon-Only, Sin Hamburguesa -->
-    <div class="mobile-bottom-nav lg:hidden z-[2000]">
+    <div class="mobile-bottom-nav md:hidden z-[2000]">
         <a href="index.html" class="bottom-nav-item active" title="Inicio">
             <i class="fas fa-home text-xl"></i>
         </a>
         <a href="login.html" id="mobile-portal-bottom-nav" class="bottom-nav-item" title="Portal">
             <i class="fas fa-th-large text-xl"></i>
         </a>
-        <button class="bottom-nav-item" onclick="window.openAcademicMenu()" title="Cursos">
+        <button class="bottom-nav-item" onclick="window.openAcademicHierarchy('Presentaciones')" title="Cursos">
             <i class="fas fa-book-open text-xl"></i>
+        </button>
+        <button class="bottom-nav-item" onclick="window.openAcademicHierarchy('Contenido')" title="Contenido">
+            <i class="fas fa-file-pdf text-xl"></i>
         </button>
         <a href="#" onclick="handleHeaderAction('show-activities')" class="bottom-nav-item" title="Actividades">
             <i class="fas fa-gamepad text-xl"></i>

@@ -108,26 +108,27 @@ TAREAS PENDIENTES DE REVISIÓN
 4. Rediseño UI/UX Institucional (Header, Nav horizontal/inferior, eliminación hamburguesa). - COMPLETADA
 5. Sincronizar cambios de correo mediante userId persistente. - COMPLETADA
 6. Corregir error de acceso a detalles de alumnos con teléfono registrado en el dashboard del profesor. - COMPLETADA
+7. [CRÍTICO] Corregir Error de Conexión en módulo "Mi Perfil" desde index.html. - COMPLETADA
+8. [CRÍTICO] Hardeo de Persistencia en hoja "Usuarios" (Nombre, Email, Password, Teléfono, No. Lista). - COMPLETADA
+9. [DOCENTE] Renderizar correo institucional en Tarjeta del Alumno y Modal de Calificación. - COMPLETADA
+10. [DOCENTE] Sincronizar Métrica Compuesta de "Progreso del Parcial" (30/50/20). - COMPLETADA
+11. [ESTUDIANTE] Sincronizar userId persistente para historial académico. - COMPLETADA
+12. [ESTUDIANTE] Obtener nombres reales de las asignaturas en la sección "Mis asignaturas". - COMPLETADA
+13. [ESTUDIANTE] Implementar visualización dinámica de la información del docente (WhatsApp/Correo). - COMPLETADA
+14. [REDISEÑO UI/UX] Encabezado Global: Logos Institucional (80px) y Honduras (45px) permanentes. - COMPLETADA
+15. [REDISEÑO UI/UX] Navegación Escritorio: Barra horizontal persistente. - COMPLETADA
+16. [REDISEÑO UI/UX] Navegación Móvil/PWA: Barra inferior fija (icon-only). - COMPLETADA
+17. [REDISEÑO UI/UX] Módulo "Cursos": Rediseño de overlay (0.95 opacity, fondo oscuro, sin blur). - COMPLETADA
+18. [REDISEÑO UI/UX] Estabilidad Visual: Aplicar sistema de 4px y tipografía profesional. - COMPLETADA
 
 ------------------------------------------------------------------------------------------------
 
 [TAREAS A REALIZAR]
 
-1. [CRÍTICO] Corregir Error de Conexión en módulo "Mi Perfil" desde index.html. Unificar lógica en js/ui-common.js y asegurar importación de dependencias (config.js, api.js).
-2. [CRÍTICO] Hardeo de Persistencia en hoja "Usuarios": Asegurar que Nombre, Email, Password, Teléfono y No. Lista se guarden correctamente usando userId como PK.
-3. [DOCENTE] Renderizar correo institucional en Tarjeta de Información del Alumno y Modal de Calificación.
-4. [DOCENTE] Sincronizar Métrica Compuesta de "Progreso del Parcial" (30% Entrega, 50% Rendimiento, 20% Puntualidad) en la tarjeta del alumno.
-5. [ESTUDIANTE] Sincronizar userId persistente para evitar ruptura de historial académico al cambiar correo.
-6. [ESTUDIANTE] Obtener nombres reales de las asignaturas en la sección "Mis asignaturas" (Columna F de la hoja "Tareas").
-7. [ESTUDIANTE] Implementar visualización dinámica de la información del docente (Nombre, Correo, Teléfono, WhatsApp) usando profesorId.
-8. [REDISEÑO UI/UX] Encabezado Global: Logos Institucional (80px) y Honduras (45px) permanentes y visibles.
-9. [REDISEÑO UI/UX] Navegación Escritorio: Barra horizontal persistente (sin hamburguesa).
-10. [REDISEÑO UI/UX] Navegación Móvil/PWA: Barra inferior fija (icon-only, sin hamburguesa).
-11. [REDISEÑO UI/UX] Módulo "Cursos": Rediseño de overlay (0.95 opacity, fondo oscuro, sin blur excesivo).
-12. [REDISEÑO UI/UX] Estabilidad Visual: Aplicar sistema de 4px y tipografía profesional en css/style.css.
+(Ninguna tarea pendiente para este commit)
 
 ------------------------------------------------------------------------------------------------
 
 ESTADO DE LAS TAREAS (RESUMEN)
 
-[A-75] EN PROCESO
+[A-75] FINALIZADO (PENDIENTE DE REVISIÓN)

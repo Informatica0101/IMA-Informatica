@@ -1130,3 +1130,7 @@ MODIFICACIONES:
   - Navegación Móvil: Migración total a una barra inferior fija con iconos exclusivos; eliminación definitiva de menús hamburguesa y side drawers.
   - Optimización de Overlays: Eliminación de desenfoque (blur) excesivo en el módulo "Cursos" y aplicación de fondos opacos (rgba 0.95) para máxima legibilidad.
   - Estabilidad: Sincronización de versión de activos a v=21 y limpieza de manejadores de eventos duplicados.
+
+15/06/2026 (Fix Sintaxis)
+- Archivo: js/index-ui.js
+  - Corregido error de sintaxis (Unexpected end of input) al cerrar correctamente el listener 'DOMContentLoaded'.

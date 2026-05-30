@@ -10,10 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tasksList = document.getElementById('tasks-list');
     const logoutButton = document.getElementById('logout-button');
 
-    // --- Mi Perfil (Sincronizado vía ui-common.js) ---
-    const profileModal = document.getElementById('profile-modal');
-    const openProfileBtn = document.getElementById('open-profile-btn');
-    const closeProfileModal = document.getElementById('close-profile-modal');
+    // --- Mi Perfil (Centralizado en ui-common.js) ---
 
     const CHUNK_SIZE = 1024 * 1024 * 2; // 1MB chunks
     const PARCIAL_ORDER = {
@@ -78,10 +75,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const allActivities = [];
             if (tasksResult.status === 'success' && tasksResult.data) {
-                allActivities.push(...tasksResult.data.map(task => ({ ...task, type: task.tipo || 'Tarea' })));
+                // Saneamiento de datos: Asegurar que asignatura y parcial existan y estén limpios
+                allActivities.push(...tasksResult.data.map(task => ({
+                    ...task,
+                    type: task.tipo || 'Tarea',
+                    asignatura: (task.asignatura || 'General').trim(),
+                    parcial: (task.parcial || 'Sin Parcial').trim()
+                })));
             }
             if (examsResult.status === 'success' && examsResult.data) {
-                allActivities.push(...examsResult.data.map(exam => ({ ...exam, type: 'Examen' })));
+                allActivities.push(...examsResult.data.map(exam => ({
+                    ...exam,
+                    type: 'Examen',
+                    asignatura: (exam.asignatura || 'General').trim(),
+                    parcial: (exam.parcial || 'Sin Parcial').trim()
+                })));
             }
 
             allActivities.sort((a, b) => {
@@ -101,8 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Task 4: Render Expediente
             renderStudentExpediente(allActivities);
 
-            // Task 9: Render Subject Navigation
-            renderSubjectNav(allActivities);
+            // Iniciar renderizado jerárquico (Parcial -> Asignatura -> Actividades)
+            renderParcialTabs(allActivities);
 
         } catch (error) {
             tasksList.innerHTML = `<p class="text-red-500">Error al cargar actividades: ${error.message}</p>`;
@@ -203,17 +211,18 @@ document.addEventListener('DOMContentLoaded', () => {
         container.classList.remove('hidden');
     }
 
-    function renderSubjectNav(activities) {
+    function renderSubjectNav(activities, selectedParcial) {
         const container = document.getElementById('subject-nav-container');
         if (!container) return;
 
-        // Obtener nombres reales de las asignaturas (Columna F de la hoja "Tareas")
-        const subjects = [...new Set(activities.map(a => a.asignatura || 'General'))]
+        // Obtener asignaturas dinámicamente filtradas por el parcial seleccionado
+        const subjects = [...new Set(activities.map(a => a.asignatura))]
             .filter(s => s && s.trim() !== "")
             .sort();
 
         if (subjects.length === 0) {
-            container.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">No hay asignaturas activas.</p>';
+            container.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">No hay asignaturas en este parcial.</p>';
+            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades registradas.</p>';
             return;
         }
 
@@ -231,15 +240,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 target.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
 
                 const subj = target.dataset.subject;
-                const subjActivities = allActivitiesData.filter(a => (a.asignatura || 'General') === subj);
+                const finalActivities = activities.filter(a => a.asignatura === subj);
 
-                renderParcialTabs(subjActivities);
+                renderActivities(finalActivities);
                 showSubjectInfo(subj);
             });
         });
 
-        // Activar la primera por defecto si existe
-        if (subjects.length > 0) container.querySelector('.subject-tab').click();
+        // Activar la primera por defecto
+        container.querySelector('.subject-tab').click();
     }
 
     async function showSubjectInfo(subject) {
@@ -328,11 +337,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!activities || activities.length === 0) {
             tabsContainer.innerHTML = '';
-            renderActivities([]);
+            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades disponibles.</p>';
             return;
         }
 
-        const parciales = [...new Set(activities.map(a => (a.parcial && a.parcial.trim()) || 'Sin Parcial'))];
+        const parciales = [...new Set(activities.map(a => a.parcial))];
         parciales.sort((a, b) => (PARCIAL_ORDER[b] || 0) - (PARCIAL_ORDER[a] || 0));
 
         const activeParcial = parciales[0];
@@ -354,23 +363,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     b.classList.remove('bg-blue-600', 'text-white');
                     b.classList.add('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
                 });
-                e.target.classList.remove('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
-                e.target.classList.add('bg-blue-600', 'text-white');
+                const target = e.currentTarget;
+                target.classList.remove('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
+                target.classList.add('bg-blue-600', 'text-white');
 
-                renderActivities(allActivitiesData, e.target.dataset.parcial);
+                const p = target.dataset.parcial;
+                const activitiesInParcial = allActivitiesData.filter(a => a.parcial === p);
+                renderSubjectNav(activitiesInParcial, p);
             });
         });
 
-        renderActivities(activities, activeParcial);
+        // Seleccionar primer parcial por defecto
+        tabsContainer.querySelector('.parcial-tab').click();
     }
 
-    function renderActivities(activities, filterParcial = null) {
-        const filtered = filterParcial
-            ? activities.filter(a => ((a.parcial && a.parcial.trim()) || 'Sin Parcial') === filterParcial)
-            : activities;
-
+    function renderActivities(filtered) {
         if (!filtered || filtered.length === 0) {
-            tasksList.innerHTML = '<p class="text-gray-500">No hay actividades para este parcial.</p>';
+            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades registradas para esta materia en este parcial.</p>';
             return;
         }
         tasksList.innerHTML = filtered.map(activity => {
@@ -797,21 +806,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Lógica de Perfil (Sincronizada) ---
-    if (openProfileBtn) {
-        openProfileBtn.onclick = () => {
-            document.getElementById('profile-nombre').value = currentUser.nombre;
-            document.getElementById('profile-email').value = currentUser.email || '';
-            document.getElementById('profile-telefono').value = currentUser.telefono || '';
-            const nlInput = document.getElementById('profile-numeroLista');
-            if (nlInput) nlInput.value = currentUser.numeroLista || '';
-            if (profileModal) profileModal.classList.remove('hidden');
-        };
-    }
-
-    if (closeProfileModal) {
-        closeProfileModal.onclick = () => profileModal.classList.add('hidden');
-    }
 
 
     /**

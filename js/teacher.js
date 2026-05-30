@@ -137,22 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         navigateTo(sectionReportes, navReportsOld);
     });
 
-    // --- Mi Perfil (Sincronizado vía ui-common.js) ---
-    const openProfileBtn = document.getElementById('open-profile-btn');
-    const profileModal = document.getElementById('profile-modal');
-    const closeProfileModal = document.getElementById('close-profile-modal');
-    const cancelProfileBtn = document.getElementById('cancel-profile-btn');
-
-    if (openProfileBtn) {
-        openProfileBtn.onclick = () => {
-            document.getElementById('profile-nombre').value = currentUser.nombre;
-            document.getElementById('profile-email').value = currentUser.email || '';
-            document.getElementById('profile-telefono').value = currentUser.telefono || '';
-            if (profileModal) profileModal.classList.remove('hidden');
-        };
-    }
-    if (closeProfileModal) closeProfileModal.onclick = () => profileModal.classList.add('hidden');
-    if (cancelProfileBtn) cancelProfileBtn.onclick = () => profileModal.classList.add('hidden');
+    // --- Mi Perfil (Centralizado en ui-common.js) ---
 
 
     // --- Lógica de Reporte Académico ---

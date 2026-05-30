@@ -53,6 +53,10 @@ body {
     box-shadow: 0 4px 15px -1px rgba(0, 0, 0, 0.05);
 }
 
+.header-hidden {
+    transform: translateY(-100%);
+}
+
 /* Rediseño Modal Recursos (A-75): 0.98 opacity, fondo oscuro, sin blur excesivo */
 #academic-menu-modal {
     background: rgba(17, 24, 39, 0.98) !important;
@@ -222,6 +226,14 @@ p { font-size: 0.875rem; line-height: 1.6; color: var(--blue-grayish); font-weig
     background-color: #f8fafc;
 }
 
+/* Desktop Dropdown Styles */
+.group:hover .group-hover\:opacity-100 {
+    opacity: 1 !important;
+}
+.group:hover .group-hover\:visible {
+    visibility: visible !important;
+}
+
 /* Footer Compact */
 footer {
     padding-top: 32px !important;
@@ -291,7 +303,7 @@ footer a:hover {
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 767px) {
     .mobile-bottom-nav { display: flex; }
     body { padding-bottom: 80px; }
 }

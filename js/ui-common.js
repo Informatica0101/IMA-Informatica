@@ -7,6 +7,11 @@ window.setupCommonUI = function() {
     const openProfileBtn = document.getElementById('open-profile-btn');
     const mobileProfileBtn = document.getElementById('mobile-profile-btn-nav');
 
+    // Restoration fix: Ensure header is visible on init
+    if (mainHeader) {
+        mainHeader.classList.remove('header-hidden');
+    }
+
     let lastScrollTop = 0;
     const scrollThreshold = 10;
 
@@ -302,9 +307,16 @@ window.resetAcademicMenu = function() {
     document.getElementById('hierarchy-navigation').classList.add('hidden');
 };
 
+window.openAcademicHierarchy = function(type) {
+    window.openAcademicMenu();
+    window.showAcademicHierarchy(type);
+};
+
 window.showAcademicHierarchy = function(type) {
-    document.getElementById('academic-menu-options').classList.add('hidden');
-    document.getElementById('hierarchy-navigation').classList.remove('hidden');
+    const options = document.getElementById('academic-menu-options');
+    const nav = document.getElementById('hierarchy-navigation');
+    if (options) options.classList.add('hidden');
+    if (nav) nav.classList.remove('hidden');
     window.renderHierarchyLevel(type, 'Grado');
 };
 

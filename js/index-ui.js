@@ -456,3 +456,4 @@ async function loadNews() {
         console.error("Error loading news:", e);
     }
 }
+});
