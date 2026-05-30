@@ -41,21 +41,35 @@ window.setupCommonUI = function() {
         });
     }
 
-    // --- Mobile Menu Logic ---
+    // --- Mobile Menu Logic (Drawer) ---
     if (mobileMenuOverlay) {
+        // Create backdrop if not exists
+        let backdrop = document.querySelector('.mobile-menu-backdrop');
+        if (!backdrop) {
+            backdrop = document.createElement('div');
+            backdrop.className = 'mobile-menu-backdrop';
+            document.body.appendChild(backdrop);
+            backdrop.onclick = () => window.closeMobileMenu();
+        }
+
         function toggleMobileMenu() {
             const isOpening = mobileMenuOverlay.classList.contains('hidden');
-            mobileMenuOverlay.classList.toggle('hidden');
-            mobileMenuOverlay.classList.toggle('mobile-menu-overlay');
+            if (isOpening) {
+                mobileMenuOverlay.classList.remove('hidden');
+                backdrop.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                window.closeMobileMenu();
+            }
             if (mobileMenuIcon) {
                 mobileMenuIcon.setAttribute('d', isOpening ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16');
             }
-            if (!isOpening) resetMobileMenuState();
         }
 
         window.closeMobileMenu = function() {
             mobileMenuOverlay.classList.add('hidden');
-            mobileMenuOverlay.classList.remove('mobile-menu-overlay');
+            backdrop.classList.remove('active');
+            document.body.style.overflow = '';
             if (mobileMenuIcon) mobileMenuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
             resetMobileMenuState();
         }
@@ -291,4 +305,10 @@ window.renderCommonNav = function() {
     if (desktopContentMenu) desktopContentMenu.innerHTML = buildHierarchy(window.downloadContentData, 'content');
     if (mobileCoursesMenu) mobileCoursesMenu.innerHTML = buildMobileHierarchy(window.presentationData);
     if (mobileContentMenu) mobileContentMenu.innerHTML = buildMobileHierarchy(window.downloadContentData);
+
+    // Sync portal link in bottom nav
+    const mobilePortalBottom = document.getElementById('mobile-portal-bottom-nav');
+    if (mobilePortalBottom && currentUser) {
+        mobilePortalBottom.href = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
+    }
 };

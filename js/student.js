@@ -25,10 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     let allActivitiesData = [];
 
-    logoutButton.addEventListener('click', () => {
-        localStorage.removeItem('currentUser');
-        window.location.href = 'login.html';
-    });
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        });
+    }
 
     // --- Elementos del Modal ---
     const submissionModal = document.getElementById('submission-modal');
@@ -132,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${parciales.map(p => {
                     const isActive = p === activeParcial;
                     const activeClass = isActive ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200';
-                    return `<button class="flex-none px-4 py-2 rounded-xl font-black transition-all text-[10px] uppercase tracking-widest ${activeClass} parcial-tab" data-parcial="${p}">${p}</button>`;
+                    return `<button class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest ${activeClass} parcial-tab" data-parcial="${p}">${p}</button>`;
                 }).join('')}
             </div>
         `;
@@ -182,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const url = activity.entrega.mimeType === 'folder'
                             ? `https://drive.google.com/drive/folders/${fileId}`
                             : `https://drive.google.com/uc?id=${fileId}`;
-                        fileLinkHtml = `<div class="mt-2"><a href="${url}" target="_blank" class="text-blue-600 font-bold hover:underline text-sm flex items-center space-x-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg><span>Ver mi entrega</span></a></div>`;
+                        fileLinkHtml = `<div class="mt-2"><a href="${url}" target="_blank" class="text-blue-600 font-medium hover:underline text-sm flex items-center space-x-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg><span>Ver mi entrega</span></a></div>`;
                     }
 
                     const deleteBtnHtml = isPending
@@ -202,14 +204,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Estado de Entrega</h4>
-                                    <p class="text-sm font-black ${statusColor}">${displayStatus}</p>
+                                    <h4 class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Estado de Entrega</h4>
+                                    <p class="text-sm font-semibold ${statusColor}">${displayStatus}</p>
                                     ${fileLinkHtml}
                                 </div>
                                 ${deleteBtnHtml}
                             </div>
-                            ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-bold text-gray-400 uppercase">Nota:</span> <span class="text-sm font-black text-blue-600">${activity.entrega.calificacion}</span></div>` : ''}
-                            ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-bold text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
+                            ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-blue-600">${activity.entrega.calificacion}</span></div>` : ''}
+                            ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
                             ${resubmitBtnHtml}
                         </div>`;
                 } else {
@@ -234,20 +236,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Estado de Examen</h4>
-                                    <p class="text-sm font-black ${statusColor}">${displayStatus}</p>
+                                    <h4 class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Estado de Examen</h4>
+                                    <p class="text-sm font-semibold ${statusColor}">${displayStatus}</p>
                                 </div>
                                 ${deleteBtnHtml}
                             </div>
-                            ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-bold text-gray-400 uppercase">Nota:</span> <span class="text-sm font-black text-purple-600">${activity.entrega.calificacion}</span></div>` : ''}
-                            ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-bold text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
+                            ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-purple-600">${activity.entrega.calificacion}</span></div>` : ''}
+                            ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
                         </div>`;
                 } else {
                     const estado = activity.estado || 'Inactivo';
                     if (estado === 'Activo') {
                         actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="btn-ima-primary bg-purple-600 hover:bg-purple-700 px-6 py-2 text-xs">Realizar Examen</a>`;
                     } else {
-                        actionButtonHtml = `<button class="bg-gray-100 text-gray-400 px-5 py-2 rounded-xl text-[10px] font-bold uppercase cursor-not-allowed" disabled>${estado}</button>`;
+                        actionButtonHtml = `<button class="bg-gray-100 text-gray-400 px-5 py-2 rounded-xl text-[10px] font-medium uppercase cursor-not-allowed" disabled>${estado}</button>`;
                     }
                 }
             }
@@ -257,13 +259,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="flex justify-between items-start">
                         <div class="flex-grow">
                             <div class="flex items-center gap-2 mb-1">
-                                <span class="text-[9px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${activity.type}</span>
-                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">${activity.asignatura || 'General'}</span>
+                                <span class="text-[9px] font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${activity.type}</span>
+                                <span class="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">${activity.asignatura || 'General'}</span>
                             </div>
-                            <h3 class="text-base font-black text-gray-900 group-hover:text-blue-600 transition-colors leading-tight uppercase tracking-tighter">${activity.titulo}</h3>
+                            <h3 class="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight uppercase tracking-tighter">${activity.titulo}</h3>
                         </div>
                         <div class="flex flex-col items-end">
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">${formatDate(activity.fechaLimite)}</span>
+                            <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">${formatDate(activity.fechaLimite)}</span>
                             <svg class="w-4 h-4 text-gray-300 transform group-[.is-expanded]:rotate-180 transition-transform duration-200 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
                     </div>
@@ -483,10 +485,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     li.innerHTML = `
                         <div class="flex items-center space-x-2 truncate">
                             <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="truncate text-xs font-bold text-gray-800">${currentFileName}</span>
+                            <span class="truncate text-xs font-medium text-gray-800">${currentFileName}</span>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <span class="text-[10px] text-green-600 font-bold uppercase tracking-tighter">Listo</span>
+                            <span class="text-[10px] text-green-600 font-medium uppercase tracking-tighter">Listo</span>
                             <button type="button" class="text-red-400 hover:text-red-600 remove-file-btn p-1" data-file-id="${uploadedData.fileId}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
@@ -495,7 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else throw new Error(uploadResult.message);
 
             } catch (error) {
-                li.innerHTML = `<div class="flex items-center justify-between w-full p-1 bg-red-50 rounded"><span class="text-red-600 text-[10px] truncate font-bold">FALLÓ: ${currentFileName}</span><button class="text-[10px] text-red-800 font-black ml-2" onclick="this.closest('li').remove()">✕</button></div>`;
+                li.innerHTML = `<div class="flex items-center justify-between w-full p-1 bg-red-50 rounded"><span class="text-red-600 text-[10px] truncate font-medium">FALLÓ: ${currentFileName}</span><button class="text-[10px] text-red-800 font-semibold ml-2" onclick="this.closest('li').remove()">✕</button></div>`;
             } finally {
                 activeUploads--;
                 updateConfirmButtonState();

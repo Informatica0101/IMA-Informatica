@@ -28,3 +28,17 @@ ARCHIVO: css/style.css
 ARCHIVO: Global (HTMLs)
 -----------------------
 - Hallazgo 12: Consistencia de Footer. Se actualizó el pie de página en login, register y dashboards para total uniformidad corporativa.
+
+ARCHIVO: js/student.js
+----------------------
+- Hallazgo 14: Bloqueo crítico detectado en DOMContentLoaded. El script intentaba acceder a 'logout-button' sin validar su existencia, deteniendo la ejecución de 'fetchAllActivities'. (CORREGIDO con verificación null).
+
+ARCHIVO: css/style.css
+----------------------
+- Hallazgo 15: Exceso de peso tipográfico y sombras. Se identificó una jerarquía visual agresiva (font-weight 800/900). (CORREGIDO mediante estandarización a 400-600 y eliminación de shadows en cards).
+- Hallazgo 16: Navegación móvil obsoleta. El menú hamburguesa cubría toda la pantalla. (CORREGIDO implementando Drawer lateral de 300px con glassmorphism).
+
+ARCHIVO: General (HTMLs)
+-----------------------
+- Hallazgo 17: Visibilidad de branding insuficiente. El logo resultaba poco identificable en resoluciones estándar. (CORREGIDO incrementando a 60px).
+- Hallazgo 18: Inconsistencia en navegación inferior. La opción 'Cursos' no era accesible directamente con el pulgar. (CORREGIDO integrándola en el bottom-nav).

@@ -1,12 +1,12 @@
 /* Global scale and Anti-Template Typography */
 :root {
-    --blue-institutional: #2563eb;
-    --blue-grayish: #64748b;
-    --gray-light: #f8fafc;
-    --gray-dark: #0f172a;
+    --blue-institutional: #3b82f6; /* More muted blue */
+    --blue-grayish: #94a3b8; /* Lighter gray-blue */
+    --gray-light: #f1f5f9; /* Neutral light background */
+    --gray-dark: #334155; /* Less aggressive dark text */
     --white: #ffffff;
-    --pink-pastel: rgba(253, 242, 242, 0.8);
-    --pink-text: #991b1b;
+    --pink-pastel: rgba(254, 226, 226, 0.6);
+    --pink-text: #b91c1c;
     --anim-speed: 200ms;
 }
 
@@ -43,17 +43,54 @@ body {
 #main-header {
     top: 0 !important;
     transition: all var(--anim-speed) ease;
-    padding-top: 6px !important;
-    padding-bottom: 6px !important;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     z-index: 1000;
 }
 
+@media (min-width: 1024px) {
+    #main-header .container {
+        max-width: 100% !important;
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+}
+
 #mobile-menu-overlay {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    width: 300px !important;
+    right: 0;
+    left: auto !important;
+    height: 100vh;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#mobile-menu-overlay:not(.hidden) {
+    display: flex !important;
+    transform: translateX(0);
+}
+
+.mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(4px);
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-backdrop.active {
+    opacity: 1;
+    visibility: visible;
 }
 
 /* Animations */
@@ -82,22 +119,22 @@ body {
 /* Compact & Elegant Cards */
 .card-ima {
     background: var(--white);
-    border-radius: 12px;
-    padding: 16px;
-    border: 1px solid rgba(226, 232, 240, 0.6);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-    transition: transform var(--anim-speed), box-shadow var(--anim-speed);
+    border-radius: 8px; /* Standardize on 8px */
+    padding: 12px; /* More compact padding */
+    border: 1px solid #e2e8f0; /* Subtle border */
+    box-shadow: none; /* Minimalist approach: no shadow by default */
+    transition: all var(--anim-speed) ease;
 }
 
 .card-ima:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+    background: #fdfdfd;
 }
 
 /* Typography */
-h1, .h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
-h2, .h2 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
-p { font-size: 0.875rem; line-height: 1.5; color: var(--blue-grayish); }
+h1, .h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
+h2, .h2 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.005em; }
+p { font-size: 0.875rem; line-height: 1.6; color: var(--blue-grayish); font-weight: 400; }
 
 /* Buttons Refined */
 .btn-ima {
@@ -106,7 +143,7 @@ p { font-size: 0.875rem; line-height: 1.5; color: var(--blue-grayish); }
     justify-content: center;
     padding: 6px 14px;
     border-radius: 8px;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.025em;
@@ -117,15 +154,13 @@ p { font-size: 0.875rem; line-height: 1.5; color: var(--blue-grayish); }
 }
 
 .btn-ima-primary {
-    background-color: rgba(37, 99, 235, 0.9);
+    background-color: var(--blue-institutional);
     color: var(--white);
-    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
 }
 
 .btn-ima-primary:hover {
-    background-color: var(--blue-institutional);
-    transform: scale(1.02);
-    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+    background-color: #2563eb;
+    transform: translateY(-1px);
 }
 
 .btn-ima-cancel {
@@ -163,7 +198,7 @@ footer p, footer a {
     background: rgba(248, 250, 252, 0.8);
     padding: 10px 16px;
     font-size: 0.65rem;
-    font-weight: 800;
+    font-weight: 600;
     color: var(--blue-grayish);
     text-transform: uppercase;
     border-bottom: 1px solid #f1f5f9;
@@ -187,34 +222,46 @@ footer p, footer a {
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 8px 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid #e2e8f0;
+    padding: 6px 0 10px 0; /* Add bottom padding for safer touch area */
     z-index: 1000;
-    justify-content: space-around;
+    justify-content: space-evenly; /* Better distribution */
 }
 
 @media (max-width: 1024px) {
     .mobile-bottom-nav { display: flex; }
-    body { padding-bottom: 60px; }
+    body { padding-bottom: 70px; }
 }
 
 .bottom-nav-item {
+    flex: 1; /* Allow equal width items */
+    display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 4px; /* Slightly more gap */
     color: var(--blue-grayish);
-    font-size: 9px;
-    font-weight: 800;
+    font-size: 10px; /* Slightly larger text */
+    font-weight: 500;
     text-transform: uppercase;
+    transition: color 0.2s ease;
+}
+
+.bottom-nav-item svg {
+    width: 20px;
+    height: 20px;
+}
+
+.bottom-nav-item:active, .bottom-nav-item:hover {
+    color: var(--blue-institutional);
 }
 
 /* Quill Editor Rich Text Reset */
 .quill-content ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
 .quill-content ol { list-style-type: decimal; margin-left: 1.5rem; margin-bottom: 1rem; }
-.quill-content h1 { font-size: 1.5rem; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--gray-dark); }
-.quill-content h2 { font-size: 1.25rem; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--gray-dark); }
-.quill-content p { margin-bottom: 0.75rem; color: var(--blue-grayish); }
-.quill-content strong { font-weight: 700; color: var(--gray-dark); }
+.quill-content h1 { font-size: 1.5rem; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--gray-dark); font-weight: 600; }
+.quill-content h2 { font-size: 1.25rem; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--gray-dark); font-weight: 600; }
+.quill-content p { margin-bottom: 0.75rem; color: var(--blue-grayish); font-weight: 400; }
+.quill-content strong { font-weight: 600; color: var(--gray-dark); }
 .quill-content blockquote { border-left: 4px solid var(--blue-institutional); padding-left: 1rem; font-style: italic; color: var(--blue-grayish); margin-bottom: 1rem; }

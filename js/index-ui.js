@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         button.textContent = text;
         button.onclick = onClickHandler;
         button.className = `
-            px-6 py-3 rounded-xl font-bold text-sm uppercase tracking-widest
+            px-6 py-3 rounded-xl font-medium text-sm uppercase tracking-widest
             bg-blue-600 text-white hover:bg-blue-700
             transition-all duration-300 ease-in-out
             shadow-lg shadow-blue-100 hover:shadow-xl hover:shadow-blue-200 transform hover:-translate-y-0.5
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             link.href = topic.file;
             link.target = '_blank';
             link.className = `
-                flex items-center justify-between px-6 py-4 rounded-2xl font-bold text-sm
+                flex items-center justify-between px-6 py-4 rounded-2xl font-medium text-sm
                 bg-gray-50 text-gray-800 border border-gray-100
                 transition-all duration-300 ease-in-out
                 hover:bg-white hover:shadow-xl hover:border-blue-200 transform hover:-translate-y-0.5
@@ -405,12 +405,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentUser) {
             const portalBtn = document.createElement('a');
             portalBtn.href = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
-            portalBtn.className = 'px-10 py-5 rounded-2xl font-bold text-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
+            portalBtn.className = 'px-10 py-5 rounded-2xl font-medium text-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
             portalBtn.textContent = 'Ir al Portal';
             accessButtonContainer.appendChild(portalBtn);
         } else {
             const loginBtn = document.createElement('button');
-            loginBtn.className = 'px-10 py-5 rounded-2xl font-bold text-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
+            loginBtn.className = 'px-10 py-5 rounded-2xl font-medium text-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
             loginBtn.textContent = 'Iniciar Sesión';
             loginBtn.addEventListener("click", openModal);
             accessButtonContainer.appendChild(loginBtn);
@@ -481,13 +481,13 @@ async function loadNews() {
                         ` : ''}
                         <div class="p-8 ${idx === 0 ? 'md:w-1/2 flex flex-col justify-center' : 'flex-grow flex flex-col'}">
                             <div class="flex items-center gap-3 mb-4">
-                                <span class="text-[9px] font-black uppercase tracking-[0.2em] text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">${n.categoria}</span>
-                                <span class="text-[10px] font-bold text-gray-300 uppercase tracking-wider">${new Date(n.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} ${n.hora ? '• ' + n.hora.substring(0,5) : ''}</span>
+                                <span class="text-[9px] font-semibold uppercase tracking-[0.2em] text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">${n.categoria}</span>
+                                <span class="text-[10px] font-medium text-gray-300 uppercase tracking-wider">${new Date(n.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} ${n.hora ? '• ' + n.hora.substring(0,5) : ''}</span>
                             </div>
-                            <h3 class="${idx === 0 ? 'text-2xl md:text-3xl' : 'text-xl'} font-black text-gray-900 mb-4 leading-tight group-hover:text-blue-600 transition-colors">${n.titulo}</h3>
+                            <h3 class="${idx === 0 ? 'text-2xl md:text-3xl' : 'text-xl'} font-semibold text-gray-900 mb-4 leading-tight group-hover:text-blue-600 transition-colors">${n.titulo}</h3>
                             <p class="text-gray-500 text-sm leading-relaxed mb-6 ${idx === 0 ? 'line-clamp-4' : 'line-clamp-3'}">${firstP}</p>
                             <div class="mt-auto pt-6 border-t border-gray-50">
-                                <span class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-blue-600 transition-all">
+                                <span class="inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400 group-hover:text-blue-600 transition-all">
                                     Seguir Leyendo
                                     <svg class="w-3 h-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                 </span>

@@ -206,17 +206,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Solo tareas y exámenes que tengan entregas o existan para este parcial
                 let headHtml = `<tr class="bg-gray-50 border-b border-gray-100">
-                    <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Nº</th>
-                    <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Alumno</th>`;
+                    <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Nº</th>
+                    <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Alumno</th>`;
 
                 allTasks.forEach(t => {
-                    headHtml += `<th class="p-4 text-center font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${t.titulo}">${t.titulo.substring(0,10)}...</th>`;
+                    headHtml += `<th class="p-4 text-center font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${t.titulo}">${t.titulo.substring(0,10)}...</th>`;
                 });
                 allExams.forEach(e => {
-                    headHtml += `<th class="p-4 text-center font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${e.titulo}">EX: ${e.titulo.substring(0,8)}...</th>`;
+                    headHtml += `<th class="p-4 text-center font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${e.titulo}">EX: ${e.titulo.substring(0,8)}...</th>`;
                 });
 
-                headHtml += `<th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Total</th></tr>`;
+                headHtml += `<th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Total</th></tr>`;
                 thead.innerHTML = headHtml;
 
                 if (students.length === 0) {
@@ -228,24 +228,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     let total = 0;
                     let rowHtml = `<tr class="hover:bg-gray-50 transition-colors">
                         <td class="p-4 text-gray-400 font-mono text-xs">${s.numeroLista || idx+1}</td>
-                        <td class="p-4 font-bold text-gray-800">${s.nombre}</td>`;
+                        <td class="p-4 font-medium text-gray-800">${s.nombre}</td>`;
 
                     allTasks.forEach(t => {
                         const sub = taskSubmissions.find(sub => sub.alumnoId == s.userId && sub.titulo === t.titulo);
                         const score = sub ? parseFloat(sub.calificacion || 0) : 0;
                         total += score;
-                        rowHtml += `<td class="p-4 text-center font-bold ${score > 0 ? 'text-green-600' : 'text-gray-300'}">${score}</td>`;
+                        rowHtml += `<td class="p-4 text-center font-medium ${score > 0 ? 'text-green-600' : 'text-gray-300'}">${score}</td>`;
                     });
 
                     allExams.forEach(e => {
                         const sub = examSubmissions.find(sub => sub.alumnoId == s.userId && sub.titulo === e.titulo);
                         const score = sub ? parseFloat(sub.calificacion || 0) : 0;
                         total += score;
-                        rowHtml += `<td class="p-4 text-center font-bold ${score > 0 ? 'text-purple-600' : 'text-gray-300'}">${score}</td>`;
+                        rowHtml += `<td class="p-4 text-center font-medium ${score > 0 ? 'text-purple-600' : 'text-gray-300'}">${score}</td>`;
                     });
 
                     const approved = total >= 70;
-                    rowHtml += `<td class="p-4 text-right font-black ${approved ? 'text-blue-700' : 'text-red-600'}">${total}%</td></tr>`;
+                    rowHtml += `<td class="p-4 text-right font-semibold ${approved ? 'text-blue-700' : 'text-red-600'}">${total}%</td></tr>`;
                     return rowHtml;
                 }).join('');
 
@@ -410,15 +410,15 @@ document.addEventListener('DOMContentLoaded', () => {
         tbody.innerHTML = allTasksExams.map((item, idx) => `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer group" onclick="window.openTaskDetail(${idx})">
                 <td class="p-4">
-                    <div class="font-black text-gray-900 uppercase tracking-tighter">${item.titulo}</div>
-                    <div class="text-[9px] font-black text-gray-400 uppercase tracking-widest">${item.tipoReal}</div>
+                    <div class="font-semibold text-gray-900 uppercase tracking-tighter">${item.titulo}</div>
+                    <div class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">${item.tipoReal}</div>
                 </td>
                 <td class="p-4">
-                    <div class="text-[10px] font-black text-blue-600 uppercase tracking-widest">${item.asignatura}</div>
-                    <div class="text-[10px] text-gray-400 font-bold">${item.parcial || 'Sin parcial'}</div>
+                    <div class="text-[10px] font-semibold text-blue-600 uppercase tracking-widest">${item.asignatura}</div>
+                    <div class="text-[10px] text-gray-400 font-medium">${item.parcial || 'Sin parcial'}</div>
                 </td>
-                <td class="p-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">${item.grado} - ${item.seccion || 'Todas'}</td>
-                <td class="p-4 text-[10px] font-black ${new Date(item.fechaLimite) < new Date() ? 'text-red-500' : 'text-green-600'} uppercase tracking-widest">
+                <td class="p-4 text-[10px] font-semibold text-gray-500 uppercase tracking-widest">${item.grado} - ${item.seccion || 'Todas'}</td>
+                <td class="p-4 text-[10px] font-semibold ${new Date(item.fechaLimite) < new Date() ? 'text-red-500' : 'text-green-600'} uppercase tracking-widest">
                     ${new Date(item.fechaLimite).toLocaleDateString()}
                 </td>
                 <td class="p-4 text-right">
@@ -581,10 +581,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
 
                 thead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100">
-                    <th class="p-4 text-left font-bold text-gray-500 text-[0.7rem] uppercase">Alumno</th>
-                    <th class="p-4 text-left font-bold text-gray-500 text-[0.7rem] uppercase">Actividad</th>
-                    <th class="p-4 text-left font-bold text-gray-500 text-[0.7rem] uppercase">Fecha</th>
-                    <th class="p-4 text-right font-bold text-gray-500 text-[0.7rem] uppercase">Acción</th>
+                    <th class="p-4 text-left font-medium text-gray-500 text-[0.7rem] uppercase">Alumno</th>
+                    <th class="p-4 text-left font-medium text-gray-500 text-[0.7rem] uppercase">Actividad</th>
+                    <th class="p-4 text-left font-medium text-gray-500 text-[0.7rem] uppercase">Fecha</th>
+                    <th class="p-4 text-right font-medium text-gray-500 text-[0.7rem] uppercase">Acción</th>
                 </tr>`;
 
                 if (pending.length === 0) {
@@ -595,16 +595,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 tbody.innerHTML = pending.map((item, idx) => `
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="p-4">
-                            <div class="font-bold text-gray-800">${item.alumnoNombre}</div>
+                            <div class="font-medium text-gray-800">${item.alumnoNombre}</div>
                             <div class="text-[10px] text-gray-400">${item.grado} - ${item.seccion}</div>
                         </td>
                         <td class="p-4">
-                            <div class="font-bold text-blue-700">${item.titulo}</div>
+                            <div class="font-medium text-blue-700">${item.titulo}</div>
                             <div class="text-[10px] text-gray-400">${item.asignatura} | ${item.tipo}</div>
                         </td>
                         <td class="p-4 text-xs text-gray-500">${new Date(item.fecha).toLocaleString()}</td>
                         <td class="p-4 text-right">
-                            <button class="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-700 op-grade-btn" data-index="${idx}">Calificar</button>
+                            <button class="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-medium hover:bg-blue-700 op-grade-btn" data-index="${idx}">Calificar</button>
                         </td>
                     </tr>
                 `).join('');
@@ -713,16 +713,16 @@ document.addEventListener('DOMContentLoaded', () => {
         currentFilteredItems = alumnosGlobal;
         dashboardTableHead.innerHTML = `
             <tr class="bg-gray-50 border-b border-gray-100">
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Alumno</th>
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado/Secc</th>
-                <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th>
+                <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Alumno</th>
+                <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado/Secc</th>
+                <th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th>
             </tr>`;
         if (alumnosGlobal.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-500">No se encontraron alumnos.</td></tr>'; return; }
         submissionsTableBody.innerHTML = alumnosGlobal.map((a, idx) => `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
-                <td class="p-4 font-bold text-blue-700">${a.nombre}</td>
+                <td class="p-4 font-medium text-blue-700">${a.nombre}</td>
                 <td class="p-4 text-sm text-gray-500">${a.grado} - ${a.seccion || 'N/A'}</td>
-                <td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver detalles &rsaquo;</span></td>
+                <td class="p-4 text-right"><span class="text-blue-600 font-medium text-sm">Ver detalles &rsaquo;</span></td>
             </tr>`).join('');
     }
 
@@ -735,17 +735,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fGrado) grados = grados.filter(g => norm(g) === norm(fGrado));
         const filtered = grados.filter(g => norm(g).includes(norm(search)));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado Académico</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Navegación</th></tr>`;
+        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado Académico</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Navegación</th></tr>`;
         if (filtered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-8 text-gray-500">No hay grados.</td></tr>'; return; }
         submissionsTableBody.innerHTML = filtered.map((grado, idx) => `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn group" data-index="${idx}">
                 <td class="p-4">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-gray-100 text-gray-400 rounded-xl flex items-center justify-center font-black group-hover:bg-blue-600 group-hover:text-white transition-all">${grado.charAt(0)}</div>
-                        <span class="font-black text-gray-900 uppercase tracking-tighter">${grado}</span>
+                        <div class="w-8 h-8 bg-gray-100 text-gray-400 rounded-xl flex items-center justify-center font-semibold group-hover:bg-blue-600 group-hover:text-white transition-all">${grado.charAt(0)}</div>
+                        <span class="font-semibold text-gray-900 uppercase tracking-tighter">${grado}</span>
                     </div>
                 </td>
-                <td class="p-4 text-right"><span class="text-blue-600 font-black text-[9px] uppercase tracking-widest group-hover:underline transition-all">Ver Secciones &rsaquo;</span></td>
+                <td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest group-hover:underline transition-all">Ver Secciones &rsaquo;</span></td>
             </tr>`).join('');
     }
 
@@ -766,8 +766,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fSeccion) secciones = secciones.filter(s => norm(s) === norm(fSeccion));
         const filtered = secciones.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Sección</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-black text-gray-900 uppercase tracking-tighter">Sección ${seccion}</td><td class="p-4 text-right"><span class="text-blue-600 font-black text-[9px] uppercase tracking-widest">Ver Asignaturas &rsaquo;</span></td></tr>`).join('');
+        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Sección</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+        submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">Sección ${seccion}</td><td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Ver Asignaturas &rsaquo;</span></td></tr>`).join('');
     }
 
     function renderAsignaturas(grado, seccion, search) {
@@ -777,8 +777,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ].filter(s => s))];
         const filtered = asignaturas.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Asignatura</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-black text-gray-900 uppercase tracking-tighter">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-black text-[9px] uppercase tracking-widest">Ver Parciales &rsaquo;</span></td></tr>`).join('');
+        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Asignatura</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Ver Parciales &rsaquo;</span></td></tr>`).join('');
     }
 
     function renderParciales(grado, seccion, asignatura, search) {
@@ -792,8 +792,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const filtered = parciales.filter(p => norm(p).includes(norm(search)));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Parcial Académico</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((parcial, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-black text-gray-900 uppercase tracking-tighter">${parcial}</td><td class="p-4 text-right"><span class="text-blue-600 font-black text-[9px] uppercase tracking-widest">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
+        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Parcial Académico</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+        submissionsTableBody.innerHTML = filtered.map((parcial, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">${parcial}</td><td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
     }
 
     function renderAlumnos(grado, seccion, asignatura, search) {
@@ -806,13 +806,13 @@ document.addEventListener('DOMContentLoaded', () => {
         waContainer.className = "bg-green-50 p-4 rounded-[1.2rem] mb-6 border border-green-100 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in";
         waContainer.innerHTML = `
             <div>
-                <h4 class="text-[10px] font-black text-green-800 uppercase tracking-widest mb-1">Grupo de WhatsApp</h4>
-                <p class="text-green-600 text-[9px] font-bold uppercase tracking-tighter">Comparte el enlace con tus alumnos.</p>
+                <h4 class="text-[10px] font-semibold text-green-800 uppercase tracking-widest mb-1">Grupo de WhatsApp</h4>
+                <p class="text-green-600 text-[9px] font-medium uppercase tracking-tighter">Comparte el enlace con tus alumnos.</p>
             </div>
             <div class="flex items-center gap-2">
-                <input type="text" id="wa-link-input" readonly class="bg-white border-none rounded-xl p-2 text-[10px] w-64 focus:ring-2 focus:ring-green-400 outline-none transition-all text-gray-500 font-bold" placeholder="https://chat.whatsapp.com/...">
-                <button id="btn-edit-wa" class="bg-white text-green-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-green-100 transition-colors shadow-sm">Editar</button>
-                <button id="btn-save-wa" class="hidden bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-green-700 transition-colors">Guardar</button>
+                <input type="text" id="wa-link-input" readonly class="bg-white border-none rounded-xl p-2 text-[10px] w-64 focus:ring-2 focus:ring-green-400 outline-none transition-all text-gray-500 font-medium" placeholder="https://chat.whatsapp.com/...">
+                <button id="btn-edit-wa" class="bg-white text-green-700 px-3 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-widest hover:bg-green-100 transition-colors shadow-sm">Editar</button>
+                <button id="btn-save-wa" class="hidden bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-widest hover:bg-green-700 transition-colors">Guardar</button>
             </div>
         `;
 
@@ -915,10 +915,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render Student List (Simplified as per requirements)
         dashboardTableHead.innerHTML = `
             <tr class="bg-gray-50 border-b border-gray-100">
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="numeroLista">No. Lista</th>
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="nombre">Nombre del alumno</th>
-                <th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="estado">estado</th>
-                <th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">acción</th>
+                <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="numeroLista">No. Lista</th>
+                <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="nombre">Nombre del alumno</th>
+                <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem] cursor-pointer sort-btn" data-sort="estado">estado</th>
+                <th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">acción</th>
             </tr>`;
 
         if (studentsWithStatus.length === 0) {
@@ -932,14 +932,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return `
                 <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn group" data-index="${idx}">
                     <td class="p-4 text-gray-400 font-mono text-xs">${s.numeroLista || '-'}</td>
-                    <td class="p-4 font-black text-gray-900 uppercase tracking-tighter group-hover:text-blue-600 transition-colors">
+                    <td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter group-hover:text-blue-600 transition-colors">
                         ${s.nombre}
                     </td>
                     <td class="p-4">
-                        <span class="px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${statusClass}">${s.statusText}</span>
+                        <span class="px-2 py-1 rounded-lg text-[9px] font-semibold uppercase tracking-widest ${statusClass}">${s.statusText}</span>
                     </td>
                     <td class="p-4 text-right">
-                        <span class="text-blue-600 font-black text-[9px] uppercase tracking-widest">Detalles &rsaquo;</span>
+                        <span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Detalles &rsaquo;</span>
                     </td>
                 </tr>`;
         }).join('');
@@ -978,16 +978,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     <!-- Sección 1: Encabezado y Acciones -->
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-10 pb-8 border-b border-gray-100">
                         <div class="flex items-center gap-8">
-                            <div class="w-24 h-24 bg-blue-600 rounded-[2.2rem] flex items-center justify-center text-white text-4xl font-black shadow-2xl shadow-blue-200 relative transform hover:rotate-3 transition-transform">
+                            <div class="w-24 h-24 bg-blue-600 rounded-[2.2rem] flex items-center justify-center text-white text-4xl font-semibold shadow-2xl shadow-blue-200 relative transform hover:rotate-3 transition-transform">
                                 ${studentInfo.nombre.charAt(0)}
                                 <div class="absolute -bottom-1 -right-1 w-10 h-10 bg-green-500 border-4 border-white rounded-full flex items-center justify-center text-white shadow-md" title="Alumno Activo">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>
                                 </div>
                             </div>
                             <div>
-                                <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-3">Expediente Académico ISEMED</span>
-                                <h3 class="text-3xl md:text-4xl font-black text-gray-900 leading-tight tracking-tight">${studentInfo.nombre}</h3>
-                                <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-2 text-xs text-gray-400 font-black uppercase tracking-[0.1em]">
+                                <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-semibold uppercase tracking-widest mb-3">Expediente Académico ISEMED</span>
+                                <h3 class="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight tracking-tight">${studentInfo.nombre}</h3>
+                                <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-2 text-xs text-gray-400 font-semibold uppercase tracking-[0.1em]">
                                     <span class="flex items-center gap-2"><div class="w-2 h-2 bg-blue-600 rounded-full"></div> ${grado} - ${seccion}</span>
                                     <span class="flex items-center gap-2"><div class="w-2 h-2 bg-purple-500 rounded-full"></div> ${parcial}</span>
                                     <span class="flex items-center gap-2"><div class="w-2 h-2 bg-teal-500 rounded-full"></div> LISTA #${studentInfo.numeroLista || '-'}</span>
@@ -995,11 +995,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                         <div class="flex flex-wrap gap-4">
-                            <button onclick="window.print()" class="px-6 py-4 bg-white text-gray-700 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-gray-50 transition-all border border-gray-200 flex items-center gap-3 shadow-sm">
+                            <button onclick="window.print()" class="px-6 py-4 bg-white text-gray-700 rounded-2xl font-semibold text-[10px] uppercase tracking-widest hover:bg-gray-50 transition-all border border-gray-200 flex items-center gap-3 shadow-sm">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                                 Imprimir Reporte
                             </button>
-                            ${waPhone ? `<a href="${waLink}" target="_blank" class="px-6 py-4 bg-green-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-green-700 transition-all shadow-xl shadow-green-100 flex items-center gap-3">
+                            ${waPhone ? `<a href="${waLink}" target="_blank" class="px-6 py-4 bg-green-600 text-white rounded-2xl font-semibold text-[10px] uppercase tracking-widest hover:bg-green-700 transition-all shadow-xl shadow-green-100 flex items-center gap-3">
                                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
                                 WhatsApp
                             </a>` : ''}
@@ -1009,27 +1009,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
                         <!-- Columna 2: Información del Alumno -->
                         <div class="lg:col-span-4 space-y-8">
-                            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-6 border-l-4 border-blue-600 pl-4">Información Personal</h4>
+                            <h4 class="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.3em] mb-6 border-l-4 border-blue-600 pl-4">Información Personal</h4>
                             <div class="space-y-4">
                                 <div class="p-6 bg-gray-50 rounded-[1.5rem] border border-gray-100 shadow-sm group hover:border-blue-200 transition-all">
-                                    <span class="block text-[10px] font-black text-gray-400 uppercase mb-2">Correo Institucional</span>
-                                    <span class="text-sm font-black text-gray-700 break-all">${studentInfo.email || 'N/A'}</span>
+                                    <span class="block text-[10px] font-semibold text-gray-400 uppercase mb-2">Correo Institucional</span>
+                                    <span class="text-sm font-semibold text-gray-700 break-all">${studentInfo.email || 'N/A'}</span>
                                 </div>
                                 <div class="p-6 bg-gray-50 rounded-[1.5rem] border border-gray-100 shadow-sm group hover:border-green-200 transition-all">
-                                    <span class="block text-[10px] font-black text-gray-400 uppercase mb-2">Contacto Directo</span>
-                                    <span class="text-sm font-black text-gray-700">${studentInfo.telefono || 'No registrado'}</span>
+                                    <span class="block text-[10px] font-semibold text-gray-400 uppercase mb-2">Contacto Directo</span>
+                                    <span class="text-sm font-semibold text-gray-700">${studentInfo.telefono || 'No registrado'}</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Columna 3: Estado de Tareas -->
                         <div class="lg:col-span-4 space-y-8 lg:border-x lg:border-gray-100 lg:px-10 px-0">
-                            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-6 border-l-4 border-purple-500 pl-4">Progreso del Parcial</h4>
+                            <h4 class="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.3em] mb-6 border-l-4 border-purple-500 pl-4">Progreso del Parcial</h4>
                             <div class="space-y-6">
                                 <div>
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Nivel de Entrega</span>
-                                        <span class="text-sm font-black text-blue-600">${total > 0 ? Math.round((completed/total)*100) : 0}%</span>
+                                        <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Nivel de Entrega</span>
+                                        <span class="text-sm font-semibold text-blue-600">${total > 0 ? Math.round((completed/total)*100) : 0}%</span>
                                     </div>
                                     <div class="w-full bg-gray-100 h-4 rounded-full overflow-hidden border border-gray-200 p-1">
                                         <div class="bg-blue-600 h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(37,99,235,0.4)]" style="width: ${total > 0 ? (completed/total)*100 : 0}%"></div>
@@ -1037,12 +1037,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="p-5 bg-white rounded-[1.5rem] border border-gray-100 text-center shadow-sm">
-                                        <span class="block text-3xl font-black text-green-600">${completed}</span>
-                                        <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Completas</span>
+                                        <span class="block text-3xl font-semibold text-green-600">${completed}</span>
+                                        <span class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Completas</span>
                                     </div>
                                     <div class="p-5 bg-white rounded-[1.5rem] border border-gray-100 text-center shadow-sm">
-                                        <span class="block text-3xl font-black text-yellow-500">${pending}</span>
-                                        <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Pendientes</span>
+                                        <span class="block text-3xl font-semibold text-yellow-500">${pending}</span>
+                                        <span class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Pendientes</span>
                                     </div>
                                 </div>
                             </div>
@@ -1050,21 +1050,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         <!-- Columna 4: Observaciones y Archivos -->
                         <div class="lg:col-span-4 space-y-8">
-                            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-6 border-l-4 border-teal-500 pl-4">Estado Académico</h4>
+                            <h4 class="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.3em] mb-6 border-l-4 border-teal-500 pl-4">Estado Académico</h4>
                             <div class="bg-gray-900 rounded-[2rem] p-8 flex flex-col justify-between h-full relative overflow-hidden group">
                                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
                                 <div class="text-center py-4 relative z-10">
                                     ${pending === 0 && total > 0 ?
                                         `<div class="inline-flex p-4 bg-green-500/20 text-green-400 rounded-2xl mb-4 border border-green-500/30"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg></div>
-                                         <div class="text-xl font-black text-white tracking-tight uppercase">EXPEDIENTE AL DÍA</div>
-                                         <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest mt-2">Sin revisiones pendientes</p>` :
+                                         <div class="text-xl font-semibold text-white tracking-tight uppercase">EXPEDIENTE AL DÍA</div>
+                                         <p class="text-[10px] text-gray-500 uppercase font-semibold tracking-widest mt-2">Sin revisiones pendientes</p>` :
                                         `<div class="inline-flex p-4 bg-yellow-500/20 text-yellow-400 rounded-2xl mb-4 border border-yellow-500/30"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-                                         <div class="text-xl font-black text-white tracking-tight uppercase">CON PENDIENTES</div>
-                                         <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest mt-2">${pending} Tareas por calificar</p>`
+                                         <div class="text-xl font-semibold text-white tracking-tight uppercase">CON PENDIENTES</div>
+                                         <p class="text-[10px] text-gray-500 uppercase font-semibold tracking-widest mt-2">${pending} Tareas por calificar</p>`
                                     }
                                 </div>
                                 <div class="mt-6 pt-6 border-t border-white/10 relative z-10">
-                                    <button class="w-full py-4 bg-white/5 border border-white/10 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-gray-900 transition-all flex items-center justify-center gap-3" onclick="window.scrollTo({top: document.querySelector('table').offsetTop - 100, behavior: 'smooth'})">
+                                    <button class="w-full py-4 bg-white/5 border border-white/10 text-white font-semibold text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-gray-900 transition-all flex items-center justify-center gap-3" onclick="window.scrollTo({top: document.querySelector('table').offsetTop - 100, behavior: 'smooth'})">
                                         Explorar evidencias
                                         <svg class="w-4 h-4 transform group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                                     </button>
@@ -1095,7 +1095,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return itemEstado === fEstado;
         });
         currentFilteredItems = finalFiltered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Actividad</th><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Estado</th><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Archivo</th><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Calificación</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Actividad</th><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Estado</th><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Archivo</th><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Calificación</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
         if (finalFiltered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-500">Sin entregas.</td></tr>'; return; }
         submissionsTableBody.innerHTML = finalFiltered.map((item, idx) => {
             let statusClass = 'bg-gray-50 text-gray-500'; let statusText = item.estado || 'Pendiente';
@@ -1113,15 +1113,15 @@ document.addEventListener('DOMContentLoaded', () => {
             let fileHtml = '<span class="text-gray-300">-</span>';
             if (item.fileId) {
                 const fId = extractDriveId(item.fileId);
-                fileHtml = `<a href="https://drive.google.com/uc?id=${fId}" target="_blank" class="text-blue-600 font-black text-[10px] uppercase tracking-widest hover:underline">Ver Archivo</a>`;
+                fileHtml = `<a href="https://drive.google.com/uc?id=${fId}" target="_blank" class="text-blue-600 font-semibold text-[10px] uppercase tracking-widest hover:underline">Ver Archivo</a>`;
             }
 
             return `
                 <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="p-4"><div class="font-black text-gray-900 uppercase tracking-tighter">${item.titulo}</div><div class="text-[9px] font-black text-gray-400 uppercase tracking-widest">${item.asignatura} | ${item.tipo}</div></td>
-                    <td class="p-4"><span class="px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${statusClass}">${statusText}</span></td>
+                    <td class="p-4"><div class="font-semibold text-gray-900 uppercase tracking-tighter">${item.titulo}</div><div class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">${item.asignatura} | ${item.tipo}</div></td>
+                    <td class="p-4"><span class="px-2 py-1 rounded-lg text-[9px] font-semibold uppercase tracking-widest ${statusClass}">${statusText}</span></td>
                     <td class="p-4">${fileHtml}</td>
-                    <td class="p-4 font-black text-gray-900 text-xs">${item.calificacion || '-'}</td>
+                    <td class="p-4 font-semibold text-gray-900 text-xs">${item.calificacion || '-'}</td>
                     <td class="p-4 text-right space-x-2">
                         <button class="btn-ima-primary px-3 py-1.5 text-[10px] grade-btn" data-index="${idx}">Calificar</button>
                         <button class="btn-ima-cancel px-3 py-1.5 text-[10px] delete-submission-btn" data-index="${idx}">Eliminar</button>
@@ -1381,7 +1381,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let qCounter = 0;
     if (addQuestionBtn) addQuestionBtn.onclick = () => {
         qCounter++; const node = document.createElement('div');
-        node.innerHTML = `<div class="question-block border p-4 rounded-lg" data-question-id="${qCounter}"><div class="flex justify-between items-center mb-4"><h4 class="font-bold">Pregunta ${qCounter}</h4><button type="button" class="text-red-500 remove-question-btn">Eliminar</button></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block font-medium mb-1">Tipo</label><select class="w-full p-2 border rounded question-type-select"><option value="opcion_multiple">Opción Múltiple</option><option value="verdadero_falso">Verdadero/Falso</option><option value="completacion">Completación</option></select></div><div class="md:col-span-2"><label class="block font-medium mb-1">Texto</label><input type="text" class="w-full p-2 border rounded question-text"></div><div class="md:col-span-2 options-container"></div><div><label class="block font-medium mb-1">Respuesta</label><input type="text" class="w-full p-2 border rounded correct-answer"></div></div></div>`;
+        node.innerHTML = `<div class="question-block border p-4 rounded-lg" data-question-id="${qCounter}"><div class="flex justify-between items-center mb-4"><h4 class="font-medium">Pregunta ${qCounter}</h4><button type="button" class="text-red-500 remove-question-btn">Eliminar</button></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block font-medium mb-1">Tipo</label><select class="w-full p-2 border rounded question-type-select"><option value="opcion_multiple">Opción Múltiple</option><option value="verdadero_falso">Verdadero/Falso</option><option value="completacion">Completación</option></select></div><div class="md:col-span-2"><label class="block font-medium mb-1">Texto</label><input type="text" class="w-full p-2 border rounded question-text"></div><div class="md:col-span-2 options-container"></div><div><label class="block font-medium mb-1">Respuesta</label><input type="text" class="w-full p-2 border rounded correct-answer"></div></div></div>`;
         questionsContainer.appendChild(node);
         const ts = node.querySelector('.question-type-select'); const oc = node.querySelector('.options-container');
         const setOpts = (val) => oc.innerHTML = val === 'opcion_multiple' ? '<label class="block text-xs">Opciones (A,B,C)</label><input type="text" class="w-full p-2 border rounded question-options">' : (val === 'verdadero_falso' ? '<input type="text" value="Verdadero,Falso" readonly class="w-full p-2 border rounded bg-gray-100 question-options">' : '');
@@ -1451,12 +1451,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         tbody.innerHTML = allProjectsRaw.map((p, idx) => `
             <tr class="hover:bg-gray-50 transition-colors">
-                <td class="p-4 font-bold text-gray-800">${p.alumnoNombre}</td>
+                <td class="p-4 font-medium text-gray-800">${p.alumnoNombre}</td>
                 <td class="p-4 text-blue-600 font-medium">${p.projectName}</td>
                 <td class="p-4 text-xs text-gray-500">${p.grado} - ${p.seccion}</td>
                 <td class="p-4 text-xs text-gray-400">${new Date(p.lastUpdated).toLocaleString()}</td>
                 <td class="p-4 text-right">
-                    <button onclick="window.viewProjectCode('${p.fileId}', '${p.projectName}')" class="bg-blue-600 text-white px-3 py-1 rounded-xl text-xs font-bold">Ver Código</button>
+                    <button onclick="window.viewProjectCode('${p.fileId}', '${p.projectName}')" class="bg-blue-600 text-white px-3 py-1 rounded-xl text-xs font-medium">Ver Código</button>
                 </td>
             </tr>
         `).join('');
@@ -1516,9 +1516,9 @@ document.addEventListener('DOMContentLoaded', () => {
             tbody.innerHTML = sortedRecords.map((r, idx) => `
                 <tr class="hover:bg-gray-50 transition-colors">
                     <td class="p-4 text-gray-400 font-mono">${idx + 1}</td>
-                    <td class="p-4 font-bold text-gray-800">${r.alumno}</td>
-                    <td class="p-4 text-purple-600 font-bold">${r.juego}</td>
-                    <td class="p-4"><span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-black">${r.maxScore}</span></td>
+                    <td class="p-4 font-medium text-gray-800">${r.alumno}</td>
+                    <td class="p-4 text-purple-600 font-medium">${r.juego}</td>
+                    <td class="p-4"><span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-semibold">${r.maxScore}</span></td>
                     <td class="p-4 text-xs italic text-gray-600">${r.lastLogro}</td>
                     <td class="p-4 text-xs text-gray-400">${new Date(r.fecha).toLocaleString()}</td>
                 </tr>
@@ -1572,10 +1572,10 @@ async function fetchNewsManagement() {
                     ` : ''}
                     <div class="p-5">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-[9px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${n.categoria}</span>
+                            <span class="text-[9px] font-medium uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${n.categoria}</span>
                             <span class="text-[10px] text-gray-400">${n.fecha}</span>
                         </div>
-                        <h3 class="font-bold text-gray-800 mb-2 line-clamp-2">${n.titulo}</h3>
+                        <h3 class="font-medium text-gray-800 mb-2 line-clamp-2">${n.titulo}</h3>
                     </div>
                 </div>
             `).join('');
