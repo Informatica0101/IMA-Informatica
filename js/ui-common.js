@@ -125,24 +125,54 @@ window.setupCommonUI = function() {
 
     // --- Dropdown Viewport Protection (A-76) ---
     const handleDropdownOverflow = () => {
-        const submenus = document.querySelectorAll('.group .absolute.left-full');
-        submenus.forEach(menu => {
-            const parent = menu.parentElement;
-            parent.addEventListener('mouseenter', () => {
-                // Temporarily show to measure
-                menu.style.visibility = 'hidden';
-                menu.style.display = 'block';
-                const rect = menu.getBoundingClientRect();
-                menu.style.display = '';
-                menu.style.visibility = '';
-
-                if (rect.right > window.innerWidth) {
-                    menu.classList.add('dropdown-reverse');
-                } else {
-                    menu.classList.remove('dropdown-reverse');
-                }
-            });
+        // Observer to re-apply logic if DOM changes (dynamic menus)
+        const observer = new MutationObserver((mutations) => {
+            attachOverflowCheck();
         });
+
+        const attachOverflowCheck = () => {
+            // Check both Level 2 (below nav) and Level 3+ (right side) submenus
+            const submenus = document.querySelectorAll('.group div[class*="absolute"]');
+            submenus.forEach(menu => {
+                const parent = menu.parentElement;
+                if (!parent || parent.dataset.ovfChecked === "true") return;
+
+                parent.dataset.ovfChecked = "true";
+                parent.addEventListener('mouseenter', () => {
+                    // Temporarily show to measure accurately
+                    const originalOpacity = menu.style.opacity;
+                    const originalVisibility = menu.style.visibility;
+
+                    menu.style.opacity = '0';
+                    menu.style.visibility = 'visible';
+                    menu.style.display = 'block';
+
+                    const rect = menu.getBoundingClientRect();
+
+                    menu.style.display = '';
+                    menu.style.visibility = originalVisibility;
+                    menu.style.opacity = originalOpacity;
+
+                    if (rect.right > window.innerWidth) {
+                        menu.classList.add('dropdown-reverse');
+                        // If it's a top-level dropdown, just shift it left
+                        if (menu.classList.contains('left-0')) {
+                            menu.classList.remove('left-0');
+                            menu.classList.add('right-0');
+                        }
+                    } else {
+                        // Reset if it fits now
+                        if (rect.left < 0) {
+                             // Handle left overflow if needed
+                        }
+                    }
+                });
+            });
+        };
+
+        const nav = document.querySelector('nav');
+        if (nav) observer.observe(nav, { childList: true, subtree: true });
+        attachOverflowCheck();
     };
     handleDropdownOverflow();
 
@@ -349,6 +379,8 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const role = user.rol || 'Invitado';
 
+    if (!container) return;
+
     container.innerHTML = '<div class="p-8 text-center"><i class="fas fa-spinner fa-spin text-blue-600 text-2xl"></i></div>';
 
     // Obtener datos de window.presentationData (Cursos) o window.downloadContentData (Contenido)
@@ -356,6 +388,13 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
 
     let items = [];
     let nextLevel = '';
+
+    // Helper for robust section check (supports string "A, B" and array ["A", "B"])
+    const checkSection = (sectionsField, targetSection) => {
+        if (!sectionsField || !targetSection) return true;
+        if (Array.isArray(sectionsField)) return sectionsField.includes(targetSection);
+        return sectionsField.split(',').map(s => s.trim()).includes(targetSection);
+    };
 
     switch(level) {
         case 'Grado':
@@ -367,7 +406,6 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
             label.textContent = 'Selecciona Sección';
             const gradeObj = sourceData.find(d => d.grade === params.grado);
             items = gradeObj ? gradeObj.sections : [];
-            // Estudiante: Sección -> Parcial. Profesor: Sección -> Asignatura.
             nextLevel = (role === 'Profesor') ? 'Asignatura' : 'Parcial';
             break;
         case 'Asignatura':
@@ -375,7 +413,7 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
             const gradeObjA = sourceData.find(d => d.grade === params.grado);
             if (gradeObjA) {
                 items = [...new Set(gradeObjA.subjects
-                    .filter(s => s.sections.includes(params.seccion) && (!params.parcial || s.partial === params.parcial))
+                    .filter(s => checkSection(s.sections, params.seccion) && (!params.parcial || s.partial === params.parcial))
                     .map(s => s.name)
                 )];
             }
@@ -387,11 +425,10 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
             const gradeObjP = sourceData.find(d => d.grade === params.grado);
             if (gradeObjP) {
                 items = [...new Set(gradeObjP.subjects
-                    .filter(s => s.sections.includes(params.seccion) && (!params.asignatura || s.name === params.asignatura))
+                    .filter(s => checkSection(s.sections, params.seccion) && (!params.asignatura || s.name === params.asignatura))
                     .map(s => s.partial)
                 )];
             }
-            // Estudiante: Parcial -> Asignatura. Profesor: Parcial -> Temas.
             nextLevel = (role === 'Profesor') ? (type === 'Presentaciones' ? 'Temas' : 'Archivos') : 'Asignatura';
             break;
         case 'Temas':
@@ -403,7 +440,7 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
                 const subject = gradeObjT.subjects.find(s =>
                     s.name === params.asignatura &&
                     s.partial === params.parcial &&
-                    s.sections.includes(params.seccion)
+                    checkSection(s.sections, params.seccion)
                 );
                 finalItems = subject ? subject.topics : [];
             }
@@ -413,32 +450,43 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
                 return;
             }
 
-            container.innerHTML = finalItems.map(item => `
-                <a href="${item.file}" ${type === 'Contenido' ? 'download' : 'target="_blank"'} class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg ${type === 'Presentaciones' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'} flex items-center justify-center text-xs">
-                            <i class="fas ${type === 'Presentaciones' ? 'fa-desktop' : 'fa-download'}"></i>
+            container.innerHTML = finalItems.map(item => {
+                if (!item.title || !item.file) return '';
+                return `
+                    <a href="${item.file}" ${type === 'Contenido' ? 'download' : 'target="_blank"'} class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg ${type === 'Presentaciones' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'} flex items-center justify-center text-xs">
+                                <i class="fas ${type === 'Presentaciones' ? 'fa-desktop' : 'fa-download'}"></i>
+                            </div>
+                            <span class="text-sm font-semibold text-gray-700">${item.title}</span>
                         </div>
-                        <span class="text-sm font-semibold text-gray-700">${item.title}</span>
-                    </div>
-                    <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
-                </a>
-            `).join('');
+                        <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                    </a>
+                `;
+            }).join('');
             return;
     }
 
-    if (items.length === 0) {
+    if (items.length === 0 || items.every(i => i === undefined)) {
         container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay opciones disponibles.</p>';
         return;
     }
 
-    container.innerHTML = items.map(item => `
-        <button onclick='window.renderHierarchyLevel("${type}", "${nextLevel}", ${JSON.stringify({...params, [level === 'Grado' ? 'grado' : (level === 'Sección' ? 'seccion' : (level === 'Asignatura' ? 'asignatura' : (level === 'Parcial' ? 'parcial' : level.toLowerCase())))]: item})})'
-                class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
-            <span class="text-sm font-semibold text-gray-700">${item}</span>
-            <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
-        </button>
-    `).join('');
+    container.innerHTML = items.map(item => {
+        if (item === undefined) return '';
+        const currentLevelKey = (level === 'Grado' ? 'grado' : (level === 'Sección' ? 'seccion' : (level === 'Asignatura' ? 'asignatura' : (level === 'Parcial' ? 'parcial' : level.toLowerCase()))));
+        const newParams = {...params, [currentLevelKey]: item};
+        // Escape single quotes for HTML attribute safety
+        const paramsStr = JSON.stringify(newParams).replace(/'/g, "&#39;");
+
+        return `
+            <button onclick='window.renderHierarchyLevel("${type}", "${nextLevel}", ${paramsStr})'
+                    class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
+                <span class="text-sm font-semibold text-gray-700">${item}</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+            </button>
+        `;
+    }).join('');
 };
 
 

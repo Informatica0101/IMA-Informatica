@@ -43,8 +43,8 @@ body {
 #main-header {
     top: 0 !important;
     transition: all var(--anim-speed) ease;
-    padding-top: 8px !important;
-    padding-bottom: 8px !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
     background: rgba(255, 255, 255, 1) !important; /* Opacidad total para institucionalidad */
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
@@ -67,20 +67,22 @@ body {
 @media (min-width: 1024px) {
     #main-header .container {
         max-width: 100% !important;
-        padding-left: 32px !important;
-        padding-right: 32px !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
     }
 }
 
 @media (min-width: 1280px) {
     .container {
-        max-width: 95% !important;
+        max-width: 98% !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
     }
 }
 
 @media (min-width: 1536px) {
     .container {
-        max-width: 1440px !important;
+        max-width: 1800px !important;
     }
 }
 
@@ -223,13 +225,13 @@ p { font-size: 0.875rem; line-height: 1.6; color: var(--blue-grayish); font-weig
 }
 
 .nav-link-desktop {
-    padding: 8px 8px;
+    padding: 4px 6px;
     font-size: 10px;
     font-weight: 600;
     color: #4b5563;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    border-radius: 8px;
+    letter-spacing: 0.05em;
+    border-radius: 6px;
     transition: all 0.2s ease;
 }
 
@@ -249,7 +251,17 @@ p { font-size: 0.875rem; line-height: 1.6; color: var(--blue-grayish); font-weig
 .dropdown-reverse {
     left: auto !important;
     right: 100% !important;
-    margin-right: 0.5rem;
+}
+
+.dropdown-container-ima {
+    min-width: 160px;
+    width: max-content;
+    max-width: 300px;
+    white-space: nowrap;
+}
+
+.dropdown-container-ima * {
+    white-space: normal;
 }
 
 /* Footer Compact */
