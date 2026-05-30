@@ -102,21 +102,19 @@ FLUJO PRINCIPAL DE TRABAJO
 -----------------------------------
 TAREAS PENDIENTES DE REVISIÓN
 
-1. Corregir error crítico en módulo “Mi Perfil” (index.html): asegurar que funcione desde index o dashboard, permitiendo actualización de todos los campos y sincronizando con el microservicio USER. (Hallazgo 24, 26) - COMPLETADA
-2. Corregir persistencia incompleta en hoja “Usuarios”: asegurar que email y contraseña se actualicen correctamente en el backend. (Hallazgo 28) - COMPLETADA
-3. Corregir visualización del correo electrónico en tarjeta del alumno: asegurar que el email se obtenga en la consulta de estudiantes y se renderice en la UI del docente. (Hallazgo 29) - COMPLETADA
-4. Implementar lógica avanzada de “Progreso del Parcial” y “Nivel de Entrega”: calcular basándose en carga académica total (todas las tareas asignadas vs entregadas, puntos y puntualidad). (Hallazgo 23) - COMPLETADA
-5. Resolver error en historial académico al cambiar correo: asegurar que el `userId` sea el identificador persistente en todas las referencias de tareas y exámenes. (Hallazgo 30) - COMPLETADA
-6. Rediseño UI/UX, navegación y coherencia visual:
-   - Encabezado institucional obligatorio (Logo, Título, Bandera siempre visibles).
-   - Navegación escritorio: barra horizontal permanente, sin menús hamburguesa.
-   - Navegación móvil: barra inferior fija con iconos, sin hamburguesa.
-   - Corrección módulo “Cursos”: eliminar desenfoque excesivo en overlays.
-   - Consistencia visual: Estilo profesional, 4px spacing, eliminar sombras agresivas. (Hallazgo 25, 27, 31) - COMPLETADA
-
 ------------------------------------------------------------------------------------------------
 
 [TAREAS A REALIZAR]
+
+1. Corregir error de conexión y persistencia en "Mi Perfil" (index.html y dashboard). Asegurar actualización de Nombre, Email, Teléfono, Número de Lista y Contraseña (con hashing SHA-256). (Hallazgo 16, 17)
+2. Garantizar que el correo electrónico del alumno (columna E) se renderice correctamente en la tarjeta de información del dashboard docente. (Hallazgo 18)
+3. Implementar lógica avanzada de "Progreso del Parcial" (30% entrega, 50% puntos, 20% puntualidad) basada en carga académica total del parcial actual. (Hallazgo 19)
+4. Rediseño UI/UX Institucional:
+   - Encabezado: Logos (Institución y Honduras) siempre visibles.
+   - Escritorio: Barra horizontal permanente, sin menús hamburguesa.
+   - Móvil/PWA: Barra inferior fija con iconos, eliminar menú hamburguesa.
+   - Módulo "Cursos": Eliminar blur excesivo y asegurar legibilidad. (Hallazgo 20, 21, 22)
+5. Sincronizar cambios de correo mediante userId persistente para evitar rupturas en el historial académico.
 
 ------------------------------------------------------------------------------------------------
 
@@ -124,3 +122,4 @@ ESTADO DE LAS TAREAS (RESUMEN)
 
 [A-72] COMPLETADA
 [A-73] COMPLETADA
+[A-74] COMPLETADA

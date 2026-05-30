@@ -1,73 +1,50 @@
-REGISTRO DE AUDITORÍA - PROCESO ESTÁNDAR
-=======================================
+REGISTRO DE AUDITORÍA - MEJORAS GENERALES Y REDISEÑO UI/UX
+======================================================
 
 ARCHIVO: index.html
 -------------------
-FECHA: 15/06/2026
-HALLAZGOS:
-1. [Crítico] Error de conexión en el módulo "Mi Perfil" debido a la falta de importación de `js/config.js` y `js/api.js`.
-2. [Crítico] El encabezado utiliza menús ocultos y hamburguesa, violando la directriz de navegación visible en escritorio.
-3. [Mejora] El botón de "Mi Perfil" no es consistente con los dashboards.
-4. [Diseño] El espaciado no sigue la regla de los 4px.
-5. [Visual] El logo institucional y la bandera de Honduras se ocultan en resoluciones móviles dentro de menús.
+- Hallazgo 1: El modal de perfil (#profile-modal) no tiene un botón de "Cerrar sesión". -> RESUELTO.
+- Hallazgo 2: Los logos del header (.logo-img) y la bandera tienen tamaños que el usuario considera pequeños (Logo ~60px, Bandera 24px en desktop). -> RESUELTO (80px / 45px).
+- Hallazgo 3: La navegación de "Cursos" está integrada en el header como un dropdown hover (desktop) y en el drawer lateral (móvil). Se requiere unificarlo como un componente tipo modal/burbuja. -> RESUELTO (Modal jerárquico unificado).
+- Hallazgo 4: Las tarjetas de la landing page (Actividades, Cursos) tienen padding generoso (p-8, py-20 en secciones) que genera mucho espacio vertical desperdiciado. -> RESUELTO (Padding reducido a p-5/p-6).
 
-ESTADO: Resuelto. Se agregaron las dependencias, se rediseñó el header para navegación horizontal en desktop y barra inferior en móvil, y se aplicó el sistema de 4px.
-
-ARCHIVO: js/index-ui.js
------------------------
-FECHA: 15/06/2026
-HALLAZGOS:
-1. [Lógica] La función `saveProfileChanges` no manejaba el campo `numeroLista`.
-2. [Lógica] Falta de sincronización de la UI tras actualizar el perfil.
-3. [UX] El cierre del modal de perfil no limpiaba los estados de error.
-
-ESTADO: Resuelto. Se integró `numeroLista` y se mejoró el feedback de guardado.
+ARCHIVO: student-dashboard.html
+-------------------------------
+- Hallazgo 5: No existe un bloque de "Expediente Académico" con barra de progreso y contadores de tareas. -> RESUELTO.
+- Hallazgo 6: La navegación por asignaturas se basa actualmente en un contenedor que muestra todas las tareas. El usuario quiere botones dinámicos por asignatura que filtren las tareas. -> RESUELTO.
+- Hallazgo 9.1: Tarjetas de tareas largas ocultan el botón de entrega. -> RESUELTO (Scroll interno implementado).
 
 ARCHIVO: js/ui-common.js
 ------------------------
-FECHA: 15/06/2026
-HALLAZGOS:
-1. [Navegación] Lógica de menú hamburguesa obsoleta.
-2. [Identidad] El header dinámico no mantenía la visibilidad permanente de los logos institucionales.
-3. [Consistencia] El botón de perfil se inyectaba de forma inconsistente entre roles.
+- Hallazgo 7: La función `renderMobileNav` y `handleHeaderAction` gestionan la apertura de menús. El rediseño del menú "Cursos" debe centralizarse aquí para afectar a toda la plataforma. -> RESUELTO (window.openAcademicMenu).
+- Hallazgo 8: Se requiere implementar la lógica de "Cerrar Sesión" (limpieza de localStorage.currentUser y redirección). -> RESUELTO.
 
-ESTADO: Resuelto. Se centralizó la navegación horizontal/inferior y se garantizó la visibilidad de logos.
-
-ARCHIVO: backend/user-service/Code.gs
--------------------------------------
-FECHA: 15/06/2026
-HALLAZGOS:
-1. [Persistencia] La función `updateUserProfile` solo actualizaba el teléfono de forma confiable.
-2. [Seguridad] No se validaba la unicidad del email al actualizar el perfil.
-3. [Esquema] El orden de columnas en la hoja Usuarios no estaba estrictamente forzado en las escrituras.
-4. [Identidad] La lógica dependía del correo electrónico como clave en algunos puntos, rompiendo el historial si el correo cambiaba.
-
-ESTADO: Resuelto. Se forzó el uso de `userId` como clave primaria, se validó el email y se corrigió el mapeo de columnas (A-I).
+ARCHIVO: js/student.js
+----------------------
+- Hallazgo 9: El renderizado de tareas en `renderActivities` genera tarjetas que se expanden. No tienen un `max-height` con `overflow-y-auto` interno, lo que puede ocultar el botón de entrega en tareas largas. -> RESUELTO.
+- Hallazgo 10: Se debe implementar la lógica para obtener y mostrar la información del profesor y el link de WhatsApp por cada asignatura. -> RESUELTO.
 
 ARCHIVO: js/teacher.js
 ----------------------
-FECHA: 15/06/2026
-HALLAZGOS:
-1. [Visual] La tarjeta del alumno no mostraba el correo electrónico del estudiante.
-2. [Lógica] El cálculo de "Progreso del Parcial" era una simple tasa de entrega, ignorando la carga académica total y la puntualidad.
-3. [Navegación] El filtro de búsqueda global no poblaba el correo en el expediente del alumno.
+- Hallazgo 11: Error al acceder a detalles de alumnos con teléfono. -> RESUELTO (Conversión a String forzada antes de regex replace).
+- Hallazgo 12: No existe funcionalidad de "Cierre de Año" ni exportación a formatos comprimidos. -> RESUELTO (Módulo de Administración implementado).
 
-ESTADO: Resuelto. Se integró el email en la UI y se implementó la métrica compuesta (30/50/20) para el progreso.
+ARCHIVO: backend/user-service/Code.gs
+-------------------------------------
+- Hallazgo 13: La función `registerUser` detecta duplicados por email, pero no maneja la lógica de "promoción" o actualización de datos para cuentas existentes. -> RESUELTO (forceUpdate flag).
+
+ARCHIVO: pseudocode.html
+------------------------
+- Hallazgo 14: El sistema de guardado en la nube debe asegurar la sobrescritura y el formato .psc. La apertura requiere un modal con el listado de archivos del usuario. -> RESUELTO (Rediseño de modal y lógica de guardado).
 
 ARCHIVO: css/style.css
 ----------------------
-FECHA: 15/06/2026
-HALLAZGOS:
-1. [UX] Efecto de blur excesivo en el módulo "Cursos" (backdrop-blur-xl) dificultaba la lectura.
-2. [Estilo] Botones con sombras neón y colores saturados no acordes al entorno académico.
-3. [Diseño] Falta de clases de utilidad para el sistema de espaciado de 4px.
+- Hallazgo 15: Definiciones de `.dashboard-card` y clases de padding/gap necesitan revisión para compactar el diseño (Sustituir p-6 por p-4 o p-3px según el sistema de 4px). -> RESUELTO.
 
-ESTADO: Resuelto. Se eliminó el blur excesivo, se normalizaron los colores a la paleta institucional y se crearon las utilidades de 4px.
-
-ARCHIVO: README.md
-------------------
-FECHA: 15/06/2026
-HALLAZGOS:
-1. [Documentación] El orden de las columnas de la hoja "Usuarios" no estaba especificado claramente.
-
-ESTADO: Resuelto. Se añadió la sección "Estructura de Base de Datos (Google Sheets)".
+- Hallazgo 16: "Mi Perfil" en index.html falla con "Error de conexión". Requiere verificar el flujo de fetchApi y la respuesta del servidor.
+- Hallazgo 17: Persistencia en hoja "Usuarios" inconsistente. La contraseña y el email deben actualizarse de forma confiable sin romper el userId.
+- Hallazgo 18: El correo electrónico (columna E) no se renderiza consistentemente en la tarjeta de información del alumno en el Dashboard del Profesor.
+- Hallazgo 19: La lógica de "Progreso del Parcial" debe validarse contra la carga académica total del parcial actual (Grado, Sección, Asignatura).
+- Hallazgo 20: Navegación móvil utiliza menú hamburguesa (Prohibido). Debe migrar a barra inferior fija con iconos.
+- Hallazgo 21: El módulo "Cursos" presenta desenfoque excesivo (blur) dificultando la lectura.
+- Hallazgo 22: Logotipos institucional y de Honduras deben permanecer visibles en todo momento en el encabezado global.

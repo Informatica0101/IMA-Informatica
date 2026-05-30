@@ -16,18 +16,18 @@
     <meta http-equiv="Expires" content="0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=19">
+    <link rel="stylesheet" href="css/style.css?v=21">
 </head>
 <body class="font-inter antialiased text-gray-900 min-h-screen flex flex-col">
 
-    <header id="main-header" class="fixed w-full z-50 transition-all duration-300">
+    <header id="main-header" class="fixed w-full z-50 transition-all duration-300 py-1">
         <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <a href="index.html" class="flex items-center gap-3 group">
-                    <img src="imagenes/logo.png" alt="Logo" class="logo-img transition-transform duration-300 group-hover:scale-105">
+                    <img src="imagenes/logo.png" alt="Logo" class="logo-img transition-transform duration-300 group-hover:scale-105" style="width: 80px; height: auto;">
                     <div class="header-title-container">
-                        <h1 class="text-sm md:text-lg font-bold text-gray-900 uppercase tracking-tight">ISEMED</h1>
-                        <p class="text-[9px] md:text-xs font-semibold text-gray-600 uppercase tracking-tight">Área de Informática I</p>
+                        <h1 class="text-sm md:text-xl font-bold text-gray-900 uppercase tracking-tight leading-tight">ISEMED</h1>
+                        <p class="text-[10px] md:text-sm font-semibold text-gray-600 uppercase tracking-tight">Área de Informática I</p>
                     </div>
                 </a>
             </div>
@@ -35,77 +35,17 @@
             <nav class="hidden lg:flex items-center gap-1">
                 <a href="index.html" class="nav-link-desktop">Inicio</a>
                 <a href="login.html" id="nav-portal-link" class="nav-link-desktop">Portal</a>
-
-                <div class="relative group">
-                    <button class="nav-link-desktop flex items-center gap-1">
-                        Cursos <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="absolute left-0 mt-0 w-56 bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 border border-gray-100 z-[100]">
-                        <div id="desktop-courses-menu"></div>
-                    </div>
-                </div>
-
-                <div class="relative group">
-                    <button class="nav-link-desktop flex items-center gap-1">
-                        Contenido <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="absolute left-0 mt-0 w-64 bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 border border-gray-100 z-[100]">
-                        <div id="desktop-content-menu"></div>
-                    </div>
-                </div>
-
+                <button onclick="window.openAcademicMenu()" class="nav-link-desktop">Cursos</button>
                 <a href="#" onclick="handleHeaderAction('show-activities')" class="nav-link-desktop">Actividades</a>
                 <a href="pseudocode.html" class="nav-link-desktop">Pseudocódigo</a>
                 <button id="open-profile-btn" class="nav-link-desktop">Mi perfil</button>
             </nav>
 
             <div class="flex items-center gap-4">
-                <img src="imagenes/bandera-de-honduras.png" alt="HN" width="24" class="opacity-100 block">
+                <img src="imagenes/bandera-de-honduras.png" alt="HN" width="45" class="opacity-100 block transition-transform hover:scale-110">
             </div>
         </div>
 
-        <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-[1100]">
-            <div class="flex justify-between items-center p-6 border-b border-gray-50">
-                <div class="header-title-container">
-                    <h1 class="text-base font-semibold text-gray-900 uppercase tracking-tight">Menú Académico</h1>
-                    <p class="text-[10px] font-medium text-blue-600 uppercase tracking-tight">Explora tu contenido</p>
-                </div>
-                <button id="mobile-menu-close-button" class="text-gray-400 hover:text-gray-600 p-2">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            <nav class="flex flex-col w-full h-full overflow-y-auto pb-32">
-                <div class="w-full border-b border-gray-50">
-                    <button id="mobile-courses-toggle" class="mobile-nav-link justify-between py-5">
-                        <span class="text-sm">Cursos (Presentaciones)</span>
-                        <span id="mobile-courses-arrow" class="transform transition-transform duration-300 text-gray-300">&#9656;</span>
-                    </button>
-                    <div id="mobile-courses-container" class="mobile-menu-item-container hidden-height bg-gray-50/50">
-                        <div id="mobile-courses-menu"></div>
-                    </div>
-                </div>
-
-                <div class="w-full border-b border-gray-50">
-                    <button id="mobile-content-toggle" class="mobile-nav-link justify-between py-5">
-                        <span class="text-sm">Contenido (Descargas PDF)</span>
-                        <span id="mobile-content-arrow" class="transform transition-transform duration-300 text-gray-300">&#9656;</span>
-                    </button>
-                    <div id="mobile-content-container" class="mobile-menu-item-container hidden-height bg-gray-50/50">
-                        <div id="mobile-content-menu"></div>
-                    </div>
-                </div>
-
-                <a href="pseudocode.html" class="mobile-nav-link py-5 text-sm">
-                    <span>Simulador de Pseudocódigo</span>
-                    <span class="ml-auto text-blue-600">→</span>
-                </a>
-
-                <div class="p-10 mt-auto flex flex-col items-center gap-4">
-                    <img src="imagenes/bandera-de-honduras.png" alt="HN" width="40" class="opacity-40">
-                    <p class="text-[9px] font-semibold text-gray-300 uppercase tracking-[0.2em]">ISEMED AREA DE INFORMÁTICA</p>
-                </div>
-            </nav>
-        </div>
     </header>
 
     <main class="mt-[5rem] md:mt-[6rem] flex-grow">
@@ -154,51 +94,51 @@
         </section>
 
         <!-- Sección de Contenido y Actividades Rediseñada -->
-        <section class="py-12 bg-white">
+        <section class="py-8 bg-white">
             <div class="container mx-auto px-6">
-                <div class="text-center max-w-2xl mx-auto mb-8 space-y-4">
-                    <h2 id="main-content-title" class="text-4xl md:text-5xl font-semibold text-gray-900 tracking-tight">
+                <div class="text-center max-w-2xl mx-auto mb-6 space-y-2">
+                    <h2 id="main-content-title" class="text-3xl md:text-4xl font-semibold text-gray-900 tracking-tight">
                         Centro de Recursos
                     </h2>
-                    <p class="text-gray-500 font-medium leading-relaxed">
-                        Accede a materiales descargables y actividades interactivas diseñadas para potenciar tu aprendizaje.
+                    <p class="text-gray-500 font-medium text-sm leading-relaxed">
+                        Accede a materiales descargables y actividades interactivas.
                     </p>
                 </div>
 
                 <div id="main-content-sections" class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
                     <!-- Descargas Card -->
-                    <div id="download-section" class="bg-white p-8 md:p-12 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 group">
-                        <div class="flex items-center gap-4 mb-10">
-                            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">📂</div>
-                            <h3 class="text-2xl font-semibold text-gray-800 tracking-tight">Contenido de Clases</h3>
+                    <div id="download-section" class="bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 group">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">📂</div>
+                            <h3 class="text-xl font-semibold text-gray-800 tracking-tight">Contenido de Clases</h3>
                         </div>
 
-                        <div id="content-back-button-container" class="mb-6 hidden">
-                            <button id="content-back-button" class="inline-flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-widest bg-blue-50 px-4 py-2 rounded-xl hover:bg-blue-100 transition-all">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        <div id="content-back-button-container" class="mb-4 hidden">
+                            <button id="content-back-button" class="inline-flex items-center gap-2 text-[10px] font-semibold text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-all">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                                 Regresar
                             </button>
                         </div>
 
-                        <div id="content-display-area" class="min-h-[250px] flex flex-col justify-center items-center">
+                        <div id="content-display-area" class="min-h-[180px] flex flex-col justify-center items-center">
                             <!-- Inyectado dinámicamente -->
                         </div>
                     </div>
 
                     <!-- Actividades Card -->
-                    <div id="activity-section" class="bg-white p-8 md:p-12 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 group">
-                        <div class="flex items-center gap-4 mb-10">
-                            <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🎮</div>
-                            <h3 class="text-2xl font-semibold text-gray-800 tracking-tight">Actividades Prácticas</h3>
+                    <div id="activity-section" class="bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 group">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">🎮</div>
+                            <h3 class="text-xl font-semibold text-gray-800 tracking-tight">Actividades Prácticas</h3>
                         </div>
 
-                        <div id="initial-activity-menu" class="flex flex-col items-center justify-center min-h-[250px]">
-                            <button id="show-activities-button" class="px-10 py-5 bg-purple-600 text-white font-semibold text-lg rounded-2xl shadow-xl shadow-purple-100 hover:bg-purple-700 transition-all transform hover:-translate-y-1">
+                        <div id="initial-activity-menu" class="flex flex-col items-center justify-center min-h-[180px]">
+                            <button id="show-activities-button" class="px-8 py-3.5 bg-purple-600 text-white font-semibold text-base rounded-xl shadow-lg shadow-purple-100 hover:bg-purple-700 transition-all transform hover:-translate-y-1">
                                 Ver Actividades
                             </button>
                         </div>
 
-                        <div id="game-list-menu" class="hidden flex-col items-center justify-center min-h-[250px] animate-fade-in-up">
+                        <div id="game-list-menu" class="hidden flex-col items-center justify-center min-h-[180px] animate-fade-in-up">
                             <div class="grid grid-cols-1 gap-4 w-full">
                                 <button id="select-peripherals-game-button" class="w-full px-6 py-4 bg-gray-50 text-gray-800 font-medium rounded-2xl border border-gray-100 hover:bg-white hover:shadow-lg hover:border-blue-200 transition-all flex items-center justify-between group/btn">
                                     <span>Periféricos E/S</span>
@@ -278,9 +218,14 @@
                     <input type="password" id="profile-password" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
                 </div>
 
-                <div class="flex space-x-4 mt-8">
-                    <button type="button" id="cancel-profile-btn" class="flex-1 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors">Cerrar</button>
-                    <button type="submit" class="flex-1 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 shadow-lg transition-all">Guardar Cambios</button>
+                <div class="flex flex-col gap-3 mt-8">
+                    <div class="flex space-x-4">
+                        <button type="button" id="cancel-profile-btn" class="flex-1 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors">Cerrar</button>
+                        <button type="submit" class="flex-1 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 shadow-lg transition-all">Guardar Cambios</button>
+                    </div>
+                    <button type="button" onclick="handleLogout()" class="w-full py-3 bg-red-50 text-red-600 font-semibold rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
                 </div>
             </form>
         </div>

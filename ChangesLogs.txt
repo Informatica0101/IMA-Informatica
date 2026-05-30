@@ -1109,3 +1109,24 @@ MODIFICACIONES:
   - Implementado sistema de espaciado institucional de 4px (utilidades p-*px, m-*px, gap-*px) en `css/style.css`.
   - Asegurada la integridad del historial académico mediante el uso estricto de `userId` como clave persistente, permitiendo cambios de correo sin pérdida de datos.
   - Sincronizada versión global de activos y caché a v=21.
+
+15/06/2026
+TAREA: [A-75]
+TÍTULO: Corrección Crítica de Perfil, Persistencia y Rediseño UI/UX Final
+ÁREA: UI/UX / Frontend / Backend / Lógica
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA
+
+MODIFICACIONES:
+- Módulo "Mi Perfil" & Persistencia:
+  - Corregido error de conexión en index.html mediante la unificación de la lógica de actualización en js/ui-common.js.
+  - Backend (USER-SVC): Corregida la persistencia en la hoja "Usuarios" (A-I) asegurando que Nombre, Email, Teléfono, Número de Lista y Contraseña (SHA-256) se guarden correctamente.
+  - Identidad Persistente: Asegurado el uso de userId como clave primaria en todos los servicios para evitar la pérdida de historial académico al cambiar de correo electrónico.
+- Lógica Académica:
+  - Implementada métrica compuesta para "Progreso del Parcial" y "Nivel de Entrega" (30% entrega, 50% rendimiento, 20% puntualidad) en la tarjeta del alumno del docente.
+  - Asegurada la visualización del correo institucional en la ficha del alumno dentro del dashboard docente.
+- Rediseño UI/UX Institucional:
+  - Encabezado: Garantizada la visibilidad permanente de logos institucional (80px) y bandera de Honduras (45px) con navegación horizontal directa en escritorio.
+  - Navegación Móvil: Migración total a una barra inferior fija con iconos exclusivos; eliminación definitiva de menús hamburguesa y side drawers.
+  - Optimización de Overlays: Eliminación de desenfoque (blur) excesivo en el módulo "Cursos" y aplicación de fondos opacos (rgba 0.95) para máxima legibilidad.
+  - Estabilidad: Sincronización de versión de activos a v=21 y limpieza de manejadores de eventos duplicados.

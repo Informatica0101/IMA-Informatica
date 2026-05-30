@@ -4,17 +4,6 @@
 
 window.setupCommonUI = function() {
     const mainHeader = document.getElementById('main-header');
-    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-    const mobileMenuCloseButton = document.getElementById('mobile-menu-close-button');
-
-    const mobileCoursesToggle = document.getElementById('mobile-courses-toggle');
-    const mobileCoursesArrow = document.getElementById('mobile-courses-arrow');
-    const mobileCoursesContainer = document.getElementById('mobile-courses-container');
-
-    const mobileContentToggle = document.getElementById('mobile-content-toggle');
-    const mobileContentArrow = document.getElementById('mobile-content-arrow');
-    const mobileContentContainer = document.getElementById('mobile-content-container');
-
     const openProfileBtn = document.getElementById('open-profile-btn');
     const mobileProfileBtn = document.getElementById('mobile-profile-btn-nav');
 
@@ -39,75 +28,14 @@ window.setupCommonUI = function() {
         });
     }
 
-    // --- Mobile Menu Logic (Overlay Hierarchical Drawer) ---
-    if (mobileMenuOverlay) {
-        let backdrop = document.querySelector('.mobile-menu-backdrop');
-        if (!backdrop) {
-            backdrop = document.createElement('div');
-            backdrop.className = 'mobile-menu-backdrop';
-            document.body.appendChild(backdrop);
-            backdrop.onclick = () => window.closeMobileMenu();
-        }
+    // --- Mobile Menu Logic (Redirect to Academic Modal A-73/74) ---
+    window.openMobileMenu = function(section = null) {
+        window.openAcademicMenu();
+    };
 
-        window.openMobileMenu = function(section = null) {
-            mobileMenuOverlay.classList.remove('hidden');
-            backdrop.classList.add('active');
-            document.body.style.overflow = 'hidden';
-
-            if (section === 'courses') {
-                resetMobileMenuState();
-                mobileCoursesContainer.classList.remove('hidden-height');
-                mobileCoursesContainer.classList.add('visible-height');
-                mobileCoursesArrow.classList.add('rotate-90');
-            } else if (section === 'content') {
-                resetMobileMenuState();
-                mobileContentContainer.classList.remove('hidden-height');
-                mobileContentContainer.classList.add('visible-height');
-                mobileContentArrow.classList.add('rotate-90');
-            }
-        };
-
-        window.closeMobileMenu = function() {
-            mobileMenuOverlay.classList.add('hidden');
-            backdrop.classList.remove('active');
-            document.body.style.overflow = '';
-            resetMobileMenuState();
-        }
-
-        function resetMobileMenuState() {
-            [mobileCoursesContainer, mobileContentContainer].forEach(el => {
-                if (el) { el.classList.add('hidden-height'); el.classList.remove('visible-height'); }
-            });
-            [mobileCoursesArrow, mobileContentArrow].forEach(el => {
-                if (el) el.classList.remove('rotate-90');
-            });
-        }
-
-        if (mobileMenuCloseButton) mobileMenuCloseButton.addEventListener('click', () => window.closeMobileMenu());
-
-        if (mobileCoursesToggle) {
-            mobileCoursesToggle.addEventListener('click', () => {
-                const isVisible = mobileCoursesContainer.classList.contains('visible-height');
-                resetMobileMenuState();
-                if (!isVisible) {
-                    mobileCoursesContainer.classList.add('visible-height');
-                    mobileCoursesContainer.classList.remove('hidden-height');
-                    mobileCoursesArrow.classList.add('rotate-90');
-                }
-            });
-        }
-        if (mobileContentToggle) {
-            mobileContentToggle.addEventListener('click', () => {
-                const isVisible = mobileContentContainer.classList.contains('visible-height');
-                resetMobileMenuState();
-                if (!isVisible) {
-                    mobileContentContainer.classList.add('visible-height');
-                    mobileContentContainer.classList.remove('hidden-height');
-                    mobileContentArrow.classList.add('rotate-90');
-                }
-            });
-        }
-    }
+    window.closeMobileMenu = function() {
+        window.closeAcademicMenu();
+    };
 
     // --- Profile Modal Logic ---
     const handleProfileClick = () => {
@@ -159,6 +87,71 @@ window.setupCommonUI = function() {
 
     // Render Navigation
     window.renderCommonNav();
+
+    // --- Unified Profile Form Handler (A-73) ---
+    const profileForm = document.getElementById('profile-form');
+    if (profileForm) {
+        profileForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) return;
+
+            const submitBtn = profileForm.querySelector('button[type="submit"]');
+            const newPassword = document.getElementById('profile-password').value;
+            const currentPassword = document.getElementById('profile-current-password').value;
+
+            if (newPassword && !currentPassword) {
+                alert('Debe ingresar su contraseña actual para realizar cambios de seguridad.');
+                return;
+            }
+
+            const payload = {
+                userId: user.userId,
+                nombre: document.getElementById('profile-nombre').value.trim(),
+                email: document.getElementById('profile-email').value.trim(),
+                telefono: document.getElementById('profile-telefono').value.trim(),
+                numeroLista: document.getElementById('profile-numeroLista') ? document.getElementById('profile-numeroLista').value : undefined,
+                currentPassword: currentPassword || undefined,
+                password: newPassword || undefined
+            };
+
+            submitBtn.disabled = true;
+            submitBtn.classList.add('btn-loading');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Guardando...';
+
+            try {
+                const result = await fetchApi('USER', 'updateUserProfile', payload);
+                if (result.status === 'success') {
+                    // Actualizar localStorage
+                    const updatedUser = { ...user, ...result.data };
+                    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+
+                    // Actualizar UI local si existe (saludos, etc)
+                    const nameEl = document.getElementById('teacher-name') || document.getElementById('student-name');
+                    if (nameEl) nameEl.textContent = updatedUser.nombre.split(' ')[0];
+
+                    if (window.renderWelcomeMessage) window.renderWelcomeMessage();
+
+                    alert('Perfil actualizado correctamente.');
+                    document.getElementById('profile-modal').classList.add('hidden');
+
+                    // Limpiar campos de password
+                    document.getElementById('profile-password').value = '';
+                    document.getElementById('profile-current-password').value = '';
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (err) {
+                console.error("Profile update error:", err);
+                alert('Fallo en la conexión con el servidor. Inténtelo de nuevo.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.textContent = originalText;
+            }
+        };
+    }
 };
 
 window.handleHeaderAction = function(action) {
@@ -170,8 +163,191 @@ window.handleHeaderAction = function(action) {
             window.location.href = 'index.html?action=show-activities';
         }
     }
+    if (action === 'cursos' || action === 'contenido' || action === 'show-academic-menu') {
+        window.openAcademicMenu();
+    }
     if (window.closeMobileMenu) window.closeMobileMenu();
 };
+
+window.openAcademicMenu = function() {
+    const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+    // Crear el modal si no existe
+    let modal = document.getElementById('academic-menu-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'academic-menu-modal';
+        modal.className = 'fixed inset-0 bg-gray-900/95 z-[2000] flex items-center justify-center hidden opacity-0 transition-all duration-300';
+        modal.innerHTML = `
+            <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-fade-in-up m-4 border border-gray-100">
+                <div class="p-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-900 tracking-tight">Recursos</h2>
+                            <p class="text-xs font-medium text-blue-600 uppercase tracking-widest mt-1">Explora tu contenido</p>
+                        </div>
+                        <button onclick="window.closeAcademicMenu()" class="text-gray-400 hover:text-gray-600 p-2 transition-colors">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4" id="academic-menu-options">
+                        <button onclick="window.showAcademicHierarchy('Presentaciones')" class="group flex items-center gap-5 p-5 bg-blue-50/50 rounded-3xl hover:bg-blue-600 transition-all duration-300">
+                            <div class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                <i class="fas fa-desktop"></i>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="font-bold text-gray-900 group-hover:text-white transition-colors">Presentaciones</h3>
+                                <p class="text-xs text-blue-600 group-hover:text-blue-100 transition-colors">Clases interactivas</p>
+                            </div>
+                        </button>
+
+                        <button onclick="window.showAcademicHierarchy('Contenido')" class="group flex items-center gap-5 p-5 bg-purple-50/50 rounded-3xl hover:bg-purple-600 transition-all duration-300">
+                            <div class="w-14 h-14 bg-purple-600 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="font-bold text-gray-900 group-hover:text-white transition-colors">Contenido de clase</h3>
+                                <p class="text-xs text-purple-600 group-hover:text-purple-100 transition-colors">Descargas PDF</p>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div id="hierarchy-navigation" class="hidden flex flex-col min-h-[300px]">
+                        <button onclick="window.resetAcademicMenu()" class="mb-6 flex items-center gap-2 text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] hover:text-blue-700 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+                            Regresar
+                        </button>
+                        <div id="hierarchy-title" class="mb-6">
+                            <h3 class="text-lg font-bold text-gray-900" id="hierarchy-label">Selecciona Grado</h3>
+                            <div class="h-1 w-12 bg-blue-600 rounded-full mt-1"></div>
+                        </div>
+                        <div id="hierarchy-options" class="flex flex-col gap-2 overflow-y-auto max-h-[350px] pr-2 scroll-minimalist">
+                            <!-- Inyectado dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    modal.classList.remove('hidden');
+    setTimeout(() => modal.classList.add('opacity-100'), 10);
+    window.resetAcademicMenu();
+};
+
+window.closeAcademicMenu = function() {
+    const modal = document.getElementById('academic-menu-modal');
+    if (modal) {
+        modal.classList.remove('opacity-100');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+};
+
+window.resetAcademicMenu = function() {
+    document.getElementById('academic-menu-options').classList.remove('hidden');
+    document.getElementById('hierarchy-navigation').classList.add('hidden');
+};
+
+window.showAcademicHierarchy = function(type) {
+    document.getElementById('academic-menu-options').classList.add('hidden');
+    document.getElementById('hierarchy-navigation').classList.remove('hidden');
+    window.renderHierarchyLevel(type, 'Grado');
+};
+
+window.renderHierarchyLevel = function(type, level, params = {}) {
+    const container = document.getElementById('hierarchy-options');
+    const label = document.getElementById('hierarchy-label');
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const role = user.rol || 'Invitado';
+
+    container.innerHTML = '<div class="p-8 text-center"><i class="fas fa-spinner fa-spin text-blue-600 text-2xl"></i></div>';
+
+    // Obtener datos de window.presentationData (Cursos) o window.downloadContentData (Contenido)
+    const sourceData = (type === 'Presentaciones') ? (window.presentationData || []) : (window.downloadContentData || []);
+
+    let items = [];
+    let nextLevel = '';
+
+    switch(level) {
+        case 'Grado':
+            label.textContent = 'Selecciona Grado';
+            items = [...new Set(sourceData.map(d => d.grado))];
+            nextLevel = 'Sección';
+            break;
+        case 'Sección':
+            label.textContent = 'Selecciona Sección';
+            items = [...new Set(sourceData.filter(d => d.grado === params.grado).map(d => d.seccion))];
+            // Estudiante: Sección -> Parcial. Profesor: Sección -> Asignatura.
+            nextLevel = (role === 'Profesor') ? 'Asignatura' : 'Parcial';
+            break;
+        case 'Asignatura':
+            label.textContent = 'Selecciona Asignatura';
+            items = [...new Set(sourceData.filter(d =>
+                d.grado === params.grado &&
+                d.seccion === params.seccion &&
+                (!params.parcial || d.parcial === params.parcial)
+            ).map(d => d.asignatura))];
+            nextLevel = (role === 'Profesor') ? 'Parcial' : 'Temas';
+            if (type === 'Contenido' && role !== 'Profesor') nextLevel = 'Archivos';
+            break;
+        case 'Parcial':
+            label.textContent = 'Selecciona Parcial';
+            items = [...new Set(sourceData.filter(d =>
+                d.grado === params.grado &&
+                d.seccion === params.seccion &&
+                (!params.asignatura || d.asignatura === params.asignatura)
+            ).map(d => d.parcial))];
+            // Estudiante: Parcial -> Asignatura. Profesor: Parcial -> Temas.
+            nextLevel = (role === 'Profesor') ? (type === 'Presentaciones' ? 'Temas' : 'Archivos') : 'Asignatura';
+            break;
+        case 'Temas':
+        case 'Archivos':
+            label.textContent = (type === 'Presentaciones') ? 'Selecciona Tema' : 'Descargar Archivos';
+            const finalFilter = { grado: params.grado, seccion: params.seccion, parcial: params.parcial };
+            if (params.asignatura) finalFilter.asignatura = params.asignatura;
+
+            const finalItems = sourceData.filter(d =>
+                d.grado === finalFilter.grado &&
+                d.seccion === finalFilter.seccion &&
+                d.parcial === finalFilter.parcial &&
+                (!finalFilter.asignatura || d.asignatura === finalFilter.asignatura)
+            );
+
+            if (finalItems.length === 0) {
+                container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay contenido disponible.</p>';
+                return;
+            }
+
+            container.innerHTML = finalItems.map(item => `
+                <a href="${item.url}" ${type === 'Contenido' ? 'download' : 'target="_blank"'} class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg ${type === 'Presentaciones' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'} flex items-center justify-center text-xs">
+                            <i class="fas ${type === 'Presentaciones' ? 'fa-desktop' : 'fa-download'}"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-700">${item.titulo}</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                </a>
+            `).join('');
+            return;
+    }
+
+    if (items.length === 0) {
+        container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay opciones disponibles.</p>';
+        return;
+    }
+
+    container.innerHTML = items.map(item => `
+        <button onclick='window.renderHierarchyLevel("${type}", "${nextLevel}", ${JSON.stringify({...params, [level.toLowerCase() === 'sección' ? 'seccion' : level.toLowerCase()]: item})})'
+                class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
+            <span class="text-sm font-semibold text-gray-700">${item}</span>
+            <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+        </button>
+    `).join('');
+};
+
 
 window.renderCommonNav = function() {
     const desktopCoursesMenu = document.getElementById('desktop-courses-menu');

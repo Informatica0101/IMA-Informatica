@@ -323,55 +323,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelProfileBtn.onclick = () => profileModal.classList.add('hidden');
     }
 
-    if (profileForm) {
-        profileForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const user = JSON.parse(localStorage.getItem('currentUser'));
-            const submitBtn = profileForm.querySelector('button[type="submit"]');
-            const newPassword = document.getElementById('profile-password').value;
-            const currentPassword = document.getElementById('profile-current-password').value;
-
-            if (newPassword && !currentPassword) {
-                alert('Debe ingresar su contraseña actual para realizar cambios de seguridad.');
-                return;
-            }
-
-            const payload = {
-                userId: user.userId,
-                nombre: document.getElementById('profile-nombre').value,
-                email: document.getElementById('profile-email').value,
-                telefono: document.getElementById('profile-telefono').value,
-                numeroLista: document.getElementById('profile-numeroLista') ? document.getElementById('profile-numeroLista').value : undefined,
-                currentPassword: currentPassword || undefined,
-                password: newPassword || undefined
-            };
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Guardando...';
-
-            try {
-                const result = await fetchApi('USER', 'updateUserProfile', payload);
-                if (result.status === 'success') {
-                    user.nombre = payload.nombre;
-                    user.email = payload.email;
-                    user.telefono = payload.telefono;
-                    if (payload.numeroLista !== undefined) user.numeroLista = payload.numeroLista;
-                    localStorage.setItem('currentUser', JSON.stringify(user));
-                    renderWelcomeMessage();
-                    alert('Perfil actualizado correctamente.');
-                    profileModal.classList.add('hidden');
-                } else {
-                    alert('Error: ' + result.message);
-                }
-            } catch (err) {
-                alert('Error de conexión.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Guardar Cambios';
-            }
-        };
-    }
-});
 
 /**
  * Login Modal Logic

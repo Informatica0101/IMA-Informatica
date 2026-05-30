@@ -147,7 +147,7 @@ body {
 .card-ima {
     background: var(--white);
     border-radius: 8px; /* Standardize on 8px */
-    padding: 12px; /* More compact padding */
+    padding: 8px 12px; /* More compact padding */
     border: 1px solid #e2e8f0; /* Subtle border */
     box-shadow: none; /* Minimalist approach: no shadow by default */
     transition: all var(--anim-speed) ease;
@@ -156,6 +156,19 @@ body {
 .card-ima:hover {
     border-color: #cbd5e1;
     background: #fdfdfd;
+}
+
+.dashboard-card {
+    border-radius: 20px;
+    padding: 12px; /* Reduced from default */
+    border: 1px solid #f1f5f9;
+    background: var(--white);
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.1);
+    border-color: #e2e8f0;
 }
 
 /* Typography */
@@ -269,42 +282,41 @@ footer a:hover {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(203, 213, 225, 0.5); border-radius: 10px; }
 
-/* Mobile Bottom Nav */
+/* Mobile Bottom Nav (Icon Only A-73/74) */
 .mobile-bottom-nav {
     display: none;
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(16px);
-    border-top: 1px solid #e2e8f0;
-    padding: 6px 0 10px 0; /* Add bottom padding for safer touch area */
-    z-index: 1000;
-    justify-content: space-evenly; /* Better distribution */
+    background: rgba(255, 255, 255, 1); /* Full opacity for legibility */
+    backdrop-filter: none !important;
+    border-top: 1px solid #f1f5f9;
+    padding: 12px 0;
+    z-index: 2100;
+    justify-content: space-around;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
 }
 
 @media (max-width: 1024px) {
     .mobile-bottom-nav { display: flex; }
-    body { padding-bottom: 70px; }
+    body { padding-bottom: 80px; }
 }
 
 .bottom-nav-item {
-    flex: 1; /* Allow equal width items */
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 4px; /* Slightly more gap */
+    justify-content: center;
     color: var(--blue-grayish);
-    font-size: 10px; /* Slightly larger text */
-    font-weight: 500;
-    text-transform: uppercase;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
+    padding: 8px;
+    border-radius: 12px;
 }
 
 .bottom-nav-item svg {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
+    stroke-width: 2.2;
 }
 
 .bottom-nav-item:active, .bottom-nav-item:hover {
@@ -319,3 +331,14 @@ footer a:hover {
 .quill-content p { margin-bottom: 0.75rem; color: var(--blue-grayish); font-weight: 400; }
 .quill-content strong { font-weight: 600; color: var(--gray-dark); }
 .quill-content blockquote { border-left: 4px solid var(--blue-institutional); padding-left: 1rem; font-style: italic; color: var(--blue-grayish); margin-bottom: 1rem; }
+
+/* Dashboard Accordion Internal Scroll */
+.assignment-content-scroll {
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 8px;
+    scrollbar-width: thin;
+}
+
+.assignment-content-scroll::-webkit-scrollbar { width: 3px; }
+.assignment-content-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
