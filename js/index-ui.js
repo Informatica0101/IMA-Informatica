@@ -288,11 +288,10 @@ document.addEventListener('DOMContentLoaded', () => {
         closeGuestModal.onclick = () => guestPromptModal.classList.add('hidden');
     }
 
-    // --- Mi Perfil (Global) ---
-    const profileModal = document.getElementById('profile-modal');
+    // --- Mi Perfil (Sincronizado vía ui-common.js) ---
     const openProfileBtn = document.getElementById('open-profile-btn');
+    const profileModal = document.getElementById('profile-modal');
     const closeProfileModal = document.getElementById('close-profile-modal');
-    const profileForm = document.getElementById('profile-form');
 
     if (openProfileBtn) {
         openProfileBtn.onclick = () => {
@@ -309,19 +308,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (user.rol === 'Profesor') nlContainer.classList.add('hidden');
                 else nlContainer.classList.remove('hidden');
             }
-
-            profileModal.classList.remove('hidden');
+            if (profileModal) profileModal.classList.remove('hidden');
         };
     }
-
-    if (closeProfileModal) {
-        closeProfileModal.onclick = () => profileModal.classList.add('hidden');
-    }
-
+    if (closeProfileModal) closeProfileModal.onclick = () => profileModal.classList.add('hidden');
     const cancelProfileBtn = document.getElementById('cancel-profile-btn');
-    if (cancelProfileBtn) {
-        cancelProfileBtn.onclick = () => profileModal.classList.add('hidden');
-    }
+    if (cancelProfileBtn) cancelProfileBtn.onclick = () => profileModal.classList.add('hidden');
 
 
 /**

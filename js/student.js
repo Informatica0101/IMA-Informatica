@@ -10,11 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const tasksList = document.getElementById('tasks-list');
     const logoutButton = document.getElementById('logout-button');
 
-    // --- Elementos de Perfil ---
+    // --- Mi Perfil (Sincronizado vía ui-common.js) ---
     const profileModal = document.getElementById('profile-modal');
     const openProfileBtn = document.getElementById('open-profile-btn');
     const closeProfileModal = document.getElementById('close-profile-modal');
-    const profileForm = document.getElementById('profile-form');
 
     const CHUNK_SIZE = 1024 * 1024 * 2; // 1MB chunks
     const PARCIAL_ORDER = {
@@ -208,7 +207,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('subject-nav-container');
         if (!container) return;
 
-        const subjects = [...new Set(activities.map(a => a.asignatura || 'General'))].sort();
+        // Obtener nombres reales de las asignaturas (Columna F de la hoja "Tareas")
+        const subjects = [...new Set(activities.map(a => a.asignatura || 'General'))]
+            .filter(s => s && s.trim() !== "")
+            .sort();
+
+        if (subjects.length === 0) {
+            container.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">No hay asignaturas activas.</p>';
+            return;
+        }
 
         container.innerHTML = subjects.map(subj => `
             <button class="subject-tab flex-none px-5 py-2.5 bg-white border border-gray-100 text-gray-600 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm hover:border-blue-200 transition-all" data-subject="${subj}">
@@ -235,41 +242,84 @@ document.addEventListener('DOMContentLoaded', () => {
         if (subjects.length > 0) container.querySelector('.subject-tab').click();
     }
 
-    function showSubjectInfo(subject) {
+    async function showSubjectInfo(subject) {
         const container = document.getElementById('subject-info-container');
         if (!container) return;
 
-        // Nota: En un sistema real, buscaríamos la info del profesor de esta asignatura.
-        // Simulamos con datos estáticos basados en el grado si no vienen en la data de actividades.
-        const professor = {
-            nombre: "Área de Informática I",
-            email: "informatica@isemed.edu.hn",
-            telefono: "50400000000",
-            waLink: "https://wa.me/50400000000"
-        };
-
-        container.innerHTML = `
-            <div class="card-ima bg-blue-50/50 border-blue-100 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center text-sm shadow-sm">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                    </div>
-                    <div>
-                        <h4 class="text-[9px] font-bold text-blue-400 uppercase tracking-widest">Docente Titular</h4>
-                        <p class="text-sm font-bold text-gray-900">${professor.nombre}</p>
-                    </div>
-                </div>
-                <div class="flex flex-wrap justify-center gap-3">
-                    <a href="mailto:${professor.email}" class="text-[10px] font-bold text-gray-500 hover:text-blue-600 transition-colors uppercase flex items-center gap-1">
-                        <i class="fas fa-envelope"></i> ${professor.email}
-                    </a>
-                    <a href="${professor.waLink}" target="_blank" class="bg-green-600 text-white px-4 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-green-100 hover:bg-green-700 transition-all">
-                        <i class="fab fa-whatsapp text-sm"></i> Contactar WhatsApp
-                    </a>
-                </div>
-            </div>
-        `;
+        container.innerHTML = '<div class="p-5 bg-gray-50 rounded-2xl text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest animate-pulse">Sincronizando información de la asignatura...</div>';
         container.classList.remove('hidden');
+
+        try {
+            // Identificar profesorId desde las actividades cargadas para esta asignatura específica
+            const activity = allActivitiesData.find(a => (a.asignatura || 'General') === subject && a.profesorId);
+            const profesorId = activity ? activity.profesorId : null;
+
+            // Info por defecto (Área de Informática)
+            let profInfo = {
+                nombre: "ISEMED - Área de Informática",
+                email: "informatica@isemed.edu.hn",
+                telefono: ""
+            };
+
+            // Intentar obtener info real del docente (A-73/75)
+            if (profesorId) {
+                try {
+                    const res = await fetchApi('USER', 'getUserInfo', { userId: profesorId });
+                    if (res.status === 'success' && res.data) {
+                        profInfo = res.data;
+                    }
+                } catch (e) {
+                    console.warn("No se pudo cargar info del docente específico:", e);
+                }
+            }
+
+            // Normalizar WhatsApp del Docente
+            const waPhone = profInfo.telefono ? String(profInfo.telefono).replace(/\D/g, '') : '';
+            const waLink = waPhone ? `https://wa.me/504${waPhone}` : null;
+
+            // Obtener enlace del grupo de WhatsApp por Grado (Lógica A-66 preservada)
+            let groupLink = null;
+            try {
+                const groupRes = await fetchApi('USER', 'getWhatsAppLink', { grado: currentUser.grado });
+                if (groupRes.status === 'success' && groupRes.link) {
+                    groupLink = groupRes.link;
+                }
+            } catch (e) {
+                console.warn("No se pudo cargar enlace de grupo de grado.");
+            }
+
+            container.innerHTML = `
+                <div class="card-ima bg-blue-50/50 border-blue-100 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center text-sm shadow-sm border border-blue-50">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div class="text-center md:text-left">
+                            <h4 class="text-[9px] font-bold text-blue-400 uppercase tracking-widest">Docente Asignado</h4>
+                            <p class="text-sm font-bold text-gray-900">${profInfo.nombre}</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <a href="mailto:${profInfo.email}" class="text-[10px] font-bold text-gray-500 hover:text-blue-600 transition-colors uppercase flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-100 shadow-sm">
+                            <i class="fas fa-envelope text-blue-400"></i> ${profInfo.email}
+                        </a>
+                        ${waLink ? `
+                            <a href="${waLink}" target="_blank" class="bg-green-600 text-white px-4 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-green-100 hover:bg-green-700 transition-all transform hover:-translate-y-0.5">
+                                <i class="fab fa-whatsapp text-sm"></i> WhatsApp Docente
+                            </a>
+                        ` : ''}
+                        ${groupLink ? `
+                            <a href="${groupLink}" target="_blank" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all transform hover:-translate-y-0.5">
+                                <i class="fas fa-users text-sm"></i> Grupo de Clase
+                            </a>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        } catch (e) {
+            console.error("Error showing subject info:", e);
+            container.innerHTML = '<div class="p-4 bg-red-50 rounded-xl text-center text-red-400 text-[10px] font-bold uppercase border border-red-100">Fallo en la sincronización de información docente.</div>';
+        }
     }
 
     function renderParcialTabs(activities) {
@@ -747,14 +797,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Lógica de Perfil ---
+    // --- Lógica de Perfil (Sincronizada) ---
     if (openProfileBtn) {
         openProfileBtn.onclick = () => {
             document.getElementById('profile-nombre').value = currentUser.nombre;
             document.getElementById('profile-email').value = currentUser.email || '';
             document.getElementById('profile-telefono').value = currentUser.telefono || '';
-            document.getElementById('profile-numeroLista').value = currentUser.numeroLista || '';
-            profileModal.classList.remove('hidden');
+            const nlInput = document.getElementById('profile-numeroLista');
+            if (nlInput) nlInput.value = currentUser.numeroLista || '';
+            if (profileModal) profileModal.classList.remove('hidden');
         };
     }
 

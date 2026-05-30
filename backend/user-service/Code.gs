@@ -79,6 +79,7 @@ function doPost(e) {
       case "saveWhatsAppLink": result = saveWhatsAppLink(payload); break;
       case "getWhatsAppLink": result = getWhatsAppLink(payload); break;
       case "getStudents": result = getStudents(payload); break;
+      case "getUserInfo": result = getUserInfo(payload); break;
       default:
         result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -171,6 +172,29 @@ function getStudents(payload) {
     numeroLista: r[8] || ""
   }));
   return { status: "success", data: students };
+}
+
+function getUserInfo(payload) {
+  const { userId } = payload;
+  if (!userId) throw new Error("ID de usuario no proporcionado.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "Usuarios");
+  const data = sheet.getDataRange().getValues();
+
+  const userRow = data.find(r => String(r[0]) === String(userId));
+  if (!userRow) throw new Error("Usuario no encontrado.");
+
+  return {
+    status: "success",
+    data: {
+      userId: userRow[0],
+      nombre: userRow[1],
+      email: userRow[4],
+      rol: userRow[6],
+      telefono: userRow[7] || ""
+    }
+  };
 }
 
 function getStudentsByGradoSeccion(payload) {
@@ -266,7 +290,8 @@ function updateUserProfile(payload) {
     throw new Error("Usuario no encontrado en la base de datos.");
   }
 
-  const userRow = data[rowIndex];
+  // Clonar la fila para evitar mutaciones directas sobre el array original antes de validaciones
+  const userRow = [...data[rowIndex]];
 
   // Gestión de Seguridad (Contraseña)
   if (password) {
@@ -295,9 +320,9 @@ function updateUserProfile(payload) {
 
   if (email && email.trim() !== "") {
     const lowerEmail = email.toLowerCase().trim();
-    // Validar duplicidad
+    // Validar duplicidad de correo (excluyendo al usuario actual)
     for (let i = 1; i < data.length; i++) {
-      if (i !== rowIndex && String(data[i][4]).toLowerCase().trim() === lowerEmail) {
+      if (String(data[i][0]) !== String(userId) && String(data[i][4]).toLowerCase().trim() === lowerEmail) {
         throw new Error("El nuevo correo electrónico ya está registrado por otro usuario.");
       }
     }
@@ -309,16 +334,26 @@ function updateUserProfile(payload) {
   }
 
   if (numeroLista !== undefined) {
-    userRow[8] = numeroLista;
+    userRow[8] = String(numeroLista).trim();
   }
 
-  // Persistencia Atómica
+  // Persistencia Atómica garantizando el mapeo A-I
   try {
-    // Aseguramos que el rango de escritura sea exactamente de 9 columnas (A-I)
-    const rangeToWrite = sheet.getRange(rowIndex + 1, 1, 1, 9);
-    const rowToSave = userRow.slice(0, 9);
-    rangeToWrite.setValues([rowToSave]);
-    logDebug("Perfil guardado exitosamente en hoja Usuarios");
+    // Forzar que el array tenga exactamente 9 elementos
+    const rowToSave = [
+      String(userRow[0]), // A: userId
+      String(userRow[1]), // B: nombre
+      String(userRow[2]), // C: grado
+      String(userRow[3]), // D: seccion
+      String(userRow[4]), // E: email
+      String(userRow[5]), // F: password
+      String(userRow[6]), // G: rol
+      String(userRow[7]), // H: telefono
+      String(userRow[8])  // I: numeroLista
+    ];
+
+    sheet.getRange(rowIndex + 1, 1, 1, 9).setValues([rowToSave]);
+    logDebug("Perfil guardado exitosamente en hoja Usuarios mediante setValues atómico");
   } catch (e) {
     logDebug("Error al escribir en la hoja", e.message);
     throw new Error("Fallo al persistir los datos en el servidor: " + e.message);

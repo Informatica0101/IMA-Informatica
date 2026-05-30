@@ -342,6 +342,7 @@ function getStudentExams({ userId, grado, seccion }) {
           titulo: e[1],
           fechaLimite: e[5] ? new Date(e[5]).toISOString() : null,
           estado: estado,
+          profesorId: e[8],
           entrega: ent ? {
             estado: estado,
             calificacion: estado === 'Pendiente' ? null : ent[5],

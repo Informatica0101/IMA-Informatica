@@ -1,0 +1,33 @@
+REGISTRO DE AUDITORÍA - REVISIÓN CRÍTICA MAYO 2026
+=================================================
+
+ARCHIVO: backend/user-service/Code.gs
+-------------------------------------
+- Hallazgo 1: La función 'updateUserProfile' utiliza 'userId' como PK, pero la persistencia en la hoja "Usuarios" falla intermitentemente para el campo 'password' y 'email'. Se requiere asegurar el mapeo estricto A-I.
+- Hallazgo 2: Se requiere implementar SHA-256 en la actualización de perfil si se detecta nueva contraseña.
+
+ARCHIVO: js/ui-common.js
+------------------------
+- Hallazgo 3: El manejo de 'profile-form' es centralizado pero 'index.html' no carga 'js/config.js' ni 'js/api.js' antes de invocar acciones, provocando "Error de conexión".
+- Hallazgo 4: El modal 'academic-menu-modal' aplica desenfoque que dificulta la lectura en móviles. Se debe ajustar a opacidad alta sin blur.
+
+ARCHIVO: js/teacher.js
+----------------------
+- Hallazgo 5: 'renderDetallesAlumno' utiliza una lógica de progreso simplificada. Debe sincronizarse con la métrica 30/50/20.
+- Hallazgo 6: La tarjeta del alumno no recupera el campo 'email' del objeto usuario cargado.
+
+ARCHIVO: js/student.js
+----------------------
+- Hallazgo 7: 'renderSubjectNav' utiliza nombres estáticos o extraídos de 'downloadContentData'. Debe extraerlos de las tareas reales (Columna F).
+- Hallazgo 8: 'showSubjectInfo' tiene datos hardcodeados. Debe realizar fetchApi('USER', 'getUserInfo') usando el 'profesorId' de la tarea.
+
+ARCHIVO: index.html, student-dashboard.html, teacher-dashboard.html
+-------------------------------------------------------------------
+- Hallazgo 9: El encabezado oculta los logos en scroll o los muestra pequeños. Se requiere estandarizar (80px/45px).
+- Hallazgo 10: Presencia de menús hamburguesa redundantes en dashboards que confunden la navegación móvil.
+
+REDISEÑO UI/UX - ESPECIFICACIONES
+---------------------------------
+- Desktop: Nav horizontal directa.
+- Móvil: Nav inferior fija (Home, Portal, Cursos, Actividades, Perfil).
+- Colores: rgba(17, 24, 39, 0.95) para overlays oscuros.

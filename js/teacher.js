@@ -137,29 +137,22 @@ document.addEventListener('DOMContentLoaded', () => {
         navigateTo(sectionReportes, navReportsOld);
     });
 
-    // --- Mi Perfil (Profesor) ---
-    const profileModal = document.getElementById('profile-modal');
+    // --- Mi Perfil (Sincronizado vía ui-common.js) ---
     const openProfileBtn = document.getElementById('open-profile-btn');
+    const profileModal = document.getElementById('profile-modal');
     const closeProfileModal = document.getElementById('close-profile-modal');
-    const profileForm = document.getElementById('profile-form');
+    const cancelProfileBtn = document.getElementById('cancel-profile-btn');
 
     if (openProfileBtn) {
         openProfileBtn.onclick = () => {
             document.getElementById('profile-nombre').value = currentUser.nombre;
             document.getElementById('profile-email').value = currentUser.email || '';
             document.getElementById('profile-telefono').value = currentUser.telefono || '';
-            profileModal.classList.remove('hidden');
+            if (profileModal) profileModal.classList.remove('hidden');
         };
     }
-
-    if (closeProfileModal) {
-        closeProfileModal.onclick = () => profileModal.classList.add('hidden');
-    }
-
-    const cancelProfileBtn = document.getElementById('cancel-profile-btn');
-    if (cancelProfileBtn) {
-        cancelProfileBtn.onclick = () => profileModal.classList.add('hidden');
-    }
+    if (closeProfileModal) closeProfileModal.onclick = () => profileModal.classList.add('hidden');
+    if (cancelProfileBtn) cancelProfileBtn.onclick = () => profileModal.classList.add('hidden');
 
 
     // --- Lógica de Reporte Académico ---
@@ -977,25 +970,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const completed = studentSubmissions.filter(s => s.estado === 'Completada' || s.estado === 'Revisada' || s.estado === 'Finalizado').length;
             const pending = studentSubmissions.filter(s => (s.estado === 'Pendiente' || s.estado === 'Pendiente de revisión' || !s.estado) && (s.fileId || s.respuestas || s.entregaId)).length;
 
-            // Métrica compuesta (Req 4.2 y 4.3)
+            // Métrica compuesta (A-73/75): 30% Entrega, 50% Rendimiento Académico, 20% Puntualidad
             const deliveryRate = totalAssigned > 0 ? (delivered / totalAssigned) : 0;
             const gradeSum = studentSubmissions.reduce((sum, s) => sum + parseFloat(s.calificacion || 0), 0);
             const maxGradePossible = subjectAssignments.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
             const academicPerformance = maxGradePossible > 0 ? (gradeSum / maxGradePossible) : 0;
 
-            // Factor Puntualidad: Penalización por entregas tardías (si aplica)
+            // Factor Puntualidad (Req 4.3): Penalización por entregas tardías
             let onTimeCount = 0;
             studentSubmissions.forEach(sub => {
                 const assignment = subjectAssignments.find(a => norm(a.titulo) === norm(sub.titulo));
                 if (assignment && assignment.fechaLimite) {
-                    if (new Date(sub.fecha) <= new Date(assignment.fechaLimite)) onTimeCount++;
+                    // Si se entregó después de la fecha límite (comparando solo fechas para evitar problemas de horas)
+                    const subDate = new Date(sub.fecha); subDate.setHours(0,0,0,0);
+                    const limitDate = new Date(assignment.fechaLimite); limitDate.setHours(0,0,0,0);
+                    if (subDate <= limitDate) onTimeCount++;
                 } else {
                     onTimeCount++; // Si no hay fecha límite, se considera a tiempo
                 }
             });
             const punctualityRate = delivered > 0 ? (onTimeCount / delivered) : 1;
 
-            // Progreso = (Tasa de entrega * 0.3) + (Rendimiento académico * 0.5) + (Puntualidad * 0.2)
+            // Cálculo final de progreso compuesto
             let compositeProgress = Math.round(((deliveryRate * 0.3) + (academicPerformance * 0.5) + (punctualityRate * 0.2)) * 100);
             if (isNaN(compositeProgress)) compositeProgress = 0;
 

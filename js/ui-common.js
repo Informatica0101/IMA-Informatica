@@ -37,32 +37,62 @@ window.setupCommonUI = function() {
         window.closeAcademicMenu();
     };
 
-    // --- Profile Modal Logic ---
-    const handleProfileClick = () => {
-        if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
-             // If on index, the modal might already be there and handled by index-ui.js
-             // But we need a global way. Let's assume we trigger an event or call a function if available.
-             const btn = document.getElementById('open-profile-btn');
-             if (btn && btn.onclick) btn.onclick();
-        } else {
-            // On dashboards, the modal is in the HTML.
-            const modal = document.getElementById('profile-modal');
-            if (modal) {
-                // Populate data if user exists
-                const user = JSON.parse(localStorage.getItem('currentUser'));
-                if (user) {
-                    document.getElementById('profile-nombre').value = user.nombre || '';
-                    document.getElementById('profile-email').value = user.email || '';
-                    document.getElementById('profile-telefono').value = user.telefono || '';
-                }
-                modal.classList.remove('hidden');
+    // --- Unified Profile Modal Logic (A-75) ---
+    window.openProfileModal = function() {
+        const modal = document.getElementById('profile-modal');
+        if (!modal) return;
+
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user) {
+            // Si no hay sesión, invitar a login (si existe modal de login)
+            const loginModal = document.getElementById('login-modal');
+            if (loginModal) {
+                loginModal.classList.remove('opacity-0', 'pointer-events-none');
+                const content = document.getElementById('login-modal-content');
+                if (content) content.classList.add('scale-100');
+            } else {
+                alert('Inicie sesión para acceder a su perfil.');
+                window.location.href = 'login.html';
             }
+            return;
         }
-        if (window.closeMobileMenu) window.closeMobileMenu();
+
+        // Poblar campos comunes
+        const nameEl = document.getElementById('profile-nombre');
+        const emailEl = document.getElementById('profile-email');
+        const phoneEl = document.getElementById('profile-telefono');
+        const listEl = document.getElementById('profile-numeroLista');
+        const listContainer = document.getElementById('profile-numeroLista-container');
+
+        if (nameEl) nameEl.value = user.nombre || '';
+        if (emailEl) emailEl.value = user.email || '';
+        if (phoneEl) phoneEl.value = user.telefono || '';
+        if (listEl) listEl.value = user.numeroLista || '';
+
+        // Mostrar/Ocultar Número de Lista según Rol
+        if (listContainer) {
+            if (user.rol === 'Profesor') listContainer.classList.add('hidden');
+            else listContainer.classList.remove('hidden');
+        }
+
+        modal.classList.remove('hidden');
+        if (window.closeAcademicMenu) window.closeAcademicMenu();
     };
 
-    if (openProfileBtn) openProfileBtn.addEventListener('click', handleProfileClick);
-    if (mobileProfileBtn) mobileProfileBtn.addEventListener('click', handleProfileClick);
+    window.closeProfileModal = function() {
+        const modal = document.getElementById('profile-modal');
+        if (modal) modal.classList.add('hidden');
+    };
+
+    // Attach to buttons if they exist
+    if (openProfileBtn) openProfileBtn.addEventListener('click', (e) => { e.preventDefault(); window.openProfileModal(); });
+    if (mobileProfileBtn) mobileProfileBtn.addEventListener('click', (e) => { e.preventDefault(); window.openProfileModal(); });
+
+    // Close on X or Cancel
+    const closeBtn = document.getElementById('close-profile-modal');
+    const cancelBtn = document.getElementById('cancel-profile-btn');
+    if (closeBtn) closeBtn.onclick = window.closeProfileModal;
+    if (cancelBtn) cancelBtn.onclick = window.closeProfileModal;
 
     // --- Logout Logic (Global) ---
     window.handleLogout = () => {
@@ -88,25 +118,34 @@ window.setupCommonUI = function() {
     // Render Navigation
     window.renderCommonNav();
 
-    // --- Unified Profile Form Handler (A-73) ---
+    // --- Unified Profile Form Handler (A-73/75) ---
+    // Sincronizar campos y asegurar que la lógica sea atómica para evitar "Error de conexión"
     const profileForm = document.getElementById('profile-form');
     if (profileForm) {
+        // Remover listener anterior si existe para evitar duplicidad (frecuente en SPAs o recargas parciales)
+        profileForm.onsubmit = null;
+
         profileForm.onsubmit = async (e) => {
             e.preventDefault();
             const user = JSON.parse(localStorage.getItem('currentUser'));
-            if (!user) return;
+            if (!user) {
+                alert('Sesión no encontrada. Por favor inicie sesión de nuevo.');
+                window.location.href = 'login.html';
+                return;
+            }
 
             const submitBtn = profileForm.querySelector('button[type="submit"]');
             const newPassword = document.getElementById('profile-password').value;
             const currentPassword = document.getElementById('profile-current-password').value;
 
+            // Validación de seguridad (Req 1.3)
             if (newPassword && !currentPassword) {
-                alert('Debe ingresar su contraseña actual para realizar cambios de seguridad.');
+                alert('Debe ingresar su contraseña actual para establecer una nueva.');
                 return;
             }
 
             const payload = {
-                userId: user.userId,
+                userId: user.userId, // Clave Primaria Persistente
                 nombre: document.getElementById('profile-nombre').value.trim(),
                 email: document.getElementById('profile-email').value.trim(),
                 telefono: document.getElementById('profile-telefono').value.trim(),
@@ -118,33 +157,45 @@ window.setupCommonUI = function() {
             submitBtn.disabled = true;
             submitBtn.classList.add('btn-loading');
             const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Guardando...';
+            submitBtn.textContent = 'Procesando...';
 
             try {
+                // Verificar que fetchApi esté disponible (Dependencia Crítica)
+                if (typeof fetchApi !== 'function') {
+                    throw new Error('El servicio de conexión (api.js) no se ha cargado correctamente.');
+                }
+
                 const result = await fetchApi('USER', 'updateUserProfile', payload);
+
                 if (result.status === 'success') {
-                    // Actualizar localStorage
+                    // Actualizar localStorage manteniendo campos no editables (grado, seccion, rol)
                     const updatedUser = { ...user, ...result.data };
                     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
 
-                    // Actualizar UI local si existe (saludos, etc)
-                    const nameEl = document.getElementById('teacher-name') || document.getElementById('student-name');
-                    if (nameEl) nameEl.textContent = updatedUser.nombre.split(' ')[0];
+                    // Actualizar Saludos en la UI
+                    const nameParts = updatedUser.nombre.split(' ');
+                    const firstName = nameParts[0];
+
+                    const teacherNameEl = document.getElementById('teacher-name');
+                    const studentNameEl = document.getElementById('student-name');
+                    if (teacherNameEl) teacherNameEl.textContent = firstName;
+                    if (studentNameEl) studentNameEl.textContent = firstName;
 
                     if (window.renderWelcomeMessage) window.renderWelcomeMessage();
 
-                    alert('Perfil actualizado correctamente.');
-                    document.getElementById('profile-modal').classList.add('hidden');
+                    alert('Perfil actualizado con éxito.');
+                    const modal = document.getElementById('profile-modal');
+                    if (modal) modal.classList.add('hidden');
 
-                    // Limpiar campos de password
+                    // Limpiar campos sensibles
                     document.getElementById('profile-password').value = '';
                     document.getElementById('profile-current-password').value = '';
                 } else {
-                    alert('Error: ' + result.message);
+                    alert('Atención: ' + result.message);
                 }
             } catch (err) {
-                console.error("Profile update error:", err);
-                alert('Fallo en la conexión con el servidor. Inténtelo de nuevo.');
+                console.error("Critical Profile Error:", err);
+                alert('Error de conexión: No se pudo sincronizar con el servidor. Verifique su internet.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('btn-loading');
@@ -177,7 +228,8 @@ window.openAcademicMenu = function() {
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'academic-menu-modal';
-        modal.className = 'fixed inset-0 bg-gray-900/95 z-[2000] flex items-center justify-center hidden opacity-0 transition-all duration-300';
+        // REDISEÑO UX (A-75): 0.98 opacity, fondo oscuro, desactivación de blur para legibilidad
+        modal.className = 'fixed inset-0 bg-gray-900/98 z-[2100] flex items-center justify-center hidden opacity-0 transition-all duration-300';
         modal.innerHTML = `
             <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-fade-in-up m-4 border border-gray-100">
                 <div class="p-8">
