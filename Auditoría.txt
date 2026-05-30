@@ -42,3 +42,10 @@ ARCHIVO: General (HTMLs)
 -----------------------
 - Hallazgo 17: Visibilidad de branding insuficiente. El logo resultaba poco identificable en resoluciones estándar. (CORREGIDO incrementando a 60px).
 - Hallazgo 18: Inconsistencia en navegación inferior. La opción 'Cursos' no era accesible directamente con el pulgar. (CORREGIDO integrándola en el bottom-nav).
+
+ARCHIVO: Global (Arquitectura Visual)
+----------------------
+- Hallazgo 19: Obstrucción visual en menú Cursos. Se detectó desenfoque excesivo que impedía legibilidad. (CORREGIDO eliminando filtros blur en el drawer y aumentando contraste).
+- Hallazgo 20: Ineficiencia de navegación móvil. El menú hamburguesa fragmentaba la experiencia. (CORREGIDO integrando acceso directo desde bottom-nav y eliminando el botón hamburguesa).
+- Hallazgo 21: Eslogan agresivo. El formato previo usaba mayúsculas sostenidas y pesos extremos. (CORREGIDO a sentence case con font-medium).
+- Hallazgo 22: Desperdicio de viewport. Se identificaron zonas muertas por py-24 y gaps excesivos. (CORREGIDO mediante auditoría y reemplazo masivo por py-12/gap-4).

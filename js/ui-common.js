@@ -41,9 +41,8 @@ window.setupCommonUI = function() {
         });
     }
 
-    // --- Mobile Menu Logic (Drawer) ---
+    // --- Mobile Menu Logic (Overlay Hierarchical Drawer) ---
     if (mobileMenuOverlay) {
-        // Create backdrop if not exists
         let backdrop = document.querySelector('.mobile-menu-backdrop');
         if (!backdrop) {
             backdrop = document.createElement('div');
@@ -52,25 +51,38 @@ window.setupCommonUI = function() {
             backdrop.onclick = () => window.closeMobileMenu();
         }
 
-        function toggleMobileMenu() {
+        function toggleMobileMenu(sectionToOpen = null) {
             const isOpening = mobileMenuOverlay.classList.contains('hidden');
             if (isOpening) {
                 mobileMenuOverlay.classList.remove('hidden');
                 backdrop.classList.add('active');
                 document.body.style.overflow = 'hidden';
+                if (sectionToOpen === 'courses' && mobileCoursesToggle) {
+                    resetMobileMenuState();
+                    mobileCoursesContainer.classList.remove('hidden-height');
+                    mobileCoursesContainer.classList.add('visible-height');
+                    mobileCoursesArrow.classList.add('rotate-90');
+                }
             } else {
                 window.closeMobileMenu();
             }
-            if (mobileMenuIcon) {
-                mobileMenuIcon.setAttribute('d', isOpening ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16');
-            }
         }
+
+        window.openMobileMenu = function(section = null) {
+            if (mobileMenuOverlay.classList.contains('hidden')) {
+                toggleMobileMenu(section);
+            } else if (section === 'courses') {
+                resetMobileMenuState();
+                mobileCoursesContainer.classList.remove('hidden-height');
+                mobileCoursesContainer.classList.add('visible-height');
+                mobileCoursesArrow.classList.add('rotate-90');
+            }
+        };
 
         window.closeMobileMenu = function() {
             mobileMenuOverlay.classList.add('hidden');
             backdrop.classList.remove('active');
             document.body.style.overflow = '';
-            if (mobileMenuIcon) mobileMenuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
             resetMobileMenuState();
         }
 
@@ -83,21 +95,29 @@ window.setupCommonUI = function() {
             });
         }
 
-        if (mobileMenuButton) mobileMenuButton.addEventListener('click', toggleMobileMenu);
-        if (mobileMenuCloseButton) mobileMenuCloseButton.addEventListener('click', toggleMobileMenu);
+        if (mobileMenuButton) mobileMenuButton.addEventListener('click', () => toggleMobileMenu());
+        if (mobileMenuCloseButton) mobileMenuCloseButton.addEventListener('click', () => window.closeMobileMenu());
 
         if (mobileCoursesToggle) {
             mobileCoursesToggle.addEventListener('click', () => {
-                mobileCoursesContainer.classList.toggle('hidden-height');
-                mobileCoursesContainer.classList.toggle('visible-height');
-                mobileCoursesArrow.classList.toggle('rotate-90');
+                const isVisible = mobileCoursesContainer.classList.contains('visible-height');
+                resetMobileMenuState();
+                if (!isVisible) {
+                    mobileCoursesContainer.classList.add('visible-height');
+                    mobileCoursesContainer.classList.remove('hidden-height');
+                    mobileCoursesArrow.classList.add('rotate-90');
+                }
             });
         }
         if (mobileContentToggle) {
             mobileContentToggle.addEventListener('click', () => {
-                mobileContentContainer.classList.toggle('hidden-height');
-                mobileContentContainer.classList.toggle('visible-height');
-                mobileContentArrow.classList.toggle('rotate-90');
+                const isVisible = mobileContentContainer.classList.contains('visible-height');
+                resetMobileMenuState();
+                if (!isVisible) {
+                    mobileContentContainer.classList.add('visible-height');
+                    mobileContentContainer.classList.remove('hidden-height');
+                    mobileContentArrow.classList.add('rotate-90');
+                }
             });
         }
     }

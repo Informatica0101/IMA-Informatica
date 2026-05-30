@@ -1116,3 +1116,7 @@ DESCRIPCIÓN OBJETIVA DEL CAMBIO: Actualización del tamaño de logo institucion
 ARCHIVO(S) MODIFICADO(S): js/ui-common.js
 LÍNEA(S) AFECTADA(S): Varias
 DESCRIPCIÓN OBJETIVA DEL CAMBIO: Implementación de lógica de Drawer móvil con gestión de backdrop y bloqueo de scroll. Adición de sincronización dinámica para el enlace del portal en la navegación inferior móvil según el rol del usuario (Profesor/Estudiante).
+
+ARCHIVO(S) MODIFICADO(S): Global (HTML/CSS/JS)
+LÍNEA(S) AFECTADA(S): Varias
+DESCRIPCIÓN OBJETIVA DEL CAMBIO: Rediseño profesional integral. Implementación de nueva arquitectura de encabezado (Logo adaptive, Título compacto vertical, Bandera persistente). Eliminación total de menú hamburguesa a favor de Drawer lateral de 320px con gestión de contexto (transparencia 0.1). Actualización de eslogan institucional a formato elegante "Aquí formamos corazones...". Optimización de viewport mediante reducción masiva de paddings y márgenes Tailwind. Estandarización tipográfica Inter (weights 400-600).
