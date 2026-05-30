@@ -199,6 +199,7 @@ En este archivo se regustrara el historial de cambios del proyecto.
 - Archivo: backend/task-service/Code.gs, Línea(s): 64, 137-139, 151-171
   - Se modificó el bloque `catch` de la función `doPost` para devolver un mensaje de error genérico.
   - Se añadió una validación en `submitAssignment` para asegurar que el tipo MIME se extraiga correctamente del `fileData`.
+  - Se añadió una validación en `submitAssignment` para asegurar que el tipo MIME se extraiga correctamente del `fileData`.
   - Se refactorizó la función `gradeSubmission` para utilizar los nombres de los encabezados de la hoja de cálculo al buscar las columnas, eliminando los índices codificados.
 
 12/01/2026
@@ -336,7 +337,7 @@ Archivo: js/teacher.js
 
 18/01/2026
 - Archivo: js/config.js, Línea(s): 17
-  - Se actualizó la URL del microservicio TASK a la nueva implementación: https://script.google.com/macros/s/AKfycbzaYA_NpnYqzEx8pinefePQpF35bTO5f3rr_fgiHVFCn-2GhHBfN7dlqB4vJ7ritos/exec
+  - Se actualizó la URL del microservicio TASK a la nueva implementación: https://script.google.com/macros/s/AKfycbwKlOEB1WZAcgm9G7yD27YCEu5u7MjBbH9v839g7mpelaxmDEDouRgU1Ex1LAf-Bl4/exec
 
 20/01/2026
 - Archivo: backend/exam-service/Code.gs
@@ -720,7 +721,7 @@ ARCHIVO: pseudocode.html
   - Intérprete Robusto:
     - Tokenizer: Soporte para operadores multi-carácter (<- , <=, >=, <>) y normalización case-insensitive.
     - Parser: Implementada detección de errores en tiempo real con subrayado ondulado rojo y mensajes en el panel de ayuda.
-    - Manejo de Bloques: Corregida la detección de fin de bloque en SEGUN, SI, PARA y MIENTRAS para permitir múltiples sentencias anidadas sin fallos de sincronización.
+    - Manejo de Bloques: Corregida la detección de fin de bloque en SEGUN, SI, PARA y MIENTRAS para permitir múltiples sentencias anidadas sin fallos de con el cursor.
   - Seguridad y Funcionalidad:
     - Añadidas protecciones contra división por cero y uso de variables no inicializadas.
     - Implementada lógica de Arreglos con base 1 (PSeInt standard).
@@ -1079,44 +1080,57 @@ MODIFICACIONES:
 - Archivo: js/index-ui.js
   - Refinamiento de la función loadNews para renderizar tarjetas de noticias con diseño modular, soporte de imágenes de alta fidelidad y extractos de texto optimizados.
 
-29/05/2026
-- Archivo: index.html, teacher-dashboard.html, student-dashboard.html, login.html, register.html
-  - Refactorización total del pie de página: implementado diseño corporativo de 2 niveles, tipografía text-[9px]/[10px] y tracking expandido.
-  - Unificación de la jerarquía visual del encabezado siguiendo el orden: Logo -> Título -> Menú -> Bandera.
-- Archivo: index.html
-  - Restaurado lema institucional oficial en el Hero.
-  - Implementada sección de noticias dinámicas con diseño modular.
+15/06/2026
+TAREA: [A-73]
+TÍTULO: Rediseño Global de Navegación, Persistencia de Perfil y Lógica Académica
+ÁREA: UI/UX / Frontend / Backend / Lógica
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA (PENDIENTE DE REVISIÓN)
+
+MODIFICACIONES:
+- Global (Header & Navegación):
+  - Rediseño integral del encabezado institucional en toda la plataforma: Logo (60px) -> Título ("ISEMED / Área de Informática I") -> Bandera de Honduras (siempre visible).
+  - Implementación de barra de navegación horizontal persistente para escritorio (clase .nav-link-desktop).
+  - Implementación de barra de navegación inferior fija (icon-only) para dispositivos móviles/PWA.
+  - Eliminación definitiva del patrón de menú hamburguesa en todas las resoluciones.
+  - Los overlays de navegación (Cursos/Contenido) en móvil ahora usan fondos de alta opacidad (rgba 0.98) con desactivación de blur para legibilidad total.
+- Backend (USER-SVC):
+  - Corregida la función `updateUserProfile` para asegurar la persistencia de todos los campos (Nombre, Email, Teléfono, Número de Lista y Contraseña).
+  - Implementada validación de duplicados para el correo electrónico durante la actualización de perfil.
+  - Asegurado que `getStudentsByGradoSeccion` retorne el campo `email` para su visualización docente.
+- Dashboard Docente:
+  - Integrada la visualización del correo institucional en la tarjeta del alumno y el modal de calificación.
+  - Refactorizada la lógica de "Progreso del Parcial" y "Nivel de Entrega" utilizando una métrica compuesta: 30% Tasa de Entrega, 50% Rendimiento Académico y 20% Puntualidad.
+  - Corregida la Búsqueda Global para incluir el correo electrónico y poblar correctamente el expediente del alumno al navegar.
+- Landing Page (index.html):
+  - Corregido error crítico de "Mi Perfil" mediante la adición de dependencias faltantes (`js/config.js` y `js/api.js`).
+  - Sincronizado el formulario de perfil para soportar "Número de Lista" y manejo dinámico de campos por rol.
+- Estabilidad & Diseño:
+  - Implementado sistema de espaciado institucional de 4px (utilidades p-*px, m-*px, gap-*px) en `css/style.css`.
+  - Asegurada la integridad del historial académico mediante el uso estricto de `userId` como clave persistente, permitiendo cambios de correo sin pérdida de datos.
+  - Sincronizada versión global de activos y caché a v=21.
+
+15/06/2026
+TAREA: [A-75]
+TÍTULO: Corrección Crítica de Perfil, Persistencia y Rediseño UI/UX Final
+ÁREA: UI/UX / Frontend / Backend / Lógica
+PRIORIDAD: CRÍTICA
+ESTADO: COMPLETADA
+
+MODIFICACIONES:
+- Módulo "Mi Perfil" & Persistencia:
+  - Corregido error de conexión en index.html mediante la unificación de la lógica de actualización en js/ui-common.js.
+  - Backend (USER-SVC): Corregida la persistencia en la hoja "Usuarios" (A-I) asegurando que Nombre, Email, Teléfono, Número de Lista y Contraseña (SHA-256) se guarden correctamente.
+  - Identidad Persistente: Asegurado el uso de userId como clave primaria en todos los servicios para evitar la pérdida de historial académico al cambiar de correo electrónico.
+- Lógica Académica:
+  - Implementada métrica compuesta para "Progreso del Parcial" y "Nivel de Entrega" (30% entrega, 50% rendimiento, 20% puntualidad) en la tarjeta del alumno del docente.
+  - Asegurada la visualización del correo institucional en la ficha del alumno dentro del dashboard docente.
+- Rediseño UI/UX Institucional:
+  - Encabezado: Garantizada la visibilidad permanente de logos institucional (80px) y bandera de Honduras (45px) con navegación horizontal directa en escritorio.
+  - Navegación Móvil: Migración total a una barra inferior fija con iconos exclusivos; eliminación definitiva de menús hamburguesa y side drawers.
+  - Optimización de Overlays: Eliminación de desenfoque (blur) excesivo en el módulo "Cursos" y aplicación de fondos opacos (rgba 0.95) para máxima legibilidad.
+  - Estabilidad: Sincronización de versión de activos a v=21 y limpieza de manejadores de eventos duplicados.
+
+15/06/2026 (Fix Sintaxis)
 - Archivo: js/index-ui.js
-  - Refinada lógica de bienvenida para usar badge '#user-welcome-badge'.
-  - Implementado sistema de carga y renderizado de noticias desde microservicio USER.
-- Archivo: js/teacher.js
-  - Rediseño integral de la Tarjeta de Detalles del Alumno con métricas de progreso y contacto directo.
-  - Robustecimiento de la navegación jerárquica con flags de bloqueo y sincronización de datos.
-  - Mejora visual de la tabla de gestión y vista de grados.
-- Archivo: css/style.css
-  - Ajuste de dimensiones del editor Quill (iconos 20px) para optimización móvil.
-  - Aplicación de reglas Anti-Template en espaciados y sombras.
-
-29/05/2026 (Fix Inicialización)
-- Archivo: js/teacher.js
-  - Se añadió validación de existencia para el elemento 'logout-button' antes de asignar el listener de cierre de sesión. Esto resuelve el fallo crítico que impedía la carga automática de la sección de Entregas al ingresar al Dashboard.
-
-ARCHIVO(S) MODIFICADO(S): js/student.js
-LÍNEA(S) AFECTADA(S): 28-33
-DESCRIPCIÓN OBJETIVA DEL CAMBIO: Adición de validación de existencia para el elemento 'logout-button' antes de asignar el listener de evento, resolviendo un bloqueo crítico del script que impedía el renderizado de actividades.
-
-ARCHIVO(S) MODIFICADO(S): css/style.css
-LÍNEA(S) AFECTADA(S): Varias (Global)
-DESCRIPCIÓN OBJETIVA DEL CAMBIO: Refactorización total del sistema de diseño. Reducción de pesos tipográficos (font-weight 600/500/400). Mimetización de paleta a azules suaves y grises neutros. Rediseño de .card-ima (12px padding, sin sombra por defecto). Implementación de menú lateral (Drawer) de 300px con glassmorphism y backdrop para navegación móvil.
-
-ARCHIVO(S) MODIFICADO(S): index.html, student-dashboard.html, teacher-dashboard.html, login.html, register.html, exam.html, interactivo.html
-LÍNEA(S) AFECTADA(S): Varias
-DESCRIPCIÓN OBJETIVA DEL CAMBIO: Actualización del tamaño de logo institucional a 60px. Migración de clases de peso tipográfico (font-black/bold -> font-semibold/medium). Integración de opción 'Cursos' en barra de navegación inferior móvil y sincronización de enlaces de portal por rol.
-
-ARCHIVO(S) MODIFICADO(S): js/ui-common.js
-LÍNEA(S) AFECTADA(S): Varias
-DESCRIPCIÓN OBJETIVA DEL CAMBIO: Implementación de lógica de Drawer móvil con gestión de backdrop y bloqueo de scroll. Adición de sincronización dinámica para el enlace del portal en la navegación inferior móvil según el rol del usuario (Profesor/Estudiante).
-
-ARCHIVO(S) MODIFICADO(S): Global (HTML/CSS/JS)
-LÍNEA(S) AFECTADA(S): Varias
-DESCRIPCIÓN OBJETIVA DEL CAMBIO: Rediseño profesional integral. Implementación de nueva arquitectura de encabezado (Logo adaptive, Título compacto vertical, Bandera persistente). Eliminación total de menú hamburguesa a favor de Drawer lateral de 320px con gestión de contexto (transparencia 0.1). Actualización de eslogan institucional a formato elegante "Aquí formamos corazones...". Optimización de viewport mediante reducción masiva de paddings y márgenes Tailwind. Estandarización tipográfica Inter (weights 400-600).
+  - Corregido error de sintaxis (Unexpected end of input) al cerrar correctamente el listener 'DOMContentLoaded'.

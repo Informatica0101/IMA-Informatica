@@ -13,6 +13,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="PSeInt App">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
         :root {
@@ -692,27 +693,31 @@ FinAlgoritmo</div>
         </div>
     </div>
 
-    <!-- Drive Open Modal -->
-    <div id="driveOpenModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[100] backdrop-blur-sm" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center;">
-        <div class="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 flex flex-col max-h-[80vh]" style="background: white; padding: 20px; border-radius: 10px; width: 600px; max-height: 80vh; display: flex; flex-direction: column;">
-            <div class="flex justify-between items-center mb-4" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h2 class="text-xl font-bold text-gray-800" style="margin: 0; font-size: 1.25rem;">Abrir desde Google Drive</h2>
-                <button onclick="closeDriveModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+    <!-- Drive Open Modal (Task 8 Refined) -->
+    <div id="driveOpenModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center hidden z-[2000]" style="display: none;">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-fade-in-up m-4 border border-gray-100 flex flex-col max-h-[80vh]">
+            <div class="p-8 pb-4">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-gray-900 tracking-tight">Mis Proyectos</h2>
+                        <p class="text-xs font-medium text-blue-600 uppercase tracking-widest mt-1">Abre desde la nube</p>
+                    </div>
+                    <button onclick="closeDriveModal()" class="text-gray-400 hover:text-gray-600 p-2 transition-colors">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Profesor Filter -->
+                <div id="teacher-filter-container" style="display: none;" class="mb-6 p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
+                    <label class="block text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-2">Auditar Alumno</label>
+                    <select id="drive-student-select" onchange="loadProjectsList(this.value)" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
+                        <option value="">Mi Carpeta</option>
+                    </select>
+                </div>
             </div>
 
-            <div id="teacher-filter-container" class="hidden" style="margin-bottom: 15px; display: none;">
-                <label style="font-weight: bold; display: block; margin-bottom: 5px;">Auditar Alumno:</label>
-                <select id="drive-student-select" onchange="loadProjectsList(this.value)" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
-                    <option value="">Mi Carpeta</option>
-                </select>
-            </div>
-
-            <div id="drive-projects-list" style="flex: 1; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
-                <p style="text-align: center; color: #666;">Cargando archivos...</p>
-            </div>
-
-            <div style="margin-top: 15px; text-align: right;">
-                <button onclick="closeDriveModal()" style="padding: 8px 20px; border-radius: 5px; border: 1px solid #ccc; cursor: pointer;">Cancelar</button>
+            <div id="drive-projects-list" class="flex-grow overflow-y-auto px-8 pb-8 space-y-3 scroll-minimalist">
+                <!-- Lista de proyectos -->
             </div>
         </div>
     </div>
@@ -751,8 +756,8 @@ FinAlgoritmo</div>
         </div>
     </div>
 
-    <script src="js/config.js?v=19"></script>
-    <script src="js/api.js?v=19"></script>
+    <script src="js/config.js?v=21"></script>
+    <script src="js/api.js?v=21"></script>
     <script>
         const editor = document.getElementById('codeEditor');
         const highlight = document.getElementById('syntaxHighlight');
@@ -2679,7 +2684,7 @@ FinAlgoritmo</div>
         // PWA update logic
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=19')
+                navigator.serviceWorker.register('sw.js?v=21')
                     .then(reg => {
                         reg.onupdatefound = () => {
                             const installingWorker = reg.installing;

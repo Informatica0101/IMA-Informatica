@@ -78,6 +78,8 @@ function doPost(e) {
       case "uploadNewsImage": result = uploadNewsImage(payload); break;
       case "saveWhatsAppLink": result = saveWhatsAppLink(payload); break;
       case "getWhatsAppLink": result = getWhatsAppLink(payload); break;
+      case "getStudents": result = getStudents(payload); break;
+      case "getUserInfo": result = getUserInfo(payload); break;
       default:
         result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -92,7 +94,7 @@ function doPost(e) {
 // ---------------------------------------------------------------------------
 
 function registerUser(payload) {
-  const { nombre, grado, seccion, email, password, telefono, numeroLista } = payload || {};
+  const { nombre, grado, seccion, email, password, telefono, numeroLista, forceUpdate } = payload || {};
   if (!nombre || !email || !password) throw new Error("Datos obligatorios faltantes.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -100,10 +102,34 @@ function registerUser(payload) {
   const data = sheet.getDataRange().getValues();
 
   const lowerEmail = email.toLowerCase().trim();
+  let existingIndex = -1;
   for (let i = 1; i < data.length; i++) {
     if (data[i][4]?.toString().toLowerCase().trim() === lowerEmail) {
-      return { status: "error", message: "Email ya registrado." };
+      existingIndex = i;
+      break;
     }
+  }
+
+  if (existingIndex !== -1) {
+    if (forceUpdate) {
+      const userId = data[existingIndex][0];
+      const hashedPassword = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password)
+        .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+
+      const newRow = [userId, nombre, grado || "", seccion || "", email, hashedPassword, "Estudiante", telefono || "", numeroLista || ""];
+      sheet.getRange(existingIndex + 1, 1, 1, newRow.length).setValues([newRow]);
+      return { status: "success", userId, message: "Cuenta actualizada correctamente (Promoción/Actualización)." };
+    }
+    return {
+      status: "error",
+      exists: true,
+      message: "Este correo electrónico ya está registrado. ¿Deseas actualizar tus datos para el nuevo año escolar?",
+      data: {
+        nombre: data[existingIndex][1],
+        gradoActual: data[existingIndex][2],
+        seccionActual: data[existingIndex][3]
+      }
+    };
   }
 
   const userId = "USR-" + new Date().getTime();
@@ -129,11 +155,46 @@ function loginUser(payload) {
     if ((row[4]?.toString().toLowerCase().trim() === lowerId || row[1]?.toString().toLowerCase().trim() === lowerId) && row[5] === hashedPassword) {
       return {
         status: "success",
-        data: { userId: row[0], nombre: row[1], grado: row[2], seccion: row[3], rol: row[6], telefono: row[7] || "", numeroLista: row[8] || "" }
+        data: { userId: row[0], nombre: row[1], grado: row[2], seccion: row[3], email: row[4], rol: row[6], telefono: row[7] || "", numeroLista: row[8] || "" }
       };
     }
   }
   return { status: "error", message: "Credenciales incorrectas." };
+}
+
+function getStudents(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "Usuarios");
+  const data = sheet.getDataRange().getValues().slice(1);
+  const students = data.filter(r => r[6] === 'Estudiante').map(r => ({
+    userId: r[0],
+    nombre: r[1],
+    numeroLista: r[8] || ""
+  }));
+  return { status: "success", data: students };
+}
+
+function getUserInfo(payload) {
+  const { userId } = payload;
+  if (!userId) throw new Error("ID de usuario no proporcionado.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "Usuarios");
+  const data = sheet.getDataRange().getValues();
+
+  const userRow = data.find(r => String(r[0]) === String(userId));
+  if (!userRow) throw new Error("Usuario no encontrado.");
+
+  return {
+    status: "success",
+    data: {
+      userId: userRow[0],
+      nombre: userRow[1],
+      email: userRow[4],
+      rol: userRow[6],
+      telefono: userRow[7] || ""
+    }
+  };
 }
 
 function getStudentsByGradoSeccion(payload) {
@@ -147,7 +208,7 @@ function getStudentsByGradoSeccion(payload) {
 
   const students = data.filter(r => {
     return String(r[6]).trim() === 'Estudiante' && normalizeString(r[2]) === sGrado && (!seccion || normalizeString(r[3]) === sSeccion);
-  }).map(r => ({ userId: r[0], nombre: r[1], grado: r[2], seccion: r[3], telefono: r[7] || "", numeroLista: r[8] || "" }));
+  }).map(r => ({ userId: r[0], nombre: r[1], grado: r[2], seccion: r[3], email: r[4], telefono: r[7] || "", numeroLista: r[8] || "" }));
 
   students.sort((a, b) => (parseInt(a.numeroLista) || 999) - (parseInt(b.numeroLista) || 999));
   return { status: "success", data: students };
@@ -215,36 +276,100 @@ function resetPassword(payload) {
 }
 
 function updateUserProfile(payload) {
-  const { userId, nombre, telefono, numeroLista, currentPassword, password } = payload || {};
+  const { userId, nombre, email, telefono, numeroLista, currentPassword, password } = payload || {};
+  logDebug("Iniciando actualización de perfil", { userId, email });
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
   const data = sheet.getDataRange().getValues();
-  const rowIndex = data.findIndex(r => r[0] === userId);
-  if (rowIndex === -1) throw new Error("Usuario no encontrado.");
 
-  const userRow = data[rowIndex];
+  // Búsqueda robusta por ID (convertir ambos a string)
+  const rowIndex = data.findIndex(r => String(r[0]) === String(userId));
+  if (rowIndex === -1) {
+    logDebug("Error: Usuario no encontrado en la base de datos", { userId });
+    throw new Error("Usuario no encontrado en la base de datos.");
+  }
 
-  // Si intenta cambiar password, validar la actual
+  // Clonar la fila para evitar mutaciones directas sobre el array original antes de validaciones
+  const userRow = [...data[rowIndex]];
+
+  // Gestión de Seguridad (Contraseña)
   if (password) {
-    if (!currentPassword) throw new Error("Debe proporcionar la contraseña actual.");
+    if (!currentPassword) throw new Error("Debe proporcionar la contraseña actual para establecer una nueva.");
+
     const currentHashed = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, currentPassword)
       .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
 
-    if (userRow[5] !== currentHashed) throw new Error("La contraseña actual es incorrecta.");
+    if (String(userRow[5]) !== currentHashed) {
+      logDebug("Error: Contraseña actual incorrecta");
+      throw new Error("La contraseña actual proporcionada es incorrecta.");
+    }
 
     const newHashed = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password)
       .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
     userRow[5] = newHashed;
+    logDebug("Contraseña actualizada y hasheada");
   }
 
-  if (nombre) userRow[1] = nombre;
-  if (telefono !== undefined) userRow[7] = telefono;
-  if (numeroLista !== undefined) userRow[8] = numeroLista;
+  // Mapeo Estricto de Columnas A-I
+  // 0:userId, 1:nombre, 2:grado, 3:seccion, 4:email, 5:password, 6:rol, 7:telefono, 8:numeroLista
 
-  // Optimización: Una sola llamada de escritura para toda la fila
-  sheet.getRange(rowIndex + 1, 1, 1, userRow.length).setValues([userRow]);
+  if (nombre && nombre.trim() !== "") {
+    userRow[1] = nombre.trim();
+  }
 
-  return { status: "success", message: "Perfil actualizado." };
+  if (email && email.trim() !== "") {
+    const lowerEmail = email.toLowerCase().trim();
+    // Validar duplicidad de correo (excluyendo al usuario actual)
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]) !== String(userId) && String(data[i][4]).toLowerCase().trim() === lowerEmail) {
+        throw new Error("El nuevo correo electrónico ya está registrado por otro usuario.");
+      }
+    }
+    userRow[4] = lowerEmail;
+  }
+
+  if (telefono !== undefined) {
+    userRow[7] = String(telefono).trim();
+  }
+
+  if (numeroLista !== undefined) {
+    userRow[8] = String(numeroLista).trim();
+  }
+
+  // Persistencia Atómica garantizando el mapeo A-I
+  try {
+    // Forzar que el array tenga exactamente 9 elementos
+    const rowToSave = [
+      String(userRow[0]), // A: userId
+      String(userRow[1]), // B: nombre
+      String(userRow[2]), // C: grado
+      String(userRow[3]), // D: seccion
+      String(userRow[4]), // E: email
+      String(userRow[5]), // F: password
+      String(userRow[6]), // G: rol
+      String(userRow[7]), // H: telefono
+      String(userRow[8])  // I: numeroLista
+    ];
+
+    sheet.getRange(rowIndex + 1, 1, 1, 9).setValues([rowToSave]);
+    logDebug("Perfil guardado exitosamente en hoja Usuarios mediante setValues atómico");
+  } catch (e) {
+    logDebug("Error al escribir en la hoja", e.message);
+    throw new Error("Fallo al persistir los datos en el servidor: " + e.message);
+  }
+
+  return {
+    status: "success",
+    message: "Perfil actualizado correctamente.",
+    data: {
+      userId: userRow[0],
+      nombre: userRow[1],
+      email: userRow[4],
+      telefono: userRow[7],
+      numeroLista: userRow[8]
+    }
+  };
 }
 
 function saveGameResult(payload) {

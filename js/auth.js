@@ -63,7 +63,19 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
 
             try {
-                const result = await fetchApi('USER', 'registerUser', payload);
+                let result = await fetchApi('USER', 'registerUser', payload);
+
+                if (result.exists) {
+                    const confirmUpdate = confirm(`${result.message}\n\nDatos encontrados:\nNombre: ${result.data.nombre}\nGrado Actual: ${result.data.gradoActual}\nSección: ${result.data.seccionActual}\n\n¿Deseas actualizar tus datos y promover tu cuenta al nuevo grado/sección ingresado?`);
+                    if (confirmUpdate) {
+                        payload.forceUpdate = true;
+                        result = await fetchApi('USER', 'registerUser', payload);
+                    } else {
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.disabled = false;
+                        return;
+                    }
+                }
 
                 if (result.status === 'success') {
                     // Login automático tras registro exitoso

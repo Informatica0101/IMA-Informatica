@@ -33,11 +33,11 @@ body {
     background-color: var(--gray-light);
 }
 
-/* Glassmorphism & Transparencies */
+/* Glassmorphism & Transparencies (A-75: Opacidad alta, Sin blur) */
 .glass-ima {
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.98) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 }
 
 #main-header {
@@ -45,11 +45,23 @@ body {
     transition: all var(--anim-speed) ease;
     padding-top: 8px !important;
     padding-bottom: 8px !important;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    background: rgba(255, 255, 255, 1) !important; /* Opacidad total para institucionalidad */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     z-index: 1000;
+    box-shadow: 0 4px 15px -1px rgba(0, 0, 0, 0.05);
+}
+
+.header-hidden {
+    transform: translateY(-100%);
+}
+
+/* Rediseño Modal Recursos (A-75): 0.98 opacity, fondo oscuro, sin blur excesivo */
+#academic-menu-modal {
+    background: rgba(17, 24, 39, 0.98) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 }
 
 @media (min-width: 1024px) {
@@ -81,22 +93,7 @@ body {
 }
 
 #mobile-menu-overlay {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    width: 320px !important;
-    right: 0;
-    left: auto !important;
-    height: 100vh;
-    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.03);
-    transform: translateX(100%);
-    transition: transform 0.3s ease-out;
-    border-left: 1px solid #f1f5f9;
-}
-
-#mobile-menu-overlay:not(.hidden) {
-    display: flex !important;
-    transform: translateX(0);
+    display: none !important; /* Eliminado por requerimiento A-75 (No hamburguesas) */
 }
 
 .mobile-menu-backdrop {
@@ -128,21 +125,26 @@ body {
 .p-8px { padding: 8px !important; }
 .p-12px { padding: 12px !important; }
 .p-16px { padding: 16px !important; }
+.p-20px { padding: 20px !important; }
 .p-24px { padding: 24px !important; }
 .p-32px { padding: 32px !important; }
 
 .m-4px { margin: 4px !important; }
 .m-8px { margin: 8px !important; }
 .m-12px { margin: 12px !important; }
+.m-16px { margin: 16px !important; }
+.m-24px { margin: 24px !important; }
 
 .gap-4px { gap: 4px !important; }
 .gap-8px { gap: 8px !important; }
+.gap-12px { gap: 12px !important; }
+.gap-16px { gap: 16px !important; }
 
 /* Compact & Elegant Cards */
 .card-ima {
     background: var(--white);
     border-radius: 8px; /* Standardize on 8px */
-    padding: 12px; /* More compact padding */
+    padding: 8px 12px; /* More compact padding */
     border: 1px solid #e2e8f0; /* Subtle border */
     box-shadow: none; /* Minimalist approach: no shadow by default */
     transition: all var(--anim-speed) ease;
@@ -151,6 +153,19 @@ body {
 .card-ima:hover {
     border-color: #cbd5e1;
     background: #fdfdfd;
+}
+
+.dashboard-card {
+    border-radius: 20px;
+    padding: 12px; /* Reduced from default */
+    border: 1px solid #f1f5f9;
+    background: var(--white);
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.1);
+    border-color: #e2e8f0;
 }
 
 /* Typography */
@@ -193,6 +208,30 @@ p { font-size: 0.875rem; line-height: 1.6; color: var(--blue-grayish); font-weig
 .btn-ima-cancel:hover {
     background-color: rgba(253, 242, 242, 1);
     transform: scale(1.02);
+}
+
+.nav-link-desktop {
+    padding: 8px 12px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.nav-link-desktop:hover {
+    color: var(--blue-institutional);
+    background-color: #f8fafc;
+}
+
+/* Desktop Dropdown Styles */
+.group:hover .group-hover\:opacity-100 {
+    opacity: 1 !important;
+}
+.group:hover .group-hover\:visible {
+    visibility: visible !important;
 }
 
 /* Footer Compact */
@@ -248,42 +287,41 @@ footer a:hover {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(203, 213, 225, 0.5); border-radius: 10px; }
 
-/* Mobile Bottom Nav */
+/* Mobile Bottom Nav (Icon Only A-73/74) */
 .mobile-bottom-nav {
     display: none;
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(16px);
-    border-top: 1px solid #e2e8f0;
-    padding: 6px 0 10px 0; /* Add bottom padding for safer touch area */
-    z-index: 1000;
-    justify-content: space-evenly; /* Better distribution */
+    background: rgba(255, 255, 255, 1); /* Full opacity for legibility */
+    backdrop-filter: none !important;
+    border-top: 1px solid #f1f5f9;
+    padding: 12px 0;
+    z-index: 2100;
+    justify-content: space-around;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 767px) {
     .mobile-bottom-nav { display: flex; }
-    body { padding-bottom: 70px; }
+    body { padding-bottom: 80px; }
 }
 
 .bottom-nav-item {
-    flex: 1; /* Allow equal width items */
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 4px; /* Slightly more gap */
+    justify-content: center;
     color: var(--blue-grayish);
-    font-size: 10px; /* Slightly larger text */
-    font-weight: 500;
-    text-transform: uppercase;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
+    padding: 8px;
+    border-radius: 12px;
 }
 
 .bottom-nav-item svg {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
+    stroke-width: 2.2;
 }
 
 .bottom-nav-item:active, .bottom-nav-item:hover {
@@ -298,3 +336,14 @@ footer a:hover {
 .quill-content p { margin-bottom: 0.75rem; color: var(--blue-grayish); font-weight: 400; }
 .quill-content strong { font-weight: 600; color: var(--gray-dark); }
 .quill-content blockquote { border-left: 4px solid var(--blue-institutional); padding-left: 1rem; font-style: italic; color: var(--blue-grayish); margin-bottom: 1rem; }
+
+/* Dashboard Accordion Internal Scroll */
+.assignment-content-scroll {
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 8px;
+    scrollbar-width: thin;
+}
+
+.assignment-content-scroll::-webkit-scrollbar { width: 3px; }
+.assignment-content-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }

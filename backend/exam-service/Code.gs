@@ -340,8 +340,11 @@ function getStudentExams({ userId, grado, seccion }) {
         return {
           examenId: e[0],
           titulo: e[1],
+          asignatura: e[2],
+          parcial: e[9] || "Primer Parcial",
           fechaLimite: e[5] ? new Date(e[5]).toISOString() : null,
           estado: estado,
+          profesorId: e[8],
           entrega: ent ? {
             estado: estado,
             calificacion: estado === 'Pendiente' ? null : ent[5],
@@ -456,6 +459,7 @@ function getTeacherExamActivity(payload) {
       titulo: examen[1], // Examen ya verificado arriba
       alumnoId: entrega[2], // Columna C: userId
       alumnoNombre: usuario ? usuario[1] : "Usuario Desconocido",
+      email: usuario ? usuario[4] : "N/A",
       grado: usuario ? usuario[2] : "N/A",
       seccion: usuario ? usuario[3] : "N/A",
       asignatura: examen[2] || "N/A",

@@ -10,11 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tasksList = document.getElementById('tasks-list');
     const logoutButton = document.getElementById('logout-button');
 
-    // --- Elementos de Perfil ---
-    const profileModal = document.getElementById('profile-modal');
-    const openProfileBtn = document.getElementById('open-profile-btn');
-    const closeProfileModal = document.getElementById('close-profile-modal');
-    const profileForm = document.getElementById('profile-form');
+    // --- Mi Perfil (Centralizado en ui-common.js) ---
 
     const CHUNK_SIZE = 1024 * 1024 * 2; // 1MB chunks
     const PARCIAL_ORDER = {
@@ -68,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para obtener Tareas y Exámenes
     async function fetchAllActivities() {
         if (!tasksList) return;
-        tasksList.innerHTML = '<p class="text-gray-500">Cargando actividades...</p>';
+        tasksList.innerHTML = '<div class="p-12 text-center"><i class="fas fa-spinner fa-spin text-blue-600 text-3xl mb-4"></i><p class="text-gray-500 font-medium">Sincronizando expediente académico...</p></div>';
         try {
             const payload = { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion };
 
@@ -79,38 +75,259 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const allActivities = [];
             if (tasksResult.status === 'success' && tasksResult.data) {
-                // Conservar el tipo original (Tarea o Credito Extra)
-                allActivities.push(...tasksResult.data.map(task => ({ ...task, type: task.tipo || 'Tarea' })));
+                // Saneamiento de datos: Asegurar que asignatura y parcial existan y estén limpios
+                allActivities.push(...tasksResult.data.map(task => ({
+                    ...task,
+                    type: task.tipo || 'Tarea',
+                    asignatura: (task.asignatura || 'General').trim(),
+                    parcial: (task.parcial || 'Sin Parcial').trim()
+                })));
             }
             if (examsResult.status === 'success' && examsResult.data) {
-                allActivities.push(...examsResult.data.map(exam => ({ ...exam, type: 'Examen' })));
+                allActivities.push(...examsResult.data.map(exam => ({
+                    ...exam,
+                    type: 'Examen',
+                    asignatura: (exam.asignatura || 'General').trim(),
+                    parcial: (exam.parcial || 'Sin Parcial').trim()
+                })));
             }
 
-            // Ordenar: No revisadas primero, luego por fecha límite (descendente - más reciente arriba)
             allActivities.sort((a, b) => {
                 const isReviewed = (act) => {
                     if (!act.entrega) return false;
                     const s = act.entrega.estado;
                     return (s === 'Completada' || s === 'Revisada' || s === 'Finalizado' || s === 'Rechazada');
                 };
-
                 const revA = isReviewed(a);
                 const revB = isReviewed(b);
-
-                // sin revisar (false) viene antes que calificadas (true)
-                if (revA !== revB) {
-                    return revA ? 1 : -1;
-                }
-
-                // Dentro del mismo grupo, fecha más reciente primero (descendente)
+                if (revA !== revB) return revA ? 1 : -1;
                 return new Date(b.fechaLimite) - new Date(a.fechaLimite);
             });
 
             allActivitiesData = allActivities;
+
+            // Task 4: Render Expediente
+            renderStudentExpediente(allActivities);
+
+            // Iniciar renderizado jerárquico (Parcial -> Asignatura -> Actividades)
             renderParcialTabs(allActivities);
 
         } catch (error) {
             tasksList.innerHTML = `<p class="text-red-500">Error al cargar actividades: ${error.message}</p>`;
+        }
+    }
+
+    function renderStudentExpediente(activities) {
+        const container = document.getElementById('student-expediente');
+        if (!container) return;
+
+        // Calcular progreso (basado en lógica de A-73/Teacher Dashboard)
+        const total = activities.length;
+        const delivered = activities.filter(a => a.entrega).length;
+        const completed = activities.filter(a => a.entrega && (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')).length;
+        const pending = total - delivered;
+
+        const deliveryRate = total > 0 ? (delivered / total) : 0;
+        const gradeSum = activities.reduce((sum, a) => sum + parseFloat(a.entrega?.calificacion || 0), 0);
+        const maxPossible = activities.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
+        const academicPerformance = maxPossible > 0 ? (gradeSum / maxPossible) : 0;
+
+        let onTimeCount = 0;
+        activities.forEach(a => {
+            if (a.entrega && a.fechaLimite) {
+                const limit = new Date(a.fechaLimite);
+                const deliveryDate = new Date(a.entrega.fecha || Date.now());
+                if (deliveryDate <= limit) onTimeCount++;
+            }
+        });
+        const punctualityRate = delivered > 0 ? (onTimeCount / delivered) : 1;
+
+        const compositeProgress = Math.round((deliveryRate * 0.3 + academicPerformance * 0.5 + punctualityRate * 0.2) * 100);
+
+        let level = "Iniciando";
+        let levelColor = "text-blue-600";
+        let barColor = "bg-blue-600";
+
+        if (compositeProgress >= 90) { level = "Excelencia"; levelColor = "text-emerald-600"; barColor = "bg-emerald-500"; }
+        else if (compositeProgress >= 70) { level = "Satisfactorio"; levelColor = "text-green-600"; barColor = "bg-green-500"; }
+        else if (compositeProgress >= 50) { level = "En Mejora"; levelColor = "text-yellow-600"; barColor = "bg-yellow-500"; }
+        else if (compositeProgress > 0) { level = "En Riesgo"; levelColor = "text-orange-600"; barColor = "bg-orange-500"; }
+
+        container.innerHTML = `
+            <div class="card-ima bg-white border border-gray-100 p-6 rounded-[2rem] shadow-sm">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl">
+                                <i class="fas fa-id-card"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Estudiante</h3>
+                                <p class="text-lg font-bold text-gray-900">${currentUser.nombre}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 pt-2">
+                            <div><span class="text-[10px] font-bold text-gray-400 uppercase">Grado</span><p class="text-sm font-semibold">${currentUser.grado}</p></div>
+                            <div><span class="text-[10px] font-bold text-gray-400 uppercase">Sección</span><p class="text-sm font-semibold">${currentUser.seccion}</p></div>
+                            <div><span class="text-[10px] font-bold text-gray-400 uppercase">No. Lista</span><p class="text-sm font-semibold">#${currentUser.numeroLista || 'N/A'}</p></div>
+                        </div>
+                    </div>
+
+                    <div class="md:border-x border-gray-50 px-0 md:px-8 space-y-4">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Progreso Académico</h3>
+                                <p class="text-3xl font-black text-gray-900">${compositeProgress}%</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase block mb-1">Nivel</span>
+                                <span class="text-xs font-bold ${levelColor} uppercase tracking-tighter">${level}</span>
+                            </div>
+                        </div>
+                        <div class="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="${barColor} h-full transition-all duration-1000" style="width: ${compositeProgress}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col justify-center space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-green-50 rounded-2xl">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-white text-green-600 rounded-xl flex items-center justify-center text-xs shadow-sm"><i class="fas fa-check"></i></div>
+                                <span class="text-xs font-bold text-green-700 uppercase">Completadas</span>
+                            </div>
+                            <span class="text-lg font-black text-green-700">${completed}</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-2xl">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-white text-yellow-600 rounded-xl flex items-center justify-center text-xs shadow-sm"><i class="fas fa-clock"></i></div>
+                                <span class="text-xs font-bold text-yellow-700 uppercase">Pendientes</span>
+                            </div>
+                            <span class="text-lg font-black text-yellow-700">${pending}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.classList.remove('hidden');
+    }
+
+    function renderSubjectNav(activities, selectedParcial) {
+        const container = document.getElementById('subject-nav-container');
+        if (!container) return;
+
+        // Obtener asignaturas dinámicamente filtradas por el parcial seleccionado
+        const subjects = [...new Set(activities.map(a => a.asignatura))]
+            .filter(s => s && s.trim() !== "")
+            .sort();
+
+        if (subjects.length === 0) {
+            container.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">No hay asignaturas en este parcial.</p>';
+            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades registradas.</p>';
+            return;
+        }
+
+        container.innerHTML = subjects.map(subj => `
+            <button class="subject-tab flex-none px-5 py-2.5 bg-white border border-gray-100 text-gray-600 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm hover:border-blue-200 transition-all" data-subject="${subj}">
+                ${subj}
+            </button>
+        `).join('');
+
+        // Listener para filtrar por asignatura
+        container.querySelectorAll('.subject-tab').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                container.querySelectorAll('.subject-tab').forEach(b => b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600'));
+                const target = e.currentTarget;
+                target.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+
+                const subj = target.dataset.subject;
+                const finalActivities = activities.filter(a => a.asignatura === subj);
+
+                renderActivities(finalActivities);
+                showSubjectInfo(subj);
+            });
+        });
+
+        // Activar la primera por defecto
+        container.querySelector('.subject-tab').click();
+    }
+
+    async function showSubjectInfo(subject) {
+        const container = document.getElementById('subject-info-container');
+        if (!container) return;
+
+        container.innerHTML = '<div class="p-5 bg-gray-50 rounded-2xl text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest animate-pulse">Sincronizando información de la asignatura...</div>';
+        container.classList.remove('hidden');
+
+        try {
+            // Identificar profesorId desde las actividades cargadas para esta asignatura específica
+            const activity = allActivitiesData.find(a => (a.asignatura || 'General') === subject && a.profesorId);
+            const profesorId = activity ? activity.profesorId : null;
+
+            // Info por defecto (Área de Informática)
+            let profInfo = {
+                nombre: "ISEMED - Área de Informática",
+                email: "informatica@isemed.edu.hn",
+                telefono: ""
+            };
+
+            // Intentar obtener info real del docente (A-73/75)
+            if (profesorId) {
+                try {
+                    const res = await fetchApi('USER', 'getUserInfo', { userId: profesorId });
+                    if (res.status === 'success' && res.data) {
+                        profInfo = res.data;
+                    }
+                } catch (e) {
+                    console.warn("No se pudo cargar info del docente específico:", e);
+                }
+            }
+
+            // Normalizar WhatsApp del Docente
+            const waPhone = profInfo.telefono ? String(profInfo.telefono).replace(/\D/g, '') : '';
+            const waLink = waPhone ? `https://wa.me/504${waPhone}` : null;
+
+            // Obtener enlace del grupo de WhatsApp por Grado (Lógica A-66 preservada)
+            let groupLink = null;
+            try {
+                const groupRes = await fetchApi('USER', 'getWhatsAppLink', { grado: currentUser.grado });
+                if (groupRes.status === 'success' && groupRes.link) {
+                    groupLink = groupRes.link;
+                }
+            } catch (e) {
+                console.warn("No se pudo cargar enlace de grupo de grado.");
+            }
+
+            container.innerHTML = `
+                <div class="card-ima bg-blue-50/50 border-blue-100 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center text-sm shadow-sm border border-blue-50">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div class="text-center md:text-left">
+                            <h4 class="text-[9px] font-bold text-blue-400 uppercase tracking-widest">Docente Asignado</h4>
+                            <p class="text-sm font-bold text-gray-900">${profInfo.nombre}</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <a href="mailto:${profInfo.email}" class="text-[10px] font-bold text-gray-500 hover:text-blue-600 transition-colors uppercase flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-100 shadow-sm">
+                            <i class="fas fa-envelope text-blue-400"></i> ${profInfo.email}
+                        </a>
+                        ${waLink ? `
+                            <a href="${waLink}" target="_blank" class="bg-green-600 text-white px-4 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-green-100 hover:bg-green-700 transition-all transform hover:-translate-y-0.5">
+                                <i class="fab fa-whatsapp text-sm"></i> WhatsApp Docente
+                            </a>
+                        ` : ''}
+                        ${groupLink ? `
+                            <a href="${groupLink}" target="_blank" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all transform hover:-translate-y-0.5">
+                                <i class="fas fa-users text-sm"></i> Grupo de Clase
+                            </a>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        } catch (e) {
+            console.error("Error showing subject info:", e);
+            container.innerHTML = '<div class="p-4 bg-red-50 rounded-xl text-center text-red-400 text-[10px] font-bold uppercase border border-red-100">Fallo en la sincronización de información docente.</div>';
         }
     }
 
@@ -120,11 +337,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!activities || activities.length === 0) {
             tabsContainer.innerHTML = '';
-            renderActivities([]);
+            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades disponibles.</p>';
             return;
         }
 
-        const parciales = [...new Set(activities.map(a => (a.parcial && a.parcial.trim()) || 'Sin Parcial'))];
+        const parciales = [...new Set(activities.map(a => a.parcial))];
         parciales.sort((a, b) => (PARCIAL_ORDER[b] || 0) - (PARCIAL_ORDER[a] || 0));
 
         const activeParcial = parciales[0];
@@ -146,23 +363,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     b.classList.remove('bg-blue-600', 'text-white');
                     b.classList.add('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
                 });
-                e.target.classList.remove('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
-                e.target.classList.add('bg-blue-600', 'text-white');
+                const target = e.currentTarget;
+                target.classList.remove('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
+                target.classList.add('bg-blue-600', 'text-white');
 
-                renderActivities(allActivitiesData, e.target.dataset.parcial);
+                const p = target.dataset.parcial;
+                const activitiesInParcial = allActivitiesData.filter(a => a.parcial === p);
+                renderSubjectNav(activitiesInParcial, p);
             });
         });
 
-        renderActivities(activities, activeParcial);
+        // Seleccionar primer parcial por defecto
+        tabsContainer.querySelector('.parcial-tab').click();
     }
 
-    function renderActivities(activities, filterParcial = null) {
-        const filtered = filterParcial
-            ? activities.filter(a => ((a.parcial && a.parcial.trim()) || 'Sin Parcial') === filterParcial)
-            : activities;
-
+    function renderActivities(filtered) {
         if (!filtered || filtered.length === 0) {
-            tasksList.innerHTML = '<p class="text-gray-500">No hay actividades para este parcial.</p>';
+            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades registradas para esta materia en este parcial.</p>';
             return;
         }
         tasksList.innerHTML = filtered.map(activity => {
@@ -271,7 +488,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="assignment-content overflow-hidden max-h-0 transition-all duration-300 ease-in-out group-[.is-expanded]:max-h-[1200px]">
                         <div class="pt-4 mt-4 border-t border-gray-50">
-                            <div class="text-gray-600 text-sm font-medium mb-5 leading-relaxed quill-content">${activity.descripcion || 'Sin descripción.'}</div>
+                            <div class="assignment-content-scroll scroll-minimalist mb-4">
+                                <div class="text-gray-600 text-sm font-medium mb-5 leading-relaxed quill-content">${activity.descripcion || 'Sin descripción.'}</div>
+                            </div>
                             <div class="flex justify-center md:justify-start">
                                 ${actionButtonHtml}
                             </div>
@@ -587,68 +806,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Lógica de Perfil ---
-    if (openProfileBtn) {
-        openProfileBtn.onclick = () => {
-            document.getElementById('profile-nombre').value = currentUser.nombre;
-            document.getElementById('profile-email').value = currentUser.email || '';
-            document.getElementById('profile-telefono').value = currentUser.telefono || '';
-            document.getElementById('profile-numeroLista').value = currentUser.numeroLista || '';
-            profileModal.classList.remove('hidden');
-        };
-    }
 
-    if (closeProfileModal) {
-        closeProfileModal.onclick = () => profileModal.classList.add('hidden');
-    }
-
-    if (profileForm) {
-        profileForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const submitBtn = profileForm.querySelector('button[type="submit"]');
-            const newPassword = document.getElementById('profile-password').value;
-            const currentPassword = document.getElementById('profile-current-password').value;
-
-            if (newPassword && !currentPassword) {
-                alert('Debe ingresar su contraseña actual para realizar cambios de seguridad.');
-                return;
-            }
-
-            const payload = {
-                userId: currentUser.userId,
-                nombre: document.getElementById('profile-nombre').value,
-                email: document.getElementById('profile-email').value,
-                telefono: document.getElementById('profile-telefono').value,
-                numeroLista: document.getElementById('profile-numeroLista').value,
-                currentPassword: currentPassword || undefined,
-                password: newPassword || undefined
-            };
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Guardando...';
-
-            try {
-                const result = await fetchApi('USER', 'updateUserProfile', payload);
-                if (result.status === 'success') {
-                    currentUser.nombre = payload.nombre;
-                    currentUser.email = payload.email;
-                    currentUser.telefono = payload.telefono;
-                    currentUser.numeroLista = payload.numeroLista;
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    document.getElementById('student-name').textContent = currentUser.nombre;
-                    alert('Perfil actualizado correctamente.');
-                    profileModal.classList.add('hidden');
-                } else {
-                    alert('Error: ' + result.message);
-                }
-            } catch (err) {
-                alert('Error de conexión.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Guardar Cambios';
-            }
-        };
-    }
 
     /**
      * WhatsApp Group Button Logic

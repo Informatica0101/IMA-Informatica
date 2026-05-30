@@ -13,22 +13,53 @@
     <link rel="apple-touch-icon" href="IMA-Logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=19">
+    <link rel="stylesheet" href="css/style.css?v=21">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
 
-    <header id="main-header" class="fixed w-full z-50 transition-all duration-300">
-        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
-            <div class="flex items-center gap-3">
+    <header id="main-header" class="fixed w-full z-50 transition-all duration-300 bg-white border-b border-gray-100">
+        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center h-16 md:h-20">
+            <div class="flex items-center gap-4">
                 <a href="index.html" class="flex items-center gap-3 group">
-                    <img src="imagenes/logo.png" alt="Logo" width="45" height="auto" class="logo-img transition-transform duration-300 group-hover:scale-105">
-                    <div class="text-left leading-tight">
-                        <h1 class="text-sm md:text-base font-black text-gray-900 uppercase">ISEMED</h1>
-                        <p class="text-[10px] md:text-xs font-bold text-blue-600 uppercase tracking-tighter">Área de Informática</p>
+                    <img src="imagenes/logo.png" alt="Logo" class="logo-img transition-transform duration-300 group-hover:scale-105 w-[60px] md:w-[80px] h-auto">
+                    <div class="header-title-container">
+                        <h1 class="text-sm md:text-xl font-black text-gray-900 uppercase tracking-tighter leading-none">ISEMED</h1>
+                        <p class="text-[9px] md:text-[11px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática I</p>
                     </div>
                 </a>
             </div>
-            <img src="imagenes/bandera-de-honduras.png" alt="HN" width="22" class="hidden xl:block opacity-90">
+
+            <nav class="hidden md:flex items-center gap-1">
+                <a href="index.html" class="nav-link-desktop">Inicio</a>
+                <a href="login.html" id="nav-portal-link" class="nav-link-desktop">Portal</a>
+
+                <div class="relative group">
+                    <button class="nav-link-desktop flex items-center gap-1">
+                        Cursos <i class="fas fa-chevron-down text-[8px] opacity-50 group-hover:rotate-180 transition-transform"></i>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-56 bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 border border-gray-100 z-[110]">
+                        <div id="desktop-courses-menu"></div>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <button class="nav-link-desktop flex items-center gap-1">
+                        Contenido <i class="fas fa-chevron-down text-[8px] opacity-50 group-hover:rotate-180 transition-transform"></i>
+                    </button>
+                    <div class="absolute left-0 mt-0 w-64 bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 border border-gray-100 z-[110]">
+                        <div id="desktop-content-menu"></div>
+                    </div>
+                </div>
+
+                <a href="#" onclick="handleHeaderAction('show-activities')" class="nav-link-desktop">Actividades</a>
+                <a href="pseudocode.html" class="nav-link-desktop">Pseudocódigo</a>
+                <button id="open-profile-btn" class="nav-link-desktop">Mi perfil</button>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <img src="imagenes/bandera-de-honduras.png" alt="HN" class="w-8 md:w-[45px] h-auto opacity-100 block transition-transform hover:scale-110">
+            </div>
         </div>
     </header>
 
@@ -49,6 +80,27 @@
             </div>
         </div>
     </main>
+
+    <div class="mobile-bottom-nav md:hidden z-[2000]">
+        <a href="index.html" class="bottom-nav-item" title="Inicio">
+            <i class="fas fa-home text-xl"></i>
+        </a>
+        <a href="login.html" id="mobile-portal-bottom-nav" class="bottom-nav-item active" title="Portal">
+            <i class="fas fa-th-large text-xl"></i>
+        </a>
+        <button class="bottom-nav-item" onclick="window.openAcademicHierarchy('Presentaciones')" title="Cursos">
+            <i class="fas fa-book-open text-xl"></i>
+        </button>
+        <button class="bottom-nav-item" onclick="window.openAcademicHierarchy('Contenido')" title="Contenido">
+            <i class="fas fa-file-pdf text-xl"></i>
+        </button>
+        <a href="#" onclick="handleHeaderAction('show-activities')" class="bottom-nav-item" title="Actividades">
+            <i class="fas fa-gamepad text-xl"></i>
+        </a>
+        <button id="mobile-profile-btn-nav" class="bottom-nav-item" title="Perfil">
+            <i class="fas fa-user-circle text-xl"></i>
+        </button>
+    </div>
 
     <footer class="bg-white/50 py-6 mt-auto">
         <div class="container mx-auto px-6 text-center">
@@ -89,13 +141,14 @@
         </div>
     </div>
 
-    <script src="js/api.js?v=19"></script>
-    <script src="js/config.js?v=19"></script>
-    <script src="js/ui-common.js?v=19"></script>
-    <script src="js/results.js?v=19"></script>
+    <script src="js/api.js?v=21"></script>
+    <script src="js/config.js?v=21"></script>
+    <script src="js/ui-common.js?v=21"></script>
+    <script src="js/results.js?v=21"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (window.setupCommonUI) window.setupCommonUI();
+            if (window.renderCommonNav) window.renderCommonNav();
         });
     </script>
 </body>

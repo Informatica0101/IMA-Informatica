@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navProyectos = document.getElementById('nav-proyectos');
     const navLogros = document.getElementById('nav-logros');
     const navNews = document.getElementById('nav-news');
+    const navAdmin = document.getElementById('nav-admin');
     const navReportsOld = document.getElementById('nav-reportes');
 
     const sectionAcademicReports = document.getElementById('section-dashboard');
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionProyectos = document.getElementById('section-proyectos');
     const sectionLogros = document.getElementById('section-logros');
     const sectionNews = document.getElementById('section-news');
+    const sectionAdmin = document.getElementById('section-admin');
     const sectionReportes = document.getElementById('section-reportes');
 
     const tareasListView = document.getElementById('tareas-list-view');
@@ -52,8 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionAcademicReports, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionReportes];
-    const allNavLinks = [navDashboard, navTareas, navProyectos, navLogros, navNews, navReportsOld];
+    const allSections = [sectionAcademicReports, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
+    const allNavLinks = [navDashboard, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -103,79 +105,40 @@ document.addEventListener('DOMContentLoaded', () => {
         navigateTo(sectionNews, navNews);
         fetchNewsManagement();
     });
+    navAdmin.addEventListener('click', () => {
+        navigateTo(sectionAdmin, navAdmin);
+    });
+
+    const btnCloseYear = document.getElementById('btn-close-year');
+    if (btnCloseYear) {
+        btnCloseYear.onclick = async () => {
+            const format = document.getElementById('backup-format').value;
+            if (confirm(`¡ATENCIÓN! Vas a finalizar el año escolar.\n\nSe eliminarán tareas y entregas.\nSe archivará respaldo en formato ${format}.\n\n¿Deseas continuar?`)) {
+                btnCloseYear.disabled = true;
+                btnCloseYear.textContent = 'Procesando...';
+                try {
+                    const res = await fetchApi('TASK', 'closeAcademicYear', { profesorId: currentUser.userId, format });
+                    if (res.status === 'success') {
+                        alert(res.message);
+                        window.location.reload();
+                    } else {
+                        alert('Error: ' + res.message);
+                    }
+                } catch (e) {
+                    alert('Error de conexión.');
+                } finally {
+                    btnCloseYear.disabled = false;
+                    btnCloseYear.textContent = 'Ejecutar Cierre';
+                }
+            }
+        };
+    }
     navReportsOld.addEventListener('click', () => {
         navigateTo(sectionReportes, navReportsOld);
     });
 
-    // --- Mi Perfil (Profesor) ---
-    const profileModal = document.getElementById('profile-modal');
-    const openProfileBtn = document.getElementById('open-profile-btn');
-    const closeProfileModal = document.getElementById('close-profile-modal');
-    const profileForm = document.getElementById('profile-form');
+    // --- Mi Perfil (Centralizado en ui-common.js) ---
 
-    if (openProfileBtn) {
-        openProfileBtn.onclick = () => {
-            document.getElementById('profile-nombre').value = currentUser.nombre;
-            document.getElementById('profile-email').value = currentUser.email || '';
-            document.getElementById('profile-telefono').value = currentUser.telefono || '';
-            profileModal.classList.remove('hidden');
-        };
-    }
-
-    if (closeProfileModal) {
-        closeProfileModal.onclick = () => profileModal.classList.add('hidden');
-    }
-
-    const cancelProfileBtn = document.getElementById('cancel-profile-btn');
-    if (cancelProfileBtn) {
-        cancelProfileBtn.onclick = () => profileModal.classList.add('hidden');
-    }
-
-    if (profileForm) {
-        profileForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const submitBtn = profileForm.querySelector('button[type="submit"]');
-            const newPassword = document.getElementById('profile-password').value;
-            const currentPassword = document.getElementById('profile-current-password').value;
-
-            if (newPassword && !currentPassword) {
-                alert('Debe ingresar su contraseña actual para realizar cambios de seguridad.');
-                return;
-            }
-
-            const payload = {
-                userId: currentUser.userId,
-                nombre: document.getElementById('profile-nombre').value,
-                email: document.getElementById('profile-email').value,
-                telefono: document.getElementById('profile-telefono').value,
-                currentPassword: currentPassword || undefined,
-                password: newPassword || undefined
-            };
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Guardando...';
-
-            try {
-                const result = await fetchApi('USER', 'updateUserProfile', payload);
-                if (result.status === 'success') {
-                    currentUser.nombre = payload.nombre;
-                    currentUser.email = payload.email;
-                    currentUser.telefono = payload.telefono;
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    document.getElementById('teacher-name').textContent = currentUser.nombre;
-                    alert('Perfil actualizado correctamente.');
-                    profileModal.classList.add('hidden');
-                } else {
-                    alert('Error: ' + result.message);
-                }
-            } catch (err) {
-                alert('Error de conexión.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Guardar Cambios';
-            }
-        };
-    }
 
     // --- Lógica de Reporte Académico ---
     const btnGenerateReport = document.getElementById('btn-generate-report');
@@ -705,7 +668,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const key = `${item.alumnoId}`;
             if (!seen.has(key)) {
                 if (norm(item.alumnoNombre).includes(norm(search))) {
-                    alumnosGlobal.push({ id: item.alumnoId, nombre: item.alumnoNombre, grado: item.grado, seccion: item.seccion, total: 0 });
+                    alumnosGlobal.push({
+                        id: item.alumnoId,
+                        nombre: item.alumnoNombre,
+                        email: item.email,
+                        grado: item.grado,
+                        seccion: item.seccion,
+                        total: 0
+                    });
                     seen.add(key);
                 }
             }
@@ -961,17 +931,61 @@ document.addEventListener('DOMContentLoaded', () => {
             infoCard.id = 'student-details-info-card';
             infoCard.className = "bg-white rounded-[2.5rem] shadow-xl border border-gray-100 mb-8 overflow-hidden animate-fade-in-up transition-all hover:shadow-2xl hover:shadow-blue-50";
 
-            const waPhone = studentInfo.telefono ? studentInfo.telefono.replace(/\D/g, '') : '';
+            const waPhone = studentInfo.telefono ? String(studentInfo.telefono).replace(/\D/g, '') : '';
             const waLink = waPhone ? `https://wa.me/504${waPhone}` : '#';
 
-            // Calcular resumen de estados para este parcial/asignatura
+            // Calcular carga académica total (A-73)
+            const subjectAssignments = allAssignmentsRaw.filter(a =>
+                norm(a.grado) === norm(grado) &&
+                (!a.seccion || norm(a.seccion) === norm(seccion) || norm(a.seccion) === 'todas') &&
+                (isGlobalSearch || norm(a.asignatura) === norm(asignatura)) &&
+                (isGlobalSearch || norm(a.parcial) === norm(parcial))
+            );
+
             const studentSubmissions = allActivityRaw.filter(sub =>
                 sub.alumnoId == alumnoId &&
-                (isGlobalSearch || (norm(sub.asignatura) === norm(asignatura) && norm(sub.parcial) === norm(parcial)))
+                norm(sub.grado) === norm(grado) &&
+                norm(sub.seccion) === norm(seccion) &&
+                norm(sub.asignatura) === norm(asignatura) &&
+                norm(sub.parcial) === norm(parcial)
             );
-            const total = studentSubmissions.length;
-            const completed = studentSubmissions.filter(s => s.estado === 'Completada' || s.estado === 'Revisada').length;
-            const pending = studentSubmissions.filter(s => s.estado === 'Pendiente' || s.estado === 'Pendiente de revisión' || !s.estado).length;
+
+            const totalAssigned = subjectAssignments.length;
+            const delivered = studentSubmissions.length;
+            const completed = studentSubmissions.filter(s => s.estado === 'Completada' || s.estado === 'Revisada' || s.estado === 'Finalizado').length;
+            const pending = studentSubmissions.filter(s => (s.estado === 'Pendiente' || s.estado === 'Pendiente de revisión' || !s.estado) && (s.fileId || s.respuestas || s.entregaId)).length;
+
+            // Métrica compuesta (A-73/75): 30% Entrega, 50% Rendimiento Académico, 20% Puntualidad
+            const deliveryRate = totalAssigned > 0 ? (delivered / totalAssigned) : 0;
+            const gradeSum = studentSubmissions.reduce((sum, s) => sum + parseFloat(s.calificacion || 0), 0);
+            const maxGradePossible = subjectAssignments.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
+            const academicPerformance = maxGradePossible > 0 ? (gradeSum / maxGradePossible) : 0;
+
+            // Factor Puntualidad (Req 4.3): Penalización por entregas tardías
+            let onTimeCount = 0;
+            studentSubmissions.forEach(sub => {
+                const assignment = subjectAssignments.find(a => norm(a.titulo) === norm(sub.titulo));
+                if (assignment && assignment.fechaLimite) {
+                    // Si se entregó después de la fecha límite (comparando solo fechas para evitar problemas de horas)
+                    const subDate = new Date(sub.fecha); subDate.setHours(0,0,0,0);
+                    const limitDate = new Date(assignment.fechaLimite); limitDate.setHours(0,0,0,0);
+                    if (subDate <= limitDate) onTimeCount++;
+                } else {
+                    onTimeCount++; // Si no hay fecha límite, se considera a tiempo
+                }
+            });
+            const punctualityRate = delivered > 0 ? (onTimeCount / delivered) : 1;
+
+            // Cálculo final de progreso compuesto
+            let compositeProgress = Math.round(((deliveryRate * 0.3) + (academicPerformance * 0.5) + (punctualityRate * 0.2)) * 100);
+            if (isNaN(compositeProgress)) compositeProgress = 0;
+
+            let levelText = "Iniciando";
+            let levelColor = "text-blue-600";
+            if (compositeProgress >= 90) { levelText = "Excelencia"; levelColor = "text-emerald-600"; }
+            else if (compositeProgress >= 70) { levelText = "Satisfactorio"; levelColor = "text-green-600"; }
+            else if (compositeProgress >= 50) { levelText = "En Mejora"; levelColor = "text-yellow-600"; }
+            else if (compositeProgress > 0) { levelText = "En Riesgo"; levelColor = "text-orange-600"; }
 
             infoCard.innerHTML = `
                 <div class="p-6 md:p-10">
@@ -984,7 +998,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>
                                 </div>
                             </div>
-                            <div>
+                            <div class="flex-grow">
                                 <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-semibold uppercase tracking-widest mb-3">Expediente Académico ISEMED</span>
                                 <h3 class="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight tracking-tight">${studentInfo.nombre}</h3>
                                 <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-2 text-xs text-gray-400 font-semibold uppercase tracking-[0.1em]">
@@ -1028,11 +1042,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="space-y-6">
                                 <div>
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Nivel de Entrega</span>
-                                        <span class="text-sm font-semibold text-blue-600">${total > 0 ? Math.round((completed/total)*100) : 0}%</span>
+                                        <div>
+                                            <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest block">Nivel de Entrega</span>
+                                            <span class="text-xs font-bold ${levelColor} uppercase tracking-tighter">${levelText}</span>
+                                        </div>
+                                        <span class="text-sm font-bold text-gray-900">${compositeProgress}%</span>
                                     </div>
                                     <div class="w-full bg-gray-100 h-4 rounded-full overflow-hidden border border-gray-200 p-1">
-                                        <div class="bg-blue-600 h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(37,99,235,0.4)]" style="width: ${total > 0 ? (completed/total)*100 : 0}%"></div>
+                                        <div class="bg-blue-600 h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(37,99,235,0.4)]" style="width: ${compositeProgress}%"></div>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
@@ -1041,8 +1058,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <span class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Completas</span>
                                     </div>
                                     <div class="p-5 bg-white rounded-[1.5rem] border border-gray-100 text-center shadow-sm">
-                                        <span class="block text-3xl font-semibold text-yellow-500">${pending}</span>
-                                        <span class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Pendientes</span>
+                                        <span class="block text-3xl font-semibold text-yellow-500">${totalAssigned - completed}</span>
+                                        <span class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Faltantes</span>
                                     </div>
                                 </div>
                             </div>
@@ -1054,13 +1071,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="bg-gray-900 rounded-[2rem] p-8 flex flex-col justify-between h-full relative overflow-hidden group">
                                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
                                 <div class="text-center py-4 relative z-10">
-                                    ${pending === 0 && total > 0 ?
+                                    ${pending === 0 && (totalAssigned - completed) === 0 && totalAssigned > 0 ?
                                         `<div class="inline-flex p-4 bg-green-500/20 text-green-400 rounded-2xl mb-4 border border-green-500/30"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg></div>
                                          <div class="text-xl font-semibold text-white tracking-tight uppercase">EXPEDIENTE AL DÍA</div>
-                                         <p class="text-[10px] text-gray-500 uppercase font-semibold tracking-widest mt-2">Sin revisiones pendientes</p>` :
+                                         <p class="text-[10px] text-gray-500 uppercase font-semibold tracking-widest mt-2">Carga académica completada</p>` :
                                         `<div class="inline-flex p-4 bg-yellow-500/20 text-yellow-400 rounded-2xl mb-4 border border-yellow-500/30"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-                                         <div class="text-xl font-semibold text-white tracking-tight uppercase">CON PENDIENTES</div>
-                                         <p class="text-[10px] text-gray-500 uppercase font-semibold tracking-widest mt-2">${pending} Tareas por calificar</p>`
+                                         <div class="text-xl font-semibold text-white tracking-tight uppercase">ACTIVIDAD EN CURSO</div>
+                                         <p class="text-[10px] text-gray-500 uppercase font-semibold tracking-widest mt-2">${pending} por calificar / ${totalAssigned - completed} faltantes</p>`
                                     }
                                 </div>
                                 <div class="mt-6 pt-6 border-t border-white/10 relative z-10">
@@ -1211,7 +1228,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         grado: item.grado,
                         seccion: item.seccion,
                         asignatura: 'Búsqueda Global',
-                        parcial: 'Todos los Parciales'
+                        parcial: 'Todos los Parciales',
+                        studentInfo: { nombre: item.nombre, email: item.email, userId: item.id }
                     });
                     return;
                 }
@@ -1315,7 +1333,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (student) {
             if (listEl) listEl.textContent = student.numeroLista || '-';
-            if (emailEl) emailEl.textContent = student.email || 'N/A';
+            if (emailEl) emailEl.textContent = student.email || entrega.email || 'N/A';
             if (phoneEl) phoneEl.textContent = student.telefono || 'N/A';
             if (waBtn) {
                 const waPhone = student.telefono ? student.telefono.replace(/\D/g, '') : '';

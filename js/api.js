@@ -24,9 +24,17 @@ async function fetchApi(service, action, payload) {
             body: JSON.stringify({ action, payload }),
         });
 
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+
         const textResponse = await response.text();
-        const jsonResponse = JSON.parse(textResponse);
-        return jsonResponse;
+        try {
+            return JSON.parse(textResponse);
+        } catch (e) {
+            console.error("Respuesta no es JSON válido:", textResponse);
+            throw new Error("El servidor devolvió una respuesta inválida.");
+        }
 
     } catch (error) {
         console.error(`Error al llamar al servicio ${service} con acción ${action}:`, error);
