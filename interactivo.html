@@ -19,7 +19,7 @@
             background-color: #f0f4f8; /* Un gris azulado claro */
             display: flex;
             justify-content: center;
-            align-items: center; 
+            align-items: center;
             min-height: 100vh;
             margin: 0;
             overflow: hidden; /* Evitar scroll si el mensaje de prohibido mouse aparece */
@@ -76,38 +76,40 @@
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); /* Sombra para enfoque */
         }
         .button {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            transition: all 0.2s ease;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            outline: none;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
         }
         .button-primary {
-            background-color: #6366f1; /* Indigo 500 */
+            background-color: #2563eb;
             color: white;
         }
         .button-primary:hover {
-            background-color: #4f46e5; /* Indigo 600 */
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            background-color: #1d4ed8;
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
         }
         .button-primary:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transform: scale(0.98);
         }
-        .button-secondary { /* These buttons will be hidden or used for restart now */
-            background-color: #e2e8f0; /* Gris 200 */
-            color: #475569; /* Gris 600 */
+        .button-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
         }
         .button-secondary:hover {
-            background-color: #cbd5e1; /* Gris 300 */
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-        }
-        .button-secondary:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #e2e8f0;
+            transform: scale(1.02);
         }
         .feedback-message {
             margin-top: 1rem;
@@ -270,12 +272,29 @@
     </style>
 </head>
 <body>
+
+    <header id="main-header" class="fixed w-full z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <img src="imagenes/logo.png" alt="Logo" class="logo-img transition-transform duration-300 group-hover:scale-105">
+                    <div class="header-title-container">
+                        <h1 class="text-sm md:text-lg font-semibold text-gray-900 uppercase tracking-tight">ISEMED</h1>
+                        <p class="text-[9px] md:text-xs font-medium text-blue-600 uppercase tracking-tight">Área de Informática</p>
+                    </div>
+                </a>
+            </div>
+            <div class="flex items-center gap-4">
+                <img src="imagenes/bandera-de-honduras.png" alt="HN" width="24" class="opacity-90">
+            </div>
+        </div>
+    </header>
     <div class="mouse-blocker" id="mouseBlocker">
         ¡PROHIBIDO EL USO DEL RATÓN! 🖱️🚫
     </div>
 
     <div class="container">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Prueba de Habilidad de Teclado 🚀</h1>
+        <h1 class="text-3xl font-medium text-center text-gray-800 mb-6">Prueba de Habilidad de Teclado 🚀</h1>
 
         <!-- Introducción -->
         <div id="intro-section" class="task-section active">
@@ -294,11 +313,11 @@
             <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Fase 1.1: Ingreso de Palabra Simple</h2>
             <p class="text-gray-600 mb-2">Escribe la siguiente palabra (sin mayúsculas ni acentos):</p>
             <div class="text-center mb-4">
-                <span id="wordToType" class="text-4xl font-bold text-indigo-700"></span>
+                <span id="wordToType" class="text-4xl font-medium text-indigo-700"></span>
             </div>
             <input type="text" id="wordInput" class="input-area w-full text-lg" placeholder="Escribe aquí la palabra..." autocomplete="off">
             <div id="wordFeedback" class="feedback-message hidden"></div>
-            <p id="wordTime" class="text-gray-600 text-center mt-2 hidden">Tiempo: <span class="font-bold">0.00s</span></p>
+            <p id="wordTime" class="text-gray-600 text-center mt-2 hidden">Tiempo: <span class="font-medium">0.00s</span></p>
             <div class="flex justify-center mt-4">
                 <button id="nextPhase1-1Btn" class="button button-primary hidden-button" disabled>Siguiente Fase</button>
             </div>
@@ -315,11 +334,11 @@
                 <p>Asegúrate de usar el teclado numérico (NumPad) si tu teclado lo tiene, con Num Lock activado.</p>
             </div>
             <div class="text-center mb-4">
-                <span id="wordToTypeAccented" class="text-4xl font-bold text-indigo-700"></span>
+                <span id="wordToTypeAccented" class="text-4xl font-medium text-indigo-700"></span>
             </div>
             <input type="text" id="wordInputAccented" class="input-area w-full text-lg" placeholder="Escribe aquí la palabra con acentos..." autocomplete="off">
             <div id="wordAccentedFeedback" class="feedback-message hidden"></div>
-            <p id="wordAccentedTime" class="text-gray-600 text-center mt-2 hidden">Tiempo: <span class="font-bold">0.00s</span></p>
+            <p id="wordAccentedTime" class="text-gray-600 text-center mt-2 hidden">Tiempo: <span class="font-medium">0.00s</span></p>
             <div class="flex justify-center mt-4">
                 <button id="nextPhase1-2Btn" class="button button-primary hidden-button" disabled>Siguiente Fase</button>
             </div>
@@ -518,7 +537,7 @@
                 <p><strong>Euro (€):</strong> <kbd>Alt</kbd> + <kbd>0128</kbd></p>
             </div>
             <div class="text-center text-lg mb-4">
-                <span id="sentenceToTypeAdvanced" class="text-gray-800 font-bold"></span>
+                <span id="sentenceToTypeAdvanced" class="text-gray-800 font-medium"></span>
             </div>
             <input type="text" id="sentenceInputAdvanced" class="input-area w-full text-lg" placeholder="Escribe la frase completa aquí..." autocomplete="off">
             <div id="sentenceAdvancedFeedback" class="feedback-message hidden"></div>
@@ -547,7 +566,7 @@
 
         <!-- Fin de la prueba -->
         <div id="end-section" class="task-section">
-            <h2 class="text-3xl font-bold text-center text-green-700 mb-4">¡Prueba Finalizada! 🎉</h2>
+            <h2 class="text-3xl font-medium text-center text-green-700 mb-4">¡Prueba Finalizada! 🎉</h2>
             <p class="text-gray-700 text-lg text-center">
                 Has completado todas las fases de la prueba de habilidad de teclado. ¡Excelente trabajo!
             </p>
@@ -1619,40 +1638,40 @@
         // FASE 6: COMPLETAR FRASES AVANZADAS (Puntuación, Mayúsculas, Acentos) - NEW PHASE
        const userName = "Juan"; // Placeholder for user's name
 const sentences_6 = [
-    { 
-        full: `Hola, mi nombre es ${userName}. ¿Cómo estás hoy?`, 
-        expected: [`Hola, mi nombre es ${userName}. ¿Cómo estás hoy?`], 
-        placeholder: `Hola, mi nombre es ${userName}. ¿Cómo estás hoy?` 
+    {
+        full: `Hola, mi nombre es ${userName}. ¿Cómo estás hoy?`,
+        expected: [`Hola, mi nombre es ${userName}. ¿Cómo estás hoy?`],
+        placeholder: `Hola, mi nombre es ${userName}. ¿Cómo estás hoy?`
     },
-    { 
-        full: `¡Qué día tan bonito! Hay 100% de probabilidad de sol.`, 
-        expected: [`¡Qué día tan bonito! Hay 100% de probabilidad de sol.`], 
-        placeholder: `¡Qué día tan bonito! Hay 100% de probabilidad de sol.` 
+    {
+        full: `¡Qué día tan bonito! Hay 100% de probabilidad de sol.`,
+        expected: [`¡Qué día tan bonito! Hay 100% de probabilidad de sol.`],
+        placeholder: `¡Qué día tan bonito! Hay 100% de probabilidad de sol.`
     },
-    { 
-        full: `La fórmula es E=mc².`, 
-        expected: [`La fórmula es E=mc².`, `La fórmula es E=mc^2.`], 
-        placeholder: `La fórmula es E=mc² (Usa Alt+0178!)` 
+    {
+        full: `La fórmula es E=mc².`,
+        expected: [`La fórmula es E=mc².`, `La fórmula es E=mc^2.`],
+        placeholder: `La fórmula es E=mc² (Usa Alt+0178!)`
     },
-    { 
-        full: `El precio es $50.00 (cincuenta dólares).`, 
-        expected: [`El precio es $50.00 (cincuenta dólares).`], 
-        placeholder: `El precio es $50.00 (cincuenta dólares).` 
+    {
+        full: `El precio es $50.00 (cincuenta dólares).`,
+        expected: [`El precio es $50.00 (cincuenta dólares).`],
+        placeholder: `El precio es $50.00 (cincuenta dólares).`
     },
-    { 
-        full: `Ella dijo: "Ven aquí ahora".`, 
-        expected: [`Ella dijo: "Ven aquí ahora".`], 
-        placeholder: `Ella dijo: "Ven aquí ahora".` 
+    {
+        full: `Ella dijo: "Ven aquí ahora".`,
+        expected: [`Ella dijo: "Ven aquí ahora".`],
+        placeholder: `Ella dijo: "Ven aquí ahora".`
     },
-    { 
-        full: `¿Dónde está la máquina?`, 
-        expected: [`¿Dónde está la máquina?`], 
-        placeholder: `¿Dónde está la máquina?` 
+    {
+        full: `¿Dónde está la máquina?`,
+        expected: [`¿Dónde está la máquina?`],
+        placeholder: `¿Dónde está la máquina?`
     },
-    { 
-        full: `El autobús número 7 (siete) llegó a las 8:30 a.m.`, 
-        expected: [`El autobús número 7 (siete) llegó a las 8:30 a.m.`], 
-        placeholder: `El autobús número 7 (siete) llegó a las 8:30 a.m.` 
+    {
+        full: `El autobús número 7 (siete) llegó a las 8:30 a.m.`,
+        expected: [`El autobús número 7 (siete) llegó a las 8:30 a.m.`],
+        placeholder: `El autobús número 7 (siete) llegó a las 8:30 a.m.`
     }
 ];
 
@@ -1695,13 +1714,13 @@ function displaySentence_6() {
 }
 
 function checkSentenceInput_6() {
-    const typedText = sentenceInputAdvanced.value; 
+    const typedText = sentenceInputAdvanced.value;
     const targetExpected = sentences_6[currentSentenceIndex_6].expected;
     const expectedArray = Array.isArray(targetExpected) ? targetExpected : [targetExpected];
 
     console.log(`[Phase 6 Check] Typed: "${typedText}", Targets: ${expectedArray}`);
 
-    if (expectedArray.includes(typedText)) { 
+    if (expectedArray.includes(typedText)) {
         sentenceAdvancedFeedback.textContent = `¡Correcto! ✔️`;
         sentenceAdvancedFeedback.classList.remove('hidden', 'feedback-error');
         sentenceAdvancedFeedback.classList.add('feedback-success');
@@ -1710,11 +1729,11 @@ function checkSentenceInput_6() {
             currentSentenceIndex_6++;
             displaySentence_6();
         }, 1000);
-    } 
-    else if (expectedArray.some(text => text.startsWith(typedText))) { 
+    }
+    else if (expectedArray.some(text => text.startsWith(typedText))) {
         sentenceAdvancedFeedback.classList.add('hidden');
-    } 
-    else { 
+    }
+    else {
         sentenceAdvancedFeedback.textContent = `Incorrecto. ¡Presta atención a MAYÚSCULAS, ACENTOS y PUNTUACIÓN! ❌`;
         sentenceAdvancedFeedback.classList.remove('hidden', 'feedback-success');
         sentenceAdvancedFeedback.classList.add('feedback-error');

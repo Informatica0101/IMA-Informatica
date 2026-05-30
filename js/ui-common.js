@@ -41,22 +41,48 @@ window.setupCommonUI = function() {
         });
     }
 
-    // --- Mobile Menu Logic ---
+    // --- Mobile Menu Logic (Overlay Hierarchical Drawer) ---
     if (mobileMenuOverlay) {
-        function toggleMobileMenu() {
-            const isOpening = mobileMenuOverlay.classList.contains('hidden');
-            mobileMenuOverlay.classList.toggle('hidden');
-            mobileMenuOverlay.classList.toggle('mobile-menu-overlay');
-            if (mobileMenuIcon) {
-                mobileMenuIcon.setAttribute('d', isOpening ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16');
-            }
-            if (!isOpening) resetMobileMenuState();
+        let backdrop = document.querySelector('.mobile-menu-backdrop');
+        if (!backdrop) {
+            backdrop = document.createElement('div');
+            backdrop.className = 'mobile-menu-backdrop';
+            document.body.appendChild(backdrop);
+            backdrop.onclick = () => window.closeMobileMenu();
         }
+
+        function toggleMobileMenu(sectionToOpen = null) {
+            const isOpening = mobileMenuOverlay.classList.contains('hidden');
+            if (isOpening) {
+                mobileMenuOverlay.classList.remove('hidden');
+                backdrop.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                if (sectionToOpen === 'courses' && mobileCoursesToggle) {
+                    resetMobileMenuState();
+                    mobileCoursesContainer.classList.remove('hidden-height');
+                    mobileCoursesContainer.classList.add('visible-height');
+                    mobileCoursesArrow.classList.add('rotate-90');
+                }
+            } else {
+                window.closeMobileMenu();
+            }
+        }
+
+        window.openMobileMenu = function(section = null) {
+            if (mobileMenuOverlay.classList.contains('hidden')) {
+                toggleMobileMenu(section);
+            } else if (section === 'courses') {
+                resetMobileMenuState();
+                mobileCoursesContainer.classList.remove('hidden-height');
+                mobileCoursesContainer.classList.add('visible-height');
+                mobileCoursesArrow.classList.add('rotate-90');
+            }
+        };
 
         window.closeMobileMenu = function() {
             mobileMenuOverlay.classList.add('hidden');
-            mobileMenuOverlay.classList.remove('mobile-menu-overlay');
-            if (mobileMenuIcon) mobileMenuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+            backdrop.classList.remove('active');
+            document.body.style.overflow = '';
             resetMobileMenuState();
         }
 
@@ -69,21 +95,29 @@ window.setupCommonUI = function() {
             });
         }
 
-        if (mobileMenuButton) mobileMenuButton.addEventListener('click', toggleMobileMenu);
-        if (mobileMenuCloseButton) mobileMenuCloseButton.addEventListener('click', toggleMobileMenu);
+        if (mobileMenuButton) mobileMenuButton.addEventListener('click', () => toggleMobileMenu());
+        if (mobileMenuCloseButton) mobileMenuCloseButton.addEventListener('click', () => window.closeMobileMenu());
 
         if (mobileCoursesToggle) {
             mobileCoursesToggle.addEventListener('click', () => {
-                mobileCoursesContainer.classList.toggle('hidden-height');
-                mobileCoursesContainer.classList.toggle('visible-height');
-                mobileCoursesArrow.classList.toggle('rotate-90');
+                const isVisible = mobileCoursesContainer.classList.contains('visible-height');
+                resetMobileMenuState();
+                if (!isVisible) {
+                    mobileCoursesContainer.classList.add('visible-height');
+                    mobileCoursesContainer.classList.remove('hidden-height');
+                    mobileCoursesArrow.classList.add('rotate-90');
+                }
             });
         }
         if (mobileContentToggle) {
             mobileContentToggle.addEventListener('click', () => {
-                mobileContentContainer.classList.toggle('hidden-height');
-                mobileContentContainer.classList.toggle('visible-height');
-                mobileContentArrow.classList.toggle('rotate-90');
+                const isVisible = mobileContentContainer.classList.contains('visible-height');
+                resetMobileMenuState();
+                if (!isVisible) {
+                    mobileContentContainer.classList.add('visible-height');
+                    mobileContentContainer.classList.remove('hidden-height');
+                    mobileContentArrow.classList.add('rotate-90');
+                }
             });
         }
     }
@@ -171,10 +205,10 @@ window.renderCommonNav = function() {
 
             // Teacher view: Full hierarchy
             let html = `<div class="relative group/grade">
-                <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-600 font-medium transition-colors focus:outline-none">
-                    ${grade.grade} <span class="float-right text-xs mt-1">&#9656;</span>
+                <button class="block w-full text-left px-4 py-2 text-[11px] font-black text-gray-700 hover:bg-blue-50 hover:text-blue-600 uppercase tracking-widest transition-colors focus:outline-none">
+                    ${grade.grade} <span class="float-right text-[10px] mt-0.5">&#9656;</span>
                 </button>
-                <div class="absolute left-full top-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible border border-gray-100">`;
+                <div class="absolute left-full top-0 w-56 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible border border-gray-100">`;
 
             // Filter subjects by section if student
             const filteredSubjects = grade.subjects.filter(subj => {
@@ -209,19 +243,19 @@ window.renderCommonNav = function() {
                 // Since data is simplified, let's use what we have: Grade > Partial > Subject > Topic
                 Object.keys(partialGroups).forEach(partial => {
                     html += `<div class="relative group/partial">
-                        <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                            ${partial} <span class="float-right text-xs mt-1">&#9656;</span>
+                        <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase tracking-tight">
+                            ${partial} <span class="float-right text-[10px] mt-0.5">&#9656;</span>
                         </button>
-                        <div class="absolute left-full top-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/partial:opacity-100 group-hover/partial:visible border border-gray-100">`;
+                        <div class="absolute left-full top-0 w-56 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/partial:opacity-100 group-hover/partial:visible border border-gray-100">`;
 
                     partialGroups[partial].forEach(subj => {
                         html += `<div class="relative group/subj">
-                            <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                                ${subj.name} <span class="float-right text-xs mt-1">&#9656;</span>
+                            <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-500 hover:bg-blue-50 hover:text-blue-600 uppercase">
+                                ${subj.name} <span class="float-right text-[10px] mt-0.5">&#9656;</span>
                             </button>
-                            <div class="absolute left-full top-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">`;
+                            <div class="absolute left-full top-0 w-56 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">`;
                         subj.topics.forEach(topic => {
-                            html += `<a href="${topic.file}" class="block px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">${topic.title}</a>`;
+                            html += `<a href="${topic.file}" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">${topic.title}</a>`;
                         });
                         html += `</div></div>`;
                     });
@@ -231,12 +265,12 @@ window.renderCommonNav = function() {
                 // Student: Subject > Topic (Directly for current partial)
                 filteredSubjects.filter(s => s.partial === studentPartial).forEach(subj => {
                     html += `<div class="relative group/subj">
-                        <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                            ${subj.name} <span class="float-right text-xs mt-1">&#9656;</span>
+                        <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">
+                            ${subj.name} <span class="float-right text-[10px] mt-0.5">&#9656;</span>
                         </button>
-                        <div class="absolute left-full top-0 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">`;
+                        <div class="absolute left-full top-0 w-56 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">`;
                     subj.topics.forEach(topic => {
-                        html += `<a href="${topic.file}" class="block px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600">${topic.title}</a>`;
+                        html += `<a href="${topic.file}" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">${topic.title}</a>`;
                     });
                     html += `</div></div>`;
                 });
@@ -252,10 +286,10 @@ window.renderCommonNav = function() {
         return data.map(grade => {
             if (!isProfesor && currentUser && currentUser.grado && grade.grade !== currentUser.grado) return '';
 
-            let html = `<button class="w-full text-left px-6 py-3 font-bold border-b border-gray-50 flex justify-between items-center" onclick="this.nextElementSibling.classList.toggle('hidden')">
+            let html = `<button class="w-full text-left px-6 py-4 font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 flex justify-between items-center text-xs" onclick="this.nextElementSibling.classList.toggle('hidden')">
                 ${grade.grade} <span>&#9662;</span>
             </button>
-            <div class="hidden bg-gray-50">`;
+            <div class="hidden bg-gray-50/50">`;
 
             const filteredSubjects = grade.subjects.filter(subj => {
                 if (!isProfesor && currentUser && currentUser.seccion) return subj.sections.includes(currentUser.seccion);
@@ -272,12 +306,12 @@ window.renderCommonNav = function() {
 
             filteredSubjects.forEach(subj => {
                 if (!isProfesor && subj.partial !== studentPartial) return;
-                html += `<button class="w-full text-left px-8 py-2 font-medium border-b border-gray-100 flex justify-between items-center" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                html += `<button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle('hidden')">
                     ${isProfesor ? `[${subj.partial}] ` : ''}${subj.name} <span>&#9662;</span>
                 </button>
-                <div class="hidden bg-white">`;
+                <div class="hidden bg-white/50">`;
                 subj.topics.forEach(topic => {
-                    html += `<a href="${topic.file}" class="block px-10 py-2 text-sm text-gray-600 border-b border-gray-50" onclick="closeMobileMenu()">${topic.title}</a>`;
+                    html += `<a href="${topic.file}" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">${topic.title}</a>`;
                 });
                 html += `</div>`;
             });
@@ -291,4 +325,10 @@ window.renderCommonNav = function() {
     if (desktopContentMenu) desktopContentMenu.innerHTML = buildHierarchy(window.downloadContentData, 'content');
     if (mobileCoursesMenu) mobileCoursesMenu.innerHTML = buildMobileHierarchy(window.presentationData);
     if (mobileContentMenu) mobileContentMenu.innerHTML = buildMobileHierarchy(window.downloadContentData);
+
+    // Sync portal link in bottom nav
+    const mobilePortalBottom = document.getElementById('mobile-portal-bottom-nav');
+    if (mobilePortalBottom && currentUser) {
+        mobilePortalBottom.href = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
+    }
 };
