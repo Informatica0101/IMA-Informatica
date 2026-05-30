@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         container.innerHTML = subjects.map(subj => `
-            <button class="subject-tab flex-none px-5 py-2.5 bg-white border border-gray-100 text-gray-600 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm hover:border-blue-200 transition-all" data-subject="${subj}">
+            <button class="subject-tab flex-none px-5 py-2.5 bg-white border border-gray-100 text-slate-900 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm hover:border-blue-200 transition-all" data-subject="${subj}">
                 ${subj}
             </button>
         `).join('');

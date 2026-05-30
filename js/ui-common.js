@@ -123,13 +123,62 @@ window.setupCommonUI = function() {
     // Render Navigation
     window.renderCommonNav();
 
+    // --- Dropdown Viewport Protection (A-76) ---
+    const handleDropdownOverflow = () => {
+        // Observer to re-apply logic if DOM changes (dynamic menus)
+        const observer = new MutationObserver((mutations) => {
+            attachOverflowCheck();
+        });
+
+        const attachOverflowCheck = () => {
+            // Check both Level 2 (below nav) and Level 3+ (right side) submenus
+            const submenus = document.querySelectorAll('.group div[class*="absolute"]');
+            submenus.forEach(menu => {
+                const parent = menu.parentElement;
+                if (!parent || parent.dataset.ovfChecked === "true") return;
+
+                parent.dataset.ovfChecked = "true";
+                parent.addEventListener('mouseenter', () => {
+                    // Temporarily show to measure accurately
+                    const originalOpacity = menu.style.opacity;
+                    const originalVisibility = menu.style.visibility;
+
+                    menu.style.opacity = '0';
+                    menu.style.visibility = 'visible';
+                    menu.style.display = 'block';
+
+                    const rect = menu.getBoundingClientRect();
+
+                    menu.style.display = '';
+                    menu.style.visibility = originalVisibility;
+                    menu.style.opacity = originalOpacity;
+
+                    if (rect.right > window.innerWidth) {
+                        menu.classList.add('dropdown-reverse');
+                        // If it's a top-level dropdown, just shift it left
+                        if (menu.classList.contains('left-0')) {
+                            menu.classList.remove('left-0');
+                            menu.classList.add('right-0');
+                        }
+                    } else {
+                        // Reset if it fits now
+                        if (rect.left < 0) {
+                             // Handle left overflow if needed
+                        }
+                    }
+                });
+            });
+        };
+
+        const nav = document.querySelector('nav');
+        if (nav) observer.observe(nav, { childList: true, subtree: true });
+        attachOverflowCheck();
+    };
+    handleDropdownOverflow();
+
     // --- Unified Profile Form Handler (A-73/75) ---
-    // Sincronizar campos y asegurar que la lógica sea atómica para evitar "Error de conexión"
     const profileForm = document.getElementById('profile-form');
     if (profileForm) {
-        // Remover listener anterior si existe para evitar duplicidad (frecuente en SPAs o recargas parciales)
-        profileForm.onsubmit = null;
-
         profileForm.onsubmit = async (e) => {
             e.preventDefault();
             const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -143,14 +192,13 @@ window.setupCommonUI = function() {
             const newPassword = document.getElementById('profile-password').value;
             const currentPassword = document.getElementById('profile-current-password').value;
 
-            // Validación de seguridad (Req 1.3)
             if (newPassword && !currentPassword) {
                 alert('Debe ingresar su contraseña actual para establecer una nueva.');
                 return;
             }
 
             const payload = {
-                userId: user.userId, // Clave Primaria Persistente
+                userId: user.userId,
                 nombre: document.getElementById('profile-nombre').value.trim(),
                 email: document.getElementById('profile-email').value.trim(),
                 telefono: document.getElementById('profile-telefono').value.trim(),
@@ -165,7 +213,6 @@ window.setupCommonUI = function() {
             submitBtn.textContent = 'Procesando...';
 
             try {
-                // Verificar que fetchApi esté disponible (Dependencia Crítica)
                 if (typeof fetchApi !== 'function') {
                     throw new Error('El servicio de conexión (api.js) no se ha cargado correctamente.');
                 }
@@ -173,11 +220,9 @@ window.setupCommonUI = function() {
                 const result = await fetchApi('USER', 'updateUserProfile', payload);
 
                 if (result.status === 'success') {
-                    // Actualizar localStorage manteniendo campos no editables (grado, seccion, rol)
                     const updatedUser = { ...user, ...result.data };
                     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
 
-                    // Actualizar Saludos en la UI
                     const nameParts = updatedUser.nombre.split(' ');
                     const firstName = nameParts[0];
 
@@ -192,7 +237,6 @@ window.setupCommonUI = function() {
                     const modal = document.getElementById('profile-modal');
                     if (modal) modal.classList.add('hidden');
 
-                    // Limpiar campos sensibles
                     document.getElementById('profile-password').value = '';
                     document.getElementById('profile-current-password').value = '';
                 } else {
@@ -208,6 +252,13 @@ window.setupCommonUI = function() {
             }
         };
     }
+};
+
+// Global helper for sections
+window.checkSectionHelper = function(sectionsField, targetSection) {
+    if (!sectionsField || !targetSection) return true;
+    if (Array.isArray(sectionsField)) return sectionsField.includes(targetSection);
+    return sectionsField.split(',').map(s => s.trim()).includes(targetSection);
 };
 
 window.handleHeaderAction = function(action) {
@@ -226,14 +277,10 @@ window.handleHeaderAction = function(action) {
 };
 
 window.openAcademicMenu = function() {
-    const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
-
-    // Crear el modal si no existe
     let modal = document.getElementById('academic-menu-modal');
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'academic-menu-modal';
-        // REDISEÑO UX (A-75): 0.98 opacity, fondo oscuro, desactivación de blur para legibilidad
         modal.className = 'fixed inset-0 bg-gray-900/98 z-[2100] flex items-center justify-center hidden opacity-0 transition-all duration-300';
         modal.innerHTML = `
             <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-fade-in-up m-4 border border-gray-100">
@@ -315,9 +362,17 @@ window.openAcademicHierarchy = function(type) {
 window.showAcademicHierarchy = function(type) {
     const options = document.getElementById('academic-menu-options');
     const nav = document.getElementById('hierarchy-navigation');
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const isProfesor = user.rol === 'Profesor';
+
     if (options) options.classList.add('hidden');
     if (nav) nav.classList.remove('hidden');
-    window.renderHierarchyLevel(type, 'Grado');
+
+    if (!isProfesor && user.grado && user.seccion) {
+        window.renderHierarchyLevel(type, 'Asignatura', { grado: user.grado, seccion: user.seccion });
+    } else {
+        window.renderHierarchyLevel(type, 'Grado');
+    }
 };
 
 window.renderHierarchyLevel = function(type, level, params = {}) {
@@ -326,9 +381,10 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const role = user.rol || 'Invitado';
 
+    if (!container) return;
+
     container.innerHTML = '<div class="p-8 text-center"><i class="fas fa-spinner fa-spin text-blue-600 text-2xl"></i></div>';
 
-    // Obtener datos de window.presentationData (Cursos) o window.downloadContentData (Contenido)
     const sourceData = (type === 'Presentaciones') ? (window.presentationData || []) : (window.downloadContentData || []);
 
     let items = [];
@@ -337,81 +393,103 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
     switch(level) {
         case 'Grado':
             label.textContent = 'Selecciona Grado';
-            items = [...new Set(sourceData.map(d => d.grado))];
+            items = [...new Set(sourceData.map(d => d.grade))].filter(Boolean);
             nextLevel = 'Sección';
             break;
         case 'Sección':
             label.textContent = 'Selecciona Sección';
-            items = [...new Set(sourceData.filter(d => d.grado === params.grado).map(d => d.seccion))];
-            // Estudiante: Sección -> Parcial. Profesor: Sección -> Asignatura.
-            nextLevel = (role === 'Profesor') ? 'Asignatura' : 'Parcial';
+            const gradeObj = sourceData.find(d => d.grade === params.grado);
+            items = gradeObj ? gradeObj.sections : [];
+            nextLevel = 'Asignatura';
             break;
         case 'Asignatura':
             label.textContent = 'Selecciona Asignatura';
-            items = [...new Set(sourceData.filter(d =>
-                d.grado === params.grado &&
-                d.seccion === params.seccion &&
-                (!params.parcial || d.parcial === params.parcial)
-            ).map(d => d.asignatura))];
+            const gradeObjA = sourceData.find(d => d.grade === params.grado);
+            let currentPartial = params.parcial;
+            if (role !== 'Profesor' && !currentPartial && gradeObjA) {
+                 const partials = ["Cuarto Parcial", "Tercer Parcial", "Segundo Parcial", "Primer Parcial"];
+                 const available = gradeObjA.subjects.filter(s => window.checkSectionHelper(s.sections, params.seccion));
+                 for (const p of partials) {
+                     if (available.some(s => s.partial === p)) { currentPartial = p; break; }
+                 }
+            }
+
+            if (gradeObjA) {
+                items = [...new Set(gradeObjA.subjects
+                    .filter(s => window.checkSectionHelper(s.sections, params.seccion) && (!currentPartial || s.partial === currentPartial))
+                    .map(s => s.name)
+                )];
+            }
+            params.parcial = currentPartial;
             nextLevel = (role === 'Profesor') ? 'Parcial' : 'Temas';
             if (type === 'Contenido' && role !== 'Profesor') nextLevel = 'Archivos';
             break;
         case 'Parcial':
             label.textContent = 'Selecciona Parcial';
-            items = [...new Set(sourceData.filter(d =>
-                d.grado === params.grado &&
-                d.seccion === params.seccion &&
-                (!params.asignatura || d.asignatura === params.asignatura)
-            ).map(d => d.parcial))];
-            // Estudiante: Parcial -> Asignatura. Profesor: Parcial -> Temas.
-            nextLevel = (role === 'Profesor') ? (type === 'Presentaciones' ? 'Temas' : 'Archivos') : 'Asignatura';
+            const gradeObjP = sourceData.find(d => d.grade === params.grado);
+            if (gradeObjP) {
+                items = [...new Set(gradeObjP.subjects
+                    .filter(s => window.checkSectionHelper(s.sections, params.seccion) && (!params.asignatura || s.name === params.asignatura))
+                    .map(s => s.partial)
+                )];
+            }
+            nextLevel = (type === 'Presentaciones' ? 'Temas' : 'Archivos');
             break;
         case 'Temas':
         case 'Archivos':
             label.textContent = (type === 'Presentaciones') ? 'Selecciona Tema' : 'Descargar Archivos';
-            const finalFilter = { grado: params.grado, seccion: params.seccion, parcial: params.parcial };
-            if (params.asignatura) finalFilter.asignatura = params.asignatura;
-
-            const finalItems = sourceData.filter(d =>
-                d.grado === finalFilter.grado &&
-                d.seccion === finalFilter.seccion &&
-                d.parcial === finalFilter.parcial &&
-                (!finalFilter.asignatura || d.asignatura === finalFilter.asignatura)
-            );
+            const gradeObjT = sourceData.find(d => d.grade === params.grado);
+            let finalItems = [];
+            if (gradeObjT) {
+                const subject = gradeObjT.subjects.find(s =>
+                    s.name === params.asignatura &&
+                    s.partial === params.parcial &&
+                    window.checkSectionHelper(s.sections, params.seccion)
+                );
+                finalItems = subject ? subject.topics : [];
+            }
 
             if (finalItems.length === 0) {
                 container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay contenido disponible.</p>';
                 return;
             }
 
-            container.innerHTML = finalItems.map(item => `
-                <a href="${item.url}" ${type === 'Contenido' ? 'download' : 'target="_blank"'} class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg ${type === 'Presentaciones' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'} flex items-center justify-center text-xs">
-                            <i class="fas ${type === 'Presentaciones' ? 'fa-desktop' : 'fa-download'}"></i>
+            container.innerHTML = finalItems.map(item => {
+                if (!item.title || !item.file) return '';
+                return `
+                    <a href="${item.file}" ${type === 'Contenido' ? 'download' : 'target="_blank"'} class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg ${type === 'Presentaciones' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'} flex items-center justify-center text-xs">
+                                <i class="fas ${type === 'Presentaciones' ? 'fa-desktop' : 'fa-download'}"></i>
+                            </div>
+                            <span class="text-sm font-semibold text-gray-700">${item.title}</span>
                         </div>
-                        <span class="text-sm font-semibold text-gray-700">${item.titulo}</span>
-                    </div>
-                    <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
-                </a>
-            `).join('');
+                        <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                    </a>
+                `;
+            }).join('');
             return;
     }
 
-    if (items.length === 0) {
+    if (items.length === 0 || items.every(i => i === undefined)) {
         container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay opciones disponibles.</p>';
         return;
     }
 
-    container.innerHTML = items.map(item => `
-        <button onclick='window.renderHierarchyLevel("${type}", "${nextLevel}", ${JSON.stringify({...params, [level.toLowerCase() === 'sección' ? 'seccion' : level.toLowerCase()]: item})})'
-                class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
-            <span class="text-sm font-semibold text-gray-700">${item}</span>
-            <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
-        </button>
-    `).join('');
+    container.innerHTML = items.map(item => {
+        if (item === undefined) return '';
+        const currentLevelKey = (level === 'Grado' ? 'grado' : (level === 'Sección' ? 'seccion' : (level === 'Asignatura' ? 'asignatura' : (level === 'Parcial' ? 'parcial' : level.toLowerCase()))));
+        const newParams = {...params, [currentLevelKey]: item};
+        const paramsStr = JSON.stringify(newParams).replace(/'/g, "&#39;");
+        return `
+            <button onclick='window.renderHierarchyLevel("${type}", "${nextLevel}", ${paramsStr})'
+                    class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
+                <span class="text-sm font-semibold text-gray-700">${item}</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+            </button>
+        `;
+    }).join('');
 };
-
 
 window.renderCommonNav = function() {
     const desktopCoursesMenu = document.getElementById('desktop-courses-menu');
@@ -422,65 +500,45 @@ window.renderCommonNav = function() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const isProfesor = currentUser && currentUser.rol === 'Profesor';
 
-    function buildHierarchy(data, type) {
-        // type: 'courses' or 'content'
+    function buildHierarchy(data) {
         if (!data) return '';
 
         return data.map(grade => {
-            // Student filtering: only their grade
             if (!isProfesor && currentUser && currentUser.grado && grade.grade !== currentUser.grado) return '';
 
-            // Teacher view: Full hierarchy
-            let html = `<div class="relative group/grade">
-                <button class="block w-full text-left px-4 py-2 text-[11px] font-black text-gray-700 hover:bg-blue-50 hover:text-blue-600 uppercase tracking-widest transition-colors focus:outline-none">
-                    ${grade.grade} <span class="float-right text-[10px] mt-0.5">&#9656;</span>
-                </button>
-                <div class="absolute left-full top-0 w-56 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible border border-gray-100">`;
-
-            // Filter subjects by section if student
             const filteredSubjects = grade.subjects.filter(subj => {
-                if (!isProfesor && currentUser && currentUser.seccion) {
-                    return subj.sections.includes(currentUser.seccion);
-                }
+                if (!isProfesor && currentUser && currentUser.seccion) return window.checkSectionHelper(subj.sections, currentUser.seccion);
                 return true;
             });
 
-            // Find current partial for student
-            let studentPartial = "";
-            if (!isProfesor && filteredSubjects.length > 0) {
-                const partials = ["Cuarto Parcial", "Tercer Parcial", "Segundo Parcial", "Primer Parcial"];
-                for (const p of partials) {
-                    if (filteredSubjects.some(s => s.partial === p)) {
-                        studentPartial = p;
-                        break;
-                    }
-                }
-            }
-
-            // Group subjects by partial for Teacher, or filter for Student
-            const partialGroups = {};
-            filteredSubjects.forEach(subj => {
-                if (!isProfesor && subj.partial !== studentPartial) return;
-                if (!partialGroups[subj.partial]) partialGroups[subj.partial] = [];
-                partialGroups[subj.partial].push(subj);
-            });
+            if (filteredSubjects.length === 0 && !isProfesor) return '';
 
             if (isProfesor) {
-                // Teacher: Grade > Section (from data) > Partial > Subject > Topic
-                // Since data is simplified, let's use what we have: Grade > Partial > Subject > Topic
+                let html = `<div class="relative group/grade">
+                    <button class="block w-full text-left px-4 py-2 text-[11px] font-black text-gray-700 hover:bg-blue-50 hover:text-blue-600 uppercase tracking-widest transition-colors focus:outline-none">
+                        ${grade.grade} <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>
+                    </button>
+                    <div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible border border-gray-100">`;
+
+                const partialGroups = {};
+                filteredSubjects.forEach(subj => {
+                    if (!partialGroups[subj.partial]) partialGroups[subj.partial] = [];
+                    partialGroups[subj.partial].push(subj);
+                });
+
                 Object.keys(partialGroups).forEach(partial => {
                     html += `<div class="relative group/partial">
                         <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase tracking-tight">
-                            ${partial} <span class="float-right text-[10px] mt-0.5">&#9656;</span>
+                            ${partial} <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>
                         </button>
-                        <div class="absolute left-full top-0 w-56 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/partial:opacity-100 group-hover/partial:visible border border-gray-100">`;
+                        <div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/partial:opacity-100 group-hover/partial:visible border border-gray-100">`;
 
                     partialGroups[partial].forEach(subj => {
                         html += `<div class="relative group/subj">
                             <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-500 hover:bg-blue-50 hover:text-blue-600 uppercase">
-                                ${subj.name} <span class="float-right text-[10px] mt-0.5">&#9656;</span>
+                                ${subj.name} <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>
                             </button>
-                            <div class="absolute left-full top-0 w-56 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">`;
+                            <div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">`;
                         subj.topics.forEach(topic => {
                             html += `<a href="${topic.file}" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">${topic.title}</a>`;
                         });
@@ -488,23 +546,26 @@ window.renderCommonNav = function() {
                     });
                     html += `</div></div>`;
                 });
+                html += `</div></div>`;
+                return html;
             } else {
-                // Student: Subject > Topic (Directly for current partial)
-                filteredSubjects.filter(s => s.partial === studentPartial).forEach(subj => {
-                    html += `<div class="relative group/subj">
-                        <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">
-                            ${subj.name} <span class="float-right text-[10px] mt-0.5">&#9656;</span>
-                        </button>
-                        <div class="absolute left-full top-0 w-56 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">`;
-                    subj.topics.forEach(topic => {
-                        html += `<a href="${topic.file}" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">${topic.title}</a>`;
-                    });
-                    html += `</div></div>`;
-                });
-            }
+                let studentPartial = "";
+                const partials = ["Cuarto Parcial", "Tercer Parcial", "Segundo Parcial", "Primer Parcial"];
+                for (const p of partials) {
+                    if (filteredSubjects.some(s => s.partial === p)) { studentPartial = p; break; }
+                }
 
-            html += `</div></div>`;
-            return html;
+                return filteredSubjects.filter(s => s.partial === studentPartial).map(subj => `
+                    <div class="relative group/subj">
+                        <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">
+                            ${subj.name} <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>
+                        </button>
+                        <div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">
+                            ${subj.topics.map(topic => `<a href="${topic.file}" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">${topic.title}</a>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
         }).join('');
     }
 
@@ -512,48 +573,52 @@ window.renderCommonNav = function() {
         if (!data) return '';
         return data.map(grade => {
             if (!isProfesor && currentUser && currentUser.grado && grade.grade !== currentUser.grado) return '';
-
-            let html = `<button class="w-full text-left px-6 py-4 font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 flex justify-between items-center text-xs" onclick="this.nextElementSibling.classList.toggle('hidden')">
-                ${grade.grade} <span>&#9662;</span>
-            </button>
-            <div class="hidden bg-gray-50/50">`;
-
             const filteredSubjects = grade.subjects.filter(subj => {
-                if (!isProfesor && currentUser && currentUser.seccion) return subj.sections.includes(currentUser.seccion);
+                if (!isProfesor && currentUser && currentUser.seccion) return window.checkSectionHelper(subj.sections, currentUser.seccion);
                 return true;
             });
+            if (filteredSubjects.length === 0 && !isProfesor) return '';
 
-            let studentPartial = "";
-            if (!isProfesor && filteredSubjects.length > 0) {
+            if (isProfesor) {
+                let html = `<button class="w-full text-left px-6 py-4 font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 flex justify-between items-center text-xs" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                    ${grade.grade} <span>&#9662;</span>
+                </button>
+                <div class="hidden bg-gray-50/50">`;
+                filteredSubjects.forEach(subj => {
+                    html += `<button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                        [${subj.partial}] ${subj.name} <span>&#9662;</span>
+                    </button>
+                    <div class="hidden bg-white/50">`;
+                    subj.topics.forEach(topic => {
+                        html += `<a href="${topic.file}" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">${topic.title}</a>`;
+                    });
+                    html += `</div>`;
+                });
+                html += `</div>`;
+                return html;
+            } else {
+                let studentPartial = "";
                 const partials = ["Cuarto Parcial", "Tercer Parcial", "Segundo Parcial", "Primer Parcial"];
                 for (const p of partials) {
                     if (filteredSubjects.some(s => s.partial === p)) { studentPartial = p; break; }
                 }
+                return filteredSubjects.filter(s => s.partial === studentPartial).map(subj => `
+                    <button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                        ${subj.name} <span>&#9662;</span>
+                    </button>
+                    <div class="hidden bg-white/50">
+                        ${subj.topics.map(topic => `<a href="${topic.file}" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">${topic.title}</a>`).join('')}
+                    </div>
+                `).join('');
             }
-
-            filteredSubjects.forEach(subj => {
-                if (!isProfesor && subj.partial !== studentPartial) return;
-                html += `<button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle('hidden')">
-                    ${isProfesor ? `[${subj.partial}] ` : ''}${subj.name} <span>&#9662;</span>
-                </button>
-                <div class="hidden bg-white/50">`;
-                subj.topics.forEach(topic => {
-                    html += `<a href="${topic.file}" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">${topic.title}</a>`;
-                });
-                html += `</div>`;
-            });
-
-            html += `</div>`;
-            return html;
         }).join('');
     }
 
-    if (desktopCoursesMenu) desktopCoursesMenu.innerHTML = buildHierarchy(window.presentationData, 'courses');
-    if (desktopContentMenu) desktopContentMenu.innerHTML = buildHierarchy(window.downloadContentData, 'content');
+    if (desktopCoursesMenu) desktopCoursesMenu.innerHTML = buildHierarchy(window.presentationData);
+    if (desktopContentMenu) desktopContentMenu.innerHTML = buildHierarchy(window.downloadContentData);
     if (mobileCoursesMenu) mobileCoursesMenu.innerHTML = buildMobileHierarchy(window.presentationData);
     if (mobileContentMenu) mobileContentMenu.innerHTML = buildMobileHierarchy(window.downloadContentData);
 
-    // Sync portal link in bottom nav
     const mobilePortalBottom = document.getElementById('mobile-portal-bottom-nav');
     if (mobilePortalBottom && currentUser) {
         mobilePortalBottom.href = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
