@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    document.getElementById('student-name').textContent = currentUser.nombre;
+    const firstName = currentUser.nombre.split(' ')[0];
+    document.getElementById('student-name').textContent = firstName;
     const tasksList = document.getElementById('tasks-list');
     const logoutButton = document.getElementById('logout-button');
 
@@ -130,8 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="flex flex-nowrap overflow-x-auto gap-2 pb-2 scroll-horizontal-clean">
                 ${parciales.map(p => {
                     const isActive = p === activeParcial;
-                    const activeClass = isActive ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-gray-700 hover:bg-blue-50 border border-gray-200';
-                    return `<button class="flex-none px-4 py-2 rounded-xl font-bold transition-all text-sm ${activeClass} parcial-tab" data-parcial="${p}">${p}</button>`;
+                    const activeClass = isActive ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200';
+                    return `<button class="flex-none px-4 py-2 rounded-xl font-black transition-all text-[10px] uppercase tracking-widest ${activeClass} parcial-tab" data-parcial="${p}">${p}</button>`;
                 }).join('')}
             </div>
         `;
@@ -140,11 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
         tabsContainer.querySelectorAll('.parcial-tab').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 tabsContainer.querySelectorAll('.parcial-tab').forEach(b => {
-                    b.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
-                    b.classList.add('bg-white', 'text-gray-700', 'hover:bg-blue-50', 'border', 'border-gray-200');
+                    b.classList.remove('bg-blue-600', 'text-white');
+                    b.classList.add('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
                 });
-                e.target.classList.remove('bg-white', 'text-gray-700', 'hover:bg-blue-50', 'border', 'border-gray-200');
-                e.target.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+                e.target.classList.remove('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
+                e.target.classList.add('bg-blue-600', 'text-white');
 
                 renderActivities(allActivitiesData, e.target.dataset.parcial);
             });
@@ -185,34 +186,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     const deleteBtnHtml = isPending
-                        ? `<button class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
+                        ? `<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
                         : '';
 
                     let resubmitBtnHtml = '';
                     if (isResubmittable) {
-                        resubmitBtnHtml = `<button class="mt-3 w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-bold open-submission-modal"
+                        resubmitBtnHtml = `<button class="btn-ima-primary mt-3 w-full py-2 text-xs open-submission-modal"
                             data-task-id="${activity.tareaId}"
                             data-task-title="${activity.titulo} (Re-entrega)"
                             data-parcial="${activity.parcial || ''}"
-                            data-asignatura="${activity.asignatura || ''}">Subir Parte Pendiente / Nueva Versión</button>`;
+                            data-asignatura="${activity.asignatura || ''}">Subir Parte Pendiente</button>`;
                     }
 
                     feedbackHtml = `
-                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                        <div class="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <h4 class="font-bold text-md">Estado de tu Entrega:</h4>
-                                    <p class="font-semibold ${statusColor}">${displayStatus}</p>
+                                    <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Estado de Entrega</h4>
+                                    <p class="text-sm font-black ${statusColor}">${displayStatus}</p>
                                     ${fileLinkHtml}
                                 </div>
                                 ${deleteBtnHtml}
                             </div>
-                            ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
-                            ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
+                            ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-bold text-gray-400 uppercase">Nota:</span> <span class="text-sm font-black text-blue-600">${activity.entrega.calificacion}</span></div>` : ''}
+                            ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-bold text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
                             ${resubmitBtnHtml}
                         </div>`;
                 } else {
-                    actionButtonHtml = `<button class="bg-blue-500 text-white px-4 py-2 rounded-lg open-submission-modal"
+                    actionButtonHtml = `<button class="btn-ima-primary px-5 py-2 text-xs open-submission-modal"
                         data-task-id="${activity.tareaId}"
                         data-task-title="${activity.titulo}"
                         data-parcial="${activity.parcial || ''}"
@@ -226,47 +227,50 @@ document.addEventListener('DOMContentLoaded', () => {
                     const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
 
                     const deleteBtnHtml = isPending
-                        ? `<button class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
+                        ? `<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
                         : '';
 
                     feedbackHtml = `
-                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                        <div class="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <h4 class="font-bold text-md">Estado de tu Examen:</h4>
-                                    <p class="font-semibold ${statusColor}">${displayStatus}</p>
+                                    <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Estado de Examen</h4>
+                                    <p class="text-sm font-black ${statusColor}">${displayStatus}</p>
                                 </div>
                                 ${deleteBtnHtml}
                             </div>
-                            ${activity.entrega.calificacion ? `<p><strong>Calificación:</strong> ${activity.entrega.calificacion}</p>` : ''}
-                            ${activity.entrega.comentario ? `<p><strong>Comentario:</strong> ${activity.entrega.comentario}</p>` : ''}
+                            ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-bold text-gray-400 uppercase">Nota:</span> <span class="text-sm font-black text-purple-600">${activity.entrega.calificacion}</span></div>` : ''}
+                            ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-bold text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
                         </div>`;
                 } else {
                     const estado = activity.estado || 'Inactivo';
                     if (estado === 'Activo') {
-                        actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="bg-purple-500 text-white px-4 py-2 rounded-lg">Realizar Examen</a>`;
+                        actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="btn-ima-primary bg-purple-600 hover:bg-purple-700 px-6 py-2 text-xs">Realizar Examen</a>`;
                     } else {
-                        actionButtonHtml = `<button class="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed" disabled>${estado}</button>`;
+                        actionButtonHtml = `<button class="bg-gray-100 text-gray-400 px-5 py-2 rounded-xl text-[10px] font-bold uppercase cursor-not-allowed" disabled>${estado}</button>`;
                     }
                 }
             }
 
             return `
-                <div class="dashboard-card assignment-card cursor-pointer group" data-task-id="${activity.tareaId || activity.examenId}">
+                <div class="card-ima assignment-card cursor-pointer group" data-task-id="${activity.tareaId || activity.examenId}">
                     <div class="flex justify-between items-start">
                         <div class="flex-grow">
-                            <h3 class="text-lg font-bold group-hover:text-blue-600 transition-colors">${activity.titulo} <span class="text-xs font-normal text-gray-500">(${activity.type})</span></h3>
-                            <p class="text-sm text-gray-500 mb-2"><strong>Asignatura:</strong> ${activity.asignatura || 'No especificada'}</p>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[9px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${activity.type}</span>
+                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">${activity.asignatura || 'General'}</span>
+                            </div>
+                            <h3 class="text-base font-black text-gray-900 group-hover:text-blue-600 transition-colors leading-tight uppercase tracking-tighter">${activity.titulo}</h3>
                         </div>
                         <div class="flex flex-col items-end">
-                            <span class="text-sm font-semibold text-gray-600">${formatDate(activity.fechaLimite)}</span>
-                            <svg class="w-5 h-5 text-gray-400 transform group-[.is-expanded]:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">${formatDate(activity.fechaLimite)}</span>
+                            <svg class="w-4 h-4 text-gray-300 transform group-[.is-expanded]:rotate-180 transition-transform duration-200 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
                     </div>
-                    <div class="assignment-content overflow-hidden max-h-0 transition-all duration-500 ease-in-out group-[.is-expanded]:max-h-[1000px]">
-                        <div class="pt-4 border-t border-gray-100 mt-2">
-                            <div class="text-gray-700 font-medium mb-4 quill-content">${activity.descripcion || 'Sin descripción.'}</div>
-                            <div class="mt-4">
+                    <div class="assignment-content overflow-hidden max-h-0 transition-all duration-300 ease-in-out group-[.is-expanded]:max-h-[1200px]">
+                        <div class="pt-4 mt-4 border-t border-gray-50">
+                            <div class="text-gray-600 text-sm font-medium mb-5 leading-relaxed quill-content">${activity.descripcion || 'Sin descripción.'}</div>
+                            <div class="flex justify-center md:justify-start">
                                 ${actionButtonHtml}
                             </div>
                             ${feedbackHtml}

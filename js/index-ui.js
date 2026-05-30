@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderInitialContentButton() {
         contentBackButtonContainer.classList.add('hidden');
         contentDisplayArea.innerHTML = '';
-        contentDisplayArea.appendChild(createCustomButton('Ver Contenido para Descargar', renderDownloadGrades));
+        contentDisplayArea.appendChild(createCustomButton('Ver Recursos Académicos', renderDownloadGrades));
         currentContentView = 'initial';
     }
 
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gridDiv.appendChild(createCustomButton(gradeData.grade, () => {
                 selectedGradeData = gradeData;
                 animateContentTransition(renderDownloadSubjects);
-            }, 'w-full'));
+            }, 'w-full bg-gray-100 text-gray-800 shadow-none hover:bg-blue-600 hover:text-white'));
         });
         contentDisplayArea.appendChild(gridDiv);
         currentContentView = 'grades';
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gridDiv.appendChild(createCustomButton(subjectData.name, () => {
                 selectedSubjectData = subjectData;
                 animateContentTransition(renderDownloadTopics);
-            }, 'w-full'));
+            }, 'w-full bg-gray-100 text-gray-800 shadow-none hover:bg-blue-600 hover:text-white'));
         });
         contentDisplayArea.appendChild(gridDiv);
         currentContentView = 'subjects';
@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                 </span>
-                Hola, ${firstName}!
+                Bienvenido, ${firstName}
             `;
             welcomeBadge.classList.remove('hidden');
         }

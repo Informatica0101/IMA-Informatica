@@ -76,38 +76,40 @@
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); /* Sombra para enfoque */
         }
         .button {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            transition: all 0.2s ease;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            outline: none;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
         }
         .button-primary {
-            background-color: #6366f1; /* Indigo 500 */
+            background-color: #2563eb;
             color: white;
         }
         .button-primary:hover {
-            background-color: #4f46e5; /* Indigo 600 */
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            background-color: #1d4ed8;
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
         }
         .button-primary:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transform: scale(0.98);
         }
-        .button-secondary { /* These buttons will be hidden or used for restart now */
-            background-color: #e2e8f0; /* Gris 200 */
-            color: #475569; /* Gris 600 */
+        .button-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
         }
         .button-secondary:hover {
-            background-color: #cbd5e1; /* Gris 300 */
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-        }
-        .button-secondary:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #e2e8f0;
+            transform: scale(1.02);
         }
         .feedback-message {
             margin-top: 1rem;

@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         numeroLista: payload.numeroLista
                     };
                     localStorage.setItem('currentUser', JSON.stringify(userData));
-                    alert('¡Registro exitoso! Bienvenido.');
+                    alert('¡Registro exitoso! Bienvenido, ' + payload.nombre.split(' ')[0]);
                     window.location.href = 'student-dashboard.html';
                 } else {
                     alert(result.message || 'Error en el registro.');

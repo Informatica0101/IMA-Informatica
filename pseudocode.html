@@ -16,21 +16,21 @@
 
     <style>
         :root {
-            --bg-gray: #f0f0f0;
-            --border-color: #a0a0a0;
-            --header-bg: #e1e1e1;
-            --active-blue: #0066cc;
-            --keyword-blue: #0000ff;
-            --string-maroon: #800000;
-            --comment-gray: #808080;
-            --type-green: #008000;
+            --bg-gray: #f8fafc;
+            --border-color: #e2e8f0;
+            --header-bg: #ffffff;
+            --active-blue: #2563eb;
+            --keyword-blue: #2563eb;
+            --string-maroon: #b91c1c;
+            --comment-gray: #64748b;
+            --type-green: #059669;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
         }
 
         body {
@@ -40,6 +40,7 @@
             flex-direction: column;
             overflow: hidden;
             font-size: 13px;
+            color: #0f172a;
         }
 
         /* Toolbar / Menu */
@@ -107,9 +108,9 @@
 
         .toolbar {
             background-color: var(--header-bg);
-            padding: 5px 10px;
+            padding: 8px 12px;
             display: flex;
-            gap: 5px;
+            gap: 8px;
             border-bottom: 1px solid var(--border-color);
             align-items: center;
         }
@@ -117,17 +118,18 @@
         .tool-btn {
             border: 1px solid transparent;
             background: transparent;
-            padding: 4px;
+            padding: 6px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 3px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
         }
 
         .tool-btn:hover {
-            border: 1px solid var(--border-color);
-            background-color: #fff;
+            background-color: #f1f5f9;
+            transform: scale(1.05);
         }
 
         .tool-btn img, .tool-btn span {

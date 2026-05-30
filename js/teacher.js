@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
         return;
     }
-    document.getElementById('teacher-name').textContent = currentUser.nombre;
+    const firstName = currentUser.nombre.split(' ')[0];
+    document.getElementById('teacher-name').textContent = firstName;
 
     // --- Elementos de Navegación y Secciones ---
     const navDashboard = document.getElementById('nav-dashboard');
@@ -73,11 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
         allNavLinks.forEach(link => {
             if (link) {
                 link.classList.remove('bg-blue-600', 'text-white');
-                link.classList.add('bg-white', 'text-gray-700');
+                link.classList.add('bg-gray-100', 'text-gray-500');
             }
         });
         navElement.classList.add('bg-blue-600', 'text-white');
-        navElement.classList.remove('bg-white', 'text-gray-700');
+        navElement.classList.remove('bg-gray-100', 'text-gray-500');
     }
 
     navDashboard.addEventListener('click', () => {
@@ -405,23 +406,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderManagementTable() {
         const tbody = document.getElementById('tasks-management-table-body');
+        if (!tbody) return;
         tbody.innerHTML = allTasksExams.map((item, idx) => `
-            <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.openTaskDetail(${idx})">
+            <tr class="hover:bg-gray-50 transition-colors cursor-pointer group" onclick="window.openTaskDetail(${idx})">
                 <td class="p-4">
-                    <div class="font-bold text-blue-700">${item.titulo}</div>
+                    <div class="font-black text-gray-900 uppercase tracking-tighter">${item.titulo}</div>
                     <div class="text-[9px] font-black text-gray-400 uppercase tracking-widest">${item.tipoReal}</div>
                 </td>
                 <td class="p-4">
-                    <div class="text-sm font-bold text-gray-800">${item.asignatura}</div>
-                    <div class="text-[10px] text-gray-500">${item.parcial || 'Sin parcial'}</div>
+                    <div class="text-[10px] font-black text-blue-600 uppercase tracking-widest">${item.asignatura}</div>
+                    <div class="text-[10px] text-gray-400 font-bold">${item.parcial || 'Sin parcial'}</div>
                 </td>
-                <td class="p-4 text-xs font-medium text-gray-600">${item.grado} - ${item.seccion || 'Todas'}</td>
-                <td class="p-4 text-xs font-bold ${new Date(item.fechaLimite) < new Date() ? 'text-red-500' : 'text-green-600'}">
+                <td class="p-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">${item.grado} - ${item.seccion || 'Todas'}</td>
+                <td class="p-4 text-[10px] font-black ${new Date(item.fechaLimite) < new Date() ? 'text-red-500' : 'text-green-600'} uppercase tracking-widest">
                     ${new Date(item.fechaLimite).toLocaleDateString()}
                 </td>
                 <td class="p-4 text-right">
-                    <button class="bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    <button class="bg-gray-50 text-gray-400 p-2 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     </button>
                 </td>
             </tr>
@@ -733,17 +735,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fGrado) grados = grados.filter(g => norm(g) === norm(fGrado));
         const filtered = grados.filter(g => norm(g).includes(norm(search)));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Seleccionar Grado Académico</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Navegación</th></tr>`;
+        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado Académico</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Navegación</th></tr>`;
         if (filtered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-8 text-gray-500">No hay grados.</td></tr>'; return; }
         submissionsTableBody.innerHTML = filtered.map((grado, idx) => `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn group" data-index="${idx}">
                 <td class="p-4">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-black group-hover:bg-blue-600 group-hover:text-white transition-all">${grado.charAt(0)}</div>
-                        <span class="font-black text-gray-800 uppercase tracking-tight">${grado}</span>
+                        <div class="w-8 h-8 bg-gray-100 text-gray-400 rounded-xl flex items-center justify-center font-black group-hover:bg-blue-600 group-hover:text-white transition-all">${grado.charAt(0)}</div>
+                        <span class="font-black text-gray-900 uppercase tracking-tighter">${grado}</span>
                     </div>
                 </td>
-                <td class="p-4 text-right"><span class="text-blue-600 font-black text-[10px] uppercase tracking-widest bg-blue-50 px-3 py-1.5 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-all">Ver Secciones &rsaquo;</span></td>
+                <td class="p-4 text-right"><span class="text-blue-600 font-black text-[9px] uppercase tracking-widest group-hover:underline transition-all">Ver Secciones &rsaquo;</span></td>
             </tr>`).join('');
     }
 
@@ -765,7 +767,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = secciones.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Sección</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${seccion}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Asignaturas &rsaquo;</span></td></tr>`).join('');
+        submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-black text-gray-900 uppercase tracking-tighter">Sección ${seccion}</td><td class="p-4 text-right"><span class="text-blue-600 font-black text-[9px] uppercase tracking-widest">Ver Asignaturas &rsaquo;</span></td></tr>`).join('');
     }
 
     function renderAsignaturas(grado, seccion, search) {
@@ -776,7 +778,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = asignaturas.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Asignatura</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Parciales &rsaquo;</span></td></tr>`).join('');
+        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-black text-gray-900 uppercase tracking-tighter">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-black text-[9px] uppercase tracking-widest">Ver Parciales &rsaquo;</span></td></tr>`).join('');
     }
 
     function renderParciales(grado, seccion, asignatura, search) {
@@ -790,8 +792,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const filtered = parciales.filter(p => norm(p).includes(norm(search)));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Parcial</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((parcial, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-bold text-gray-800">${parcial}</td><td class="p-4 text-right"><span class="text-blue-600 font-bold text-sm">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
+        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Parcial Académico</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+        submissionsTableBody.innerHTML = filtered.map((parcial, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-black text-gray-900 uppercase tracking-tighter">${parcial}</td><td class="p-4 text-right"><span class="text-blue-600 font-black text-[9px] uppercase tracking-widest">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
     }
 
     function renderAlumnos(grado, seccion, asignatura, search) {
@@ -801,16 +803,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // WhatsApp Group Integration
         const waContainer = document.createElement('div');
-        waContainer.className = "bg-green-50 p-4 rounded-xl mb-6 border border-green-100 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in";
+        waContainer.className = "bg-green-50 p-4 rounded-[1.2rem] mb-6 border border-green-100 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in";
         waContainer.innerHTML = `
             <div>
-                <h4 class="font-bold text-green-800 text-sm mb-1">Grupo de WhatsApp de la Clase</h4>
-                <p class="text-green-600 text-[10px]">Comparte el enlace con tus alumnos para este parcial.</p>
+                <h4 class="text-[10px] font-black text-green-800 uppercase tracking-widest mb-1">Grupo de WhatsApp</h4>
+                <p class="text-green-600 text-[9px] font-bold uppercase tracking-tighter">Comparte el enlace con tus alumnos.</p>
             </div>
             <div class="flex items-center gap-2">
-                <input type="text" id="wa-link-input" readonly class="bg-white border border-green-200 rounded-lg p-2 text-xs w-64 focus:ring-2 focus:ring-green-400 outline-none transition-all text-gray-500" placeholder="https://chat.whatsapp.com/...">
-                <button id="btn-edit-wa" class="bg-white text-green-700 border border-green-200 px-3 py-2 rounded-lg text-xs font-bold hover:bg-green-100 transition-colors">Editar</button>
-                <button id="btn-save-wa" class="hidden bg-green-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-green-700 transition-colors">Guardar</button>
+                <input type="text" id="wa-link-input" readonly class="bg-white border-none rounded-xl p-2 text-[10px] w-64 focus:ring-2 focus:ring-green-400 outline-none transition-all text-gray-500 font-bold" placeholder="https://chat.whatsapp.com/...">
+                <button id="btn-edit-wa" class="bg-white text-green-700 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-green-100 transition-colors shadow-sm">Editar</button>
+                <button id="btn-save-wa" class="hidden bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-green-700 transition-colors">Guardar</button>
             </div>
         `;
 
@@ -925,19 +927,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         submissionsTableBody.innerHTML = studentsWithStatus.map((s, idx) => {
-            const statusClass = s.isPending ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700';
+            const statusClass = s.isPending ? 'bg-yellow-50 text-yellow-700' : 'bg-green-50 text-green-700';
 
             return `
-                <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
+                <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn group" data-index="${idx}">
                     <td class="p-4 text-gray-400 font-mono text-xs">${s.numeroLista || '-'}</td>
-                    <td class="p-4 font-bold text-blue-700">
+                    <td class="p-4 font-black text-gray-900 uppercase tracking-tighter group-hover:text-blue-600 transition-colors">
                         ${s.nombre}
                     </td>
                     <td class="p-4">
-                        <span class="px-2 py-1 rounded-full text-[10px] font-bold ${statusClass}">${s.statusText}</span>
+                        <span class="px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${statusClass}">${s.statusText}</span>
                     </td>
                     <td class="p-4 text-right">
-                        <button class="bg-blue-600 text-white px-4 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors">Ver detalles</button>
+                        <span class="text-blue-600 font-black text-[9px] uppercase tracking-widest">Detalles &rsaquo;</span>
                     </td>
                 </tr>`;
         }).join('');
@@ -1096,33 +1098,33 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Actividad</th><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Estado</th><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Archivo</th><th class="p-4 text-left font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Calificación</th><th class="p-4 text-right font-bold text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
         if (finalFiltered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-500">Sin entregas.</td></tr>'; return; }
         submissionsTableBody.innerHTML = finalFiltered.map((item, idx) => {
-            let statusClass = 'bg-gray-100 text-gray-600'; let statusText = item.estado || 'Pendiente';
+            let statusClass = 'bg-gray-50 text-gray-500'; let statusText = item.estado || 'Pendiente';
 
             if (item.estado === 'Completada' || item.estado === 'Revisada') {
                 statusText = 'Completada';
-                statusClass = 'bg-green-100 text-green-700';
+                statusClass = 'bg-green-50 text-green-700';
             } else if (item.estado === 'Rechazada' || item.estado === 'Tarea incompleta') {
-                statusClass = 'bg-red-100 text-red-700';
+                statusClass = 'bg-red-50 text-red-700';
             } else if (item.estado === 'Pendiente de revisión' || item.fileId || item.respuestas || item.entregaId) {
-                statusText = item.estado === 'Pendiente de revisión' ? 'Pendiente de revisión' : 'Por calificar';
-                statusClass = 'bg-yellow-100 text-yellow-700';
+                statusText = item.estado === 'Pendiente de revisión' ? 'Pendiente' : 'Por calificar';
+                statusClass = 'bg-yellow-50 text-yellow-700';
             }
 
-            let fileHtml = 'N/A';
+            let fileHtml = '<span class="text-gray-300">-</span>';
             if (item.fileId) {
                 const fId = extractDriveId(item.fileId);
-                fileHtml = `<a href="https://drive.google.com/uc?id=${fId}" target="_blank" class="text-blue-600 font-bold hover:underline">Ver</a>`;
+                fileHtml = `<a href="https://drive.google.com/uc?id=${fId}" target="_blank" class="text-blue-600 font-black text-[10px] uppercase tracking-widest hover:underline">Ver Archivo</a>`;
             }
 
             return `
                 <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="p-4"><div class="font-bold text-gray-800">${item.titulo}</div><div class="text-[10px] text-gray-400 uppercase">${item.asignatura} | ${item.tipo}</div></td>
-                    <td class="p-4"><span class="px-2 py-1 rounded-full text-[10px] font-bold ${statusClass}">${statusText}</span></td>
+                    <td class="p-4"><div class="font-black text-gray-900 uppercase tracking-tighter">${item.titulo}</div><div class="text-[9px] font-black text-gray-400 uppercase tracking-widest">${item.asignatura} | ${item.tipo}</div></td>
+                    <td class="p-4"><span class="px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${statusClass}">${statusText}</span></td>
                     <td class="p-4">${fileHtml}</td>
-                    <td class="p-4 font-bold text-gray-700">${item.calificacion || '-'}</td>
+                    <td class="p-4 font-black text-gray-900 text-xs">${item.calificacion || '-'}</td>
                     <td class="p-4 text-right space-x-2">
-                        <button class="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors grade-btn" data-index="${idx}">Calificar</button>
-                        <button class="bg-red-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-red-600 transition-colors delete-submission-btn" data-index="${idx}">Eliminar</button>
+                        <button class="btn-ima-primary px-3 py-1.5 text-[10px] grade-btn" data-index="${idx}">Calificar</button>
+                        <button class="btn-ima-cancel px-3 py-1.5 text-[10px] delete-submission-btn" data-index="${idx}">Eliminar</button>
                     </td>
                 </tr>`;
         }).join('');

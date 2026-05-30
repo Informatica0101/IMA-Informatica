@@ -22,48 +22,49 @@
 </head>
 <body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
 
-    <header id="main-header" class="bg-white border-b border-gray-100 fixed w-full z-50 py-2 md:py-3 transition-all duration-300">
+    <header id="main-header" class="fixed w-full z-50 transition-all duration-300">
         <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
                 <a href="index.html" class="flex items-center gap-3 group">
-                    <img src="imagenes/logo.png" alt="Logo" width="80" height="auto" class="logo-img transition-transform duration-300 group-hover:scale-105">
-                    <h1 class="hidden md:block text-base lg:text-lg font-black text-blue-900 tracking-tight leading-none uppercase">
-                        Área de Informática ISEMED
-                    </h1>
+                    <img src="imagenes/logo.png" alt="Logo" width="45" height="auto" class="logo-img transition-transform duration-300 group-hover:scale-105">
+                    <div class="text-left leading-tight">
+                        <h1 class="text-sm md:text-base font-black text-gray-900 uppercase">ISEMED</h1>
+                        <p class="text-[10px] md:text-xs font-bold text-blue-600 uppercase tracking-tighter">Área de Informática I</p>
+                    </div>
                 </a>
             </div>
 
             <nav class="hidden lg:flex items-center gap-1">
-                <a href="index.html" class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Inicio</a>
-                <a href="teacher-dashboard.html" id="nav-portal-link" class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Portal</a>
+                <a href="index.html" class="px-3 py-2 text-[10px] font-bold text-gray-600 hover:text-blue-600 rounded-lg transition-colors uppercase tracking-widest">Inicio</a>
+                <a href="teacher-dashboard.html" id="nav-portal-link" class="px-3 py-2 text-[10px] font-black text-gray-600 hover:text-blue-600 rounded-lg transition-colors uppercase tracking-widest">Portal</a>
 
                 <div class="relative group">
-                    <button class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors flex items-center gap-1">
+                    <button class="px-3 py-2 text-[10px] font-black text-gray-600 hover:text-blue-600 rounded-lg transition-colors flex items-center gap-1 uppercase tracking-widest">
                         Cursos <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div class="absolute left-0 mt-0 w-56 bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-2 group-hover:translate-y-0 border border-gray-100">
+                    <div class="absolute left-0 mt-0 w-56 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-2 group-hover:translate-y-0 border border-gray-100">
                         <div id="desktop-courses-menu"></div>
                     </div>
                 </div>
 
                 <div class="relative group">
-                    <button class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors flex items-center gap-1">
+                    <button class="px-3 py-2 text-[10px] font-black text-gray-600 hover:text-blue-600 rounded-lg transition-colors flex items-center gap-1 uppercase tracking-widest">
                         Contenido <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div class="absolute left-0 mt-0 w-64 bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-2 group-hover:translate-y-0 border border-gray-100">
+                    <div class="absolute left-0 mt-0 w-64 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-2 group-hover:translate-y-0 border border-gray-100">
                         <div id="desktop-content-menu"></div>
                     </div>
                 </div>
 
-                <a href="#" onclick="handleHeaderAction('show-activities')" class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Actividades</a>
-                <a href="pseudocode.html" class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Pseudocódigo</a>
-                <button id="open-profile-btn" class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Mi perfil</button>
+                <a href="#" onclick="handleHeaderAction('show-activities')" class="px-3 py-2 text-[10px] font-black text-gray-600 hover:text-blue-600 rounded-lg transition-colors uppercase tracking-widest">Actividades</a>
+                <a href="pseudocode.html" class="px-3 py-2 text-[10px] font-black text-gray-600 hover:text-blue-600 rounded-lg transition-colors uppercase tracking-widest">Pseudocódigo</a>
+                <button id="open-profile-btn" class="px-3 py-2 text-[10px] font-black text-gray-600 hover:text-blue-600 rounded-lg transition-colors uppercase tracking-widest">Mi perfil</button>
             </nav>
 
             <div class="flex items-center gap-3">
-                <img src="imagenes/bandera-de-honduras.png" alt="HN" width="35" class="hidden xl:block opacity-90">
+                <img src="imagenes/bandera-de-honduras.png" alt="HN" width="22" class="hidden xl:block opacity-90">
 
-                <button id="mobile-menu-button" class="lg:hidden p-2 text-gray-600 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <button id="mobile-menu-button" class="lg:hidden p-2 text-gray-600 bg-gray-50/50 rounded-xl hover:bg-gray-100 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path id="mobile-menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -71,11 +72,17 @@
             </div>
         </div>
 
-        <div id="mobile-menu-overlay" class="hidden">
-            <button id="mobile-menu-close-button" class="absolute top-4 right-6 text-gray-700 focus:outline-none z-50">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <nav class="flex flex-col mt-16 w-full h-full overflow-y-auto pb-20">
+        <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-[1100] animate-fade-in-up">
+            <div class="flex justify-between items-center p-4 border-b">
+                <div class="text-left leading-tight">
+                    <h1 class="text-xs font-black text-gray-900 uppercase">ISEMED</h1>
+                    <p class="text-[9px] font-bold text-blue-600 uppercase tracking-tighter">Área de Informática I</p>
+                </div>
+                <button id="mobile-menu-close-button" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <nav class="flex flex-col w-full h-full overflow-y-auto pb-24">
                 <a href="index.html" class="mobile-nav-link" onclick="closeMobileMenu()">Inicio</a>
                 <a href="teacher-dashboard.html" id="mobile-portal-link" class="mobile-nav-link" onclick="closeMobileMenu()">Portal</a>
 
@@ -110,45 +117,52 @@
         </div>
     </header>
 
-    <main class="mt-[5rem] md:mt-[5rem] pb-12 flex-grow">
-        <div class="container mx-auto px-4 md:px-8">
-            <div class="mb-8 text-center md:text-left">
-                <h1 class="text-3xl font-extrabold text-gray-800">Panel de Profesor</h1>
-                <p class="text-lg text-gray-600 font-medium">Bienvenido, <span id="teacher-name" class="text-blue-600 font-bold"></span>.</p>
+    <main class="mt-[4.5rem] pb-12 flex-grow">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-6">
+                <div>
+                    <h1 class="text-xl font-black text-gray-900 uppercase tracking-tighter">Panel de Gestión</h1>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Bienvenido, <span id="teacher-name" class="text-blue-600"></span></p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="flex -space-x-2">
+                        <div class="w-8 h-8 rounded-full border-2 border-white bg-blue-100 flex items-center justify-center text-[10px] font-black text-blue-600">ISE</div>
+                    </div>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Área de Informática I</span>
+                </div>
             </div>
 
 
 
             <nav class="flex flex-nowrap overflow-x-auto gap-2 md:gap-3 mb-6 pb-2 scroll-horizontal-clean">
-                <button id="nav-dashboard" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-blue-600 text-white">Entregas</button>
-                <button id="nav-reportes" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Reportes</button>
-                <button id="nav-tareas" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Tareas y Exámenes</button>
-                <button id="nav-proyectos" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Proyectos PSeInt</button>
-                <button id="nav-logros" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Logros/Juegos</button>
-                <button id="nav-news" class="flex-none px-3 py-2 text-xs md:px-5 md:py-2.5 md:text-sm rounded-xl font-bold transition-all shadow-sm hover:shadow-md bg-white text-gray-700 hover:bg-blue-50">Noticias</button>
-
+                <button id="nav-dashboard" class="flex-none px-4 py-2 rounded-xl font-black transition-all text-[10px] uppercase tracking-widest bg-blue-600 text-white">Entregas</button>
+                <button id="nav-reportes" class="flex-none px-4 py-2 rounded-xl font-black transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Reportes</button>
+                <button id="nav-tareas" class="flex-none px-4 py-2 rounded-xl font-black transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Actividades</button>
+                <button id="nav-proyectos" class="flex-none px-4 py-2 rounded-xl font-black transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Proyectos</button>
+                <button id="nav-logros" class="flex-none px-4 py-2 rounded-xl font-black transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Logros</button>
+                <button id="nav-news" class="flex-none px-4 py-2 rounded-xl font-black transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Noticias</button>
             </nav>
 
             <!-- Sección de Dashboard (Entregas Operativas) -->
             <section id="section-dashboard" class="animate-fade-in-up">
                  <div class="flex flex-col space-y-4 mb-6">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <h2 class="text-2xl font-bold text-gray-800" id="dashboard-level-title">Control de Entregas</h2>
-                        <div class="flex flex-wrap items-center gap-3" id="filters-container">
-                            <select id="filter-grado" class="p-2 border rounded-xl text-sm focus:ring-2 focus:ring-blue-400">
-                                <option value="">Todos los Grados</option>
-                                <option value="Décimo">Décimo</option>
-                                <option value="Undécimo">Undécimo</option>
-                                <option value="Duodécimo">Duodécimo</option>
+                        <h2 class="text-lg font-black text-gray-900 uppercase tracking-tighter" id="dashboard-level-title">Control de Entregas</h2>
+                        <div class="flex flex-wrap items-center gap-2" id="filters-container">
+                            <select id="filter-grado" class="p-2 bg-white border border-gray-100 rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-2 focus:ring-blue-500/20 outline-none">
+                                <option value="">Grados</option>
+                                <option value="Décimo">10°</option>
+                                <option value="Undécimo">11°</option>
+                                <option value="Duodécimo">12°</option>
                             </select>
-                            <select id="filter-seccion" class="p-2 border rounded-xl text-sm focus:ring-2 focus:ring-blue-400">
-                                <option value="">Todas las Secciones</option>
-                                <option value="A">Sección A</option>
-                                <option value="B">Sección B</option>
-                                <option value="C">Sección C</option>
+                            <select id="filter-seccion" class="p-2 bg-white border border-gray-100 rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-2 focus:ring-blue-500/20 outline-none">
+                                <option value="">Secc</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
                             </select>
-                            <input type="text" id="filter-asignatura" placeholder="Materia..." class="p-2 border rounded-xl text-sm focus:ring-2 focus:ring-blue-400 w-32">
-                            <select id="filter-estado" class="p-2 border rounded-xl text-sm focus:ring-2 focus:ring-blue-400">
+                            <input type="text" id="filter-asignatura" placeholder="Materia..." class="p-2 bg-white border border-gray-100 rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-2 focus:ring-blue-500/20 outline-none w-24">
+                            <select id="filter-estado" class="p-2 bg-white border border-gray-100 rounded-xl text-[10px] font-black uppercase tracking-widest focus:ring-2 focus:ring-blue-500/20 outline-none">
                                 <option value="">Todos los Estados</option>
                                 <option value="Pendiente">Pendientes</option>
                                 <option value="Por calificar">Por calificar</option>
@@ -158,8 +172,8 @@
                         </div>
                     </div>
                     <div class="w-full relative">
-                        <input type="text" id="student-search" placeholder="Buscar alumno por nombre..." class="w-full pl-10 pr-4 py-3 border rounded-2xl focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all">
-                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" id="student-search" placeholder="Buscar expediente..." class="w-full pl-10 pr-4 py-3 bg-white border-none rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-xs font-bold uppercase tracking-widest">
+                        <svg class="w-4 h-4 text-gray-400 absolute left-4 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                  </div>
                 <div class="table-container overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100">
@@ -406,26 +420,26 @@
                     </button>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 bg-white p-5 rounded-[1.5rem] border border-gray-50 shadow-sm">
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Grado</label>
-                        <select id="report-grado" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
+                        <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Grado Académico</label>
+                        <select id="report-grado" class="w-full p-3 bg-gray-50 border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-blue-500/20">
                             <option value="Décimo">Décimo</option>
                             <option value="Undécimo">Undécimo</option>
                             <option value="Duodécimo">Duodécimo</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Sección</label>
-                        <select id="report-seccion" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
+                        <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Sección</label>
+                        <select id="report-seccion" class="w-full p-3 bg-gray-50 border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-blue-500/20">
                             <option value="A">Sección A</option>
                             <option value="B">Sección B</option>
                             <option value="C">Sección C</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Parcial</label>
-                        <select id="report-parcial" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
+                        <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Parcial</label>
+                        <select id="report-parcial" class="w-full p-3 bg-gray-50 border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-blue-500/20">
                             <option value="Primer Parcial">Primer Parcial</option>
                             <option value="Segundo Parcial">Segundo Parcial</option>
                             <option value="Tercer Parcial">Tercer Parcial</option>
@@ -433,7 +447,7 @@
                         </select>
                     </div>
                     <div class="flex items-end">
-                        <button id="btn-generate-report" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-all">Generar Vista</button>
+                        <button id="btn-generate-report" class="btn-ima-primary w-full py-3 text-xs">Generar Reporte</button>
                     </div>
                 </div>
 
@@ -486,8 +500,8 @@
                 </div>
 
                 <div class="flex space-x-4 mt-8">
-                    <button type="button" id="cancel-profile-btn" class="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cerrar</button>
-                    <button type="submit" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg transition-all">Guardar Cambios</button>
+                    <button type="button" id="cancel-profile-btn" class="btn-ima-cancel flex-1 py-3">Cerrar</button>
+                    <button type="submit" class="btn-ima-primary flex-1 py-3">Guardar Cambios</button>
                 </div>
             </form>
         </div>
@@ -533,8 +547,8 @@
                 </div>
 
                 <div class="flex gap-3 pt-4 sticky bottom-0 bg-white py-2">
-                    <button type="button" id="cancel-news-btn" class="flex-1 px-4 py-3 rounded-xl font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors">Cancelar</button>
-                    <button type="submit" id="save-news-btn" class="flex-1 px-4 py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors">Publicar</button>
+                    <button type="button" id="cancel-news-btn" class="btn-ima-cancel flex-1 py-3">Cancelar</button>
+                    <button type="submit" id="save-news-btn" class="btn-ima-primary flex-1 py-3">Publicar</button>
                 </div>
             </form>
         </div>
@@ -612,38 +626,43 @@
             </div>
 
             <div class="flex space-x-4 mt-10">
-                <button id="cancel-grade-btn" class="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cancelar</button>
-                <button id="save-grade-btn" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all">Guardar</button>
+                <button id="cancel-grade-btn" class="btn-ima-cancel flex-1 py-3">Cancelar</button>
+                <button id="save-grade-btn" class="btn-ima-primary flex-1 py-3">Guardar</button>
             </div>
         </div>
     </div>
 
-    <footer class="bg-white border-t border-gray-100 py-10 mt-auto">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
-                <div class="flex items-center gap-4">
-                    <img src="imagenes/logo.png" alt="Logo" width="60" class="opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
-                    <div class="text-left border-l border-gray-100 pl-4">
-                        <h4 class="text-[11px] font-black text-gray-900 uppercase tracking-widest">ISEMED</h4>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Área de Informática</p>
-                    </div>
-                </div>
-                <div class="flex flex-wrap justify-center gap-x-8 gap-y-4">
-                    <a href="index.html" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-[0.2em] transition-all">Inicio</a>
-                    <a href="login.html" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-[0.2em] transition-all">Portal</a>
-                    <a href="#" onclick="handleHeaderAction('show-activities')" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-[0.2em] transition-all">Actividades</a>
-                    <a href="pseudocode.html" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-[0.2em] transition-all">Pseudocódigo</a>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-50 gap-4">
-                <p class="text-[9px] font-black text-gray-300 uppercase tracking-[0.2em]">
-                    &copy; <span id="current-year"></span> Área de Informática ISEMED. <span class="hidden md:inline">Hecho con fe y tecnología.</span>
-                </p>
-                <div class="flex gap-6">
-                    <a href="index.html" class="text-[9px] font-black text-gray-300 hover:text-blue-600 uppercase tracking-[0.2em] transition-colors">Privacidad</a>
-                    <a href="index.html" class="text-[9px] font-black text-gray-300 hover:text-blue-600 uppercase tracking-[0.2em] transition-colors">Términos</a>
-                </div>
-            </div>
+    <div class="mobile-bottom-nav lg:hidden">
+        <a href="index.html" class="bottom-nav-item flex">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span>Inicio</span>
+        </a>
+        <a href="teacher-dashboard.html" class="bottom-nav-item flex">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+            <span>Portal</span>
+        </a>
+        <a href="#" onclick="handleHeaderAction('show-activities')" class="bottom-nav-item flex">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span>Actividades</span>
+        </a>
+        <button class="bottom-nav-item flex" onclick="document.getElementById('open-profile-btn').click()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            <span>Perfil</span>
+        </button>
+    </div>
+
+    <footer class="bg-white/50 py-6 mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                &copy; 2026 Área de Informática <strong>ISEMED</strong>.
+            </p>
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest opacity-60">
+                <a href="#" class="hover:text-blue-600 transition-colors">Privacidad</a>
+                <span class="mx-1">-</span>
+                <a href="#" class="hover:text-blue-600 transition-colors">Términos y Condiciones</a>
+                <span class="mx-1">-</span>
+                <a href="#" class="hover:text-blue-600 transition-colors">Contáctanos</a>
+            </p>
         </div>
     </footer>
 
@@ -691,9 +710,9 @@
                 </div>
             </div>
             <div class="flex space-x-4">
-                <button id="close-task-modal-btn" class="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cerrar</button>
-                <button id="edit-task-btn" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg transition-all">Editar</button>
-                <button id="delete-task-btn" class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 shadow-lg transition-all">Eliminar</button>
+                <button id="close-task-modal-btn" class="btn-ima-cancel flex-1 py-3">Cerrar</button>
+                <button id="edit-task-btn" class="btn-ima-primary flex-1 py-3">Editar</button>
+                <button id="delete-task-btn" class="btn-ima-cancel flex-1 py-3">Eliminar</button>
             </div>
         </div>
     </div>
@@ -771,8 +790,8 @@
                     </div>
                 </div>
                 <div class="flex space-x-4 mt-8">
-                    <button type="button" id="cancel-edit-btn" class="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cancelar</button>
-                    <button type="submit" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg transition-all">Guardar Cambios</button>
+                    <button type="button" id="cancel-edit-btn" class="btn-ima-cancel flex-1 py-3">Cancelar</button>
+                    <button type="submit" class="btn-ima-primary flex-1 py-3">Guardar Cambios</button>
                 </div>
             </form>
         </div>

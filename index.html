@@ -20,48 +20,49 @@
 </head>
 <body class="font-inter antialiased text-gray-900 min-h-screen flex flex-col">
 
-    <header id="main-header" class="bg-white border-b border-gray-100 fixed w-full z-50 py-2 md:py-3 transition-all duration-300">
+    <header id="main-header" class="fixed w-full z-50 transition-all duration-300">
         <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
                 <a href="index.html" class="flex items-center gap-3 group">
-                    <img src="imagenes/logo.png" alt="Logo" width="80" height="auto" class="logo-img transition-transform duration-300 group-hover:scale-105">
-                    <h1 class="hidden md:block text-base lg:text-lg font-black text-blue-900 tracking-tight leading-none uppercase">
-                        Área de Informática ISEMED
-                    </h1>
+                    <img src="imagenes/logo.png" alt="Logo" width="45" height="auto" class="logo-img transition-transform duration-300 group-hover:scale-105">
+                    <div class="text-left leading-tight">
+                        <h1 class="text-sm md:text-base font-black text-gray-900 uppercase">ISEMED</h1>
+                        <p class="text-[10px] md:text-xs font-bold text-blue-600 uppercase tracking-tighter">Área de Informática I</p>
+                    </div>
                 </a>
             </div>
 
             <nav class="hidden lg:flex items-center gap-1">
-                <a href="index.html" class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Inicio</a>
-                <a href="login.html" id="nav-portal-link" class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Portal</a>
+                <a href="index.html" class="px-3 py-2 text-[10px] font-bold text-gray-600 hover:text-blue-600 rounded-lg transition-colors uppercase tracking-widest">Inicio</a>
+                <a href="login.html" id="nav-portal-link" class="px-3 py-2 text-[10px] font-black text-gray-600 hover:text-blue-600 rounded-lg transition-colors uppercase tracking-widest">Portal</a>
 
                 <div class="relative group">
-                    <button class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors flex items-center gap-1">
+                    <button class="px-3 py-2 text-[10px] font-black text-gray-600 hover:text-blue-600 rounded-lg transition-colors flex items-center gap-1 uppercase tracking-widest">
                         Cursos <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div class="absolute left-0 mt-0 w-56 bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-2 group-hover:translate-y-0 border border-gray-100">
+                    <div class="absolute left-0 mt-0 w-56 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-2 group-hover:translate-y-0 border border-gray-100">
                         <div id="desktop-courses-menu"></div>
                     </div>
                 </div>
 
                 <div class="relative group">
-                    <button class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors flex items-center gap-1">
+                    <button class="px-3 py-2 text-[10px] font-black text-gray-600 hover:text-blue-600 rounded-lg transition-colors flex items-center gap-1 uppercase tracking-widest">
                         Contenido <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div class="absolute left-0 mt-0 w-64 bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-2 group-hover:translate-y-0 border border-gray-100">
+                    <div class="absolute left-0 mt-0 w-64 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-2 group-hover:translate-y-0 border border-gray-100">
                         <div id="desktop-content-menu"></div>
                     </div>
                 </div>
 
-                <a href="#" onclick="handleHeaderAction('show-activities')" class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Actividades</a>
-                <a href="pseudocode.html" class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Pseudocódigo</a>
-                <button id="open-profile-btn" class="px-3 py-2 text-xs xl:text-sm font-bold text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Mi perfil</button>
+                <a href="#" onclick="handleHeaderAction('show-activities')" class="px-3 py-2 text-[10px] font-black text-gray-600 hover:text-blue-600 rounded-lg transition-colors uppercase tracking-widest">Actividades</a>
+                <a href="pseudocode.html" class="px-3 py-2 text-[10px] font-black text-gray-600 hover:text-blue-600 rounded-lg transition-colors uppercase tracking-widest">Pseudocódigo</a>
+                <button id="open-profile-btn" class="px-3 py-2 text-[10px] font-black text-gray-600 hover:text-blue-600 rounded-lg transition-colors uppercase tracking-widest">Mi perfil</button>
             </nav>
 
             <div class="flex items-center gap-3">
-                <img src="imagenes/bandera-de-honduras.png" alt="HN" width="35" class="hidden xl:block opacity-90">
+                <img src="imagenes/bandera-de-honduras.png" alt="HN" width="22" class="hidden xl:block opacity-90">
 
-                <button id="mobile-menu-button" class="lg:hidden p-2 text-gray-600 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <button id="mobile-menu-button" class="lg:hidden p-2 text-gray-600 bg-gray-50/50 rounded-xl hover:bg-gray-100 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path id="mobile-menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -69,11 +70,17 @@
             </div>
         </div>
 
-        <div id="mobile-menu-overlay" class="hidden">
-            <button id="mobile-menu-close-button" class="absolute top-4 right-6 text-gray-700 focus:outline-none z-50">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <nav class="flex flex-col mt-16 w-full h-full overflow-y-auto pb-20">
+        <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-[1100] animate-fade-in-up">
+            <div class="flex justify-between items-center p-4 border-b">
+                <div class="text-left leading-tight">
+                    <h1 class="text-xs font-black text-gray-900 uppercase">ISEMED</h1>
+                    <p class="text-[9px] font-bold text-blue-600 uppercase tracking-tighter">Área de Informática I</p>
+                </div>
+                <button id="mobile-menu-close-button" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <nav class="flex flex-col w-full h-full overflow-y-auto pb-24">
                 <a href="index.html" class="mobile-nav-link" onclick="closeMobileMenu()">Inicio</a>
                 <a href="login.html" id="mobile-portal-link" class="mobile-nav-link" onclick="closeMobileMenu()">Portal</a>
 
@@ -114,23 +121,13 @@
             <div class="container mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center gap-12">
                 <div class="md:w-3/5 text-center md:text-left space-y-8 animate-fade-in-up">
                     <div class="flex flex-wrap items-center gap-3">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[11px] font-black uppercase tracking-widest">
-                            <span class="relative flex h-2 w-2">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
-                            </span>
-                            Plataforma Académica 2026
-                        </div>
                         <div id="user-welcome-badge" class="hidden inline-flex items-center gap-2 px-3 py-1 bg-green-50 text-green-600 rounded-full text-[11px] font-black uppercase tracking-widest">
                             <!-- Inyectado dinámicamente -->
                         </div>
                     </div>
-                    <h1 class="text-4xl md:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight">
-                        Formando <span class="text-blue-600">Corazones</span> con amor, fe, alegría y tecnología
+                    <h1 class="text-4xl md:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight uppercase">
+                        Formando <span class="text-blue-600">Corazones</span> con amor, fe, esperanza y tecnología
                     </h1>
-                    <p class="text-lg md:text-xl text-gray-500 max-w-xl leading-relaxed font-medium">
-                        Impulsamos el talento técnico a través de tecnología avanzada y educación de calidad. Bienvenidos al ISEMED.
-                    </p>
                     <div class="flex flex-wrap justify-center md:justify-start gap-4 pt-4">
                         <a href="login.html" class="px-8 py-4 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all transform hover:-translate-y-1">Empezar Ahora</a>
                         <a href="#news-section" class="px-8 py-4 bg-gray-50 text-gray-700 font-black rounded-2xl hover:bg-gray-100 transition-all">Ver Noticias</a>
@@ -308,32 +305,37 @@
         </div>
     </div>
 
-    <footer class="bg-white border-t border-gray-100 py-10 mt-auto">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
-                <div class="flex items-center gap-4">
-                    <img src="imagenes/logo.png" alt="Logo" width="60" class="opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
-                    <div class="text-left border-l border-gray-100 pl-4">
-                        <h4 class="text-[11px] font-black text-gray-900 uppercase tracking-widest">ISEMED</h4>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Área de Informática</p>
-                    </div>
-                </div>
-                <div class="flex flex-wrap justify-center gap-x-8 gap-y-4">
-                    <a href="index.html" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-[0.2em] transition-all">Inicio</a>
-                    <a href="login.html" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-[0.2em] transition-all">Portal</a>
-                    <a href="#" onclick="handleHeaderAction('show-activities')" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-[0.2em] transition-all">Actividades</a>
-                    <a href="pseudocode.html" class="text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-[0.2em] transition-all">Pseudocódigo</a>
-                </div>
-            </div>
-            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-50 gap-4">
-                <p class="text-[9px] font-black text-gray-300 uppercase tracking-[0.2em]">
-                    &copy; <span id="current-year"></span> Área de Informática ISEMED. <span class="hidden md:inline">Hecho con fe y tecnología.</span>
-                </p>
-                <div class="flex gap-6">
-                    <a href="index.html" class="text-[9px] font-black text-gray-300 hover:text-blue-600 uppercase tracking-[0.2em] transition-colors">Privacidad</a>
-                    <a href="index.html" class="text-[9px] font-black text-gray-300 hover:text-blue-600 uppercase tracking-[0.2em] transition-colors">Términos</a>
-                </div>
-            </div>
+    <div class="mobile-bottom-nav lg:hidden">
+        <a href="index.html" class="bottom-nav-item flex">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span>Inicio</span>
+        </a>
+        <a href="login.html" class="bottom-nav-item flex">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+            <span>Portal</span>
+        </a>
+        <a href="#" onclick="handleHeaderAction('show-activities')" class="bottom-nav-item flex">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span>Actividades</span>
+        </a>
+        <button id="mobile-profile-btn" class="bottom-nav-item flex" onclick="document.getElementById('open-profile-btn').click()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            <span>Perfil</span>
+        </button>
+    </div>
+
+    <footer class="bg-white/50 py-6 mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                &copy; 2026 Área de Informática <strong>ISEMED</strong>.
+            </p>
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest opacity-60">
+                <a href="#" class="hover:text-blue-600 transition-colors">Privacidad</a>
+                <span class="mx-1">-</span>
+                <a href="#" class="hover:text-blue-600 transition-colors">Términos y Condiciones</a>
+                <span class="mx-1">-</span>
+                <a href="#" class="hover:text-blue-600 transition-colors">Contáctanos</a>
+            </p>
         </div>
     </footer>
 
