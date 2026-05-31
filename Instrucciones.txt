@@ -121,6 +121,19 @@ TAREAS PENDIENTES DE REVISIÓN
 16. [REDISEÑO UI/UX] Navegación Móvil/PWA: Barra inferior fija (icon-only). - COMPLETADA
 17. [REDISEÑO UI/UX] Módulo "Cursos": Rediseño de overlay (0.95 opacity, fondo oscuro, sin blur). - COMPLETADA
 18. [REDISEÑO UI/UX] Estabilidad Visual: Aplicar sistema de 4px y tipografía profesional. - COMPLETADA
+19. [UI GLOBAL] Aumentar tamaño de logos (ISEMED y Honduras) y reducir márgenes laterales. - COMPLETADA
+20. [UI GLOBAL] Ajustar interlineado del título institucional en el encabezado. - COMPLETADA
+21. [DOCENTE] Optimizar tabla de evidencias: reducción de gaps y eliminación de scroll. - COMPLETADA
+22. [DOCENTE] Reducir altura y padding de la tarjeta de información del alumno. - COMPLETADA
+23. [ESTUDIANTE] Eliminar bloque de encabezado redundante. - COMPLETADA
+24. [ESTUDIANTE] Implementar vista previa por miniaturas (thumbnails) en modal. - COMPLETADA
+25. [ESTUDIANTE] Implementar scroll interno en lista de archivos del modal. - COMPLETADA
+26. [ESTUDIANTE] Implementar sistema de subida por fragmentos (chunking) > 50MB. - COMPLETADA
+27. [ESTUDIANTE] Sistema de mensajes de error comprensibles. - COMPLETADA
+28. [ESTUDIANTE] Limpieza de archivos temporales al cancelar entrega. - COMPLETADA
+29. [NOTICIAS] Mostrar extracto y miniatura en tarjetas de noticias. - COMPLETADA
+30. [NOTICIAS] Activar botón "Seguir Leyendo" con visualización en modal. - COMPLETADA
+31. [NOTICIAS] Asegurar visualización de 3 noticias recientes en inicio. - COMPLETADA
 
 ------------------------------------------------------------------------------------------------
 
@@ -132,4 +145,4 @@ TAREAS PENDIENTES DE REVISIÓN
 
 ESTADO DE LAS TAREAS (RESUMEN)
 
-[A-75] FINALIZADO (PENDIENTE DE REVISIÓN)
+[A-76] FINALIZADO (PENDIENTE DE REVISIÓN)

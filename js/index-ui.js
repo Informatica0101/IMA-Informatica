@@ -417,34 +417,53 @@ async function loadNews() {
         const res = await fetchApi('USER', 'getNews', {});
         if (res.status === 'success' && res.data.length > 0) {
             newsSection.classList.remove('hidden');
-            // Identificar la noticia más reciente para un estilo destacado si se desea,
-            // pero el requerimiento pide: Título, Primera Imagen, Primer Párrafo, Fecha.
-            newsContainer.innerHTML = res.data.map((n, idx) => {
-                // Extraer el primer párrafo del contenido HTML
+
+            // Mostrar las 3 noticias más recientes (o todas si hay menos de 3)
+            const newsToShow = res.data.slice(0, 3);
+
+            newsContainer.innerHTML = newsToShow.map((n, idx) => {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = n.contenido;
-                const firstP = tempDiv.querySelector('p') ? tempDiv.querySelector('p').innerText : tempDiv.innerText.substring(0, 150) + '...';
+
+                // Extraer un fragmento representativo del contenido (primer párrafo o 180 caracteres)
+                let excerpt = "";
+                const paragraphs = tempDiv.querySelectorAll('p');
+                if (paragraphs.length > 0) {
+                    excerpt = paragraphs[0].innerText.trim();
+                } else {
+                    excerpt = tempDiv.innerText.trim();
+                }
+
+                if (excerpt.length > 180) {
+                    excerpt = excerpt.substring(0, 177) + "...";
+                }
+
+                const imgUrl = window.convertDriveLink(n.imagenUrl);
 
                 return `
                 <div class="${idx === 0 ? 'md:col-span-2 lg:col-span-2' : ''} bg-white rounded-[2rem] border border-gray-100 overflow-hidden group hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50 transition-all duration-500">
                     <div class="${idx === 0 ? 'flex flex-col md:flex-row h-full' : 'flex flex-col'}">
                         ${n.imagenUrl ? `
                             <div class="${idx === 0 ? 'md:w-1/2 h-72 md:h-full' : 'h-56'} overflow-hidden">
-                                <img src="${window.convertDriveLink ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
+                                <img src="${imgUrl}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
                             </div>
-                        ` : ''}
+                        ` : `
+                            <div class="${idx === 0 ? 'md:w-1/2 h-72 md:h-full' : 'h-56'} bg-gray-50 flex items-center justify-center text-gray-200">
+                                <i class="fas fa-newspaper text-6xl"></i>
+                            </div>
+                        `}
                         <div class="p-8 ${idx === 0 ? 'md:w-1/2 flex flex-col justify-center' : 'flex-grow flex flex-col'}">
                             <div class="flex items-center gap-3 mb-4">
                                 <span class="text-[9px] font-semibold uppercase tracking-[0.2em] text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">${n.categoria}</span>
                                 <span class="text-[10px] font-medium text-gray-300 uppercase tracking-wider">${new Date(n.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} ${n.hora ? '• ' + n.hora.substring(0,5) : ''}</span>
                             </div>
-                            <h3 class="${idx === 0 ? 'text-2xl md:text-3xl' : 'text-xl'} font-semibold text-gray-900 mb-4 leading-tight group-hover:text-blue-600 transition-colors">${n.titulo}</h3>
-                            <p class="text-gray-500 text-sm leading-relaxed mb-6 ${idx === 0 ? 'line-clamp-4' : 'line-clamp-3'}">${firstP}</p>
+                            <h3 class="${idx === 0 ? 'text-2xl md:text-3xl' : 'text-xl'} font-semibold text-gray-900 mb-4 leading-tight group-hover:text-blue-600 transition-colors uppercase tracking-tighter">${n.titulo}</h3>
+                            <p class="text-gray-500 text-sm leading-relaxed mb-6 ${idx === 0 ? 'line-clamp-4' : 'line-clamp-3'} font-medium">${excerpt}</p>
                             <div class="mt-auto pt-6 border-t border-gray-50">
-                                <span class="inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400 group-hover:text-blue-600 transition-all">
+                                <button onclick='window.showNewsDetail(${JSON.stringify(n).replace(/'/g, "&apos;")})' class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 hover:text-blue-800 transition-all">
                                     Seguir Leyendo
                                     <svg class="w-3 h-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                </span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -456,4 +475,32 @@ async function loadNews() {
         console.error("Error loading news:", e);
     }
 }
+
+window.showNewsDetail = function(news) {
+    const modal = document.getElementById('news-detail-modal');
+    if (!modal) return;
+
+    const imgUrl = window.convertDriveLink(news.imagenUrl);
+    document.getElementById('news-modal-image').src = imgUrl;
+    document.getElementById('news-modal-category').textContent = news.categoria;
+    document.getElementById('news-modal-title').textContent = news.titulo;
+    document.getElementById('news-modal-meta').textContent = `${new Date(news.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })} ${news.hora ? '• ' + news.hora.substring(0,5) : ''}`;
+    document.getElementById('news-modal-content').innerHTML = news.contenido;
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // Event listeners para cerrar
+    const closeBtn = document.getElementById('close-news-detail-modal');
+    const closeBtnFooter = document.getElementById('close-news-detail-btn');
+
+    const closeModal = () => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    };
+
+    closeBtn.onclick = closeModal;
+    closeBtnFooter.onclick = closeModal;
+    modal.onclick = (e) => { if(e.target === modal) closeModal(); };
+};
 });

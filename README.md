@@ -209,8 +209,9 @@ El frontend es una aplicación cliente que consume los microservicios.
   - **Creación**: Llama al servicio de `TASK` para crear tareas y al de `EXAM` para crear exámenes.
   - **Visualización**: Para mostrar la lista de actividades, llama en paralelo a `getTeacherActivity` del servicio de tareas y a `getTeacherExamActivity` del servicio de exámenes. Luego, **combina y ordena los resultados en el lado del cliente** antes de renderizarlos.
   - **Calificación**: Llama a `gradeSubmission` (servicio de tareas) o `reactivateExam` (servicio de exámenes) según la acción.
-- **`student.js`**: Controla el `student-dashboard.html`. De forma similar al dashboard del profesor, llama a los servicios `TASK` y `EXAM` para obtener la lista de actividades pendientes del estudiante y las muestra combinadas.
+- **`student.js`**: Controla el `student-dashboard.html`. Gestiona el expediente académico, la visualización de tareas por parcial y un avanzado sistema de subida múltiple con soporte para archivos >50MB mediante fragmentación (chunking) y previsualización de miniaturas.
 - **`exam.js`**: Gestiona la página `exam.html`. Se comunica exclusivamente con el **microservicio de exámenes** para obtener las preguntas (`getExamQuestions`) y para enviar las respuestas (`submitExam`).
+- **`index-ui.js`**: Controla la lógica de la página principal, incluyendo la carga dinámica de noticias con sistema de detalles en modal y la navegación jerárquica de recursos.
 
 ---
 

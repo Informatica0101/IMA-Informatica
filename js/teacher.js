@@ -988,102 +988,102 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (compositeProgress > 0) { levelText = "En Riesgo"; levelColor = "text-orange-600"; }
 
             infoCard.innerHTML = `
-                <div class="p-6 md:p-10">
+                <div class="p-4 md:p-6">
                     <!-- Sección 1: Encabezado y Acciones -->
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-10 pb-8 border-b border-gray-100">
-                        <div class="flex items-center gap-8">
-                            <div class="w-24 h-24 bg-blue-600 rounded-[2.2rem] flex items-center justify-center text-white text-4xl font-semibold shadow-2xl shadow-blue-200 relative transform hover:rotate-3 transition-transform">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-gray-100">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 bg-blue-600 rounded-[1.5rem] flex items-center justify-center text-white text-2xl font-semibold shadow-xl shadow-blue-200 relative transform hover:rotate-3 transition-transform">
                                 ${studentInfo.nombre.charAt(0)}
-                                <div class="absolute -bottom-1 -right-1 w-10 h-10 bg-green-500 border-4 border-white rounded-full flex items-center justify-center text-white shadow-md" title="Alumno Activo">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>
+                                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-2 border-white rounded-full flex items-center justify-center text-white shadow-md" title="Alumno Activo">
+                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>
                                 </div>
                             </div>
                             <div class="flex-grow">
-                                <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-semibold uppercase tracking-widest mb-3">Expediente Académico ISEMED</span>
-                                <h3 class="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight tracking-tight">${studentInfo.nombre}</h3>
-                                <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-2 text-xs text-gray-400 font-semibold uppercase tracking-[0.1em]">
-                                    <span class="flex items-center gap-2"><div class="w-2 h-2 bg-blue-600 rounded-full"></div> ${grado} - ${seccion}</span>
-                                    <span class="flex items-center gap-2"><div class="w-2 h-2 bg-purple-500 rounded-full"></div> ${parcial}</span>
-                                    <span class="flex items-center gap-2"><div class="w-2 h-2 bg-teal-500 rounded-full"></div> LISTA #${studentInfo.numeroLista || '-'}</span>
+                                <span class="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-[8px] font-semibold uppercase tracking-widest mb-1">Expediente Académico ISEMED</span>
+                                <h3 class="text-xl md:text-2xl font-semibold text-gray-900 leading-tight tracking-tight">${studentInfo.nombre}</h3>
+                                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-[10px] text-gray-400 font-semibold uppercase tracking-[0.05em]">
+                                    <span class="flex items-center gap-1"><div class="w-1.5 h-1.5 bg-blue-600 rounded-full"></div> ${grado} - ${seccion}</span>
+                                    <span class="flex items-center gap-1"><div class="w-1.5 h-1.5 bg-purple-500 rounded-full"></div> ${parcial}</span>
+                                    <span class="flex items-center gap-1"><div class="w-1.5 h-1.5 bg-teal-500 rounded-full"></div> LISTA #${studentInfo.numeroLista || '-'}</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex flex-wrap gap-4">
-                            <button onclick="window.print()" class="px-6 py-4 bg-white text-gray-700 rounded-2xl font-semibold text-[10px] uppercase tracking-widest hover:bg-gray-50 transition-all border border-gray-200 flex items-center gap-3 shadow-sm">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                Imprimir Reporte
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="window.print()" class="px-3 py-2 bg-white text-gray-700 rounded-xl font-semibold text-[9px] uppercase tracking-widest hover:bg-gray-50 transition-all border border-gray-200 flex items-center gap-2 shadow-sm">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                Imprimir
                             </button>
-                            ${waPhone ? `<a href="${waLink}" target="_blank" class="px-6 py-4 bg-green-600 text-white rounded-2xl font-semibold text-[10px] uppercase tracking-widest hover:bg-green-700 transition-all shadow-xl shadow-green-100 flex items-center gap-3">
-                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                            ${waPhone ? `<a href="${waLink}" target="_blank" class="px-3 py-2 bg-green-600 text-white rounded-xl font-semibold text-[9px] uppercase tracking-widest hover:bg-green-700 transition-all shadow-lg shadow-green-100 flex items-center gap-2">
+                                <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.101.004.242-.038.379.292.144.35.492 1.2.535 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.144.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
                                 WhatsApp
                             </a>` : ''}
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                         <!-- Columna 2: Información del Alumno -->
-                        <div class="lg:col-span-4 space-y-8">
-                            <h4 class="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.3em] mb-6 border-l-4 border-blue-600 pl-4">Información Personal</h4>
-                            <div class="space-y-4">
-                                <div class="p-6 bg-gray-50 rounded-[1.5rem] border border-gray-100 shadow-sm group hover:border-blue-200 transition-all">
-                                    <span class="block text-[10px] font-semibold text-gray-400 uppercase mb-2">Correo Institucional</span>
-                                    <span class="text-sm font-semibold text-gray-700 break-all">${studentInfo.email || 'N/A'}</span>
+                        <div class="lg:col-span-4 space-y-4">
+                            <h4 class="text-[9px] font-semibold text-gray-400 uppercase tracking-[0.2em] mb-2 border-l-4 border-blue-600 pl-3">Información Personal</h4>
+                            <div class="space-y-3">
+                                <div class="p-4 bg-gray-50 rounded-[1.2rem] border border-gray-100 shadow-sm group hover:border-blue-200 transition-all">
+                                    <span class="block text-[8px] font-semibold text-gray-400 uppercase mb-1">Correo Institucional</span>
+                                    <span class="text-[11px] font-semibold text-gray-700 break-all">${studentInfo.email || 'N/A'}</span>
                                 </div>
-                                <div class="p-6 bg-gray-50 rounded-[1.5rem] border border-gray-100 shadow-sm group hover:border-green-200 transition-all">
-                                    <span class="block text-[10px] font-semibold text-gray-400 uppercase mb-2">Contacto Directo</span>
-                                    <span class="text-sm font-semibold text-gray-700">${studentInfo.telefono || 'No registrado'}</span>
+                                <div class="p-4 bg-gray-50 rounded-[1.2rem] border border-gray-100 shadow-sm group hover:border-green-200 transition-all">
+                                    <span class="block text-[8px] font-semibold text-gray-400 uppercase mb-1">Contacto Directo</span>
+                                    <span class="text-[11px] font-semibold text-gray-700">${studentInfo.telefono || 'No registrado'}</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Columna 3: Estado de Tareas -->
-                        <div class="lg:col-span-4 space-y-8 lg:border-x lg:border-gray-100 lg:px-10 px-0">
-                            <h4 class="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.3em] mb-6 border-l-4 border-purple-500 pl-4">Progreso del Parcial</h4>
-                            <div class="space-y-6">
+                        <div class="lg:col-span-4 space-y-4 lg:border-x lg:border-gray-100 lg:px-6 px-0">
+                            <h4 class="text-[9px] font-semibold text-gray-400 uppercase tracking-[0.2em] mb-2 border-l-4 border-purple-500 pl-3">Progreso del Parcial</h4>
+                            <div class="space-y-4">
                                 <div>
-                                    <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center justify-between mb-2">
                                         <div>
-                                            <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest block">Nivel de Entrega</span>
-                                            <span class="text-xs font-bold ${levelColor} uppercase tracking-tighter">${levelText}</span>
+                                            <span class="text-[8px] font-semibold text-gray-500 uppercase tracking-widest block">Nivel de Entrega</span>
+                                            <span class="text-[10px] font-bold ${levelColor} uppercase tracking-tighter">${levelText}</span>
                                         </div>
-                                        <span class="text-sm font-bold text-gray-900">${compositeProgress}%</span>
+                                        <span class="text-xs font-bold text-gray-900">${compositeProgress}%</span>
                                     </div>
-                                    <div class="w-full bg-gray-100 h-4 rounded-full overflow-hidden border border-gray-200 p-1">
-                                        <div class="bg-blue-600 h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(37,99,235,0.4)]" style="width: ${compositeProgress}%"></div>
+                                    <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden border border-gray-200 p-0.5">
+                                        <div class="bg-blue-600 h-full rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(37,99,235,0.3)]" style="width: ${compositeProgress}%"></div>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="p-5 bg-white rounded-[1.5rem] border border-gray-100 text-center shadow-sm">
-                                        <span class="block text-3xl font-semibold text-green-600">${completed}</span>
-                                        <span class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Completas</span>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="p-3 bg-white rounded-[1rem] border border-gray-100 text-center shadow-sm">
+                                        <span class="block text-2xl font-semibold text-green-600">${completed}</span>
+                                        <span class="text-[8px] font-semibold text-gray-400 uppercase tracking-widest">Completas</span>
                                     </div>
-                                    <div class="p-5 bg-white rounded-[1.5rem] border border-gray-100 text-center shadow-sm">
-                                        <span class="block text-3xl font-semibold text-yellow-500">${totalAssigned - completed}</span>
-                                        <span class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">Faltantes</span>
+                                    <div class="p-3 bg-white rounded-[1rem] border border-gray-100 text-center shadow-sm">
+                                        <span class="block text-2xl font-semibold text-yellow-500">${totalAssigned - completed}</span>
+                                        <span class="text-[8px] font-semibold text-gray-400 uppercase tracking-widest">Faltantes</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Columna 4: Observaciones y Archivos -->
-                        <div class="lg:col-span-4 space-y-8">
-                            <h4 class="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.3em] mb-6 border-l-4 border-teal-500 pl-4">Estado Académico</h4>
-                            <div class="bg-gray-900 rounded-[2rem] p-8 flex flex-col justify-between h-full relative overflow-hidden group">
-                                <div class="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-                                <div class="text-center py-4 relative z-10">
+                        <div class="lg:col-span-4 space-y-4">
+                            <h4 class="text-[9px] font-semibold text-gray-400 uppercase tracking-[0.2em] mb-2 border-l-4 border-teal-500 pl-3">Estado Académico</h4>
+                            <div class="bg-gray-900 rounded-[1.5rem] p-4 flex flex-col justify-between h-full relative overflow-hidden group">
+                                <div class="absolute -top-10 -right-10 w-24 h-24 bg-white opacity-5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+                                <div class="text-center py-1 relative z-10">
                                     ${pending === 0 && (totalAssigned - completed) === 0 && totalAssigned > 0 ?
-                                        `<div class="inline-flex p-4 bg-green-500/20 text-green-400 rounded-2xl mb-4 border border-green-500/30"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg></div>
-                                         <div class="text-xl font-semibold text-white tracking-tight uppercase">EXPEDIENTE AL DÍA</div>
-                                         <p class="text-[10px] text-gray-500 uppercase font-semibold tracking-widest mt-2">Carga académica completada</p>` :
-                                        `<div class="inline-flex p-4 bg-yellow-500/20 text-yellow-400 rounded-2xl mb-4 border border-yellow-500/30"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-                                         <div class="text-xl font-semibold text-white tracking-tight uppercase">ACTIVIDAD EN CURSO</div>
-                                         <p class="text-[10px] text-gray-500 uppercase font-semibold tracking-widest mt-2">${pending} por calificar / ${totalAssigned - completed} faltantes</p>`
+                                        `<div class="inline-flex p-2 bg-green-500/20 text-green-400 rounded-xl mb-2 border border-green-500/30"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg></div>
+                                         <div class="text-base font-semibold text-white tracking-tight uppercase">AL DÍA</div>
+                                         <p class="text-[8px] text-gray-500 uppercase font-semibold tracking-widest mt-1">Carga académica completada</p>` :
+                                        `<div class="inline-flex p-2 bg-yellow-500/20 text-yellow-400 rounded-xl mb-2 border border-yellow-500/30"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                                         <div class="text-base font-semibold text-white tracking-tight uppercase">EN CURSO</div>
+                                         <p class="text-[8px] text-gray-500 uppercase font-semibold tracking-widest mt-1">${pending} por calificar / ${totalAssigned - completed} faltantes</p>`
                                     }
                                 </div>
-                                <div class="mt-6 pt-6 border-t border-white/10 relative z-10">
-                                    <button class="w-full py-4 bg-white/5 border border-white/10 text-white font-semibold text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-gray-900 transition-all flex items-center justify-center gap-3" onclick="window.scrollTo({top: document.querySelector('table').offsetTop - 100, behavior: 'smooth'})">
+                                <div class="mt-2 pt-3 border-t border-white/10 relative z-10">
+                                    <button class="w-full py-2 bg-white/5 border border-white/10 text-white font-semibold text-[9px] uppercase tracking-[0.1em] rounded-lg hover:bg-white hover:text-gray-900 transition-all flex items-center justify-center gap-2" onclick="window.scrollTo({top: document.querySelector('table').offsetTop - 100, behavior: 'smooth'})">
                                         Explorar evidencias
-                                        <svg class="w-4 h-4 transform group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                                        <svg class="w-3 h-3 transform group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                                     </button>
                                 </div>
                             </div>
@@ -1112,7 +1112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return itemEstado === fEstado;
         });
         currentFilteredItems = finalFiltered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Actividad</th><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Estado</th><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Archivo</th><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Calificación</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.65rem]">Actividad</th><th class="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.65rem]">Estado</th><th class="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.65rem]">Archivo</th><th class="px-2 py-2 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.65rem]">Nota</th><th class="px-2 py-2 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.65rem]">Acción</th></tr>`;
         if (finalFiltered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-500">Sin entregas.</td></tr>'; return; }
         submissionsTableBody.innerHTML = finalFiltered.map((item, idx) => {
             let statusClass = 'bg-gray-50 text-gray-500'; let statusText = item.estado || 'Pendiente';
@@ -1135,13 +1135,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return `
                 <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="p-4"><div class="font-semibold text-gray-900 uppercase tracking-tighter">${item.titulo}</div><div class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">${item.asignatura} | ${item.tipo}</div></td>
-                    <td class="p-4"><span class="px-2 py-1 rounded-lg text-[9px] font-semibold uppercase tracking-widest ${statusClass}">${statusText}</span></td>
-                    <td class="p-4">${fileHtml}</td>
-                    <td class="p-4 font-semibold text-gray-900 text-xs">${item.calificacion || '-'}</td>
-                    <td class="p-4 text-right space-x-2">
-                        <button class="btn-ima-primary px-3 py-1.5 text-[10px] grade-btn" data-index="${idx}">Calificar</button>
-                        <button class="btn-ima-cancel px-3 py-1.5 text-[10px] delete-submission-btn" data-index="${idx}">Eliminar</button>
+                    <td class="px-1 py-2"><div class="font-semibold text-gray-900 uppercase tracking-tighter text-[11px] line-clamp-1">${item.titulo}</div><div class="text-[8px] font-semibold text-gray-400 uppercase tracking-widest">${item.asignatura}</div></td>
+                    <td class="px-1 py-2"><span class="px-1.5 py-0.5 rounded text-[8px] font-semibold uppercase tracking-widest ${statusClass}">${statusText}</span></td>
+                    <td class="px-1 py-2">${fileHtml}</td>
+                    <td class="px-1 py-2 font-semibold text-gray-900 text-[10px]">${item.calificacion || '-'}</td>
+                    <td class="px-1 py-2 text-right space-x-1">
+                        <button class="bg-blue-600 text-white px-2 py-1 rounded-md text-[8px] font-bold uppercase grade-btn" data-index="${idx}">Calificar</button>
+                        <button class="bg-red-50 text-red-600 px-2 py-1 rounded-md text-[8px] font-bold uppercase delete-submission-btn" data-index="${idx}">Eliminar</button>
                     </td>
                 </tr>`;
         }).join('');
@@ -1584,8 +1584,8 @@ async function fetchNewsManagement() {
             newsManagementContainer.innerHTML = data.map(n => `
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all">
                     ${n.imagenUrl ? `
-                        <div class="h-40 overflow-hidden">
-                            <img src="${window.convertDriveLink ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl}" class="w-full h-full object-cover">
+                        <div class="h-40 overflow-hidden bg-gray-50">
+                            <img src="${window.convertDriveLink(n.imagenUrl)}" class="w-full h-full object-cover">
                         </div>
                     ` : ''}
                     <div class="p-5">
@@ -1622,7 +1622,8 @@ if (newsForm) {
                     fileData: base64
                 });
                 if (uploadRes.status === 'success') {
-                    imageUrl = uploadRes.data.fileId;
+                    // Usar la URL directa retornada por el backend si está disponible (Req 1)
+                    imageUrl = uploadRes.data.directUrl || uploadRes.data.fileId;
                 }
             }
 
