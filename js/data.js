@@ -47,7 +47,7 @@ window.presentationData = [
                     { title: "Lenguajes compilados e interpretados / Bucles", file: "II_BTP_A/Programacion/lenguajes_compilados_interpretados.html" },
                     { title: "Lenguajes declarativos / Bucle Mientras", file: "II_BTP_A/Programacion/lenguajes_declarativos_mientras.html" },
                     { title: "Programación Lógica / Bucle Repetir", file: "II_BTP_A/Programacion/prog_logica_repetir.html" },
-                    { title: "Bases de Datos: Tipos y Modelos", file: "II_BTP_A/Programacion/prog_bd_modelos.html" }
+                    { title: "Bases de Datos: Tipos y Modelos (31/05)", file: "II_BTP_A/Programacion/prog_bd_modelos.html" }
                 ]
             }
         ]
@@ -79,7 +79,8 @@ window.presentationData = [
                     { title: "Enlazar estilos CSS / Etiquetas autocerrables", file: "III_BTP_A/dw_II/enlazar_estilos_autocerrables.html" },
                     { title: "Medidas en CSS (px, em, %)", file: "III_BTP_A/dw_II/medidas_css.html" },
                     { title: "Modelo de Caja y Dimensiones", file: "III_BTP_A/dw_II/modelo_caja_dimensiones.html" },
-                    { title: "Bordes, Enlaces y Decoración", file: "III_BTP_A/dw_II/bordes_enlaces_decoracion.html" }
+                    { title: "Bordes, Enlaces y Decoración", file: "III_BTP_A/dw_II/bordes_enlaces_decoracion.html" },
+                    { title: "Selectores (Simples, Múltiples y Globales)", file: "III_BTP_A/dw_II/selectores_css.html" }
                 ]
             }
         ]

@@ -1,0 +1,60 @@
+# Normas de Generación de Presentaciones Académicas (ISEMED)
+
+Este documento establece las normas obligatorias para la creación y actualización de presentaciones didácticas dentro de la plataforma académica.
+
+## 1. Estructura Obligatoria (16 Diapositivas)
+
+Todas las presentaciones deben constar de exactamente 16 diapositivas distribuidas de la siguiente manera:
+
+*   **Diapositiva 1:** Portada del tema (Regla de Conservación Estricta).
+    *   **Estructura:** Se debe mantener la estructura original de la plantilla base sin modificaciones estructurales.
+    *   **Elementos Obligatorios (en orden):**
+        1. Logo de la institución (sin cambios en dimensiones o posición).
+        2. Nombre del tema (Título principal).
+        3. Nombre de la asignatura.
+        4. Nombre del grado y sección.
+        5. Nombre del docente.
+        6. Fecha de la clase.
+    *   **Restricciones de Estilo:** Prohibido modificar tipografía, tamaños de letra, colores, alineación (centrada) o espaciados. El título debe estar separado del resto por dos espacios visuales.
+    *   **Modificaciones Permitidas:** Únicamente el texto del tema, fecha y asignatura.
+*   **Diapositivas 2 a 6:** Desarrollo del Tema Principal 1. Explicaciones claras y ejemplos estructurados.
+*   **Diapositiva 7:** Ejercicio Práctico del Tema Principal 1. Incluye definiciones y conceptos clave.
+*   **Diapositivas 8 a 12:** Desarrollo del Tema Principal 2 (o continuación avanzada del tema).
+*   **Diapositiva 13:** Ejercicio Práctico del Tema Principal 2.
+*   **Diapositivas 14 a 15:** Cuestionario Interactivo (Evaluación).
+    *   Mínimo 10 preguntas (5 por diapositiva).
+    *   **Reglas del Quiz:**
+        *   La respuesta correcta debe tener una longitud similar a las demás opciones (no debe destacar por ser más corta ni más larga).
+        *   La posición de la respuesta correcta debe variar obligatoriamente respecto a la pregunta anterior (no repetir ubicación consecutiva).
+*   **Diapositiva 16:** Asignación (Tarea) indicada en el plan de clases.
+
+## 2. Reglas de Diseño y Estilo
+
+*   **Estilo Visual:** Diseño sobrio, profesional y académico.
+*   **Densidad de Información:** Evitar la saturación de texto. Priorizar la legibilidad.
+*   **Fuentes y Tipografía:** Utilizar 'Inter' para cuerpo de texto y 'Poppins' para títulos.
+*   **Colores Institucionales:** Respetar la paleta definida en el sistema (Azul, Naranja, Gris, Blanco).
+*   **Gráficos:** Se prohíben imágenes externas para diagramas o esquemas. Deben generarse mediante HTML, CSS o JavaScript nativo.
+*   **Estructura de Ejemplos:** Todos los ejemplos de código deben ser duales, mostrando explícitamente:
+    1. Implementación en HTML.
+    2. Implementación en CSS.
+*   **Framework:** Utilizar Tailwind CSS v4 para el estilizado.
+
+## 3. Sistema de Navegación
+
+La presentación debe responder a los siguientes controles:
+
+*   **Avanzar:** Clic izquierdo, Barra espaciadora o Flecha derecha.
+*   **Retroceder:** Tecla Retroceso (Backspace) o Flecha izquierda.
+*   **Pantalla Completa (F11):** Al estar en modo pantalla completa, se deben ocultar automáticamente el encabezado, pie de página y botones de navegación de la interfaz global para maximizar el área de proyección.
+
+## 4. Restricciones de Contenido
+
+*   **Fuentes Autorizadas:** Únicamente se permite extraer información de los PDFs oficiales proporcionados en la carpeta de la asignatura correspondiente.
+*   **Análisis de Planes de Clase:** Es obligatorio identificar el tema correspondiente a la fecha exacta mediante el Plan de Clases oficial.
+*   **Coherencia Temporal:** Revisar el tema anterior y siguiente para evitar saltos lógicos o repeticiones innecesarias.
+*   **Temas Secundarios:** Solo se permite complementar información externa (como ejercicios de PSeInt o estructuras de control) si están explícitamente mencionados en el plan de clases.
+
+## 5. Integración al Sistema
+
+Las presentaciones terminadas deben integrarse en el archivo `js/data.js` para ser visibles en la sección "Cursos" del menú principal, respetando los filtros de Rol, Grado, Sección y Asignatura.
