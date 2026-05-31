@@ -13,7 +13,9 @@ Todas las presentaciones deben constar de exactamente 16 diapositivas distribuid
 *   **Diapositiva 13:** Ejercicio Práctico del Tema Principal 2.
 *   **Diapositivas 14 a 15:** Cuestionario Interactivo (Evaluación).
     *   Mínimo 10 preguntas (5 por diapositiva).
-    *   La respuesta correcta debe ser breve en comparación con las opciones incorrectas.
+    *   **Reglas del Quiz:**
+        *   La respuesta correcta debe tener una longitud similar a las demás opciones (no debe destacar por ser más corta ni más larga).
+        *   La posición de la respuesta correcta debe variar obligatoriamente respecto a la pregunta anterior (no repetir ubicación consecutiva).
 *   **Diapositiva 16:** Asignación (Tarea) indicada en el plan de clases.
 
 ## 2. Reglas de Diseño y Estilo

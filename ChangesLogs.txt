@@ -884,7 +884,7 @@ DESCRIPCIÓN DE CAMBIOS:
 - Archivo: II_BTP_A/Programacion/prog_logica_repetir.html
   - Reestructurada presentación de 16 diapositivas para el tema "Programación Lógica / Bucle Repetir" (17 de mayo).
   - Integrado contenido teórico de p.58 del PDF (Entidades, Relaciones, Ventajas/Desventajas).
-- Archivo: II_BTP_A/Programacion/prog_bd_modelos.html
+- Archivo: II_BTP_A/Programacion/prog_bd_modelos.html (Actualizado)
   - Creada presentación de 16 diapositivas para el tema "Programación orientada a bases de datos" (24 de mayo).
 - Archivo: III_BTP_A/dw_II/bordes_enlaces_decoracion.html
   - Creada presentación de 16 diapositivas para el tema "Bordes, Enlaces y Decoración" (24 de mayo).
@@ -1138,7 +1138,7 @@ MODIFICACIONES:
 31/05/2026 (Generación de Presentaciones Académicas)
 - Archivo: Normas_Presentaciones.md
   - Creado documento de normas con estructura obligatoria de 16 diapositivas y reglas de diseño/navegación.
-- Archivo: II_BTP_A/Programacion/prog_bd_modelos_31_mayo.html
+- Archivo: II_BTP_A/Programacion/prog_bd_modelos.html (Actualizado)
   - Creada copia de la presentación de bases de datos con fecha actualizada al 31 de mayo de 2026.
 - Archivo: III_BTP_A/dw_II/selectores_css.html
   - Creada nueva presentación de "Selectores (Simples, Múltiples y Globales)" siguiendo estrictamente el plan de clases y la estructura de 16 diapositivas.
@@ -1146,3 +1146,11 @@ MODIFICACIONES:
   - Añadido cuestionario interactivo de 10 preguntas y asignación del 5%.
 - Archivo: js/data.js
   - Integradas las nuevas presentaciones en el objeto `presentationData` para su visualización en el portal.
+
+31/05/2026 (Corrección de Quices y Normas)
+- Archivo: Normas_Presentaciones.md
+  - Actualizadas reglas para quices: balance de longitud de opciones y variación obligatoria de posición de respuesta.
+- Archivo: III_BTP_A/dw_II/selectores_css.html
+  - Corregidas las opciones del quiz para que la respuesta correcta sea seleccionable.
+  - Ajustada la longitud de las opciones para cumplir con la nueva normativa.
+  - Rotada manualmente la posición de las respuestas correctas.

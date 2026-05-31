@@ -369,16 +369,16 @@
         let currentSlide = 0;
 
         const quizData = [
-            { q: "¿Qué símbolo representa al selector global?", options: ["#", ".", "*", "@"], a: "*" },
-            { q: "¿Cómo se separa una lista de selectores múltiples?", options: ["Con puntos", "Con comas", "Con espacios", "Con guiones"], a: "Con comas" },
-            { q: "¿Qué prefijo se usa para los selectores de clase?", options: ["#", "@", "$", "."], a: "." },
-            { q: "¿Cuál selector es más específico?", options: ["Etiqueta", "Global", "ID", "Clase"], a: "ID" },
-            { q: "¿Qué hace el selector universal?", options: ["Selecciona <body>", "Selecciona todo", "Limpia la caché", "Pone color blanco"], a: "Selecciona todo" },
-            { q: "¿Para qué sirve agrupar selectores?", options: ["Para bugs", "Evitar repetir código", "Hacerlo más lento", "Solo para fuentes"], a: "Evitar repetir código" },
-            { q: "¿Cómo se define un selector de ID en CSS?", options: ["Con .", "Con :", "Con #", "Con *"], a: "Con #" },
-            { q: "¿Qué etiqueta se usa para agrupar palabras en línea?", options: ["div", "section", "span", "header"], a: "span" },
-            { q: "¿Qué propiedad CSS define el color del texto?", options: ["font-color", "text-style", "background", "color"], a: "color" },
-            { q: "¿Los selectores de clase pueden repetirse?", options: ["No, son únicos", "Sí", "Solo en <body>", "Depende del navegador"], a: "Sí" }
+            { q: "¿Qué símbolo representa al selector global?", options: ["El signo #", "El signo .", "El signo *", "El signo @"], a: "El signo *" },
+            { q: "¿Cómo se separa una lista de selectores múltiples?", options: ["Usando comas", "Usando puntos", "Usando barras", "Usando guion"], a: "Usando comas" },
+            { q: "¿Qué prefijo se usa para los selectores de clase?", options: ["Un numeral #", "Una arroba @", "Un signo dólar", "Un punto final"], a: "Un punto final" },
+            { q: "¿Cuál selector es más específico en el DOM?", options: ["Selector Global", "Selector de ID", "Selector Clase", "Tipo Etiqueta"], a: "Selector de ID" },
+            { q: "¿Qué hace exactamente el selector universal?", options: ["Crea una tabla", "Borra el estilo", "Selecciona todo", "Limpia memoria"], a: "Selecciona todo" },
+            { q: "¿Para qué sirve agrupar selectores en CSS?", options: ["Hacerlo complejo", "Poner más color", "Cambiar fuente", "Evitar repetir"], a: "Evitar repetir" },
+            { q: "¿Cómo se define un selector de ID en CSS?", options: ["Usando signo #", "Usando punto .", "Usando signo :", "Usando signo *"], a: "Usando signo #" },
+            { q: "¿Qué etiqueta se usa para agrupar en línea?", options: ["Etiqueta div", "Etiqueta span", "Etiqueta nav", "Etiqueta p"], a: "Etiqueta span" },
+            { q: "¿Qué propiedad CSS define el color del texto?", options: ["Propiedad color", "Propiedad font", "Propiedad text", "Propiedad back"], a: "Propiedad color" },
+            { q: "¿Los selectores de clase pueden repetirse?", options: ["No se permite", "Se permite usar", "Solo en tablas", "Es un error web"], a: "Se permite usar" }
         ];
         let currentQuiz = 0;
 

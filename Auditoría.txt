@@ -89,10 +89,18 @@ ARCHIVO: Normas_Presentaciones.md
 ---------------------------------
 - Hallazgo: Ausencia de un marco normativo para la creación de presentaciones. ✔ RESUELTO (Documento creado).
 
-ARCHIVO: II_BTP_A/Programacion/prog_bd_modelos_31_mayo.html
+ARCHIVO: II_BTP_A/Programacion/prog_bd_modelos.html
 ---------------------------------------------------------
 - Hallazgo: Necesidad de actualizar la fecha de la presentación de base de datos para el 31 de mayo de 2026. ✔ RESUELTO.
 
 ARCHIVO: III_BTP_A/dw_II/selectores_css.html
 -------------------------------------------
 - Hallazgo: Nueva presentación requerida para el tema "Selectores (Simples, Múltiples y Globales)". Se debe seguir estructura de 16 diapositivas y reglas de navegación específicas. ✔ RESUELTO.
+
+ARCHIVO: Normas_Presentaciones.md
+---------------------------------
+- Hallazgo: Reglas de quiz insuficientes. ✔ RESUELTO (Añadidas reglas de balance de longitud y rotación de posiciones).
+
+ARCHIVO: III_BTP_A/dw_II/selectores_css.html
+-------------------------------------------
+- Hallazgo: Error en concordancia de respuestas del quiz. ✔ RESUELTO (Opciones balanceadas y validación de respuesta correcta corregida).
