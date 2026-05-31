@@ -1161,3 +1161,31 @@ MODIFICACIONES:
 - Archivo: III_BTP_A/dw_II/selectores_css.html
   - Rediseñada la portada con una estética profesional, tonos sobrios (#1e293b) y jerarquía visual mejorada.
   - Actualizados todos los ejemplos de selectores para mostrar simultáneamente la implementación en HTML y CSS.
+
+16/06/2026
+TAREA: [A-76]
+TÍTULO: Optimización Global, Carga de Archivos de Gran Escala y Sistema de Noticias
+ÁREA: UI/UX / Frontend / Lógica / Rendimiento
+PRIORIDAD: ALTA
+ESTADO: COMPLETADA
+
+MODIFICACIONES:
+- Global (Header & Layout):
+  - Aumentado tamaño de logos institucionales (Logo ISEMED y Bandera) para mayor presencia visual.
+  - Reducido el interlineado en el título institucional (.header-title-container) a 0.8 para un diseño más compacto.
+  - Ajustadas las reglas de .container para reducir márgenes laterales y maximizar el uso del viewport en todas las resoluciones.
+- Dashboard Docente:
+  - Optimización extrema de la Tabla de Evidencias: reducción de padding (px-1 py-2) y tipografía compacta (11px) con line-clamp para eliminar el scroll horizontal.
+  - Refinamiento de la Tarjeta del Alumno: reducción de padding general y dimensiones de elementos para optimizar el espacio vertical.
+- Dashboard Estudiante:
+  - Eliminación de bloques redundantes (Mi Portal Académico/Bienvenido) para priorizar la tarjeta de expediente.
+  - Implementación de Optimizador de Subida de Alta Fidelidad: previsualización de archivos mediante miniaturas (thumbnails) reales para imágenes y placeholders para documentos.
+  - Lógica de Carga Avanzada: Implementación de subida por fragmentos (chunking) para soportar archivos >50MB, garantizando integridad y evitando fallos post-100%.
+  - Sistema de Errores Amigables: Mapeo de fallos técnicos a mensajes comprensibles por el estudiante.
+  - Gestión de Archivos Temporales: Lógica de eliminación automática de archivos cargados al cancelar el proceso, incluyendo advertencia de pérdida de datos.
+- Sistema de Noticias:
+  - Rediseño de tarjetas de noticias en index.html con visualización obligatoria de extracto y miniatura de alta resolución.
+  - Implementación de News Detail Modal: nueva interfaz para lectura de noticias completas sin salir de la página principal.
+  - Activación del botón "Seguir Leyendo" vinculado dinámicamente al sistema de noticias.
+- Documentación:
+  - Actualización de README.md reflejando la nueva arquitectura de subida y el módulo de noticias.

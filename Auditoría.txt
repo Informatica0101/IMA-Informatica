@@ -9,7 +9,7 @@ ARCHIVO: backend/user-service/Code.gs
 ARCHIVO: js/ui-common.js
 ------------------------
 - Hallazgo 3: El manejo de 'profile-form' es centralizado pero 'index.html' no carga 'js/config.js' ni 'js/api.js' antes de invocar acciones, provocando "Error de conexión".
-- Hallazgo 4: El modal 'academic-menu-modal' aplica desenfoque que dificulta la lectura en móviles. Se debe ajustar a opacidad alta sin blur.
+- Hallazgo 4: El modal 'academic-menu-modal' aplica desenfoque que dificultar la lectura en móviles. Se debe ajustar a opacidad alta sin blur.
 
 ARCHIVO: js/teacher.js
 ----------------------
@@ -31,6 +31,7 @@ REDISEÑO UI/UX - ESPECIFICACIONES
 - Desktop: Nav horizontal directa.
 - Móvil: Nav inferior fija (Home, Portal, Cursos, Actividades, Perfil).
 - Colores: rgba(17, 24, 39, 0.95) para overlays oscuros.
+
 REGISTRO DE AUDITORÍA - MEJORAS GENERALES Y REDISEÑO UI/UX
 ======================================================
 
@@ -99,7 +100,7 @@ ARCHIVO: III_BTP_A/dw_II/selectores_css.html
 
 ARCHIVO: Normas_Presentaciones.md
 ---------------------------------
-- Hallazgo: Reglas de quiz insuficientes. ✔ RESUELTO (Añadidas reglas de balance de longitud y rotación de posiciones).
+- Hallazgo: Reglas de quiz insuficiente. ✔ RESUELTO (Añadidas reglas de balance de longitud y rotación de posiciones).
 
 ARCHIVO: III_BTP_A/dw_II/selectores_css.html
 -------------------------------------------
@@ -108,3 +109,37 @@ ARCHIVO: III_BTP_A/dw_II/selectores_css.html
 ARCHIVO: III_BTP_A/dw_II/selectores_css.html
 -------------------------------------------
 - Hallazgo: Portada con diseño saturado y falta de estructura dual en ejemplos de código. ✔ RESUELTO (Rediseño de portada minimalista y actualización de ejemplos a formato HTML/CSS).
+
+REGISTRO DE AUDITORÍA - MEJORAS JUNIO 2026
+=========================================
+
+ARCHIVO: css/style.css
+----------------------
+- Hallazgo J1: Los logos (.logo-img) tienen tamaños máximos de 85px en pantallas grandes. Se requiere aumentar para mejorar visibilidad. ✔ RESUELTO
+- Hallazgo J2: Las reglas de .container limitan el aprovechamiento del viewport en pantallas anchas (max-width: 100% con padding excesivo). ✔ RESUELTO
+- Hallazgo J3: El interlineado en .header-title-container es 0.9, pero el usuario solicita reducirlo aún más entre las dos líneas. ✔ RESUELTO
+
+ARCHIVO: index.html
+-------------------
+- Hallazgo J4: La sección de noticias (#news-section) está oculta por defecto y se muestra dinámicamente. El requerimiento pide mostrar al menos 3 noticias. ✔ RESUELTO
+- Hallazgo J5: El botón "Seguir Leyendo" en las noticias no tiene funcionalidad (es un span con clases de estilo). ✔ RESUELTO
+
+ARCHIVO: teacher-dashboard.html
+-------------------------------
+- Hallazgo J6: La tabla de entregas utiliza clases estándar de Tailwind. Se requiere optimizar el espaciado horizontal para eliminar el scroll. ✔ RESUELTO
+- Hallazgo J7: La tarjeta de información del alumno (#student-details-info-card) inyectada dinámicamente tiene paddings de p-6 a p-10 que generan altura excesiva. ✔ RESUELTO
+
+ARCHIVO: student-dashboard.html
+-------------------------------
+- Hallazgo J8: El bloque de encabezado con "Mi Portal Académico" y "Bienvenido" es redundante con la información de la tarjeta de expediente. ✔ RESUELTO
+- Hallazgo J9: El modal de entrega (#submission-modal) no tiene un área de miniaturas (thumbnails) para previsualización real antes de la subida, solo muestra una lista de nombres. ✔ RESUELTO
+
+ARCHIVO: js/student.js
+----------------------
+- Hallazgo J10: La lógica de subida es secuencial pero no soporta fragmentación (chunking) para archivos individuales de gran tamaño, lo que causa errores post-100%. ✔ RESUELTO
+- Hallazgo J11: Los mensajes de error son técnicos (extraídos de error.message del backend). Se requiere mapeo a lenguaje amigable. ✔ RESUELTO
+- Hallazgo J12: No hay una advertencia de "archivos temporales" al cancelar o abandonar el modal de entrega. ✔ RESUELTO
+
+ARCHIVO: js/index-ui.js
+-----------------------
+- Hallazgo J13: La función loadNews ya extrae el primer párrafo, pero el diseño de la tarjeta debe unificarse y permitir la navegación a la noticia completa. ✔ RESUELTO

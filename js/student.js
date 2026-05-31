@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const firstName = currentUser.nombre.split(' ')[0];
-    document.getElementById('student-name').textContent = firstName;
+    const studentNameEl = document.getElementById('student-name');
+    if (studentNameEl) studentNameEl.textContent = firstName;
     const tasksList = document.getElementById('tasks-list');
     const logoutButton = document.getElementById('logout-button');
 
@@ -520,12 +521,24 @@ document.addEventListener('DOMContentLoaded', () => {
         submissionModal.classList.remove('hidden');
     }
 
-    function closeSubmissionModal() {
+    async function closeSubmissionModal() {
         if (activeUploads > 0) {
             if (!confirm('Hay una subida en progreso. ¿Estás seguro de cerrar el modal?')) return;
         }
+        if (uploadedFiles.length > 0) {
+            if (confirm('ATENCIÓN: Al cerrar este modal se eliminarán los archivos cargados temporalmente y se cancelará el proceso de entrega. ¿Deseas continuar?')) {
+                // Eliminar archivos temporales de forma asíncrona pero sin bloquear la UI
+                uploadedFiles.forEach(f => fetchApi('TASK', 'deleteFile', { fileId: f.fileId }).catch(console.error));
+                uploadedFiles = [];
+            } else {
+                return;
+            }
+        }
         submissionModal.classList.add('hidden');
         submissionForm.reset();
+        uploadedFilesList.innerHTML = '';
+        uploadedFilesContainer.classList.add('hidden');
+        updateConfirmButtonState();
     }
 
     function updateConfirmButtonState() {
@@ -629,14 +642,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentFileSize = currentFile.size;
 
             const li = document.createElement('li');
-            li.className = 'flex items-center justify-between text-sm text-gray-700 bg-white p-2 rounded border shadow-sm animate-fade-in-up';
+            li.className = 'flex flex-col text-sm text-gray-700 bg-white p-3 rounded-xl border border-gray-100 shadow-sm animate-fade-in-up gap-3';
+
+            // Generar vista previa inicial (thumbnail placeholder o real si es imagen)
+            let thumbnailHtml = `<div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><i class="fas fa-file"></i></div>`;
+            if (currentFile.type.startsWith('image/')) {
+                const tempUrl = URL.createObjectURL(currentFile);
+                thumbnailHtml = `<img src="${tempUrl}" class="w-12 h-12 object-cover rounded-lg shadow-inner">`;
+            } else if (currentFile.type === 'application/pdf') {
+                thumbnailHtml = `<div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-red-400"><i class="fas fa-file-pdf"></i></div>`;
+            }
+
             li.innerHTML = `
-                <div class="flex items-center space-x-2 truncate">
-                    <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <span class="truncate text-xs">${currentFileName}</span>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3 truncate">
+                        ${thumbnailHtml}
+                        <div class="truncate">
+                            <p class="truncate text-xs font-bold text-gray-800 uppercase tracking-tighter">${currentFileName}</p>
+                            <p class="text-[10px] text-gray-400 font-medium uppercase tracking-widest" id="upload-progress-text">Preparando...</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <span class="text-[10px] text-blue-500 font-medium" id="upload-progress-text">Preparando...</span>
+                <div class="w-full bg-gray-50 h-1.5 rounded-full overflow-hidden border border-gray-100">
+                    <div id="upload-progress-bar" class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
                 </div>
             `;
             uploadedFilesList.appendChild(li);
@@ -647,12 +678,14 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 let uploadResult;
                 const progressSpan = li.querySelector('#upload-progress-text');
+                const progressBar = li.querySelector('#upload-progress-bar');
                 let fileData;
                 let mimeType = currentFile.type;
 
                 // Optimización Móvil: Compresión de imágenes (Req 3.3)
                 if (currentFile.type.startsWith('image/')) {
                     progressSpan.textContent = "Optimizando...";
+                    if (progressBar) progressBar.style.width = '10%';
                     fileData = await compressImage(currentFile);
                 } else {
                     fileData = await new Promise((resolve) => {
@@ -670,13 +703,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     const rawBase64 = fileData.split(',')[1];
 
                     for (let i = 0; i < totalChunks; i++) {
-                        progressSpan.textContent = `${Math.round((i/totalChunks)*100)}%`;
+                        const percent = Math.round((i / totalChunks) * 100);
+                        progressSpan.textContent = `Subiendo ${percent}%`;
+                        if (progressBar) progressBar.style.width = `${percent}%`;
+
                         const start = i * (CHUNK_SIZE * 1.33);
                         const chunk = rawBase64.substring(start, start + (CHUNK_SIZE * 1.33));
                         await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData: chunk });
                     }
 
                     progressSpan.textContent = "Finalizando...";
+                    if (progressBar) progressBar.style.width = '100%';
                     uploadResult = await fetchApi('TASK', 'finishChunkedUpload', {
                         uploadId, userId: currentUser.userId, tareaId: currentTaskId,
                         parcial: currentTaskParcial, asignatura: currentTaskAsignatura,
@@ -684,11 +721,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 } else {
                     progressSpan.textContent = "Subiendo...";
+                    if (progressBar) progressBar.style.width = '50%';
                     uploadResult = await fetchApi('TASK', 'uploadFile', {
                         userId: currentUser.userId, tareaId: currentTaskId,
                         fileName: currentFileName, fileData: fileData,
                         parcial: currentTaskParcial, asignatura: currentTaskAsignatura
                     });
+                    if (progressBar) progressBar.style.width = '100%';
                 }
 
                 if (uploadResult.status === 'success') {
@@ -702,21 +741,42 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentFolderId = uploadedData.folderId;
 
                     li.innerHTML = `
-                        <div class="flex items-center space-x-2 truncate">
-                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="truncate text-xs font-medium text-gray-800">${currentFileName}</span>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <span class="text-[10px] text-green-600 font-medium uppercase tracking-tighter">Listo</span>
-                            <button type="button" class="text-red-400 hover:text-red-600 remove-file-btn p-1" data-file-id="${uploadedData.fileId}">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3 truncate">
+                                ${thumbnailHtml}
+                                <div class="truncate">
+                                    <p class="truncate text-xs font-bold text-gray-800 uppercase tracking-tighter">${currentFileName}</p>
+                                    <p class="text-[10px] text-green-600 font-bold uppercase tracking-widest">Listo</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                <button type="button" class="text-red-400 hover:text-red-600 remove-file-btn p-1 transition-all hover:scale-110" data-file-id="${uploadedData.fileId}">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
                         </div>
                     `;
                 } else throw new Error(uploadResult.message);
 
             } catch (error) {
-                li.innerHTML = `<div class="flex items-center justify-between w-full p-1 bg-red-50 rounded"><span class="text-red-600 text-[10px] truncate font-medium">FALLÓ: ${currentFileName}</span><button class="text-[10px] text-red-800 font-semibold ml-2" onclick="this.closest('li').remove()">✕</button></div>`;
+                console.error("Error detallado de subida:", error);
+                let friendlyMsg = "Error inesperado";
+                const msg = error.message.toLowerCase();
+                if (msg.includes("network") || msg.includes("fetch")) friendlyMsg = "Error de conexión";
+                else if (msg.includes("large") || msg.includes("size")) friendlyMsg = "Archivo demasiado grande";
+                else if (msg.includes("quota") || msg.includes("storage")) friendlyMsg = "Error de almacenamiento";
+                else if (msg.includes("corrupt")) friendlyMsg = "Archivo dañado";
+                else if (msg.includes("permission") || msg.includes("access")) friendlyMsg = "Error de permisos";
+
+                li.innerHTML = `
+                    <div class="flex items-center justify-between w-full p-1 bg-red-50 rounded border border-red-100">
+                        <div class="flex items-center gap-2 truncate">
+                            <i class="fas fa-exclamation-circle text-red-500 text-xs"></i>
+                            <span class="text-red-600 text-[10px] truncate font-bold uppercase tracking-tighter">${friendlyMsg}: ${currentFileName}</span>
+                        </div>
+                        <button class="text-[10px] text-red-800 font-black ml-2 hover:bg-red-100 px-1.5 py-0.5 rounded" onclick="this.closest('li').remove()">✕</button>
+                    </div>`;
             } finally {
                 activeUploads--;
                 updateConfirmButtonState();
@@ -840,4 +900,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchAllActivities();
     initWhatsAppButton();
+
+    window.addEventListener('beforeunload', (e) => {
+        if (activeUploads > 0 || uploadedFiles.length > 0) {
+            e.preventDefault();
+            e.returnValue = 'Tienes una entrega en progreso. Si sales ahora, se perderán los archivos cargados.';
+        }
+    });
 });

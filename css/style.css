@@ -67,45 +67,54 @@ body {
 @media (min-width: 1024px) {
     #main-header .container {
         max-width: 100% !important;
-        padding-left: 16px !important;
-        padding-right: 16px !important;
+        padding-left: 8px !important;
+        padding-right: 8px !important;
     }
 }
 
 @media (min-width: 1280px) {
     .container {
         max-width: 100% !important;
-        padding-left: 16px !important;
-        padding-right: 16px !important;
+        padding-left: 8px !important;
+        padding-right: 8px !important;
     }
 }
 
 @media (min-width: 1536px) {
     .container {
         max-width: 100% !important;
-        padding-left: 20px !important;
-        padding-right: 20px !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
     }
 }
 
 .logo-img {
     height: auto;
-    width: 50px;
+    width: 65px;
     transition: width 0.3s ease;
 }
 
 @media (min-width: 768px) {
-    .logo-img { width: 70px; }
+    .logo-img { width: 90px; }
 }
 
 @media (min-width: 1280px) {
-    .logo-img { width: 85px; }
+    .logo-img { width: 100px; }
 }
 
 .header-title-container {
-    line-height: 0.9;
+    line-height: 0.8;
     display: flex;
     flex-direction: column;
+}
+
+.hn-flag {
+    width: 35px;
+    height: auto;
+}
+
+@media (min-width: 768px) {
+    .hn-flag { width: 55px; }
 }
 
 #mobile-menu-overlay {
@@ -379,3 +388,12 @@ footer a:hover {
 
 .assignment-content-scroll::-webkit-scrollbar { width: 3px; }
 .assignment-content-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+/* Custom scroll for modals (A-76) */
+.scroll-minimalist {
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
+}
+.scroll-minimalist::-webkit-scrollbar { width: 4px; }
+.scroll-minimalist::-webkit-scrollbar-track { background: transparent; }
+.scroll-minimalist::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
