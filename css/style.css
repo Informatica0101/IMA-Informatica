@@ -99,22 +99,22 @@ body {
 }
 
 @media (min-width: 1280px) {
-    .logo-img { width: 100px; }
+    .logo-img { width: 120px; }
 }
 
 .header-title-container {
-    line-height: 0.8;
+    line-height: 0.75;
     display: flex;
     flex-direction: column;
 }
 
 .hn-flag {
-    width: 35px;
+    width: 40px;
     height: auto;
 }
 
 @media (min-width: 768px) {
-    .hn-flag { width: 55px; }
+    .hn-flag { width: 65px; }
 }
 
 #mobile-menu-overlay {
@@ -397,3 +397,9 @@ footer a:hover {
 .scroll-minimalist::-webkit-scrollbar { width: 4px; }
 .scroll-minimalist::-webkit-scrollbar-track { background: transparent; }
 .scroll-minimalist::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+.file-list-scroll {
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
