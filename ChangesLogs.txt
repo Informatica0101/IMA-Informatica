@@ -1189,3 +1189,15 @@ MODIFICACIONES:
   - Activación del botón "Seguir Leyendo" vinculado dinámicamente al sistema de noticias.
 - Documentación:
   - Actualización de README.md reflejando la nueva arquitectura de subida y el módulo de noticias.
+
+16/06/2026 (Corrección Módulo de Noticias)
+- Archivo: js/ui-common.js
+  - Implementada función global window.convertDriveLink para transformar enlaces de Drive en URLs directas compatibles con <img>.
+- Archivo: index.html
+  - Rediseño estructural del News Detail Modal para integrar la imagen de portada en el flujo de desplazamiento, mejorando la legibilidad.
+- Archivo: backend/user-service/Code.gs
+  - Actualizadas funciones uploadNewsImage y createNews para forzar el almacenamiento de URLs públicas directas en la base de datos.
+- Archivo: js/index-ui.js
+  - Integrada la lógica de conversión de enlaces y refinada la extracción de extractos de noticias (180 caracteres max).
+- Archivo: js/teacher.js
+  - Sincronizada la creación de noticias para utilizar URLs directas y previsualización optimizada.

@@ -435,7 +435,13 @@ function createNews(payload) {
   const fecha = now.toISOString().split('T')[0];
   const hora = now.toTimeString().split(' ')[0];
 
-  sheet.appendRow([fecha, hora, titulo, contenido, imagenUrl || "", categoria || "General"]);
+  // Si imagenUrl no es una URL completa sino solo un ID, convertirlo a URL directa
+  let finalImageUrl = imagenUrl || "";
+  if (finalImageUrl && !finalImageUrl.includes("http")) {
+    finalImageUrl = `https://lh3.googleusercontent.com/d/${finalImageUrl}`;
+  }
+
+  sheet.appendRow([fecha, hora, titulo, contenido, finalImageUrl, categoria || "General"]);
   return { status: "success", message: "Noticia publicada." };
 }
 
@@ -452,9 +458,19 @@ function uploadNewsImage(payload) {
   const blob = Utilities.newBlob(Utilities.base64Decode(base64Content), mimeType, fileName);
 
   const file = newsFolder.createFile(blob);
-  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  const fileId = file.getId();
 
-  return { status: "success", data: { fileId: file.getId() } };
+  // Asegurar que el archivo sea público para su visualización
+  try {
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (e) {
+    logDebug("Error al establecer permisos en imagen de noticia", e.message);
+  }
+
+  // Generar URL directa compatible con <img> (Req 2)
+  const directUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
+
+  return { status: "success", data: { fileId: fileId, directUrl: directUrl } };
 }
 
 function saveWhatsAppLink(payload) {

@@ -143,3 +143,15 @@ ARCHIVO: js/student.js
 ARCHIVO: js/index-ui.js
 -----------------------
 - Hallazgo J13: La función loadNews ya extrae el primer párrafo, pero el diseño de la tarjeta debe unificarse y permitir la navegación a la noticia completa. ✔ RESUELTO
+
+ARCHIVO: js/ui-common.js
+------------------------
+- Hallazgo J14: Ausencia de un convertidor centralizado para enlaces de Google Drive. ✔ RESUELTO (window.convertDriveLink).
+
+ARCHIVO: index.html
+-------------------
+- Hallazgo J15: El modal de noticias tenía la imagen de portada fija, bloqueando el contenido en pantallas pequeñas. ✔ RESUELTO (Refactorizado para scroll integrado).
+
+ARCHIVO: backend/user-service/Code.gs
+-------------------------------------
+- Hallazgo J16: Las imágenes de noticias no se guardaban como URLs directas en la hoja NoticiasPortal. ✔ RESUELTO (Conversión automática a lh3.googleusercontent.com).

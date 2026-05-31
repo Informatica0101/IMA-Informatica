@@ -1584,8 +1584,8 @@ async function fetchNewsManagement() {
             newsManagementContainer.innerHTML = data.map(n => `
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all">
                     ${n.imagenUrl ? `
-                        <div class="h-40 overflow-hidden">
-                            <img src="${window.convertDriveLink ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl}" class="w-full h-full object-cover">
+                        <div class="h-40 overflow-hidden bg-gray-50">
+                            <img src="${window.convertDriveLink(n.imagenUrl)}" class="w-full h-full object-cover">
                         </div>
                     ` : ''}
                     <div class="p-5">
@@ -1622,7 +1622,8 @@ if (newsForm) {
                     fileData: base64
                 });
                 if (uploadRes.status === 'success') {
-                    imageUrl = uploadRes.data.fileId;
+                    // Usar la URL directa retornada por el backend si está disponible (Req 1)
+                    imageUrl = uploadRes.data.directUrl || uploadRes.data.fileId;
                 }
             }
 

@@ -424,14 +424,28 @@ async function loadNews() {
             newsContainer.innerHTML = newsToShow.map((n, idx) => {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = n.contenido;
-                const firstP = tempDiv.querySelector('p') ? tempDiv.querySelector('p').innerText : tempDiv.innerText.substring(0, 150) + '...';
+
+                // Extraer un fragmento representativo del contenido (primer párrafo o 180 caracteres)
+                let excerpt = "";
+                const paragraphs = tempDiv.querySelectorAll('p');
+                if (paragraphs.length > 0) {
+                    excerpt = paragraphs[0].innerText.trim();
+                } else {
+                    excerpt = tempDiv.innerText.trim();
+                }
+
+                if (excerpt.length > 180) {
+                    excerpt = excerpt.substring(0, 177) + "...";
+                }
+
+                const imgUrl = window.convertDriveLink(n.imagenUrl);
 
                 return `
                 <div class="${idx === 0 ? 'md:col-span-2 lg:col-span-2' : ''} bg-white rounded-[2rem] border border-gray-100 overflow-hidden group hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50 transition-all duration-500">
                     <div class="${idx === 0 ? 'flex flex-col md:flex-row h-full' : 'flex flex-col'}">
                         ${n.imagenUrl ? `
                             <div class="${idx === 0 ? 'md:w-1/2 h-72 md:h-full' : 'h-56'} overflow-hidden">
-                                <img src="${window.convertDriveLink ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
+                                <img src="${imgUrl}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
                             </div>
                         ` : `
                             <div class="${idx === 0 ? 'md:w-1/2 h-72 md:h-full' : 'h-56'} bg-gray-50 flex items-center justify-center text-gray-200">
@@ -444,7 +458,7 @@ async function loadNews() {
                                 <span class="text-[10px] font-medium text-gray-300 uppercase tracking-wider">${new Date(n.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} ${n.hora ? '• ' + n.hora.substring(0,5) : ''}</span>
                             </div>
                             <h3 class="${idx === 0 ? 'text-2xl md:text-3xl' : 'text-xl'} font-semibold text-gray-900 mb-4 leading-tight group-hover:text-blue-600 transition-colors uppercase tracking-tighter">${n.titulo}</h3>
-                            <p class="text-gray-500 text-sm leading-relaxed mb-6 ${idx === 0 ? 'line-clamp-4' : 'line-clamp-3'} font-medium">${firstP}</p>
+                            <p class="text-gray-500 text-sm leading-relaxed mb-6 ${idx === 0 ? 'line-clamp-4' : 'line-clamp-3'} font-medium">${excerpt}</p>
                             <div class="mt-auto pt-6 border-t border-gray-50">
                                 <button onclick='window.showNewsDetail(${JSON.stringify(n).replace(/'/g, "&apos;")})' class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 hover:text-blue-800 transition-all">
                                     Seguir Leyendo
@@ -466,7 +480,8 @@ window.showNewsDetail = function(news) {
     const modal = document.getElementById('news-detail-modal');
     if (!modal) return;
 
-    document.getElementById('news-modal-image').src = window.convertDriveLink ? window.convertDriveLink(news.imagenUrl) : news.imagenUrl;
+    const imgUrl = window.convertDriveLink(news.imagenUrl);
+    document.getElementById('news-modal-image').src = imgUrl;
     document.getElementById('news-modal-category').textContent = news.categoria;
     document.getElementById('news-modal-title').textContent = news.titulo;
     document.getElementById('news-modal-meta').textContent = `${new Date(news.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })} ${news.hora ? '• ' + news.hora.substring(0,5) : ''}`;

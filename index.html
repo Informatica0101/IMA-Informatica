@@ -360,27 +360,37 @@
     </div>
     <!-- Modal de Detalle de Noticia (A-76) -->
     <div id="news-detail-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center hidden z-[80] backdrop-blur-md">
-        <div class="bg-white w-full max-w-4xl mx-4 rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col animate-fade-in-up">
-            <div class="relative h-64 md:h-96 w-full">
-                <img id="news-modal-image" src="" alt="Noticia" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-8">
-                    <div class="space-y-2">
-                        <span id="news-modal-category" class="px-3 py-1 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg"></span>
-                        <h2 id="news-modal-title" class="text-2xl md:text-4xl font-bold text-white leading-tight"></h2>
-                        <p id="news-modal-meta" class="text-gray-300 text-xs font-medium uppercase tracking-widest"></p>
+        <div class="bg-white w-full max-w-3xl mx-4 rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col animate-fade-in-up">
+            <!-- Botón de Cerrar Flotante -->
+            <button id="close-news-detail-modal" class="absolute top-4 right-4 w-10 h-10 bg-white/20 hover:bg-white/40 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all z-[90]">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="overflow-y-auto flex-grow scroll-minimalist">
+                <!-- Encabezado con Imagen en el flujo de scroll -->
+                <div class="relative h-64 md:h-80 w-full">
+                    <img id="news-modal-image" src="" alt="Noticia" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-black/10"></div>
+                </div>
+
+                <div class="px-6 py-8 md:px-10">
+                    <div class="mb-8">
+                        <span id="news-modal-category" class="inline-block px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-widest rounded-lg mb-4"></span>
+                        <h2 id="news-modal-title" class="text-3xl md:text-4xl font-bold text-gray-900 leading-tight tracking-tighter mb-4 uppercase"></h2>
+                        <div class="flex items-center gap-2 text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                            <i class="far fa-calendar-alt"></i>
+                            <span id="news-modal-meta"></span>
+                        </div>
+                    </div>
+
+                    <div id="news-modal-content" class="prose prose-blue max-w-none text-gray-600 leading-relaxed quill-content">
+                        <!-- Contenido inyectado -->
                     </div>
                 </div>
-                <button id="close-news-detail-modal" class="absolute top-4 right-4 w-10 h-10 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all">
-                    <i class="fas fa-times"></i>
-                </button>
             </div>
-            <div class="p-8 md:p-12 overflow-y-auto flex-grow scroll-minimalist">
-                <div id="news-modal-content" class="prose prose-blue max-w-none text-gray-600 leading-relaxed quill-content">
-                    <!-- Contenido inyectado -->
-                </div>
-            </div>
+
             <div class="p-6 border-t border-gray-100 bg-gray-50 flex justify-end">
-                <button id="close-news-detail-btn" class="px-8 py-3 bg-gray-200 text-gray-700 font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gray-300 transition-all">Cerrar</button>
+                <button id="close-news-detail-btn" class="px-8 py-3 bg-gray-200 text-gray-700 font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gray-300 transition-all">Cerrar Noticia</button>
             </div>
         </div>
     </div>

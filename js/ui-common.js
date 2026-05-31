@@ -254,6 +254,36 @@ window.setupCommonUI = function() {
     }
 };
 
+/**
+ * Convierte un ID o URL de Google Drive en una URL de visualización directa pública.
+ * @param {string} driveLink - El enlace o ID del archivo de Drive.
+ * @returns {string} La URL convertida o el link original si no se puede procesar.
+ */
+window.convertDriveLink = function(driveLink) {
+    if (!driveLink || typeof driveLink !== 'string') return '';
+
+    // Si ya es un enlace directo funcional, no tocar
+    if (driveLink.includes('lh3.googleusercontent.com')) return driveLink;
+
+    let fileId = '';
+
+    if (driveLink.includes('drive.google.com')) {
+        // Formatos: /file/d/ID/view, /open?id=ID, /uc?id=ID
+        const match = driveLink.match(/\/d\/([a-zA-Z0-9-_]+)/) ||
+                      driveLink.match(/[?&]id=([a-zA-Z0-9-_]+)/);
+        if (match && match[1]) fileId = match[1];
+    } else if (!driveLink.includes('http')) {
+        // Asumir que es un ID directo
+        fileId = driveLink;
+    }
+
+    if (fileId) {
+        return `https://lh3.googleusercontent.com/d/${fileId}`;
+    }
+
+    return driveLink;
+};
+
 // Global helper for sections
 window.checkSectionHelper = function(sectionsField, targetSection) {
     if (!sectionsField || !targetSection) return true;
