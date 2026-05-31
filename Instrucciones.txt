@@ -134,6 +134,9 @@ TAREAS PENDIENTES DE REVISIÓN
 29. [NOTICIAS] Mostrar extracto y miniatura en tarjetas de noticias. - COMPLETADA
 30. [NOTICIAS] Activar botón "Seguir Leyendo" con visualización en modal. - COMPLETADA
 31. [NOTICIAS] Asegurar visualización de 3 noticias recientes en inicio. - COMPLETADA
+32. [DOCENTE] Refactorizar modal de calificación: sustituir datos de alumno por metadatos de entrega. - COMPLETADA
+33. [DOCENTE] Implementar bloqueo de botones e indicadores de carga en el proceso de calificación. - COMPLETADA
+34. [GLOBAL] Corregir lógica de progreso académico: tratar "Crédito Extra" como recuperación (no obligatorio). - COMPLETADA
 
 ------------------------------------------------------------------------------------------------
 

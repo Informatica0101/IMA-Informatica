@@ -155,3 +155,12 @@ ARCHIVO: index.html
 ARCHIVO: backend/user-service/Code.gs
 -------------------------------------
 - Hallazgo J16: Las imágenes de noticias no se guardaban como URLs directas en la hoja NoticiasPortal. ✔ RESUELTO (Conversión automática a lh3.googleusercontent.com).
+
+ARCHIVO: js/teacher.js
+----------------------
+- Hallazgo J17: El modal de calificación mostraba datos del alumno que ya estaban visibles en la tarjeta de expediente, desaprovechando espacio para metadatos de la entrega. ✔ RESUELTO (Sustituido por Título, Fecha y Hora).
+- Hallazgo J18: El proceso de calificación permitía múltiples clics durante el guardado asíncrono. ✔ RESUELTO (Bloqueo de botones e indicadores de carga).
+
+ARCHIVO: js/teacher.js & js/student.js
+--------------------------------------
+- Hallazgo J19: La lógica de progreso académico penalizaba al alumno al contar las tareas de "Crédito Extra" como tareas obligatorias no entregadas. ✔ RESUELTO (Implementada lógica de recuperación: suman puntos pero no aumentan el denominador de tareas asignadas).

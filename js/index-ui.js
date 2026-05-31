@@ -418,8 +418,10 @@ async function loadNews() {
         if (res.status === 'success' && res.data.length > 0) {
             newsSection.classList.remove('hidden');
 
-            // Mostrar las 3 noticias más recientes (o todas si hay menos de 3)
-            const newsToShow = res.data.slice(0, 3);
+            // Mostrar las 3 noticias más recientes (ordenadas por fecha descendente)
+            const newsToShow = res.data
+                .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+                .slice(0, 3);
 
             newsContainer.innerHTML = newsToShow.map((n, idx) => {
                 const tempDiv = document.createElement('div');

@@ -1201,3 +1201,8 @@ MODIFICACIONES:
   - Integrada la lógica de conversión de enlaces y refinada la extracción de extractos de noticias (180 caracteres max).
 - Archivo: js/teacher.js
   - Sincronizada la creación de noticias para utilizar URLs directas y previsualización optimizada.
+  - Refactorizada la función `openGradeModal` para poblar metadatos de la entrega (Título, Fecha, Hora) en lugar de información personal del alumno.
+  - Implementada lógica de bloqueo de botones y estados de carga (`btn-loading`) durante el proceso de calificación.
+  - Corregida la lógica de "Progreso del Parcial" para tratar las tareas de "Crédito Extra" como mecanismo de recuperación (suman puntos pero no aumentan la base de tareas asignadas).
+- Archivo: js/student.js
+  - Sincronizada la lógica de cálculo de progreso académico con el dashboard docente, aplicando el tratamiento de "Crédito Extra" como recuperación.

@@ -122,15 +122,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('student-expediente');
         if (!container) return;
 
-        // Calcular progreso (basado en lógica de A-73/Teacher Dashboard)
-        const total = activities.length;
+        // Auxiliar para normalizar
+        const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        // (A-73/June 2026) "Extra Credit" as recovery logic
+        const ordinaryActivities = activities.filter(a => !norm(a.titulo).includes('extra'));
+        const total = ordinaryActivities.length;
+
         const delivered = activities.filter(a => a.entrega).length;
         const completed = activities.filter(a => a.entrega && (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')).length;
-        const pending = total - delivered;
+        const pending = Math.max(0, total - delivered);
 
-        const deliveryRate = total > 0 ? (delivered / total) : 0;
+        const deliveryRate = total > 0 ? (Math.min(delivered, total) / total) : 0;
         const gradeSum = activities.reduce((sum, a) => sum + parseFloat(a.entrega?.calificacion || 0), 0);
-        const maxPossible = activities.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
+        const maxPossible = ordinaryActivities.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
         const academicPerformance = maxPossible > 0 ? (gradeSum / maxPossible) : 0;
 
         let onTimeCount = 0;
