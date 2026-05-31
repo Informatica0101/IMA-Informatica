@@ -1201,3 +1201,28 @@ MODIFICACIONES:
   - Integrada la lógica de conversión de enlaces y refinada la extracción de extractos de noticias (180 caracteres max).
 - Archivo: js/teacher.js
   - Sincronizada la creación de noticias para utilizar URLs directas y previsualización optimizada.
+REGISTRO DE CAMBIOS - NAVEGACIÓN Y SISTEMA DE PSEUDOCÓDIGO
+
+Archivo: index.html
+- Líneas 291-293: Agregado enlace de Pseudocódigo a la barra de navegación móvil.
+
+Archivo: student-dashboard.html
+- Líneas 217-219: Agregado enlace de Pseudocódigo a la barra de navegación móvil.
+
+Archivo: teacher-dashboard.html
+- Líneas 670-672: Agregado enlace de Pseudocódigo a la barra de navegación móvil.
+
+Archivo: backend/task-service/Code.gs
+- Líneas 628-644: saveProject ahora registra metadatos en la hoja 'pseudocode'.
+- Líneas 647-686: listProjects ahora consulta la hoja 'pseudocode' con fallback a Drive.
+
+Archivo: pseudocode.html
+- Líneas 16: Agregado CDN de Tailwind CSS para estilos del modal.
+- Líneas 762-766: Implementada validación de sesión de usuario al cargar.
+- Líneas 1467-1502: Rediseñado el modal de selección de proyectos con estilo IMA y carga desde Spreadsheet.
+
+Archivo: js/student.js
+- Línea 50: Agregado flag isSubmitting.
+- Líneas 515-560: Actualizada lógica de cierre de modal con advertencia institucional y limpieza silenciosa.
+- Líneas 839-875: Implementada protección contra duplicados y reseteo de estados en la entrega.
+- Líneas 919-923: Actualizada advertencia en el evento beforeunload.

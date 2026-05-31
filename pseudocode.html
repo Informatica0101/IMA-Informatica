@@ -13,6 +13,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="PSeInt App">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
@@ -759,6 +760,12 @@ FinAlgoritmo</div>
     <script src="js/config.js?v=21"></script>
     <script src="js/api.js?v=21"></script>
     <script>
+        // Sesión de usuario (Req 2.1)
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            window.location.href = 'login.html';
+        }
+
         const editor = document.getElementById('codeEditor');
         const highlight = document.getElementById('syntaxHighlight');
         const lineNumbers = document.getElementById('lineNumbers');
@@ -1441,7 +1448,6 @@ FinAlgoritmo</div>
         }
 
         async function loadProjectsList(overrideUserId = null) {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             const listContainer = document.getElementById('projectsList');
             const modalListContainer = document.getElementById('drive-projects-list');
 
@@ -1459,22 +1465,30 @@ FinAlgoritmo</div>
                 let html = '';
                 if (res.status === 'success' && res.data.length > 0) {
                     html = res.data.map(p => `
-                        <div class="p-2 border rounded hover:bg-blue-50 cursor-pointer group flex justify-between items-center" style="padding: 10px; border: 1px solid #eee; border-radius: 5px; margin-bottom: 5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="loadProjectCloud('${p.id}')">
-                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                <p style="font-weight: bold; color: #2563eb; margin: 0;">${p.name}</p>
-                                <p style="font-size: 10px; color: #999; margin: 0;">${new Date(p.lastUpdated).toLocaleString()}</p>
+                        <div class="p-3 border border-gray-100 rounded-2xl hover:bg-blue-50 hover:border-blue-200 cursor-pointer group flex justify-between items-center transition-all" onclick="loadProjectCloud('${p.id}')">
+                            <div class="truncate mr-4">
+                                <p class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">${p.name}</p>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">${new Date(p.lastUpdated).toLocaleDateString()}</p>
                             </div>
-                            <span style="color: #ccc;">&rarr;</span>
+                            <div class="w-8 h-8 bg-gray-50 text-gray-400 rounded-xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                                <i class="fas fa-folder-open text-xs"></i>
+                            </div>
                         </div>
                     `).join('');
                 } else {
-                    html = '<p style="text-align: center; color: #999;">No hay proyectos.</p>';
+                    html = `
+                        <div class="text-center py-12">
+                            <div class="w-16 h-16 bg-gray-50 text-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-folder-open text-2xl"></i>
+                            </div>
+                            <p class="text-sm font-medium text-gray-400 uppercase tracking-widest">Sin archivos en la nube</p>
+                        </div>`;
                 }
 
                 if (listContainer) listContainer.innerHTML = html;
                 if (modalListContainer) modalListContainer.innerHTML = html;
             } catch (e) {
-                const err = '<p style="text-align: center; color: red;">Error al cargar.</p>';
+                const err = '<p style="text-align: center; color: red; font-size: 10px; font-weight: bold; text-transform: uppercase;">Error al sincronizar</p>';
                 if (listContainer) listContainer.innerHTML = err;
                 if (modalListContainer) modalListContainer.innerHTML = err;
             }

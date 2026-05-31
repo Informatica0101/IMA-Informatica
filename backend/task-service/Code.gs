@@ -625,30 +625,70 @@ function saveProject(payload) {
     file = projectsFolder.createFile(finalFileName, code, "text/plain");
   }
 
-  return { status: "success", message: "Proyecto guardado.", data: { fileId: file.getId() } };
+  const fileId = file.getId();
+  const fileUrl = `https://drive.google.com/uc?id=${fileId}`;
+
+  // Registrar en la hoja "pseudocode" (userId, NombreArchivo, archivoUrl)
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const pseudocodeSheet = getOrCreateSheet(ss, "pseudocode");
+    const data = pseudocodeSheet.getDataRange().getValues();
+    const rowIndex = data.findIndex(r => r[0] == userId && r[1] == finalFileName);
+
+    if (rowIndex !== -1) {
+      pseudocodeSheet.getRange(rowIndex + 1, 3).setValue(fileUrl);
+    } else {
+      pseudocodeSheet.appendRow([userId, finalFileName, fileUrl]);
+    }
+  } catch (e) {
+    logDebug("Error al registrar en hoja pseudocode:", e.message);
+  }
+
+  return { status: "success", message: "Proyecto guardado.", data: { fileId: fileId } };
 }
 
 function listProjects(payload) {
   const { userId } = payload;
   if (!userId) throw new Error("ID de usuario requerido.");
 
-  const alumnoFolder = getStudentFolder(userId);
-  const projectsFolder = getOrCreateFolder(alumnoFolder, "Proyectos_PSeInt");
-  const files = projectsFolder.getFiles();
   const result = [];
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const pseudocodeSheet = getSheetOrThrow(ss, "pseudocode");
+    const data = pseudocodeSheet.getDataRange().getValues().slice(1);
 
-  while (files.hasNext()) {
-    const file = files.next();
-    if (file.getName().toLowerCase().endsWith(".psc")) {
-      result.push({
-        name: file.getName(),
-        id: file.getId(),
-        lastUpdated: file.getLastUpdated().toISOString()
-      });
+    data.forEach(r => {
+      if (r[0] == userId) {
+        const fileIdMatch = r[2].match(/id=([^&]+)/);
+        const fileId = fileIdMatch ? fileIdMatch[1] : null;
+        if (fileId) {
+          result.push({
+            name: r[1],
+            id: fileId,
+            lastUpdated: new Date().toISOString() // La hoja no tiene fecha, usamos actual o Drive si es crítico
+          });
+        }
+      }
+    });
+  } catch (e) {
+    logDebug("Error al listar proyectos desde hoja:", e.message);
+    // Fallback a Drive si la hoja falla o no existe aún
+    const alumnoFolder = getStudentFolder(userId);
+    const projectsFolder = getOrCreateFolder(alumnoFolder, "Proyectos_PSeInt");
+    const files = projectsFolder.getFiles();
+    while (files.hasNext()) {
+      const file = files.next();
+      if (file.getName().toLowerCase().endsWith(".psc")) {
+        result.push({
+          name: file.getName(),
+          id: file.getId(),
+          lastUpdated: file.getLastUpdated().toISOString()
+        });
+      }
     }
   }
 
-  result.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
+  result.sort((a, b) => a.name.localeCompare(b.name));
   return { status: "success", data: result };
 }
 

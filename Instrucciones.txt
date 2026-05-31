@@ -146,3 +146,8 @@ TAREAS PENDIENTES DE REVISIÓN
 ESTADO DE LAS TAREAS (RESUMEN)
 
 [A-76] FINALIZADO (PENDIENTE DE REVISIÓN)
+
+[TAREAS PENDIENTES DE REVISIÓN - JULES COMMIT]
+32. Integración del intérprete de Pseudocódigo en barra de navegación móvil (index, student, teacher).
+33. Diagnóstico y corrección del sistema de archivos de Pseudocódigo (Hoja Spreadsheet 'pseudocode').
+34. Robustecimiento de lógica anti-pérdida y protección contra duplicados en módulo de entrega.

@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let uploadedFiles = []; // [{fileId, fileName, mimeType}]
     let currentFolderId = null;
     let activeUploads = 0;
+    let isSubmitting = false; // Flag para evitar avisos tras entrega exitosa (Tarea 3)
 
     function formatDate(isoString) {
         if (!isoString) return 'N/A';
@@ -511,6 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTaskTitle.textContent = taskTitle;
         uploadedFiles = [];
         currentFolderId = null;
+        isSubmitting = false; // Resetear flag al abrir
 
         uploadedFilesList.innerHTML = '';
         uploadedFilesContainer.classList.add('hidden');
@@ -522,23 +524,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function closeSubmissionModal() {
-        if (activeUploads > 0) {
+        if (activeUploads > 0 && !isSubmitting) {
             if (!confirm('Hay una subida en progreso. ¿Estás seguro de cerrar el modal?')) return;
         }
-        if (uploadedFiles.length > 0) {
-            if (confirm('ATENCIÓN: Al cerrar este modal se eliminarán los archivos cargados temporalmente y se cancelará el proceso de entrega. ¿Deseas continuar?')) {
-                // Eliminar archivos temporales de forma asíncrona pero sin bloquear la UI
-                uploadedFiles.forEach(f => fetchApi('TASK', 'deleteFile', { fileId: f.fileId }).catch(console.error));
+
+        // Solo mostrar advertencia si NO estamos en proceso de submit y hay archivos (Tarea 3)
+        if (uploadedFiles.length > 0 && !isSubmitting) {
+            if (confirm('«Los archivos cargados durante esta entrega se eliminarán y la entrega no será registrada. ¿Desea continuar?»')) {
+                // Eliminar archivos temporales silenciosamente en segundo plano
+                const filesToDelete = [...uploadedFiles];
                 uploadedFiles = [];
+                filesToDelete.forEach(f => {
+                    fetchApi('TASK', 'deleteFile', { fileId: f.fileId }).catch(e => console.warn("Fallo limpieza silenciosa:", e));
+                });
             } else {
                 return;
             }
         }
+
         submissionModal.classList.add('hidden');
         submissionForm.reset();
         uploadedFilesList.innerHTML = '';
         uploadedFilesContainer.classList.add('hidden');
         updateConfirmButtonState();
+        isSubmitting = false;
     }
 
     function updateConfirmButtonState() {
@@ -827,8 +836,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (submissionForm) {
         submissionForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (uploadedFiles.length === 0 || activeUploads > 0) return;
+            // Protección contra duplicados y subidas incompletas (Tarea 3)
+            if (isSubmitting || uploadedFiles.length === 0 || activeUploads > 0) return;
 
+            isSubmitting = true; // Bloquear nuevas acciones
             confirmSubmissionBtn.disabled = true;
             confirmSubmissionBtn.classList.add('btn-loading');
 
@@ -851,6 +862,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await fetchApi('TASK', 'submitAssignment', payload);
                 if (result.status === 'success') {
                     alert('¡Tarea entregada exitosamente!');
+                    // Limpiar referencias antes de cerrar para evitar el aviso de pérdida
+                    uploadedFiles = [];
                     closeSubmissionModal();
                     fetchAllActivities();
                 } else {
@@ -858,6 +871,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 alert(`Error al finalizar la entrega: ${error.message}`);
+                isSubmitting = false; // Permitir re-intento si falló el servidor
             } finally {
                 confirmSubmissionBtn.disabled = false;
                 confirmSubmissionBtn.classList.remove('btn-loading');
@@ -902,9 +916,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initWhatsAppButton();
 
     window.addEventListener('beforeunload', (e) => {
-        if (activeUploads > 0 || uploadedFiles.length > 0) {
+        if (!isSubmitting && (activeUploads > 0 || uploadedFiles.length > 0)) {
             e.preventDefault();
-            e.returnValue = 'Tienes una entrega en progreso. Si sales ahora, se perderán los archivos cargados.';
+            e.returnValue = '«Los archivos cargados durante esta entrega se eliminarán y la entrega no será registrada. ¿Desea continuar?»';
         }
     });
 });
