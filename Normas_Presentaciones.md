@@ -6,8 +6,11 @@ Este documento establece las normas obligatorias para la creación y actualizaci
 
 Todas las presentaciones deben constar de exactamente 16 diapositivas distribuidas de la siguiente manera:
 
-*   **Diapositiva 1:** Portada del tema. Incluye Título, Nombre del Docente, Fecha y Grado/Sección.
-*   **Diapositivas 2 a 6:** Desarrollo del Tema Principal 1. Explicaciones claras y ejemplos simples.
+*   **Diapositiva 1:** Portada del tema.
+    *   **Estética:** Diseño sobrio, profesional y minimalista.
+    *   **Paleta:** Uso de colores institucionales (tonos oscuros o azules profesionales). Prohibido el uso de colores neón o saturados.
+    *   **Contenido:** Título del tema (tamaño destacado), Nombre del Docente, Fecha y Grado/Sección.
+*   **Diapositivas 2 a 6:** Desarrollo del Tema Principal 1. Explicaciones claras y ejemplos estructurados.
 *   **Diapositiva 7:** Ejercicio Práctico del Tema Principal 1. Incluye definiciones y conceptos clave.
 *   **Diapositivas 8 a 12:** Desarrollo del Tema Principal 2 (o continuación avanzada del tema).
 *   **Diapositiva 13:** Ejercicio Práctico del Tema Principal 2.
@@ -25,6 +28,9 @@ Todas las presentaciones deben constar de exactamente 16 diapositivas distribuid
 *   **Fuentes y Tipografía:** Utilizar 'Inter' para cuerpo de texto y 'Poppins' para títulos.
 *   **Colores Institucionales:** Respetar la paleta definida en el sistema (Azul, Naranja, Gris, Blanco).
 *   **Gráficos:** Se prohíben imágenes externas para diagramas o esquemas. Deben generarse mediante HTML, CSS o JavaScript nativo.
+*   **Estructura de Ejemplos:** Todos los ejemplos de código deben ser duales, mostrando explícitamente:
+    1. Implementación en HTML.
+    2. Implementación en CSS.
 *   **Framework:** Utilizar Tailwind CSS v4 para el estilizado.
 
 ## 3. Sistema de Navegación

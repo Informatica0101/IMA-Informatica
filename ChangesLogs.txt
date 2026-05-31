@@ -1154,3 +1154,10 @@ MODIFICACIONES:
   - Corregidas las opciones del quiz para que la respuesta correcta sea seleccionable.
   - Ajustada la longitud de las opciones para cumplir con la nueva normativa.
   - Rotada manualmente la posición de las respuestas correctas.
+
+31/05/2026 (Mejora UI/UX y Pedagógica - Diseño Web)
+- Archivo: Normas_Presentaciones.md
+  - Añadidas normas para el diseño de portadas profesionales y la estructura dual (HTML/CSS) de los ejemplos.
+- Archivo: III_BTP_A/dw_II/selectores_css.html
+  - Rediseñada la portada con una estética profesional, tonos sobrios (#1e293b) y jerarquía visual mejorada.
+  - Actualizados todos los ejemplos de selectores para mostrar simultáneamente la implementación en HTML y CSS.

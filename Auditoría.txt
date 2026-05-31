@@ -104,3 +104,7 @@ ARCHIVO: Normas_Presentaciones.md
 ARCHIVO: III_BTP_A/dw_II/selectores_css.html
 -------------------------------------------
 - Hallazgo: Error en concordancia de respuestas del quiz. ✔ RESUELTO (Opciones balanceadas y validación de respuesta correcta corregida).
+
+ARCHIVO: III_BTP_A/dw_II/selectores_css.html
+-------------------------------------------
+- Hallazgo: Portada con diseño saturado y falta de estructura dual en ejemplos de código. ✔ RESUELTO (Rediseño de portada minimalista y actualización de ejemplos a formato HTML/CSS).
