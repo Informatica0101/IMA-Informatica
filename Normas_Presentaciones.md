@@ -6,10 +6,17 @@ Este documento establece las normas obligatorias para la creación y actualizaci
 
 Todas las presentaciones deben constar de exactamente 16 diapositivas distribuidas de la siguiente manera:
 
-*   **Diapositiva 1:** Portada del tema.
-    *   **Estética:** Diseño sobrio, profesional y minimalista.
-    *   **Paleta:** Uso de colores institucionales (tonos oscuros o azules profesionales). Prohibido el uso de colores neón o saturados.
-    *   **Contenido:** Título del tema (tamaño destacado), Nombre del Docente, Fecha y Grado/Sección.
+*   **Diapositiva 1:** Portada del tema (Regla de Conservación Estricta).
+    *   **Estructura:** Se debe mantener la estructura original de la plantilla base sin modificaciones estructurales.
+    *   **Elementos Obligatorios (en orden):**
+        1. Logo de la institución (sin cambios en dimensiones o posición).
+        2. Nombre del tema (Título principal).
+        3. Nombre de la asignatura.
+        4. Nombre del grado y sección.
+        5. Nombre del docente.
+        6. Fecha de la clase.
+    *   **Restricciones de Estilo:** Prohibido modificar tipografía, tamaños de letra, colores, alineación (centrada) o espaciados. El título debe estar separado del resto por dos espacios visuales.
+    *   **Modificaciones Permitidas:** Únicamente el texto del tema, fecha y asignatura.
 *   **Diapositivas 2 a 6:** Desarrollo del Tema Principal 1. Explicaciones claras y ejemplos estructurados.
 *   **Diapositiva 7:** Ejercicio Práctico del Tema Principal 1. Incluye definiciones y conceptos clave.
 *   **Diapositivas 8 a 12:** Desarrollo del Tema Principal 2 (o continuación avanzada del tema).
