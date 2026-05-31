@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selectores CSS (Simples, Múltiples y Globales)</title>
+    <!-- CDN de Tailwind CSS v4 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts - Inter & Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Universal box-sizing */
+        * { box-sizing: border-box; }
+
+        /* Configuración base */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        /* Contenedor principal */
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        #presentation-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+
+        /* Estilo para cada diapositiva */
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 4rem;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation: fadeIn 0.8s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tipografía proyectable (Estándar 2026) */
+        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3rem; color: #fd7e14; margin-bottom: 1.5rem; }
+        h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.25rem; line-height: 1.4; color: #1f2937; margin-bottom: 1.5rem; }
+        p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 900px; }
+
+        .concept-box {
+            background-color: #fffaf0;
+            border-left: 8px solid #fd7e14;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            text-align: left;
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .code-block {
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: left;
+            font-size: 1.25rem;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 1rem;
+            font-family: monospace;
+            border-l-8: 8px solid #fd7e14;
+        }
+
+        /* Botones de navegación */
+        .nav-button {
+            background-color: #fd7e14;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .nav-button:hover { background-color: #e67300; transform: scale(1.05); }
+        .nav-button:disabled { background-color: #d1d5db; cursor: not-allowed; transform: scale(1); }
+
+        #slide-counter {
+            position: absolute;
+            bottom: 1.5rem;
+            right: 2rem;
+            font-weight: 600;
+            color: #9ca3af;
+            z-index: 10;
+        }
+
+        /* Quiz */
+        .quiz-option {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.25rem 0;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            background: white;
+            font-size: 1rem;
+            text-align: left;
+        }
+        .quiz-option:hover { background-color: #fff7ed; border-color: #fd7e14; }
+        .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
+        .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+
+        @media (max-width: 768px) {
+            .slide { padding: 2rem 1.5rem; }
+            h2 { font-size: 1.75rem; }
+            h3 { font-size: 1.4rem; }
+            p, li { font-size: 1rem; line-height: 1.4; }
+            .concept-box { padding: 1rem; border-left-width: 4px; }
+            .code-block { font-size: 0.9rem; padding: 1rem; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="page-header" class="w-full bg-white p-4 shadow-sm flex justify-between items-center z-50">
+        <div class="flex items-center space-x-4">
+            <img src="../../imagenes/logo.png" alt="Logo IMA" style="width: 150px; height: auto;">
+            <h1 class="text-xl font-bold text-gray-800">Diseño Web I</h1>
+        </div>
+        <nav>
+            <a href="../../index.html" class="text-gray-600 hover:text-orange-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
+        </nav>
+    </header>
+
+    <main>
+        <div id="presentation-container">
+            <!-- Diapositiva 1: Portada -->
+            <div class="slide active">
+                <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
+                <h2>SELECTORES (simples, múltiples y globales)</h2>
+                <div class="mt-8 text-lg text-gray-500">
+                    <p>Lic. Pablo Antonio Peña Mancia</p>
+                    <p>Fecha: 31 de mayo de 2026</p>
+                    <p>Grado: III BTP Informática Sección "A"</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 2: ¿Qué es un Selector CSS? -->
+            <div class="slide">
+                <h3>¿Qué es un Selector CSS?</h3>
+                <p>Los selectores son la parte de la regla CSS que determina a qué elementos HTML se les aplicará el estilo definido.</p>
+                <div class="concept-box">
+                    <p>Permiten apuntar con precisión a los elementos que queremos modificar dentro del <strong>DOM</strong> (Document Object Model).</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: Selectores Simples (De Etiqueta) -->
+            <div class="slide">
+                <h3>Selectores Simples (De Etiqueta)</h3>
+                <p>Selecciona todos los elementos que tienen el nombre de una etiqueta HTML específica.</p>
+                <div class="code-block">
+                    p { <br>
+                    &nbsp;&nbsp;color: red; <br>
+                    }
+                </div>
+                <p class="mt-4 text-sm">Este ejemplo aplica el color rojo a <strong>todos</strong> los párrafos del documento.</p>
+            </div>
+
+            <!-- Diapositiva 4: Selectores Simples (De Clase) -->
+            <div class="slide">
+                <h3>Selectores Simples (De Clase)</h3>
+                <p>Se utiliza para seleccionar elementos que tienen un atributo <strong>class</strong> específico. Se define con un punto (.).</p>
+                <div class="code-block">
+                    .texto-destacado { <br>
+                    &nbsp;&nbsp;font-weight: bold; <br>
+                    }
+                </div>
+                <p class="mt-4 text-sm italic">Las clases pueden usarse en múltiples elementos diferentes.</p>
+            </div>
+
+            <!-- Diapositiva 5: Selectores Simples (De ID) -->
+            <div class="slide">
+                <h3>Selectores Simples (De ID)</h3>
+                <p>Selecciona un único elemento que tiene un atributo <strong>id</strong> único. Se define con el símbolo (#).</p>
+                <div class="code-block">
+                    #cabecera-principal { <br>
+                    &nbsp;&nbsp;background-color: blue; <br>
+                    }
+                </div>
+                <p class="mt-4 text-sm">A diferencia de las clases, un ID debe ser <strong>único</strong> en toda la página.</p>
+            </div>
+
+            <!-- Diapositiva 6: Comparativa -->
+            <div class="slide">
+                <h3>Comparativa: Etiqueta vs Clase vs ID</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-gray-50 p-6 rounded-lg border-t-4 border-blue-500 text-left">
+                        <h4 class="font-bold text-xl mb-2">Etiqueta</h4>
+                        <p class="text-base">Afecta a todos los elementos del mismo tipo.</p>
+                    </div>
+                    <div class="bg-orange-50 p-6 rounded-lg border-t-4 border-orange-500 text-left">
+                        <h4 class="font-bold text-xl mb-2">Clase</h4>
+                        <p class="text-base">Reutilizable en varios elementos diferentes.</p>
+                    </div>
+                    <div class="bg-red-50 p-6 rounded-lg border-t-4 border-red-500 text-left">
+                        <h4 class="font-bold text-xl mb-2">ID</h4>
+                        <p class="text-base">Único. Identifica un solo elemento específico.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Ejercicio 1 -->
+            <div class="slide">
+                <h3>Ejercicio 1: Identificación</h3>
+                <p>Identifica las etiquetas HTML en tu código actual y anota qué propiedades básicas de color y borde les aplicarías usando selectores de etiqueta.</p>
+                <div class="concept-box border-blue-600">
+                    <p><strong>Concepto clave: Especificidad</strong>. Determina qué regla "gana" cuando hay conflictos entre selectores.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Selectores Múltiples (Agrupados) -->
+            <div class="slide">
+                <h3>Selectores Múltiples (Agrupados)</h3>
+                <p>Si quieres aplicar el mismo estilo a varios elementos diferentes, puedes agrupar sus selectores separándolos con una <strong>coma (,)</strong>.</p>
+                <div class="concept-box">
+                    <p>Esto ayuda a mantener el código CSS más corto, eficiente y fácil de leer.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Ejemplo de Selectores Múltiples -->
+            <div class="slide">
+                <h3>Ejemplo de Agrupación</h3>
+                <div class="code-block">
+                    h1, h2, h3, p { <br>
+                    &nbsp;&nbsp;color: #2c3e50; <br>
+                    &nbsp;&nbsp;font-family: 'Inter', sans-serif; <br>
+                    }
+                </div>
+                <p class="mt-4 text-sm">Resultado: Todos los encabezados y párrafos compartirán el mismo color y fuente.</p>
+            </div>
+
+            <!-- Diapositiva 10: Selector Global (Universal) -->
+            <div class="slide">
+                <h3>Selector Global (Universal)</h3>
+                <p>El selector universal se representa con un asterisco (<strong>*</strong>).</p>
+                <div class="concept-box border-gray-400">
+                    <p>Selecciona absolutamente <strong>todos</strong> los elementos del documento HTML al mismo tiempo.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 11: Uso del Selector Global -->
+            <div class="slide">
+                <h3>Uso del Selector Global</h3>
+                <p>Se utiliza comúnmente para realizar un "reset" básico de estilos o para aplicar una fuente general a todo el sitio.</p>
+                <div class="code-block">
+                    * { <br>
+                    &nbsp;&nbsp;margin: 0; <br>
+                    &nbsp;&nbsp;padding: 0; <br>
+                    &nbsp;&nbsp;box-sizing: border-box; <br>
+                    }
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Ventajas de la Optimización -->
+            <div class="slide">
+                <h3>Ventajas de Optimizar Selectores</h3>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li><strong>Reducción de código:</strong> Evitas repetir las mismas reglas (DRY).</li>
+                    <li><strong>Mantenimiento sencillo:</strong> Al cambiar un valor, se actualizan todos los elementos agrupados.</li>
+                    <li><strong>Velocidad:</strong> Archivos CSS más ligeros cargan más rápido.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 13: Ejercicio 2 -->
+            <div class="slide">
+                <h3>Ejercicio 2: Agrupación y Global</h3>
+                <p><strong>Reto:</strong> Escribe una regla CSS que use el selector global para cambiar el color de fondo a gris claro, y otra que agrupe las etiquetas &lt;a&gt; y &lt;button&gt; para quitarles el subrayado.</p>
+            </div>
+
+            <!-- Diapositiva 14: Cuestionario (Parte 1) -->
+            <div class="slide">
+                <h3>Cuestionario: Evaluación</h3>
+                <div class="quiz-container max-w-2xl w-full">
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <div class="quiz-options flex flex-col gap-2"></div>
+                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 15: Cuestionario (Parte 2) -->
+            <div class="slide">
+                <h3>Cuestionario: Continuación</h3>
+                <div class="quiz-container max-w-2xl w-full">
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <div class="quiz-options flex flex-col gap-2"></div>
+                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 16: Fin y Asignación -->
+            <div class="slide">
+                <h2>¡Muchas Gracias!</h2>
+                <div class="concept-box border-orange-600">
+                    <p><strong>Asignación:</strong> Registro en el cuaderno de ejemplos de sintaxis para cada tipo de selector visto en clase (simple, clase, ID, múltiple y global).</p>
+                    <p class="mt-4 text-sm font-bold text-orange-600">Ponderación: 5%</p>
+                    <p class="text-xs text-gray-500 mt-2">Fecha de entrega: Próxima clase presencial.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controles -->
+        <div id="controls-container" class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-4 z-20">
+            <button id="prev-btn" class="nav-button">Anterior</button>
+            <button id="next-btn" class="nav-button">Siguiente</button>
+        </div>
+        <div id="slide-counter">1 / 16</div>
+    </main>
+
+    <footer id="page-footer" class="w-full bg-gray-900 text-white text-center p-2 text-sm">
+        <div class="flex items-center justify-center space-x-2">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="Honduras" width="60">
+            <p>© 2026 Instituto María Auxiliadora - Área de Informática</p>
+        </div>
+    </footer>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const header = document.getElementById('page-header');
+        const footer = document.getElementById('page-footer');
+        const controlsContainer = document.getElementById('controls-container');
+        let currentSlide = 0;
+
+        const quizData = [
+            { q: "¿Qué símbolo representa al selector global?", options: ["#", ".", "*", "@"], a: "*" },
+            { q: "¿Cómo se separa una lista de selectores múltiples?", options: ["Con puntos", "Con comas", "Con espacios", "Con guiones"], a: "Con comas" },
+            { q: "¿Qué prefijo se usa para los selectores de clase?", options: ["#", "@", "$", "."], a: "." },
+            { q: "¿Cuál selector es más específico?", options: ["Etiqueta", "Global", "ID", "Clase"], a: "ID" },
+            { q: "¿Qué hace el selector universal?", options: ["Selecciona <body>", "Selecciona todo", "Limpia la caché", "Pone color blanco"], a: "Selecciona todo" },
+            { q: "¿Para qué sirve agrupar selectores?", options: ["Para bugs", "Evitar repetir código", "Hacerlo más lento", "Solo para fuentes"], a: "Evitar repetir código" },
+            { q: "¿Cómo se define un selector de ID en CSS?", options: ["Con .", "Con :", "Con #", "Con *"], a: "Con #" },
+            { q: "¿Qué etiqueta se usa para agrupar palabras en línea?", options: ["div", "section", "span", "header"], a: "span" },
+            { q: "¿Qué propiedad CSS define el color del texto?", options: ["font-color", "text-style", "background", "color"], a: "color" },
+            { q: "¿Los selectores de clase pueden repetirse?", options: ["No, son únicos", "Sí", "Solo en <body>", "Depende del navegador"], a: "Sí" }
+        ];
+        let currentQuiz = 0;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].style.display = 'none';
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].style.display = 'flex';
+            setTimeout(() => slides[currentSlide].classList.add('active'), 10);
+
+            slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === slides.length - 1;
+
+            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
+        }
+
+        function loadQuiz() {
+            const currentSlideEl = slides[currentSlide];
+            const questionEl = currentSlideEl.querySelector('.quiz-question');
+            const optionsEl = currentSlideEl.querySelector('.quiz-options');
+            const feedbackEl = currentSlideEl.querySelector('.quiz-feedback');
+
+            if (!questionEl) return;
+
+            if (currentQuiz >= quizData.length) {
+                questionEl.textContent = "¡Cuestionario completado!";
+                optionsEl.innerHTML = "";
+                feedbackEl.textContent = "Has respondido todas las preguntas.";
+                return;
+            }
+
+            // Slide 13 shows questions 1-5, Slide 14 shows questions 6-10
+            if (currentQuiz < 5 && currentSlide === 14) { currentQuiz = 5; }
+            if (currentQuiz >= 5 && currentSlide === 13) { currentQuiz = 0; }
+
+            const data = quizData[currentQuiz];
+            questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
+            optionsEl.innerHTML = "";
+            feedbackEl.textContent = "";
+
+            data.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.textContent = opt;
+                btn.className = "quiz-option";
+                btn.onclick = () => {
+                    const btns = optionsEl.querySelectorAll('button');
+                    btns.forEach(b => b.disabled = true);
+                    if (opt === data.a) {
+                        btn.classList.add('correct');
+                        feedbackEl.textContent = "¡Correcto!";
+                        feedbackEl.style.color = "#10b981";
+                    } else {
+                        btn.classList.add('incorrect');
+                        feedbackEl.textContent = `Incorrecto. Respuesta: ${data.a}`;
+                        feedbackEl.style.color = "#ef4444";
+                    }
+                    setTimeout(() => {
+                        currentQuiz++;
+                        if (currentQuiz === 5 && currentSlide === 13) {
+                            showSlide(14);
+                        } else if (currentQuiz === 10 && currentSlide === 14) {
+                            showSlide(15);
+                        } else {
+                            loadQuiz();
+                        }
+                    }, 2000);
+                };
+                optionsEl.appendChild(btn);
+            });
+        }
+
+        nextBtn.onclick = () => showSlide(currentSlide + 1);
+        prevBtn.onclick = () => showSlide(currentSlide - 1);
+
+        // Navigation according to requirements
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') showSlide(currentSlide + 1);
+            if (e.key === 'ArrowLeft' || e.key === 'Backspace') showSlide(currentSlide - 1);
+        });
+
+        // Advance with right click
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            showSlide(currentSlide + 1);
+        });
+
+        // Fullscreen Logic
+        function handleFullscreen() {
+            const isFull = window.innerHeight >= screen.height - 10 || document.fullscreenElement;
+            header.style.setProperty('display', isFull ? 'none' : 'flex', 'important');
+            footer.style.setProperty('display', isFull ? 'none' : 'block', 'important');
+            if (controlsContainer) {
+                controlsContainer.style.setProperty('display', isFull ? 'none' : 'flex', 'important');
+            }
+        }
+
+        window.addEventListener('resize', handleFullscreen);
+        document.addEventListener('fullscreenchange', handleFullscreen);
+
+        showSlide(0);
+        handleFullscreen();
+    </script>
+</body>
+</html>

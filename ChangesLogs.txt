@@ -1134,3 +1134,15 @@ MODIFICACIONES:
 15/06/2026 (Fix Sintaxis)
 - Archivo: js/index-ui.js
   - Corregido error de sintaxis (Unexpected end of input) al cerrar correctamente el listener 'DOMContentLoaded'.
+
+31/05/2026 (Generación de Presentaciones Académicas)
+- Archivo: Normas_Presentaciones.md
+  - Creado documento de normas con estructura obligatoria de 16 diapositivas y reglas de diseño/navegación.
+- Archivo: II_BTP_A/Programacion/prog_bd_modelos_31_mayo.html
+  - Creada copia de la presentación de bases de datos con fecha actualizada al 31 de mayo de 2026.
+- Archivo: III_BTP_A/dw_II/selectores_css.html
+  - Creada nueva presentación de "Selectores (Simples, Múltiples y Globales)" siguiendo estrictamente el plan de clases y la estructura de 16 diapositivas.
+  - Implementada navegación por teclado (Flechas, Espacio, Retroceso) y clic derecho.
+  - Añadido cuestionario interactivo de 10 preguntas y asignación del 5%.
+- Archivo: js/data.js
+  - Integradas las nuevas presentaciones en el objeto `presentationData` para su visualización en el portal.

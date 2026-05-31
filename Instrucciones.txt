@@ -102,6 +102,7 @@ FLUJO PRINCIPAL DE TRABAJO
 -----------------------------------
 TAREAS PENDIENTES DE REVISIÓN
 
+0. Generación de presentaciones académicas para Programación y Diseño Web (31 mayo 2026). - COMPLETADA
 1. Corregir error de conexión y persistencia en "Mi Perfil" (index.html y dashboard). - COMPLETADA
 2. Garantizar que el correo electrónico del alumno se renderice en la tarjeta del docente. - COMPLETADA
 3. Implementar lógica avanzada de "Progreso del Parcial" (30/50/20). - COMPLETADA

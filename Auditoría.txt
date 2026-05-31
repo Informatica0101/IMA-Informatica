@@ -84,3 +84,15 @@ ARCHIVO: css/style.css
 
 - Hallazgo 23: Sección "Mis asignaturas" en el dashboard del estudiante no muestra nombres dinámicos. ✔ RESUELTO
 - Hallazgo 24: Información del docente en "Mis asignaturas" está hardcodeada. Debe ser dinámica basada en el profesorId de las tareas. ✔ RESUELTO
+
+ARCHIVO: Normas_Presentaciones.md
+---------------------------------
+- Hallazgo: Ausencia de un marco normativo para la creación de presentaciones. ✔ RESUELTO (Documento creado).
+
+ARCHIVO: II_BTP_A/Programacion/prog_bd_modelos_31_mayo.html
+---------------------------------------------------------
+- Hallazgo: Necesidad de actualizar la fecha de la presentación de base de datos para el 31 de mayo de 2026. ✔ RESUELTO.
+
+ARCHIVO: III_BTP_A/dw_II/selectores_css.html
+-------------------------------------------
+- Hallazgo: Nueva presentación requerida para el tema "Selectores (Simples, Múltiples y Globales)". Se debe seguir estructura de 16 diapositivas y reglas de navegación específicas. ✔ RESUELTO.
