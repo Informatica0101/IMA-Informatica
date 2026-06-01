@@ -466,6 +466,7 @@ async function processPresentation(file, subject, grade) {
                     id: `${file}_transcription_${pIdx}`,
                     question: "Reto de Transcripción: Escribe el siguiente texto exactamente como aparece, respetando ortografía y puntuación.",
                     targetText: cleanText,
+                    answer: cleanText,
                     type: 'transcription',
                     source: file,
                     subject: subject,
@@ -510,6 +511,12 @@ function showQuestion() {
     fibContainer.classList.add('hidden');
     matchingContainer.classList.add('hidden');
 
+    const input = document.getElementById('fib-input');
+    if (input) {
+        input.disabled = false;
+        input.value = '';
+    }
+
     if (q.type === 'practice') {
         optionsContainer.classList.remove('hidden');
         const codeEl = document.createElement('div');
@@ -536,9 +543,11 @@ function showQuestion() {
         fibContainer.prepend(targetEl);
 
         const input = document.getElementById('fib-input');
-        input.value = '';
         input.placeholder = "Escribe aquí respetando ortografía...";
-        setTimeout(() => input.focus(), 100);
+        setTimeout(() => {
+            input.disabled = false;
+            input.focus();
+        }, 200);
     } else if (q.type === 'memory') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
