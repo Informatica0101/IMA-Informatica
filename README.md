@@ -212,7 +212,7 @@ El frontend es una aplicación cliente que consume los microservicios.
 - **`student.js`**: Controla el `student-dashboard.html`. Gestiona el expediente académico, la visualización de tareas por parcial y un avanzado sistema de subida múltiple con soporte para archivos >50MB mediante fragmentación (chunking) y previsualización de miniaturas.
 - **`exam.js`**: Gestiona la página `exam.html`. Se comunica exclusivamente con el **microservicio de exámenes** para obtener las preguntas (`getExamQuestions`) y para enviar las respuestas (`submitExam`).
 - **`index-ui.js`**: Controla la lógica de la página principal, incluyendo la carga dinámica de noticias con sistema de detalles en modal y la navegación jerárquica de recursos.
-- **`evaluacion_inteligente.js`**: Motor del sistema de quices dinámicos que extrae preguntas de las presentaciones académicas y gestiona la lógica de evaluación.
+- **`quizpro.js`**: Motor del sistema de quices dinámicos que extrae preguntas de las presentaciones académicas y gestiona la lógica de evaluación.
 
 ---
 
@@ -280,7 +280,7 @@ Además del portal de gestión PWA, el sitio cuenta con una sección pública de
     - **`perifericos.html`**: Un juego para clasificar periféricos de computadora como dispositivos de entrada, salida o mixtos.
     - **`webmaster_quiz.html`**: Un cuestionario sobre conceptos de desarrollo y cultura web.
     - **`destreza_teclado.html`**: Una actividad para practicar y medir la velocidad y precisión al teclear.
-    - **`evaluacion_inteligente.html`**: Sistema de evaluación dinámico basado en el contenido real de las clases del repositorio.
+    - **`quizpro.html`**: Sistema de evaluación dinámico basado en el contenido real de las clases del repositorio.
   - **Acceso**: Se cargan dinámicamente en la página principal a través de los menús "Recursos Adicionales" o "Actividades Prácticas".
 
 ---

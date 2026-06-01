@@ -99,7 +99,7 @@ window.additionalResourcesData = [
     {
         category: "Actividades Practicas",
         items: [
-            { title: "Evaluación Inteligente", file: "juegos/evaluacion_inteligente.html" },
+            { title: "QuizPro", file: "juegos/quizpro.html" },
             { title: "Periféricos Entrada/Salida", action: "load-peripherals-game" },
             { title: "WebMaster Quiz", action: "load-webmaster-quiz" },
             { title: "Destreza en el Teclado", action: "load-dexterity-game" },

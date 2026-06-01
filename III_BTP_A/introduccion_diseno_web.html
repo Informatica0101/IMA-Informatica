@@ -643,6 +643,59 @@
     window.addEventListener('resize', handleFullscreenChange);
 
 
+    const quizData = [
+        {
+            q: "¿Qué significa la sigla HTML?",
+            options: ["HyperText Markup Language", "High Tech Multi Language", "Hyper Transfer Markup Link", "Home Tool Markup Language"],
+            a: "HyperText Markup Language"
+        },
+        {
+            q: "Característica de HTML que permite que la información esté repartida en páginas enlazadas entre sí:",
+            options: ["Distribuido", "Centralizado", "Estático", "Lineal"],
+            a: "Distribuido"
+        },
+        {
+            q: "¿Qué tipo de software es suficiente para escribir código HTML?",
+            options: ["Un editor de texto plano (como Bloc de notas)", "Un procesador de palabras complejo", "Un software de diseño gráfico", "Un gestor de bases de datos"],
+            a: "Un editor de texto plano (como Bloc de notas)"
+        },
+        {
+            q: "¿Cuál es la extensión correcta para guardar un archivo HTML?",
+            options: [".html o .htm", ".txt", ".doc", ".web"],
+            a: ".html o .htm"
+        },
+        {
+            q: "La etiqueta que define el título que se ve en la pestaña del navegador es:",
+            options: ["<title>", "<head>", "<h1>", "<meta>"],
+            a: "<title>"
+        },
+        {
+            q: "¿Cuál es la regla de oro al cerrar etiquetas anidadas?",
+            options: ["La última etiqueta que abres debe ser la primera que cierres", "La primera etiqueta que abres debe ser la primera que cierres", "El orden de cierre no importa", "No es necesario cerrar las etiquetas internas"],
+            a: "La última etiqueta que abres debe ser la primera que cierres"
+        },
+        {
+            q: "¿En qué sección del documento se coloca el contenido visible para el usuario?",
+            options: ["<body>", "<head>", "<title>", "<html>"],
+            a: "<body>"
+        },
+        {
+            q: "¿Cuál de los siguientes encabezados es el más grande en tamaño?",
+            options: ["<h1>", "<h6>", "<h3>", "<header>"],
+            a: "<h1>"
+        },
+        {
+            q: "¿Qué etiqueta se utiliza para definir un párrafo de texto?",
+            options: ["<p>", "<span>", "<div>", "<a>"],
+            a: "<p>"
+        },
+        {
+            q: "HTML fue diseñado para ser compatible con:",
+            options: ["Todo tipo de computadoras y sistemas operativos", "Solo computadoras Windows", "Solo dispositivos móviles", "Solo navegadores modernos"],
+            a: "Todo tipo de computadoras y sistemas operativos"
+        }
+    ];
+
     // Navigation improvements (2026)
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);

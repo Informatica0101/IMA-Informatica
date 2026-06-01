@@ -899,66 +899,66 @@
 
 
         // --- Lógica del Quiz de Funciones del SO ---
-        const osQuizData = [
+        const quizData = [
             {
-                question: "Se encarga de asignar tiempo de CPU a cada programa y controlar su ejecución.",
+                q: "Se encarga de asignar tiempo de CPU a cada programa y controlar su ejecución.",
                 options: ["Gestión de Procesos", "Gestión de Memoria", "Gestión de Redes", "Gestión de Dispositivos"],
-                correctAnswer: "Gestión de Procesos"
+                a: "Gestión de Procesos"
             },
             {
-                question: "Controla la comunicación entre la CPU y periféricos como la impresora o el teclado.",
+                q: "Controla la comunicación entre la CPU y periféricos como la impresora o el teclado.",
                 options: ["Gestión de Archivos", "Gestión de Dispositivos", "Interfaz de Usuario", "Gestión de Memoria"],
-                correctAnswer: "Gestión de Dispositivos"
+                a: "Gestión de Dispositivos"
             },
             {
-                question: "Organiza y controla el almacenamiento de datos en discos, permitiendo crear y eliminar archivos.",
+                q: "Organiza y controla el almacenamiento de datos en discos, permitiendo crear y eliminar archivos.",
                 options: ["Gestión de Memoria", "Gestión de Procesos", "Gestión de Archivos", "Seguridad"],
-                correctAnswer: "Gestión de Archivos"
+                a: "Gestión de Archivos"
             },
             {
-                question: "Asigna y desasigna espacio en la memoria principal (RAM) a los programas.",
+                q: "Asigna y desasigna espacio en la memoria principal (RAM) a los programas.",
                 options: ["Gestión de Procesos", "Gestión de Memoria", "Gestión de Redes", "Interfaz de Usuario"],
-                correctAnswer: "Gestión de Memoria"
+                a: "Gestión de Memoria"
             },
             {
-                question: "Permite al usuario interactuar con la computadora a través de ventanas, iconos y menús.",
+                q: "Permite al usuario interactuar con la computadora a través de ventanas, iconos y menús.",
                 options: ["Kernel", "Gestión de Archivos", "Interfaz de Usuario", "Gestión de Dispositivos"],
-                correctAnswer: "Interfaz de Usuario"
+                a: "Interfaz de Usuario"
             },
             {
-                question: "Protege el sistema contra accesos no autorizados y gestiona permisos de usuario.",
+                q: "Protege el sistema contra accesos no autorizados y gestiona permisos de usuario.",
                 options: ["Gestión de Procesos", "Gestión de Redes", "Seguridad", "Gestión de Memoria"],
-                correctAnswer: "Seguridad"
+                a: "Seguridad"
             },
             {
-                question: "Permite la comunicación entre computadoras conectadas y gestiona protocolos.",
+                q: "Permite la comunicación entre computadoras conectadas y gestiona protocolos.",
                 options: ["Interfaz de Usuario", "Gestión de Archivos", "Gestión de Redes", "Kernel"],
-                correctAnswer: "Gestión de Redes"
+                a: "Gestión de Redes"
             },
             {
-                question: "Es el corazón del sistema operativo, gestiona la CPU y reside permanentemente en la memoria.",
+                q: "Es el corazón del sistema operativo, gestiona la CPU y reside permanentemente en la memoria.",
                 options: ["Shell", "Kernel", "Sistema de Archivos", "Driver"],
-                correctAnswer: "Kernel"
+                a: "Kernel"
             },
             {
-                question: "Tipo de SO que permite a varios usuarios utilizar el sistema al mismo tiempo.",
+                q: "Tipo de SO que permite a varios usuarios utilizar el sistema al mismo tiempo.",
                 options: ["Monotarea", "Monousuario", "Multiusuario", "Embebido"],
-                correctAnswer: "Multiusuario"
+                a: "Multiusuario"
             },
             {
-                question: "Tipo de SO capaz de ejecutar múltiples programas de forma concurrente.",
+                q: "Tipo de SO capaz de ejecutar múltiples programas de forma concurrente.",
                 options: ["Monousuario", "Monotarea", "Multitarea", "Tiempo Real"],
-                correctAnswer: "Multitarea"
+                a: "Multitarea"
             },
             {
-                question: "Sistema operativo de código abierto muy popular en servidores.",
+                q: "Sistema operativo de código abierto muy popular en servidores.",
                 options: ["Windows", "macOS", "Linux", "iOS"],
-                correctAnswer: "Linux"
+                a: "Linux"
             },
             {
-                question: "Sistema operativo móvil desarrollado por Google.",
+                q: "Sistema operativo móvil desarrollado por Google.",
                 options: ["iOS", "Windows Mobile", "Android", "Symbian"],
-                correctAnswer: "Android"
+                a: "Android"
             }
         ];
 
@@ -983,7 +983,7 @@
         }
 
         function initializeOSQuiz() {
-            shuffledQuizQuestions = shuffleArray([...osQuizData]);
+            shuffledQuizQuestions = shuffleArray([...quizData]);
             currentQuizQuestionIndex = 0;
             quizScore = 0;
             quizTotalQuestionsDisplay.textContent = shuffledQuizQuestions.length;
@@ -997,7 +997,7 @@
 
             if (currentQuizQuestionIndex < shuffledQuizQuestions.length) {
                 const currentQuestion = shuffledQuizQuestions[currentQuizQuestionIndex];
-                questionTextDisplay.textContent = currentQuestion.question;
+                questionTextDisplay.textContent = currentQuestion.q;
                 quizFeedbackDisplay.textContent = "";
                 quizFeedbackDisplay.classList.remove('text-green-600', 'text-red-600', 'text-indigo-700');
                 quizScoreDisplay.textContent = quizScore;
@@ -1027,7 +1027,7 @@
 
         function handleQuizAnswer(event) {
             const selectedAnswer = event.target.dataset.answer;
-            const correctAnswer = shuffledQuizQuestions[currentQuizQuestionIndex].correctAnswer;
+            const correctAnswer = shuffledQuizQuestions[currentQuizQuestionIndex].a;
 
             if (selectedAnswer === correctAnswer) {
                 quizFeedbackDisplay.textContent = "¡Correcto!";

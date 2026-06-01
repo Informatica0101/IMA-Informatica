@@ -1077,6 +1077,59 @@
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
+    const quizData = [
+        {
+            q: "¿Qué característica define a JavaScript como lenguaje?",
+            options: ["Ligero e interpretado", "Pesado y compilado", "Solo para bases de datos", "Lenguaje de bajo nivel"],
+            a: "Ligero e interpretado"
+        },
+        {
+            q: "¿En qué lado se ejecuta principalmente JavaScript en el desarrollo web?",
+            options: ["Lado del cliente (Navegador)", "Lado del servidor únicamente", "En el router", "En la base de datos"],
+            a: "Lado del cliente (Navegador)"
+        },
+        {
+            q: "¿Cuál de estas palabras clave permite declarar una variable con alcance de bloque y que puede ser reasignada?",
+            options: ["let", "var", "const", "fixed"],
+            a: "let"
+        },
+        {
+            q: "¿Qué sucede si intentas reasignar un valor a una variable declarada con 'const'?",
+            options: ["Produce un error", "Cambia el valor normalmente", "El valor se duplica", "La variable se borra"],
+            a: "Produce un error"
+        },
+        {
+            q: "¿Cuál es el tipo de dato para valores lógicos (true/false)?",
+            options: ["Boolean", "String", "Number", "Null"],
+            a: "Boolean"
+        },
+        {
+            q: "¿Qué operador se utiliza para la igualdad estricta (valor y tipo)?",
+            options: ["===", "==", "=", "!="],
+            a: "==="
+        },
+        {
+            q: "El operador '%' (módulo) se utiliza para:",
+            options: ["Obtener el residuo de una división", "Calcular un porcentaje", "Multiplicar por 100", "Dividir números enteros"],
+            a: "Obtener el residuo de una división"
+        },
+        {
+            q: "¿Qué estructura de control usarías para repetir código un número conocido de veces?",
+            options: ["Bucle for", "Condicional if", "Switch", "While"],
+            a: "Bucle for"
+        },
+        {
+            q: "¿Cómo se define una función flecha (Arrow Function)?",
+            options: ["const func = () => { }", "function func() { }", "define func()", "arrow function()"],
+            a: "const func = () => { }"
+        },
+        {
+            q: "¿Qué etiqueta HTML se utiliza para insertar código JavaScript interno o enlazar uno externo?",
+            options: ["<script>", "<js>", "<javascript>", "<link>"],
+            a: "<script>"
+        }
+    ];
+
 </script>
 </body>
 </html>

@@ -828,34 +828,54 @@
         // --- Lógica del Minijuego de Preguntas ---
         const quizData = [
             {
-                question: "¿Qué tipo de red cubre un área geográfica limitada como una casa u oficina?",
+                q: "¿Qué tipo de red cubre un área geográfica limitada como una casa u oficina?",
                 options: ["PAN", "LAN", "MAN", "WAN"],
-                correctAnswer: "LAN"
+                a: "LAN"
             },
             {
-                question: "¿Cuál es la topología de red más común donde todos los dispositivos se conectan a un punto central?",
+                q: "¿Cuál es la topología de red más común donde todos los dispositivos se conectan a un punto central?",
                 options: ["Bus", "Anillo", "Estrella", "Malla"],
-                correctAnswer: "Estrella"
+                a: "Estrella"
             },
             {
-                question: "¿Qué protocolo es la base de Internet y gestiona la comunicación en la mayoría de las redes modernas?",
+                q: "¿Qué protocolo es la base de Internet y gestiona la comunicación en la mayoría de las redes modernas?",
                 options: ["HTTP", "FTP", "TCP/IP", "SMTP"],
-                correctAnswer: "TCP/IP"
+                a: "TCP/IP"
             },
             {
-                question: "¿Qué componente de la configuración IP traduce nombres de dominio a direcciones IP numéricas?",
+                q: "¿Qué componente de la configuración IP traduce nombres de dominio a direcciones IP numéricas?",
                 options: ["Máscara de Subred", "Puerta de Enlace", "Servidor DNS", "Dirección IP"],
-                correctAnswer: "Servidor DNS"
+                a: "Servidor DNS"
             },
             {
-                question: "Si tu dirección IP es asignada automáticamente por el router, ¿qué método de configuración se está utilizando?",
+                q: "Si tu dirección IP es asignada automáticamente por el router, ¿qué método de configuración se está utilizando?",
                 options: ["Estática", "Manual", "Dinámica (DHCP)", "Fija"],
-                correctAnswer: "Dinámica (DHCP)"
+                a: "Dinámica (DHCP)"
             },
             {
-                question: "¿Qué versión de IP fue creada para reemplazar a IPv4 debido al agotamiento de direcciones?",
+                q: "¿Qué versión de IP fue creada para reemplazar a IPv4 debido al agotamiento de direcciones?",
                 options: ["IPv3", "IPv5", "IPv6", "IPv7"],
-                correctAnswer: "IPv6"
+                a: "IPv6"
+            },
+            {
+                q: "¿Qué es una Red de Computadoras?",
+                options: ["Sistema que interconecta dispositivos para compartir recursos", "Solo una computadora sin cables", "Un programa para dibujar", "Una empresa que vende hardware"],
+                a: "Sistema que interconecta dispositivos para compartir recursos"
+            },
+            {
+                q: "¿Qué topología conecta los dispositivos en un círculo cerrado?",
+                options: ["Anillo", "Bus", "Estrella", "Árbol"],
+                a: "Anillo"
+            },
+            {
+                q: "¿Cuál es la red más grande, que conecta países y regiones?",
+                options: ["WAN", "LAN", "PAN", "MAN"],
+                a: "WAN"
+            },
+            {
+                q: "La dirección IP única asignada manualmente a un servidor es una IP:",
+                options: ["Estática", "Dinámica", "Virtual", "Invisible"],
+                a: "Estática"
             }
         ];
 
@@ -894,7 +914,7 @@
 
             if (currentQuizQuestionIndex < shuffledQuizQuestions.length) {
                 const currentQuestion = shuffledQuizQuestions[currentQuizQuestionIndex];
-                questionTextDisplay.textContent = currentQuestion.question;
+                questionTextDisplay.textContent = currentQuestion.q;
                 quizFeedbackDisplay.textContent = "";
                 quizFeedbackDisplay.classList.remove('text-green-600', 'text-red-600', 'text-indigo-700');
                 quizScoreDisplay.textContent = quizScore;
@@ -924,7 +944,7 @@
 
         function handleQuizAnswer(event) {
             const selectedAnswer = event.target.dataset.answer;
-            const correctAnswer = shuffledQuizQuestions[currentQuizQuestionIndex].correctAnswer;
+            const correctAnswer = shuffledQuizQuestions[currentQuizQuestionIndex].a;
 
             if (selectedAnswer === correctAnswer) {
                 quizFeedbackDisplay.textContent = "¡Correcto!";

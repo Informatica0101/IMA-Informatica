@@ -961,6 +961,59 @@ REM Pausa la ejecución hasta que se presione una tecla.
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
+    const quizData = [
+        {
+            q: "¿Qué significa CLI?",
+            options: ["Command Line Interface", "Common Logic Internal", "Computer Link Interconnect", "Central Line Index"],
+            a: "Command Line Interface"
+        },
+        {
+            q: "¿Cuál es una ventaja de usar la terminal frente a la interfaz gráfica?",
+            options: ["Control preciso y automatización", "Es más bonita visualmente", "No requiere saber escribir", "Es más lenta"],
+            a: "Control preciso y automatización"
+        },
+        {
+            q: "¿Qué comando se usa para cambiar de directorio en Windows y Linux?",
+            options: ["cd", "dir", "mkdir", "move"],
+            a: "cd"
+        },
+        {
+            q: "El comando 'mkdir' sirve para:",
+            options: ["Crear una nueva carpeta", "Borrar un archivo", "Mover un documento", "Reiniciar la terminal"],
+            a: "Crear una nueva carpeta"
+        },
+        {
+            q: "¿Qué comando lista el contenido de una carpeta en Windows?",
+            options: ["dir", "ls", "list", "show"],
+            a: "dir"
+        },
+        {
+            q: "¿Cómo se sube un nivel en la jerarquía de carpetas?",
+            options: ["cd ..", "cd sub", "cd /", "cd next"],
+            a: "cd .."
+        },
+        {
+            q: "Para mostrar el contenido de un archivo de texto en la terminal de Windows se usa:",
+            options: ["type", "cat", "open", "read"],
+            a: "type"
+        },
+        {
+            q: "¿Qué comando limpia la pantalla de la terminal en Windows?",
+            options: ["cls", "clear", "clean", "reset"],
+            a: "cls"
+        },
+        {
+            q: "¿Qué extensión suelen tener los archivos de script (lote) en Windows?",
+            options: [".bat", ".exe", ".txt", ".sh"],
+            a: ".bat"
+        },
+        {
+            q: "Para mover o renombrar un archivo en Windows se usa el comando:",
+            options: ["move", "copy", "del", "rename únicamente"],
+            a: "move"
+        }
+    ];
+
 </script>
 </body>
 </html>

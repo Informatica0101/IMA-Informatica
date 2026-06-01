@@ -1398,6 +1398,59 @@
         });
 
         // Initialize the first question when the slide becomes active
+        const quizData = [
+            {
+                q: "¿Qué son los periféricos en una computadora?",
+                options: ["Dispositivos que permiten la comunicación con el exterior", "Solo las partes internas del CPU", "Los cables de corriente únicamente", "El sistema operativo"],
+                a: "Dispositivos que permiten la comunicación con el exterior"
+            },
+            {
+                q: "Un dispositivo que introduce datos a la computadora se clasifica como:",
+                options: ["Entrada", "Salida", "Mixto", "Interno"],
+                a: "Entrada"
+            },
+            {
+                q: "¿Cuál de estos es el periférico de entrada más común?",
+                options: ["Teclado", "Monitor", "Impresora", "Altavoces"],
+                a: "Teclado"
+            },
+            {
+                q: "Los periféricos de salida sirven para:",
+                options: ["Mostrar los resultados del procesamiento", "Escribir instrucciones", "Guardar archivos en la nube", "Reiniciar la PC"],
+                a: "Mostrar los resultados del procesamiento"
+            },
+            {
+                q: "¿Qué tipo de periférico es una Impresora Multifunción?",
+                options: ["Mixto", "Solo Entrada", "Solo Salida", "No es un periférico"],
+                a: "Mixto"
+            },
+            {
+                q: "El Monitor es un ejemplo clásico de periférico de:",
+                options: ["Salida", "Entrada", "Almacenamiento", "Procesamiento"],
+                a: "Salida"
+            },
+            {
+                q: "Dispositivo que permite digitalizar documentos físicos:",
+                options: ["Escáner", "Impresora", "Monitor", "Mouse"],
+                a: "Escáner"
+            },
+            {
+                q: "¿Cuál de estos es un criterio de selección para un periférico?",
+                options: ["Propósito, compatibilidad y costo", "Solo el color", "El tamaño de la caja", "La marca del cable"],
+                a: "Propósito, compatibilidad y costo"
+            },
+            {
+                q: "Un proyector se clasifica como un periférico de:",
+                options: ["Salida", "Entrada", "Mixto", "Red"],
+                a: "Salida"
+            },
+            {
+                q: "La memoria USB (Pendrive) se considera un periférico:",
+                options: ["Mixto", "Solo Entrada", "Solo Salida", "De video"],
+                a: "Mixto"
+            }
+        ];
+
         document.addEventListener('DOMContentLoaded', () => { handleFullscreenChange();
             // ... existing DOMContentLoaded logic ...
 

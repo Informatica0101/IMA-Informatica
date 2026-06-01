@@ -391,26 +391,56 @@
         let isTransitioning = false;
 
         // Quiz de VBA Fundamental
-        const quizQuestions = [
+        const quizData = [
             {
-                question: "En Range(\"A1\").Value = \"Hola\", ¿qué es '.Value'?",
-                options: ["Un Objeto", "Una Propiedad", "Un Método"],
-                correctAnswer: "Una Propiedad"
+                q: "En la instrucción Range(\"A1\").Value = \"Hola\", ¿qué representa '.Value'?",
+                options: ["Un Objeto", "Una Propiedad", "Un Método", "Una Variable"],
+                a: "Una Propiedad"
             },
             {
-                question: "¿Para qué sirve el comando 'MsgBox'?",
-                options: ["Para escribir en una celda", "Para guardar un valor", "Para mostrar un mensaje al usuario"],
-                correctAnswer: "Para mostrar un mensaje al usuario"
+                q: "¿Para qué sirve el comando 'MsgBox' en VBA?",
+                options: ["Para escribir en una celda", "Para guardar un valor", "Para mostrar un mensaje al usuario", "Para borrar el disco duro"],
+                a: "Para mostrar un mensaje al usuario"
             },
             {
-                question: "Todo el código de una macro se escribe entre...",
-                options: [
-                    "Sub...End Sub",
-                    "Start...End",
-                    "Begin...Finish",
-                    "Function...End Function"
-                ],
-                correctAnswer: "Sub...End Sub"
+                q: "Todo el código de una macro (procedimiento) se escribe entre:",
+                options: ["Sub...End Sub", "Start...End", "Begin...Finish", "If...End If"],
+                a: "Sub...End Sub"
+            },
+            {
+                q: "¿Qué significa la sigla VBA?",
+                options: ["Visual Basic for Applications", "Virtual Basic Array", "Visual Binary Assembler", "Verified Basic App"],
+                a: "Visual Basic for Applications"
+            },
+            {
+                q: "¿Qué combinación de teclas abre el Editor de VBA (VBE)?",
+                options: ["Alt + F11", "Ctrl + Alt + Del", "Alt + F4", "Ctrl + V"],
+                a: "Alt + F11"
+            },
+            {
+                q: "¿Qué palabra clave se usa para crear o declarar una variable en VBA?",
+                options: ["Dim", "Var", "New", "Create"],
+                a: "Dim"
+            },
+            {
+                q: "¿Cuál es el tipo de dato correcto para almacenar texto?",
+                options: ["String", "Integer", "Boolean", "Date"],
+                a: "String"
+            },
+            {
+                q: "¿Qué extensión debe tener un libro de Excel para conservar el código VBA?",
+                options: [".xlsm", ".xlsx", ".docx", ".pdf"],
+                a: ".xlsm"
+            },
+            {
+                q: "En VBA, una acción que un objeto puede realizar (como borrar) se llama:",
+                options: ["Método", "Propiedad", "Atributo", "Evento"],
+                a: "Método"
+            },
+            {
+                q: "Para referirse a la celda B5 en VBA, se utiliza:",
+                options: ["Range(\"B5\")", "Cell(\"B5\")", "Target(B5)", "Select(B5)"],
+                a: "Range(\"B5\")"
             }
         ];
         let currentQuizQuestionIndex = 0;
@@ -421,15 +451,15 @@
             const quizFeedbackElement = document.getElementById('quiz-feedback');
             const totalSlides = slides.length;
 
-            if (currentQuizQuestionIndex >= quizQuestions.length) {
+            if (currentQuizQuestionIndex >= quizData.length) {
                 quizQuestionElement.textContent = "¡Cuestionario completado! ¡Excelente trabajo!";
                 quizOptionsElement.innerHTML = '';
                 quizFeedbackElement.textContent = '';
                 return;
             }
 
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            quizQuestionElement.textContent = `Pregunta ${currentQuizQuestionIndex + 1}: ${currentQuestion.question}`;
+            const currentQuestion = quizData[currentQuizQuestionIndex];
+            quizQuestionElement.textContent = `Pregunta ${currentQuizQuestionIndex + 1}: ${currentQuestion.q}`;
             quizOptionsElement.innerHTML = '';
             quizFeedbackElement.textContent = '';
             currentQuestion.options.forEach(option => {
@@ -443,10 +473,10 @@
         }
 
         function checkAnswer(selectedOption) {
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            const currentQuestion = quizData[currentQuizQuestionIndex];
             const quizFeedback = document.getElementById('quiz-feedback');
             const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
-            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+            const isCorrect = selectedOption === currentQuestion.a;
             buttons.forEach(button => {
                 button.disabled = true;
                 if (button.textContent === currentQuestion.correctAnswer) {

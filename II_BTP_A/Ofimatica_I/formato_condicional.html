@@ -506,31 +506,56 @@
         }
 
         // --- Static Quiz Logic ---
-        const quizQuestions = [
+        const quizData = [
             {
-                question: "¿Qué es el Formato Condicional?",
+                q: "¿Qué es el Formato Condicional?",
                 options: ["Un tipo de celda", "Una herramienta para dar formato a una celda basada en una regla", "Una función matemática", "Una forma de ocultar datos"],
-                correctAnswer: "Una herramienta para dar formato a una celda basada en una regla"
+                a: "Una herramienta para dar formato a una celda basada en una regla"
             },
             {
-                question: "¿Para qué sirve el Formato Condicional?",
+                q: "¿Para qué sirve el Formato Condicional?",
                 options: ["Para cambiar el nombre de una hoja de cálculo", "Para sumar automáticamente los valores", "Para visualizar rápidamente tendencias y valores importantes", "Para crear gráficos"],
-                correctAnswer: "Para visualizar rápidamente tendencias y valores importantes"
+                a: "Para visualizar rápidamente tendencias y valores importantes"
             },
             {
-                question: "Una regla que usa una fórmula personalizada siempre comienza con:",
-                options: ["`=`", "`()`", "`<>`", "`<>`"],
-                correctAnswer: "`=`"
+                q: "Una regla que usa una fórmula personalizada siempre comienza con:",
+                options: ["`=`", "`()`", "`<>`", "`#`"],
+                a: "`=`"
             },
             {
-                question: "Si tienes dos reglas que se aplican a la misma celda, ¿cuál tiene prioridad?",
+                q: "Si tienes dos reglas que se aplican a la misma celda, ¿cuál tiene prioridad?",
                 options: ["La que fue creada primero", "La que fue creada al último", "La que está más arriba en el Administrador de reglas", "La que tiene el formato más simple"],
-                correctAnswer: "La que está más arriba en el Administrador de reglas"
+                a: "La que está más arriba en el Administrador de reglas"
             },
             {
-                question: "La fórmula `=C2 > 1000` resaltará las celdas en la columna C que:",
+                q: "La fórmula `=C2 > 1000` resaltará las celdas en la columna C que:",
                 options: ["Contienen el número 1000", "Son iguales a 1000", "Son mayores a 1000", "Son menores a 1000"],
-                correctAnswer: "Son mayores a 1000"
+                a: "Son mayores a 1000"
+            },
+            {
+                q: "¿Cuál de estas visualizaciones usa una barra horizontal proporcional al valor?",
+                options: ["Barras de Datos", "Escalas de Color", "Conjuntos de Íconos", "Gráficos de Tarta"],
+                a: "Barras de Datos"
+            },
+            {
+                q: "¿Qué visualización usa un degradado de color según el valor?",
+                options: ["Escalas de Color", "Barras de Datos", "Conjuntos de Íconos", "Filtros"],
+                a: "Escalas de Color"
+            },
+            {
+                q: "Para agregar flechas o semáforos a una celda se usa:",
+                options: ["Conjuntos de Íconos", "Barras de Datos", "Fórmulas complejas", "Macros"],
+                a: "Conjuntos de Íconos"
+            },
+            {
+                q: "La opción 'Detener si es verdad' sirve para:",
+                options: ["Evitar que se apliquen reglas posteriores", "Cerrar el programa", "Borrar el contenido de la celda", "Reiniciar la PC"],
+                a: "Evitar que se apliquen reglas posteriores"
+            },
+            {
+                q: "¿En qué pestaña de Excel se encuentra usualmente el Formato Condicional?",
+                options: ["Inicio", "Insertar", "Fórmulas", "Datos"],
+                a: "Inicio"
             }
         ];
 
@@ -545,7 +570,7 @@
         }
 
         function updateQuizDisplay() {
-            if (currentQuizQuestionIndex >= quizQuestions.length) {
+            if (currentQuizQuestionIndex >= quizData.length) {
                 quizQuestionElement.textContent = "¡Quiz terminado!";
                 quizOptionsContainer.innerHTML = '';
                 quizFeedback.textContent = '';
@@ -557,8 +582,8 @@
                 return;
             }
 
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            quizQuestionElement.textContent = currentQuestion.question;
+            const currentQuestion = quizData[currentQuizQuestionIndex];
+            quizQuestionElement.textContent = currentQuestion.q;
             quizOptionsContainer.innerHTML = '';
             quizFeedback.textContent = '';
 
@@ -572,13 +597,13 @@
         }
 
         function checkAnswer(selectedButton, selectedOption) {
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            const currentQuestion = quizData[currentQuizQuestionIndex];
             const buttons = quizOptionsContainer.querySelectorAll('.quiz-option-button');
-            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+            const isCorrect = selectedOption === currentQuestion.a;
 
             buttons.forEach(button => {
                 button.disabled = true;
-                if (button.textContent === currentQuestion.correctAnswer) {
+                if (button.textContent === currentQuestion.a) {
                     button.classList.add('correct');
                 } else if (button.textContent === selectedOption) {
                     button.classList.add('incorrect');
@@ -590,7 +615,7 @@
                 quizFeedback.classList.remove('text-red-500');
                 quizFeedback.classList.add('text-green-500');
             } else {
-                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.correctAnswer;
+                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.a;
                 quizFeedback.classList.remove('text-green-500');
                 quizFeedback.classList.add('text-red-500');
             }

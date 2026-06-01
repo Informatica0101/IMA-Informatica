@@ -11,24 +11,53 @@ let timerInterval = null;
 let selectedAsignatura = '';
 let selectedDifficulty = '';
 
-document.addEventListener('DOMContentLoaded', async () => {
+window.initQuizPro = function() {
     populateSubjects();
 
     // (Req 4.8) Control de sesión: Cancelar si el usuario abandona la pestaña
-    window.addEventListener('blur', () => {
-        if (!document.getElementById('quiz-screen').classList.contains('hidden')) {
-            alert('Evaluación cancelada por abandono de ventana.');
+    const handleAbandonment = () => {
+        const quizScreen = document.getElementById('quiz-screen');
+        if (quizScreen && !quizScreen.classList.contains('hidden')) {
+            alert('Evaluación cancelada por abandono de ventana o cambio de pestaña.');
             location.reload();
         }
+    };
+
+    window.addEventListener('blur', handleAbandonment);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+            handleAbandonment();
+        }
     });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Si no se carga dinámicamente desde index.html, inicializar normalmente
+    if (document.getElementById('subject-select')) {
+        window.initQuizPro();
+    }
 });
+
+function normalizeSubject(name) {
+    if (!name) return 'General';
+    let normalized = name.trim();
+    // Eliminar acentos para unificar (e.g., Informática vs Informatica)
+    normalized = normalized.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    // Eliminar sufijos de parcial: (I Parcial), (II Parcial), etc.
+    normalized = normalized.replace(/\s*\((?:I+|IV|V)?\s*Parcial\)/i, '');
+    // Eliminar numerales romanos al final: I, II, III, IV, V
+    normalized = normalized.replace(/\s+(?:I{1,3}|IV|V)$/i, '');
+    return normalized.trim();
+}
 
 function populateSubjects() {
     const select = document.getElementById('subject-select');
     const subjects = new Set();
 
     window.presentationData.forEach(grade => {
-        grade.subjects.forEach(subj => subjects.add(subj.name));
+        grade.subjects.forEach(subj => {
+            subjects.add(normalizeSubject(subj.name));
+        });
     });
 
     select.innerHTML = '<option value="all">Todas las Asignaturas</option>' +
@@ -71,7 +100,8 @@ async function loadQuestions() {
     const presentations = [];
     window.presentationData.forEach(grade => {
         grade.subjects.forEach(subj => {
-            if (selectedAsignatura === 'all' || subj.name === selectedAsignatura) {
+            const normSubj = normalizeSubject(subj.name);
+            if (selectedAsignatura === 'all' || normSubj === selectedAsignatura) {
                 // Filtrar por dificultad (basado en la posición en topics como proxy de fecha/progresión)
                 let topics = subj.topics;
                 if (selectedDifficulty === 'basico') topics = topics.slice(0, Math.ceil(topics.length / 3));
@@ -89,19 +119,17 @@ async function loadQuestions() {
             const response = await fetch('../' + file);
             const text = await response.text();
 
-            // Extraer quizData del script dentro del HTML
-            const match = text.match(/const quizData\s*=\s*(\[[\s\S]*?\]);/);
+            // Extraer quizData o quizQuestions del script dentro del HTML
+            const match = text.match(/const (?:quizData|quizQuestions)\s*=\s*(\[[\s\S]*?\]);/);
             if (match && match[1]) {
-                // Limpiar y parsear el JS (aproximación simple)
                 try {
-                    // Usamos una función para evaluar de forma segura el fragmento JSON-like
                     const data = new Function(`return ${match[1]}`)();
                     if (Array.isArray(data)) {
                         data.forEach(q => {
                             allPresentationQuestions.push({
-                                question: q.q,
+                                question: q.q || q.question,
                                 options: q.options,
-                                answer: q.a,
+                                answer: q.a || q.answer,
                                 type: 'multiple-choice',
                                 source: file
                             });
@@ -110,28 +138,79 @@ async function loadQuestions() {
                 } catch (e) { console.warn("Error parsing quizData from", file, e); }
             }
 
-            // (Req 4.4) Extraer contenido de slides para preguntas de completación
-            const slides = text.match(/<div class="slide[\s\S]*?<\/div>/g) || [];
+            // (Req 4.4) Extraer contenido de slides para preguntas de completación y V/F
+            const slides = text.match(/<div[^>]*class="slide[\s\S]*?<\/div>/g) || [];
+            const localTerms = []; // Para mejores distractores
+
             slides.forEach(slide => {
-                const conceptMatch = slide.match(/<div class="concept-box">([\s\S]*?)<\/div>/);
+                const conceptMatch = slide.match(/<div[^>]*class="concept-box">([\s\S]*?)<\/div>/);
                 if (conceptMatch) {
-                    const content = conceptMatch[1].replace(/<[^>]*>?/gm, '').trim();
-                    if (content.length > 30 && content.length < 200) {
-                        // Generar pregunta de completación (ocultando una palabra clave)
-                        const words = content.split(' ').filter(w => w.length > 5);
-                        if (words.length > 0) {
-                            const targetWord = words[Math.floor(Math.random() * words.length)];
-                            const questionText = content.replace(targetWord, '__________');
+                    const cleanContent = conceptMatch[1].replace(/<[^>]*>?/gm, '').trim();
+                    const boldMatch = conceptMatch[1].match(/<strong>(.*?)<\/strong>/);
+                    if (boldMatch) localTerms.push(boldMatch[1].trim());
+
+                    if (cleanContent.length > 30 && cleanContent.length < 250) {
+                        // 1. Pregunta de completación / Opción Múltiple
+                        let targetWord = boldMatch ? boldMatch[1].trim() : '';
+                        if (!targetWord) {
+                            const words = cleanContent.split(' ').filter(w => w.length > 8);
+                            if (words.length > 0) targetWord = words[0];
+                        }
+
+                        if (targetWord && cleanContent.includes(targetWord)) {
+                            const questionText = cleanContent.replace(new RegExp(targetWord, 'g'), '__________');
+                            const distractors = [...new Set(['Algoritmo', 'Servidor', 'Variable', 'Navegador', 'Protocolo', 'Etiqueta', ...localTerms])]
+                                .filter(d => d.toLowerCase() !== targetWord.toLowerCase());
+
                             allPresentationQuestions.push({
-                                question: `Completa la siguiente definición: "${questionText}"`,
-                                answer: targetWord.toLowerCase().replace(/[,.;]/g, ''),
-                                type: 'fill-in-blanks',
+                                question: `Completa el concepto: "${questionText}"`,
+                                options: shuffleArray([targetWord, ...distractors.slice(0, 3)]),
+                                answer: targetWord,
+                                type: 'multiple-choice',
                                 source: file
                             });
                         }
+
+                        // 2. Verdadero o Falso mejorado
+                        const isTrue = Math.random() > 0.4;
+                        let qText = cleanContent;
+                        if (!isTrue) {
+                            qText = qText.replace(/\bes\b/gi, 'no es').replace(/\bpermite\b/gi, 'restringe');
+                            if (qText === cleanContent) qText = "Es falso que: " + cleanContent;
+                        }
+                        allPresentationQuestions.push({
+                            question: `¿Es la siguiente afirmación verdadera o falsa? \n\n"${qText}"`,
+                            options: ['Verdadero', 'Falso'],
+                            answer: isTrue ? 'Verdadero' : 'Falso',
+                            type: 'multiple-choice',
+                            source: file
+                        });
                     }
                 }
             });
+
+            // 3. Emparejamiento (Matching)
+            const matchingPairs = [];
+            slides.forEach(slide => {
+                const titleMatch = slide.match(/<h3[^>]*>(.*?)<\/h3>/);
+                const conceptMatch = slide.match(/<div[^>]*class="concept-box">([\s\S]*?)<\/div>/);
+                if (titleMatch && conceptMatch) {
+                    const def = conceptMatch[1].replace(/<[^>]*>?/gm, '').trim();
+                    if (def.length > 15 && def.length < 120) {
+                        matchingPairs.push({ term: titleMatch[1].trim(), definition: def });
+                    }
+                }
+            });
+
+            if (matchingPairs.length >= 3) {
+                const selected = shuffleArray([...matchingPairs]).slice(0, 3);
+                allPresentationQuestions.push({
+                    question: "Relaciona cada término con su definición correspondiente:",
+                    pairs: selected,
+                    type: 'matching',
+                    source: file
+                });
+            }
 
         } catch (e) { console.warn("Fallo al cargar presentación para quiz:", file); }
     }
@@ -155,6 +234,9 @@ function showQuestion() {
     optionsContainer.classList.add('hidden');
     fibContainer.classList.add('hidden');
 
+    const matchingContainer = document.getElementById('matching-container');
+    matchingContainer.classList.add('hidden');
+
     if (q.type === 'multiple-choice') {
         optionsContainer.classList.remove('hidden');
         const shuffledOptions = shuffleArray([...q.options]);
@@ -164,6 +246,26 @@ function showQuestion() {
             btn.textContent = opt;
             btn.onclick = () => checkAnswer(opt, q.answer, btn);
             optionsContainer.appendChild(btn);
+        });
+    } else if (q.type === 'matching') {
+        matchingContainer.classList.remove('hidden');
+        const pairsContainer = document.getElementById('matching-pairs');
+        pairsContainer.innerHTML = '';
+
+        const terms = q.pairs.map(p => p.term);
+        const definitions = shuffleArray(q.pairs.map(p => p.definition));
+
+        q.pairs.forEach((pair, idx) => {
+            const row = document.createElement('div');
+            row.className = 'flex flex-col md:flex-row gap-2 items-center bg-gray-50 p-3 rounded-xl border border-gray-100';
+            row.innerHTML = `
+                <div class="w-full md:w-1/3 font-bold text-blue-600 text-sm">${pair.term}</div>
+                <select class="matching-select w-full md:w-2/3 p-2 bg-white border rounded-lg text-xs outline-none focus:border-blue-400" data-term="${pair.term}">
+                    <option value="">Selecciona la definición...</option>
+                    ${definitions.map(d => `<option value="${d}">${d}</option>`).join('')}
+                </select>
+            `;
+            pairsContainer.appendChild(row);
         });
     } else if (q.type === 'fill-in-blanks') {
         fibContainer.classList.remove('hidden');
@@ -179,6 +281,47 @@ function submitFib() {
     const val = input.value.trim().toLowerCase();
 
     checkAnswer(val, q.answer, input);
+}
+
+function submitMatching() {
+    const q = currentQuizQuestions[currentIndex];
+    const selects = document.querySelectorAll('.matching-select');
+    let allCorrect = true;
+
+    selects.forEach(sel => {
+        const term = sel.dataset.term;
+        const val = sel.value;
+        const correctPair = q.pairs.find(p => p.term === term);
+
+        if (val !== correctPair.definition) {
+            allCorrect = false;
+            sel.classList.add('border-red-500');
+        } else {
+            sel.classList.add('border-green-500');
+        }
+        sel.disabled = true;
+    });
+
+    const feedback = document.getElementById('feedback-msg');
+    if (allCorrect) {
+        feedback.textContent = '¡Emparejamiento Correcto!';
+        feedback.className = 'text-center h-8 font-bold text-sm uppercase tracking-widest text-emerald-500';
+        score++;
+    } else {
+        feedback.textContent = 'Emparejamiento Incorrecto';
+        feedback.className = 'text-center h-8 font-bold text-sm uppercase tracking-widest text-red-500';
+    }
+
+    document.getElementById('score').textContent = `${score} / ${currentIndex + 1}`;
+
+    setTimeout(() => {
+        currentIndex++;
+        if (currentIndex < currentQuizQuestions.length) {
+            showQuestion();
+        } else {
+            endQuiz();
+        }
+    }, 2500);
 }
 
 function checkAnswer(selected, correct, btn) {
@@ -245,7 +388,7 @@ async function endQuiz() {
 
     if (approved) {
         title.textContent = '¡Excelente Trabajo!';
-        msg.textContent = `Has aprobado la evaluación inteligente con un rendimiento sólido.`;
+        msg.textContent = `Has aprobado QuizPro con un rendimiento sólido.`;
         icon.innerHTML = '<i class="fas fa-trophy"></i>';
         icon.className = 'w-24 h-24 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 bg-emerald-50 text-emerald-500';
     } else {
@@ -258,7 +401,7 @@ async function endQuiz() {
     // Registrar el logro
     if (window.GamesAdapter) {
         await GamesAdapter.saveResult(
-            "Evaluación Inteligente",
+            "QuizPro",
             `${selectedAsignatura} - ${selectedDifficulty} (${finalPercent}%)`,
             finalPercent
         );

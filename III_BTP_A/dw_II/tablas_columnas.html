@@ -352,24 +352,54 @@
         // Funcionalidad del cuestionario
         const quizQuestions = [
             {
-                question: "¿Qué propiedad de CSS se utiliza para crear un layout de cuadrícula bidimensional?",
+                q: "¿Qué propiedad de CSS se utiliza para crear un layout de cuadrícula bidimensional?",
                 options: ["display: flex;", "display: grid;", "display: block;", "display: table;"],
-                correctAnswer: "display: grid;"
+                a: "display: grid;"
             },
             {
-                question: "¿Qué sistema de maquetación es más adecuado para alinear elementos en una sola fila o columna?",
+                q: "¿Qué sistema de maquetación es más adecuado para alinear elementos en una sola fila o columna?",
                 options: ["CSS Grid", "HTML Table", "Flexbox", "CSS Columns"],
-                correctAnswer: "Flexbox"
+                a: "Flexbox"
             },
             {
-                question: "¿Cuál es el principal beneficio de usar Grid y Flexbox en lugar de tablas para el diseño?",
+                q: "¿Cuál es el principal beneficio de usar Grid y Flexbox en lugar de tablas para el diseño?",
                 options: ["Son más lentos", "No permiten diseños complejos", "Son más flexibles y responsivos", "Solo funcionan en navegadores antiguos"],
-                correctAnswer: "Son más flexibles y responsivos"
+                a: "Son más flexibles y responsivos"
             },
             {
-                question: "¿Qué propiedad de Flexbox centra los elementos horizontalmente?",
+                q: "¿Qué propiedad de Flexbox centra los elementos horizontalmente?",
                 options: ["align-items", "flex-direction", "justify-content", "flex-wrap"],
-                correctAnswer: "justify-content"
+                a: "justify-content"
+            },
+            {
+                q: "¿Qué sistema permite control total sobre filas y columnas al mismo tiempo?",
+                options: ["CSS Grid", "Flexbox", "Floats", "Inline-block"],
+                a: "CSS Grid"
+            },
+            {
+                q: "Flexbox se define como un sistema de maquetación de tipo:",
+                options: ["Unidimensional", "Bidimensional", "Tridimensional", "Estático"],
+                a: "Unidimensional"
+            },
+            {
+                q: "¿Cuál es el método tradicional y hoy desaconsejado para maquetar toda una web?",
+                options: ["Tablas HTML", "CSS Grid", "Flexbox", "Frameworks modernos"],
+                a: "Tablas HTML"
+            },
+            {
+                q: "La capacidad de un diseño para adaptarse a cualquier tamaño de pantalla se llama:",
+                options: ["Diseño Responsivo", "Diseño Adaptativo", "Diseño Estático", "Diseño Líquido"],
+                a: "Diseño Responsivo"
+            },
+            {
+                q: "Propiedad de Grid para definir áreas específicas con nombre:",
+                options: ["grid-template-areas", "grid-gap", "grid-column", "display-area"],
+                a: "grid-template-areas"
+            },
+            {
+                q: "¿Qué herramienta es ideal para crear un menú de navegación horizontal?",
+                options: ["Flexbox", "CSS Grid", "Z-index", "Position: absolute"],
+                a: "Flexbox"
             }
         ];
         let currentQuizQuestionIndex = 0;
@@ -387,7 +417,7 @@
             }
 
             const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            quizQuestionElement.textContent = currentQuestion.question;
+            quizQuestionElement.textContent = currentQuestion.q;
             quizOptionsElement.innerHTML = '';
             quizFeedbackElement.textContent = '';
 
@@ -404,11 +434,11 @@
             const currentQuestion = quizQuestions[currentQuizQuestionIndex];
             const quizFeedback = document.getElementById('quiz-feedback');
             const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
-            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+            const isCorrect = selectedOption === currentQuestion.a;
 
             buttons.forEach(button => {
                 button.disabled = true;
-                if (button.textContent === currentQuestion.correctAnswer) {
+                if (button.textContent === currentQuestion.a) {
                     button.classList.add('correct');
                 } else if (button.textContent === selectedOption) {
                     button.classList.add('incorrect');
@@ -420,7 +450,7 @@
                 quizFeedback.classList.remove('text-red-500');
                 quizFeedback.classList.add('text-green-500');
             } else {
-                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.correctAnswer;
+                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.a;
                 quizFeedback.classList.remove('text-green-500');
                 quizFeedback.classList.add('text-red-500');
             }
