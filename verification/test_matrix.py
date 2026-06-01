@@ -56,7 +56,7 @@ async def run_matrix_test():
 
         # TEST 3: Desbloquear con Stats simulados
         stats_approved = {
-            "QuizPro_Informatica I_Decimo_Basico": {"maxScore": 85, "grade": "10", "subject": "Informática I", "level": "Básico"}
+            "QuizPro_Informatica_Decimo_Basico": {"maxScore": 85, "grade": "10", "subject": "Informatica", "level": "Básico"}
         }
         print("Injecting stats:", stats_approved)
         await page.evaluate(f"window.userGameStats = {json.dumps(stats_approved)}")

@@ -157,10 +157,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadGame(gameId, htmlPath, jsPath, initFnName, title) {
+        // Full Space Mode (Ocultar secciones)
+        const sectionsToHide = ['hero-section', 'news-section', 'resources-section', 'access-section'];
+        sectionsToHide.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        });
+
         const mainHeader = document.getElementById('main-header');
         if (mainHeader) mainHeader.classList.add('header-hidden');
-        mainContentSections.classList.add('hidden');
-        mainContentSections.classList.remove('flex');
+
         dynamicallyLoadedGameContainer.classList.remove('hidden');
         mainContentTitle.textContent = title;
 
@@ -192,11 +198,30 @@ document.addEventListener('DOMContentLoaded', () => {
     window.returnToMainContent = function() {
         const mainHeader = document.getElementById('main-header');
         if (mainHeader) mainHeader.classList.remove('header-hidden');
+
         dynamicallyLoadedGameContainer.innerHTML = '';
+        dynamicallyLoadedGameContainer.classList.add('hidden');
+
         ['js/perifericos_juego.js', 'js/webmaster_quiz_juego.js', 'js/destreza_teclado.js', 'js/quizpro.js'].forEach(src => {
             const s = document.querySelector(`script[src="${src}"]`);
             if (s) s.remove();
         });
+
+        // Restaurar secciones
+        const sectionsToRestore = ['hero-section', 'news-section', 'resources-section', 'access-section'];
+        sectionsToRestore.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                // News section solo si tiene contenido (basado en lógica de loadNews)
+                if (id === 'news-section') {
+                    const container = document.getElementById('news-container');
+                    if (container && container.children.length > 0) el.classList.remove('hidden');
+                } else {
+                    el.classList.remove('hidden');
+                }
+            }
+        });
+
         showMainContentSections();
     };
 

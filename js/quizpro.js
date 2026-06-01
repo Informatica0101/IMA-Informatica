@@ -17,7 +17,7 @@ let incorrectAnswers = [];
 const SEEN_QUESTIONS_KEY = 'quizpro_seen_questions';
 const SEEN_LIMIT = 200;
 
-let userGameStats = {}; // Cache de logros para validación de bloqueos
+window.userGameStats = {}; // Cache de logros para validación de bloqueos
 
 window.initQuizPro = function() {
     loadPerformanceTable();
@@ -125,26 +125,43 @@ window.navigateToSubjects = function() {
 };
 
 /**
- * REQ 3.A: Validación Cross-Grade
- * 11vo requiere 10mo aprobado. 12vo requiere 11vo aprobado.
+ * REQ 3.A: Validación Cross-Grade (Matriz Estricta con Fallback)
+ * 11vo requiere 10mo de la MISMA materia. Si no existe en 10mo, requiere 'Informatica' de 10mo.
  */
 function checkCrossGradeLock(subjectName, targetGrade) {
     const targetGradeNum = parseGrade(targetGrade);
-    if (targetGradeNum <= 10) return false; // 10mo siempre abierto
+    if (targetGradeNum <= 10) return false;
 
     const prevGradeNum = targetGradeNum - 1;
+    const statsArray = Object.values(window.userGameStats);
+    const normTarget = normalizeSubject(subjectName);
 
-    // REQ: El alumno debe haber aprobado al menos UNA materia del grado anterior
-    // para desbloquear el nivel actual (Concepto de Promoción de Grado en QuizPro)
-    const statsArray = Object.values(userGameStats);
-
-    const hasAnyApprovalInPrevGrade = statsArray.some(s => {
-        const sg = parseGrade(s.grade);
-        const score = parseFloat(s.maxScore || 0);
-        return sg === prevGradeNum && score >= 70;
+    // 1. Buscar si la materia existe en el grado anterior (en los datos globales)
+    let existsInPrev = false;
+    window.presentationData.forEach(block => {
+        if (parseGrade(block.grade) === prevGradeNum) {
+            if (block.subjects.some(s => normalizeSubject(s.name) === normTarget)) {
+                existsInPrev = true;
+            }
+        }
     });
 
-    return !hasAnyApprovalInPrevGrade;
+    // 2. Aplicar lógica de bloqueo
+    const hasApproval = statsArray.some(s => {
+        const sg = parseGrade(s.grade);
+        const score = parseFloat(s.maxScore || 0);
+        const normS = normalizeSubject(s.subject);
+
+        if (existsInPrev) {
+            // Requiere la misma materia
+            return sg === prevGradeNum && normS === normTarget && score >= 70;
+        } else {
+            // Fallback: Requiere haber pasado 'Informatica' en el grado anterior
+            return sg === prevGradeNum && (normS === 'Informatica' || normS === 'Informatica I') && score >= 70;
+        }
+    });
+
+    return !hasApproval;
 }
 
 window.navigateToLevels = function(subjectName, gradeLabel) {
@@ -155,7 +172,7 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     const isTeacher = JSON.parse(localStorage.getItem('currentUser'))?.rol === 'Profesor';
 
     // REQ 3.B: Progresión Interna por Niveles
-    const stats = Object.values(userGameStats).filter(s => s.subject === subjectName && s.grade === gradeLabel);
+    const stats = Object.values(window.userGameStats).filter(s => s.subject === subjectName && s.grade === gradeLabel);
     const basicScore = stats.find(s => s.level === 'Básico')?.maxScore || 0;
     const interScore = stats.find(s => s.level === 'Intermedio')?.maxScore || 0;
 
@@ -279,17 +296,19 @@ async function loadQuestions() {
 
     const presentations = [];
     window.presentationData.forEach(gradeBlock => {
-        // Solo cargamos el grado específico seleccionado (para respetar niveles Básico/Intermedio del grado)
-        if (gradeBlock.grade === selectedGrado) {
+        // Normalizamos grado de comparación
+        const blockGradeNum = parseGrade(gradeBlock.grade);
+        const targetGradeNum = parseGrade(selectedGrado);
+
+        if (blockGradeNum === targetGradeNum) {
             gradeBlock.subjects.forEach(subj => {
                 const normSubj = normalizeSubject(subj.name);
-                if (normSubj !== selectedAsignatura) return;
+                if (normSubj !== normalizeSubject(selectedAsignatura)) return;
 
-                // NOTA: No filtramos por window.PARCIAL_ACTUAL aquí para cumplir con la corrección.
                 let topics = subj.topics;
                 // Segmentación de temas por dificultad
-                if (selectedDifficulty === 'basico') topics = topics.slice(0, Math.ceil(topics.length / 3));
-                else if (selectedDifficulty === 'intermedio') topics = topics.slice(Math.floor(topics.length/3), Math.floor(topics.length*2/3));
+                if (selectedDifficulty === 'basico') topics = topics.slice(0, Math.max(1, Math.ceil(topics.length / 3)));
+                else if (selectedDifficulty === 'intermedio') topics = topics.slice(Math.floor(topics.length/3), Math.max(Math.floor(topics.length/3) + 1, Math.floor(topics.length*2/3)));
                 else if (selectedDifficulty === 'avanzado') topics = topics.slice(Math.floor(topics.length*2/3));
 
                 topics.forEach(t => presentations.push(t.file));
@@ -305,7 +324,12 @@ async function loadQuestions() {
 
 async function processPresentation(file) {
     try {
-        const res = await fetch('../' + file);
+        // Corrección de Rutas para carga desde index.html o juegos/quizpro.html
+        const isRoot = !window.location.pathname.includes('/juegos/');
+        const pathPrefix = isRoot ? '' : '../';
+
+        const res = await fetch(pathPrefix + file);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const text = await res.text();
 
         const quizMatch = text.match(/const (?:quizData|quizQuestions)\s*=\s*(\[[\s\S]*?\]);/);
@@ -537,7 +561,16 @@ function checkAnswer(selected, correct, btn) {
     if(input) input.disabled = true;
 
     const feedback = document.getElementById('feedback-msg');
-    const isCorrect = String(selected).trim().toLowerCase() === String(correct).trim().toLowerCase();
+
+    // REQ 8.4: Evaluación estricta para Transcripción (Ortografía y Puntuación)
+    const q = currentQuizQuestions[currentIndex];
+    let isCorrect = false;
+    if (q && q.type === 'transcription') {
+        // Sensible a mayúsculas, minúsculas y puntuación exacta
+        isCorrect = String(selected).trim() === String(correct).trim();
+    } else {
+        isCorrect = String(selected).trim().toLowerCase() === String(correct).trim().toLowerCase();
+    }
 
     if (isCorrect) {
         if (btn) btn.classList.add('correct', 'border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
@@ -677,7 +710,7 @@ window.loadPerformanceTable = async function() {
     try {
         const res = await fetchApi('USER', 'getGameStats', { userId: user.userId });
         if (res.status === 'success') {
-            userGameStats = res.data || {};
+            window.userGameStats = res.data || {};
             const history = res.allHistory || [];
 
             let approvedCount = 0;
@@ -689,7 +722,7 @@ window.loadPerformanceTable = async function() {
                 }
             });
 
-            container.innerHTML = Object.entries(userGameStats)
+            container.innerHTML = Object.entries(window.userGameStats)
                 .filter(([key]) => key.startsWith('QuizPro_'))
                 .map(([key, s]) => {
                     if (s.maxScore >= 70) approvedCount++;
@@ -710,7 +743,7 @@ window.loadPerformanceTable = async function() {
                     `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${tag}</span>`
                 ).join('');
             }
-            if (Object.keys(userGameStats).length > 0) {
+            if (Object.keys(window.userGameStats).length > 0) {
                 document.getElementById('performance-dashboard').classList.remove('hidden');
             }
         }
