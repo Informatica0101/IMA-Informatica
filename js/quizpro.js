@@ -495,6 +495,8 @@ function extractTags(text, question) {
 
 function showQuestion() {
     const q = currentQuizQuestions[currentIndex];
+    if (!q) return;
+
     const feedback = document.getElementById('feedback-msg');
     feedback.textContent = '';
 
@@ -512,10 +514,13 @@ function showQuestion() {
     matchingContainer.classList.add('hidden');
 
     const input = document.getElementById('fib-input');
+    const fibBtn = fibContainer.querySelector('button');
     if (input) {
         input.disabled = false;
         input.value = '';
+        input.onkeydown = (e) => { if(e.key === 'Enter') submitFib(); };
     }
+    if (fibBtn) fibBtn.disabled = false;
 
     if (q.type === 'practice') {
         optionsContainer.classList.remove('hidden');
@@ -534,8 +539,8 @@ function showQuestion() {
         fibContainer.classList.remove('hidden');
         const targetEl = document.createElement('div');
         targetEl.className = 'bg-blue-50 text-blue-800 p-4 rounded-xl italic text-sm mb-6 border border-blue-100 no-copy';
-        targetEl.textContent = q.targetText;
-        targetEl.oncontextmenu = (e) => e.preventDefault(); // Bloquear click derecho
+        targetEl.textContent = q.targetText || q.answer || "Error: Texto no encontrado";
+        targetEl.oncontextmenu = (e) => e.preventDefault();
 
         const existingTarget = fibContainer.querySelector('.transcription-target');
         if (existingTarget) existingTarget.remove();
@@ -545,9 +550,11 @@ function showQuestion() {
         const input = document.getElementById('fib-input');
         input.placeholder = "Escribe aquí respetando ortografía...";
         setTimeout(() => {
-            input.disabled = false;
-            input.focus();
-        }, 200);
+            if (input) {
+                input.disabled = false;
+                input.focus();
+            }
+        }, 300);
     } else if (q.type === 'memory') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
@@ -636,21 +643,29 @@ function registerSeenQuestion(id) {
 }
 
 function checkAnswer(selected, correct, btn) {
+    if (document.body.dataset.isTransitioning === "true") return;
+    document.body.dataset.isTransitioning = "true";
+
     const allBtns = document.querySelectorAll('.option-card');
     const input = document.getElementById('fib-input');
+    const fibBtn = document.querySelector('#fib-container button');
+
     allBtns.forEach(b => b.disabled = true);
     if(input) input.disabled = true;
+    if(fibBtn) fibBtn.disabled = true;
 
     const feedback = document.getElementById('feedback-msg');
 
     // REQ 8.4: Evaluación estricta para Transcripción (Ortografía y Puntuación)
     const q = currentQuizQuestions[currentIndex];
     let isCorrect = false;
+    const cleanSelected = String(selected || "").trim();
+    const cleanCorrect = String(correct || "").trim();
+
     if (q && q.type === 'transcription') {
-        // Sensible a mayúsculas, minúsculas y puntuación exacta
-        isCorrect = String(selected).trim() === String(correct).trim();
+        isCorrect = cleanSelected === cleanCorrect;
     } else {
-        isCorrect = String(selected).trim().toLowerCase() === String(correct).trim().toLowerCase();
+        isCorrect = cleanSelected.toLowerCase() === cleanCorrect.toLowerCase();
     }
 
     if (isCorrect) {
@@ -661,17 +676,19 @@ function checkAnswer(selected, correct, btn) {
     } else {
         if (btn) btn.classList.add('incorrect', 'border-red-500', 'bg-red-50', 'text-red-700');
         feedback.className = 'text-center h-8 font-bold text-red-500';
-        feedback.textContent = `Incorrecto. Era: ${correct}`;
-        incorrectAnswers.push(currentQuizQuestions[currentIndex]);
+        const displayCorrect = correct || "Respuesta no disponible";
+        feedback.textContent = `Incorrecto. Era: ${displayCorrect}`;
+        incorrectAnswers.push(q);
         allBtns.forEach(b => { if (b.textContent === correct) b.classList.add('correct', 'border-emerald-500', 'text-emerald-600'); });
     }
 
     document.getElementById('score').textContent = `${score} / ${currentIndex + 1}`;
     setTimeout(() => {
+        document.body.dataset.isTransitioning = "false";
         currentIndex++;
         if (currentIndex < currentQuizQuestions.length) showQuestion();
         else endQuiz();
-    }, 1500);
+    }, 1200);
 }
 
 window.submitFib = function() {
