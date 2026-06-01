@@ -528,9 +528,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!confirm('Hay una subida en progreso. ¿Estás seguro de cerrar el modal?')) return;
         }
 
-        // Solo mostrar advertencia si NO estamos en proceso de submit y hay archivos (Tarea 3)
+        // Solo mostrar advertencia si NO estamos en proceso de submit y hay archivos (Req 2)
         if (uploadedFiles.length > 0 && !isSubmitting) {
-            if (confirm('«Los archivos cargados durante esta entrega se eliminarán y la entrega no será registrada. ¿Desea continuar?»')) {
+            if (confirm('«Los archivos cargados se perderán si abandona esta entrega. ¿Desea continuar?»')) {
                 // Eliminar archivos temporales silenciosamente en segundo plano
                 const filesToDelete = [...uploadedFiles];
                 uploadedFiles = [];
@@ -842,12 +842,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (submissionForm) {
         submissionForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            // Protección contra duplicados y subidas incompletas (Tarea 3)
+            // Protección contra duplicados y subidas incompletas (Req 3)
             if (isSubmitting || uploadedFiles.length === 0 || activeUploads > 0) return;
 
-            isSubmitting = true; // Bloquear nuevas acciones
+            isSubmitting = true; // Bloquear nuevas acciones (Req 3.1)
             confirmSubmissionBtn.disabled = true;
             confirmSubmissionBtn.classList.add('btn-loading');
+            confirmSubmissionBtn.textContent = 'Procesando...'; // Estado de procesamiento (Req 3.3)
 
             try {
                 let finalFileId = uploadedFiles[0].fileId;
@@ -867,9 +868,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const result = await fetchApi('TASK', 'submitAssignment', payload);
                 if (result.status === 'success') {
-                    alert('¡Tarea entregada exitosamente!');
-                    // Limpiar referencias antes de cerrar para evitar el aviso de pérdida
+                    // Operación exitosa: limpiar archivos para evitar advertencia (Caso 2)
                     uploadedFiles = [];
+                    alert('¡Tarea entregada exitosamente!');
                     closeSubmissionModal();
                     fetchAllActivities();
                 } else {
@@ -881,6 +882,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 confirmSubmissionBtn.disabled = false;
                 confirmSubmissionBtn.classList.remove('btn-loading');
+                confirmSubmissionBtn.textContent = 'Entregar Tarea';
                 updateConfirmButtonState();
             }
         });
@@ -924,7 +926,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('beforeunload', (e) => {
         if (!isSubmitting && (activeUploads > 0 || uploadedFiles.length > 0)) {
             e.preventDefault();
-            e.returnValue = '«Los archivos cargados durante esta entrega se eliminarán y la entrega no será registrada. ¿Desea continuar?»';
+            e.returnValue = '«Los archivos cargados se perderán si abandona esta entrega. ¿Desea continuar?»';
         }
     });
 });

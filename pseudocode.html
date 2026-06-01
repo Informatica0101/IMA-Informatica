@@ -1021,6 +1021,7 @@ FinAlgoritmo</div>
 
         function openDriveModal() {
             const modal = document.getElementById('driveOpenModal');
+            modal.classList.remove('hidden');
             modal.style.display = 'flex';
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             if (currentUser && currentUser.rol === 'Profesor') {
@@ -1032,7 +1033,9 @@ FinAlgoritmo</div>
         }
 
         function closeDriveModal() {
-            document.getElementById('driveOpenModal').style.display = 'none';
+            const modal = document.getElementById('driveOpenModal');
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
         }
 
         async function loadStudentsForFilter() {
@@ -1407,7 +1410,6 @@ FinAlgoritmo</div>
             const code = editor.innerText;
             const match = code.match(/(?:Algoritmo|Proceso)\s+([a-zA-Z0-9_]+)/i);
             const filename = (match && match[1] ? match[1] : 'sin_titulo') + '.psc';
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
             if (!currentUser) {
                 alert("Debes iniciar sesión para guardar en la nube.");
@@ -1419,10 +1421,11 @@ FinAlgoritmo</div>
                 const res = await fetchApi('TASK', 'saveProject', {
                     userId: currentUser.userId,
                     fileName: filename,
-                    code: code
+                    code: code,
+                    editor: 'PseudocodeEditor' // Identificador del editor (Req 1.2)
                 });
                 if (res.status === 'success') {
-                    printToConsole("✓ Proyecto guardado en Google Drive.");
+                    printToConsole("✓ Proyecto guardado en la nube.");
                     loadProjectsList();
                 }
             } catch (e) {
@@ -1497,7 +1500,10 @@ FinAlgoritmo</div>
         async function loadProjectCloud(fileId) {
             if (!confirm('¿Deseas cargar este proyecto? Se perderán los cambios no guardados.')) return;
             try {
-                const res = await fetchApi('TASK', 'loadProject', { fileId });
+                const res = await fetchApi('TASK', 'loadProject', {
+                    fileId,
+                    userId: currentUser.userId // Enviamos userId para búsqueda en hoja
+                });
                 if (res.status === 'success') {
                     editor.innerText = res.data.code;
                     updateEditor();

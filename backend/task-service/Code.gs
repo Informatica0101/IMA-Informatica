@@ -396,6 +396,22 @@ function submitAssignment(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const entregasSheet = getSheetOrThrow(ss, "Entregas");
 
+  // Validación de duplicados (Req 3)
+  const data = entregasSheet.getDataRange().getValues();
+  // Verificar si ya existe una entrega para este usuario, tarea y archivo en los últimos 5 minutos
+  const now = new Date().getTime();
+  const duplicate = data.some(row => {
+    const rowUserId = row[2];
+    const rowTareaId = row[1];
+    const rowFileId = row[4];
+    const rowDate = new Date(row[3]).getTime();
+    return rowUserId == userId && rowTareaId == tareaId && rowFileId == fileId && (now - rowDate < 300000);
+  });
+
+  if (duplicate) {
+    return { status: "success", message: "La tarea ya fue entregada previamente." };
+  }
+
   const entregaId = "ENT-" + new Date().getTime();
   // Estado inicial: Pendiente de revisión
   entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente de revisión', '', mimeType]);
@@ -606,7 +622,7 @@ function getStudentFolder(userId) {
 }
 
 function saveProject(payload) {
-  const { userId, fileName, code } = payload;
+  const { userId, fileName, code, editor } = payload;
   if (!userId || !fileName) throw new Error("ID de usuario y nombre de archivo requeridos.");
 
   const alumnoFolder = getStudentFolder(userId);
@@ -629,7 +645,7 @@ function saveProject(payload) {
   const fileId = file.getId();
   const fileUrl = `https://drive.google.com/uc?id=${fileId}`;
 
-  // Registrar en la hoja "pseudocode" (userId, NombreArchivo, archivoUrl)
+  // Registrar en la hoja "pseudocode" (userId, NombreArchivo, archivoUrl, codigo, editor)
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     const pseudocodeSheet = getOrCreateSheet(ss, "pseudocode");
@@ -637,9 +653,13 @@ function saveProject(payload) {
     const rowIndex = data.findIndex(r => r[0] == userId && r[1] == finalFileName);
 
     if (rowIndex !== -1) {
+      // Actualizar: A:userId, B:NombreArchivo, C:archivoUrl, D:codigo, E:editor
       pseudocodeSheet.getRange(rowIndex + 1, 3).setValue(fileUrl);
+      pseudocodeSheet.getRange(rowIndex + 1, 4).setValue(code);
+      pseudocodeSheet.getRange(rowIndex + 1, 5).setValue(editor || 'PseudocodeEditor');
     } else {
-      pseudocodeSheet.appendRow([userId, finalFileName, fileUrl]);
+      // Insertar: A:userId, B:NombreArchivo, C:archivoUrl, D:codigo, E:editor
+      pseudocodeSheet.appendRow([userId, finalFileName, fileUrl, code, editor || 'PseudocodeEditor']);
     }
   } catch (e) {
     logDebug("Error al registrar en hoja pseudocode:", e.message);
@@ -660,20 +680,19 @@ function listProjects(payload) {
 
     data.forEach(r => {
       if (r[0] == userId) {
-        const fileIdMatch = r[2].match(/id=([^&]+)/);
-        const fileId = fileIdMatch ? fileIdMatch[1] : null;
-        if (fileId) {
-          result.push({
-            name: r[1],
-            id: fileId,
-            lastUpdated: new Date().toISOString() // La hoja no tiene fecha, usamos actual o Drive si es crítico
-          });
-        }
+        // En este nuevo flujo, el id puede ser el NombreArchivo para búsqueda en hoja o el fileId real
+        const fileIdMatch = (r[2] || "").match(/id=([^&]+)/);
+        const fileId = fileIdMatch ? fileIdMatch[1] : r[1]; // Fallback al nombre si no hay URL
+        result.push({
+          name: r[1],
+          id: fileId,
+          lastUpdated: new Date().toISOString()
+        });
       }
     });
   } catch (e) {
     logDebug("Error al listar proyectos desde hoja:", e.message);
-    // Fallback a Drive si la hoja falla o no existe aún
+    // Fallback a Drive si la hoja falla
     const alumnoFolder = getStudentFolder(userId);
     const projectsFolder = getOrCreateFolder(alumnoFolder, "Proyectos_PSeInt");
     const files = projectsFolder.getFiles();
@@ -694,9 +713,31 @@ function listProjects(payload) {
 }
 
 function loadProject(payload) {
-  const { fileId } = payload;
-  if (!fileId) throw new Error("ID de archivo requerido.");
+  const { fileId, userId } = payload; // Ahora podemos recibir userId para buscar en hoja
+  if (!fileId) throw new Error("Identificador de proyecto requerido.");
 
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const pseudocodeSheet = getSheetOrThrow(ss, "pseudocode");
+    const data = pseudocodeSheet.getDataRange().getValues();
+
+    // Buscar por fileId (en URL) o por NombreArchivo (si fileId es el nombre)
+    const rowIndex = data.findIndex(r => (r[0] == userId && (r[1] == fileId || (r[2] || "").indexOf(fileId) !== -1)));
+
+    if (rowIndex !== -1) {
+      return {
+        status: "success",
+        data: {
+          name: data[rowIndex][1],
+          code: data[rowIndex][3] // Columna D: codigo
+        }
+      };
+    }
+  } catch (e) {
+    logDebug("Error al cargar desde hoja, intentando Drive:", e.message);
+  }
+
+  // Fallback a Drive si no se encuentra en la hoja o falla
   const file = DriveApp.getFileById(fileId);
   return {
     status: "success",
