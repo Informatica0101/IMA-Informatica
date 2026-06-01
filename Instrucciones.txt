@@ -146,3 +146,11 @@ TAREAS PENDIENTES DE REVISIÓN
 ESTADO DE LAS TAREAS (RESUMEN)
 
 [A-76] FINALIZADO (PENDIENTE DE REVISIÓN)
+
+[TAREAS PENDIENTES DE REVISIÓN - JULES COMMIT]
+32. Integración del intérprete de Pseudocódigo en barra de navegación móvil (index, student, teacher).
+33. Diagnóstico y corrección del sistema de archivos de Pseudocódigo (Hoja Spreadsheet 'pseudocode').
+34. Robustecimiento de lógica anti-pérdida y protección contra duplicados en módulo de entrega.
+35. Implementación de soporte completo para archivos HEIC (Dashboard, Tareas, Noticias). - COMPLETADA
+36. Mejora del modal de calificación: sustitución de datos personales por metadatos de entrega y bloqueo de doble clic. - COMPLETADA
+37. Ajuste de métricas de progreso: 'Crédito Extra' ahora funciona como recuperación sin penalizar el baseline obligatorio. - COMPLETADA

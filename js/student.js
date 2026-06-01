@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let uploadedFiles = []; // [{fileId, fileName, mimeType}]
     let currentFolderId = null;
     let activeUploads = 0;
+    let isSubmitting = false; // Flag para evitar avisos tras entrega exitosa (Tarea 3)
 
     function formatDate(isoString) {
         if (!isoString) return 'N/A';
@@ -122,16 +123,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('student-expediente');
         if (!container) return;
 
-        // Calcular progreso (basado en lógica de A-73/Teacher Dashboard)
-        const total = activities.length;
-        const delivered = activities.filter(a => a.entrega).length;
-        const completed = activities.filter(a => a.entrega && (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')).length;
-        const pending = total - delivered;
+        // --- Ajuste de Lógica de Progreso (Req 2) ---
+        // Excluir 'Credito Extra' del total asignado (baseline), ya que son de recuperación
+        const baseActivities = activities.filter(a => a.type !== 'Credito Extra');
+        const totalAssigned = baseActivities.length;
 
-        const deliveryRate = total > 0 ? (delivered / total) : 0;
+        // Las completadas suman puntos al progreso real (separando obligatorias de recuperación)
+        const mandatoryCompleted = activities.filter(a => a.type !== 'Credito Extra' && a.entrega &&
+            (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
+        ).length;
+
+        const extraCreditCompleted = activities.filter(a => a.type === 'Credito Extra' && a.entrega &&
+            (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
+        ).length;
+
+        // El progreso visual (slots llenos) se beneficia del crédito extra para cubrir faltantes (Req 2)
+        const completed = Math.min(totalAssigned, mandatoryCompleted + extraCreditCompleted);
+        const pending = Math.max(0, totalAssigned - completed);
+
+        // Tasa de entrega basada en tareas obligatorias (Req 2: Crédito extra no es obligatorio)
+        const mandatoryDelivered = activities.filter(a => a.type !== 'Credito Extra' && a.entrega).length;
+        const deliveryRate = totalAssigned > 0 ? (mandatoryDelivered / totalAssigned) : 0;
+
+        // Puntos totales obtenidos (incluye recuperación por créditos extra)
         const gradeSum = activities.reduce((sum, a) => sum + parseFloat(a.entrega?.calificacion || 0), 0);
-        const maxPossible = activities.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
-        const academicPerformance = maxPossible > 0 ? (gradeSum / maxPossible) : 0;
+
+        // El máximo posible se basa en las tareas obligatorias
+        const maxPossible = baseActivities.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
+        const academicPerformance = maxPossible > 0 ? Math.min(1, gradeSum / maxPossible) : 0;
 
         let onTimeCount = 0;
         activities.forEach(a => {
@@ -141,7 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (deliveryDate <= limit) onTimeCount++;
             }
         });
-        const punctualityRate = delivered > 0 ? (onTimeCount / delivered) : 1;
+        const totalDelivered = activities.filter(a => a.entrega).length;
+        const punctualityRate = totalDelivered > 0 ? (onTimeCount / totalDelivered) : 1;
 
         const compositeProgress = Math.round((deliveryRate * 0.3 + academicPerformance * 0.5 + punctualityRate * 0.2) * 100);
 
@@ -511,6 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTaskTitle.textContent = taskTitle;
         uploadedFiles = [];
         currentFolderId = null;
+        isSubmitting = false; // Resetear flag al abrir
 
         uploadedFilesList.innerHTML = '';
         uploadedFilesContainer.classList.add('hidden');
@@ -522,23 +543,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function closeSubmissionModal() {
-        if (activeUploads > 0) {
+        if (activeUploads > 0 && !isSubmitting) {
             if (!confirm('Hay una subida en progreso. ¿Estás seguro de cerrar el modal?')) return;
         }
-        if (uploadedFiles.length > 0) {
-            if (confirm('ATENCIÓN: Al cerrar este modal se eliminarán los archivos cargados temporalmente y se cancelará el proceso de entrega. ¿Deseas continuar?')) {
-                // Eliminar archivos temporales de forma asíncrona pero sin bloquear la UI
-                uploadedFiles.forEach(f => fetchApi('TASK', 'deleteFile', { fileId: f.fileId }).catch(console.error));
+
+        // Solo mostrar advertencia si NO estamos en proceso de submit y hay archivos (Req 2)
+        if (uploadedFiles.length > 0 && !isSubmitting) {
+            if (confirm('«Los archivos cargados se perderán si abandona esta entrega. ¿Desea continuar?»')) {
+                // Eliminar archivos temporales silenciosamente en segundo plano
+                const filesToDelete = [...uploadedFiles];
                 uploadedFiles = [];
+                filesToDelete.forEach(f => {
+                    fetchApi('TASK', 'deleteFile', { fileId: f.fileId }).catch(e => console.warn("Fallo limpieza silenciosa:", e));
+                });
             } else {
                 return;
             }
         }
+
         submissionModal.classList.add('hidden');
         submissionForm.reset();
         uploadedFilesList.innerHTML = '';
         uploadedFilesContainer.classList.add('hidden');
         updateConfirmButtonState();
+        isSubmitting = false;
     }
 
     function updateConfirmButtonState() {
@@ -647,8 +675,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Generar vista previa inicial (thumbnail placeholder o real si es imagen)
             let thumbnailHtml = `<div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><i class="fas fa-file"></i></div>`;
             if (currentFile.type.startsWith('image/')) {
-                const tempUrl = URL.createObjectURL(currentFile);
-                thumbnailHtml = `<img src="${tempUrl}" class="w-12 h-12 object-cover rounded-lg shadow-inner">`;
+                // (Tarea HEIC) Fallback para HEIC ya que el navegador no lo renderiza nativamente en <img>
+                if (currentFile.name.toLowerCase().endsWith('.heic')) {
+                    thumbnailHtml = `<div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-400"><i class="fas fa-image"></i></div>`;
+                } else {
+                    const tempUrl = URL.createObjectURL(currentFile);
+                    thumbnailHtml = `<img src="${tempUrl}" class="w-12 h-12 object-cover rounded-lg shadow-inner">`;
+                }
             } else if (currentFile.type === 'application/pdf') {
                 thumbnailHtml = `<div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-red-400"><i class="fas fa-file-pdf"></i></div>`;
             }
@@ -683,7 +716,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 let mimeType = currentFile.type;
 
                 // Optimización Móvil: Compresión de imágenes (Req 3.3)
-                if (currentFile.type.startsWith('image/')) {
+                // (Tarea HEIC) Saltamos compresión para HEIC para preservar formato original
+                if (currentFile.type.startsWith('image/') && !currentFile.name.toLowerCase().endsWith('.heic')) {
                     progressSpan.textContent = "Optimizando...";
                     if (progressBar) progressBar.style.width = '10%';
                     fileData = await compressImage(currentFile);
@@ -827,10 +861,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (submissionForm) {
         submissionForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (uploadedFiles.length === 0 || activeUploads > 0) return;
+            // Protección contra duplicados y subidas incompletas (Req 3)
+            if (isSubmitting || uploadedFiles.length === 0 || activeUploads > 0) return;
 
+            isSubmitting = true; // Bloquear nuevas acciones (Req 3.1)
             confirmSubmissionBtn.disabled = true;
             confirmSubmissionBtn.classList.add('btn-loading');
+            confirmSubmissionBtn.textContent = 'Procesando...'; // Estado de procesamiento (Req 3.3)
 
             try {
                 let finalFileId = uploadedFiles[0].fileId;
@@ -850,6 +887,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const result = await fetchApi('TASK', 'submitAssignment', payload);
                 if (result.status === 'success') {
+                    // Operación exitosa: limpiar archivos para evitar advertencia (Caso 2)
+                    uploadedFiles = [];
                     alert('¡Tarea entregada exitosamente!');
                     closeSubmissionModal();
                     fetchAllActivities();
@@ -858,9 +897,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 alert(`Error al finalizar la entrega: ${error.message}`);
+                isSubmitting = false; // Permitir re-intento si falló el servidor
             } finally {
                 confirmSubmissionBtn.disabled = false;
                 confirmSubmissionBtn.classList.remove('btn-loading');
+                confirmSubmissionBtn.textContent = 'Entregar Tarea';
                 updateConfirmButtonState();
             }
         });
@@ -902,9 +943,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initWhatsAppButton();
 
     window.addEventListener('beforeunload', (e) => {
-        if (activeUploads > 0 || uploadedFiles.length > 0) {
+        if (!isSubmitting && (activeUploads > 0 || uploadedFiles.length > 0)) {
             e.preventDefault();
-            e.returnValue = 'Tienes una entrega en progreso. Si sales ahora, se perderán los archivos cargados.';
+            e.returnValue = '«Los archivos cargados se perderán si abandona esta entrega. ¿Desea continuar?»';
         }
     });
 });

@@ -950,16 +950,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 norm(sub.parcial) === norm(parcial)
             );
 
-            const totalAssigned = subjectAssignments.length;
+            // --- Ajuste de Lógica de Progreso (Req 2) ---
+            // Excluir 'Credito Extra' del total asignado (baseline)
+            const baseAssignments = subjectAssignments.filter(a => a.tipo !== 'Credito Extra');
+            const totalAssigned = baseAssignments.length;
+
+            const mandatoryCompleted = studentSubmissions.filter(s => {
+                const assignment = subjectAssignments.find(a => norm(a.titulo) === norm(s.titulo));
+                return (s.estado === 'Completada' || s.estado === 'Revisada' || s.estado === 'Finalizado') && assignment && assignment.tipo !== 'Credito Extra';
+            }).length;
+
+            const extraCreditCompleted = studentSubmissions.filter(s => {
+                const assignment = subjectAssignments.find(a => norm(a.titulo) === norm(s.titulo));
+                return (s.estado === 'Completada' || s.estado === 'Revisada' || s.estado === 'Finalizado') && assignment && assignment.tipo === 'Credito Extra';
+            }).length;
+
+            const completed = Math.min(totalAssigned, mandatoryCompleted + extraCreditCompleted);
             const delivered = studentSubmissions.length;
-            const completed = studentSubmissions.filter(s => s.estado === 'Completada' || s.estado === 'Revisada' || s.estado === 'Finalizado').length;
             const pending = studentSubmissions.filter(s => (s.estado === 'Pendiente' || s.estado === 'Pendiente de revisión' || !s.estado) && (s.fileId || s.respuestas || s.entregaId)).length;
 
-            // Métrica compuesta (A-73/75): 30% Entrega, 50% Rendimiento Académico, 20% Puntualidad
-            const deliveryRate = totalAssigned > 0 ? (delivered / totalAssigned) : 0;
+            // Tasa de entrega basada en tareas obligatorias
+            const mandatoryDelivered = studentSubmissions.filter(s => {
+                const assignment = subjectAssignments.find(a => norm(a.titulo) === norm(s.titulo));
+                return assignment && assignment.tipo !== 'Credito Extra';
+            }).length;
+            const deliveryRate = totalAssigned > 0 ? (mandatoryDelivered / totalAssigned) : 0;
+
+            // Puntos totales obtenidos (incluye recuperación por créditos extra)
             const gradeSum = studentSubmissions.reduce((sum, s) => sum + parseFloat(s.calificacion || 0), 0);
-            const maxGradePossible = subjectAssignments.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
-            const academicPerformance = maxGradePossible > 0 ? (gradeSum / maxGradePossible) : 0;
+
+            // El máximo posible se basa en las tareas obligatorias
+            const maxGradePossible = baseAssignments.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
+            const academicPerformance = maxGradePossible > 0 ? Math.min(1, gradeSum / maxGradePossible) : 0;
 
             // Factor Puntualidad (Req 4.3): Penalización por entregas tardías
             let onTimeCount = 0;
@@ -1317,39 +1339,22 @@ document.addEventListener('DOMContentLoaded', () => {
         currentEditingEntregaId = entrega.entregaId;
         document.getElementById('student-name-modal').textContent = entrega.alumnoNombre;
 
-        // Populate extra info (A-71)
-        const current = navStack[navStack.length - 1];
-        let student = null;
-        if (current.level === 'Detalles' && current.data.studentInfo) {
-            student = current.data.studentInfo;
-        } else if (current.level === 'Alumnos' && current.data.students) {
-            student = current.data.students.find(s => s.userId == entrega.alumnoId);
-        }
+        // Mostrar información relevante de la entrega (Req 1)
+        const taskTitleEl = document.getElementById('grade-modal-task-title');
+        const deliveryDateEl = document.getElementById('grade-modal-date');
+        const deliveryTimeEl = document.getElementById('grade-modal-time');
 
-        const listEl = document.getElementById('student-list-modal');
-        const emailEl = document.getElementById('student-email-modal');
-        const phoneEl = document.getElementById('student-phone-modal');
-        const waBtn = document.getElementById('wa-direct-btn');
+        if (taskTitleEl) taskTitleEl.textContent = entrega.titulo || 'N/A';
 
-        if (student) {
-            if (listEl) listEl.textContent = student.numeroLista || '-';
-            if (emailEl) emailEl.textContent = student.email || entrega.email || 'N/A';
-            if (phoneEl) phoneEl.textContent = student.telefono || 'N/A';
-            if (waBtn) {
-                const waPhone = student.telefono ? student.telefono.replace(/\D/g, '') : '';
-                if (waPhone) {
-                    waBtn.href = `https://wa.me/504${waPhone}`;
-                    waBtn.classList.remove('hidden');
-                } else {
-                    waBtn.classList.add('hidden');
-                }
-            }
+        if (entrega.fecha) {
+            const dateObj = new Date(entrega.fecha);
+            if (deliveryDateEl) deliveryDateEl.textContent = dateObj.toLocaleDateString();
+            if (deliveryTimeEl) deliveryTimeEl.textContent = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         } else {
-            if (listEl) listEl.textContent = '-';
-            if (emailEl) emailEl.textContent = 'N/A';
-            if (phoneEl) phoneEl.textContent = 'N/A';
-            if (waBtn) waBtn.classList.add('hidden');
+            if (deliveryDateEl) deliveryDateEl.textContent = 'N/A';
+            if (deliveryTimeEl) deliveryTimeEl.textContent = 'N/A';
         }
+
         const flm = document.getElementById('file-link-modal');
         if (entrega.tipo === 'Examen') { flm.href = `results.html?entregaExamenId=${entrega.entregaId}`; flm.textContent = "Ver Respuestas"; }
         else if (entrega.fileId) { flm.href = `https://drive.google.com/uc?id=${extractDriveId(entrega.fileId)}`; flm.textContent = "Ver Archivo"; }
@@ -1357,19 +1362,44 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('calificacion').value = entrega.calificacion || '';
         document.getElementById('estado').value = (entrega.estado === 'Revisada' ? 'Completada' : (entrega.estado || 'Completada'));
         document.getElementById('comentario').value = entrega.comentario || '';
+
+        // Bloque de metadatos (A-71)
+        saveGradeBtn.dataset.type = entrega.tipo;
+
         gradeModal.classList.remove('hidden');
     }
-    cancelGradeBtn.onclick = () => gradeModal.classList.add('hidden');
+    cancelGradeBtn.onclick = () => {
+        gradeModal.classList.add('hidden');
+        saveGradeBtn.disabled = false;
+        saveGradeBtn.classList.remove('btn-loading', 'opacity-50', 'cursor-not-allowed');
+    };
     saveGradeBtn.onclick = async () => {
+        if (saveGradeBtn.disabled) return;
         const type = saveGradeBtn.dataset.type;
-        const payload = { entregaId: currentEditingEntregaId, calificacion: document.getElementById('calificacion').value, estado: document.getElementById('estado').value, comentario: document.getElementById('comentario').value };
-        saveGradeBtn.classList.add('btn-loading');
+        const payload = {
+            entregaId: currentEditingEntregaId,
+            calificacion: document.getElementById('calificacion').value,
+            estado: document.getElementById('estado').value,
+            comentario: document.getElementById('comentario').value
+        };
+
+        // Bloqueo temporal del botón (Req 1.3)
+        saveGradeBtn.disabled = true;
+        saveGradeBtn.classList.add('btn-loading', 'opacity-50', 'cursor-not-allowed');
+
         try {
             const res = await fetchApi(type === 'Tarea' ? 'TASK' : 'EXAM', type === 'Tarea' ? 'gradeSubmission' : 'gradeExamSubmission', payload);
-            if (res.status === 'success') { alert('Guardado.'); gradeModal.classList.add('hidden'); fetchTeacherActivity(); }
+            if (res.status === 'success') {
+                alert('¡Calificación guardada correctamente!');
+                gradeModal.classList.add('hidden');
+                fetchTeacherActivity();
+            }
             else throw new Error(res.message);
-        } catch (error) { alert('Error: ' + error.message); }
-        finally { saveGradeBtn.classList.remove('btn-loading'); }
+        } catch (error) {
+            alert('Error al guardar: ' + error.message);
+            saveGradeBtn.disabled = false;
+            saveGradeBtn.classList.remove('btn-loading', 'opacity-50', 'cursor-not-allowed');
+        }
     };
 
     // --- CRUD Forms ---
