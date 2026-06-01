@@ -1226,3 +1226,18 @@ Archivo: js/student.js
 - Líneas 515-560: Actualizada lógica de cierre de modal con advertencia institucional y limpieza silenciosa.
 - Líneas 839-875: Implementada protección contra duplicados y reseteo de estados en la entrega.
 - Líneas 919-923: Actualizada advertencia en el evento beforeunload.
+
+REGISTRO DE CAMBIOS - SOPORTE ARCHIVOS HEIC
+
+Archivo: backend/task-service/Code.gs
+- Línea 300: Agregado 'heic' al mimeMap para soporte de imágenes de alta eficiencia.
+
+Archivo: js/student.js
+- Líneas 660-662: Agregado fallback visual (icono) para miniaturas de archivos HEIC.
+- Líneas 701-703: Saltada la compresión automática para archivos HEIC para preservar formato y calidad original.
+
+Archivo: student-dashboard.html
+- Línea 171: Agregado '.heic' al atributo 'accept' del input de archivos.
+
+Archivo: teacher-dashboard.html
+- Línea 557: Agregado '.heic' al atributo 'accept' del input de imágenes de noticias.

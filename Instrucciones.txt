@@ -151,3 +151,4 @@ ESTADO DE LAS TAREAS (RESUMEN)
 32. Integración del intérprete de Pseudocódigo en barra de navegación móvil (index, student, teacher).
 33. Diagnóstico y corrección del sistema de archivos de Pseudocódigo (Hoja Spreadsheet 'pseudocode').
 34. Robustecimiento de lógica anti-pérdida y protección contra duplicados en módulo de entrega.
+35. Implementación de soporte completo para archivos HEIC (Dashboard, Tareas, Noticias). - COMPLETADA

@@ -296,7 +296,8 @@ function uploadFile(payload) {
       'css': 'text/css',
       'html': 'text/html',
       'txt': 'text/plain',
-      'psc': 'text/plain' // Pseudocódigo (PSeInt)
+      'psc': 'text/plain', // Pseudocódigo (PSeInt)
+      'heic': 'image/heic'
     };
     mimeType = mimeMap[ext] || mimeType;
     base64Content = fileData; // En caso de que no sea DataURL

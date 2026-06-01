@@ -656,8 +656,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Generar vista previa inicial (thumbnail placeholder o real si es imagen)
             let thumbnailHtml = `<div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><i class="fas fa-file"></i></div>`;
             if (currentFile.type.startsWith('image/')) {
-                const tempUrl = URL.createObjectURL(currentFile);
-                thumbnailHtml = `<img src="${tempUrl}" class="w-12 h-12 object-cover rounded-lg shadow-inner">`;
+                // (Tarea HEIC) Fallback para HEIC ya que el navegador no lo renderiza nativamente en <img>
+                if (currentFile.name.toLowerCase().endsWith('.heic')) {
+                    thumbnailHtml = `<div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-400"><i class="fas fa-image"></i></div>`;
+                } else {
+                    const tempUrl = URL.createObjectURL(currentFile);
+                    thumbnailHtml = `<img src="${tempUrl}" class="w-12 h-12 object-cover rounded-lg shadow-inner">`;
+                }
             } else if (currentFile.type === 'application/pdf') {
                 thumbnailHtml = `<div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-red-400"><i class="fas fa-file-pdf"></i></div>`;
             }
@@ -692,7 +697,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 let mimeType = currentFile.type;
 
                 // Optimización Móvil: Compresión de imágenes (Req 3.3)
-                if (currentFile.type.startsWith('image/')) {
+                // (Tarea HEIC) Saltamos compresión para HEIC para preservar formato original
+                if (currentFile.type.startsWith('image/') && !currentFile.name.toLowerCase().endsWith('.heic')) {
                     progressSpan.textContent = "Optimizando...";
                     if (progressBar) progressBar.style.width = '10%';
                     fileData = await compressImage(currentFile);
