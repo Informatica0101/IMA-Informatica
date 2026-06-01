@@ -246,6 +246,16 @@ window.backToSubjects = function() {
     document.getElementById('subjects-screen').classList.remove('hidden');
 };
 
+window.backToLevelsAfterResult = function() {
+    document.getElementById('result-screen').classList.add('hidden');
+    // Si tenemos una asignatura seleccionada, ir a niveles. Si no, a asignaturas.
+    if (selectedAsignatura) {
+        window.navigateToLevels(selectedAsignatura, selectedGrado);
+    } else {
+        window.navigateToSubjects();
+    }
+};
+
 window.selectLevel = function(level) {
     selectedDifficulty = level;
     startQuiz();
@@ -276,7 +286,34 @@ async function startQuiz() {
     let freshQuestions = allPresentationQuestions.filter(q => !seenIds.includes(q.id));
     if (freshQuestions.length < 5) freshQuestions = allPresentationQuestions;
 
-    currentQuizQuestions = shuffleArray(freshQuestions).slice(0, 15);
+    // REQ 2: Algoritmo de Variedad de Fuente (Post-Audit)
+    // Agrupar por origen para evitar clustering
+    const groupedBySource = {};
+    freshQuestions.forEach(q => {
+        if (!groupedBySource[q.source]) groupedBySource[q.source] = [];
+        groupedBySource[q.source].push(q);
+    });
+
+    // Barajar individualmente cada grupo
+    Object.keys(groupedBySource).forEach(src => {
+        groupedBySource[src] = shuffleArray(groupedBySource[src]);
+    });
+
+    const interleaved = [];
+    const sources = Object.keys(groupedBySource);
+    let totalAdded = 0;
+
+    // Intercalar para máxima variedad temática
+    while (totalAdded < freshQuestions.length) {
+        sources.forEach(src => {
+            if (groupedBySource[src].length > 0) {
+                interleaved.push(groupedBySource[src].shift());
+                totalAdded++;
+            }
+        });
+    }
+
+    currentQuizQuestions = interleaved.slice(0, 15);
     currentIndex = 0;
     score = 0;
     timerSeconds = 0;
@@ -296,7 +333,6 @@ async function loadQuestions() {
 
     const presentations = [];
     window.presentationData.forEach(gradeBlock => {
-        // Normalizamos grado de comparación
         const blockGradeNum = parseGrade(gradeBlock.grade);
         const targetGradeNum = parseGrade(selectedGrado);
 
@@ -305,26 +341,39 @@ async function loadQuestions() {
                 const normSubj = normalizeSubject(subj.name);
                 if (normSubj !== normalizeSubject(selectedAsignatura)) return;
 
-                let topics = subj.topics;
-                // Segmentación de temas por dificultad
-                if (selectedDifficulty === 'basico') topics = topics.slice(0, Math.max(1, Math.ceil(topics.length / 3)));
-                else if (selectedDifficulty === 'intermedio') topics = topics.slice(Math.floor(topics.length/3), Math.max(Math.floor(topics.length/3) + 1, Math.floor(topics.length*2/3)));
-                else if (selectedDifficulty === 'avanzado') topics = topics.slice(Math.floor(topics.length*2/3));
+                let topics = [...subj.topics];
+                // Segmentación estricta por dificultad
+                if (selectedDifficulty === 'basico') {
+                    topics = topics.slice(0, Math.max(1, Math.ceil(topics.length / 3)));
+                } else if (selectedDifficulty === 'intermedio') {
+                    const start = Math.ceil(topics.length / 3);
+                    const end = Math.ceil(topics.length * 2 / 3);
+                    topics = topics.slice(start, Math.max(start + 1, end));
+                } else if (selectedDifficulty === 'avanzado') {
+                    const start = Math.ceil(topics.length * 2 / 3);
+                    topics = topics.slice(start);
+                }
 
-                topics.forEach(t => presentations.push(t.file));
+                topics.forEach(t => presentations.push({ file: t.file, subject: normSubj, grade: gradeBlock.grade }));
             });
         }
     });
 
-    for (let i = 0; i < presentations.length; i += 10) {
-        const batch = presentations.slice(i, i + 10);
-        await Promise.all(batch.map(file => processPresentation(file)));
+    // Ingesta Secuencial para trazabilidad de fuente
+    for (let i = 0; i < presentations.length; i++) {
+        await processPresentation(presentations[i].file, presentations[i].subject, presentations[i].grade);
     }
+
+    // Filtrado de Integridad: Eliminar fugas temáticas (Post-Audit)
+    allPresentationQuestions = allPresentationQuestions.filter(q => {
+        const matchSubject = normalizeSubject(q.subject) === normalizeSubject(selectedAsignatura);
+        const matchGrade = parseGrade(q.grade) === parseGrade(selectedGrado);
+        return matchSubject && matchGrade;
+    });
 }
 
-async function processPresentation(file) {
+async function processPresentation(file, subject, grade) {
     try {
-        // Corrección de Rutas para carga desde index.html o juegos/quizpro.html
         const isRoot = !window.location.pathname.includes('/juegos/');
         const pathPrefix = isRoot ? '' : '../';
 
@@ -344,6 +393,8 @@ async function processPresentation(file) {
                     answer: q.a || q.answer,
                     type: type,
                     source: file,
+                    subject: subject,
+                    grade: grade,
                     tags: extractTags(text, q.q || q.question)
                 });
             });
@@ -369,6 +420,8 @@ async function processPresentation(file) {
                 pairs: shuffleArray(matchingPairs).slice(0, 3),
                 type: 'matching',
                 source: file,
+                subject: subject,
+                grade: grade,
                 tags: ["Conceptos", "Teoría"]
             });
 
@@ -378,6 +431,8 @@ async function processPresentation(file) {
                 pairs: shuffleArray(matchingPairs).slice(0, 4),
                 type: 'memory',
                 source: file,
+                subject: subject,
+                grade: grade,
                 tags: ["Memoria", "Conceptos"]
             });
         }
@@ -394,6 +449,8 @@ async function processPresentation(file) {
                     answer: "Análisis técnico de estructura",
                     type: 'practice',
                     source: file,
+                    subject: subject,
+                    grade: grade,
                     tags: ["Práctica", "Código"]
                 });
             }
@@ -409,6 +466,8 @@ async function processPresentation(file) {
                     targetText: cleanText,
                     type: 'transcription',
                     source: file,
+                    subject: subject,
+                    grade: grade,
                     tags: ["Escritura", "Ortografía"]
                 });
             }
@@ -465,13 +524,19 @@ function showQuestion() {
     } else if (q.type === 'transcription') {
         fibContainer.classList.remove('hidden');
         const targetEl = document.createElement('div');
-        targetEl.className = 'bg-blue-50 text-blue-800 p-4 rounded-xl italic text-sm mb-6 border border-blue-100';
+        targetEl.className = 'bg-blue-50 text-blue-800 p-4 rounded-xl italic text-sm mb-6 border border-blue-100 no-copy';
         targetEl.textContent = q.targetText;
+        targetEl.oncontextmenu = (e) => e.preventDefault(); // Bloquear click derecho
+
         const existingTarget = fibContainer.querySelector('.transcription-target');
         if (existingTarget) existingTarget.remove();
         targetEl.classList.add('transcription-target');
         fibContainer.prepend(targetEl);
-        document.getElementById('fib-input').placeholder = "Escribe aquí...";
+
+        const input = document.getElementById('fib-input');
+        input.value = '';
+        input.placeholder = "Escribe aquí respetando ortografía...";
+        setTimeout(() => input.focus(), 100);
     } else if (q.type === 'memory') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
@@ -530,8 +595,13 @@ function showQuestion() {
         });
     } else if (q.type === 'completion' || q.type === 'fill-in-the-blanks') {
         fibContainer.classList.remove('hidden');
-        document.getElementById('fib-input').value = '';
-        document.getElementById('fib-input').focus();
+        const input = document.getElementById('fib-input');
+        input.value = '';
+        input.placeholder = "Tu respuesta...";
+        setTimeout(() => input.focus(), 100);
+        // Remover elementos de transcripción si existen
+        const existingTarget = fibContainer.querySelector('.transcription-target');
+        if (existingTarget) existingTarget.remove();
     } else {
         optionsContainer.classList.remove('hidden');
         shuffleArray([...q.options]).forEach(opt => {
@@ -698,7 +768,8 @@ async function endQuiz() {
 
     if (typeof fetchApi === 'function') {
         await fetchApi('USER', 'saveGameResult', payload);
-        loadPerformanceTable();
+        // REQ 5: Actualizar stats y refrescar UI de niveles para reflejar el desbloqueo
+        await loadPerformanceTable();
     }
 }
 
@@ -750,4 +821,10 @@ window.loadPerformanceTable = async function() {
     } catch (e) { console.error("Error loading stats", e); }
 }
 
-function exitGame() { window.location.href = '../index.html?action=show-activities'; }
+function exitGame() {
+    if (window.returnToMainContent) {
+        window.returnToMainContent();
+    } else {
+        window.location.href = '../index.html?action=show-activities';
+    }
+}

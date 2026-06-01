@@ -157,22 +157,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadGame(gameId, htmlPath, jsPath, initFnName, title) {
-        // Full Space Mode (Ocultar secciones)
-        const sectionsToHide = ['hero-section', 'news-section', 'resources-section', 'access-section'];
-        sectionsToHide.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.classList.add('hidden');
-        });
-
+        // Estrategia de Aislamiento Total (Post-Commit Audit)
+        const wrapper = document.getElementById('main-content-wrapper');
         const mainHeader = document.getElementById('main-header');
+
+        // 1. Ocultar el wrapper principal de golpe para evitar condiciones de carrera con carga diferida
+        if (wrapper) wrapper.style.display = 'none';
         if (mainHeader) mainHeader.classList.add('header-hidden');
 
-        dynamicallyLoadedGameContainer.classList.remove('hidden');
-        mainContentTitle.textContent = title;
+        // 2. Crear un contenedor efímero exclusivo para el juego si no existe
+        let gameOverlay = document.getElementById('dedicated-game-overlay');
+        if (!gameOverlay) {
+            gameOverlay = document.createElement('div');
+            gameOverlay.id = 'dedicated-game-overlay';
+            gameOverlay.className = 'flex-grow w-full bg-white animate-fade-in';
+            document.body.insertBefore(gameOverlay, document.querySelector('footer'));
+        }
+        gameOverlay.innerHTML = '<div class="flex items-center justify-center min-h-[60vh]"><i class="fas fa-spinner fa-spin text-4xl text-blue-600"></i></div>';
+        gameOverlay.style.display = 'block';
 
         try {
             const htmlResponse = await fetch(htmlPath);
-            dynamicallyLoadedGameContainer.innerHTML = await htmlResponse.text();
+            gameOverlay.innerHTML = await htmlResponse.text();
 
             const script = document.createElement('script');
             script.src = jsPath;
@@ -181,11 +187,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     window[initFnName](window.gameDataStorage);
                 }
             };
-            dynamicallyLoadedGameContainer.appendChild(script);
+            gameOverlay.appendChild(script);
         } catch (error) {
             console.error(`Error loading game ${gameId}:`, error);
-            dynamicallyLoadedGameContainer.innerHTML = '<p class="text-red-500 p-8 text-center">Error al cargar el juego. Por favor, inténtalo de nuevo.</p>';
-            dynamicallyLoadedGameContainer.appendChild(createCustomButton('Volver al Inicio', showMainContentSections, 'mt-4 mx-auto block'));
+            gameOverlay.innerHTML = '<p class="text-red-500 p-8 text-center">Error al cargar el juego. Por favor, inténtalo de nuevo.</p>';
+            gameOverlay.appendChild(createCustomButton('Volver al Inicio', window.returnToMainContent, 'mt-4 mx-auto block'));
         }
     }
 
@@ -196,30 +202,21 @@ document.addEventListener('DOMContentLoaded', () => {
     window.loadDexterityGame = () => loadGame('dexterity', 'juegos/destreza_teclado.html', 'js/destreza_teclado.js', 'initDexterityGame', 'Destreza en el Teclado');
 
     window.returnToMainContent = function() {
+        const wrapper = document.getElementById('main-content-wrapper');
         const mainHeader = document.getElementById('main-header');
-        if (mainHeader) mainHeader.classList.remove('header-hidden');
+        const gameOverlay = document.getElementById('dedicated-game-overlay');
 
-        dynamicallyLoadedGameContainer.innerHTML = '';
-        dynamicallyLoadedGameContainer.classList.add('hidden');
+        if (gameOverlay) {
+            gameOverlay.innerHTML = '';
+            gameOverlay.style.display = 'none';
+        }
+
+        if (wrapper) wrapper.style.display = 'block';
+        if (mainHeader) mainHeader.classList.remove('header-hidden');
 
         ['js/perifericos_juego.js', 'js/webmaster_quiz_juego.js', 'js/destreza_teclado.js', 'js/quizpro.js'].forEach(src => {
             const s = document.querySelector(`script[src="${src}"]`);
             if (s) s.remove();
-        });
-
-        // Restaurar secciones
-        const sectionsToRestore = ['hero-section', 'news-section', 'resources-section', 'access-section'];
-        sectionsToRestore.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                // News section solo si tiene contenido (basado en lógica de loadNews)
-                if (id === 'news-section') {
-                    const container = document.getElementById('news-container');
-                    if (container && container.children.length > 0) el.classList.remove('hidden');
-                } else {
-                    el.classList.remove('hidden');
-                }
-            }
         });
 
         showMainContentSections();
