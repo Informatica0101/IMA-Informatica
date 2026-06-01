@@ -85,6 +85,7 @@ window.navigateToSubjects = function() {
                 const normName = normalizeSubject(subj.name);
                 if (seenInBlock.has(normName)) return; // No duplicar por parciales en el mismo bloque
 
+                // QuizPro is period-agnostic: shows all subjects for authorized grades
                 subjectEntries.push({
                     name: normName,
                     gradeLabel: gradeBlock.grade,
@@ -341,6 +342,7 @@ async function loadQuestions() {
                 const normSubj = normalizeSubject(subj.name);
                 if (normSubj !== normalizeSubject(selectedAsignatura)) return;
 
+                // Ingest all topics for the subject regardless of period
                 let topics = [...subj.topics];
                 // Segmentación estricta por dificultad
                 if (selectedDifficulty === 'basico') {
