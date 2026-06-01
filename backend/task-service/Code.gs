@@ -54,6 +54,7 @@ function doPost(e) {
       case "deleteTask": response = deleteTask(payload); break;
       case "deleteSubmission": response = deleteSubmission(payload); break;
       case "saveProject": response = saveProject(payload); break;
+      case "deleteProject": response = deleteProject(payload); break;
       case "listProjects": response = listProjects(payload); break;
       case "loadProject": response = loadProject(payload); break;
       case "getAllStudentProjects": response = getAllStudentProjects(payload); break;
@@ -710,6 +711,37 @@ function listProjects(payload) {
 
   result.sort((a, b) => a.name.localeCompare(b.name));
   return { status: "success", data: result };
+}
+
+function deleteProject(payload) {
+  const { fileId, userId, fileName } = payload;
+  if (!fileId && !fileName) throw new Error("Identificador de proyecto requerido.");
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const pseudocodeSheet = getSheetOrThrow(ss, "pseudocode");
+    const data = pseudocodeSheet.getDataRange().getValues();
+
+    // Buscar por fileId (en URL) o por NombreArchivo (si fileId es el nombre)
+    const rowIndex = data.findIndex(r => (r[0] == userId && (r[1] == fileName || r[1] == fileId || (r[2] || "").indexOf(fileId) !== -1)));
+
+    if (rowIndex !== -1) {
+      pseudocodeSheet.deleteRow(rowIndex + 1);
+    }
+  } catch (e) {
+    logDebug("Error al eliminar de la hoja:", e.message);
+  }
+
+  // Intentar eliminar de Drive
+  try {
+    const file = DriveApp.getFileById(fileId);
+    file.setTrashed(true);
+  } catch (e) {
+    logDebug("Error al eliminar de Drive:", e.message);
+    // Si no es un ID válido o no se encuentra, procedemos (podría ser solo registro en hoja)
+  }
+
+  return { status: "success", message: "Proyecto eliminado." };
 }
 
 function loadProject(payload) {

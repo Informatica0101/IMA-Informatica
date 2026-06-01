@@ -154,3 +154,6 @@ ESTADO DE LAS TAREAS (RESUMEN)
 35. Implementación de soporte completo para archivos HEIC (Dashboard, Tareas, Noticias). - COMPLETADA
 36. Mejora del modal de calificación: sustitución de datos personales por metadatos de entrega y bloqueo de doble clic. - COMPLETADA
 37. Ajuste de métricas de progreso: 'Crédito Extra' ahora funciona como recuperación sin penalizar el baseline obligatorio. - COMPLETADA
+38. Implementación de eliminación de archivos de Pseudocódigo en la nube con confirmación e invalidación de referencia. - COMPLETADA
+39. Mejora del sistema de navegación global mediante History API (Sincronización con botones Atrás/Adelante y gestos móviles). - COMPLETADA
+40. Creación del sistema de "Evaluación Inteligente" (Quiz dinámico basado en presentaciones del repositorio). - COMPLETADA

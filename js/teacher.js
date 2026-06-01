@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
     // --- Lógica de Navegación ---
-    function navigateTo(targetSection, navElement) {
+    window.navigateTo = function(targetSection, navElement, pushState = true) {
         allSections.forEach(section => section && section.classList.add('hidden'));
         targetSection.classList.remove('hidden');
 
@@ -81,32 +81,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         navElement.classList.add('bg-blue-600', 'text-white');
         navElement.classList.remove('bg-gray-100', 'text-gray-500');
+
+        if (pushState) {
+            history.pushState({ type: 'dashboard-section', sectionId: targetSection.id, navId: navElement.id }, '');
+        }
     }
 
     navDashboard.addEventListener('click', () => {
-        navigateTo(sectionAcademicReports, navDashboard);
+        window.navigateTo(sectionAcademicReports, navDashboard);
         fetchTeacherActivity();
     });
     navTareas.addEventListener('click', () => {
-        navigateTo(sectionTareas, navTareas);
+        window.navigateTo(sectionTareas, navTareas);
         tareasListView.classList.remove('hidden');
         tareasCreateView.classList.add('hidden');
         fetchManagementData();
     });
     navProyectos.addEventListener('click', () => {
-        navigateTo(sectionProyectos, navProyectos);
+        window.navigateTo(sectionProyectos, navProyectos);
         fetchProjects();
     });
     navLogros.addEventListener('click', () => {
-        navigateTo(sectionLogros, navLogros);
+        window.navigateTo(sectionLogros, navLogros);
         fetchLogros();
     });
     navNews.addEventListener('click', () => {
-        navigateTo(sectionNews, navNews);
+        window.navigateTo(sectionNews, navNews);
         fetchNewsManagement();
     });
     navAdmin.addEventListener('click', () => {
-        navigateTo(sectionAdmin, navAdmin);
+        window.navigateTo(sectionAdmin, navAdmin);
     });
 
     const btnCloseYear = document.getElementById('btn-close-year');
@@ -134,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
     navReportsOld.addEventListener('click', () => {
-        navigateTo(sectionReportes, navReportsOld);
+        window.navigateTo(sectionReportes, navReportsOld);
     });
 
     // --- Mi Perfil (Centralizado en ui-common.js) ---
@@ -302,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Lógica de Navegación Jerárquica ---
-    window.pushNav = async function(level, data) {
+    window.pushNav = async function(level, data, pushState = true) {
         if (isNavigating) return;
         isNavigating = true;
         try {
@@ -310,7 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (level === 'Alumnos') {
                 if (submissionsTableBody) submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8">Cargando lista de alumnos...</td></tr>';
-                // Cargamos la lista real de alumnos inscritos para este grado y sección
                 try {
                     const res = await fetchApi('USER', 'getStudentsByGradoSeccion', { grado: data.grado, seccion: data.seccion });
                     data.students = res.data || [];
@@ -321,24 +324,35 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             navStack.push({ level, data });
+            if (pushState) {
+                history.pushState({ type: 'hierarchical-nav', stack: navStack }, '');
+            }
             renderCurrentLevel();
         } finally {
             isNavigating = false;
         }
     }
 
-    window.popNav = function() {
+    window.popNav = function(doPop = true) {
         if (isNavigating) return;
         if (navStack.length > 1) {
             try {
                 if (studentSearchInput) studentSearchInput.value = '';
                 navStack.pop();
-                renderCurrentLevel();
+                if (doPop) history.back();
+                else renderCurrentLevel();
             } catch (e) {
                 console.error("Error en popNav:", e);
             }
         }
     }
+
+    window.syncNavWithState = function(state) {
+        if (state.stack) {
+            navStack = [...state.stack];
+            renderCurrentLevel();
+        }
+    };
 
     if (backNavBtn) backNavBtn.addEventListener('click', popNav);
 
@@ -1691,6 +1705,8 @@ function toBase64(file) {
 }
 
     // Inicialización automática de la sección de entregas (A-73)
-    navigateTo(sectionAcademicReports, navDashboard);
+    // Usar replaceState para el estado inicial
+    history.replaceState({ type: 'dashboard-section', sectionId: sectionAcademicReports.id, navId: navDashboard.id }, '');
+    window.navigateTo(sectionAcademicReports, navDashboard, false);
     fetchTeacherActivity();
 });

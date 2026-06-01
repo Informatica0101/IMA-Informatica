@@ -1254,3 +1254,27 @@ Archivo: js/teacher.js
 
 Archivo: js/student.js
 - Líneas 125-148: Sincronizada la lógica de progreso del expediente: 'Credito Extra' ahora suma al contador de tareas completadas y puntos obtenidos, pero se excluye del total de tareas asignadas (baseline).
+
+17/06/2026
+- Archivo: backend/task-service/Code.gs
+  - Implementada acción 'deleteProject' para permitir la eliminación de registros de pseudocódigo en la hoja de cálculo y el borrado físico (papelera) del archivo en Google Drive.
+- Archivo: pseudocode.html
+  - Actualizada la lista de proyectos en el modal de apertura para incluir botones de eliminación (icono de papelera) por cada archivo.
+  - Implementada función 'deleteProjectCloud' con confirmación obligatoria para el usuario.
+  - Añadida lógica de invalidación de referencia: si el archivo actualmente abierto es eliminado de la nube, las variables de seguimiento se resetean.
+- Archivo: js/ui-common.js
+  - Implementado Sistema de Navegación Global basado en History API.
+  - Sincronizados los modales de navegación (Académico, Perfil) con el historial del navegador para permitir el uso del botón "Atrás" y gestos móviles.
+  - Añadido listener 'popstate' para gestionar la restauración de estados y el cierre de modales de forma coordinada.
+- Archivo: js/teacher.js
+  - Integrada la navegación jerárquica (pushNav/popNav) con el historial del navegador (history.pushState).
+  - Implementada función 'syncNavWithState' para restaurar la vista del dashboard docente al navegar por el historial.
+- Archivos: juegos/evaluacion_inteligente.html, js/evaluacion_inteligente.js
+  - Creado nuevo sistema de "Evaluación Inteligente".
+  - El motor de preguntas extrae dinámicamente 'quizData' de todas las presentaciones HTML del repositorio.
+  - Implementada lógica de aleatorización, temporizador, niveles de dificultad y requisito de aprobación del 70%.
+  - Integrada persistencia de resultados mediante 'GamesAdapter'.
+- Archivo: js/data.js
+  - Registrada la "Evaluación Inteligente" en el catálogo de actividades prácticas.
+- Archivo: README.md
+  - Actualizada la documentación técnica para reflejar las nuevas capacidades del sistema de navegación, el módulo de quices inteligentes y la gestión de archivos de pseudocódigo.
