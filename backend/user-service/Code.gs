@@ -388,11 +388,21 @@ function getGameStats(payload) {
 
   if (userId) {
     const stats = {};
-    data.filter(r => r[1] === userId).forEach(r => {
-      const j = r[3]; const p = parseFloat(r[5] || 0);
-      if (!stats[j] || p > stats[j].maxScore) stats[j] = { maxScore: p, lastLogro: r[4], date: r[0] };
+    const userRows = data.filter(r => String(r[1]) === String(userId));
+
+    userRows.forEach(r => {
+      const j = r[3];
+      const p = parseFloat(r[5] || 0);
+      if (!stats[j] || p > stats[j].maxScore) {
+        stats[j] = { maxScore: p, lastLogro: r[4], date: r[0] };
+      }
     });
-    return { status: "success", data: stats };
+
+    return {
+      status: "success",
+      data: stats,
+      allHistory: userRows // Devolver historial completo para desgloses detallados (e.g. QuizPro por materia)
+    };
   }
 
   const students = getStudentsByGradoSeccion({ grado, seccion }).data.map(s => s.userId);

@@ -767,7 +767,8 @@ FinAlgoritmo</div>
         }
 
         const editor = document.getElementById('codeEditor');
-        const highlight = document.getElementById('syntaxHighlight');
+        let currentCloudFileId = null;
+        let currentCloudFileName = null;
         const lineNumbers = document.getElementById('lineNumbers');
 
         function toggleLeftPanel() {
@@ -1011,6 +1012,8 @@ FinAlgoritmo</div>
 
         function newProject() {
             editor.innerText = "Algoritmo sin_titulo\n\nFinAlgoritmo";
+            currentCloudFileId = null;
+            currentCloudFileName = null;
             updateEditor();
             clearConsole();
         }
@@ -1468,13 +1471,18 @@ FinAlgoritmo</div>
                 let html = '';
                 if (res.status === 'success' && res.data.length > 0) {
                     html = res.data.map(p => `
-                        <div class="p-3 border border-gray-100 rounded-2xl hover:bg-blue-50 hover:border-blue-200 cursor-pointer group flex justify-between items-center transition-all" onclick="loadProjectCloud('${p.id}')">
+                        <div class="p-3 border border-gray-100 rounded-2xl hover:bg-blue-50 hover:border-blue-200 cursor-pointer group flex justify-between items-center transition-all" onclick="loadProjectCloud('${p.id}', '${p.name}')">
                             <div class="truncate mr-4">
                                 <p class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">${p.name}</p>
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">${new Date(p.lastUpdated).toLocaleDateString()}</p>
                             </div>
-                            <div class="w-8 h-8 bg-gray-50 text-gray-400 rounded-xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
-                                <i class="fas fa-folder-open text-xs"></i>
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 bg-gray-50 text-gray-400 rounded-xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                                    <i class="fas fa-folder-open text-xs"></i>
+                                </div>
+                                <button onclick="event.stopPropagation(); deleteProjectCloud('${p.id}', '${p.name}')" class="w-8 h-8 bg-red-50 text-red-400 rounded-xl flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm">
+                                    <i class="fas fa-trash text-xs"></i>
+                                </button>
                             </div>
                         </div>
                     `).join('');
@@ -1497,7 +1505,7 @@ FinAlgoritmo</div>
             }
         }
 
-        async function loadProjectCloud(fileId) {
+        async function loadProjectCloud(fileId, fileName = null) {
             if (!confirm('¿Deseas cargar este proyecto? Se perderán los cambios no guardados.')) return;
             try {
                 const res = await fetchApi('TASK', 'loadProject', {
@@ -1506,12 +1514,37 @@ FinAlgoritmo</div>
                 });
                 if (res.status === 'success') {
                     editor.innerText = res.data.code;
+                    currentCloudFileId = fileId;
+                    currentCloudFileName = fileName || res.data.name;
                     updateEditor();
                     closeDriveModal();
-                    printToConsole("✓ Proyecto cargado desde la nube.");
+                    printToConsole("✓ Proyecto cargado desde la nube: " + currentCloudFileName);
                 }
             } catch (e) {
                 alert('Error al cargar proyecto: ' + e.message);
+            }
+        }
+
+        async function deleteProjectCloud(fileId, fileName) {
+            if (!confirm(`¿Estás seguro de eliminar el proyecto "${fileName}"? Esta acción no se puede deshacer.`)) return;
+            try {
+                const res = await fetchApi('TASK', 'deleteProject', {
+                    fileId,
+                    fileName,
+                    userId: currentUser.userId
+                });
+                if (res.status === 'success') {
+                    alert('Proyecto eliminado correctamente.');
+                    if (currentCloudFileId === fileId || currentCloudFileName === fileName) {
+                        currentCloudFileId = null;
+                        currentCloudFileName = null;
+                    }
+                    loadProjectsList();
+                } else {
+                    alert('Error al eliminar: ' + res.message);
+                }
+            } catch (e) {
+                alert('Error de conexión al intentar eliminar el proyecto.');
             }
         }
 

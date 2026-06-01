@@ -428,31 +428,56 @@
         let currentSlideIndex = 0;
         let isTransitioning = false;
 
-        const quizQuestions = [
+        const quizData = [
             {
-                question: "¿Cuál es el valor decimal de la letra 'A' en hexadecimal?",
+                q: "¿Cuál es el valor decimal de la letra 'A' en hexadecimal?",
                 options: ["9", "10", "11", "12"],
-                correctAnswer: "10"
+                a: "10"
             },
             {
-                question: "¿Cuántos dígitos binarios (bits) se necesitan para representar un dígito hexadecimal?",
+                q: "¿Cuántos dígitos binarios (bits) se necesitan para representar un solo dígito hexadecimal?",
                 options: ["1", "4", "8", "16"],
-                correctAnswer: "4"
+                a: "4"
             },
             {
-                question: "¿Qué número hexadecimal representa el color rojo puro en un código de 6 dígitos?",
+                q: "¿Qué número hexadecimal representa el color rojo puro en un código de 6 dígitos?",
                 options: ["#0000FF", "#FFFF00", "#FF0000", "#FFFFFF"],
-                correctAnswer: "#FF0000"
+                a: "#FF0000"
             },
             {
-                question: "¿Cuál de los siguientes no es un símbolo válido en el sistema hexadecimal?",
+                q: "¿Cuál de los siguientes NO es un símbolo válido en el sistema hexadecimal?",
                 options: ["A", "G", "F", "D"],
-                correctAnswer: "G"
+                a: "G"
             },
             {
-                question: "En informática, ¿dónde se utiliza comúnmente la numeración hexadecimal?",
+                q: "En informática, ¿dónde se utiliza comúnmente la numeración hexadecimal?",
                 options: ["En direcciones de memoria", "En nombres de archivos", "En el tamaño de las fuentes", "En la velocidad del procesador"],
-                correctAnswer: "En direcciones de memoria"
+                a: "En direcciones de memoria"
+            },
+            {
+                q: "¿Cuál es la base del sistema de numeración hexadecimal?",
+                options: ["Base 2", "Base 8", "Base 10", "Base 16"],
+                a: "Base 16"
+            },
+            {
+                q: "¿Qué letra representa el valor decimal 15 en hexadecimal?",
+                options: ["E", "F", "D", "X"],
+                a: "F"
+            },
+            {
+                q: "Un conjunto de 4 bits se conoce como:",
+                options: ["Byte", "Nibble", "Word", "Packet"],
+                a: "Nibble"
+            },
+            {
+                q: "¿Qué valor decimal tiene el número hexadecimal '10'?",
+                options: ["10", "16", "1", "0"],
+                a: "16"
+            },
+            {
+                q: "Las direcciones MAC de hardware de red se escriben usualmente en formato:",
+                options: ["Decimal", "Binario", "Hexadecimal", "Octal"],
+                a: "Hexadecimal"
             }
         ];
         let currentQuizQuestionIndex = 0;
@@ -462,15 +487,15 @@
             const quizOptionsElement = document.getElementById('quiz-options');
             const quizFeedbackElement = document.getElementById('quiz-feedback');
 
-            if (currentQuizQuestionIndex >= quizQuestions.length) {
+            if (currentQuizQuestionIndex >= quizData.length) {
                 quizQuestionElement.textContent = "¡Cuestionario completado!";
                 quizOptionsElement.innerHTML = '';
                 quizFeedbackElement.textContent = '';
                 return;
             }
 
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            quizQuestionElement.textContent = currentQuestion.question;
+            const currentQuestion = quizData[currentQuizQuestionIndex];
+            quizQuestionElement.textContent = currentQuestion.q;
             quizOptionsElement.innerHTML = '';
             quizFeedbackElement.textContent = '';
 
@@ -484,14 +509,14 @@
         }
 
         function checkAnswer(selectedOption) {
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            const currentQuestion = quizData[currentQuizQuestionIndex];
             const quizFeedback = document.getElementById('quiz-feedback');
             const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
-            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+            const isCorrect = selectedOption === currentQuestion.a;
 
             buttons.forEach(button => {
                 button.disabled = true;
-                if (button.textContent === currentQuestion.correctAnswer) {
+                if (button.textContent === currentQuestion.a) {
                     button.classList.add('correct');
                 } else if (button.textContent === selectedOption) {
                     button.classList.add('incorrect');
@@ -503,7 +528,7 @@
                 quizFeedback.classList.remove('text-red-500');
                 quizFeedback.classList.add('text-green-500');
             } else {
-                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.correctAnswer;
+                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.a;
                 quizFeedback.classList.remove('text-green-500');
                 quizFeedback.classList.add('text-red-500');
             }

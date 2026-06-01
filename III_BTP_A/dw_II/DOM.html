@@ -1416,48 +1416,56 @@
         }
 
         // --- Lógica del Quiz de DOM ---
-        let domQuizData = [
+        const quizData = [
             {
-                question: "¿Qué significa la sigla DOM?",
+                q: "¿Qué significa la sigla DOM?",
                 options: ["Document Object Model", "Data Object Management", "Digital Object Markup", "Dynamic Order Module"],
-                correctAnswer: "Document Object Model",
-                type: "multiple-choice"
+                a: "Document Object Model"
             },
             {
-                question: "¿El DOM representa un documento HTML como una estructura de árbol de nodos?",
+                q: "¿El DOM representa un documento HTML como una estructura de árbol de nodos?",
                 options: ["Verdadero", "Falso"],
-                correctAnswer: "Verdadero",
-                type: "true-false"
+                a: "Verdadero"
             },
             {
-                question: "¿Qué método usarías para seleccionar un elemento por su atributo `id`?",
+                q: "¿Qué método usarías para seleccionar un elemento por su atributo `id`?",
                 options: ["`querySelector()`", "`getElementById()`", "`getElementsByClassName()`", "`selectById()`"],
-                correctAnswer: "`getElementById()`",
-                type: "multiple-choice"
+                a: "`getElementById()`"
             },
             {
-                question: "¿La propiedad `textContent` se usa para cambiar el contenido HTML de un elemento, incluyendo etiquetas?",
+                q: "¿La propiedad `textContent` se usa para cambiar el contenido HTML de un elemento, incluyendo etiquetas?",
                 options: ["Verdadero", "Falso"],
-                correctAnswer: "Falso", // `innerHTML` is for HTML content
-                type: "true-false"
+                a: "Falso"
             },
             {
-                question: "Para añadir una nueva clase CSS a un elemento, ¿qué método de `classList` usarías?",
+                q: "Para añadir una nueva clase CSS a un elemento, ¿qué método de `classList` usarías?",
                 options: ["`classList.set()`", "`classList.add()`", "`classList.update()`", "`classList.toggle()`"],
-                correctAnswer: "`classList.add()`",
-                type: "multiple-choice"
+                a: "`classList.add()`"
             },
             {
-                question: "¿El método `appendChild()` se utiliza para eliminar un nodo hijo de un elemento padre?",
+                q: "¿El método `appendChild()` se utiliza para eliminar un nodo hijo de un elemento padre?",
                 options: ["Verdadero", "Falso"],
-                correctAnswer: "Falso", // `removeChild()` is for removing
-                type: "true-false"
+                a: "Falso"
             },
             {
-                question: "¿Qué evento se dispara cuando el usuario hace clic en un elemento?",
+                q: "¿Qué evento se dispara cuando el usuario hace clic en un elemento?",
                 options: ["`mouseover`", "`keydown`", "`click`", "`submit`"],
-                correctAnswer: "`click`",
-                type: "multiple-choice"
+                a: "`click`"
+            },
+            {
+                q: "¿Qué objeto global representa toda la página web y es la raíz del DOM?",
+                options: ["document", "window", "body", "html"],
+                a: "document"
+            },
+            {
+                q: "El método que selecciona todos los elementos que coinciden con un selector CSS es:",
+                options: ["`querySelectorAll()`", "`querySelector()`", "`getElementByCSS()`", "`matchAll()`"],
+                a: "`querySelectorAll()`"
+            },
+            {
+                q: "Para cambiar el color de fondo de un elemento directamente en JS, se usa:",
+                options: ["`elemento.style.backgroundColor`", "`elemento.color.background`", "`elemento.style.bg`", "`elemento.setBG()`"],
+                a: "`elemento.style.backgroundColor`"
             }
         ];
 
@@ -1474,7 +1482,7 @@
         const domRestartQuizButton = document.getElementById('dom-restart-quiz-button');
 
         function initializeDOMQuiz() {
-            shuffledDOMQuizQuestions = shuffleArray([...domQuizData]);
+            shuffledDOMQuizQuestions = shuffleArray([...quizData]);
             currentDOMQuizQuestionIndex = 0;
             domQuizScore = 0;
             domQuizTotalQuestionsDisplay.textContent = shuffledDOMQuizQuestions.length;
@@ -1499,7 +1507,7 @@
 
             if (currentDOMQuizQuestionIndex < shuffledDOMQuizQuestions.length) {
                 const currentQuestion = shuffledDOMQuizQuestions[currentDOMQuizQuestionIndex];
-                domQuestionTextDisplay.textContent = currentQuestion.question;
+                domQuestionTextDisplay.textContent = currentQuestion.q;
                 domQuizFeedbackDisplay.textContent = "";
                 domQuizFeedbackDisplay.classList.remove('text-green-600', 'text-red-600', 'text-indigo-700');
                 domQuizScoreDisplay.textContent = domQuizScore;
@@ -1529,7 +1537,7 @@
 
         function handleDOMQuizAnswer(event) {
             const selectedAnswer = event.target.dataset.answer;
-            const correctAnswer = shuffledDOMQuizQuestions[currentDOMQuizQuestionIndex].correctAnswer;
+            const correctAnswer = shuffledDOMQuizQuestions[currentDOMQuizQuestionIndex].a;
 
             if (selectedAnswer === correctAnswer) {
                 domQuizFeedbackDisplay.textContent = "¡Correcto!";

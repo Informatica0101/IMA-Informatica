@@ -429,36 +429,56 @@
         let isTransitioning = false;
 
         // Funcionalidad del cuestionario
-        const quizQuestions = [
+        const quizData = [
             {
-                question: "¿Qué es una fila en una tabla?",
+                q: "¿Qué es una fila en una tabla?",
                 options: ["Una línea vertical de celdas", "Una línea horizontal de celdas", "Una celda principal", "El encabezado de la tabla"],
-                correctAnswer: "Una línea horizontal de celdas"
+                a: "Una línea horizontal de celdas"
             },
             {
-                question: "¿Para qué sirve el estilo de fuente 'negrita'?",
+                q: "¿Para qué sirve el estilo de fuente 'negrita'?",
                 options: ["Para justificar el texto", "Para cambiar el tamaño del texto", "Para enfatizar palabras o frases", "Para alinear el texto al centro"],
-                correctAnswer: "Para enfatizar palabras o frases"
+                a: "Para enfatizar palabras o frases"
             },
             {
-                question: "¿Cuál es el componente de una tabla que define el título de una columna?",
+                q: "¿Cuál es el componente de una tabla que define el título de una columna?",
                 options: ["Fila", "Celda", "Encabezado", "Columna"],
-                correctAnswer: "Encabezado"
+                a: "Encabezado"
             },
             {
-                question: "¿Qué es la alineación de texto?",
+                q: "¿Qué es la alineación de texto?",
                 options: ["El tipo de letra", "El color del texto", "La posición del texto", "El tamaño de la fuente"],
-                correctAnswer: "La posición del texto"
+                a: "La posición del texto"
             },
             {
-                question: "¿Cuál es el componente que se usa para encabezar filas y columnas?",
+                q: "¿Cuál es el componente que se usa para encabezar filas y columnas?",
                 options: ["Una celda de encabezado", "Una celda de datos", "Una fila", "Una columna"],
-                correctAnswer: "Una celda de encabezado"
+                a: "Una celda de encabezado"
             },
             {
-                question: "¿Cómo se llama la intersección de una fila y una columna?",
+                q: "¿Cómo se llama la intersección de una fila y una columna?",
                 options: ["Cuadro", "Celda", "Segmento", "Intersección"],
-                correctAnswer: "Celda"
+                a: "Celda"
+            },
+            {
+                q: "El formato de texto se refiere a:",
+                options: ["Presentación y estilo del texto", "Solo a la ortografía", "A la velocidad de escritura", "Al peso del archivo"],
+                a: "Presentación y estilo del texto"
+            },
+            {
+                q: "¿Qué opción permite cambiar el tipo de letra (ej. Arial)?",
+                options: ["Fuente", "Tamaño", "Efecto", "Color"],
+                a: "Fuente"
+            },
+            {
+                q: "Alinear el texto de forma que quede recto por ambos lados se llama:",
+                options: ["Justificado", "Centrado", "Izquierda", "Derecha"],
+                a: "Justificado"
+            },
+            {
+                q: "Un conjunto vertical de celdas en una tabla se llama:",
+                options: ["Columna", "Fila", "Rango", "Bloque"],
+                a: "Columna"
             }
         ];
         let currentQuizQuestionIndex = 0;
@@ -468,15 +488,15 @@
             const quizOptionsElement = document.getElementById('quiz-options');
             const quizFeedbackElement = document.getElementById('quiz-feedback');
 
-            if (currentQuizQuestionIndex >= quizQuestions.length) {
+            if (currentQuizQuestionIndex >= quizData.length) {
                 quizQuestionElement.textContent = "¡Cuestionario completado!";
                 quizOptionsElement.innerHTML = '';
                 quizFeedbackElement.textContent = '';
                 return;
             }
 
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            quizQuestionElement.textContent = currentQuestion.question;
+            const currentQuestion = quizData[currentQuizQuestionIndex];
+            quizQuestionElement.textContent = currentQuestion.q;
             quizOptionsElement.innerHTML = '';
             quizFeedbackElement.textContent = '';
 
@@ -490,14 +510,14 @@
         }
 
         function checkAnswer(selectedOption) {
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            const currentQuestion = quizData[currentQuizQuestionIndex];
             const quizFeedback = document.getElementById('quiz-feedback');
             const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
-            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+            const isCorrect = selectedOption === currentQuestion.a;
 
             buttons.forEach(button => {
                 button.disabled = true;
-                if (button.textContent === currentQuestion.correctAnswer) {
+                if (button.textContent === currentQuestion.a) {
                     button.classList.add('correct');
                 } else if (button.textContent === selectedOption) {
                     button.classList.add('incorrect');
@@ -509,7 +529,7 @@
                 quizFeedback.classList.remove('text-red-500');
                 quizFeedback.classList.add('text-green-500');
             } else {
-                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.correctAnswer;
+                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.a;
                 quizFeedback.classList.remove('text-green-500');
                 quizFeedback.classList.add('text-red-500');
             }

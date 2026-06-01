@@ -43,7 +43,7 @@ window.setupCommonUI = function() {
     };
 
     // --- Unified Profile Modal Logic (A-75) ---
-    window.openProfileModal = function() {
+    window.openProfileModal = function(pushState = true) {
         const modal = document.getElementById('profile-modal');
         if (!modal) return;
 
@@ -82,11 +82,17 @@ window.setupCommonUI = function() {
 
         modal.classList.remove('hidden');
         if (window.closeAcademicMenu) window.closeAcademicMenu();
+        if (pushState) {
+            history.pushState({ type: 'modal-close', modalId: 'profile-modal' }, '');
+        }
     };
 
-    window.closeProfileModal = function() {
+    window.closeProfileModal = function(doPop = true) {
         const modal = document.getElementById('profile-modal');
         if (modal) modal.classList.add('hidden');
+        if (doPop && history.state && history.state.modalId === 'profile-modal') {
+            history.back();
+        }
     };
 
     // Attach to buttons if they exist
@@ -122,6 +128,56 @@ window.setupCommonUI = function() {
 
     // Render Navigation
     window.renderCommonNav();
+
+    // --- (A-77) Global History Navigation System ---
+    const handlePopState = (event) => {
+        const state = event.state;
+
+        // Siempre cerrar modales si el nuevo estado NO es de modal
+        if (!state || (state.type !== 'modal-close' && state.type !== 'academic-menu')) {
+            const academicModal = document.getElementById('academic-menu-modal');
+            if (academicModal && !academicModal.classList.contains('hidden')) {
+                window.closeAcademicMenu(false);
+            }
+            const profileModal = document.getElementById('profile-modal');
+            if (profileModal && !profileModal.classList.contains('hidden')) {
+                window.closeProfileModal(false);
+            }
+            const loginModal = document.getElementById('login-modal');
+            if (loginModal) {
+                loginModal.classList.add('opacity-0', 'pointer-events-none');
+                const content = document.getElementById('login-modal-content');
+                if (content) content.classList.remove('scale-100');
+            }
+        }
+
+        if (!state) return;
+
+        if (state.type === 'dashboard-section') {
+            const targetNav = document.getElementById(state.navId);
+            const targetSection = document.getElementById(state.sectionId);
+            if (targetNav && targetSection && window.navigateTo) {
+                window.navigateTo(targetSection, targetNav, false);
+            }
+        } else if (state.type === 'hierarchical-nav') {
+            if (window.syncNavWithState) {
+                window.syncNavWithState(state);
+            }
+        } else if (state.type === 'academic-menu') {
+            window.openAcademicMenu(false); // Asegurar que el modal esté visible al navegar atrás/adelante
+            if (state.level === 'root') {
+                window.resetAcademicMenu(false);
+            } else {
+                window.renderHierarchyLevel(state.menuType, state.level, state.params, false);
+            }
+        } else if (state.type === 'modal-close') {
+            // Si el estado es de modal (forward), lo abrimos
+            if (state.modalId === 'academic-menu-modal') window.openAcademicMenu(false);
+            if (state.modalId === 'profile-modal') window.openProfileModal(false);
+        }
+    };
+
+    window.addEventListener('popstate', handlePopState);
 
     // --- Dropdown Viewport Protection (A-76) ---
     const handleDropdownOverflow = () => {
@@ -306,7 +362,7 @@ window.handleHeaderAction = function(action) {
     if (window.closeMobileMenu) window.closeMobileMenu();
 };
 
-window.openAcademicMenu = function() {
+window.openAcademicMenu = function(pushState = true) {
     let modal = document.getElementById('academic-menu-modal');
     if (!modal) {
         modal = document.createElement('div');
@@ -368,20 +424,30 @@ window.openAcademicMenu = function() {
 
     modal.classList.remove('hidden');
     setTimeout(() => modal.classList.add('opacity-100'), 10);
-    window.resetAcademicMenu();
+    window.resetAcademicMenu(false);
+
+    if (pushState) {
+        history.pushState({ type: 'modal-close', modalId: 'academic-menu-modal' }, '');
+    }
 };
 
-window.closeAcademicMenu = function() {
+window.closeAcademicMenu = function(doPop = true) {
     const modal = document.getElementById('academic-menu-modal');
     if (modal) {
         modal.classList.remove('opacity-100');
         setTimeout(() => modal.classList.add('hidden'), 300);
+        if (doPop && history.state && history.state.modalId === 'academic-menu-modal') {
+            history.back();
+        }
     }
 };
 
-window.resetAcademicMenu = function() {
+window.resetAcademicMenu = function(pushState = true) {
     document.getElementById('academic-menu-options').classList.remove('hidden');
     document.getElementById('hierarchy-navigation').classList.add('hidden');
+    if (pushState) {
+        history.pushState({ type: 'academic-menu', level: 'root' }, '');
+    }
 };
 
 window.openAcademicHierarchy = function(type) {
@@ -405,7 +471,7 @@ window.showAcademicHierarchy = function(type) {
     }
 };
 
-window.renderHierarchyLevel = function(type, level, params = {}) {
+window.renderHierarchyLevel = function(type, level, params = {}, pushState = true) {
     const container = document.getElementById('hierarchy-options');
     const label = document.getElementById('hierarchy-label');
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -504,6 +570,10 @@ window.renderHierarchyLevel = function(type, level, params = {}) {
     if (items.length === 0 || items.every(i => i === undefined)) {
         container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay opciones disponibles.</p>';
         return;
+    }
+
+    if (pushState) {
+        history.pushState({ type: 'academic-menu', menuType: type, level, params }, '');
     }
 
     container.innerHTML = items.map(item => {

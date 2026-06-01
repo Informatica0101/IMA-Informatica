@@ -428,26 +428,56 @@
         let currentSlideIndex = 0;
         let isTransitioning = false;
 
-        const quizQuestions = [
+        const quizData = [
             {
-                question: "¿Qué es un modelo de datos en Excel?",
-                options: ["Un tipo de gráfico", "Una colección de tablas relacionadas", "Una función de búsqueda", "Una plantilla de formato"],
-                correctAnswer: "Una colección de tablas relacionadas"
+                q: "¿Qué es un modelo de datos en Excel?",
+                options: ["Una colección de tablas relacionadas", "Un tipo de gráfico", "Una función de búsqueda", "Una plantilla de formato"],
+                a: "Una colección de tablas relacionadas"
             },
             {
-                question: "¿Qué herramienta de Excel se usa para crear relaciones en un modelo de datos?",
-                options: ["Tablas Dinámicas", "Power Query", "Power Pivot", "Formato Condicional"],
-                correctAnswer: "Power Pivot"
+                q: "¿Qué herramienta de Excel se usa para crear relaciones en un modelo de datos?",
+                options: ["Power Pivot", "Tablas Dinámicas", "Power Query", "Formato Condicional"],
+                a: "Power Pivot"
             },
             {
-                question: "¿Qué es una 'medida' en el modelo de datos?",
-                options: ["Una fila de datos", "Una columna de texto", "Un cálculo usando fórmulas DAX", "Un tipo de filtro"],
-                correctAnswer: "Un cálculo usando fórmulas DAX"
+                q: "¿Qué es una 'medida' en el modelo de datos?",
+                options: ["Un cálculo usando fórmulas DAX", "Una fila de datos", "Una columna de texto", "Un tipo de filtro"],
+                a: "Un cálculo usando fórmulas DAX"
             },
             {
-                question: "¿Cuál es el beneficio principal de usar un modelo de datos con múltiples tablas?",
-                options: ["Simplifica la entrada de datos", "Permite analizar grandes volúmenes de datos rápidamente", "Se eliminan las fórmulas de la hoja de cálculo", "Mejora la estética de la tabla"],
-                correctAnswer: "Permite analizar grandes volúmenes de datos rápidamente"
+                q: "¿Cuál es el beneficio principal de usar un modelo de datos?",
+                options: ["Permite analizar grandes volúmenes de datos rápidamente", "Simplifica la entrada de datos", "Se eliminan las fórmulas de la hoja de cálculo", "Mejora la estética de la tabla"],
+                a: "Permite analizar grandes volúmenes de datos rápidamente"
+            },
+            {
+                q: "¿Qué tipo de relación es la más común en un modelo de datos?",
+                options: ["Uno a Muchos (1:M)", "Uno a Uno (1:1)", "Muchos a Muchos (M:M)", "Ninguna"],
+                a: "Uno a Muchos (1:M)"
+            },
+            {
+                q: "Las relaciones entre tablas se establecen a través de:",
+                options: ["Una columna común (ID)", "El color de las celdas", "El nombre de la hoja", "Fórmulas de suma"],
+                a: "Una columna común (ID)"
+            },
+            {
+                q: "¿Qué lenguaje se usa para crear fórmulas avanzadas en Power Pivot?",
+                options: ["DAX", "HTML", "SQL", "CSS"],
+                a: "DAX"
+            },
+            {
+                q: "Una relación de Muchos a Muchos (M:M) requiere de:",
+                options: ["Una tabla intermedia", "Solo dos tablas", "Borrar datos", "No es posible en Excel"],
+                a: "Una tabla intermedia"
+            },
+            {
+                q: "¿Cómo se llama la vista donde se arrastran columnas para crear relaciones?",
+                options: ["Vista de Diagrama", "Vista de Datos", "Vista de Impresión", "Vista de Hoja"],
+                a: "Vista de Diagrama"
+            },
+            {
+                q: "Power Pivot es un __________ integrado en Excel para modelos avanzados.",
+                options: ["Complemento", "Virus", "Hardware", "Navegador"],
+                a: "Complemento"
             }
         ];
         let currentQuizQuestionIndex = 0;
@@ -457,15 +487,15 @@
             const quizOptionsElement = document.getElementById('quiz-options');
             const quizFeedbackElement = document.getElementById('quiz-feedback');
 
-            if (currentQuizQuestionIndex >= quizQuestions.length) {
+            if (currentQuizQuestionIndex >= quizData.length) {
                 quizQuestionElement.textContent = "¡Cuestionario completado!";
                 quizOptionsElement.innerHTML = '';
                 quizFeedbackElement.textContent = '';
                 return;
             }
 
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            quizQuestionElement.textContent = currentQuestion.question;
+            const currentQuestion = quizData[currentQuizQuestionIndex];
+            quizQuestionElement.textContent = currentQuestion.q;
             quizOptionsElement.innerHTML = '';
             quizFeedbackElement.textContent = '';
 
@@ -479,14 +509,14 @@
         }
 
         function checkAnswer(selectedOption) {
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
+            const currentQuestion = quizData[currentQuizQuestionIndex];
             const quizFeedback = document.getElementById('quiz-feedback');
             const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
-            const isCorrect = selectedOption === currentQuestion.correctAnswer;
+            const isCorrect = selectedOption === currentQuestion.a;
 
             buttons.forEach(button => {
                 button.disabled = true;
-                if (button.textContent === currentQuestion.correctAnswer) {
+                if (button.textContent === currentQuestion.a) {
                     button.classList.add('correct');
                 } else if (button.textContent === selectedOption) {
                     button.classList.add('incorrect');
@@ -498,7 +528,7 @@
                 quizFeedback.classList.remove('text-red-500');
                 quizFeedback.classList.add('text-green-500');
             } else {
-                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.correctAnswer;
+                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.a;
                 quizFeedback.classList.remove('text-green-500');
                 quizFeedback.classList.add('text-red-500');
             }

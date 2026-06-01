@@ -1,0 +1,42 @@
+
+AUDITORÍA - 17/06/2026 - MEJORAS DE SISTEMA, NAVEGACIÓN Y QUIZPRO
+
+Archivos Involucrados:
+- backend/task-service/Code.gs
+- backend/user-service/Code.gs
+- pseudocode.html
+- js/ui-common.js
+- js/teacher.js
+- js/data.js
+- juegos/quizpro.html (NUEVO)
+- js/quizpro.js (NUEVO)
+- README.md
+- ChangesLogs.txt
+- Auditoria.txt
+- Instrucciones.txt
+
+Hallazgos y Verificaciones:
+
+1. Gestión de Pseudocódigo:
+   - Se verificó que la acción 'deleteProject' en el backend maneja correctamente tanto la hoja de cálculo como DriveApp.
+   - El modal en pseudocode.html ahora muestra el botón de basura y pide confirmación antes de llamar a la API.
+   - La invalidación del archivo actual funciona correctamente reseteando currentCloudFileId y currentCloudFileName.
+
+2. Sistema de Navegación:
+   - La implementación en ui-common.js con 'popstate' permite que el gesto "Atrás" en móviles cierre modales o regrese niveles en el menú académico.
+   - En teacher-dashboard, la navegación jerárquica ahora es persistente en el historial. Un usuario puede usar las flechas del navegador para moverse entre Grado > Sección > Alumno.
+   - Se validó que popNav() interactúe correctamente con history.back() para evitar duplicidad de transiciones.
+
+3. Evaluación Inteligente (QuizPro):
+   - Se creó la estructura HTML/JS siguiendo el sistema de diseño institucional (4px, Inter/Poppins).
+   - El cargador dinámico extrae preguntas de presentaciones externas. Se auditaron todas las materias para asegurar el estándar de 10 preguntas por archivo.
+   - Implementado: Prevención de repetición mediante buffer de 200 IDs en localStorage.
+   - Implementado: Jerarquía Académica (10mo < 11mo < 12mo). Estudiantes solo ven contenido de su nivel o inferiores.
+   - Implementado: Motor de recomendaciones basado en errores que sugiere presentaciones específicas para repaso.
+   - Implementado: Panel de Desempeño Histórico que desglosa puntajes máximos y errores por asignatura.
+   - Backend: getGameStats actualizado para devolver historial completo (allHistory) permitiendo el desglose por materia en el frontend.
+
+4. Documentación:
+   - README.md actualizado con la nueva sección de "Sistema de Navegación y Estado" y "QuizPro Intelligence".
+   - ChangesLogs.txt refleja todos los cambios técnicos realizados.
+   - Instrucciones.txt actualizado con las tareas completadas.

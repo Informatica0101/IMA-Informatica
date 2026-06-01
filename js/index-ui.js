@@ -186,13 +186,14 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showMainContentSections = showMainContentSections;
     window.loadPeripheralsGame = () => loadGame('peripherals', 'juegos/perifericos.html', 'js/perifericos_juego.js', 'initializePeripheralsGame', 'Juego de Periféricos');
     window.loadWebMasterQuiz = () => loadGame('webmaster', 'juegos/webmaster_quiz.html', 'js/webmaster_quiz_juego.js', 'initQuizGame', 'WebMaster Quiz');
+    window.loadQuizPro = () => loadGame('quizpro', 'juegos/quizpro.html', 'js/quizpro.js', 'initQuizPro', 'QuizPro');
     window.loadDexterityGame = () => loadGame('dexterity', 'juegos/destreza_teclado.html', 'js/destreza_teclado.js', 'initDexterityGame', 'Destreza en el Teclado');
 
     window.returnToMainContent = function() {
         const mainHeader = document.getElementById('main-header');
         if (mainHeader) mainHeader.classList.remove('header-hidden');
         dynamicallyLoadedGameContainer.innerHTML = '';
-        ['js/perifericos_juego.js', 'js/webmaster_quiz_juego.js', 'js/destreza_teclado.js'].forEach(src => {
+        ['js/perifericos_juego.js', 'js/webmaster_quiz_juego.js', 'js/destreza_teclado.js', 'js/quizpro.js'].forEach(src => {
             const s = document.querySelector(`script[src="${src}"]`);
             if (s) s.remove();
         });
@@ -220,6 +221,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (pBtn) pBtn.addEventListener('click', loadPeripheralsGame);
     const wBtn = document.getElementById('select-webmaster-quiz-button');
     if (wBtn) wBtn.addEventListener('click', loadWebMasterQuiz);
+    const qBtn = document.getElementById('select-quiz-pro-button');
+    if (qBtn) qBtn.addEventListener('click', loadQuizPro);
     const dBtn = document.getElementById('select-dexterity-game-button');
     if (dBtn) dBtn.addEventListener('click', loadDexterityGame);
     if (backToMainActivitiesButton) backToMainActivitiesButton.addEventListener('click', renderInitialActivityButton);
