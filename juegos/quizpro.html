@@ -115,6 +115,27 @@
             <button onclick="startQuiz()" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
                 Iniciar Evaluación
             </button>
+
+            <!-- Performance Panel (Req 6) -->
+            <div id="performance-panel" class="hidden mt-10 text-left border-t border-gray-100 pt-8">
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Tu Desempeño por Asignatura</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="text-[10px] text-gray-400 font-bold uppercase border-b border-gray-50">
+                                <th class="text-left py-2">Asignatura</th>
+                                <th class="text-left py-2">Nivel</th>
+                                <th class="text-left py-2">Máximo</th>
+                                <th class="text-left py-2">Fallos</th>
+                                <th class="text-left py-2">Tiempo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="performance-table-body">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <!-- Quiz Screen -->
@@ -179,6 +200,8 @@
             <div id="result-icon" class="w-24 h-24 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
                 <!-- Icon injected by JS -->
             </div>
+
+            <div id="recommendations-container" class="hidden mb-6"></div>
             <h2 id="result-title" class="text-3xl font-poppins font-black text-gray-900 mb-2">¡Completado!</h2>
             <p id="result-msg" class="text-gray-500 text-sm mb-8 leading-relaxed">Mensaje de resultado...</p>
 

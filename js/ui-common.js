@@ -132,6 +132,25 @@ window.setupCommonUI = function() {
     // --- (A-77) Global History Navigation System ---
     const handlePopState = (event) => {
         const state = event.state;
+
+        // Siempre cerrar modales si el nuevo estado NO es de modal
+        if (!state || (state.type !== 'modal-close' && state.type !== 'academic-menu')) {
+            const academicModal = document.getElementById('academic-menu-modal');
+            if (academicModal && !academicModal.classList.contains('hidden')) {
+                window.closeAcademicMenu(false);
+            }
+            const profileModal = document.getElementById('profile-modal');
+            if (profileModal && !profileModal.classList.contains('hidden')) {
+                window.closeProfileModal(false);
+            }
+            const loginModal = document.getElementById('login-modal');
+            if (loginModal) {
+                loginModal.classList.add('opacity-0', 'pointer-events-none');
+                const content = document.getElementById('login-modal-content');
+                if (content) content.classList.remove('scale-100');
+            }
+        }
+
         if (!state) return;
 
         if (state.type === 'dashboard-section') {
@@ -145,14 +164,16 @@ window.setupCommonUI = function() {
                 window.syncNavWithState(state);
             }
         } else if (state.type === 'academic-menu') {
+            window.openAcademicMenu(false); // Asegurar que el modal esté visible al navegar atrás/adelante
             if (state.level === 'root') {
                 window.resetAcademicMenu(false);
             } else {
                 window.renderHierarchyLevel(state.menuType, state.level, state.params, false);
             }
         } else if (state.type === 'modal-close') {
-            if (state.modalId === 'academic-menu-modal') window.closeAcademicMenu(false);
-            if (state.modalId === 'profile-modal') window.closeProfileModal(false);
+            // Si el estado es de modal (forward), lo abrimos
+            if (state.modalId === 'academic-menu-modal') window.openAcademicMenu(false);
+            if (state.modalId === 'profile-modal') window.openProfileModal(false);
         }
     };
 
