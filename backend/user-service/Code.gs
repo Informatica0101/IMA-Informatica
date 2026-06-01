@@ -373,10 +373,48 @@ function updateUserProfile(payload) {
 }
 
 function saveGameResult(payload) {
-  const { userId, nombreAlumno, juego, logro, puntaje } = payload || {};
+  const { userId, nombreAlumno, juego, logro, puntaje, nivel } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "Logros");
-  sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, logro || "N/A", puntaje || 0]);
+  const data = sheet.getDataRange().getValues();
+  const score = parseFloat(puntaje || 0);
+
+  // Determinación de sub-llave para registros independientes (Asignatura + Nivel)
+  let subKey = "";
+  let currentLevel = nivel || "";
+  if (juego === "QuizPro" && logro) {
+    const parts = logro.split(" | ");
+    subKey = parts[0]; // Asignatura
+    currentLevel = parts[1] || currentLevel;
+  }
+
+  let existingIndex = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][1]) === String(userId) && data[i][3] === juego) {
+      if (juego === "QuizPro") {
+        const rowSubKey = String(data[i][4]).split(" | ")[0];
+        if (rowSubKey === subKey && String(data[i][6]) === String(currentLevel)) {
+          existingIndex = i;
+          break;
+        }
+      } else if (data[i][4] === logro) {
+        existingIndex = i;
+        break;
+      }
+    }
+  }
+
+  if (existingIndex !== -1) {
+    const oldScore = parseFloat(data[existingIndex][5] || 0);
+    if (score > oldScore) {
+      sheet.getRange(existingIndex + 1, 1).setValue(new Date());
+      sheet.getRange(existingIndex + 1, 5).setValue(logro);
+      sheet.getRange(existingIndex + 1, 6).setValue(score);
+      sheet.getRange(existingIndex + 1, 7).setValue(currentLevel);
+    }
+  } else {
+    sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, logro || "N/A", score, currentLevel]);
+  }
   return { status: "success" };
 }
 
@@ -393,15 +431,24 @@ function getGameStats(payload) {
     userRows.forEach(r => {
       const j = r[3];
       const p = parseFloat(r[5] || 0);
-      if (!stats[j] || p > stats[j].maxScore) {
-        stats[j] = { maxScore: p, lastLogro: r[4], date: r[0] };
+      // Para QuizPro devolvemos un agregado por asignatura
+      if (j === "QuizPro") {
+        const subj = String(r[4]).split(" | ")[0];
+        const comboKey = `QuizPro_${subj}`;
+        if (!stats[comboKey] || p > stats[comboKey].maxScore) {
+          stats[comboKey] = { maxScore: p, lastLogro: r[4], date: r[0], level: r[6] };
+        }
+      } else {
+        if (!stats[j] || p > stats[j].maxScore) {
+          stats[j] = { maxScore: p, lastLogro: r[4], date: r[0] };
+        }
       }
     });
 
     return {
       status: "success",
       data: stats,
-      allHistory: userRows // Devolver historial completo para desgloses detallados (e.g. QuizPro por materia)
+      allHistory: userRows
     };
   }
 
@@ -534,7 +581,7 @@ function getOrCreateSheet(ss, name) {
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
-    if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Logro", "Puntaje"]);
+    if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Logro", "Puntaje", "Nivel"]);
     if (name === "NoticiasPortal") sheet.appendRow(["Fecha", "Hora", "Título", "Contenido", "ImagenUrl", "Categoría"]);
     if (name === "Clases") sheet.appendRow(["Grado", "Seccion", "WhatsAppLink"]);
   }

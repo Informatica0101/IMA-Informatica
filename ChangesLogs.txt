@@ -27,3 +27,17 @@
   - Auditados y actualizados contenidos para asegurar 10 preguntas por archivo en todas las materias.
 - Archivo: README.md
   - Actualizada la documentación técnica con las nuevas secciones de "Sistema de Navegación y Estado" y "QuizPro Intelligence".
+
+[QUIZPRO REFACTOR & EXPANSION]
+Archivo: backend/user-service/Code.gs
+- Líneas afectadas: saveGameResult, getGameStats, getOrCreateSheet.
+- Descripción: Implementación de guardado independiente por Asignatura + Nivel (Columna G) y lógica de mejor puntuación.
+Archivo: juegos/quizpro.html
+- Líneas afectadas: Estructura main, styles, scripts.
+- Descripción: Refactorización total a navegación por pantallas (Home/Sujeto/Niveles), eliminación de dropdowns y modo 100% viewport.
+Archivo: js/quizpro.js
+- Líneas afectadas: Todo el archivo.
+- Descripción: Implementación de jerarquía académica (10/11/12), unificación de asignaturas, shuffle robusto, control de sesión anti-repetición y multi-modalidad (Memoria, Práctica, Transcripción).
+Archivo: js/data.js
+- Líneas afectadas: window.presentationData.
+- Descripción: Unificación de materia 'Programación' e indexación de nuevas materias: Ofimática I, Informática Aplicada I, Análisis y Diseño.

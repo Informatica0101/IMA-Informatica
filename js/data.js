@@ -25,8 +25,8 @@ window.presentationData = [
         sections: ["A"],
         subjects: [
             {
-                name: "Programación (I Parcial)",
-                partial: "Primer Parcial",
+                name: "Programación",
+                partial: "I y II Parcial",
                 sections: "A",
                 topics: [
                     { title: "Introducción a la Programación", file: "II_BTP_A/Programacion/introduccion_programacion.html" },
@@ -35,19 +35,48 @@ window.presentationData = [
                     { title: "Análisis y diseño de algoritmos", file: "II_BTP_A/Programacion/analisis_diseno_algoritmos.html" },
                     { title: "Programación y representación", file: "II_BTP_A/Programacion/programacion_representacion.html" },
                     { title: "Pseudocódigo y ordenación simbólica", file: "II_BTP_A/Programacion/pseudocodigo_ordenacion.html" },
-                    { title: "Diagramas de flujo", file: "II_BTP_A/Programacion/diagramas_flujo.html" }
-                ]
-            },
-            {
-                name: "Programación",
-                partial: "Segundo Parcial",
-                sections: "A",
-                topics: [
+                    { title: "Diagramas de flujo", file: "II_BTP_A/Programacion/diagramas_flujo.html" },
                     { title: "Introducción a los Lenguajes de Programación", file: "II_BTP_A/Programacion/intro_lenguajes_programacion.html" },
                     { title: "Lenguajes compilados e interpretados / Bucles", file: "II_BTP_A/Programacion/lenguajes_compilados_interpretados.html" },
                     { title: "Lenguajes declarativos / Bucle Mientras", file: "II_BTP_A/Programacion/lenguajes_declarativos_mientras.html" },
                     { title: "Programación Lógica / Bucle Repetir", file: "II_BTP_A/Programacion/prog_logica_repetir.html" },
-                    { title: "Bases de Datos: Tipos y Modelos (31/05)", file: "II_BTP_A/Programacion/prog_bd_modelos.html" }
+                    { title: "Bases de Datos: Tipos y Modelos", file: "II_BTP_A/Programacion/prog_bd_modelos.html" }
+                ]
+            },
+            {
+                name: "Ofimática I",
+                partial: "Primer Parcial",
+                sections: "A",
+                topics: [
+                    { title: "Procesadores de Texto", file: "II_BTP_A/Ofimatica_I/procesadores_texto.html" },
+                    { title: "Hojas de Cálculo", file: "II_BTP_A/Ofimatica_I/hojas_calculo.html" },
+                    { title: "Fórmulas y Funciones", file: "II_BTP_A/Ofimatica_I/hojas_calculo2.html" },
+                    { title: "Formato Condicional", file: "II_BTP_A/Ofimatica_I/formato_condicional.html" },
+                    { title: "Tablas Dinámicas", file: "II_BTP_A/Ofimatica_I/tablas_dinamicas.html" },
+                    { title: "Fundamentos VBA", file: "II_BTP_A/Ofimatica_I/fundamentos_VBA.html" }
+                ]
+            },
+            {
+                name: "Informática Aplicada I",
+                partial: "Primer Parcial",
+                sections: "A",
+                topics: [
+                    { title: "Sistemas de Numeración", file: "II_BTP_A/Informatica_Aplicada_I/sistemas_numeracion.html" },
+                    { title: "Redes e IP", file: "II_BTP_A/Informatica_Aplicada_I/redes_ip.html" },
+                    { title: "Sistemas Operativos", file: "II_BTP_A/Informatica_Aplicada_I/sistemas_operativos.html" },
+                    { title: "Terminal y Comandos", file: "II_BTP_A/Informatica_Aplicada_I/terminal_comando.html" },
+                    { title: "Instalación de Software", file: "II_BTP_A/Informatica_Aplicada_I/instalacion_software.html" }
+                ]
+            },
+            {
+                name: "Análisis y Diseño",
+                partial: "Primer Parcial",
+                sections: "A",
+                topics: [
+                    { title: "Rol del Analista", file: "II_BTP_A/analisis_diseno/rol_analista_sistemas.html" },
+                    { title: "Ciclo de Vida de Desarrollo", file: "II_BTP_A/analisis_diseno/ciclo_desarrollo.html" },
+                    { title: "Técnicas de Recolección", file: "II_BTP_A/analisis_diseno/tecnicas_de_recoleccion_requisitos.html" },
+                    { title: "Gestión de Proyectos", file: "II_BTP_A/analisis_diseno/gestion_proyectos_software.html" }
                 ]
             }
         ]
