@@ -123,16 +123,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('student-expediente');
         if (!container) return;
 
-        // Calcular progreso (basado en lógica de A-73/Teacher Dashboard)
-        const total = activities.length;
-        const delivered = activities.filter(a => a.entrega).length;
-        const completed = activities.filter(a => a.entrega && (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')).length;
-        const pending = total - delivered;
+        // --- Ajuste de Lógica de Progreso (Req 2) ---
+        // Excluir 'Credito Extra' del total asignado (baseline), ya que son de recuperación
+        const baseActivities = activities.filter(a => a.type !== 'Credito Extra');
+        const totalAssigned = baseActivities.length;
 
-        const deliveryRate = total > 0 ? (delivered / total) : 0;
+        // Las completadas suman puntos al progreso real (separando obligatorias de recuperación)
+        const mandatoryCompleted = activities.filter(a => a.type !== 'Credito Extra' && a.entrega &&
+            (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
+        ).length;
+
+        const extraCreditCompleted = activities.filter(a => a.type === 'Credito Extra' && a.entrega &&
+            (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
+        ).length;
+
+        // El progreso visual (slots llenos) se beneficia del crédito extra para cubrir faltantes (Req 2)
+        const completed = Math.min(totalAssigned, mandatoryCompleted + extraCreditCompleted);
+        const pending = Math.max(0, totalAssigned - completed);
+
+        // Tasa de entrega basada en tareas obligatorias (Req 2: Crédito extra no es obligatorio)
+        const mandatoryDelivered = activities.filter(a => a.type !== 'Credito Extra' && a.entrega).length;
+        const deliveryRate = totalAssigned > 0 ? (mandatoryDelivered / totalAssigned) : 0;
+
+        // Puntos totales obtenidos (incluye recuperación por créditos extra)
         const gradeSum = activities.reduce((sum, a) => sum + parseFloat(a.entrega?.calificacion || 0), 0);
-        const maxPossible = activities.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
-        const academicPerformance = maxPossible > 0 ? (gradeSum / maxPossible) : 0;
+
+        // El máximo posible se basa en las tareas obligatorias
+        const maxPossible = baseActivities.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
+        const academicPerformance = maxPossible > 0 ? Math.min(1, gradeSum / maxPossible) : 0;
 
         let onTimeCount = 0;
         activities.forEach(a => {
@@ -142,7 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (deliveryDate <= limit) onTimeCount++;
             }
         });
-        const punctualityRate = delivered > 0 ? (onTimeCount / delivered) : 1;
+        const totalDelivered = activities.filter(a => a.entrega).length;
+        const punctualityRate = totalDelivered > 0 ? (onTimeCount / totalDelivered) : 1;
 
         const compositeProgress = Math.round((deliveryRate * 0.3 + academicPerformance * 0.5 + punctualityRate * 0.2) * 100);
 

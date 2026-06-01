@@ -1241,3 +1241,16 @@ Archivo: student-dashboard.html
 
 Archivo: teacher-dashboard.html
 - Línea 557: Agregado '.heic' al atributo 'accept' del input de imágenes de noticias.
+
+REGISTRO DE CAMBIOS - MODAL DE CALIFICACIÓN Y PROGRESO ACADÉMICO
+
+Archivo: teacher-dashboard.html
+- Líneas 600-613: Se eliminó la visualización de No. Lista, Correo y Teléfono en el modal de calificación. Se agregaron campos para Nombre de la tarea, Fecha y Hora de entrega.
+
+Archivo: js/teacher.js
+- Líneas 1332-1348: openGradeModal ahora puebla los metadatos de la entrega (título, fecha, hora) y ya no busca información adicional del alumno.
+- Líneas 1362-1398: Implementado bloqueo temporal del botón 'save-grade-btn' con estado visual 'btn-loading' y opacidad reducida. Se asegura el desbloqueo en caso de error o cancelación.
+- Líneas 953-976: Lógica de progreso del estudiante actualizada para tratar 'Credito Extra' como recuperación académica (no aumenta la línea base obligatoria).
+
+Archivo: js/student.js
+- Líneas 125-148: Sincronizada la lógica de progreso del expediente: 'Credito Extra' ahora suma al contador de tareas completadas y puntos obtenidos, pero se excluye del total de tareas asignadas (baseline).
