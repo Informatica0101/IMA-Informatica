@@ -372,48 +372,47 @@ function updateUserProfile(payload) {
   };
 }
 
+/**
+ * Req 4: Persistencia Extendida de Progresión (Logs de Logros)
+ * Mapeo de Columnas en 'Logros':
+ * A: Fecha (fecha_logro)
+ * B: usuario_id
+ * C: Alumno
+ * D: Juego (Fijo "QuizPro" o similar)
+ * E: Asignatura (Ej: "Programación")
+ * F: porcentaje_obtenido
+ * G: nivel_alcanzado
+ * H: grado
+ */
 function saveGameResult(payload) {
-  const { userId, nombreAlumno, juego, logro, puntaje, nivel } = payload || {};
+  const { userId, nombreAlumno, juego, asignatura, puntaje, nivel, grado } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "Logros");
   const data = sheet.getDataRange().getValues();
   const score = parseFloat(puntaje || 0);
 
-  // Determinación de sub-llave para registros independientes (Asignatura + Nivel)
-  let subKey = "";
-  let currentLevel = nivel || "";
-  if (juego === "QuizPro" && logro) {
-    const parts = logro.split(" | ");
-    subKey = parts[0]; // Asignatura
-    currentLevel = parts[1] || currentLevel;
-  }
-
   let existingIndex = -1;
+  // Búsqueda para actualización de High Score independiente por Materia + Grado + Nivel
   for (let i = 1; i < data.length; i++) {
-    if (String(data[i][1]) === String(userId) && data[i][3] === juego) {
-      if (juego === "QuizPro") {
-        const rowSubKey = String(data[i][4]).split(" | ")[0];
-        if (rowSubKey === subKey && String(data[i][6]) === String(currentLevel)) {
-          existingIndex = i;
-          break;
-        }
-      } else if (data[i][4] === logro) {
-        existingIndex = i;
-        break;
-      }
+    if (String(data[i][1]) === String(userId) &&
+        data[i][3] === juego &&
+        String(data[i][4]) === String(asignatura) &&
+        String(data[i][6]) === String(nivel) &&
+        String(data[i][7]) === String(grado)) {
+      existingIndex = i;
+      break;
     }
   }
 
   if (existingIndex !== -1) {
     const oldScore = parseFloat(data[existingIndex][5] || 0);
     if (score > oldScore) {
-      sheet.getRange(existingIndex + 1, 1).setValue(new Date());
-      sheet.getRange(existingIndex + 1, 5).setValue(logro);
-      sheet.getRange(existingIndex + 1, 6).setValue(score);
-      sheet.getRange(existingIndex + 1, 7).setValue(currentLevel);
+      sheet.getRange(existingIndex + 1, 1).setValue(new Date()); // fecha_logro
+      sheet.getRange(existingIndex + 1, 6).setValue(score);    // porcentaje_obtenido
     }
   } else {
-    sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, logro || "N/A", score, currentLevel]);
+    // Estructura: [Fecha, UserId, Alumno, Juego, Asignatura, Puntaje, Nivel, Grado]
+    sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, asignatura || "General", score, nivel || "Básico", grado || ""]);
   }
   return { status: "success" };
 }
@@ -431,16 +430,19 @@ function getGameStats(payload) {
     userRows.forEach(r => {
       const j = r[3];
       const p = parseFloat(r[5] || 0);
-      // Para QuizPro devolvemos un agregado por asignatura
+      const asig = r[4];
+      const lvl = r[6];
+      const grd = r[7];
+
       if (j === "QuizPro") {
-        const subj = String(r[4]).split(" | ")[0];
-        const comboKey = `QuizPro_${subj}`;
-        if (!stats[comboKey] || p > stats[comboKey].maxScore) {
-          stats[comboKey] = { maxScore: p, lastLogro: r[4], date: r[0], level: r[6] };
+        // Generar llaves únicas por materia, grado y nivel para el frontend
+        const key = `QuizPro_${asig}_${grd}_${lvl}`;
+        if (!stats[key] || p > stats[key].maxScore) {
+          stats[key] = { maxScore: p, date: r[0], level: lvl, grade: grd, subject: asig };
         }
       } else {
         if (!stats[j] || p > stats[j].maxScore) {
-          stats[j] = { maxScore: p, lastLogro: r[4], date: r[0] };
+          stats[j] = { maxScore: p, date: r[0] };
         }
       }
     });
@@ -581,7 +583,7 @@ function getOrCreateSheet(ss, name) {
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
-    if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Logro", "Puntaje", "Nivel"]);
+    if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Asignatura", "Puntaje", "Nivel", "Grado"]);
     if (name === "NoticiasPortal") sheet.appendRow(["Fecha", "Hora", "Título", "Contenido", "ImagenUrl", "Categoría"]);
     if (name === "Clases") sheet.appendRow(["Grado", "Seccion", "WhatsAppLink"]);
   }

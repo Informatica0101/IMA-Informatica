@@ -22,3 +22,10 @@ const SERVICE_URLS = {
 
 // --- URL del sitio para CORS (si es necesario ajustarlo en el backend) ---
 const FRONTEND_URL = 'https://informatica0101.github.io';
+
+/**
+ * CONFIGURACIÓN ACADÉMICA CENTRALIZADA
+ * Punto único de verdad para el período escolar vigente.
+ * Valores: "Primer Parcial", "Segundo Parcial", "Tercer Parcial", "Cuarto Parcial"
+ */
+window.PARCIAL_ACTUAL = "Segundo Parcial";

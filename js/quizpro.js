@@ -1,6 +1,6 @@
 /**
- * Lógica del sistema de Evaluación Inteligente (Quiz) - Versión 2.2
- * Mejoras: Shuffle Robusto, Session Control, Jerarquía Académica y Multi-Modalidad.
+ * Lógica del sistema de Evaluación Inteligente (Quiz) - Versión 3.0
+ * Refactorización: Matriz de Prerrequisitos, Acceso Cross-Grade y Centralización Académica.
  */
 
 let allPresentationQuestions = [];
@@ -11,12 +11,13 @@ let timerSeconds = 0;
 let timerInterval = null;
 let selectedAsignatura = '';
 let selectedDifficulty = '';
+let selectedGrado = '';
 let incorrectAnswers = [];
 
 const SEEN_QUESTIONS_KEY = 'quizpro_seen_questions';
 const SEEN_LIMIT = 200;
 
-let userGameStats = {};
+let userGameStats = {}; // Cache de logros para validación de bloqueos
 
 window.initQuizPro = function() {
     loadPerformanceTable();
@@ -35,92 +36,140 @@ window.initQuizPro = function() {
     });
 };
 
+const GRADE_MAP = {
+    'decimo': 10, 'undecimo': 11, 'duodecimo': 12,
+    '10': 10, '11': 11, '12': 12, '10mo': 10, '11no': 11, '12mo': 12,
+    'ibtp': 10, 'iibtp': 11, 'iiibtp': 12
+};
+
+function parseGrade(gradeStr) {
+    if (!gradeStr) return 10;
+    const normalized = gradeStr.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
+    if (GRADE_MAP[normalized]) return GRADE_MAP[normalized];
+
+    // Fallback for BTP naming conventions
+    if (normalized.includes("iiibtp")) return 12;
+    if (normalized.includes("iibtp")) return 11;
+    if (normalized.includes("ibtp")) return 10;
+
+    const match = gradeStr.match(/\d+/);
+    return match ? parseInt(match[0]) : 10;
+}
+
 function getStudentGrade() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (!user) return 10;
-    const gradeStr = user.grado || "10";
-    return parseInt(gradeStr.match(/\d+/)?.[0] || 10);
+    return parseGrade(user.grado);
 }
 
-// Req 2: Acceso Jerárquico
+/**
+ * REQ 3: Matriz de Progresión Académica Prerrequisito
+ * El acceso depende del historial de aprobación (Cross-Grade).
+ */
 window.navigateToSubjects = function() {
     const grid = document.getElementById('subjects-grid');
-    const userGrade = getStudentGrade();
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const isTeacher = user?.rol === 'Profesor';
+    const userGradeNum = getStudentGrade();
 
-    const subjects = new Set();
+    // Req 3.A: Para permitir flujo cross-grade, necesitamos mostrar la misma materia en diferentes grados.
+    const subjectEntries = [];
 
     window.presentationData.forEach(gradeBlock => {
-        const blockGrade = parseInt(gradeBlock.grade.match(/\d+/)?.[0] || 10);
+        const blockGradeNum = parseGrade(gradeBlock.grade);
 
-        let hasAccess = false;
-        if (isTeacher) hasAccess = true;
-        else if (userGrade === 10 && blockGrade === 10) hasAccess = true;
-        else if (userGrade === 11 && (blockGrade === 10 || blockGrade === 11)) hasAccess = true;
-        else if (userGrade === 12) hasAccess = true;
-
-        if (hasAccess) {
+        // El alumno ve su propio grado y los anteriores (pero filtrado por prerrequisitos)
+        if (isTeacher || blockGradeNum <= userGradeNum) {
+            const seenInBlock = new Set();
             gradeBlock.subjects.forEach(subj => {
                 const normName = normalizeSubject(subj.name);
-                subjects.add(normName);
+                if (seenInBlock.has(normName)) return; // No duplicar por parciales en el mismo bloque
+
+                subjectEntries.push({
+                    name: normName,
+                    gradeLabel: gradeBlock.grade,
+                    gradeNum: blockGradeNum
+                });
+                seenInBlock.add(normName);
             });
         }
     });
 
-    grid.innerHTML = Array.from(subjects).sort().map(name => `
-        <div class="subject-card p-6 bg-white border-2 border-gray-100 rounded-3xl shadow-sm hover:shadow-md transition-all text-center" onclick="navigateToLevels('${name}')">
-            <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl">
-                <i class="fas fa-book"></i>
+    // Ordenar por Grado y luego Nombre
+    subjectEntries.sort((a, b) => a.gradeNum - b.gradeNum || a.name.localeCompare(b.name));
+
+    grid.innerHTML = subjectEntries.map(entry => {
+        const isLocked = !isTeacher && checkCrossGradeLock(entry.name, entry.gradeLabel);
+
+        const cardClass = isLocked ? 'opacity-60 grayscale cursor-not-allowed' : 'hover:shadow-md cursor-pointer';
+        const lockIcon = isLocked ? '<i class="fas fa-lock text-xs ml-2 text-gray-400"></i>' : '';
+        const clickAction = isLocked ? '' : `onclick="navigateToLevels('${entry.name}', '${entry.gradeLabel}')"`;
+
+        return `
+            <div class="subject-card p-6 bg-white border-2 border-gray-100 rounded-3xl shadow-sm transition-all text-center ${cardClass}" ${clickAction}>
+                <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3 class="font-bold text-gray-900 leading-tight">${entry.name} ${lockIcon}</h3>
+                <p class="text-[10px] font-bold text-gray-400 uppercase mt-2 tracking-widest">${getSubjectLabel(entry.name)}</p>
+                <div class="mt-2 flex items-center justify-center gap-2">
+                     <span class="text-[8px] px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full font-bold uppercase">${entry.gradeLabel}</span>
+                </div>
+                ${isLocked ? `<p class="text-[8px] text-red-500 font-bold uppercase mt-2">Prerrequisito pendiente</p>` : ''}
             </div>
-            <h3 class="font-bold text-gray-900 leading-tight">${name}</h3>
-            <p class="text-[10px] font-bold text-gray-400 uppercase mt-2 tracking-widest">${getSubjectLabel(name)}</p>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 
     document.getElementById('home-screen').classList.add('hidden');
     document.getElementById('subjects-screen').classList.remove('hidden');
 };
 
-function getSubjectLabel(name) {
-    if (name.includes("Informatica")) return "Fundamentos";
-    if (name.includes("Programacion")) return "Lógica y Código";
-    if (name.includes("Diseno Web")) return "Frontend & UI";
-    return "Academia";
+/**
+ * REQ 3.A: Validación Cross-Grade
+ * 11vo requiere 10mo aprobado. 12vo requiere 11vo aprobado.
+ */
+function checkCrossGradeLock(subjectName, targetGrade) {
+    const targetGradeNum = parseGrade(targetGrade);
+    if (targetGradeNum <= 10) return false; // 10mo siempre abierto
+
+    const prevGradeNum = targetGradeNum - 1;
+
+    // REQ: El alumno debe haber aprobado al menos UNA materia del grado anterior
+    // para desbloquear el nivel actual (Concepto de Promoción de Grado en QuizPro)
+    const statsArray = Object.values(userGameStats);
+
+    const hasAnyApprovalInPrevGrade = statsArray.some(s => {
+        const sg = parseGrade(s.grade);
+        const score = parseFloat(s.maxScore || 0);
+        return sg === prevGradeNum && score >= 70;
+    });
+
+    return !hasAnyApprovalInPrevGrade;
 }
 
-// Req 7: Unificación Robusta
-function normalizeSubject(name) {
-    if (!name) return 'General';
-    return name.trim()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s*\(?(?:[IVX]+)?\s*Parcial\)?/i, '')
-        .replace(/\s+\(?[IVX]+\)?$/i, '')
-        .replace(/\s+I{1,3}$/i, '')
-        .trim();
-}
-
-window.backToHome = function() {
-    document.getElementById('subjects-screen').classList.add('hidden');
-    document.getElementById('home-screen').classList.remove('hidden');
-};
-
-window.navigateToLevels = function(subjectName) {
+window.navigateToLevels = function(subjectName, gradeLabel) {
     selectedAsignatura = subjectName;
+    selectedGrado = gradeLabel;
     document.getElementById('selected-subject-title').textContent = subjectName;
 
-    // Req 4: Lógica de Desbloqueo
-    const stats = userGameStats[subjectName] || {};
-    const basicScore = stats['basico'] || 0;
-    const interScore = stats['intermedio'] || 0;
+    const isTeacher = JSON.parse(localStorage.getItem('currentUser'))?.rol === 'Profesor';
+
+    // REQ 3.B: Progresión Interna por Niveles
+    const stats = Object.values(userGameStats).filter(s => s.subject === subjectName && s.grade === gradeLabel);
+    const basicScore = stats.find(s => s.level === 'Básico')?.maxScore || 0;
+    const interScore = stats.find(s => s.level === 'Intermedio')?.maxScore || 0;
 
     const btnInter = document.getElementById('btn-intermedio');
     const cardInter = document.getElementById('level-intermedio');
     const btnAvan = document.getElementById('btn-avanzado');
     const cardAvan = document.getElementById('level-avanzado');
 
-    // Desbloqueo Intermedio (>= 70% en Básico)
-    if (basicScore >= 70) {
+    // Bypass Profesor (REQ 5)
+    const canUnlockInter = isTeacher || basicScore >= 70;
+    const canUnlockAvan = isTeacher || interScore >= 70;
+
+    // UI Intermedio
+    if (canUnlockInter) {
         btnInter.disabled = false;
         btnInter.innerHTML = 'Entrar';
         btnInter.classList.replace('bg-gray-300', 'bg-gray-900');
@@ -134,8 +183,8 @@ window.navigateToLevels = function(subjectName) {
         cardInter.classList.add('locked');
     }
 
-    // Desbloqueo Avanzado (>= 70% en Intermedio)
-    if (interScore >= 70) {
+    // UI Avanzado
+    if (canUnlockAvan) {
         btnAvan.disabled = false;
         btnAvan.innerHTML = 'Entrar';
         btnAvan.classList.replace('bg-gray-300', 'bg-gray-900');
@@ -153,6 +202,28 @@ window.navigateToLevels = function(subjectName) {
     document.getElementById('levels-screen').classList.remove('hidden');
 };
 
+function getSubjectLabel(name) {
+    if (name.includes("Informatica")) return "Fundamentos";
+    if (name.includes("Programacion")) return "Lógica y Código";
+    if (name.includes("Diseno Web")) return "Frontend & UI";
+    return "Academia";
+}
+
+function normalizeSubject(name) {
+    if (!name) return 'General';
+    return name.trim()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s*\(?(?:[IVX]+)?\s*Parcial\)?/i, '')
+        .replace(/\s+\(?[IVX]+\)?$/i, '')
+        .replace(/\s+I{1,3}$/i, '')
+        .trim();
+}
+
+window.backToHome = function() {
+    document.getElementById('subjects-screen').classList.add('hidden');
+    document.getElementById('home-screen').classList.remove('hidden');
+};
+
 window.backToSubjects = function() {
     document.getElementById('levels-screen').classList.add('hidden');
     document.getElementById('subjects-screen').classList.remove('hidden');
@@ -163,9 +234,6 @@ window.selectLevel = function(level) {
     startQuiz();
 };
 
-/**
- * Req 1: Shuffle Robusto y Distribución Uniforme
- */
 function shuffleArray(a) {
     const array = [...a];
     for (let i = array.length - 1; i > 0; i--) {
@@ -187,15 +255,11 @@ async function startQuiz() {
         return;
     }
 
-    // Req 1: Persistencia de No-Repetición
     let seenIds = JSON.parse(localStorage.getItem(SEEN_QUESTIONS_KEY) || "[]");
     let freshQuestions = allPresentationQuestions.filter(q => !seenIds.includes(q.id));
-
     if (freshQuestions.length < 5) freshQuestions = allPresentationQuestions;
 
-    // Shuffle Robusto
     currentQuizQuestions = shuffleArray(freshQuestions).slice(0, 15);
-
     currentIndex = 0;
     score = 0;
     timerSeconds = 0;
@@ -205,28 +269,33 @@ async function startQuiz() {
     showQuestion();
 }
 
+/**
+ * CORRECCIÓN: El filtro global de parcial NO afecta a QuizPro.
+ * Se cargan todos los temas de la materia para el grado seleccionado.
+ */
 async function loadQuestions() {
     allPresentationQuestions = [];
-    const userGrade = getStudentGrade();
     const isTeacher = JSON.parse(localStorage.getItem('currentUser'))?.rol === 'Profesor';
 
     const presentations = [];
-    for (const gradeBlock of window.presentationData) {
-        const blockGrade = parseInt(gradeBlock.grade.match(/\d+/)?.[0] || 10);
-        if (!isTeacher && blockGrade > userGrade) continue;
+    window.presentationData.forEach(gradeBlock => {
+        // Solo cargamos el grado específico seleccionado (para respetar niveles Básico/Intermedio del grado)
+        if (gradeBlock.grade === selectedGrado) {
+            gradeBlock.subjects.forEach(subj => {
+                const normSubj = normalizeSubject(subj.name);
+                if (normSubj !== selectedAsignatura) return;
 
-        for (const subj of gradeBlock.subjects) {
-            const normSubj = normalizeSubject(subj.name);
-            if (normSubj !== selectedAsignatura) continue;
+                // NOTA: No filtramos por window.PARCIAL_ACTUAL aquí para cumplir con la corrección.
+                let topics = subj.topics;
+                // Segmentación de temas por dificultad
+                if (selectedDifficulty === 'basico') topics = topics.slice(0, Math.ceil(topics.length / 3));
+                else if (selectedDifficulty === 'intermedio') topics = topics.slice(Math.floor(topics.length/3), Math.floor(topics.length*2/3));
+                else if (selectedDifficulty === 'avanzado') topics = topics.slice(Math.floor(topics.length*2/3));
 
-            let topics = subj.topics;
-            if (selectedDifficulty === 'basico') topics = topics.slice(0, Math.ceil(topics.length / 3));
-            else if (selectedDifficulty === 'intermedio') topics = topics.slice(Math.floor(topics.length/3), Math.floor(topics.length*2/3));
-            else if (selectedDifficulty === 'avanzado') topics = topics.slice(Math.floor(topics.length*2/3));
-
-            topics.forEach(t => presentations.push(t.file));
+                topics.forEach(t => presentations.push(t.file));
+            });
         }
-    }
+    });
 
     for (let i = 0; i < presentations.length; i += 10) {
         const batch = presentations.slice(i, i + 10);
@@ -239,7 +308,6 @@ async function processPresentation(file) {
         const res = await fetch('../' + file);
         const text = await res.text();
 
-        // 1. Preguntas Definidas en Código
         const quizMatch = text.match(/const (?:quizData|quizQuestions)\s*=\s*(\[[\s\S]*?\]);/);
         if (quizMatch) {
             const data = new Function(`return ${quizMatch[1]}`)();
@@ -257,7 +325,6 @@ async function processPresentation(file) {
             });
         }
 
-        // 2. Extracción de Emparejamiento (Concept-box)
         const slides = text.match(/<div[^>]*class="slide[\s\S]*?<\/div>/g) || [];
         const matchingPairs = [];
         slides.forEach(slide => {
@@ -281,7 +348,6 @@ async function processPresentation(file) {
                 tags: ["Conceptos", "Teoría"]
             });
 
-            // Req 8: Modo Memoria (Pares de conceptos)
             allPresentationQuestions.push({
                 id: `${file}_memory_${Math.random().toString(36).substr(2, 5)}`,
                 question: "Reto de Memoria: Encuentra los pares de conceptos relacionados.",
@@ -292,7 +358,6 @@ async function processPresentation(file) {
             });
         }
 
-        // 3. Extracción de Práctica (Code snippets)
         const codeBlocks = text.match(/<pre[^>]*>([\s\S]*?)<\/pre>|<code[^>]*>([\s\S]*?)<\/code>/g) || [];
         codeBlocks.forEach((block, bIdx) => {
             const cleanCode = block.replace(/<[^>]*>?/gm, '').trim();
@@ -302,7 +367,7 @@ async function processPresentation(file) {
                     question: "¿Qué resultado produce este fragmento de código o cuál es su propósito principal?",
                     code: cleanCode,
                     options: generateDistractorsForCode(cleanCode),
-                    answer: "Análisis técnico de estructura", // Simplificado para el generador
+                    answer: "Análisis técnico de estructura",
                     type: 'practice',
                     source: file,
                     tags: ["Práctica", "Código"]
@@ -310,7 +375,6 @@ async function processPresentation(file) {
             }
         });
 
-        // 4. Reto de Transcripción (Req 8.4)
         const longParagraphs = text.match(/<p[^>]*>([\s\S]*?)<\/p>/g) || [];
         longParagraphs.forEach((p, pIdx) => {
             const cleanText = p.replace(/<[^>]*>?/gm, '').trim();
@@ -325,7 +389,6 @@ async function processPresentation(file) {
                 });
             }
         });
-
     } catch (e) { console.error("Error loading", file); }
 }
 
@@ -368,8 +431,7 @@ function showQuestion() {
         codeEl.className = 'bg-gray-900 text-green-400 p-4 rounded-xl font-mono text-xs mb-6 overflow-x-auto whitespace-pre';
         codeEl.textContent = q.code;
         optionsContainer.appendChild(codeEl);
-
-        q.options.forEach(opt => {
+        shuffleArray([...q.options]).forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
             btn.textContent = opt;
@@ -381,6 +443,9 @@ function showQuestion() {
         const targetEl = document.createElement('div');
         targetEl.className = 'bg-blue-50 text-blue-800 p-4 rounded-xl italic text-sm mb-6 border border-blue-100';
         targetEl.textContent = q.targetText;
+        const existingTarget = fibContainer.querySelector('.transcription-target');
+        if (existingTarget) existingTarget.remove();
+        targetEl.classList.add('transcription-target');
         fibContainer.prepend(targetEl);
         document.getElementById('fib-input').placeholder = "Escribe aquí...";
     } else if (q.type === 'memory') {
@@ -388,10 +453,8 @@ function showQuestion() {
         const pairsList = document.getElementById('matching-pairs');
         pairsList.innerHTML = '<div class="grid grid-cols-2 gap-2" id="memory-grid"></div>';
         const grid = document.getElementById('memory-grid');
-
         const items = shuffleArray([...q.pairs.map(p => ({v: p.term, k: p.term})), ...q.pairs.map(p => ({v: p.definition, k: p.term}))]);
         let selectedCards = [];
-
         items.forEach(item => {
             const card = document.createElement('div');
             card.className = 'h-16 bg-gray-100 rounded-xl flex items-center justify-center text-[10px] p-2 text-center cursor-pointer border-2 border-transparent transition-all';
@@ -401,12 +464,11 @@ function showQuestion() {
                     card.textContent = item.v;
                     card.classList.add('bg-white', 'border-blue-500');
                     selectedCards.push({card, item});
-
                     if (selectedCards.length === 2) {
                         setTimeout(() => {
                             if (selectedCards[0].item.k === selectedCards[1].item.k) {
                                 selectedCards.forEach(c => c.card.classList.replace('border-blue-500', 'border-emerald-500'));
-                                score += 0.25; // Puntos parciales para memoria
+                                score += 0.25;
                             } else {
                                 selectedCards.forEach(c => {
                                     c.card.textContent = "???";
@@ -420,13 +482,11 @@ function showQuestion() {
             };
             grid.appendChild(card);
         });
-
         const btn = document.createElement('button');
         btn.className = 'mt-4 w-full py-2 bg-gray-900 text-white rounded-lg text-xs font-bold uppercase';
         btn.textContent = "Finalizar Reto";
-        btn.onclick = () => { currentIndex++; showQuestion(); };
+        btn.onclick = () => { currentIndex++; if(currentIndex < currentQuizQuestions.length) showQuestion(); else endQuiz(); };
         matchingContainer.appendChild(btn);
-
     } else if (q.type === 'matching') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
@@ -458,7 +518,6 @@ function showQuestion() {
             optionsContainer.appendChild(btn);
         });
     }
-
     registerSeenQuestion(q.id);
 }
 
@@ -490,10 +549,7 @@ function checkAnswer(selected, correct, btn) {
         feedback.className = 'text-center h-8 font-bold text-red-500';
         feedback.textContent = `Incorrecto. Era: ${correct}`;
         incorrectAnswers.push(currentQuizQuestions[currentIndex]);
-
-        allBtns.forEach(b => {
-            if (b.textContent === correct) b.classList.add('correct', 'border-emerald-500', 'text-emerald-600');
-        });
+        allBtns.forEach(b => { if (b.textContent === correct) b.classList.add('correct', 'border-emerald-500', 'text-emerald-600'); });
     }
 
     document.getElementById('score').textContent = `${score} / ${currentIndex + 1}`;
@@ -514,17 +570,12 @@ window.submitMatching = function() {
     const q = currentQuizQuestions[currentIndex];
     const selects = document.querySelectorAll('.matching-select');
     let allCorrect = true;
-
     selects.forEach(sel => {
         const term = sel.dataset.term;
         const val = sel.value;
         const correctPair = q.pairs.find(p => p.term === term);
-        if (val !== correctPair.definition) {
-            allCorrect = false;
-            sel.classList.add('border-red-500');
-        } else {
-            sel.classList.add('border-green-500');
-        }
+        if (val !== correctPair.definition) { allCorrect = false; sel.classList.add('border-red-500'); }
+        else { sel.classList.add('border-green-500'); }
         sel.disabled = true;
     });
 
@@ -557,6 +608,9 @@ function startTimer() {
     }, 1000);
 }
 
+/**
+ * REQ 4: Persistencia Extendida
+ */
 async function endQuiz() {
     clearInterval(timerInterval);
     document.getElementById('quiz-screen').classList.add('hidden');
@@ -597,67 +651,57 @@ async function endQuiz() {
         icon.innerHTML = '<i class="fas fa-redo"></i>';
     }
 
-    const achievementStr = [selectedAsignatura, selectedDifficulty, score, currentQuizQuestions.length - score, `${mins}:${secs}`].join(' | ');
-    if (window.GamesAdapter) {
-        await GamesAdapter.saveResult("QuizPro", achievementStr, finalPercent);
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const payload = {
+        userId: user.userId,
+        nombreAlumno: user.nombre,
+        juego: "QuizPro",
+        asignatura: selectedAsignatura,
+        puntaje: finalPercent,
+        nivel: selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1),
+        grado: selectedGrado,
+        fecha_logro: new Date().toISOString()
+    };
+
+    if (typeof fetchApi === 'function') {
+        await fetchApi('USER', 'saveGameResult', payload);
         loadPerformanceTable();
     }
 }
 
-async function loadPerformanceTable() {
+window.loadPerformanceTable = async function() {
     const container = document.getElementById('performance-table-body');
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (!container || !user) return;
 
     try {
         const res = await fetchApi('USER', 'getGameStats', { userId: user.userId });
-        if (res.status === 'success' && res.allHistory) {
-            const quizHistory = res.allHistory.filter(r => r[3] === 'QuizPro');
-            userGameStats = {}; // Global for unlocking logic
-
-            quizHistory.forEach(h => {
-                const parts = h[4].split(' | ');
-                const subj = parts[0] || 'General';
-                const level = parts[1] || 'basico';
-                const scoreValue = parseFloat(h[5]);
-
-                if (!userGameStats[subj]) userGameStats[subj] = {};
-                if (!userGameStats[subj][level] || scoreValue > userGameStats[subj][level]) {
-                    userGameStats[subj][level] = scoreValue;
-                }
-            });
+        if (res.status === 'success') {
+            userGameStats = res.data || {};
+            const history = res.allHistory || [];
 
             let approvedCount = 0;
             const allMistakeTags = new Set();
 
-            // Analizar historial para extraer temas a reforzar (Req 5)
-            quizHistory.forEach(h => {
-                const scoreValue = parseFloat(h[5]);
-                if (scoreValue < 70) {
-                    const logroStr = h[4];
-                    // Si el logro contiene info de errores o tags, los extraemos.
-                    // Por ahora, usamos el nombre de la asignatura como tema base si falló.
-                    const subj = logroStr.split(' | ')[0];
-                    allMistakeTags.add(subj);
+            history.forEach(h => {
+                if (h[3] === 'QuizPro' && parseFloat(h[5]) < 70) {
+                    allMistakeTags.add(h[4]);
                 }
             });
 
-            container.innerHTML = Object.entries(userGameStats).map(([subj, levels]) => {
-                const maxLevel = levels.avanzado !== undefined ? 'avanzado' : (levels.intermedio !== undefined ? 'intermedio' : 'basico');
-                const maxScore = Math.max(...Object.values(levels));
-                if (maxScore >= 70) approvedCount++;
-
-                return `
-                    <tr class="border-b border-gray-50 text-[11px]">
-                        <td class="py-3 font-bold text-gray-700">${subj}</td>
-                        <td class="py-3 capitalize text-blue-600 font-semibold">${maxLevel}</td>
-                        <td class="py-3 font-black text-gray-900">${maxScore}%</td>
-                    </tr>`;
-            }).join('');
+            container.innerHTML = Object.entries(userGameStats)
+                .filter(([key]) => key.startsWith('QuizPro_'))
+                .map(([key, s]) => {
+                    if (s.maxScore >= 70) approvedCount++;
+                    return `
+                        <tr class="border-b border-gray-50 text-[11px]">
+                            <td class="py-3 font-bold text-gray-700">${s.subject}</td>
+                            <td class="py-3 capitalize text-blue-600 font-semibold">${s.level} (${s.grade})</td>
+                            <td class="py-3 font-black text-gray-900">${s.maxScore}%</td>
+                        </tr>`;
+                }).join('');
 
             document.getElementById('total-approvals').textContent = approvedCount;
-
-            // Renderizar temas a reforzar en el dashboard inicial
             const reinforcementSection = document.getElementById('reinforcement-feedback');
             const tagsContainer = document.getElementById('reinforcement-tags');
             if (allMistakeTags.size > 0 && tagsContainer) {
@@ -666,7 +710,6 @@ async function loadPerformanceTable() {
                     `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${tag}</span>`
                 ).join('');
             }
-
             if (Object.keys(userGameStats).length > 0) {
                 document.getElementById('performance-dashboard').classList.remove('hidden');
             }
