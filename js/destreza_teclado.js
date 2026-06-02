@@ -71,7 +71,9 @@ let gameTimerInterval;
 let timeRemainingSeconds; // Usaremos segundos con decimales para mayor precisión
 const MAX_CONSECUTIVE_ERRORS = 3;
 const UPDATE_INTERVAL_MS = 50; // Intervalo de actualización de la barra de tiempo en milisegundos
-let gameActive = false; // Nueva bandera para controlar el estado del juego
+let gameActive = false;
+let questionStartTime = 0;
+let responseChanges = 0; // Nueva bandera para controlar el estado del juego
 
 // Configuración de tiempo por longitud de palabra
 const timeSettings = {
@@ -206,6 +208,7 @@ window.initDexterityGame = function() {
     if (retryGameButton) retryGameButton.addEventListener('click', startGame);
     if (exitResultsButton) exitResultsButton.addEventListener('click', exitGame);
 
+    if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
     // Mostrar menú de inicio al cargar
     showScreen('game-start-menu');
 };
@@ -323,6 +326,8 @@ function loadNewWord() {
     timeRemainingSeconds = currentWord.timeLimit; // Inicializar tiempo restante para la nueva palabra
 
     if (currentWordDisplay) currentWordDisplay.textContent = currentWord.word;
+    questionStartTime = Date.now();
+    responseChanges = 0;
     if (specialCharHint) {
         if (currentWord.type === "special" || currentWord.type === "shortcut") {
             specialCharHint.textContent = `Pista: ${currentWord.hint}`;
@@ -441,6 +446,28 @@ function handleInput() {
 
     // Caso 3: La longitud de la entrada coincide con la longitud de la palabra objetivo
     if (inputText.length === targetWord.length) {
+        const responseTime = Date.now() - questionStartTime;
+        // Captura de Analítica (Fase 5)
+        if (window.GamesAdapter) {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const analyticsPayload = {
+                userId: user?.userId,
+                gameId: 'destreza',
+                gameName: 'Destreza en el Teclado',
+                asignatura: 'Ofimática I',
+                grado: user?.grado || 'Décimo',
+                nivel: ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel],
+                preguntaId: 'kbd_' + currentWord.word,
+                tema: 'Escritura',
+                respuestaSeleccionada: inputText,
+                respuestaCorrecta: targetWord,
+                esCorrecta: inputText.toLowerCase() === targetWord.toLowerCase(),
+                tiempoRespuesta: responseTime,
+                cambiosRespuesta: responseChanges
+            };
+            fetchApi('USER', 'recordAnalytics', analyticsPayload);
+        }
+
         // Para la coincidencia final, comparamos el input y el target en minúsculas.
         // Esto permite que "Ctrl+Z" y "ctrl+z" sean correctos.
         // Si el input original coincide exactamente con el target original (incluyendo acentos y caso)

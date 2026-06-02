@@ -29,6 +29,8 @@ let errors = 0;
 let timerInterval;
 let startTime;
 let gameStarted = false;
+let questionStartTime = 0;
+let responseChanges = 0;
 let answerBlocked = false; // To prevent multiple clicks on answer buttons for a single question
 
 // DOM Elements for Game - These will be assigned inside initializePeripheralsGame
@@ -56,6 +58,7 @@ let localGameStorage; // Variable to hold the gameDataStorage object passed from
 // Function to initialize DOM elements and attach event listeners
 // This function now accepts the gameDataStorage object
 async function initializePeripheralsGame(gameDataStorage) {
+    if (window.GamesAdapter) window.GamesAdapter.showLoading(true);
     localGameStorage = gameDataStorage; // Store the passed object
 
     // Cargar récord personal
@@ -99,6 +102,7 @@ async function initializePeripheralsGame(gameDataStorage) {
 
         // Console log to confirm initialization and element finding
         console.log("initializePeripheralsGame: Elementos DOM inicializados.");
+        if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         if (!startMenu || !startGameButton || !correctAnswersDisplay) {
             console.error("initializePeripheralsGame: ¡ERROR! No se encontraron todos los elementos DOM esperados.");
         }
@@ -163,6 +167,8 @@ function displayPeripheral() {
         const peripheral = shuffledPeripherals[currentPeripheralIndex];
         if (peripheralName) peripheralName.textContent = peripheral.name;
         if (peripheralDescription) peripheralDescription.textContent = peripheral.description;
+        questionStartTime = Date.now();
+        responseChanges = 0;
         if (peripheral.image && peripheralImage) {
             peripheralImage.src = peripheral.image;
             peripheralImage.classList.remove('hidden');
@@ -199,6 +205,7 @@ function displayPeripheral() {
 }
 
 function checkAnswer(selectedType) {
+    const responseTime = Date.now() - questionStartTime;
     if (answerBlocked) return; // Prevent multiple answers for the same question
     answerBlocked = true;
 
@@ -207,6 +214,27 @@ function checkAnswer(selectedType) {
     const selectedButton = document.querySelector(`.answer-button[data-type="${selectedType}"]`);
 
     if (answerButtons) answerButtons.forEach(button => button.disabled = true); // Disable all answer buttons immediately
+
+    // Captura de Analítica (Fase 5)
+    if (window.GamesAdapter) {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        const analyticsPayload = {
+            userId: user?.userId,
+            gameId: 'perifericos',
+            gameName: 'Juego de Periféricos',
+            asignatura: 'Informática I',
+            grado: user?.grado || 'Décimo',
+            nivel: 'Básico',
+            preguntaId: 'perif_' + peripheral.name,
+            tema: 'Hardware',
+            respuestaSeleccionada: selectedType,
+            respuestaCorrecta: correctType,
+            esCorrecta: selectedType === correctType,
+            tiempoRespuesta: responseTime,
+            cambiosRespuesta: responseChanges
+        };
+        fetchApi('USER', 'recordAnalytics', analyticsPayload);
+    }
 
     if (selectedType === correctType) {
         score++;

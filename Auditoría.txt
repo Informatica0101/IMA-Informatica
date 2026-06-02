@@ -22,3 +22,53 @@ Archivo: js/ui-common.js
 Archivo: juegos/quizpro.html
 - Necesita contenedor para el Top Global.
 - Necesita animación de carga.
+
+AUDITORÍA PROFUNDA - 2026-06-18
+
+Archivo: backend/user-service/Code.gs
+- [HALLAZGO] El switch de doPost no incluye el caso "getGlobalTop", lo que causa el error "Acción no reconocida" reportado.
+- [HALLAZGO] saveGameResult solo guarda el mejor puntaje por nivel, pero el requerimiento pide un registro de cada respuesta individual para analítica.
+- [HALLAZGO] Faltan las hojas: QuizProAnalytics, GameLeaderboards, GameStatistics, y LearningProfile.
+
+Archivo: js/quizpro.js
+- [HALLAZGO] La captura de datos de comportamiento (tiempos, cambios de respuesta) no está implementada.
+- [HALLAZGO] No hay pantalla de carga profesional con mensajes dinámicos.
+- [HALLAZGO] La lógica de desbloqueo solo considera el puntaje >= 70, pero debe integrar el Índice de Dominio.
+
+Archivo: juegos/quizpro.html
+- [HALLAZGO] El Top Global no tiene un contenedor visual robusto integrado en el flujo de pantallas.
+
+Archivo: js/index-ui.js
+- [HALLAZGO] loadGame descarga el JS cada vez, pero no hay un manejo de estados de carga (spinners) uniforme para todos los juegos antes de su inicialización completa.
+
+Archivo: js/data.js
+- [HALLAZGO] Inconsistencia en nombres de parciales entre Décimo ("Primer Parcial") y Undécimo ("I Parcial"). Esto afecta a isContentAuthorized.
+
+LIMPIEZA DE REPOSITORIO
+- Se identificaron archivos .txt sin referencias en el código:
+  - Portafolio/Silabos/Planes/Readme.txt
+  - III_BTP_A/dw_II/contenido/text.txt
+  - III_BTP_A/introduccionDW.txt
+  - II_BTP_A/Programacion/II Parcial/text.txt
+
+AUDITORÍA DE CENTRALIZACIÓN Y ADMINISTRACIÓN - 2026-06-18
+
+Archivo: backend/user-service/Code.gs
+- [VERIFICADO] switch de doPost incluye todos los nuevos endpoints: getQuestionBank, saveQuestion, getAcademicConfig, updateAcademicConfig, getAsignaturasActivas, updateAsignaturasActivas, generateMigrationReport.
+- [VERIFICADO] Lógica de gestión automática de hojas implementada en getOrCreateSheet (7 nuevas hojas soportadas).
+- [VERIFICADO] Normalización de strings para búsquedas robustas en el banco.
+
+Archivo: js/quizpro.js
+- [VERIFICADO] loadQuestions refactorizado para usar fetchApi('getQuestionBank').
+- [VERIFICADO] Implementado generador de distractores inteligentes (pulling from same topic).
+- [VERIFICADO] Implementadas actividades multi-modales (Verdadero/Falso, Completar).
+- [VERIFICADO] Aplicada regla .quiz-image para visualización de componentes.
+
+Archivo: teacher-dashboard.html / js/teacher.js
+- [VERIFICADO] Panel de Administración expandido con Gestión Académica y Banco de Preguntas.
+- [VERIFICADO] Sincronización bidireccional de configuración académica con el backend.
+- [VERIFICADO] Herramienta de migración operativa (client-side extraction + chunked backend push).
+
+Archivo: js/config.js / js/ui-common.js
+- [VERIFICADO] Eliminada dependencia de window.PARCIAL_ACTUAL estático.
+- [VERIFICADO] Implementada validación cruzada por Parcial y por AsignaturasActivas (Dynamic Scope Guard).

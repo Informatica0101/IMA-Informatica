@@ -225,6 +225,23 @@
 
     <main class="py-12 md:py-20 bg-gray-50 min-h-screen flex items-center justify-center">
         <div id="dexterity-game-container" class="w-full max-w-2xl bg-white p-6 rounded-2xl shadow-xl border border-gray-200 text-center animate-fade-in-down">
+    <!-- REQ: Pantalla de Carga Profesional (Fase 3) -->
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999] opacity-0 pointer-events-none">
+        <div class="relative w-32 h-32 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-50 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <img src="../imagenes/logo.png" alt="Logo" class="w-16 animate-pulse">
+            </div>
+        </div>
+        <div class="text-center space-y-3">
+            <h3 id="loading-msg" class="text-sm font-black text-gray-900 uppercase tracking-[0.3em]">Inicializando...</h3>
+            <p id="loading-submsg" class="text-[10px] font-bold text-blue-500 uppercase tracking-widest animate-pulse">Preparando entorno académico</p>
+        </div>
+        <div class="mt-12 w-48 h-1 bg-gray-100 rounded-full overflow-hidden">
+            <div id="loading-bar" class="h-full bg-blue-600 transition-all duration-1000" style="width: 0%"></div>
+        </div>
+    </div>
             <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-6">
                 Destreza en el Teclado
             </h3>

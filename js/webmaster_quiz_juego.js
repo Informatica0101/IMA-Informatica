@@ -1756,6 +1756,8 @@ let selectedDifficulty = '';
 let currentQuestions = [];
 let answeredCorrectly = 0;
 let answeredIncorrectly = 0;
+let questionStartTime = 0;
+let responseChanges = 0;
 
 const INACTIVITY_TIMEOUT = 60; // seconds of inactivity before warning
 const INACTIVITY_WARNING_DURATION = 10; // seconds for warning countdown
@@ -1961,6 +1963,8 @@ function startQuestion() {
 
     const question = currentQuestions[currentQuestionIndex];
     if (quizQuestion) quizQuestion.textContent = question.question;
+    questionStartTime = Date.now();
+    responseChanges = 0;
     if (quizHelpText) {
         quizHelpText.textContent = question.help || ''; // Set help text, now always visible
         quizHelpText.classList.remove('hidden'); // Ensure help text is visible
@@ -2063,6 +2067,7 @@ function renderSyntaxOptions() {
             fragmentSpan.textContent = fragment;
             fragmentSpan.dataset.index = index;
             fragmentSpan.onclick = () => addSyntaxFragment(fragment, index);
+            responseChanges++;
             syntaxOptionsArea.appendChild(fragmentSpan);
         });
     }
@@ -2218,6 +2223,7 @@ function setupDragMatchQuestion(question) {
 
             dropTarget.addEventListener('dragover', handleDragOver);
             dropTarget.addEventListener('drop', handleDrop);
+            dropTarget.addEventListener('drop', () => responseChanges++);
             dropTarget.addEventListener('dragleave', handleDragLeave);
             if (dropTargetsArea) dropTargetsArea.appendChild(dropTarget);
         });
@@ -2448,6 +2454,7 @@ function updateScoreDisplay() {
 }
 
 function checkAnswer(selectedIndex, correctAnswer) {
+    const responseTime = Date.now() - questionStartTime;
     pauseTimer();
     if (quizHelpText) quizHelpText.classList.remove('hidden'); // Show help text after answer
 
@@ -2466,6 +2473,28 @@ function checkAnswer(selectedIndex, correctAnswer) {
         });
     }
 
+
+    // Captura de Analítica (Fase 5)
+    if (window.GamesAdapter) {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        const q = currentQuestions[currentQuestionIndex];
+        const analyticsPayload = {
+            userId: user?.userId,
+            gameId: 'webmaster',
+            gameName: 'WebMaster Quiz',
+            asignatura: 'Diseño Web',
+            grado: user?.grado || 'Duodécimo',
+            nivel: selectedDifficulty,
+            preguntaId: 'wm_' + currentQuestionIndex,
+            tema: selectedTopic,
+            respuestaSeleccionada: selectedIndex,
+            respuestaCorrecta: correctAnswer,
+            esCorrecta: selectedIndex === correctAnswer,
+            tiempoRespuesta: responseTime,
+            cambiosRespuesta: responseChanges
+        };
+        fetchApi('USER', 'recordAnalytics', analyticsPayload);
+    }
 
     if (selectedIndex === correctAnswer) {
         handleCorrectAnswer();
@@ -2547,6 +2576,7 @@ function shuffleArray(array) {
 // --- Global Initialization Function for the Quiz Game ---
 // This function will be called by index.html after the quiz HTML content is loaded.
 window.initQuizGame = async function() {
+    if (window.GamesAdapter) window.GamesAdapter.showLoading(true);
     // Cargar récord personal
     try {
         const records = await GamesAdapter.getPersonalRecord();
@@ -2661,6 +2691,7 @@ window.initQuizGame = async function() {
         document.addEventListener(event, resetInactivityTimer);
     });
 
+    if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
     // Initial screen setup - moved inside initQuizGame
     showScreen('quiz-start-menu');
 }; // End of initQuizGame function

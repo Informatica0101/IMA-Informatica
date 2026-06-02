@@ -180,16 +180,22 @@
 </head>
 <body class="font-inter antialiased text-gray-900 min-h-screen flex flex-col bg-gray-50 full-viewport-mode">
 
-    <!-- REQ: Animación de Carga -->
-    <div id="loading-overlay" class="fixed inset-0 bg-white/90 flex flex-col items-center justify-center transition-all duration-500 hidden opacity-0">
-        <div class="relative w-24 h-24 mb-6">
-            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+    <!-- REQ: Pantalla de Carga Profesional (Fase 3) -->
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999] opacity-0 pointer-events-none">
+        <div class="relative w-32 h-32 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-50 rounded-full"></div>
             <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
-            <div class="absolute inset-0 flex items-center justify-center text-blue-600 text-2xl">
-                <i class="fas fa-laptop-code"></i>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <img src="../imagenes/logo.png" alt="Logo" class="w-16 animate-pulse">
             </div>
         </div>
-        <p class="text-xs font-black text-gray-400 uppercase tracking-widest animate-pulse">Sincronizando Progresos...</p>
+        <div class="text-center space-y-3">
+            <h3 id="loading-msg" class="text-sm font-black text-gray-900 uppercase tracking-[0.3em]">Inicializando...</h3>
+            <p id="loading-submsg" class="text-[10px] font-bold text-blue-500 uppercase tracking-widest animate-pulse">Preparando entorno académico</p>
+        </div>
+        <div class="mt-12 w-48 h-1 bg-gray-100 rounded-full overflow-hidden">
+            <div id="loading-bar" class="h-full bg-blue-600 transition-all duration-1000" style="width: 0%"></div>
+        </div>
     </div>
 
     <!-- ENCABEZADO INSTITUCIONAL (Solo si se carga solo, no inyectado) -->

@@ -403,3 +403,13 @@ footer a:hover {
     overflow-y: auto;
     padding-right: 4px;
 }
+
+/* Reglas CSS Obligatorias para Imágenes de Quiz (Fase 4) */
+.quiz-image {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}

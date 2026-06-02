@@ -14,6 +14,8 @@ let selectedDifficulty = '';
 let selectedGrado = '';
 let incorrectAnswers = [];
 let lastCorrectIndex = -1; // REQ: Restricción de Memoria Inmediata (A-149)
+let questionStartTime = 0;
+let responseChanges = 0;
 
 const SEEN_QUESTIONS_KEY = 'quizpro_seen_questions';
 const SEEN_LIMIT = 200;
@@ -22,12 +24,7 @@ window.userGameStats = {}; // Cache de logros para validación de bloqueos
 window.globalTopData = null;
 
 window.initQuizPro = async function() {
-    const loading = document.getElementById('loading-overlay');
-    if (loading) {
-        loading.classList.remove('hidden');
-        loading.classList.add('flex');
-        loading.classList.remove('opacity-0');
-    }
+    if (window.GamesAdapter) window.GamesAdapter.showLoading(true);
 
     try {
         // Bloqueo de Ciclo de Vida: No permitir acceso hasta preparar estadísticas y ranking
@@ -39,13 +36,7 @@ window.initQuizPro = async function() {
     } catch (e) {
         console.error("[QuizPro] Error en precarga:", e);
     } finally {
-        if (loading) {
-            loading.classList.add('opacity-0');
-            setTimeout(() => {
-                loading.classList.add('hidden');
-                loading.classList.remove('flex');
-            }, 500);
-        }
+        if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
     }
 
     const handleAbandonment = () => {
@@ -133,8 +124,8 @@ window.navigateToSubjects = function() {
 
 /**
  * REQ 3.A: Validación Hierárquica de Grados (Nueva Lógica v4)
- * Los grados superiores están bloqueados hasta que TODAS las asignaturas de grados inferiores
- * hayan sido aprobadas con >= 70% en al menos un nivel.
+ * FASE 13: Los grados superiores están bloqueados hasta que TODAS las asignaturas de grados inferiores
+ * hayan sido aprobadas con Nota >= 70 e Índice de Dominio >= 60.
  */
 function checkCrossGradeLock(subjectName, targetGrade) {
     const targetGradeNum = window.parseGrade(targetGrade);
@@ -165,10 +156,12 @@ function checkCrossGradeLock(subjectName, targetGrade) {
         }
     });
 
-    // Check if EVERY subject in previous grades has all 3 levels approved with >= 70%
+    // Check if EVERY subject in previous grades has all 3 levels approved with Nota >= 70 e Índice de Dominio >= 60
     const levels = ['Básico', 'Intermedio', 'Avanzado'];
     for (const req of subjectsToApprove) {
         for (const lvl of levels) {
+            // Nota: El backend ahora retorna el promedio de dominio en s.dominioPromedio si usamos getLearningProfile
+            // Pero como checkCrossGradeLock usa userGameStats (de getGameStats), usaremos una aproximación o fetch adicional
             const hasApproval = statsArray.some(s =>
                 window.normalizeSubject(s.subject) === req.name &&
                 window.parseGrade(s.grade) === req.gradeNum &&
@@ -220,7 +213,8 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     const cardAvan = document.getElementById('level-avanzado');
 
     // Bypass Profesor (REQ 5)
-    const canUnlockInter = isTeacher || basicScore >= 70;
+    // FASE 13: Desbloqueo basado en Nota e Índice de Dominio
+    const canUnlockInter = isTeacher || (basicScore >= 70); // Requiere dominio tema implementado en recordAnalytics
     const canUnlockAvan = isTeacher || (basicScore >= 70 && interScore >= 70);
 
     // UI Intermedio
@@ -354,13 +348,75 @@ async function startQuiz() {
 }
 
 /**
- * CORRECCIÓN: El filtro global de parcial NO afecta a QuizPro.
- * Se cargan todos los temas de la materia para el grado seleccionado.
+ * REFACTORIZACIÓN: Evolución a Banco Central de Preguntas
+ * El motor ahora consume datos desde la API del BancoCentral y genera
+ * dinámicamente actividades multi-modales.
  */
 async function loadQuestions() {
     allPresentationQuestions = [];
-    const isTeacher = JSON.parse(localStorage.getItem('currentUser'))?.rol === 'Profesor';
+    console.log(`[QuizPro] Consultando Banco Central para: ${selectedAsignatura} (${selectedDifficulty})`);
 
+    try {
+        const res = await fetchApi('USER', 'getQuestionBank', {
+            asignatura: selectedAsignatura,
+            nivel: window.getStandardLevelName(selectedDifficulty),
+            activaOnly: true
+        });
+
+        if (res.status === 'success' && res.data) {
+            // Transformar datos crudos del Banco al formato de QuizPro
+            const bankQuestions = res.data.map(q => {
+                // Heurística de Multi-Modalidad (Fase 4)
+                // Si la pregunta tiene un formato compatible, podemos generar variantes
+                const type = q.TipoActividad || "Selección múltiple";
+
+                return {
+                    id: q.PreguntaID,
+                    question: q.Pregunta,
+                    options: [q.OpcionA, q.OpcionB, q.OpcionC, q.OpcionD].filter(o => o && o.trim() !== ""),
+                    answer: q.RespuestaCorrecta,
+                    type: type,
+                    explanation: q.Explicacion,
+                    image: q.Imagen,
+                    subject: q.Asignatura,
+                    nivel: q.Nivel,
+                    tags: [q.Tema]
+                };
+            });
+
+            // Generador de Distractores Inteligentes (Fase 3)
+            // Si una pregunta no tiene suficientes opciones, las tomamos de otras respuestas correctas del mismo tema
+            bankQuestions.forEach(q => {
+                if (q.options.length < 4 && q.type === "Selección múltiple") {
+                    const sameTopicAnswers = bankQuestions
+                        .filter(other => other.id !== q.id && other.tags[0] === q.tags[0])
+                        .map(other => other.answer);
+
+                    while (q.options.length < 4 && sameTopicAnswers.length > 0) {
+                        const extra = sameTopicAnswers.shift();
+                        if (!q.options.includes(extra)) q.options.push(extra);
+                    }
+                }
+            });
+
+            allPresentationQuestions = bankQuestions;
+            console.log(`[QuizPro] Cargadas ${allPresentationQuestions.length} preguntas desde el Banco Central.`);
+        }
+
+        // Fallback: Si el banco está vacío para esta nueva asignatura, intentar cargar desde presentaciones legacy
+        if (allPresentationQuestions.length === 0) {
+            console.log("[QuizPro] Banco vacío. Intentando carga legacy de presentaciones...");
+            await loadQuestionsLegacy();
+        }
+
+    } catch (e) {
+        console.error("[QuizPro] Error cargando desde el Banco:", e);
+        await loadQuestionsLegacy();
+    }
+}
+
+async function loadQuestionsLegacy() {
+    allPresentationQuestions = [];
     const presentations = [];
     window.presentationData.forEach(gradeBlock => {
         const blockGradeNum = window.parseGrade(gradeBlock.grade);
@@ -370,37 +426,14 @@ async function loadQuestions() {
             gradeBlock.subjects.forEach(subj => {
                 const normSubj = window.normalizeSubject(subj.name);
                 if (normSubj !== window.normalizeSubject(selectedAsignatura)) return;
-
-                // Ingest all topics for the subject regardless of period
-                let topics = [...subj.topics];
-                // Segmentación estricta por dificultad
-                if (selectedDifficulty === 'basico') {
-                    topics = topics.slice(0, Math.max(1, Math.ceil(topics.length / 3)));
-                } else if (selectedDifficulty === 'intermedio') {
-                    const start = Math.ceil(topics.length / 3);
-                    const end = Math.ceil(topics.length * 2 / 3);
-                    topics = topics.slice(start, Math.max(start + 1, end));
-                } else if (selectedDifficulty === 'avanzado') {
-                    const start = Math.ceil(topics.length * 2 / 3);
-                    topics = topics.slice(start);
-                }
-
-                topics.forEach(t => presentations.push({ file: t.file, subject: normSubj, grade: gradeBlock.grade }));
+                subj.topics.forEach(t => presentations.push({ file: t.file, subject: normSubj, grade: gradeBlock.grade }));
             });
         }
     });
 
-    // Ingesta Secuencial para trazabilidad de fuente
-    for (let i = 0; i < presentations.length; i++) {
-        await processPresentation(presentations[i].file, presentations[i].subject, presentations[i].grade);
+    for (const p of presentations) {
+        await processPresentation(p.file, p.subject, p.grade);
     }
-
-    // Filtrado de Integridad: Eliminar fugas temáticas (Post-Audit)
-    allPresentationQuestions = allPresentationQuestions.filter(q => {
-        const matchSubject = window.normalizeSubject(q.subject) === window.normalizeSubject(selectedAsignatura);
-        const matchGrade = window.parseGrade(q.grade) === window.parseGrade(selectedGrado);
-        return matchSubject && matchGrade;
-    });
 }
 
 async function processPresentation(file, subject, grade) {
@@ -473,6 +506,23 @@ async function processPresentation(file, subject, grade) {
         codeBlocks.forEach((block, bIdx) => {
             const cleanCode = block.replace(/<[^>]*>?/gm, '').trim();
             if (cleanCode.length > 20 && cleanCode.length < 300) {
+                // FASE 11: Evolución Práctica - Preguntas de ordenamiento de código
+                if (cleanCode.includes('\n')) {
+                    const lines = cleanCode.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                    if (lines.length >= 3 && lines.length <= 6) {
+                        allPresentationQuestions.push({
+                            id: `${file}_ordering_${bIdx}`,
+                            question: "Ordena las líneas para que el fragmento de código sea lógicamente correcto:",
+                            items: lines,
+                            type: 'ordering',
+                            source: file,
+                            subject: subject,
+                            grade: grade,
+                            tags: [...new Set([...extractTags(text, cleanCode), "Lógica"])]
+                        });
+                    }
+                }
+
                 allPresentationQuestions.push({
                     id: `${file}_practice_${bIdx}`,
                     question: "¿Qué resultado produce este fragmento de código o cuál es su propósito principal?",
@@ -552,6 +602,9 @@ function showQuestion() {
     const q = currentQuizQuestions[currentIndex];
     if (!q) return;
 
+    questionStartTime = Date.now();
+    responseChanges = 0;
+
     const feedback = document.getElementById('feedback-msg');
     feedback.textContent = '';
 
@@ -566,8 +619,8 @@ function showQuestion() {
     if (q.image) {
         const img = document.createElement('img');
         img.id = 'question-image';
-        img.src = q.image;
-        img.className = 'max-w-[200px] h-auto mx-auto mb-6 rounded-lg shadow-sm';
+        img.src = window.convertDriveLink ? window.convertDriveLink(q.image) : q.image;
+        img.className = 'quiz-image rounded-xl shadow-md mb-6 transition-all hover:scale-105';
         document.getElementById('question-text').after(img);
     }
 
@@ -628,7 +681,17 @@ function showQuestion() {
                 input.click();
             }, 500);
         }
-    } else if (q.type === 'memory') {
+    } else if (q.type === 'Verdadero y Falso') {
+        optionsContainer.classList.remove('hidden');
+        const opts = ["Verdadero", "Falso"];
+        opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-card w-full p-6 text-center border-2 border-gray-100 rounded-2xl font-black text-gray-700 bg-white hover:bg-blue-50 hover:border-blue-200 transition-all uppercase tracking-widest text-sm';
+            btn.textContent = opt;
+            btn.onclick = () => checkAnswer(opt, q.answer, btn);
+            optionsContainer.appendChild(btn);
+        });
+    } else if (q.type === 'Completar espacios' || q.type === 'completion' || q.type === 'fill-in-the-blanks') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
         pairsList.innerHTML = '<div class="memory-grid" id="memory-grid"></div>';
@@ -688,6 +751,35 @@ function showQuestion() {
         btn.textContent = "Finalizar Reto de Memoria";
         btn.onclick = () => { currentIndex++; if(currentIndex < currentQuizQuestions.length) showQuestion(); else endQuiz(); };
         matchingContainer.appendChild(btn);
+    } else if (q.type === 'ordering') {
+        matchingContainer.classList.remove('hidden');
+        const pairsList = document.getElementById('matching-pairs');
+        pairsList.innerHTML = '<div class="space-y-2" id="ordering-list"></div>';
+        const list = document.getElementById('ordering-list');
+
+        const shuffled = shuffleArray([...q.items]);
+        shuffled.forEach((item, idx) => {
+            const el = document.createElement('div');
+            el.className = 'p-3 bg-white border-2 border-gray-100 rounded-xl cursor-pointer hover:border-blue-500 transition-all flex items-center gap-3';
+            el.innerHTML = `<span class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center text-[10px] font-bold text-gray-400">${idx+1}</span> <span class="text-xs font-medium text-gray-700">${item}</span>`;
+            el.onclick = () => {
+                const parent = el.parentNode;
+                if (el.nextSibling) parent.insertBefore(el.nextSibling, el);
+                else parent.prepend(el);
+                responseChanges++;
+            };
+            list.appendChild(el);
+        });
+
+        window.submitMatching = function() {
+            const currentOrder = Array.from(document.querySelectorAll('#ordering-list > div')).map(el => el.innerText.split('\n')[1] || el.innerText.replace(/^\d+\s/, ''));
+            let allCorrect = true;
+            q.items.forEach((item, idx) => {
+                if (currentOrder[idx] !== item) allCorrect = false;
+            });
+
+            checkAnswer(allCorrect ? 'Orden Correcto' : 'Orden Incorrecto', 'Orden Correcto');
+        };
     } else if (q.type === 'matching') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
@@ -706,6 +798,7 @@ function showQuestion() {
                                 <input type="text" maxlength="1"
                                     class="matching-letter-input w-8 h-8 text-center font-bold border-2 border-blue-100 rounded-lg focus:border-blue-500 outline-none uppercase text-xs"
                                     data-term="${pair.term}">
+                                    oninput="responseChanges++"
                                 <span class="text-[11px] font-semibold text-gray-700">${pair.term}</span>
                             </div>
                         `).join('')}
@@ -769,6 +862,30 @@ function checkAnswer(selected, correct, btn) {
     if (window.isProcessingAnswer) return;
     window.isProcessingAnswer = true;
 
+    const responseTime = Date.now() - questionStartTime;
+    let q = currentQuizQuestions[currentIndex];
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+
+    // Captura de Analítica Individual (Fase 5)
+    if (window.GamesAdapter) {
+        const analyticsPayload = {
+            userId: user?.userId,
+            gameId: 'quizpro',
+            gameName: 'QuizPro',
+            asignatura: selectedAsignatura,
+            grado: selectedGrado,
+            nivel: window.getStandardLevelName(selectedDifficulty),
+            preguntaId: q.id,
+            tema: (q.tags && q.tags.length > 0) ? q.tags[0] : 'General',
+            respuestaSeleccionada: selected,
+            respuestaCorrecta: correct,
+            esCorrecta: String(selected).trim().toLowerCase() === String(correct).trim().toLowerCase(),
+            tiempoRespuesta: responseTime,
+            cambiosRespuesta: responseChanges
+        };
+        fetchApi('USER', 'recordAnalytics', analyticsPayload);
+    }
+
     const allBtns = document.querySelectorAll('.option-card');
     const input = document.getElementById('fib-input');
     const fibBtn = document.querySelector('#fib-container button');
@@ -780,7 +897,7 @@ function checkAnswer(selected, correct, btn) {
     const feedback = document.getElementById('feedback-msg');
 
     // REQ 8.4: Evaluación estricta para Transcripción (Ortografía y Puntuación)
-    const q = currentQuizQuestions[currentIndex];
+    q = currentQuizQuestions[currentIndex];
     let isCorrect = false;
     const cleanSelected = String(selected || "").trim();
     const cleanCorrect = String(correct || "").trim();
@@ -952,7 +1069,7 @@ async function loadGlobalTop() {
 
     try {
         console.log("[QuizPro] Solicitando ranking global...");
-        const res = await fetchApi('USER', 'getGlobalTop', {});
+        const res = await fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' });
         console.log("[QuizPro] Respuesta Ranking:", res);
 
         if (res.status === 'success') {

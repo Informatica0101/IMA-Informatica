@@ -1,9 +1,18 @@
 TAREAS PENDIENTES
+1. Migración del banco de preguntas a Google Sheets (BancoPreguntas).
+2. Implementación de script de migración y log de resultados.
+3. Generador de distractores inteligentes basado en el banco central.
+4. Soporte para múltiples tipos de actividades (V/F, Completar, Emparejamiento, Ordenamiento, Identificar Imagen).
+5. Ampliación del banco a 100 preguntas por nivel/asignatura.
+6. Incorporación de nuevas asignaturas exclusivas (Redes y POO).
+7. Administración de parciales y asignaturas activas desde el Dashboard del Profesor.
+8. Implementación de gestión automática de hojas en el backend.
+
+TAREAS PENDIENTES DE REVISIÓN
 1. Corregir reglas de desbloqueo en QuizPro.
 2. Implementar Top Global en QuizPro.
 3. Implementar Menciones de top por asignatura en QuizPro.
 4. Agregar animación de carga en QuizPro.
 5. Diagnosticar y resolver problema de visualización de asignaturas en el modal de presentaciones para Undécimo.
-
-TAREAS PENDIENTES DE REVISIÓN
-(Vacío)
+6. Sistema unificado de analítica educativa (Confianza, Adivinación, Dominio).
+7. Perfil de dominio del estudiante en Dashboard.

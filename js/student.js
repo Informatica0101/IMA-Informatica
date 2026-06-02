@@ -111,6 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Task 4: Render Expediente
             renderStudentExpediente(allActivities);
 
+            // Fase 9: Render Perfil de Dominio
+            fetchAndRenderLearningProfile();
+
             // Iniciar renderizado jerárquico (Parcial -> Asignatura -> Actividades)
             renderParcialTabs(allActivities);
 
@@ -227,6 +230,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                 </div>
+                <!-- Fase 9: Integración de Perfil de Dominio -->
+                <div id="learning-profile-integration"></div>
             </div>
         `;
         container.classList.remove('hidden');
@@ -941,6 +946,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchAllActivities();
     initWhatsAppButton();
+
+    async function fetchAndRenderLearningProfile() {
+        const profileContainer = document.getElementById('learning-profile-integration');
+        if (!profileContainer) return;
+
+        try {
+            const res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId });
+            if (res.status === 'success' && res.data && res.data.length > 0) {
+                const profileData = res.data;
+                const avgDominio = Math.round(profileData.reduce((sum, item) => sum + item.dominio, 0) / profileData.length);
+
+                let classification = "Requiere Refuerzo";
+                let badgeClass = "bg-orange-50 text-orange-600";
+                if (avgDominio >= 90) { classification = "Maestro"; badgeClass = "bg-purple-50 text-purple-600"; }
+                else if (avgDominio >= 75) { classification = "Avanzado"; badgeClass = "bg-emerald-50 text-emerald-600"; }
+                else if (avgDominio >= 60) { classification = "Competente"; badgeClass = "bg-blue-50 text-blue-600"; }
+                else if (avgDominio >= 40) { classification = "En Desarrollo"; badgeClass = "bg-yellow-50 text-yellow-600"; }
+
+                profileContainer.innerHTML = `
+                    <div class="mt-6 pt-6 border-t border-gray-50 animate-fade-in">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Perfil de Dominio</h4>
+                                <p class="text-sm font-bold text-gray-800">Dominio por Conceptos</p>
+                            </div>
+                            <span class="px-2 py-1 ${badgeClass} rounded-full text-[8px] font-black uppercase tracking-widest">${classification}</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            ${profileData.slice(0, 4).map(item => `
+                                <div class="p-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-[8px] font-bold text-gray-500 uppercase truncate pr-1">${item.tema}</span>
+                                        <span class="text-[9px] font-black text-purple-600">${item.dominio}%</span>
+                                    </div>
+                                    <div class="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="bg-purple-500 h-full transition-all duration-1000" style="width: ${item.dominio}%"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${profileData.length > 4 ? `<p class="text-[8px] text-gray-400 font-medium uppercase mt-3 text-center">+ ${profileData.length - 4} temas adicionales registrados</p>` : ''}
+                    </div>
+                `;
+            }
+        } catch (e) {
+            console.error("Error al cargar perfil de dominio:", e);
+        }
+    }
 
     window.addEventListener('beforeunload', (e) => {
         if (!isSubmitting && (activeUploads > 0 || uploadedFiles.length > 0)) {

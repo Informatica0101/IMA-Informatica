@@ -505,7 +505,7 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
             // REQ 7: Filtrado por Autorización (Parcial Actual/Anteriores)
             if (gradeObjA) {
                 items = [...new Set(gradeObjA.subjects
-                    .filter(s => window.checkSectionHelper(s.sections, params.seccion) && window.isContentAuthorized(s.partial))
+                    .filter(s => window.checkSectionHelper(s.sections, params.seccion) && window.isContentAuthorized(s.partial, s.name))
                     .map(s => s.name)
                 )];
             }
@@ -585,7 +585,7 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
             const subject = gradeObj.subjects.find(s =>
                 s.name === item &&
                 window.checkSectionHelper(s.sections, params.seccion) &&
-                window.isContentAuthorized(s.partial)
+                window.isContentAuthorized(s.partial, s.name)
             );
             if (subject) {
                 newParams.parcial = subject.partial;
@@ -662,7 +662,7 @@ window.renderCommonNav = function() {
                 return html;
             } else {
                 // REQ 7: Los estudiantes solo ven el contenido autorizado (Garantía de Scope)
-                return filteredSubjects.filter(s => window.isContentAuthorized(s.partial)).map(subj => `
+                return filteredSubjects.filter(s => window.isContentAuthorized(s.partial, s.name)).map(subj => `
                     <div class="relative group/subj">
                         <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">
                             ${subj.name} <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>

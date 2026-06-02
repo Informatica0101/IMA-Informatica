@@ -1,6 +1,23 @@
 <!-- Este archivo contiene solo la estructura HTML del juego de WebMaster Quiz. -->
 <!-- No incluye el encabezado, pie de página, ni estilos globales. -->
 
+    <!-- REQ: Pantalla de Carga Profesional (Fase 3) -->
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999] opacity-0 pointer-events-none">
+        <div class="relative w-32 h-32 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-50 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <img src="../imagenes/logo.png" alt="Logo" class="w-16 animate-pulse">
+            </div>
+        </div>
+        <div class="text-center space-y-3">
+            <h3 id="loading-msg" class="text-sm font-black text-gray-900 uppercase tracking-[0.3em]">Inicializando...</h3>
+            <p id="loading-submsg" class="text-[10px] font-bold text-blue-500 uppercase tracking-widest animate-pulse">Preparando entorno académico</p>
+        </div>
+        <div class="mt-12 w-48 h-1 bg-gray-100 rounded-full overflow-hidden">
+            <div id="loading-bar" class="h-full bg-blue-600 transition-all duration-1000" style="width: 0%"></div>
+        </div>
+    </div>
 <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-6">
     WebMaster Quiz
 </h3>
@@ -24,21 +41,21 @@
 <div id="quiz-topic-selection-menu" class="hidden flex-col items-center justify-center min-h-[300px] animate-fade-in-down">
     <h4 class="text-xl font-semibold text-gray-700 mb-6">Selecciona un tema:</h4>
     <div class="grid grid-cols-1 gap-4 w-full max-w-sm">
-        <button class="topic-button px-6 py-3 rounded-xl font-semibold text-lg
+        <button class="topic-button px-8 py-4 rounded-xl font-semibold text-lg
                     bg-blue-500 text-white hover:bg-blue-600
                     transition-all duration-300 ease-in-out
                     shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
                 data-topic="html">
             HTML
         </button>
-        <button class="topic-button px-6 py-3 rounded-xl font-semibold text-lg
+        <button class="topic-button px-8 py-4 rounded-xl font-semibold text-lg
                     bg-green-500 text-white hover:bg-green-600
                     transition-all duration-300 ease-in-out
                     shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300"
                 data-topic="css">
             CSS
         </button>
-        <button class="topic-button px-6 py-3 rounded-xl font-semibold text-lg
+        <button class="topic-button px-8 py-4 rounded-xl font-semibold text-lg
                     bg-yellow-500 text-white hover:bg-yellow-600
                     transition-all duration-300 ease-in-out
                     shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-yellow-300"
@@ -46,7 +63,7 @@
             JavaScript
         </button>
     </div>
-    <button id="back-to-start-menu-button" class="mt-8 px-6 py-3 rounded-xl font-semibold text-base
+    <button id="back-to-start-menu-button" class="mt-8 px-8 py-4 rounded-xl font-semibold text-base
                 bg-gray-600 text-white hover:bg-gray-700
                 transition-all duration-300 ease-in-out
                 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300">
@@ -59,21 +76,21 @@
     <h4 class="text-xl font-semibold text-gray-700 mb-6">Tema: <span id="selected-topic-display" class="text-blue-600"></span></h4>
     <p class="text-lg text-gray-700 mb-6">Selecciona una dificultad:</p>
     <div class="grid grid-cols-1 gap-4 w-full max-w-sm">
-        <button class="difficulty-button px-6 py-3 rounded-xl font-semibold text-lg
+        <button class="difficulty-button px-8 py-4 rounded-xl font-semibold text-lg
                     bg-teal-500 text-white hover:bg-teal-600
                     transition-all duration-300 ease-in-out
                     shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-teal-300"
                 data-difficulty="basico">
             Básico
         </button>
-        <button class="difficulty-button px-6 py-3 rounded-xl font-semibold text-lg
+        <button class="difficulty-button px-8 py-4 rounded-xl font-semibold text-lg
                     bg-orange-500 text-white hover:bg-orange-600
                     transition-all duration-300 ease-in-out
                     shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-orange-300"
                 data-difficulty="intermedio">
             Intermedio
         </button>
-        <button class="difficulty-button px-6 py-3 rounded-xl font-semibold text-lg
+        <button class="difficulty-button px-8 py-4 rounded-xl font-semibold text-lg
                     bg-red-500 text-white hover:bg-red-600
                     transition-all duration-300 ease-in-out
                     shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-red-300"
@@ -81,7 +98,7 @@
             Avanzado
         </button>
     </div>
-    <button id="back-to-topic-menu-button" class="mt-8 px-6 py-3 rounded-xl font-semibold text-base
+    <button id="back-to-topic-menu-button" class="mt-8 px-8 py-4 rounded-xl font-semibold text-base
                 bg-gray-600 text-white hover:bg-gray-700
                 transition-all duration-300 ease-in-out
                 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300">
@@ -96,7 +113,7 @@
         <span class="text-lg font-semibold text-gray-700">Puntaje: <span id="quiz-score-display" class="text-green-600">0</span></span>
     </div>
 
-    <div id="quiz-card" class="bg-white p-6 rounded-2xl shadow-xl border-2 border-gray-200 w-full max-w-xl text-center min-h-[250px] flex flex-col justify-between items-center">
+    <div id="quiz-card" class="bg-white p-10 rounded-[2.5rem] shadow-2xl border border-gray-100 w-full max-w-xl text-center min-h-[250px] flex flex-col justify-between items-center">
         <p id="quiz-question" class="text-2xl font-bold text-gray-800 mb-4"></p>
         <!-- Ayuda visual/Pista visible constantemente -->
         <p id="quiz-help-text" class="text-sm text-gray-500 mb-4"></p>
@@ -106,22 +123,22 @@
 
             <!-- Multiple Choice Options -->
             <div id="multiple-choice-options" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                <button class="answer-option-button px-6 py-3 rounded-xl font-semibold text-lg
+                <button class="answer-option-button px-8 py-4 rounded-xl font-semibold text-lg
                             bg-blue-500 text-white hover:bg-blue-600
                             transition-all duration-300 ease-in-out
                             shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
                         data-option="0">Opción 1</button>
-                <button class="answer-option-button px-6 py-3 rounded-xl font-semibold text-lg
+                <button class="answer-option-button px-8 py-4 rounded-xl font-semibold text-lg
                             bg-blue-500 text-white hover:bg-blue-600
                             transition-all duration-300 ease-in-out
                             shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
                         data-option="1">Opción 2</button>
-                <button class="answer-option-button px-6 py-3 rounded-xl font-semibold text-lg
+                <button class="answer-option-button px-8 py-4 rounded-xl font-semibold text-lg
                             bg-blue-500 text-white hover:bg-blue-600
                             transition-all duration-300 ease-in-out
                             shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
                         data-option="2">Opción 3</button>
-                <button class="answer-option-button px-6 py-3 rounded-xl font-semibold text-lg
+                <button class="answer-option-button px-8 py-4 rounded-xl font-semibold text-lg
                             bg-blue-500 text-white hover:bg-blue-600
                             transition-all duration-300 ease-in-out
                             shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
@@ -137,13 +154,13 @@
                     <!-- Clickable fragments will be here -->
                 </div>
                 <div class="flex space-x-4">
-                    <button id="check-syntax-button" class="px-6 py-3 rounded-xl font-semibold text-lg
+                    <button id="check-syntax-button" class="px-8 py-4 rounded-xl font-semibold text-lg
                                 bg-purple-600 text-white hover:bg-purple-700
                                 transition-all duration-300 ease-in-out
                                 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300">
                         Comprobar
                     </button>
-                    <button id="undo-syntax-button" class="px-6 py-3 rounded-xl font-semibold text-lg
+                    <button id="undo-syntax-button" class="px-8 py-4 rounded-xl font-semibold text-lg
                                 bg-gray-400 text-white hover:bg-gray-500
                                 transition-all duration-300 ease-in-out
                                 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300">
@@ -161,13 +178,13 @@
                     <!-- Drop targets will be here -->
                 </div>
                 <div class="flex space-x-4 mt-4">
-                    <button id="check-match-button" class="px-6 py-3 rounded-xl font-semibold text-lg
+                    <button id="check-match-button" class="px-8 py-4 rounded-xl font-semibold text-lg
                                 bg-purple-600 text-white hover:bg-purple-700
                                 transition-all duration-300 ease-in-out
                                 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300">
                         Comprobar
                     </button>
-                    <button id="undo-match-button" class="px-6 py-3 rounded-xl font-semibold text-lg
+                    <button id="undo-match-button" class="px-8 py-4 rounded-xl font-semibold text-lg
                                 bg-gray-400 text-white hover:bg-gray-500
                                 transition-all duration-300 ease-in-out
                                 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300">
@@ -197,28 +214,28 @@
     
     <!-- Adjusted button container for better fitting -->
     <div class="flex flex-wrap justify-center gap-4 mt-6 w-full max-w-lg">
-        <button id="quiz-retry-level-button" class="px-6 py-3 rounded-xl font-bold text-lg
+        <button id="quiz-retry-level-button" class="px-8 py-4 rounded-xl font-bold text-lg
                     bg-blue-600 text-white hover:bg-blue-700
                     transition-all duration-300 ease-in-out
                     shadow-lg hover:shadow-xl transform hover:-translate-y-1
                     focus:outline-none focus:ring-4 focus:ring-blue-300 flex-grow">
             Reintentar Nivel
         </button>
-        <button id="quiz-next-level-button" class="px-6 py-3 rounded-xl font-bold text-lg
+        <button id="quiz-next-level-button" class="px-8 py-4 rounded-xl font-bold text-lg
                     bg-green-600 text-white hover:bg-green-700
                     transition-all duration-300 ease-in-out
                     shadow-lg hover:shadow-xl transform hover:-translate-y-1
                     focus:outline-none focus:ring-4 focus:ring-green-300 flex-grow">
             Siguiente Nivel
         </button>
-        <button id="quiz-change-topic-button" class="px-6 py-3 rounded-xl font-bold text-lg
+        <button id="quiz-change-topic-button" class="px-8 py-4 rounded-xl font-bold text-lg
                     bg-purple-600 text-white hover:bg-purple-700
                     transition-all duration-300 ease-in-out
                     shadow-lg hover:shadow-xl transform hover:-translate-y-1
                     focus:outline-none focus:ring-4 focus:ring-purple-300 flex-grow">
             Cambiar de Tema
         </button>
-        <button id="quiz-exit-game-button" class="px-6 py-3 rounded-xl font-bold text-lg
+        <button id="quiz-exit-game-button" class="px-8 py-4 rounded-xl font-bold text-lg
                     bg-gray-600 text-white hover:bg-gray-700
                     transition-all duration-300 ease-in-out
                     shadow-lg hover:shadow-xl transform hover:-translate-y-1

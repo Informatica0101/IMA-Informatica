@@ -403,6 +403,59 @@
                         </div>
                     </div>
 
+                    <!-- Tarjeta de Gestión Académica (Fase 7) -->
+                    <div class="card-ima border-blue-100 bg-blue-50/30 p-8 rounded-[2.5rem]">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-blue-100">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">Gestión Académica</h3>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Parcial Activo</label>
+                                <select id="admin-parcial-actual" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
+                                    <option value="Primer Parcial">Primer Parcial</option>
+                                    <option value="Segundo Parcial">Segundo Parcial</option>
+                                    <option value="Tercer Parcial">Tercer Parcial</option>
+                                    <option value="Cuarto Parcial">Cuarto Parcial</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Asignaturas Visibles para el Parcial</label>
+                                <div id="admin-asignaturas-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 bg-white/50 rounded-xl border border-blue-50">
+                                    <!-- Checkboxes dinámicos -->
+                                </div>
+                            </div>
+
+                            <button id="btn-save-academic-config" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+                                Guardar Configuración
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta de Banco de Preguntas -->
+                    <div class="card-ima border-amber-100 bg-amber-50/30 p-8 rounded-[2.5rem]">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 bg-amber-500 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-amber-100">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">Banco de Preguntas</h3>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-6 leading-relaxed">
+                            Centraliza y administra todas las preguntas y actividades educativas desde Google Sheets.
+                        </p>
+
+                        <div class="flex flex-col gap-3">
+                            <button id="btn-migrate-questions" class="flex items-center justify-center gap-2 bg-amber-500 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-100">
+                                <i class="fas fa-sync-alt"></i> Sincronizar / Migrar Banco
+                            </button>
+                            <p id="migration-status-msg" class="text-[10px] text-center font-bold text-amber-600 uppercase hidden"></p>
+                        </div>
+                    </div>
+
                     <!-- Tarjeta de Información de Promoción -->
                     <div class="card-ima border-blue-100 bg-blue-50/30 p-8 rounded-[2.5rem]">
                         <div class="flex items-center gap-4 mb-6">

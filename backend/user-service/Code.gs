@@ -81,6 +81,16 @@ function doPost(e) {
       case "getWhatsAppLink": result = getWhatsAppLink(payload); break;
       case "getStudents": result = getStudents(payload); break;
       case "getUserInfo": result = getUserInfo(payload); break;
+      case "getGlobalTop": result = getGlobalTop(payload); break;
+      case "recordAnalytics": result = recordAnalytics(payload); break;
+      case "getLearningProfile": result = getLearningProfile(payload); break;
+      case "getQuestionBank": result = getQuestionBank(payload); break;
+      case "saveQuestion": result = saveQuestion(payload); break;
+      case "getAcademicConfig": result = getAcademicConfig(payload); break;
+      case "updateAcademicConfig": result = updateAcademicConfig(payload); break;
+      case "getAsignaturasActivas": result = getAsignaturasActivas(payload); break;
+      case "updateAsignaturasActivas": result = updateAsignaturasActivas(payload); break;
+      case "generateMigrationReport": result = generateMigrationReport(payload); break;
       default:
         result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -734,6 +744,289 @@ function getOrCreateSheet(ss, name) {
     if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Asignatura", "Puntaje", "Nivel", "Grado"]);
     if (name === "NoticiasPortal") sheet.appendRow(["Fecha", "Hora", "Título", "Contenido", "ImagenUrl", "Categoría"]);
     if (name === "Clases") sheet.appendRow(["Grado", "Seccion", "WhatsAppLink"]);
+    if (name === "BancoPreguntas") {
+      sheet.appendRow(["PreguntaID", "Asignatura", "Nivel", "Tema", "TipoActividad", "Pregunta", "OpcionA", "OpcionB", "OpcionC", "OpcionD", "RespuestaCorrecta", "Explicacion", "Imagen", "VecesRespondida", "VecesCorrecta", "PorcentajeAcierto", "UltimaActualizacion", "Activa", "DificultadCalculada"]);
+    }
+    if (name === "ConfiguracionAcademica") {
+      sheet.appendRow(["Clave", "Valor"]);
+      sheet.appendRow(["ParcialActual", "Primer Parcial"]);
+    }
+    if (name === "AsignaturasPorParcial") {
+      sheet.appendRow(["Parcial", "Asignatura"]);
+    }
+    if (name === "QuizProAnalytics") {
+      sheet.appendRow(["analyticsId", "fecha", "userId", "quizId", "gameId", "gameName", "asignatura", "grado", "nivel", "preguntaId", "respuestaSeleccionada", "respuestaCorrecta", "esCorrecta", "tiempoRespuesta", "tiempoPromedioHistorico", "tiempoRelativo", "cambiosRespuesta", "indiceConfianza", "indiceAdivinacion", "indiceDominio"]);
+    }
+    if (name === "GameLeaderboards") {
+      sheet.appendRow(["leaderboardId", "gameId", "userId", "nombreAlumno", "grado", "asignatura", "mejorPuntuacion", "indiceDominioPromedio", "partidasJugadas", "ultimaActualizacion"]);
+    }
+    if (name === "GameStatistics") {
+      sheet.appendRow(["gameId", "partidasTotales", "usuariosActivos", "promedioPuntuacion", "promedioDominio", "promedioTiempo", "ultimaActualizacion"]);
+    }
+    if (name === "LearningProfile") {
+      sheet.appendRow(["profileId", "userId", "asignatura", "tema", "nivel", "intentos", "aciertos", "porcentajeAciertos", "indiceDominio", "ultimaActualizacion"]);
+    }
   }
   return sheet;
+}
+
+/**
+ * SISTEMA UNIFICADO DE ANALÍTICA EDUCATIVA (FASE 2)
+ */
+
+function recordAnalytics(payload) {
+  const {
+    userId, quizId, gameId, gameName, asignatura, grado, nivel,
+    preguntaId, respuestaSeleccionada, respuestaCorrecta, esCorrecta,
+    tiempoRespuesta, cambiosRespuesta, tema
+  } = payload;
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // 1. Registro Individual en QuizProAnalytics
+  const analyticsSheet = getOrCreateSheet(ss, "QuizProAnalytics");
+  const analyticsId = "ANL-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+
+  // Cálculo de Métricas (Fase 6, 7, 8)
+  const stats = getGameStats({ userId });
+  const history = stats.allHistory || [];
+  const subjectHistory = history.filter(h => h[4] === asignatura);
+
+  // Tiempo promedio histórico para esta asignatura (si existe)
+  const totalTime = subjectHistory.reduce((sum, h) => sum + (parseFloat(h[8]) || 0), 0); // Asumiendo col 9 es tiempo
+  const avgTime = subjectHistory.length > 0 ? totalTime / subjectHistory.length : tiempoRespuesta;
+
+  const tiempoRelativo = avgTime > 0 ? tiempoRespuesta / avgTime : 1;
+
+  // Índice de Confianza (Fase 6)
+  let scoreRapidez = 20;
+  if (tiempoRelativo <= 0.25) scoreRapidez = 100;
+  else if (tiempoRelativo <= 0.50) scoreRapidez = 80;
+  else if (tiempoRelativo <= 0.75) scoreRapidez = 60;
+  else if (tiempoRelativo <= 1.00) scoreRapidez = 40;
+
+  const indiceConfianza = Math.round((esCorrecta ? 70 : 0) + (scoreRapidez * 0.2) - (cambiosRespuesta * 5));
+
+  // Índice de Adivinación (Fase 7)
+  let indiceAdivinacion = 0;
+  if (!esCorrecta && tiempoRespuesta < 3000) indiceAdivinacion = 80; // < 3s y error
+  else if (esCorrecta && tiempoRespuesta < 2000) indiceAdivinacion = 60; // < 2s y acierto
+
+  // Índice de Dominio (Fase 8)
+  const indiceDominio = Math.max(0, Math.min(100, Math.round((esCorrecta ? 100 : 0) * 0.7 + (scoreRapidez * 0.3))));
+
+  // Columnas: analyticsId, fecha, userId, quizId, gameId, gameName, asignatura, grado, nivel, preguntaId,
+  // respuestaSeleccionada, respuestaCorrecta, esCorrecta, tiempoRespuesta, avgTime, tiempoRelativo,
+  // cambiosRespuesta, indiceConfianza, indiceAdivinacion, indiceDominio
+  analyticsSheet.appendRow([
+    analyticsId, new Date(), userId, quizId || "", gameId, gameName, asignatura, grado, nivel, preguntaId,
+    respuestaSeleccionada, respuestaCorrecta, esCorrecta, tiempoRespuesta, avgTime, tiempoRelativo,
+    cambiosRespuesta, indiceConfianza, indiceAdivinacion, indiceDominio
+  ]);
+
+  // 2. Actualizar LearningProfile (Fase 2)
+  updateLearningProfile(ss, userId, asignatura, tema, nivel, esCorrecta, indiceDominio);
+
+  // 3. Actualizar GameLeaderboards (Fase 2)
+  updateLeaderboard(ss, gameId, userId, asignatura, grado, indiceDominio);
+
+  return { status: "success", metrics: { indiceConfianza, indiceAdivinacion, indiceDominio } };
+}
+
+function updateLearningProfile(ss, userId, asignatura, tema, nivel, esCorrecta, dominioActual) {
+  if (!tema) return;
+  const sheet = getOrCreateSheet(ss, "LearningProfile");
+  const data = sheet.getDataRange().getValues();
+
+  let rowIndex = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][1] === userId && data[i][2] === asignatura && data[i][3] === tema && data[i][4] === nivel) {
+      rowIndex = i;
+      break;
+    }
+  }
+
+  if (rowIndex !== -1) {
+    const intentos = parseInt(data[rowIndex][5]) + 1;
+    const aciertos = parseInt(data[rowIndex][6]) + (esCorrecta ? 1 : 0);
+    const porcentaje = Math.round((aciertos / intentos) * 100);
+    const nuevoDominio = Math.round((parseFloat(data[rowIndex][8]) * 0.7) + (dominioActual * 0.3));
+
+    sheet.getRange(rowIndex + 1, 6, 1, 5).setValues([[intentos, aciertos, porcentaje, nuevoDominio, new Date()]]);
+  } else {
+    const profileId = "PRF-" + Date.now();
+    sheet.appendRow([profileId, userId, asignatura, tema, nivel, 1, esCorrecta ? 1 : 0, esCorrecta ? 100 : 0, dominioActual, new Date()]);
+  }
+}
+
+function updateLeaderboard(ss, gameId, userId, asignatura, grado, dominio) {
+  const sheet = getOrCreateSheet(ss, "GameLeaderboards");
+  const data = sheet.getDataRange().getValues();
+  const userSheet = ss.getSheetByName("Usuarios");
+  const userData = userSheet.getDataRange().getValues();
+  const userRow = userData.find(r => r[0] === userId);
+  const nombreAlumno = userRow ? userRow[1] : "Anónimo";
+
+  let rowIndex = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][1] === gameId && data[i][2] === userId && data[i][5] === asignatura) {
+      rowIndex = i;
+      break;
+    }
+  }
+
+  if (rowIndex !== -1) {
+    const partidas = parseInt(data[rowIndex][8]) + 1;
+    const dominioPromedio = Math.round((parseFloat(data[rowIndex][7]) * (partidas-1) + dominio) / partidas);
+    sheet.getRange(rowIndex + 1, 8, 1, 3).setValues([[dominioPromedio, partidas, new Date()]]);
+  } else {
+    const lbId = "LDB-" + Date.now();
+    sheet.appendRow([lbId, gameId, userId, nombreAlumno, grado, asignatura, 0, dominio, 1, new Date()]);
+  }
+}
+
+function getLearningProfile(payload) {
+  const { userId } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "LearningProfile");
+  const data = sheet.getDataRange().getValues().slice(1);
+
+  const profile = data.filter(r => r[1] === userId).map(r => ({
+    asignatura: r[2],
+    tema: r[3],
+    nivel: r[4],
+    intentos: r[5],
+    aciertos: r[6],
+    porcentaje: r[7],
+    dominio: r[8],
+    ultimaActualizacion: r[9]
+  }));
+
+  return { status: "success", data: profile };
+}
+
+/**
+ * ADMINISTRACIÓN ACADÉMICA Y BANCO DE PREGUNTAS (EVOLUCIÓN)
+ */
+
+function getQuestionBank(payload) {
+  const { asignatura, nivel, activaOnly } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BancoPreguntas");
+  const data = sheet.getDataRange().getValues();
+  const headers = data.shift();
+
+  let questions = data.map(r => {
+    let obj = {};
+    headers.forEach((h, i) => obj[h] = r[i]);
+    return obj;
+  });
+
+  if (asignatura) {
+    const sAsig = normalizeString(asignatura);
+    questions = questions.filter(q => normalizeString(q.Asignatura) === sAsig);
+  }
+  if (nivel) {
+    const sNivel = normalizeString(nivel);
+    questions = questions.filter(q => normalizeString(q.Nivel) === sNivel);
+  }
+  if (activaOnly) questions = questions.filter(q => q.Activa === true || q.Activa === "TRUE");
+
+  return { status: "success", data: questions };
+}
+
+function saveQuestion(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BancoPreguntas");
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+
+  const questionObj = payload;
+  if (!questionObj.PreguntaID) questionObj.PreguntaID = "Q-" + Date.now() + "-" + Math.floor(Math.random()*1000);
+  questionObj.UltimaActualizacion = new Date();
+
+  const rowIndex = data.findIndex(r => r[0] === questionObj.PreguntaID);
+  const row = headers.map(h => questionObj[h] !== undefined ? questionObj[h] : "");
+
+  if (rowIndex !== -1) {
+    sheet.getRange(rowIndex + 1, 1, 1, row.length).setValues([row]);
+  } else {
+    sheet.appendRow(row);
+  }
+
+  return { status: "success", preguntaId: questionObj.PreguntaID };
+}
+
+function getAcademicConfig() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
+  const data = sheet.getDataRange().getValues().slice(1);
+  const config = {};
+  data.forEach(r => config[r[0]] = r[1]);
+  return { status: "success", data: config };
+}
+
+function updateAcademicConfig(payload) {
+  const { key, value } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
+  const data = sheet.getDataRange().getValues();
+
+  const rowIndex = data.findIndex(r => r[0] === key);
+  if (rowIndex !== -1) {
+    sheet.getRange(rowIndex + 1, 2).setValue(value);
+  } else {
+    sheet.appendRow([key, value]);
+  }
+  return { status: "success" };
+}
+
+function getAsignaturasActivas(payload) {
+  const { parcial } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AsignaturasPorParcial");
+  const data = sheet.getDataRange().getValues().slice(1);
+
+  const asignaturas = data.filter(r => r[0] === parcial).map(r => r[1]);
+  return { status: "success", data: asignaturas };
+}
+
+function updateAsignaturasActivas(payload) {
+  const { parcial, asignaturas } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AsignaturasPorParcial");
+
+  // Limpiar actuales para el parcial
+  const data = sheet.getDataRange().getValues();
+  for (let i = data.length - 1; i >= 1; i--) {
+    if (data[i][0] === parcial) {
+      sheet.deleteRow(i + 1);
+    }
+  }
+
+  // Insertar nuevas
+  asignaturas.forEach(asig => {
+    sheet.appendRow([parcial, asig]);
+  });
+
+  return { status: "success" };
+}
+
+function generateMigrationReport(payload) {
+  const { stats } = payload;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MigrationLogs");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["Fecha", "TotalDetectadas", "TotalMigradas", "Asignaturas", "Detalle"]);
+  }
+
+  sheet.appendRow([
+    new Date(),
+    stats.totalDetectadas,
+    stats.totalMigradas,
+    JSON.stringify(stats.asignaturas),
+    stats.detalle
+  ]);
+
+  return { status: "success" };
 }

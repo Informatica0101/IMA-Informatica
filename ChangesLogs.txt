@@ -46,3 +46,20 @@ Archivo: js/data.js
 - Archivo: js/quizpro.js. Líneas afectadas: loadQuestions, processPresentation, startQuiz, checkAnswer, exitGame. Cambio: Auditoría de integridad temática, algoritmo de variedad de fuentes, sensibilidad a mayúsculas en transcripción, actualización de stats en tiempo real para desbloqueo.
 - Archivo: juegos/quizpro.html. Líneas afectadas: Estilos, Header/Footer. Cambio: Eliminación de elementos redundantes, clases no-copy, inyección condicional de encabezados.
 - Archivo: index.html. Líneas afectadas: main wrapper. Cambio: Envoltorio para control de visibilidad global.
+
+2026-06-18: Proyecto Integral de Evolución y Analítica Educativa
+- Archivo: backend/user-service/Code.gs. Líneas afectadas: doGet, doPost, recordAnalytics, getLearningProfile, getGlobalTop, updateLearningProfile, updateLeaderboard. Cambio: Implementación del sistema unificado de analítica con cálculos de Índice de Confianza, Adivinación y Dominio. Gestión automatizada de nuevas hojas de cálculo.
+- Archivo: js/games-adapter.js. Líneas afectadas: Todo el archivo (Nuevo). Cambio: Centralización de estados de carga y adaptadores de telemetría para todos los minijuegos.
+- Archivos: juegos/quizpro.html, juegos/webmaster.html, juegos/perifericos.html. Líneas afectadas: Estructura HTML y lógica JS. Cambio: Integración de pantallas de carga profesionales y rediseño moderno (Tailwind v4) para Periféricos y WebMaster Quiz.
+- Archivo: js/quizpro.js. Líneas afectadas: startQuiz, showQuestion, checkAnswer, loadQuestions. Cambio: Implementación de telemetría conductual, tipo de pregunta 'ordering' y lógica de desbloqueo basada en Índice de Dominio (Mastery).
+- Archivo: js/student.js y js/teacher.js. Líneas afectadas: renderMasteryProfile, openGradeModal. Cambio: Visualización del perfil de dominio por tema en tableros de estudiante y docente.
+- Archivo: README.md. Líneas afectadas: Todo el archivo. Cambio: Actualización profunda de la documentación técnica, organigrama y esquemas de base de datos.
+
+2026-06-18: Centralización del Banco de Preguntas y Administración Académica Dinámica
+- Archivo: backend/user-service/Code.gs. Líneas afectadas: doPost, getOrCreateSheet, getQuestionBank, saveQuestion, getAcademicConfig, updateAcademicConfig, getAsignaturasActivas, updateAsignaturasActivas, generateMigrationReport. Cambio: Implementación de la infraestructura backend para el banco centralizado y administración de parciales. Añadida gestión autónoma de 7 nuevas hojas de cálculo.
+- Archivo: js/config.js. Líneas afectadas: window.PARCIAL_ACTUAL, window.ASIGNATURAS_ACTIVAS, initAcademicState, isContentAuthorized. Cambio: Desacoplamiento de la configuración estática; ahora el estado académico se sincroniza desde el backend al inicio. Refactorización del Scope Guard para validar visibilidad por asignatura autorizada.
+- Archivo: js/quizpro.js. Líneas afectadas: loadQuestions, loadQuestionsLegacy, showQuestion. Cambio: Refactorización total para consumir preguntas desde el Banco Central. Implementación de generador de distractores inteligentes y soporte para tipos de actividades multi-modales (V/F, Completar).
+- Archivo: teacher-dashboard.html. Líneas afectadas: sección #section-admin. Cambio: Inserción de las tarjetas de "Gestión Académica" (Selector de Parcial y Asignaturas) y "Banco de Preguntas" (Herramienta de Sincronización).
+- Archivo: js/teacher.js. Líneas afectadas: loadAcademicAdminData, renderAsignaturasCheckboxes, updateAcademicConfig, migración de banco. Cambio: Implementación de la lógica de administración en tiempo real y proceso de migración de preguntas por lotes (chunks).
+- Archivo: css/style.css. Líneas afectadas: .quiz-image. Cambio: Implementación de reglas obligatorias para la visualización responsiva y centrada de imágenes educativas.
+- Archivo: js/ui-common.js. Líneas afectadas: renderHierarchyLevel, buildHierarchy. Cambio: Actualización de llamadas a isContentAuthorized para incluir el nombre de la asignatura, permitiendo el filtrado dinámico del profesor.
