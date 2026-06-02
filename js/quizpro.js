@@ -951,7 +951,10 @@ async function loadGlobalTop() {
     if (!body) return;
 
     try {
+        console.log("[QuizPro] Solicitando ranking global...");
         const res = await fetchApi('USER', 'getGlobalTop', {});
+        console.log("[QuizPro] Respuesta Ranking:", res);
+
         if (res.status === 'success') {
             window.globalTopData = res;
             body.innerHTML = res.global.map((user, idx) => `

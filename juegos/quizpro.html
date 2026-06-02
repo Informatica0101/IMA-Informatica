@@ -487,15 +487,15 @@
     <script src="../js/data.js?v=21"></script>
     <script src="../js/games-adapter.js?v=21"></script>
     <script src="../js/quizpro.js?v=21"></script>
+    <script>
+        // Auto-init for standalone mode
+        if (window.location.pathname.includes('/juegos/')) {
+            window.addEventListener('DOMContentLoaded', () => {
+                if (typeof window.initQuizPro === 'function') {
+                    window.initQuizPro();
+                }
+            });
+        }
+    </script>
 </body>
 </html>
-<script>
-    // Auto-init for standalone mode
-    if (window.location.pathname.includes('/juegos/')) {
-        window.addEventListener('DOMContentLoaded', () => {
-            if (typeof window.initQuizPro === 'function') {
-                window.initQuizPro();
-            }
-        });
-    }
-</script>
