@@ -18,9 +18,25 @@ const SEEN_QUESTIONS_KEY = 'quizpro_seen_questions';
 const SEEN_LIMIT = 200;
 
 window.userGameStats = {}; // Cache de logros para validación de bloqueos
+window.globalTopData = null;
 
-window.initQuizPro = function() {
-    loadPerformanceTable();
+window.initQuizPro = async function() {
+    const loading = document.getElementById('loading-overlay');
+    if (loading) loading.classList.remove('hidden', 'opacity-0');
+
+    try {
+        await Promise.all([
+            loadPerformanceTable(),
+            loadGlobalTop()
+        ]);
+    } catch (e) {
+        console.error("Error during initialization", e);
+    } finally {
+        if (loading) {
+            loading.classList.add('opacity-0');
+            setTimeout(() => loading.classList.add('hidden'), 500);
+        }
+    }
 
     const handleAbandonment = () => {
         const quizScreen = document.getElementById('quiz-screen');
@@ -36,30 +52,10 @@ window.initQuizPro = function() {
     });
 };
 
-const GRADE_MAP = {
-    'decimo': 10, 'undecimo': 11, 'duodecimo': 12,
-    '10': 10, '11': 11, '12': 12, '10mo': 10, '11no': 11, '12mo': 12,
-    'ibtp': 10, 'iibtp': 11, 'iiibtp': 12
-};
-
-function parseGrade(gradeStr) {
-    if (!gradeStr) return 10;
-    const normalized = gradeStr.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
-    if (GRADE_MAP[normalized]) return GRADE_MAP[normalized];
-
-    // Fallback for BTP naming conventions
-    if (normalized.includes("iiibtp")) return 12;
-    if (normalized.includes("iibtp")) return 11;
-    if (normalized.includes("ibtp")) return 10;
-
-    const match = gradeStr.match(/\d+/);
-    return match ? parseInt(match[0]) : 10;
-}
-
 function getStudentGrade() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (!user) return 10;
-    return parseGrade(user.grado);
+    return window.parseGrade(user.grado);
 }
 
 /**
@@ -72,25 +68,21 @@ window.navigateToSubjects = function() {
     const isTeacher = user?.rol === 'Profesor';
     const userGradeNum = getStudentGrade();
 
-    // Req 3.A: Para permitir flujo cross-grade, necesitamos mostrar la misma materia en diferentes grados.
     const subjectEntries = [];
-
     const userSection = user?.seccion;
 
     window.presentationData.forEach(gradeBlock => {
-        const blockGradeNum = parseGrade(gradeBlock.grade);
+        const blockGradeNum = window.parseGrade(gradeBlock.grade);
 
-        // El alumno ve su propio grado y los anteriores (pero filtrado por prerrequisitos)
+        // Rule: Student can only visualize subjects of their current grade or lower
         if (isTeacher || blockGradeNum <= userGradeNum) {
             const seenInBlock = new Set();
             gradeBlock.subjects.forEach(subj => {
-                // REQ: Solo mostrar materias correspondientes a la sección del alumno
                 if (!isTeacher && userSection && !window.checkSectionHelper(subj.sections, userSection)) return;
 
-                const normName = normalizeSubject(subj.name);
-                if (seenInBlock.has(normName)) return; // No duplicar por parciales en el mismo bloque
+                const normName = window.normalizeSubject(subj.name);
+                if (seenInBlock.has(normName)) return;
 
-                // QuizPro is period-agnostic: shows all subjects for authorized grades
                 subjectEntries.push({
                     name: normName,
                     gradeLabel: gradeBlock.grade,
@@ -101,7 +93,6 @@ window.navigateToSubjects = function() {
         }
     });
 
-    // Ordenar por Grado y luego Nombre
     subjectEntries.sort((a, b) => a.gradeNum - b.gradeNum || a.name.localeCompare(b.name));
 
     grid.innerHTML = subjectEntries.map(entry => {
@@ -136,42 +127,52 @@ window.navigateToSubjects = function() {
  * hayan sido aprobadas con >= 70% en al menos un nivel.
  */
 function checkCrossGradeLock(subjectName, targetGrade) {
-    const targetGradeNum = parseGrade(targetGrade);
+    const targetGradeNum = window.parseGrade(targetGrade);
+    // 10th grade subjects are unlocked by default
     if (targetGradeNum <= 10) return false;
 
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const userSection = user?.seccion;
     const statsArray = Object.values(window.userGameStats);
 
-    // 1. Identificar todas las materias que el alumno DEBIÓ cursar en grados anteriores
+    // Identify all subjects from previous grades that the student should have completed
     const requiredGrades = [];
     if (targetGradeNum > 10) requiredGrades.push(10);
     if (targetGradeNum > 11) requiredGrades.push(11);
 
-    const subjectsToApprove = [];
+    const subjectsToApprove = []; // { name, gradeNum }
     window.presentationData.forEach(block => {
-        const bg = parseGrade(block.grade);
+        const bg = window.parseGrade(block.grade);
         if (requiredGrades.includes(bg)) {
             block.subjects.forEach(s => {
-                // Solo requerir materias que el alumno pudo cursar (según su sección)
                 if (userSection && !window.checkSectionHelper(s.sections, userSection)) return;
 
-                const name = normalizeSubject(s.name);
-                if (!subjectsToApprove.includes(name)) subjectsToApprove.push(name);
+                const name = window.normalizeSubject(s.name);
+                if (!subjectsToApprove.some(item => item.name === name && item.gradeNum === bg)) {
+                    subjectsToApprove.push({ name, gradeNum: bg });
+                }
             });
         }
     });
 
-    // 2. Verificar si CADA una de esas materias tiene al menos un nivel aprobado con >= 70%
-    for (const reqSubj of subjectsToApprove) {
-        const hasApproval = statsArray.some(s =>
-            normalizeSubject(s.subject) === reqSubj &&
-            parseFloat(s.maxScore || 0) >= 70
-        );
-        if (!hasApproval) return true; // Falta aprobar esta materia de grado anterior
+    // Check if EVERY subject in previous grades has all 3 levels approved with >= 70%
+    const levels = ['Básico', 'Intermedio', 'Avanzado'];
+    for (const req of subjectsToApprove) {
+        for (const lvl of levels) {
+            const hasApproval = statsArray.some(s =>
+                window.normalizeSubject(s.subject) === req.name &&
+                window.parseGrade(s.grade) === req.gradeNum &&
+                window.getStandardLevelName(s.level) === lvl &&
+                parseFloat(s.maxScore || 0) >= 70
+            );
+            if (!hasApproval) {
+                console.log(`Locking ${subjectName}: Missing ${req.name} ${lvl} (${req.gradeNum})`);
+                return true;
+            }
+        }
     }
 
-    return false; // Todos los prerrequisitos de grados anteriores cumplidos
+    return false;
 }
 
 window.navigateToLevels = function(subjectName, gradeLabel) {
@@ -181,13 +182,27 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
 
     const isTeacher = JSON.parse(localStorage.getItem('currentUser'))?.rol === 'Profesor';
 
+    // UI: Menciones por Asignatura
+    const topContainer = document.getElementById('subject-top-container');
+    const topNames = document.getElementById('subject-top-names');
+    if (topContainer && topNames && window.globalTopData?.subjectTops) {
+        const topList = window.globalTopData.subjectTops[gradeLabel]?.[subjectName];
+        if (topList && topList.length > 0) {
+            topNames.textContent = topList.map(u => u.nombre).join(', ');
+            topContainer.classList.remove('hidden');
+        } else {
+            topContainer.classList.add('hidden');
+        }
+    }
+
     // REQ 3.B: Progresión Interna por Niveles (A-149: Fix Level Unlock)
     const stats = Object.values(window.userGameStats).filter(s =>
-        normalizeSubject(s.subject) === normalizeSubject(subjectName) && s.grade === gradeLabel
+        window.normalizeSubject(s.subject) === window.normalizeSubject(subjectName) &&
+        window.parseGrade(s.grade) === window.parseGrade(gradeLabel)
     );
 
-    const basicScore = stats.find(s => getStandardLevelName(s.level) === 'Básico')?.maxScore || 0;
-    const interScore = stats.find(s => getStandardLevelName(s.level) === 'Intermedio')?.maxScore || 0;
+    const basicScore = stats.find(s => window.getStandardLevelName(s.level) === 'Básico')?.maxScore || 0;
+    const interScore = stats.find(s => window.getStandardLevelName(s.level) === 'Intermedio')?.maxScore || 0;
 
     const btnInter = document.getElementById('btn-intermedio');
     const cardInter = document.getElementById('level-intermedio');
@@ -196,7 +211,7 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
 
     // Bypass Profesor (REQ 5)
     const canUnlockInter = isTeacher || basicScore >= 70;
-    const canUnlockAvan = isTeacher || interScore >= 70;
+    const canUnlockAvan = isTeacher || (basicScore >= 70 && interScore >= 70);
 
     // UI Intermedio
     if (canUnlockInter) {
@@ -239,24 +254,6 @@ function getSubjectLabel(name) {
     return "Academia";
 }
 
-function normalizeSubject(name) {
-    if (!name) return 'General';
-    return name.trim()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s*\(?(?:[IVX]+)?\s*Parcial\)?/i, '')
-        .replace(/\s+\(?[IVX]+\)?$/i, '')
-        .replace(/\s+I{1,3}$/i, '')
-        .trim();
-}
-
-function getStandardLevelName(lvl) {
-    if (!lvl) return 'Básico';
-    const n = lvl.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if (n === 'basico') return 'Básico';
-    if (n === 'intermedio') return 'Intermedio';
-    if (n === 'avanzado') return 'Avanzado';
-    return lvl;
-}
 
 window.backToHome = function() {
     document.getElementById('subjects-screen').classList.add('hidden');
@@ -355,13 +352,13 @@ async function loadQuestions() {
 
     const presentations = [];
     window.presentationData.forEach(gradeBlock => {
-        const blockGradeNum = parseGrade(gradeBlock.grade);
-        const targetGradeNum = parseGrade(selectedGrado);
+        const blockGradeNum = window.parseGrade(gradeBlock.grade);
+        const targetGradeNum = window.parseGrade(selectedGrado);
 
         if (blockGradeNum === targetGradeNum) {
             gradeBlock.subjects.forEach(subj => {
-                const normSubj = normalizeSubject(subj.name);
-                if (normSubj !== normalizeSubject(selectedAsignatura)) return;
+                const normSubj = window.normalizeSubject(subj.name);
+                if (normSubj !== window.normalizeSubject(selectedAsignatura)) return;
 
                 // Ingest all topics for the subject regardless of period
                 let topics = [...subj.topics];
@@ -389,8 +386,8 @@ async function loadQuestions() {
 
     // Filtrado de Integridad: Eliminar fugas temáticas (Post-Audit)
     allPresentationQuestions = allPresentationQuestions.filter(q => {
-        const matchSubject = normalizeSubject(q.subject) === normalizeSubject(selectedAsignatura);
-        const matchGrade = parseGrade(q.grade) === parseGrade(selectedGrado);
+        const matchSubject = window.normalizeSubject(q.subject) === window.normalizeSubject(selectedAsignatura);
+        const matchGrade = window.parseGrade(q.grade) === window.parseGrade(selectedGrado);
         return matchSubject && matchGrade;
     });
 }
@@ -876,7 +873,7 @@ async function endQuiz() {
         juego: "QuizPro",
         asignatura: selectedAsignatura,
         puntaje: finalPercent,
-        nivel: getStandardLevelName(selectedDifficulty),
+        nivel: window.getStandardLevelName(selectedDifficulty),
         grado: selectedGrado,
         fecha_logro: new Date().toISOString()
     };
@@ -885,6 +882,41 @@ async function endQuiz() {
         await fetchApi('USER', 'saveGameResult', payload);
         // REQ 5: Actualizar stats y refrescar UI de niveles para reflejar el desbloqueo
         await loadPerformanceTable();
+    }
+}
+
+async function loadGlobalTop() {
+    const body = document.getElementById('global-top-body');
+    if (!body) return;
+
+    try {
+        const res = await fetchApi('USER', 'getGlobalTop', {});
+        if (res.status === 'success') {
+            window.globalTopData = res;
+            body.innerHTML = res.global.map((user, idx) => `
+                <tr class="hover:bg-blue-50/30 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 flex items-center justify-center rounded-full ${idx === 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'} text-[10px] font-black">${idx + 1}</span>
+                            <div>
+                                <p class="font-bold text-gray-900 leading-none">${user.nombre}</p>
+                                <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">${user.grado}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <span class="text-sm font-black ${user.promedio >= 70 ? 'text-emerald-600' : 'text-gray-400'}">${user.promedio}%</span>
+                    </td>
+                </tr>
+            `).join('');
+
+            if (res.global.length === 0) {
+                body.innerHTML = '<tr><td colspan="2" class="px-6 py-8 text-center text-gray-400 text-xs italic">Aún no hay puntuaciones globales registradas</td></tr>';
+            }
+        }
+    } catch (e) {
+        console.error("Error loading global top", e);
+        body.innerHTML = '<tr><td colspan="2" class="px-6 py-8 text-center text-red-400 text-xs italic">Error al cargar ranking global</td></tr>';
     }
 }
 

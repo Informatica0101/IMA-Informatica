@@ -466,21 +466,28 @@ function getGlobalTop(payload) {
   const globalLeaderboard = [];
   const subjectTops = {}; // subjectTops[grado][asignatura] = [{nombre, promedio}]
 
+  const parseGradeNum = (gStr) => {
+    const g = normalizeString(gStr);
+    if (g.includes("decimo") || g.includes("10") || g.includes("ibtp")) return 10;
+    if (g.includes("undecimo") || g.includes("11") || g.includes("iibtp")) return 11;
+    if (g.includes("duodecimo") || g.includes("12") || g.includes("iiibtp")) return 12;
+    return 10;
+  };
+
   for (const userId in stats) {
     if (!usersMap[userId]) continue;
 
     const userGrades = stats[userId];
-    const allSubjectAverages = [];
+    let totalSubjectSum = 0;
 
     for (const grd in userGrades) {
       const subjects = userGrades[grd];
-
       for (const asig in subjects) {
         const levels = subjects[asig];
         const scores = Object.values(levels);
         // Promedio de la asignatura: suma de niveles / 3 (Divisor fijo por Req)
         const asigAvg = scores.reduce((a, b) => a + b, 0) / 3;
-        allSubjectAverages.push(asigAvg);
+        totalSubjectSum += asigAvg;
 
         // Registrar para top por asignatura
         if (!subjectTops[grd]) subjectTops[grd] = {};
@@ -489,21 +496,12 @@ function getGlobalTop(payload) {
       }
     }
 
-    // Cantidad de asignaturas a las que tiene acceso según su grado
-    const getSubjectCount = (gStr) => {
-      const g = normalizeString(gStr);
-      if (g.includes("decimo") || g.includes("10") || g.includes("ibtp")) return 1;
-      if (g.includes("undecimo") || g.includes("11") || g.includes("iibtp")) return 5;
-      if (g.includes("duodecimo") || g.includes("12") || g.includes("iiibtp")) return 6;
-      return 1;
-    };
+    const userGradeNum = parseGradeNum(usersMap[userId].grado);
+    let globalDivisor = 1;
+    if (userGradeNum === 11) globalDivisor = 5; // 1 (10th) + 4 (11th)
+    if (userGradeNum === 12) globalDivisor = 6; // 1 (10th) + 4 (11th) + 1 (12th)
 
-    const totalAvailable = getSubjectCount(usersMap[userId].grado);
-
-    // Promedio Global: suma de promedios de asignaturas / total de asignaturas disponibles para su grado
-    const globalAvg = totalAvailable > 0
-      ? allSubjectAverages.reduce((a, b) => a + b, 0) / totalAvailable
-      : 0;
+    const globalAvg = totalSubjectSum / globalDivisor;
 
     globalLeaderboard.push({
       nombre: usersMap[userId].nombre,

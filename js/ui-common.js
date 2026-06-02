@@ -494,13 +494,13 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
             break;
         case 'Sección':
             label.textContent = 'Selecciona Sección';
-            const gradeObj = sourceData.find(d => d.grade === params.grado);
+            const gradeObj = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
             items = gradeObj ? gradeObj.sections : [];
             nextLevel = 'Asignatura';
             break;
         case 'Asignatura':
             label.textContent = 'Selecciona Asignatura';
-            const gradeObjA = sourceData.find(d => d.grade === params.grado);
+            const gradeObjA = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
 
             // REQ 7: Filtrado por Autorización (Parcial Actual/Anteriores)
             if (gradeObjA) {
@@ -514,7 +514,7 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
             break;
         case 'Parcial':
             label.textContent = 'Selecciona Parcial';
-            const gradeObjP = sourceData.find(d => d.grade === params.grado);
+            const gradeObjP = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
             if (gradeObjP) {
                 items = [...new Set(gradeObjP.subjects
                     .filter(s => window.checkSectionHelper(s.sections, params.seccion) && (!params.asignatura || s.name === params.asignatura))
@@ -526,7 +526,7 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
         case 'Temas':
         case 'Archivos':
             label.textContent = (type === 'Presentaciones') ? 'Selecciona Tema' : 'Descargar Archivos';
-            const gradeObjT = sourceData.find(d => d.grade === params.grado);
+            const gradeObjT = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
             let finalItems = [];
             if (gradeObjT) {
                 const subject = gradeObjT.subjects.find(s =>
@@ -596,7 +596,7 @@ window.renderCommonNav = function() {
         if (!data) return '';
 
         return data.map(grade => {
-            if (!isProfesor && currentUser && currentUser.grado && grade.grade !== currentUser.grado) return '';
+            if (!isProfesor && currentUser && currentUser.grado && window.parseGrade(grade.grade) !== window.parseGrade(currentUser.grado)) return '';
 
             const filteredSubjects = grade.subjects.filter(subj => {
                 if (!isProfesor && currentUser && currentUser.seccion) return window.checkSectionHelper(subj.sections, currentUser.seccion);
@@ -659,7 +659,7 @@ window.renderCommonNav = function() {
     function buildMobileHierarchy(data) {
         if (!data) return '';
         return data.map(grade => {
-            if (!isProfesor && currentUser && currentUser.grado && grade.grade !== currentUser.grado) return '';
+            if (!isProfesor && currentUser && currentUser.grado && window.parseGrade(grade.grade) !== window.parseGrade(currentUser.grado)) return '';
             const filteredSubjects = grade.subjects.filter(subj => {
                 if (!isProfesor && currentUser && currentUser.seccion) return window.checkSectionHelper(subj.sections, currentUser.seccion);
                 return true;

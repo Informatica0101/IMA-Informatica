@@ -30,27 +30,82 @@ const FRONTEND_URL = 'https://informatica0101.github.io';
  */
 window.PARCIAL_ACTUAL = "Segundo Parcial";
 
+const GRADE_MAP = {
+    'decimo': 10, 'undecimo': 11, 'duodecimo': 12,
+    '10': 10, '11': 11, '12': 12, '10mo': 10, '11no': 11, '12mo': 12,
+    'ibtp': 10, 'iibtp': 11, 'iiibtp': 12
+};
+
+window.parseGrade = function(gradeStr) {
+    if (!gradeStr) return 10;
+    const normalized = gradeStr.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
+    if (GRADE_MAP[normalized]) return GRADE_MAP[normalized];
+
+    if (normalized.includes("iiibtp")) return 12;
+    if (normalized.includes("iibtp")) return 11;
+    if (normalized.includes("ibtp")) return 10;
+
+    const match = gradeStr.toString().match(/\d+/);
+    return match ? parseInt(match[0]) : 10;
+};
+
+window.normalizeSubject = function(name) {
+    if (!name) return 'General';
+    return name.trim()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s*\(?(?:[IVX]+)?\s*Parcial\)?/i, '')
+        .replace(/\s+\(?[IVX]+\)?$/i, '')
+        .replace(/\s+I{1,3}$/i, '')
+        .trim();
+};
+
+window.getStandardLevelName = function(lvl) {
+    if (!lvl) return 'Básico';
+    const n = lvl.toLowerCase().normalize("NFD").replace(/[\u0300._-]/g, "").replace(/[\u0300-\u036f]/g, "");
+    if (n === 'basico') return 'Básico';
+    if (n === 'intermedio') return 'Intermedio';
+    if (n === 'avanzado') return 'Avanzado';
+    return lvl;
+};
+
 /**
  * REQ 7: Guardián Global de Alcance (Scope Guard)
  * Centraliza la lógica de visibilidad para prevenir fugas accidentales de contenido.
  */
+/**
+ * Normaliza nombres de parciales para permitir comparaciones flexibles
+ * (ej. "II Parcial" -> "Segundo Parcial")
+ */
+function normalizePartial(p) {
+    if (!p) return "";
+    const n = p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    if (n.includes("primer") || n === "i parcial") return "Primer Parcial";
+    if (n.includes("segundo") || n === "ii parcial") return "Segundo Parcial";
+    if (n.includes("tercer") || n === "iii parcial") return "Tercer Parcial";
+    if (n.includes("cuarto") || n === "iv parcial") return "Cuarto Parcial";
+    return p;
+}
+
 window.isContentAuthorized = function(contentPartial) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (user?.rol === 'Profesor') return true; // El profesor siempre tiene acceso total
+    if (user?.rol === 'Profesor') return true;
 
     if (!contentPartial) return false;
 
-    // El estudiante solo tiene acceso al parcial configurado globalmente
-    if (contentPartial === window.PARCIAL_ACTUAL) return true;
+    const normContent = normalizePartial(contentPartial);
+    const normActual = normalizePartial(window.PARCIAL_ACTUAL);
 
-    // Manejo de asignaturas que abarcan múltiples parciales (ej. "I y II Parcial")
+    // El estudiante solo tiene acceso al parcial configurado globalmente
+    if (normContent === normActual) return true;
+
+    // Manejo de asignaturas que abarcan múltiples parciales
     const partialGroups = {
         "I y II Parcial": ["Primer Parcial", "Segundo Parcial"],
         "III y IV Parcial": ["Tercer Parcial", "Cuarto Parcial"]
     };
 
     if (partialGroups[contentPartial]) {
-        return partialGroups[contentPartial].includes(window.PARCIAL_ACTUAL);
+        return partialGroups[contentPartial].includes(normActual);
     }
 
     return false;
