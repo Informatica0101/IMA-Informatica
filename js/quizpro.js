@@ -75,6 +75,8 @@ window.navigateToSubjects = function() {
     // Req 3.A: Para permitir flujo cross-grade, necesitamos mostrar la misma materia en diferentes grados.
     const subjectEntries = [];
 
+    const userSection = user?.seccion;
+
     window.presentationData.forEach(gradeBlock => {
         const blockGradeNum = parseGrade(gradeBlock.grade);
 
@@ -82,6 +84,9 @@ window.navigateToSubjects = function() {
         if (isTeacher || blockGradeNum <= userGradeNum) {
             const seenInBlock = new Set();
             gradeBlock.subjects.forEach(subj => {
+                // REQ: Solo mostrar materias correspondientes a la sección del alumno
+                if (!isTeacher && userSection && !window.checkSectionHelper(subj.sections, userSection)) return;
+
                 const normName = normalizeSubject(subj.name);
                 if (seenInBlock.has(normName)) return; // No duplicar por parciales en el mismo bloque
 
@@ -126,43 +131,47 @@ window.navigateToSubjects = function() {
 };
 
 /**
- * REQ 3.A: Validación Cross-Grade (Matriz Estricta con Fallback)
- * 11vo requiere 10mo de la MISMA materia. Si no existe en 10mo, requiere 'Informatica' de 10mo.
+ * REQ 3.A: Validación Hierárquica de Grados (Nueva Lógica v4)
+ * Los grados superiores están bloqueados hasta que TODAS las asignaturas de grados inferiores
+ * hayan sido aprobadas con >= 70% en al menos un nivel.
  */
 function checkCrossGradeLock(subjectName, targetGrade) {
     const targetGradeNum = parseGrade(targetGrade);
     if (targetGradeNum <= 10) return false;
 
-    const prevGradeNum = targetGradeNum - 1;
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const userSection = user?.seccion;
     const statsArray = Object.values(window.userGameStats);
-    const normTarget = normalizeSubject(subjectName);
 
-    // 1. Buscar si la materia existe en el grado anterior (en los datos globales)
-    let existsInPrev = false;
+    // 1. Identificar todas las materias que el alumno DEBIÓ cursar en grados anteriores
+    const requiredGrades = [];
+    if (targetGradeNum > 10) requiredGrades.push(10);
+    if (targetGradeNum > 11) requiredGrades.push(11);
+
+    const subjectsToApprove = [];
     window.presentationData.forEach(block => {
-        if (parseGrade(block.grade) === prevGradeNum) {
-            if (block.subjects.some(s => normalizeSubject(s.name) === normTarget)) {
-                existsInPrev = true;
-            }
+        const bg = parseGrade(block.grade);
+        if (requiredGrades.includes(bg)) {
+            block.subjects.forEach(s => {
+                // Solo requerir materias que el alumno pudo cursar (según su sección)
+                if (userSection && !window.checkSectionHelper(s.sections, userSection)) return;
+
+                const name = normalizeSubject(s.name);
+                if (!subjectsToApprove.includes(name)) subjectsToApprove.push(name);
+            });
         }
     });
 
-    // 2. Aplicar lógica de bloqueo
-    const hasApproval = statsArray.some(s => {
-        const sg = parseGrade(s.grade);
-        const score = parseFloat(s.maxScore || 0);
-        const normS = normalizeSubject(s.subject);
+    // 2. Verificar si CADA una de esas materias tiene al menos un nivel aprobado con >= 70%
+    for (const reqSubj of subjectsToApprove) {
+        const hasApproval = statsArray.some(s =>
+            normalizeSubject(s.subject) === reqSubj &&
+            parseFloat(s.maxScore || 0) >= 70
+        );
+        if (!hasApproval) return true; // Falta aprobar esta materia de grado anterior
+    }
 
-        if (existsInPrev) {
-            // Requiere la misma materia
-            return sg === prevGradeNum && normS === normTarget && score >= 70;
-        } else {
-            // Fallback: Requiere haber pasado 'Informatica' en el grado anterior
-            return sg === prevGradeNum && (normS === 'Informatica' || normS === 'Informatica I') && score >= 70;
-        }
-    });
-
-    return !hasApproval;
+    return false; // Todos los prerrequisitos de grados anteriores cumplidos
 }
 
 window.navigateToLevels = function(subjectName, gradeLabel) {
@@ -172,10 +181,13 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
 
     const isTeacher = JSON.parse(localStorage.getItem('currentUser'))?.rol === 'Profesor';
 
-    // REQ 3.B: Progresión Interna por Niveles
-    const stats = Object.values(window.userGameStats).filter(s => s.subject === subjectName && s.grade === gradeLabel);
-    const basicScore = stats.find(s => s.level === 'Básico')?.maxScore || 0;
-    const interScore = stats.find(s => s.level === 'Intermedio')?.maxScore || 0;
+    // REQ 3.B: Progresión Interna por Niveles (A-149: Fix Level Unlock)
+    const stats = Object.values(window.userGameStats).filter(s =>
+        normalizeSubject(s.subject) === normalizeSubject(subjectName) && s.grade === gradeLabel
+    );
+
+    const basicScore = stats.find(s => getStandardLevelName(s.level) === 'Básico')?.maxScore || 0;
+    const interScore = stats.find(s => getStandardLevelName(s.level) === 'Intermedio')?.maxScore || 0;
 
     const btnInter = document.getElementById('btn-intermedio');
     const cardInter = document.getElementById('level-intermedio');
@@ -235,6 +247,15 @@ function normalizeSubject(name) {
         .replace(/\s+\(?[IVX]+\)?$/i, '')
         .replace(/\s+I{1,3}$/i, '')
         .trim();
+}
+
+function getStandardLevelName(lvl) {
+    if (!lvl) return 'Básico';
+    const n = lvl.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (n === 'basico') return 'Básico';
+    if (n === 'intermedio') return 'Intermedio';
+    if (n === 'avanzado') return 'Avanzado';
+    return lvl;
 }
 
 window.backToHome = function() {
@@ -855,7 +876,7 @@ async function endQuiz() {
         juego: "QuizPro",
         asignatura: selectedAsignatura,
         puntaje: finalPercent,
-        nivel: selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1),
+        nivel: getStandardLevelName(selectedDifficulty),
         grado: selectedGrado,
         fecha_logro: new Date().toISOString()
     };
