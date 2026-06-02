@@ -13,6 +13,7 @@ let selectedAsignatura = '';
 let selectedDifficulty = '';
 let selectedGrado = '';
 let incorrectAnswers = [];
+let lastCorrectIndex = -1; // REQ: Restricción de Memoria Inmediata (A-149)
 
 const SEEN_QUESTIONS_KEY = 'quizpro_seen_questions';
 const SEEN_LIMIT = 200;
@@ -22,19 +23,28 @@ window.globalTopData = null;
 
 window.initQuizPro = async function() {
     const loading = document.getElementById('loading-overlay');
-    if (loading) loading.classList.remove('hidden', 'opacity-0');
+    if (loading) {
+        loading.classList.remove('hidden');
+        loading.classList.add('flex');
+        loading.classList.remove('opacity-0');
+    }
 
     try {
+        // Bloqueo de Ciclo de Vida: No permitir acceso hasta preparar estadísticas y ranking
         await Promise.all([
-            loadPerformanceTable(),
+            window.loadPerformanceTable(),
             loadGlobalTop()
         ]);
+        console.log("[QuizPro] Datos cargados: estadísticas y ranking listos.");
     } catch (e) {
-        console.error("Error during initialization", e);
+        console.error("[QuizPro] Error en precarga:", e);
     } finally {
         if (loading) {
             loading.classList.add('opacity-0');
-            setTimeout(() => loading.classList.add('hidden'), 500);
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                loading.classList.remove('flex');
+            }, 500);
         }
     }
 
@@ -337,6 +347,7 @@ async function startQuiz() {
     score = 0;
     timerSeconds = 0;
     incorrectAnswers = [];
+    lastCorrectIndex = -1; // Resetear para nueva sesión
 
     startTimer();
     showQuestion();
@@ -434,6 +445,7 @@ async function processPresentation(file, subject, grade) {
         });
 
         if (matchingPairs.length >= 3) {
+            const baseTags = extractTags(text, "memory matching");
             allPresentationQuestions.push({
                 id: `${file}_matching_${Math.random().toString(36).substr(2, 5)}`,
                 question: "Relaciona cada término con su definición correspondiente:",
@@ -442,7 +454,7 @@ async function processPresentation(file, subject, grade) {
                 source: file,
                 subject: subject,
                 grade: grade,
-                tags: ["Conceptos", "Teoría"]
+                tags: [...new Set([...baseTags, "Conceptos"])]
             });
 
             allPresentationQuestions.push({
@@ -453,7 +465,7 @@ async function processPresentation(file, subject, grade) {
                 source: file,
                 subject: subject,
                 grade: grade,
-                tags: ["Memoria", "Conceptos"]
+                tags: [...new Set([...baseTags, "Memoria"])]
             });
         }
 
@@ -471,7 +483,7 @@ async function processPresentation(file, subject, grade) {
                     source: file,
                     subject: subject,
                     grade: grade,
-                    tags: ["Práctica", "Código"]
+                    tags: [...new Set([...extractTags(text, cleanCode), "Práctica"])]
                 });
             }
         });
@@ -489,7 +501,7 @@ async function processPresentation(file, subject, grade) {
                     source: file,
                     subject: subject,
                     grade: grade,
-                    tags: ["Escritura", "Ortografía"]
+                    tags: [...new Set([...extractTags(text, cleanText), "Escritura"])]
                 });
             }
         });
@@ -502,12 +514,37 @@ function generateDistractorsForCode(code) {
     return ["Ejecución lógica", "Asignación de valor", "Comparación", "Salida de datos"];
 }
 
+/**
+ * REQ: Distribución Equilibrada y Restricción de Memoria Inmediata (A-149)
+ */
+function getBalancedOptions(options, correct) {
+    let shuffled = shuffleArray([...options]);
+    let correctIdx = shuffled.indexOf(correct);
+
+    // Evitar que la correcta repita posición consecutiva (máximo 5 intentos)
+    let attempts = 0;
+    while (correctIdx === lastCorrectIndex && attempts < 5) {
+        shuffled = shuffleArray([...options]);
+        correctIdx = shuffled.indexOf(correct);
+        attempts++;
+    }
+
+    lastCorrectIndex = correctIdx;
+    return shuffled;
+}
+
 function extractTags(text, question) {
     const tags = [];
-    if (text.includes("Programacion") || text.includes("codigo")) tags.push("Programación");
-    if (text.includes("HTML") || text.includes("CSS")) tags.push("Web");
-    if (text.includes("Excel") || text.includes("Calculo")) tags.push("Excel");
-    if (question.toLowerCase().includes("que es") || question.toLowerCase().includes("definicion")) tags.push("Conceptos");
+    const content = (text + " " + question).toLowerCase();
+
+    if (content.includes("programacion") || content.includes("codigo") || content.includes("algoritmo")) tags.push("Programación");
+    if (content.includes("html") || content.includes("css") || content.includes("web") || content.includes("etiqueta")) tags.push("Web");
+    if (content.includes("excel") || content.includes("calculo") || content.includes("tabla") || content.includes("ofimatica") || content.includes("word")) tags.push("Ofimática");
+    if (content.includes("hardware") || content.includes("procesador") || content.includes("ram") || content.includes("disco") || content.includes("componente")) tags.push("Hardware");
+    if (content.includes("periferico") || content.includes("entrada") || content.includes("salida") || content.includes("teclado") || content.includes("monitor")) tags.push("Periféricos");
+    if (content.includes("seguridad") || content.includes("virus") || content.includes("antivirus") || content.includes("phishing")) tags.push("Seguridad");
+    if (content.includes("que es") || content.includes("definicion") || content.includes("concepto")) tags.push("Conceptos");
+
     return tags;
 }
 
@@ -558,7 +595,9 @@ function showQuestion() {
         codeEl.className = 'bg-gray-900 text-green-400 p-4 rounded-xl font-mono text-xs mb-6 overflow-x-auto whitespace-pre';
         codeEl.textContent = q.code;
         optionsContainer.appendChild(codeEl);
-        shuffleArray([...q.options]).forEach(opt => {
+
+        const balanced = getBalancedOptions(q.options, q.answer);
+        balanced.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
             btn.textContent = opt;
@@ -592,40 +631,61 @@ function showQuestion() {
     } else if (q.type === 'memory') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
-        pairsList.innerHTML = '<div class="grid grid-cols-2 gap-2" id="memory-grid"></div>';
+        pairsList.innerHTML = '<div class="memory-grid" id="memory-grid"></div>';
         const grid = document.getElementById('memory-grid');
+
+        const getIcon = (tags = []) => {
+            if (tags.includes("Programación")) return "fa-terminal";
+            if (tags.includes("Web")) return "fa-code";
+            if (tags.includes("Ofimática")) return "fa-file-alt";
+            if (tags.includes("Hardware")) return "fa-microchip";
+            if (tags.includes("Periféricos")) return "fa-keyboard";
+            if (tags.includes("Seguridad")) return "fa-shield-alt";
+            return "fa-brain";
+        };
+        const icon = getIcon(q.tags);
+
         const items = shuffleArray([...q.pairs.map(p => ({v: p.term, k: p.term})), ...q.pairs.map(p => ({v: p.definition, k: p.term}))]);
         let selectedCards = [];
+
         items.forEach(item => {
             const card = document.createElement('div');
-            card.className = 'h-16 bg-gray-100 rounded-xl flex items-center justify-center text-[10px] p-2 text-center cursor-pointer border-2 border-transparent transition-all';
-            card.textContent = "???";
+            card.className = 'memory-card';
+            card.innerHTML = `
+                <div class="memory-card-inner">
+                    <div class="memory-card-front">
+                        <i class="fas ${icon} text-gray-300 text-2xl mb-1"></i>
+                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">IMA</span>
+                    </div>
+                    <div class="memory-card-back">
+                        <span class="text-[9px] sm:text-[11px] font-bold text-gray-800 leading-tight">${item.v}</span>
+                    </div>
+                </div>`;
+
             card.onclick = () => {
-                if (selectedCards.length < 2 && !card.classList.contains('bg-white')) {
-                    card.textContent = item.v;
-                    card.classList.add('bg-white', 'border-blue-500');
+                if (selectedCards.length < 2 && !card.classList.contains('revealed')) {
+                    card.classList.add('revealed');
                     selectedCards.push({card, item});
+
                     if (selectedCards.length === 2) {
-                        setTimeout(() => {
-                            if (selectedCards[0].item.k === selectedCards[1].item.k) {
-                                selectedCards.forEach(c => c.card.classList.replace('border-blue-500', 'border-emerald-500'));
-                                score += 0.25;
-                            } else {
-                                selectedCards.forEach(c => {
-                                    c.card.textContent = "???";
-                                    c.card.classList.remove('bg-white', 'border-blue-500');
-                                });
-                            }
+                        if (selectedCards[0].item.k === selectedCards[1].item.k) {
+                            selectedCards.forEach(c => c.card.classList.add('matched'));
+                            score += 0.25;
                             selectedCards = [];
-                        }, 1000);
+                        } else {
+                            setTimeout(() => {
+                                selectedCards.forEach(c => c.card.classList.remove('revealed'));
+                                selectedCards = [];
+                            }, 1000);
+                        }
                     }
                 }
             };
             grid.appendChild(card);
         });
         const btn = document.createElement('button');
-        btn.className = 'mt-4 w-full py-2 bg-gray-900 text-white rounded-lg text-xs font-bold uppercase';
-        btn.textContent = "Finalizar Reto";
+        btn.className = 'mt-6 w-full py-4 bg-gray-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-800 transition-colors shadow-lg';
+        btn.textContent = "Finalizar Reto de Memoria";
         btn.onclick = () => { currentIndex++; if(currentIndex < currentQuizQuestions.length) showQuestion(); else endQuiz(); };
         matchingContainer.appendChild(btn);
     } else if (q.type === 'matching') {
@@ -684,7 +744,8 @@ function showQuestion() {
         if (existingTarget) existingTarget.remove();
     } else {
         optionsContainer.classList.remove('hidden');
-        shuffleArray([...q.options]).forEach(opt => {
+        const balanced = getBalancedOptions(q.options, q.answer);
+        balanced.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
             btn.textContent = opt;
