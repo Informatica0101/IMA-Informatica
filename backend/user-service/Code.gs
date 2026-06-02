@@ -427,6 +427,113 @@ function saveGameResult(payload) {
   return { status: "success" };
 }
 
+/**
+ * Req: Top Global y Menciones por Asignatura
+ * Calcula el promedio global y por asignatura para el leaderboard.
+ */
+function getGlobalTop(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const logSheet = getOrCreateSheet(ss, "Logros");
+  const logData = logSheet.getDataRange().getValues().slice(1);
+  const userSheet = getSheetOrThrow(ss, "Usuarios");
+  const userData = userSheet.getDataRange().getValues().slice(1);
+
+  // 1. Mapa de Usuarios por ID
+  const usersMap = {};
+  userData.forEach(r => {
+    usersMap[r[0]] = { nombre: r[1], grado: r[2], userId: r[0] };
+  });
+
+  // 2. Procesar Logros de QuizPro
+  const stats = {};
+  logData.forEach(r => {
+    if (r[3] !== "QuizPro") return;
+    const userId = String(r[1]);
+    const asignatura = String(r[4]);
+    const score = parseFloat(r[5] || 0);
+    const nivel = String(r[6]);
+    const grado = String(r[7]);
+
+    if (!stats[userId]) stats[userId] = {};
+    if (!stats[userId][grado]) stats[userId][grado] = {};
+    if (!stats[userId][grado][asignatura]) stats[userId][grado][asignatura] = {};
+
+    const currentMax = stats[userId][grado][asignatura][nivel] || 0;
+    if (score > currentMax) stats[userId][grado][asignatura][nivel] = score;
+  });
+
+  // 3. Calcular Promedios Globales por Usuario
+  const globalLeaderboard = [];
+  const subjectTops = {}; // subjectTops[grado][asignatura] = [{nombre, promedio}]
+
+  for (const userId in stats) {
+    if (!usersMap[userId]) continue;
+
+    const userGrades = stats[userId];
+    const allSubjectAverages = [];
+
+    for (const grd in userGrades) {
+      const subjects = userGrades[grd];
+
+      for (const asig in subjects) {
+        const levels = subjects[asig];
+        const scores = Object.values(levels);
+        // Promedio de la asignatura: suma de niveles / 3 (Divisor fijo por Req)
+        const asigAvg = scores.reduce((a, b) => a + b, 0) / 3;
+        allSubjectAverages.push(asigAvg);
+
+        // Registrar para top por asignatura
+        if (!subjectTops[grd]) subjectTops[grd] = {};
+        if (!subjectTops[grd][asig]) subjectTops[grd][asig] = [];
+        subjectTops[grd][asig].push({ nombre: usersMap[userId].nombre, promedio: asigAvg });
+      }
+    }
+
+    // Cantidad de asignaturas a las que tiene acceso según su grado
+    const getSubjectCount = (gStr) => {
+      const g = normalizeString(gStr);
+      if (g.includes("decimo") || g.includes("10") || g.includes("ibtp")) return 1;
+      if (g.includes("undecimo") || g.includes("11") || g.includes("iibtp")) return 5;
+      if (g.includes("duodecimo") || g.includes("12") || g.includes("iiibtp")) return 6;
+      return 1;
+    };
+
+    const totalAvailable = getSubjectCount(usersMap[userId].grado);
+
+    // Promedio Global: suma de promedios de asignaturas / total de asignaturas disponibles para su grado
+    const globalAvg = totalAvailable > 0
+      ? allSubjectAverages.reduce((a, b) => a + b, 0) / totalAvailable
+      : 0;
+
+    globalLeaderboard.push({
+      nombre: usersMap[userId].nombre,
+      promedio: Math.round(globalAvg),
+      grado: usersMap[userId].grado
+    });
+  }
+
+  // Ordenar Global
+  globalLeaderboard.sort((a, b) => b.promedio - a.promedio);
+
+  // Procesar Top por Asignatura (Empates incluidos)
+  const finalSubjectTops = {};
+  for (const grd in subjectTops) {
+    finalSubjectTops[grd] = {};
+    for (const asig in subjectTops[grd]) {
+      const list = subjectTops[grd][asig];
+      list.sort((a, b) => b.promedio - a.promedio);
+      const maxScore = list[0].promedio;
+      finalSubjectTops[grd][asig] = list.filter(u => u.promedio === maxScore && maxScore > 0);
+    }
+  }
+
+  return {
+    status: "success",
+    global: globalLeaderboard.slice(0, 10), // Top 10 Global
+    subjectTops: finalSubjectTops
+  };
+}
+
 function getGameStats(payload) {
   const { grado, seccion, userId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
