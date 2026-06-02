@@ -39,14 +39,20 @@ const GRADE_MAP = {
 window.parseGrade = function(gradeStr) {
     if (!gradeStr) return 10;
     const normalized = gradeStr.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
-    if (GRADE_MAP[normalized]) return GRADE_MAP[normalized];
 
-    if (normalized.includes("iiibtp")) return 12;
-    if (normalized.includes("iibtp")) return 11;
-    if (normalized.includes("ibtp")) return 10;
+    if (normalized.includes("duodecimo") || normalized.includes("iiibtp")) return 12;
+    if (normalized.includes("undecimo") || normalized.includes("iibtp")) return 11;
+    if (normalized.includes("decimo") || normalized.includes("ibtp")) return 10;
 
     const match = gradeStr.toString().match(/\d+/);
-    return match ? parseInt(match[0]) : 10;
+    if (match) {
+        const num = parseInt(match[0]);
+        if (num === 12) return 12;
+        if (num === 11) return 11;
+        if (num === 10) return 10;
+    }
+
+    return 10;
 };
 
 window.normalizeSubject = function(name) {

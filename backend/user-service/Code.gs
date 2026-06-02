@@ -4,6 +4,7 @@
 
 const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
 const FRONTEND_URL = "https://informatica0101.github.io";
+// URL: https://script.google.com/macros/s/AKfycbz27i1GrswQvdt8EF9ssTdg9olLYb_jUCKsM6Ddw79FmnSiETKnIQLoDMO7TqSit0lD/exec
 const DEBUG_MODE = true;
 // SECRET_KEY se obtiene de ScriptProperties para mayor seguridad
 const SECRET_KEY = PropertiesService.getScriptProperties().getProperty('SECRET_KEY') || "IMA-PORTAL-DEVELOPMENT-KEY-UNSECURE";

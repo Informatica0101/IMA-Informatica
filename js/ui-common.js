@@ -509,8 +509,13 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
                     .map(s => s.name)
                 )];
             }
-            nextLevel = (role === 'Profesor') ? 'Parcial' : 'Temas';
-            if (type === 'Contenido' && role !== 'Profesor') nextLevel = 'Archivos';
+
+            // Si no es profesor, saltar directamente al nivel de Temas/Archivos usando el parcial autorizado
+            if (role !== 'Profesor') {
+                nextLevel = (type === 'Presentaciones' ? 'Temas' : 'Archivos');
+            } else {
+                nextLevel = 'Parcial';
+            }
             break;
         case 'Parcial':
             label.textContent = 'Selecciona Parcial';
@@ -571,7 +576,22 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
     container.innerHTML = items.map(item => {
         if (item === undefined) return '';
         const currentLevelKey = (level === 'Grado' ? 'grado' : (level === 'Sección' ? 'seccion' : (level === 'Asignatura' ? 'asignatura' : (level === 'Parcial' ? 'parcial' : level.toLowerCase()))));
-        const newParams = {...params, [currentLevelKey]: item};
+        let newParams = {...params, [currentLevelKey]: item};
+
+        // Si el usuario es estudiante y acaba de seleccionar una asignatura,
+        // debemos pre-asignar el parcial autorizado para que el siguiente nivel cargue correctamente.
+        if (role !== 'Profesor' && level === 'Asignatura') {
+            const gradeObj = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
+            const subject = gradeObj.subjects.find(s =>
+                s.name === item &&
+                window.checkSectionHelper(s.sections, params.seccion) &&
+                window.isContentAuthorized(s.partial)
+            );
+            if (subject) {
+                newParams.parcial = subject.partial;
+            }
+        }
+
         const paramsStr = JSON.stringify(newParams).replace(/'/g, "&#39;");
         return `
             <button onclick='window.renderHierarchyLevel("${type}", "${nextLevel}", ${paramsStr})'
