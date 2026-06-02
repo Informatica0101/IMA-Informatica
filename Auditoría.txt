@@ -1,0 +1,24 @@
+AUDITORÍA INICIAL - 2024-05-22
+
+Archivo: js/quizpro.js
+- La función checkCrossGradeLock solo verifica si existe AL MENOS UNA materia aprobada con >= 70%.
+- No verifica que TODOS los niveles (Básico, Intermedio, Avanzado) estén aprobados.
+- No verifica todas las materias del grado anterior.
+- La función navigateToLevels maneja el desbloqueo interno de niveles.
+
+Archivo: js/config.js
+- window.PARCIAL_ACTUAL = "Segundo Parcial"
+- window.isContentAuthorized usa comparación estricta.
+
+Archivo: js/data.js
+- Las materias de Undécimo usan "I Parcial", "II Parcial".
+- Las materias de Décimo usan "Primer Parcial".
+- Esto causa que isContentAuthorized falle para Undécimo si PARCIAL_ACTUAL es "Segundo Parcial".
+
+Archivo: js/ui-common.js
+- renderHierarchyLevel depende de isContentAuthorized.
+- buildHierarchy y buildMobileHierarchy también dependen de isContentAuthorized.
+
+Archivo: juegos/quizpro.html
+- Necesita contenedor para el Top Global.
+- Necesita animación de carga.

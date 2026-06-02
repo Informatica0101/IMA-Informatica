@@ -4,6 +4,7 @@
 
 const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
 const FRONTEND_URL = "https://informatica0101.github.io";
+// URL: https://script.google.com/macros/s/AKfycbzChAgiijmvKABxJuNSi5M8nKUdoB_UJni5bbBQsAJiQygZPrqPWaR2KIo89UjyoBTn/exec
 const DEBUG_MODE = true;
 // SECRET_KEY se obtiene de ScriptProperties para mayor seguridad
 const SECRET_KEY = PropertiesService.getScriptProperties().getProperty('SECRET_KEY') || "IMA-PORTAL-DEVELOPMENT-KEY-UNSECURE";
@@ -427,6 +428,133 @@ function saveGameResult(payload) {
   return { status: "success" };
 }
 
+/**
+ * Req: Top Global y Menciones por Asignatura
+ * Calcula el promedio global y por asignatura para el leaderboard.
+ */
+function getGlobalTop(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const logSheet = getOrCreateSheet(ss, "Logros");
+  const logData = logSheet.getDataRange().getValues();
+  if (logData.length <= 1) return { status: "success", global: [], subjectTops: {}, message: "No hay datos en Logros" };
+
+  const logRows = logData.slice(1);
+  const userSheet = getSheetOrThrow(ss, "Usuarios");
+  const userData = userSheet.getDataRange().getValues().slice(1);
+
+  // 1. Mapa de Usuarios por ID
+  const usersMap = {};
+  userData.forEach(r => {
+    usersMap[String(r[0])] = { nombre: r[1], grado: r[2], userId: r[0] };
+  });
+
+  // 2. Procesar Logros de QuizPro
+  const stats = {};
+  logRows.forEach(r => {
+    // Normalizar juego para comparación robusta
+    const game = normalizeString(r[3]);
+    if (game !== "quizpro") return;
+
+    const userId = String(r[1]).trim();
+    if (!userId) return;
+
+    const alumnoNombre = String(r[2]).trim();
+
+    // Normalizar asignatura para agrupar récords correctamente
+    const rawSubj = String(r[4]);
+    const asignatura = normalizeSubjectInBackend(rawSubj);
+
+    const score = parseFloat(r[5] || 0);
+    const nivel = String(r[6]).trim();
+    const grado = String(r[7]).trim();
+
+    if (!stats[userId]) {
+      stats[userId] = {
+        data: {},
+        fallbackNombre: alumnoNombre,
+        fallbackGrado: grado
+      };
+    }
+    if (!stats[userId].data[grado]) stats[userId].data[grado] = {};
+    if (!stats[userId].data[grado][asignatura]) stats[userId].data[grado][asignatura] = {};
+
+    const currentMax = stats[userId].data[grado][asignatura][nivel] || 0;
+    if (score > currentMax) stats[userId].data[grado][asignatura][nivel] = score;
+  });
+
+  // 3. Calcular Promedios Globales por Usuario
+  const globalLeaderboard = [];
+  const subjectTops = {}; // subjectTops[grado][asignatura] = [{nombre, promedio}]
+
+  const parseGradeNum = (gStr) => {
+    const g = normalizeString(gStr);
+    if (g.includes("decimo") || g.includes("10") || g.includes("ibtp")) return 10;
+    if (g.includes("undecimo") || g.includes("11") || g.includes("iibtp")) return 11;
+    if (g.includes("duodecimo") || g.includes("12") || g.includes("iiibtp")) return 12;
+    return 10;
+  };
+
+  for (const userId in stats) {
+    const profile = usersMap[userId] || {
+      nombre: stats[userId].fallbackNombre,
+      grado: stats[userId].fallbackGrado
+    };
+
+    const userGrades = stats[userId].data;
+    let totalSubjectSum = 0;
+
+    for (const grd in userGrades) {
+      const subjects = userGrades[grd];
+      for (const asig in subjects) {
+        const levels = subjects[asig];
+        const scores = Object.values(levels);
+        // Promedio de la asignatura: suma de niveles / 3 (Divisor fijo por Req)
+        const asigAvg = scores.reduce((a, b) => a + b, 0) / 3;
+        totalSubjectSum += asigAvg;
+
+        // Registrar para top por asignatura
+        if (!subjectTops[grd]) subjectTops[grd] = {};
+        if (!subjectTops[grd][asig]) subjectTops[grd][asig] = [];
+        subjectTops[grd][asig].push({ nombre: profile.nombre, promedio: asigAvg });
+      }
+    }
+
+    const userGradeNum = parseGradeNum(profile.grado);
+    let globalDivisor = 1;
+    if (userGradeNum === 11) globalDivisor = 5; // 1 (10th) + 4 (11th)
+    if (userGradeNum === 12) globalDivisor = 6; // 1 (10th) + 4 (11th) + 1 (12th)
+
+    const globalAvg = totalSubjectSum / globalDivisor;
+
+    globalLeaderboard.push({
+      nombre: profile.nombre,
+      promedio: Math.round(globalAvg),
+      grado: profile.grado
+    });
+  }
+
+  // Ordenar Global
+  globalLeaderboard.sort((a, b) => b.promedio - a.promedio);
+
+  // Procesar Top por Asignatura (Empates incluidos)
+  const finalSubjectTops = {};
+  for (const grd in subjectTops) {
+    finalSubjectTops[grd] = {};
+    for (const asig in subjectTops[grd]) {
+      const list = subjectTops[grd][asig];
+      list.sort((a, b) => b.promedio - a.promedio);
+      const maxScore = list[0].promedio;
+      finalSubjectTops[grd][asig] = list.filter(u => u.promedio === maxScore && maxScore > 0);
+    }
+  }
+
+  return {
+    status: "success",
+    global: globalLeaderboard.slice(0, 10), // Top 10 Global
+    subjectTops: finalSubjectTops
+  };
+}
+
 function getGameStats(payload) {
   const { grado, seccion, userId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -587,6 +715,16 @@ function getWhatsAppLink(payload) {
 function getOrCreateFolderNews(parentFolder, folderName) {
   const folders = parentFolder.getFoldersByName(folderName);
   return folders.hasNext() ? folders.next() : parentFolder.createFolder(folderName);
+}
+
+function normalizeSubjectInBackend(name) {
+  if (!name) return 'General';
+  return name.toString().trim()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s*\(?(?:[IVX]+)?\s*Parcial\)?/i, '')
+      .replace(/\s+\(?[IVX]+\)?$/i, '')
+      .replace(/\s+I{1,3}$/i, '')
+      .trim();
 }
 
 function getOrCreateSheet(ss, name) {

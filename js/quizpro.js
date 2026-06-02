@@ -13,14 +13,40 @@ let selectedAsignatura = '';
 let selectedDifficulty = '';
 let selectedGrado = '';
 let incorrectAnswers = [];
+let lastCorrectIndex = -1; // REQ: Restricción de Memoria Inmediata (A-149)
 
 const SEEN_QUESTIONS_KEY = 'quizpro_seen_questions';
 const SEEN_LIMIT = 200;
 
 window.userGameStats = {}; // Cache de logros para validación de bloqueos
+window.globalTopData = null;
 
-window.initQuizPro = function() {
-    loadPerformanceTable();
+window.initQuizPro = async function() {
+    const loading = document.getElementById('loading-overlay');
+    if (loading) {
+        loading.classList.remove('hidden');
+        loading.classList.add('flex');
+        loading.classList.remove('opacity-0');
+    }
+
+    try {
+        // Bloqueo de Ciclo de Vida: No permitir acceso hasta preparar estadísticas y ranking
+        await Promise.all([
+            window.loadPerformanceTable(),
+            loadGlobalTop()
+        ]);
+        console.log("[QuizPro] Datos cargados: estadísticas y ranking listos.");
+    } catch (e) {
+        console.error("[QuizPro] Error en precarga:", e);
+    } finally {
+        if (loading) {
+            loading.classList.add('opacity-0');
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                loading.classList.remove('flex');
+            }, 500);
+        }
+    }
 
     const handleAbandonment = () => {
         const quizScreen = document.getElementById('quiz-screen');
@@ -36,30 +62,10 @@ window.initQuizPro = function() {
     });
 };
 
-const GRADE_MAP = {
-    'decimo': 10, 'undecimo': 11, 'duodecimo': 12,
-    '10': 10, '11': 11, '12': 12, '10mo': 10, '11no': 11, '12mo': 12,
-    'ibtp': 10, 'iibtp': 11, 'iiibtp': 12
-};
-
-function parseGrade(gradeStr) {
-    if (!gradeStr) return 10;
-    const normalized = gradeStr.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
-    if (GRADE_MAP[normalized]) return GRADE_MAP[normalized];
-
-    // Fallback for BTP naming conventions
-    if (normalized.includes("iiibtp")) return 12;
-    if (normalized.includes("iibtp")) return 11;
-    if (normalized.includes("ibtp")) return 10;
-
-    const match = gradeStr.match(/\d+/);
-    return match ? parseInt(match[0]) : 10;
-}
-
 function getStudentGrade() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (!user) return 10;
-    return parseGrade(user.grado);
+    return window.parseGrade(user.grado);
 }
 
 /**
@@ -72,25 +78,21 @@ window.navigateToSubjects = function() {
     const isTeacher = user?.rol === 'Profesor';
     const userGradeNum = getStudentGrade();
 
-    // Req 3.A: Para permitir flujo cross-grade, necesitamos mostrar la misma materia en diferentes grados.
     const subjectEntries = [];
-
     const userSection = user?.seccion;
 
     window.presentationData.forEach(gradeBlock => {
-        const blockGradeNum = parseGrade(gradeBlock.grade);
+        const blockGradeNum = window.parseGrade(gradeBlock.grade);
 
-        // El alumno ve su propio grado y los anteriores (pero filtrado por prerrequisitos)
+        // Rule: Student can only visualize subjects of their current grade or lower
         if (isTeacher || blockGradeNum <= userGradeNum) {
             const seenInBlock = new Set();
             gradeBlock.subjects.forEach(subj => {
-                // REQ: Solo mostrar materias correspondientes a la sección del alumno
                 if (!isTeacher && userSection && !window.checkSectionHelper(subj.sections, userSection)) return;
 
-                const normName = normalizeSubject(subj.name);
-                if (seenInBlock.has(normName)) return; // No duplicar por parciales en el mismo bloque
+                const normName = window.normalizeSubject(subj.name);
+                if (seenInBlock.has(normName)) return;
 
-                // QuizPro is period-agnostic: shows all subjects for authorized grades
                 subjectEntries.push({
                     name: normName,
                     gradeLabel: gradeBlock.grade,
@@ -101,7 +103,6 @@ window.navigateToSubjects = function() {
         }
     });
 
-    // Ordenar por Grado y luego Nombre
     subjectEntries.sort((a, b) => a.gradeNum - b.gradeNum || a.name.localeCompare(b.name));
 
     grid.innerHTML = subjectEntries.map(entry => {
@@ -136,42 +137,52 @@ window.navigateToSubjects = function() {
  * hayan sido aprobadas con >= 70% en al menos un nivel.
  */
 function checkCrossGradeLock(subjectName, targetGrade) {
-    const targetGradeNum = parseGrade(targetGrade);
+    const targetGradeNum = window.parseGrade(targetGrade);
+    // 10th grade subjects are unlocked by default
     if (targetGradeNum <= 10) return false;
 
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const userSection = user?.seccion;
     const statsArray = Object.values(window.userGameStats);
 
-    // 1. Identificar todas las materias que el alumno DEBIÓ cursar en grados anteriores
+    // Identify all subjects from previous grades that the student should have completed
     const requiredGrades = [];
     if (targetGradeNum > 10) requiredGrades.push(10);
     if (targetGradeNum > 11) requiredGrades.push(11);
 
-    const subjectsToApprove = [];
+    const subjectsToApprove = []; // { name, gradeNum }
     window.presentationData.forEach(block => {
-        const bg = parseGrade(block.grade);
+        const bg = window.parseGrade(block.grade);
         if (requiredGrades.includes(bg)) {
             block.subjects.forEach(s => {
-                // Solo requerir materias que el alumno pudo cursar (según su sección)
                 if (userSection && !window.checkSectionHelper(s.sections, userSection)) return;
 
-                const name = normalizeSubject(s.name);
-                if (!subjectsToApprove.includes(name)) subjectsToApprove.push(name);
+                const name = window.normalizeSubject(s.name);
+                if (!subjectsToApprove.some(item => item.name === name && item.gradeNum === bg)) {
+                    subjectsToApprove.push({ name, gradeNum: bg });
+                }
             });
         }
     });
 
-    // 2. Verificar si CADA una de esas materias tiene al menos un nivel aprobado con >= 70%
-    for (const reqSubj of subjectsToApprove) {
-        const hasApproval = statsArray.some(s =>
-            normalizeSubject(s.subject) === reqSubj &&
-            parseFloat(s.maxScore || 0) >= 70
-        );
-        if (!hasApproval) return true; // Falta aprobar esta materia de grado anterior
+    // Check if EVERY subject in previous grades has all 3 levels approved with >= 70%
+    const levels = ['Básico', 'Intermedio', 'Avanzado'];
+    for (const req of subjectsToApprove) {
+        for (const lvl of levels) {
+            const hasApproval = statsArray.some(s =>
+                window.normalizeSubject(s.subject) === req.name &&
+                window.parseGrade(s.grade) === req.gradeNum &&
+                window.getStandardLevelName(s.level) === lvl &&
+                parseFloat(s.maxScore || 0) >= 70
+            );
+            if (!hasApproval) {
+                console.log(`Locking ${subjectName}: Missing ${req.name} ${lvl} (${req.gradeNum})`);
+                return true;
+            }
+        }
     }
 
-    return false; // Todos los prerrequisitos de grados anteriores cumplidos
+    return false;
 }
 
 window.navigateToLevels = function(subjectName, gradeLabel) {
@@ -181,13 +192,27 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
 
     const isTeacher = JSON.parse(localStorage.getItem('currentUser'))?.rol === 'Profesor';
 
+    // UI: Menciones por Asignatura
+    const topContainer = document.getElementById('subject-top-container');
+    const topNames = document.getElementById('subject-top-names');
+    if (topContainer && topNames && window.globalTopData?.subjectTops) {
+        const topList = window.globalTopData.subjectTops[gradeLabel]?.[subjectName];
+        if (topList && topList.length > 0) {
+            topNames.textContent = topList.map(u => u.nombre).join(', ');
+            topContainer.classList.remove('hidden');
+        } else {
+            topContainer.classList.add('hidden');
+        }
+    }
+
     // REQ 3.B: Progresión Interna por Niveles (A-149: Fix Level Unlock)
     const stats = Object.values(window.userGameStats).filter(s =>
-        normalizeSubject(s.subject) === normalizeSubject(subjectName) && s.grade === gradeLabel
+        window.normalizeSubject(s.subject) === window.normalizeSubject(subjectName) &&
+        window.parseGrade(s.grade) === window.parseGrade(gradeLabel)
     );
 
-    const basicScore = stats.find(s => getStandardLevelName(s.level) === 'Básico')?.maxScore || 0;
-    const interScore = stats.find(s => getStandardLevelName(s.level) === 'Intermedio')?.maxScore || 0;
+    const basicScore = stats.find(s => window.getStandardLevelName(s.level) === 'Básico')?.maxScore || 0;
+    const interScore = stats.find(s => window.getStandardLevelName(s.level) === 'Intermedio')?.maxScore || 0;
 
     const btnInter = document.getElementById('btn-intermedio');
     const cardInter = document.getElementById('level-intermedio');
@@ -196,7 +221,7 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
 
     // Bypass Profesor (REQ 5)
     const canUnlockInter = isTeacher || basicScore >= 70;
-    const canUnlockAvan = isTeacher || interScore >= 70;
+    const canUnlockAvan = isTeacher || (basicScore >= 70 && interScore >= 70);
 
     // UI Intermedio
     if (canUnlockInter) {
@@ -239,24 +264,6 @@ function getSubjectLabel(name) {
     return "Academia";
 }
 
-function normalizeSubject(name) {
-    if (!name) return 'General';
-    return name.trim()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s*\(?(?:[IVX]+)?\s*Parcial\)?/i, '')
-        .replace(/\s+\(?[IVX]+\)?$/i, '')
-        .replace(/\s+I{1,3}$/i, '')
-        .trim();
-}
-
-function getStandardLevelName(lvl) {
-    if (!lvl) return 'Básico';
-    const n = lvl.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if (n === 'basico') return 'Básico';
-    if (n === 'intermedio') return 'Intermedio';
-    if (n === 'avanzado') return 'Avanzado';
-    return lvl;
-}
 
 window.backToHome = function() {
     document.getElementById('subjects-screen').classList.add('hidden');
@@ -340,6 +347,7 @@ async function startQuiz() {
     score = 0;
     timerSeconds = 0;
     incorrectAnswers = [];
+    lastCorrectIndex = -1; // Resetear para nueva sesión
 
     startTimer();
     showQuestion();
@@ -355,13 +363,13 @@ async function loadQuestions() {
 
     const presentations = [];
     window.presentationData.forEach(gradeBlock => {
-        const blockGradeNum = parseGrade(gradeBlock.grade);
-        const targetGradeNum = parseGrade(selectedGrado);
+        const blockGradeNum = window.parseGrade(gradeBlock.grade);
+        const targetGradeNum = window.parseGrade(selectedGrado);
 
         if (blockGradeNum === targetGradeNum) {
             gradeBlock.subjects.forEach(subj => {
-                const normSubj = normalizeSubject(subj.name);
-                if (normSubj !== normalizeSubject(selectedAsignatura)) return;
+                const normSubj = window.normalizeSubject(subj.name);
+                if (normSubj !== window.normalizeSubject(selectedAsignatura)) return;
 
                 // Ingest all topics for the subject regardless of period
                 let topics = [...subj.topics];
@@ -389,8 +397,8 @@ async function loadQuestions() {
 
     // Filtrado de Integridad: Eliminar fugas temáticas (Post-Audit)
     allPresentationQuestions = allPresentationQuestions.filter(q => {
-        const matchSubject = normalizeSubject(q.subject) === normalizeSubject(selectedAsignatura);
-        const matchGrade = parseGrade(q.grade) === parseGrade(selectedGrado);
+        const matchSubject = window.normalizeSubject(q.subject) === window.normalizeSubject(selectedAsignatura);
+        const matchGrade = window.parseGrade(q.grade) === window.parseGrade(selectedGrado);
         return matchSubject && matchGrade;
     });
 }
@@ -437,6 +445,7 @@ async function processPresentation(file, subject, grade) {
         });
 
         if (matchingPairs.length >= 3) {
+            const baseTags = extractTags(text, "memory matching");
             allPresentationQuestions.push({
                 id: `${file}_matching_${Math.random().toString(36).substr(2, 5)}`,
                 question: "Relaciona cada término con su definición correspondiente:",
@@ -445,7 +454,7 @@ async function processPresentation(file, subject, grade) {
                 source: file,
                 subject: subject,
                 grade: grade,
-                tags: ["Conceptos", "Teoría"]
+                tags: [...new Set([...baseTags, "Conceptos"])]
             });
 
             allPresentationQuestions.push({
@@ -456,7 +465,7 @@ async function processPresentation(file, subject, grade) {
                 source: file,
                 subject: subject,
                 grade: grade,
-                tags: ["Memoria", "Conceptos"]
+                tags: [...new Set([...baseTags, "Memoria"])]
             });
         }
 
@@ -474,7 +483,7 @@ async function processPresentation(file, subject, grade) {
                     source: file,
                     subject: subject,
                     grade: grade,
-                    tags: ["Práctica", "Código"]
+                    tags: [...new Set([...extractTags(text, cleanCode), "Práctica"])]
                 });
             }
         });
@@ -492,7 +501,7 @@ async function processPresentation(file, subject, grade) {
                     source: file,
                     subject: subject,
                     grade: grade,
-                    tags: ["Escritura", "Ortografía"]
+                    tags: [...new Set([...extractTags(text, cleanText), "Escritura"])]
                 });
             }
         });
@@ -505,12 +514,37 @@ function generateDistractorsForCode(code) {
     return ["Ejecución lógica", "Asignación de valor", "Comparación", "Salida de datos"];
 }
 
+/**
+ * REQ: Distribución Equilibrada y Restricción de Memoria Inmediata (A-149)
+ */
+function getBalancedOptions(options, correct) {
+    let shuffled = shuffleArray([...options]);
+    let correctIdx = shuffled.indexOf(correct);
+
+    // Evitar que la correcta repita posición consecutiva (máximo 5 intentos)
+    let attempts = 0;
+    while (correctIdx === lastCorrectIndex && attempts < 5) {
+        shuffled = shuffleArray([...options]);
+        correctIdx = shuffled.indexOf(correct);
+        attempts++;
+    }
+
+    lastCorrectIndex = correctIdx;
+    return shuffled;
+}
+
 function extractTags(text, question) {
     const tags = [];
-    if (text.includes("Programacion") || text.includes("codigo")) tags.push("Programación");
-    if (text.includes("HTML") || text.includes("CSS")) tags.push("Web");
-    if (text.includes("Excel") || text.includes("Calculo")) tags.push("Excel");
-    if (question.toLowerCase().includes("que es") || question.toLowerCase().includes("definicion")) tags.push("Conceptos");
+    const content = (text + " " + question).toLowerCase();
+
+    if (content.includes("programacion") || content.includes("codigo") || content.includes("algoritmo")) tags.push("Programación");
+    if (content.includes("html") || content.includes("css") || content.includes("web") || content.includes("etiqueta")) tags.push("Web");
+    if (content.includes("excel") || content.includes("calculo") || content.includes("tabla") || content.includes("ofimatica") || content.includes("word")) tags.push("Ofimática");
+    if (content.includes("hardware") || content.includes("procesador") || content.includes("ram") || content.includes("disco") || content.includes("componente")) tags.push("Hardware");
+    if (content.includes("periferico") || content.includes("entrada") || content.includes("salida") || content.includes("teclado") || content.includes("monitor")) tags.push("Periféricos");
+    if (content.includes("seguridad") || content.includes("virus") || content.includes("antivirus") || content.includes("phishing")) tags.push("Seguridad");
+    if (content.includes("que es") || content.includes("definicion") || content.includes("concepto")) tags.push("Conceptos");
+
     return tags;
 }
 
@@ -561,7 +595,9 @@ function showQuestion() {
         codeEl.className = 'bg-gray-900 text-green-400 p-4 rounded-xl font-mono text-xs mb-6 overflow-x-auto whitespace-pre';
         codeEl.textContent = q.code;
         optionsContainer.appendChild(codeEl);
-        shuffleArray([...q.options]).forEach(opt => {
+
+        const balanced = getBalancedOptions(q.options, q.answer);
+        balanced.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
             btn.textContent = opt;
@@ -595,40 +631,61 @@ function showQuestion() {
     } else if (q.type === 'memory') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
-        pairsList.innerHTML = '<div class="grid grid-cols-2 gap-2" id="memory-grid"></div>';
+        pairsList.innerHTML = '<div class="memory-grid" id="memory-grid"></div>';
         const grid = document.getElementById('memory-grid');
+
+        const getIcon = (tags = []) => {
+            if (tags.includes("Programación")) return "fa-terminal";
+            if (tags.includes("Web")) return "fa-code";
+            if (tags.includes("Ofimática")) return "fa-file-alt";
+            if (tags.includes("Hardware")) return "fa-microchip";
+            if (tags.includes("Periféricos")) return "fa-keyboard";
+            if (tags.includes("Seguridad")) return "fa-shield-alt";
+            return "fa-brain";
+        };
+        const icon = getIcon(q.tags);
+
         const items = shuffleArray([...q.pairs.map(p => ({v: p.term, k: p.term})), ...q.pairs.map(p => ({v: p.definition, k: p.term}))]);
         let selectedCards = [];
+
         items.forEach(item => {
             const card = document.createElement('div');
-            card.className = 'h-16 bg-gray-100 rounded-xl flex items-center justify-center text-[10px] p-2 text-center cursor-pointer border-2 border-transparent transition-all';
-            card.textContent = "???";
+            card.className = 'memory-card';
+            card.innerHTML = `
+                <div class="memory-card-inner">
+                    <div class="memory-card-front">
+                        <i class="fas ${icon} text-gray-300 text-2xl mb-1"></i>
+                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">IMA</span>
+                    </div>
+                    <div class="memory-card-back">
+                        <span class="text-[9px] sm:text-[11px] font-bold text-gray-800 leading-tight">${item.v}</span>
+                    </div>
+                </div>`;
+
             card.onclick = () => {
-                if (selectedCards.length < 2 && !card.classList.contains('bg-white')) {
-                    card.textContent = item.v;
-                    card.classList.add('bg-white', 'border-blue-500');
+                if (selectedCards.length < 2 && !card.classList.contains('revealed')) {
+                    card.classList.add('revealed');
                     selectedCards.push({card, item});
+
                     if (selectedCards.length === 2) {
-                        setTimeout(() => {
-                            if (selectedCards[0].item.k === selectedCards[1].item.k) {
-                                selectedCards.forEach(c => c.card.classList.replace('border-blue-500', 'border-emerald-500'));
-                                score += 0.25;
-                            } else {
-                                selectedCards.forEach(c => {
-                                    c.card.textContent = "???";
-                                    c.card.classList.remove('bg-white', 'border-blue-500');
-                                });
-                            }
+                        if (selectedCards[0].item.k === selectedCards[1].item.k) {
+                            selectedCards.forEach(c => c.card.classList.add('matched'));
+                            score += 0.25;
                             selectedCards = [];
-                        }, 1000);
+                        } else {
+                            setTimeout(() => {
+                                selectedCards.forEach(c => c.card.classList.remove('revealed'));
+                                selectedCards = [];
+                            }, 1000);
+                        }
                     }
                 }
             };
             grid.appendChild(card);
         });
         const btn = document.createElement('button');
-        btn.className = 'mt-4 w-full py-2 bg-gray-900 text-white rounded-lg text-xs font-bold uppercase';
-        btn.textContent = "Finalizar Reto";
+        btn.className = 'mt-6 w-full py-4 bg-gray-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-800 transition-colors shadow-lg';
+        btn.textContent = "Finalizar Reto de Memoria";
         btn.onclick = () => { currentIndex++; if(currentIndex < currentQuizQuestions.length) showQuestion(); else endQuiz(); };
         matchingContainer.appendChild(btn);
     } else if (q.type === 'matching') {
@@ -687,7 +744,8 @@ function showQuestion() {
         if (existingTarget) existingTarget.remove();
     } else {
         optionsContainer.classList.remove('hidden');
-        shuffleArray([...q.options]).forEach(opt => {
+        const balanced = getBalancedOptions(q.options, q.answer);
+        balanced.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
             btn.textContent = opt;
@@ -876,7 +934,7 @@ async function endQuiz() {
         juego: "QuizPro",
         asignatura: selectedAsignatura,
         puntaje: finalPercent,
-        nivel: getStandardLevelName(selectedDifficulty),
+        nivel: window.getStandardLevelName(selectedDifficulty),
         grado: selectedGrado,
         fecha_logro: new Date().toISOString()
     };
@@ -885,6 +943,44 @@ async function endQuiz() {
         await fetchApi('USER', 'saveGameResult', payload);
         // REQ 5: Actualizar stats y refrescar UI de niveles para reflejar el desbloqueo
         await loadPerformanceTable();
+    }
+}
+
+async function loadGlobalTop() {
+    const body = document.getElementById('global-top-body');
+    if (!body) return;
+
+    try {
+        console.log("[QuizPro] Solicitando ranking global...");
+        const res = await fetchApi('USER', 'getGlobalTop', {});
+        console.log("[QuizPro] Respuesta Ranking:", res);
+
+        if (res.status === 'success') {
+            window.globalTopData = res;
+            body.innerHTML = res.global.map((user, idx) => `
+                <tr class="hover:bg-blue-50/30 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 flex items-center justify-center rounded-full ${idx === 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'} text-[10px] font-black">${idx + 1}</span>
+                            <div>
+                                <p class="font-bold text-gray-900 leading-none">${user.nombre}</p>
+                                <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">${user.grado}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <span class="text-sm font-black ${user.promedio >= 70 ? 'text-emerald-600' : 'text-gray-400'}">${user.promedio}%</span>
+                    </td>
+                </tr>
+            `).join('');
+
+            if (res.global.length === 0) {
+                body.innerHTML = '<tr><td colspan="2" class="px-6 py-8 text-center text-gray-400 text-xs italic">Aún no hay puntuaciones globales registradas</td></tr>';
+            }
+        }
+    } catch (e) {
+        console.error("Error loading global top", e);
+        body.innerHTML = '<tr><td colspan="2" class="px-6 py-8 text-center text-red-400 text-xs italic">Error al cargar ranking global</td></tr>';
     }
 }
 

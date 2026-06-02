@@ -12,6 +12,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
+        /* REQ: Loading Overlay */
+        #loading-overlay {
+            z-index: 9999;
+            backdrop-filter: blur(8px);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
@@ -102,9 +108,89 @@
             cursor: not-allowed;
             background-color: #f8fafc;
         }
+
+        /* REQ: Memory Game Responsive Grid */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        @media (min-width: 640px) {
+            .memory-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1rem;
+            }
+        }
+
+        .memory-card {
+            perspective: 1000px;
+            height: 100px;
+        }
+        @media (min-width: 640px) {
+            .memory-card {
+                height: 120px;
+            }
+        }
+
+        .memory-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .memory-card.revealed .memory-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .memory-card-front, .memory-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .memory-card-front {
+            background-color: #f1f5f9;
+            border: 2px solid #e2e8f0;
+        }
+
+        .memory-card-back {
+            background-color: white;
+            border: 2px solid #3b82f6;
+            transform: rotateY(180deg);
+        }
+
+        .memory-card.matched .memory-card-back {
+            border-color: #10b981;
+            background-color: #ecfdf5;
+        }
     </style>
 </head>
 <body class="font-inter antialiased text-gray-900 min-h-screen flex flex-col bg-gray-50 full-viewport-mode">
+
+    <!-- REQ: Animación de Carga -->
+    <div id="loading-overlay" class="fixed inset-0 bg-white/90 flex flex-col items-center justify-center transition-all duration-500 hidden opacity-0">
+        <div class="relative w-24 h-24 mb-6">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-blue-600 text-2xl">
+                <i class="fas fa-laptop-code"></i>
+            </div>
+        </div>
+        <p class="text-xs font-black text-gray-400 uppercase tracking-widest animate-pulse">Sincronizando Progresos...</p>
+    </div>
 
     <!-- ENCABEZADO INSTITUCIONAL (Solo si se carga solo, no inyectado) -->
     <script>
@@ -153,6 +239,32 @@
                 Empezar
                 <i class="fas fa-arrow-right transition-transform group-hover:translate-x-1"></i>
             </button>
+
+            <!-- REQ: Top Globales (Home Screen) -->
+            <div class="mt-12 text-left border-t border-gray-100 pt-8">
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="w-8 h-8 bg-yellow-50 text-yellow-500 rounded-lg flex items-center justify-center text-xs">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3 class="text-sm font-black text-gray-900 uppercase tracking-tighter">Top Globales</h3>
+                </div>
+
+                <div class="bg-gray-50/50 rounded-2xl border border-gray-100 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">
+                                <th class="px-6 py-3">Jugador</th>
+                                <th class="px-6 py-3 text-right">Promedio</th>
+                            </tr>
+                        </thead>
+                        <tbody id="global-top-body" class="text-xs">
+                            <tr>
+                                <td colspan="2" class="px-6 py-8 text-center text-gray-400 italic animate-pulse">Obteniendo rankings...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <!-- Dashboard de Desempeño (Req 5) -->
             <div id="performance-dashboard" class="hidden mt-12 text-left border-t border-gray-100 pt-8 overflow-hidden">
@@ -209,7 +321,20 @@
             </button>
 
             <h2 id="selected-subject-title" class="text-3xl font-poppins font-black text-gray-900 mb-2">Asignatura</h2>
-            <p class="text-gray-500 text-sm mb-12">Alcanza un 70% para desbloquear el siguiente nivel</p>
+            <p class="text-gray-500 text-sm mb-6">Alcanza un 70% para desbloquear el siguiente nivel</p>
+
+            <!-- REQ: Menciones por Asignatura -->
+            <div id="subject-top-container" class="hidden max-w-md mx-auto mb-10 p-4 bg-yellow-50/50 border border-yellow-100 rounded-2xl animate-fade-in">
+                <div class="flex items-center justify-center gap-3">
+                    <div class="w-8 h-8 bg-white text-yellow-500 rounded-xl flex items-center justify-center text-xs shadow-sm">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-[9px] font-black text-yellow-600 uppercase tracking-widest leading-none mb-1">Mención Destacada</p>
+                        <p id="subject-top-names" class="text-xs font-bold text-gray-900">Alumno(s) Estrella</p>
+                    </div>
+                </div>
+            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
                 <!-- Basic -->
@@ -357,9 +482,20 @@
     </script>
 
     <script src="../js/config.js?v=21"></script>
+    <script src="../js/ui-common.js?v=21"></script>
     <script src="../js/api.js?v=21"></script>
     <script src="../js/data.js?v=21"></script>
     <script src="../js/games-adapter.js?v=21"></script>
     <script src="../js/quizpro.js?v=21"></script>
+    <script>
+        // Auto-init for standalone mode
+        if (window.location.pathname.includes('/juegos/')) {
+            window.addEventListener('DOMContentLoaded', () => {
+                if (typeof window.initQuizPro === 'function') {
+                    window.initQuizPro();
+                }
+            });
+        }
+    </script>
 </body>
 </html>
