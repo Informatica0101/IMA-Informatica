@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducción a la Informática</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .slide { display: none; padding: 2rem; text-align: center; min-height: 80vh; flex-direction: column; justify-content: center; align-items: center; }
+        .slide.active { display: flex; }
+        .concept-box { background: #f1f5f9; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem; border-left: 4px solid #3b82f6; }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div id="presentation-container" class="max-w-4xl mx-auto my-10 bg-white shadow-lg rounded-xl overflow-hidden">
+        <div class="slide active">
+            <img src="../imagenes/logo.png" alt="Logo" class="w-48 mb-6">
+            <h1 class="text-3xl font-bold text-slate-800">Introducción a la Informática</h1>
+            <p class="text-slate-500 mt-2">Conceptos Básicos para Décimo Grado</p>
+        </div>
+
+        <div class="slide">
+            <h2 class="text-2xl font-bold">¿Qué es la Informática?</h2>
+            <div class="concept-box">
+                Es la ciencia que estudia el tratamiento automático y racional de la información mediante el uso de computadoras.
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2 class="text-2xl font-bold">¿Qué es una Computadora?</h2>
+            <div class="concept-box">
+                Máquina electrónica capaz de recibir, procesar y devolver resultados en torno a determinados datos.
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2 class="text-2xl font-bold">Hardware</h2>
+            <div class="concept-box">
+                Corresponde a todas las partes físicas y tangibles de una computadora: sus componentes eléctricos, electrónicos, electromecánicos y mecánicos.
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2 class="text-2xl font-bold">Software</h2>
+            <div class="concept-box">
+                Es el conjunto de los programas de cómputo, procedimientos, reglas, documentación y datos asociados, que forman parte de las operaciones de un sistema de computación.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "¿Qué es la informática?",
+                options: ["Ciencia del tratamiento automático de la información", "El estudio de los cables", "La venta de computadoras", "Jugar videojuegos"],
+                a: "Ciencia del tratamiento automático de la información"
+            },
+            {
+                q: "¿Cuál es el componente principal de un sistema informático que se puede tocar?",
+                options: ["Hardware", "Software", "Humanware", "Firmware"],
+                a: "Hardware"
+            },
+            {
+                q: "¿Cómo se le llama al conjunto de programas e instrucciones?",
+                options: ["Software", "Hardware", "Periféricos", "CPU"],
+                a: "Software"
+            },
+            {
+                q: "¿Cuál es la función principal de una computadora?",
+                options: ["Procesar datos para convertirlos en información", "Servir de adorno", "Consumir energía", "Solo navegar en internet"],
+                a: "Procesar datos para convertirlos en información"
+            },
+            {
+                q: "¿Qué es un sistema informático?",
+                options: ["Conjunto de Hardware, Software y Personal informático", "Solo la computadora", "Un programa de juegos", "Un virus"],
+                a: "Conjunto de Hardware, Software y Personal informático"
+            },
+            {
+                q: "¿Cuál de estos es un ejemplo de Hardware?",
+                options: ["Monitor", "Windows", "Word", "Excel"],
+                a: "Monitor"
+            },
+            {
+                q: "¿Cuál de estos es un ejemplo de Software?",
+                options: ["Navegador Web", "Teclado", "Mouse", "Impresora"],
+                a: "Navegador Web"
+            },
+            {
+                q: "¿Qué dispositivo es el cerebro de la computadora?",
+                options: ["CPU", "Monitor", "RAM", "Disco Duro"],
+                a: "CPU"
+            },
+            {
+                q: "¿Qué significa la palabra Informática?",
+                options: ["Información Automática", "Informe Técnico", "Información Crítica", "Informática General"],
+                a: "Información Automática"
+            },
+            {
+                q: "¿Cuál de estos componentes NO es físico?",
+                options: ["Sistema Operativo", "Memoria RAM", "Tarjeta de Video", "Cable de Poder"],
+                a: "Sistema Operativo"
+            },
+            {
+                q: "¿A qué categoría pertenece el Mouse?",
+                options: ["Hardware", "Software", "Sistema", "Aplicación"],
+                a: "Hardware"
+            },
+            {
+                q: "¿Qué es el Humanware?",
+                options: ["El usuario que utiliza la computadora", "Un virus humano", "Un tipo de monitor", "La carcasa de la PC"],
+                a: "El usuario que utiliza la computadora"
+            },
+            {
+                q: "¿Cuál es un periférico de entrada?",
+                options: ["Teclado", "Monitor", "Impresora", "Parlantes"],
+                a: "Teclado"
+            },
+            {
+                q: "¿Cuál es un periférico de salida?",
+                options: ["Impresora", "Mouse", "Escáner", "Micrófono"],
+                a: "Impresora"
+            },
+            {
+                q: "¿Para qué sirve el Disco Duro?",
+                options: ["Para guardar información permanentemente", "Para procesar datos rápidamente", "Para mostrar imágenes", "Para enfriar la computadora"],
+                a: "Para guardar información permanentemente"
+            },
+            {
+                q: "¿Qué es un dato en informática?",
+                options: ["Una unidad mínima de información sin sentido en sí misma", "Un libro completo", "Una computadora", "El resultado final de un proceso"],
+                a: "Una unidad mínima de información sin sentido en sí misma"
+            },
+            {
+                q: "¿Qué es la información?",
+                options: ["Conjunto de datos procesados con significado", "Cables y chips", "Un ratón de computadora", "Electricidad"],
+                a: "Conjunto de datos procesados con significado"
+            },
+            {
+                q: "¿Qué dispositivo permite ver lo que procesa la computadora?",
+                options: ["Monitor", "CPU", "RAM", "Teclado"],
+                a: "Monitor"
+            },
+            {
+                q: "¿Cuál es la unidad básica de almacenamiento en informática?",
+                options: ["Bit", "Vatio", "Hertzio", "Amperio"],
+                a: "Bit"
+            },
+            {
+                q: "Un conjunto de 8 bits forma un:",
+                options: ["Byte", "Mega", "Giga", "Tera"],
+                a: "Byte"
+            }
+        ];
+
+        quizData.push(
+            { q: "¿Qué dispositivo de la imagen es el cerebro de la PC?", options: ["CPU", "RAM", "Monitor", "Teclado"], a: "CPU", image: "../imagenes/cpu.jpg" },
+            { q: "¿Cómo se llama este componente?", options: ["Placa Madre", "Disco Duro", "Fuente de Poder", "Tarjeta de Red"], a: "Placa Madre", image: "../imagenes/motherboard.jpg" },
+            { q: "Identifica este componente:", options: ["Memoria RAM", "Procesador", "Cámara Web", "Altavoces"], a: "Memoria RAM", image: "../imagenes/memoria_ram.png" },
+            { q: "¿Qué periférico es este?", options: ["Escáner", "Impresora", "Monitor", "Plotter"], a: "Escáner", image: "../imagenes/escaner.png" },
+            { q: "Este dispositivo de entrada es un:", options: ["Micrófono", "Mouse", "Escáner", "Mando"], a: "Micrófono", image: "../imagenes/microfono.png" },
+            { q: "¿Qué es este objeto?", options: ["Disco Duro Externo", "Memoria RAM", "CPU", "Router"], a: "Disco Duro Externo", image: "../imagenes/disco_duro_externo.png" },
+            { q: "¿Cómo se clasifica este software?", options: ["Sistema Operativo", "Navegador Web", "Videojuego", "Antivirus"], a: "Sistema Operativo", image: "../imagenes/windows_logo.png" },
+            { q: "Identifica el periférico:", options: ["Monitor", "Impresora", "Proyector", "Teclado"], a: "Monitor", image: "../imagenes/monitor.png" },
+            { q: "¿Qué dispositivo de red es este?", options: ["Router", "Módem", "Switch", "Antena"], a: "Router", image: "../imagenes/router.png" },
+            { q: "¿Qué tipo de periférico es?", options: ["Impresora", "Escáner", "Mouse", "Gamepad"], a: "Impresora", image: "../imagenes/impresora.png" },
+            { q: "¿Qué es el Software de Sistema?", options: ["Programas que gestionan el hardware", "Juegos de computadora", "Programas de oficina", "Virus informáticos"], a: "Programas que gestionan el hardware" },
+            { q: "¿Qué es el Software de Aplicación?", options: ["Programas para tareas específicas del usuario", "El sistema operativo", "Lenguajes de programación", "Drivers de hardware"], a: "Programas para tareas específicas del usuario" },
+            { q: "¿Qué es un Sistema Informático?", options: ["Hardware, Software y Humanware", "Solo la CPU", "Solo los programas", "Solo el monitor"], a: "Hardware, Software y Humanware" },
+            { q: "¿A qué categoría pertenece Google Chrome?", options: ["Software de Aplicación", "Software de Sistema", "Hardware", "Firmware"], a: "Software de Aplicación" },
+            { q: "¿A qué categoría pertenece Windows 11?", options: ["Software de Sistema", "Software de Aplicación", "Hardware", "Humanware"], a: "Software de Sistema" },
+            { q: "Identifica este componente de almacenamiento:", options: ["Unidad SSD", "Memoria RAM", "Procesador", "Fuente de Poder"], a: "Unidad SSD", image: "../imagenes/ssd.png" },
+            { q: "¿Qué periférico de entrada es este?", options: ["Ratón / Mouse", "Teclado", "Escáner", "Micrófono"], a: "Ratón / Mouse", image: "../imagenes/raton.png" },
+            { q: "¿Qué componente permite la salida de audio?", options: ["Altavoces / Parlantes", "Micrófono", "Monitor", "Impresora"], a: "Altavoces / Parlantes", image: "../imagenes/altavoces.png" },
+            { q: "Este componente es un:", options: ["Joystick / Gamepad", "Mouse", "Teclado", "Monitor"], a: "Joystick / Gamepad", image: "../imagenes/gamepad.png" },
+            { q: "Identifica el componente físico:", options: ["Teclado", "Monitor", "CPU", "Impresora"], a: "Teclado", image: "../imagenes/teclado.png" }
+        );
+
+        quizData.push({
+            type: "matching",
+            question: "Relaciona los componentes con su definición:",
+            pairs: [
+                { term: "Hardware", definition: "Partes físicas y tangibles de la computadora" },
+                { term: "Software", definition: "Programas e instrucciones intangibles" },
+                { term: "Humanware", definition: "Personal que opera el sistema informático" },
+                { term: "Informática", definition: "Tratamiento automático de la información" },
+                { term: "Dato", definition: "Unidad mínima de información" }
+            ]
+        });
+
+        // REQ: Letter-based matching (Tabla A: Concepto, Tabla B: Letra)
+        quizData.push({
+            type: "matching",
+            question: "Identifica la letra que corresponde a cada concepto (Hardware/Software):",
+            pairs: [
+                { term: "CPU (Cerebro)", definition: "Hardware de Procesamiento" },
+                { term: "Sistema Operativo", definition: "Software de Sistema" },
+                { term: "Microsoft Word", definition: "Software de Aplicación" },
+                { term: "Monitor / Pantalla", definition: "Hardware de Salida" },
+                { term: "Teclado / Mouse", definition: "Hardware de Entrada" }
+            ]
+        });
+
+        quizData.push(
+            { q: "¿Cuál es un ejemplo de dispositivo de entrada?", options: ["Escáner", "Impresora", "Monitor", "Parlantes"], a: "Escáner" },
+            { q: "¿Qué dispositivo se encarga de dar energía a la PC?", options: ["Fuente de Poder", "RAM", "CPU", "Disco Duro"], a: "Fuente de Poder" },
+            { q: "¿Qué componente almacena los programas que se están ejecutando?", options: ["Memoria RAM", "Disco Duro", "Procesador", "ROM"], a: "Memoria RAM" },
+            { q: "¿Qué tipo de software es un Antivirus?", options: ["Software de Sistema / Utilidades", "Software de Programación", "Hardware", "Navegador"], a: "Software de Sistema / Utilidades" },
+            { q: "¿A qué se refiere el término 'intangible'?", options: ["Que no se puede tocar (Software)", "Que es físico (Hardware)", "Que es un usuario", "Que es electricidad"], a: "Que no se puede tocar (Software)" },
+            { q: "¿Cuál es el hardware básico de salida?", options: ["Monitor", "Teclado", "Mouse", "Micrófono"], a: "Monitor" },
+            { q: "¿Para qué sirve el Software de Programación?", options: ["Para crear otros programas", "Para escribir cartas", "Para navegar en internet", "Para jugar"], a: "Para crear otros programas" },
+            { q: "Identifica este componente vital:", options: ["Placa Madre", "Memoria RAM", "Tarjeta de Video", "Fuente de Poder"], a: "Placa Madre", image: "../imagenes/motherboard.jpg" },
+            { q: "Un sistema operativo libre es:", options: ["Linux", "Windows", "iOS", "macOS"], a: "Linux" },
+            { q: "¿Cuál es la función del Escáner?", options: ["Convertir documentos físicos a digitales", "Imprimir archivos", "Mostrar imágenes", "Procesar datos"], a: "Convertir documentos físicos a digitales" }
+        );
+    </script>
+</body>
+</html>

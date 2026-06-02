@@ -102,6 +102,15 @@ FLUJO PRINCIPAL DE TRABAJO
 -----------------------------------
 TAREAS PENDIENTES DE REVISIÓN
 
+[JULES - JUNIO 2026] Refactorización y Expansión Integral de QuizPro:
+- Implementación de Shuffle Robusto y Control de Sesión (No-repetición).
+- Acceso Jerárquico por Grado (10°, 11°, 12°) y Rol Docente.
+- Refactorización UI/UX: Navegación guiada por pantallas y modo Full Viewport.
+- Sistema de Progresión: Desbloqueo de niveles (Básico -> Intermedio -> Avanzado) con umbral del 70%.
+- Dashboard de Desempeño con Reinforcement Feedback basado en tags.
+- Multi-modalidad: Ingesta de datos para modos Memoria, Práctica y Transcripción.
+- Unificación y Consolidación del Banco de Preguntas del repositorio.
+
 0. Generación de presentaciones académicas para Programación y Diseño Web (31 mayo 2026). - COMPLETADA
 1. Corregir error de conexión y persistencia en "Mi Perfil" (index.html y dashboard). - COMPLETADA
 2. Garantizar que el correo electrónico del alumno se renderice en la tarjeta del docente. - COMPLETADA

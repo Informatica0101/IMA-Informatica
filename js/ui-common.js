@@ -501,22 +501,14 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
         case 'Asignatura':
             label.textContent = 'Selecciona Asignatura';
             const gradeObjA = sourceData.find(d => d.grade === params.grado);
-            let currentPartial = params.parcial;
-            if (role !== 'Profesor' && !currentPartial && gradeObjA) {
-                 const partials = ["Cuarto Parcial", "Tercer Parcial", "Segundo Parcial", "Primer Parcial"];
-                 const available = gradeObjA.subjects.filter(s => window.checkSectionHelper(s.sections, params.seccion));
-                 for (const p of partials) {
-                     if (available.some(s => s.partial === p)) { currentPartial = p; break; }
-                 }
-            }
 
+            // REQ 7: Filtrado por Autorización (Parcial Actual/Anteriores)
             if (gradeObjA) {
                 items = [...new Set(gradeObjA.subjects
-                    .filter(s => window.checkSectionHelper(s.sections, params.seccion) && (!currentPartial || s.partial === currentPartial))
+                    .filter(s => window.checkSectionHelper(s.sections, params.seccion) && window.isContentAuthorized(s.partial))
                     .map(s => s.name)
                 )];
             }
-            params.parcial = currentPartial;
             nextLevel = (role === 'Profesor') ? 'Parcial' : 'Temas';
             if (type === 'Contenido' && role !== 'Profesor') nextLevel = 'Archivos';
             break;
@@ -649,13 +641,8 @@ window.renderCommonNav = function() {
                 html += `</div></div>`;
                 return html;
             } else {
-                let studentPartial = "";
-                const partials = ["Cuarto Parcial", "Tercer Parcial", "Segundo Parcial", "Primer Parcial"];
-                for (const p of partials) {
-                    if (filteredSubjects.some(s => s.partial === p)) { studentPartial = p; break; }
-                }
-
-                return filteredSubjects.filter(s => s.partial === studentPartial).map(subj => `
+                // REQ 7: Los estudiantes solo ven el contenido autorizado (Garantía de Scope)
+                return filteredSubjects.filter(s => window.isContentAuthorized(s.partial)).map(subj => `
                     <div class="relative group/subj">
                         <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">
                             ${subj.name} <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>
@@ -697,12 +684,8 @@ window.renderCommonNav = function() {
                 html += `</div>`;
                 return html;
             } else {
-                let studentPartial = "";
-                const partials = ["Cuarto Parcial", "Tercer Parcial", "Segundo Parcial", "Primer Parcial"];
-                for (const p of partials) {
-                    if (filteredSubjects.some(s => s.partial === p)) { studentPartial = p; break; }
-                }
-                return filteredSubjects.filter(s => s.partial === studentPartial).map(subj => `
+                // REQ 7: Los estudiantes solo ven el contenido autorizado (Garantía de Scope)
+                return filteredSubjects.filter(s => window.isContentAuthorized(s.partial)).map(subj => `
                     <button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle('hidden')">
                         ${subj.name} <span>&#9662;</span>
                     </button>

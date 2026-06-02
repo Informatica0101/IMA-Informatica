@@ -90,13 +90,25 @@ document.addEventListener('DOMContentLoaded', () => {
         contentDisplayArea.innerHTML = '';
         const gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg';
+
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const role = currentUser?.rol || 'Invitado';
+
         selectedGradeData.subjects.forEach(subjectData => {
+            // REQ 7: Filtrado por Parcial Actual para no-profesores
+            if (role !== 'Profesor' && subjectData.partial !== window.PARCIAL_ACTUAL) return;
+
             gridDiv.appendChild(createCustomButton(subjectData.name, () => {
                 selectedSubjectData = subjectData;
                 animateContentTransition(renderDownloadTopics);
             }, 'w-full bg-gray-100 text-gray-800 shadow-none hover:bg-blue-600 hover:text-white'));
         });
-        contentDisplayArea.appendChild(gridDiv);
+
+        if (gridDiv.children.length === 0) {
+            contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos autorizados para este período.</p>';
+        } else {
+            contentDisplayArea.appendChild(gridDiv);
+        }
         currentContentView = 'subjects';
     }
 
@@ -157,16 +169,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadGame(gameId, htmlPath, jsPath, initFnName, title) {
+        // Estrategia de Aislamiento Total (Post-Commit Audit)
+        const wrapper = document.getElementById('main-content-wrapper');
         const mainHeader = document.getElementById('main-header');
+
+        // 1. Ocultar el wrapper principal de golpe para evitar condiciones de carrera con carga diferida
+        if (wrapper) wrapper.style.display = 'none';
         if (mainHeader) mainHeader.classList.add('header-hidden');
-        mainContentSections.classList.add('hidden');
-        mainContentSections.classList.remove('flex');
-        dynamicallyLoadedGameContainer.classList.remove('hidden');
-        mainContentTitle.textContent = title;
+
+        // 2. Crear un contenedor efímero exclusivo para el juego si no existe
+        let gameOverlay = document.getElementById('dedicated-game-overlay');
+        if (!gameOverlay) {
+            gameOverlay = document.createElement('div');
+            gameOverlay.id = 'dedicated-game-overlay';
+            gameOverlay.className = 'flex-grow w-full bg-white animate-fade-in';
+            document.body.insertBefore(gameOverlay, document.querySelector('footer'));
+        }
+        gameOverlay.innerHTML = '<div class="flex items-center justify-center min-h-[60vh]"><i class="fas fa-spinner fa-spin text-4xl text-blue-600"></i></div>';
+        gameOverlay.style.display = 'block';
 
         try {
             const htmlResponse = await fetch(htmlPath);
-            dynamicallyLoadedGameContainer.innerHTML = await htmlResponse.text();
+            gameOverlay.innerHTML = await htmlResponse.text();
 
             const script = document.createElement('script');
             script.src = jsPath;
@@ -175,11 +199,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     window[initFnName](window.gameDataStorage);
                 }
             };
-            dynamicallyLoadedGameContainer.appendChild(script);
+            gameOverlay.appendChild(script);
         } catch (error) {
             console.error(`Error loading game ${gameId}:`, error);
-            dynamicallyLoadedGameContainer.innerHTML = '<p class="text-red-500 p-8 text-center">Error al cargar el juego. Por favor, inténtalo de nuevo.</p>';
-            dynamicallyLoadedGameContainer.appendChild(createCustomButton('Volver al Inicio', showMainContentSections, 'mt-4 mx-auto block'));
+            gameOverlay.innerHTML = '<p class="text-red-500 p-8 text-center">Error al cargar el juego. Por favor, inténtalo de nuevo.</p>';
+            gameOverlay.appendChild(createCustomButton('Volver al Inicio', window.returnToMainContent, 'mt-4 mx-auto block'));
         }
     }
 
@@ -190,13 +214,23 @@ document.addEventListener('DOMContentLoaded', () => {
     window.loadDexterityGame = () => loadGame('dexterity', 'juegos/destreza_teclado.html', 'js/destreza_teclado.js', 'initDexterityGame', 'Destreza en el Teclado');
 
     window.returnToMainContent = function() {
+        const wrapper = document.getElementById('main-content-wrapper');
         const mainHeader = document.getElementById('main-header');
+        const gameOverlay = document.getElementById('dedicated-game-overlay');
+
+        if (gameOverlay) {
+            gameOverlay.innerHTML = '';
+            gameOverlay.style.display = 'none';
+        }
+
+        if (wrapper) wrapper.style.display = 'block';
         if (mainHeader) mainHeader.classList.remove('header-hidden');
-        dynamicallyLoadedGameContainer.innerHTML = '';
+
         ['js/perifericos_juego.js', 'js/webmaster_quiz_juego.js', 'js/destreza_teclado.js', 'js/quizpro.js'].forEach(src => {
             const s = document.querySelector(`script[src="${src}"]`);
             if (s) s.remove();
         });
+
         showMainContentSections();
     };
 

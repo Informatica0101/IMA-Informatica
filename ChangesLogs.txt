@@ -27,3 +27,22 @@
   - Auditados y actualizados contenidos para asegurar 10 preguntas por archivo en todas las materias.
 - Archivo: README.md
   - Actualizada la documentación técnica con las nuevas secciones de "Sistema de Navegación y Estado" y "QuizPro Intelligence".
+
+[QUIZPRO REFACTOR & EXPANSION]
+Archivo: backend/user-service/Code.gs
+- Líneas afectadas: saveGameResult, getGameStats, getOrCreateSheet.
+- Descripción: Implementación de guardado independiente por Asignatura + Nivel (Columna G) y lógica de mejor puntuación.
+Archivo: juegos/quizpro.html
+- Líneas afectadas: Estructura main, styles, scripts.
+- Descripción: Refactorización total a navegación por pantallas (Home/Sujeto/Niveles), eliminación de dropdowns y modo 100% viewport.
+Archivo: js/quizpro.js
+- Líneas afectadas: Todo el archivo.
+- Descripción: Implementación de jerarquía académica (10/11/12), unificación de asignaturas, shuffle robusto, control de sesión anti-repetición y multi-modalidad (Memoria, Práctica, Transcripción).
+Archivo: js/data.js
+- Líneas afectadas: window.presentationData.
+- Descripción: Unificación de materia 'Programación' e indexación de nuevas materias: Ofimática I, Informática Aplicada I, Análisis y Diseño.
+2026-06-01: Refactorización y Auditoría QuizPro v3.1.
+- Archivo: js/index-ui.js. Líneas afectadas: loadGame, returnToMainContent. Cambio: Implementación de Dedicated Game Overlay para aislamiento total del DOM.
+- Archivo: js/quizpro.js. Líneas afectadas: loadQuestions, processPresentation, startQuiz, checkAnswer, exitGame. Cambio: Auditoría de integridad temática, algoritmo de variedad de fuentes, sensibilidad a mayúsculas en transcripción, actualización de stats en tiempo real para desbloqueo.
+- Archivo: juegos/quizpro.html. Líneas afectadas: Estilos, Header/Footer. Cambio: Eliminación de elementos redundantes, clases no-copy, inyección condicional de encabezados.
+- Archivo: index.html. Líneas afectadas: main wrapper. Cambio: Envoltorio para control de visibilidad global.
