@@ -12,6 +12,11 @@ window.presentationData = [
                 partial: "Primer Parcial",
                 sections: "A, B",
                 topics: [
+                    { title: "Introducción a la Informática", file: "Informatica_I/introduccion_informatica.html" },
+                    { title: "Software y Sistemas Operativos", file: "Informatica_I/software_concepto.html" },
+                    { title: "Partes de la Computadora", file: "Informatica_I/Partes_Computadora.html" },
+                    { title: "Periféricos de Entrada y Salida", file: "Informatica_I/perifericos_entrada_salida.html" },
+                    { title: "Seguridad Informática", file: "Informatica_I/seguridad_informatica.html" },
                     { title: "Procesadores de Texto", file: "Informatica_I/prosesadores_texto.html" },
                     { title: "Formato de texto y tablas", file: "Informatica_I/texto_tablas.html" },
                     { title: "Insertar/Formato de página", file: "Informatica_I/insertar_formato.html" },

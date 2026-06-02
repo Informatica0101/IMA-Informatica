@@ -504,6 +504,18 @@ function showQuestion() {
     document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / currentQuizQuestions.length) * 100}%`;
     document.getElementById('question-text').textContent = q.question;
 
+    // REQ: Soporte para imágenes en preguntas
+    const existingImg = document.getElementById('question-image');
+    if (existingImg) existingImg.remove();
+
+    if (q.image) {
+        const img = document.createElement('img');
+        img.id = 'question-image';
+        img.src = q.image;
+        img.className = 'max-w-[200px] h-auto mx-auto mb-6 rounded-lg shadow-sm';
+        document.getElementById('question-text').after(img);
+    }
+
     const optionsContainer = document.getElementById('options-container');
     const fibContainer = document.getElementById('fib-container');
     const matchingContainer = document.getElementById('matching-container');
@@ -538,7 +550,9 @@ function showQuestion() {
     } else if (q.type === 'transcription') {
         fibContainer.classList.remove('hidden');
         const targetEl = document.createElement('div');
-        targetEl.className = 'bg-blue-50 text-blue-800 p-4 rounded-xl italic text-sm mb-6 border border-blue-100 no-copy';
+        targetEl.className = 'bg-blue-50 text-blue-800 p-4 rounded-xl italic text-sm mb-6 border border-blue-100';
+        targetEl.style.userSelect = 'none';
+        targetEl.style.webkitUserSelect = 'none';
         targetEl.textContent = q.targetText || q.answer || "Error: Texto no encontrado";
         targetEl.oncontextmenu = (e) => e.preventDefault();
 
@@ -548,13 +562,15 @@ function showQuestion() {
         fibContainer.prepend(targetEl);
 
         const input = document.getElementById('fib-input');
-        input.placeholder = "Escribe aquí respetando ortografía...";
-        setTimeout(() => {
-            if (input) {
-                input.disabled = false;
+        if (input) {
+            input.placeholder = "Escribe aquí respetando ortografía...";
+            input.disabled = false;
+            input.readOnly = false;
+            setTimeout(() => {
                 input.focus();
-            }
-        }, 300);
+                input.click();
+            }, 500);
+        }
     } else if (q.type === 'memory') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
@@ -598,19 +614,47 @@ function showQuestion() {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
         pairsList.innerHTML = '';
-        const definitions = shuffleArray(q.pairs.map(p => p.definition));
+
+        const shuffledDefs = shuffleArray(q.pairs.map(p => p.definition));
+        const letters = "ABCDEFGHIJ";
+
+        let html = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-left">
+                <div class="bg-gray-100 p-3 rounded-xl">
+                    <p class="text-[10px] font-black uppercase text-gray-500 mb-2">Tabla A: Conceptos</p>
+                    <div class="space-y-2">
+                        ${q.pairs.map((pair, i) => `
+                            <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-gray-200">
+                                <input type="text" maxlength="1"
+                                    class="matching-letter-input w-8 h-8 text-center font-bold border-2 border-blue-100 rounded-lg focus:border-blue-500 outline-none uppercase text-xs"
+                                    data-term="${pair.term}">
+                                <span class="text-[11px] font-semibold text-gray-700">${pair.term}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-3 rounded-xl">
+                    <p class="text-[10px] font-black uppercase text-blue-400 mb-2">Tabla B: Definiciones</p>
+                    <div class="space-y-2">
+                        ${shuffledDefs.map((def, i) => `
+                            <div class="flex items-start gap-2 text-[10px] leading-tight">
+                                <span class="font-bold text-blue-600">${letters[i]})</span>
+                                <span class="text-gray-600">${def}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+        pairsList.innerHTML = html;
+
+        // Guardar mapeo correcto
+        window.currentMatchingMapping = {};
         q.pairs.forEach(pair => {
-            const row = document.createElement('div');
-            row.className = 'flex flex-col md:flex-row gap-2 items-center bg-gray-50 p-3 rounded-xl border border-gray-100';
-            row.innerHTML = `
-                <div class="w-full md:w-1/3 font-bold text-blue-600 text-sm">${pair.term}</div>
-                <select class="matching-select w-full md:w-2/3 p-2 bg-white border rounded-lg text-xs outline-none focus:border-blue-400" data-term="${pair.term}">
-                    <option value="">Selecciona...</option>
-                    ${definitions.map(d => `<option value="${d}">${d}</option>`).join('')}
-                </select>
-            `;
-            pairsList.appendChild(row);
+            const letterIdx = shuffledDefs.indexOf(pair.definition);
+            window.currentMatchingMapping[pair.term] = letters[letterIdx];
         });
+
     } else if (q.type === 'completion' || q.type === 'fill-in-the-blanks') {
         fibContainer.classList.remove('hidden');
         const input = document.getElementById('fib-input');
@@ -643,8 +687,8 @@ function registerSeenQuestion(id) {
 }
 
 function checkAnswer(selected, correct, btn) {
-    if (document.body.dataset.isTransitioning === "true") return;
-    document.body.dataset.isTransitioning = "true";
+    if (window.isProcessingAnswer) return;
+    window.isProcessingAnswer = true;
 
     const allBtns = document.querySelectorAll('.option-card');
     const input = document.getElementById('fib-input');
@@ -676,15 +720,19 @@ function checkAnswer(selected, correct, btn) {
     } else {
         if (btn) btn.classList.add('incorrect', 'border-red-500', 'bg-red-50', 'text-red-700');
         feedback.className = 'text-center h-8 font-bold text-red-500';
-        const displayCorrect = correct || "Respuesta no disponible";
+        const displayCorrect = (correct !== undefined && correct !== null) ? correct : "No disponible";
         feedback.textContent = `Incorrecto. Era: ${displayCorrect}`;
         incorrectAnswers.push(q);
-        allBtns.forEach(b => { if (b.textContent === correct) b.classList.add('correct', 'border-emerald-500', 'text-emerald-600'); });
+        allBtns.forEach(b => {
+            if (correct && b.textContent.trim() === String(correct).trim()) {
+                b.classList.add('correct', 'border-emerald-500', 'text-emerald-600');
+            }
+        });
     }
 
     document.getElementById('score').textContent = `${score} / ${currentIndex + 1}`;
     setTimeout(() => {
-        document.body.dataset.isTransitioning = "false";
+        window.isProcessingAnswer = false;
         currentIndex++;
         if (currentIndex < currentQuizQuestions.length) showQuestion();
         else endQuiz();
@@ -699,16 +747,34 @@ window.submitFib = function() {
 
 window.submitMatching = function() {
     const q = currentQuizQuestions[currentIndex];
+    const inputs = document.querySelectorAll('.matching-letter-input');
     const selects = document.querySelectorAll('.matching-select');
     let allCorrect = true;
-    selects.forEach(sel => {
-        const term = sel.dataset.term;
-        const val = sel.value;
-        const correctPair = q.pairs.find(p => p.term === term);
-        if (val !== correctPair.definition) { allCorrect = false; sel.classList.add('border-red-500'); }
-        else { sel.classList.add('border-green-500'); }
-        sel.disabled = true;
-    });
+
+    if (inputs.length > 0) {
+        inputs.forEach(input => {
+            const term = input.dataset.term;
+            const val = input.value.trim().toUpperCase();
+            const correctLetter = window.currentMatchingMapping[term];
+
+            if (val !== correctLetter) {
+                allCorrect = false;
+                input.classList.add('border-red-500', 'bg-red-50');
+            } else {
+                input.classList.add('border-emerald-500', 'bg-emerald-50');
+            }
+            input.disabled = true;
+        });
+    } else {
+        selects.forEach(sel => {
+            const term = sel.dataset.term;
+            const val = sel.value;
+            const correctPair = q.pairs.find(p => p.term === term);
+            if (val !== correctPair.definition) { allCorrect = false; sel.classList.add('border-red-500'); }
+            else { sel.classList.add('border-green-500'); }
+            sel.disabled = true;
+        });
+    }
 
     const feedback = document.getElementById('feedback-msg');
     if (allCorrect) {
