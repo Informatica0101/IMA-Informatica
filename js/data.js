@@ -42,7 +42,7 @@ window.presentationData = [
                     { title: "Pseudocódigo y ordenación simbólica", file: "II_BTP_A/Programacion/pseudocodigo_ordenacion.html" },
                     { title: "Diagramas de flujo", file: "II_BTP_A/Programacion/diagramas_flujo.html" }
                     ]
-            }
+            },
             {
                 name: "Programación",
                 partial: "II Parcial",
