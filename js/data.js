@@ -31,7 +31,7 @@ window.presentationData = [
         subjects: [
             {
                 name: "Programación",
-                partial: "I y II Parcial",
+                partial: "I Parcial",
                 sections: "A",
                 topics: [
                     { title: "Introducción a la Programación", file: "II_BTP_A/Programacion/introduccion_programacion.html" },
@@ -40,8 +40,14 @@ window.presentationData = [
                     { title: "Análisis y diseño de algoritmos", file: "II_BTP_A/Programacion/analisis_diseno_algoritmos.html" },
                     { title: "Programación y representación", file: "II_BTP_A/Programacion/programacion_representacion.html" },
                     { title: "Pseudocódigo y ordenación simbólica", file: "II_BTP_A/Programacion/pseudocodigo_ordenacion.html" },
-                    { title: "Diagramas de flujo", file: "II_BTP_A/Programacion/diagramas_flujo.html" },
-                    { title: "Introducción a los Lenguajes de Programación", file: "II_BTP_A/Programacion/intro_lenguajes_programacion.html" },
+                    { title: "Diagramas de flujo", file: "II_BTP_A/Programacion/diagramas_flujo.html" }
+                    ]
+            }
+            {
+                name: "Programación",
+                partial: "II Parcial",
+                sections: "A",
+                topics: [{ title: "Introducción a los Lenguajes de Programación", file: "II_BTP_A/Programacion/intro_lenguajes_programacion.html" },
                     { title: "Lenguajes compilados e interpretados / Bucles", file: "II_BTP_A/Programacion/lenguajes_compilados_interpretados.html" },
                     { title: "Lenguajes declarativos / Bucle Mientras", file: "II_BTP_A/Programacion/lenguajes_declarativos_mientras.html" },
                     { title: "Programación Lógica / Bucle Repetir", file: "II_BTP_A/Programacion/prog_logica_repetir.html" },
@@ -63,7 +69,7 @@ window.presentationData = [
             },
             {
                 name: "Informática Aplicada I",
-                partial: "Primer Parcial",
+                partial: "I Parcial",
                 sections: "A",
                 topics: [
                     { title: "Sistemas de Numeración", file: "II_BTP_A/Informatica_Aplicada_I/sistemas_numeracion.html" },
@@ -75,7 +81,7 @@ window.presentationData = [
             },
             {
                 name: "Análisis y Diseño",
-                partial: "Primer Parcial",
+                partial: "I Parcial",
                 sections: "A",
                 topics: [
                     { title: "Rol del Analista", file: "II_BTP_A/analisis_diseno/rol_analista_sistemas.html" },
@@ -92,7 +98,7 @@ window.presentationData = [
         subjects: [
             {
                 name: "Diseño Web (I Parcial)",
-                partial: "Primer Parcial",
+                partial: "I Parcial",
                 sections: "A",
                 topics: [
                     { title: "Introducción al Diseño Web", file: "III_BTP_A/introduccion_diseno_web.html" },
@@ -106,7 +112,7 @@ window.presentationData = [
             },
             {
                 name: "Diseño Web",
-                partial: "Segundo Parcial",
+                partial: "II Parcial",
                 sections: "A",
                 topics: [
                     { title: "Introducción a CSS", file: "III_BTP_A/dw_II/introduccion_css.html" },
