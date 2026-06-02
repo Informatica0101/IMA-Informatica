@@ -391,13 +391,23 @@ function saveGameResult(payload) {
   const data = sheet.getDataRange().getValues();
   const score = parseFloat(puntaje || 0);
 
+  const standardLevel = (lvl) => {
+    if (!lvl) return 'Básico';
+    const n = lvl.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (n === 'basico') return 'Básico';
+    if (n === 'intermedio') return 'Intermedio';
+    if (n === 'avanzado') return 'Avanzado';
+    return lvl;
+  };
+  const normNivel = standardLevel(nivel);
+
   let existingIndex = -1;
   // Búsqueda para actualización de High Score independiente por Materia + Grado + Nivel
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][1]) === String(userId) &&
         data[i][3] === juego &&
         String(data[i][4]) === String(asignatura) &&
-        String(data[i][6]) === String(nivel) &&
+        standardLevel(data[i][6]) === normNivel &&
         String(data[i][7]) === String(grado)) {
       existingIndex = i;
       break;
@@ -412,7 +422,7 @@ function saveGameResult(payload) {
     }
   } else {
     // Estructura: [Fecha, UserId, Alumno, Juego, Asignatura, Puntaje, Nivel, Grado]
-    sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, asignatura || "General", score, nivel || "Básico", grado || ""]);
+    sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, asignatura || "General", score, normNivel, grado || ""]);
   }
   return { status: "success" };
 }
