@@ -127,3 +127,20 @@ Archivo: js/games-adapter.js
 Archivo: js/config.js
 - [CONFIRMADO] Implementado Guardián de Alcance (isContentAuthorized) con normalización de parciales (I Parcial -> Primer Parcial).
 - [CONFIRMADO] Fallback de seguridad para GamesAdapter implementado.
+
+AUDITORÍA DE BANCO DE PREGUNTAS (ICR v3.1 & Phase 10) - 2026-06-18
+- Se revisaron 771 reactivos clasificados como "General".
+- [CORRECCIÓN] "2. ¿Para qué se usa <th>?" -> Respuesta cambiada de "<th>" a "C" (Encabezados de tabla).
+- [CORRECCIÓN] "¿Cuántos dígitos binarios (bits) se necesitan...?" -> Respuesta cambiada de "4" a "B" (4).
+- [CORRECCIÓN] "¿Cuál de los siguientes NO es un símbolo válido en el sistema hexadecimal?" -> Respuesta cambiada de "G" a "B" (G).
+- [CORRECCIÓN] "¿Qué letra representa el valor decimal 15 en hexadecimal?" -> Respuesta cambiada de "F" a "B" (F).
+- [CORRECCIÓN] "¿Cuál es la base del sistema de numeración binario?" -> Respuesta cambiada de "2" a "C" (2).
+- [CORRECCIÓN] "Al convertir el número binario 1001 a decimal..." -> Respuesta cambiada de "9" a "A" (9).
+- [CORRECCIÓN] "¿Qué carácter se utiliza para indicar una referencia absoluta?" -> Respuesta cambiada de "$" a "D" ($).
+- [CORRECCIÓN] "¿Cuál es el símbolo que debe iniciar toda fórmula...?" -> Respuesta cambiada de "=" a "B" (=).
+- [CORRECCIÓN] "¿Qué operador se usa para multiplicar en una fórmula?" -> Respuesta cambiada de "*" a "B" (*).
+- [RECLASIFICACIÓN] 215 preguntas de Diseño Web migradas de "General" a temas como: "Estilos CSS", "Fundamentos Web", "DOM y JavaScript".
+- [RECLASIFICACIÓN] 252 preguntas de Informática I migradas de "General" a: "Hardware y Almacenamiento", "Sistemas de Numeración", "Procesadores de Texto", etc.
+- [RECLASIFICACIÓN] 80 preguntas de Ofimática migradas de "General" a: "Excel: Formato Condicional", "Excel: Automatización (VBA)".
+- [RECLASIFICACIÓN] 155 preguntas de Programación migradas de "General" a: "Lógica de Programación", "Estructuras de Control", "Bases de Datos".
+- [RECLASIFICACIÓN] 69 preguntas con Asignatura "General" reasignadas a "Análisis y Diseño" (con temas de SDLC, Gestión de Proyectos) e "Informática I".

@@ -40,3 +40,19 @@ REVISIÓN FINAL - 2026-06-03
 - [VERIFICADO] js/config.js: window.normalizeQuestion estandariza la detección de respuestas correctas eliminando errores de visualización en feedback.
 - [VERIFICADO] js/quizpro.js: Sincronización de Mastery Index en el flujo de resultados para desbloqueo dinámico de niveles.
 - [LIMPIEZA] Eliminado server.log y archivos .txt huérfanos confirmados en auditoría.
+
+REVISIÓN ANALÍTICA E INTEGRIDAD DE DATOS (ICR v3.1) - 2026-06-18
+
+ARCHIVO: backend/user-service/Code.gs
+- Líneas 12-25: Implementada constante ANALYTICS_CONFIG con pesos oficiales para ICR, GP y Mastery.
+- Líneas 68-85: Agregadas funciones utilitarias getStandardLevelName y parseGrade para soporte de anclaje conductual.
+- Línea 815: Refactorizada función recordAnalytics integrando la Fase de Calibración (Cold Start) y cálculo de TRc (Tiempo Relativo Compuesto).
+- Línea 845: Implementado anclaje obligatorio a "Informática - Décimo - Básico" para nuevos perfiles.
+- Línea 870: Implementado cálculo de Eficiencia penalizando impulsividad en errores.
+- Línea 895: Implementado Índice de Confianza de Respuesta (ICR) y Probabilidad de Adivinación (GP).
+- Línea 956: Aplicada Regla 70/30 (Rule 70/30) en la persistencia del Perfil de Dominio (updateLearningProfile).
+
+ARCHIVO: js/questions-bank.json
+- Masivo: Reclasificación temática de 771 preguntas anteriormente etiquetadas como "General".
+- Corrección: Normalización de campos RespuestaCorrecta a formato estándar (A, B, C, D) en 9 reactivos críticos.
+- Estructuración: Asignación de temas específicos (ej. "Ingeniería de Requisitos", "Sistemas de Numeración", "Estilos CSS") basada en auditoría de contenido.
