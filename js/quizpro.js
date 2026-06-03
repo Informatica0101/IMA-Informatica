@@ -381,6 +381,27 @@ async function loadQuestions() {
     allPresentationQuestions = [];
     console.log(`[QuizPro] Consultando Banco Central para: ${selectedAsignatura} (${selectedDifficulty})`);
 
+    // FASE 1: Consumo Local (JSON) como fuente primaria
+    try {
+        const localRes = await fetch('js/questions-bank.json');
+        if (localRes.ok) {
+            const localData = await localRes.json();
+            const filteredLocal = localData.filter(q =>
+                window.normalizeSubject(q.Asignatura) === window.normalizeSubject(selectedAsignatura) &&
+                window.getStandardLevelName(q.Nivel) === window.getStandardLevelName(selectedDifficulty)
+            );
+
+            if (filteredLocal.length > 0) {
+                console.log(`[QuizPro] Cargadas ${filteredLocal.length} preguntas desde JSON local.`);
+                allPresentationQuestions = transformBankQuestions(filteredLocal);
+                return;
+            }
+        }
+    } catch (e) {
+        console.warn("[QuizPro] Fallo carga de JSON local, reintentando con API...", e);
+    }
+
+    // FASE 2: Consumo API (Google Sheets) como fuente secundaria
     try {
         const res = await fetchApi('USER', 'getQuestionBank', {
             asignatura: selectedAsignatura,
@@ -389,8 +410,27 @@ async function loadQuestions() {
         });
 
         if (res.status === 'success' && res.data) {
-            // Transformar datos crudos del Banco al formato de QuizPro
-            const bankQuestions = res.data.map(q => {
+            allPresentationQuestions = transformBankQuestions(res.data);
+            console.log(`[QuizPro] Cargadas ${allPresentationQuestions.length} preguntas desde la API del Banco Central.`);
+        }
+
+        // Fallback: Si el banco está vacío para esta nueva asignatura, intentar cargar desde presentaciones legacy
+        if (allPresentationQuestions.length === 0) {
+            console.log("[QuizPro] Banco vacío. Intentando carga legacy de presentaciones...");
+            await loadQuestionsLegacy();
+        }
+
+    } catch (e) {
+        console.error("[QuizPro] Error cargando desde el Banco:", e);
+        await loadQuestionsLegacy();
+    }
+}
+
+/**
+ * Transforma los datos crudos del banco (JSON o API) al formato interno de QuizPro
+ */
+function transformBankQuestions(data) {
+    const bankQuestions = data.map(q => {
                 // Heurística de Multi-Modalidad (Fase 4)
                 let type = q.TipoActividad || "Selección múltiple";
                 let options = [q.OpcionA, q.OpcionB, q.OpcionC, q.OpcionD].filter(o => o && o.trim() !== "");
@@ -413,7 +453,7 @@ async function loadQuestions() {
                 }
 
                 return {
-                    id: q.PreguntaID,
+                    id: q.PreguntaID || `bank_${Math.random().toString(36).substr(2, 9)}`,
                     question: q.Pregunta,
                     options: options,
                     items: items,
@@ -424,14 +464,13 @@ async function loadQuestions() {
                     image: q.Imagen,
                     subject: q.Asignatura,
                     nivel: q.Nivel,
-                    tags: [q.Tema]
+                    tags: [q.Tema || "General"]
                 };
             });
 
             // Generador de Distractores Inteligentes (Fase 3)
-            // Si una pregunta no tiene suficientes opciones, las tomamos de otras respuestas correctas del mismo tema
             bankQuestions.forEach(q => {
-                if (q.options.length < 4 && q.type === "Selección múltiple") {
+                if (q.options.length < 4 && (q.type === "Selección múltiple" || q.type === "opcion_multiple")) {
                     const sameTopicAnswers = bankQuestions
                         .filter(other => other.id !== q.id && other.tags[0] === q.tags[0])
                         .map(other => other.answer);
@@ -443,20 +482,7 @@ async function loadQuestions() {
                 }
             });
 
-            allPresentationQuestions = bankQuestions;
-            console.log(`[QuizPro] Cargadas ${allPresentationQuestions.length} preguntas desde el Banco Central.`);
-        }
-
-        // Fallback: Si el banco está vacío para esta nueva asignatura, intentar cargar desde presentaciones legacy
-        if (allPresentationQuestions.length === 0) {
-            console.log("[QuizPro] Banco vacío. Intentando carga legacy de presentaciones...");
-            await loadQuestionsLegacy();
-        }
-
-    } catch (e) {
-        console.error("[QuizPro] Error cargando desde el Banco:", e);
-        await loadQuestionsLegacy();
-    }
+            return bankQuestions;
 }
 
 async function loadQuestionsLegacy() {

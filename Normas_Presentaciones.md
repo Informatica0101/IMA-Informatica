@@ -1,60 +1,58 @@
-# Normas de Generación de Presentaciones Académicas (ISEMED)
+# Normas de Estandarización de Presentaciones IMA
 
-Este documento establece las normas obligatorias para la creación y actualización de presentaciones didácticas dentro de la plataforma académica.
+Este documento define las reglas técnicas y pedagógicas obligatorias para todas las presentaciones HTML dentro del ecosistema educativo de la institución.
+
+---
 
 ## 1. Estructura Obligatoria (16 Diapositivas)
 
-Todas las presentaciones deben constar de exactamente 16 diapositivas distribuidas de la siguiente manera:
+Toda presentación debe seguir exactamente este orden:
 
-*   **Diapositiva 1:** Portada del tema (Regla de Conservación Estricta).
-    *   **Estructura:** Se debe mantener la estructura original de la plantilla base sin modificaciones estructurales.
-    *   **Elementos Obligatorios (en orden):**
-        1. Logo de la institución (sin cambios en dimensiones o posición).
-        2. Nombre del tema (Título principal).
-        3. Nombre de la asignatura.
-        4. Nombre del grado y sección.
-        5. Nombre del docente.
-        6. Fecha de la clase.
-    *   **Restricciones de Estilo:** Prohibido modificar tipografía, tamaños de letra, colores, alineación (centrada) o espaciados. El título debe estar separado del resto por dos espacios visuales.
-    *   **Modificaciones Permitidas:** Únicamente el texto del tema, fecha y asignatura.
-*   **Diapositivas 2 a 6:** Desarrollo del Tema Principal 1. Explicaciones claras y ejemplos estructurados.
-*   **Diapositiva 7:** Ejercicio Práctico del Tema Principal 1. Incluye definiciones y conceptos clave.
-*   **Diapositivas 8 a 12:** Desarrollo del Tema Principal 2 (o continuación avanzada del tema).
-*   **Diapositiva 13:** Ejercicio Práctico del Tema Principal 2.
-*   **Diapositivas 14 a 15:** Cuestionario Interactivo (Evaluación).
-    *   Mínimo 10 preguntas (5 por diapositiva).
-    *   **Reglas del Quiz:**
-        *   La respuesta correcta debe tener una longitud similar a las demás opciones (no debe destacar por ser más corta ni más larga).
-        *   La posición de la respuesta correcta debe variar obligatoriamente respecto a la pregunta anterior (no repetir ubicación consecutiva).
-*   **Diapositiva 16:** Asignación (Tarea) indicada en el plan de clases.
+1.  **Diapositiva 1: Portada Institucional**
+    - Logo (imagenes/logo.png), Nombre del Tema, Asignatura, Grado/Sección, Nombre del Docente y Fecha.
+2.  **Diapositiva 2: Objetivos de la Clase**
+    - Al menos 2 objetivos de aprendizaje.
+3.  **Diapositivas 3-10: Desarrollo de Contenido**
+    - Mezcla de texto, imágenes y bloques de código.
+4.  **Diapositivas 11-12: Cuestionario Interactivo**
+    - 5 preguntas por diapositiva para un total de 10.
+5.  **Diapositiva 13: Resumen de Puntos Clave**
+6.  **Diapositiva 14: Asignación (Tarea)**
+    - Tarea para realizar en casa con valor y fecha.
+7.  **Diapositiva 15: Glosario Técnico**
+8.  **Diapositiva 16: Despedida y Créditos**
 
-## 2. Reglas de Diseño y Estilo
+---
 
-*   **Estilo Visual:** Diseño sobrio, profesional y académico.
-*   **Densidad de Información:** Evitar la saturación de texto. Priorizar la legibilidad.
-*   **Fuentes y Tipografía:** Utilizar 'Inter' para cuerpo de texto y 'Poppins' para títulos.
-*   **Colores Institucionales:** Respetar la paleta definida en el sistema (Azul, Naranja, Gris, Blanco).
-*   **Gráficos:** Se prohíben imágenes externas para diagramas o esquemas. Deben generarse mediante HTML, CSS o JavaScript nativo.
-*   **Estructura de Ejemplos:** Todos los ejemplos de código deben ser duales, mostrando explícitamente:
-    1. Implementación en HTML.
-    2. Implementación en CSS.
-*   **Framework:** Utilizar Tailwind CSS v4 para el estilizado.
+## 2. Diseño Institucional
 
-## 3. Sistema de Navegación
+- **Encabezado Global:** Debe incluir el Logo, "ISEMED" y "Área de Informática".
+- **Pie de Página Global:** Debe incluir la bandera de Honduras y el copyright.
+- **Tipografía:** Inter o Poppins.
+- **Colores:** Azul Institucional (#2563eb).
 
-La presentación debe responder a los siguientes controles:
+---
 
-*   **Avanzar:** Clic izquierdo, Barra espaciadora o Flecha derecha.
-*   **Retroceder:** Tecla Retroceso (Backspace) o Flecha izquierda.
-*   **Pantalla Completa (F11):** Al estar en modo pantalla completa, se deben ocultar automáticamente el encabezado, pie de página y botones de navegación de la interfaz global para maximizar el área de proyección.
+## 3. Navegación Estándar
 
-## 4. Restricciones de Contenido
+- **Teclado:** Flecha derecha / Espacio (Avanzar), Flecha izquierda (Retroceder).
+- **Móvil:** Swipe izquierda (Avanzar), Swipe derecha (Retroceder).
+- **Fullscreen:** Doble toque en portada (móvil) o F11 (escritorio).
+- **Auto-hide:** El encabezado y pie de página deben ocultarse automáticamente en modo Fullscreen.
 
-*   **Fuentes Autorizadas:** Únicamente se permite extraer información de los PDFs oficiales proporcionados en la carpeta de la asignatura correspondiente.
-*   **Análisis de Planes de Clase:** Es obligatorio identificar el tema correspondiente a la fecha exacta mediante el Plan de Clases oficial.
-*   **Coherencia Temporal:** Revisar el tema anterior y siguiente para evitar saltos lógicos o repeticiones innecesarias.
-*   **Temas Secundarios:** Solo se permite complementar información externa (como ejercicios de PSeInt o estructuras de control) si están explícitamente mencionados en el plan de clases.
+---
 
-## 5. Integración al Sistema
+## 4. Componentes Especiales
 
-Las presentaciones terminadas deben integrarse en el archivo `js/data.js` para ser visibles en la sección "Cursos" del menú principal, respetando los filtros de Rol, Grado, Sección y Asignatura.
+- **Concept Box:** `<div class="concept-box">` para definiciones importantes.
+- **Code Box:** `<div class="code-box">` con resaltado de sintaxis manual.
+- **Quiz:** Usar botones `.quiz-option-button` con feedback visual (Correcto/Incorrecto).
+
+---
+
+## 5. Auditoría de Calidad
+
+Cada presentación debe ser validada contra:
+- **NormalizeQuestion:** Los cuestionarios deben usar `correctAnswer` o `respuestaCorrecta`.
+- **Integridad de Imágenes:** Todas las rutas deben apuntar a `imagenes/`.
+- **Responsive:** Probar en vista móvil antes de publicar.

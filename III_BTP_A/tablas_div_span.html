@@ -35,17 +35,30 @@
     </style>
 </head>
 <body class="antialiased">
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
+
+    <!-- ENCABEZADO INSTITUCIONAL -->
+    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left transition-all duration-300">
         <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
-            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Diseño Web I</h1>
+            <img src="../imagenes/logo.png" id="header-logo" alt="Logo" class="w-16 sm:w-20 h-auto">
+            <div class="leading-none">
+                <h1 class="text-sm sm:text-base font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] sm:text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
+            </div>
         </div>
         <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-2 sm:space-x-3">
-                <li><a href="../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
+            <ul class="flex space-x-4">
+                <li><a href="../index.html" id="nav-home-link" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest transition-colors">Inicio</a></li>
             </ul>
         </nav>
     </header>
+
+
+
+
+
+
+
+
 
     <main class="flex-grow flex justify-center items-center p-3">
         <div id="presentation-container" class="relative">
@@ -258,12 +271,7 @@
         <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 14</div>
     </main>
 
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
-            <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Diseño Web I</p>
-        </div>
-    </footer>
+
 
     <script>
         const slides = document.querySelectorAll('.slide');
@@ -502,5 +510,87 @@
     })();
 
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- PIE DE PÁGINA INSTITUCIONAL -->
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-[10px] p-4 transition-all duration-300">
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <img src="../imagenes/bandera-de-honduras.png" id="footer-flag" alt="HN" class="w-10 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
+        </div>
+    </footer>
+
+
+    <!-- LOGICA DE NAVEGACIÓN ESTÁNDAR (Fase 6) -->
+    <script>
+        (function() {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   else if (typeof nextSlide === 'function') nextSlide();
+                }
+                if (e.key === 'ArrowLeft') {
+                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   else if (typeof prevSlide === 'function') prevSlide();
+                }
+            });
+
+            const container = document.getElementById('presentation-container') || document.body;
+            let tsX = 0;
+            container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
+            container.addEventListener('touchend', e => {
+                let teX = e.changedTouches[0].screenX;
+                if (tsX - teX > 50) {
+                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    else if (typeof nextSlide === 'function') nextSlide();
+                }
+                if (teX - tsX > 50) {
+                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    else if (typeof prevSlide === 'function') prevSlide();
+                }
+            }, {passive: true});
+
+            // Double tap for fullscreen
+            let lastTap = 0;
+            container.addEventListener('touchstart', (e) => {
+                const now = Date.now();
+                if (now - lastTap < 300) {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen().catch(err => console.error(err));
+                    } else {
+                        document.exitFullscreen();
+                    }
+                }
+                lastTap = now;
+            }, {passive: true});
+
+            function handleFS() {
+                const isFS = document.fullscreenElement;
+                const h = document.getElementById('page-header');
+                const f = document.getElementById('page-footer');
+                if (h) h.style.display = isFS ? 'none' : 'flex';
+                if (f) f.style.display = isFS ? 'none' : 'block';
+            }
+            document.addEventListener('fullscreenchange', handleFS);
+            document.addEventListener('webkitfullscreenchange', handleFS);
+            document.addEventListener('mozfullscreenchange', handleFS);
+            document.addEventListener('MSFullscreenChange', handleFS);
+        })();
+    </script>
+
 </body>
 </html>

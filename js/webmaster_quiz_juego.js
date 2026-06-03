@@ -2544,7 +2544,17 @@ function endQuiz() {
 
     // Guardar en el portal vía Adaptador Unificado
     if (window.GamesAdapter) {
-        GamesAdapter.finishSession('Diseño Web', selectedDifficulty, currentScore);
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (user) {
+            GamesAdapter.finishSession('Diseño Web', selectedDifficulty, currentScore);
+        } else {
+            // Guest mode persistence
+            const recordKey = 'guest_record_webmaster';
+            const existing = JSON.parse(localStorage.getItem(recordKey) || '{"maxScore": 0}');
+            if (currentScore > existing.maxScore) {
+                localStorage.setItem(recordKey, JSON.stringify({ maxScore: currentScore, date: new Date().toISOString() }));
+            }
+        }
     }
 
     // Check if there's a next level
@@ -2577,19 +2587,36 @@ function shuffleArray(array) {
 // --- Global Initialization Function for the Quiz Game ---
 // This function will be called by index.html after the quiz HTML content is loaded.
 window.initQuizGame = async function() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const isGuest = !user;
+
     if (window.GamesAdapter) {
-        await GamesAdapter.init('webmaster');
+        const { lb, record } = await GamesAdapter.init('webmaster');
+
+        // Renderizar Mini-Leaderboard
+        const miniLb = document.getElementById('mini-leaderboard');
+        if (miniLb && lb && lb.global) {
+            miniLb.innerHTML = lb.global.slice(0, 3).map((u, i) => `
+                <div class="flex items-center justify-between text-[10px] font-bold">
+                    <span class="text-blue-700">${i+1}. ${u.nombre.split(' ')[0]}</span>
+                    <span class="text-blue-500">${u.promedio}%</span>
+                </div>
+            `).join('');
+        } else if (miniLb) {
+            miniLb.innerHTML = '<p class="text-[10px] text-gray-400 text-center italic">Sin datos globales</p>';
+        }
+
+        // Cargar récord personal
+        const myRecord = record?.["WebMaster Quiz"] || JSON.parse(localStorage.getItem('guest_record_webmaster') || 'null');
+        if (myRecord) {
+            const scoreSpan = document.getElementById('init-max-score');
+            if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || 0;
+        }
     }
 
-    // Cargar récord personal (Sincronizado con Adaptador)
-    const myRecord = GamesAdapter.state?.personalRecords?.["WebMaster Quiz"];
-    if (myRecord) {
-        const recordDiv = document.getElementById('personal-record-init');
-        const scoreSpan = document.getElementById('init-max-score');
-        if (recordDiv && scoreSpan) {
-            recordDiv.classList.remove('hidden');
-            scoreSpan.textContent = myRecord.maxScore;
-        }
+    if (isGuest) {
+        document.getElementById('guest-mode-warning')?.classList.remove('hidden');
+        document.getElementById('continue-guest-btn')?.classList.remove('hidden');
     }
 
     // Assign DOM elements now that they are guaranteed to be in the document
@@ -2633,7 +2660,12 @@ window.initQuizGame = async function() {
 
     // --- Event Listeners ---
     if (startQuizButton) {
-        startQuizButton.addEventListener('click', startQuiz);
+        startQuizButton.addEventListener('click', () => {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
+            }
+            startQuiz();
+        });
     }
 
     topicButtons.forEach(button => {

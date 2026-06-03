@@ -231,7 +231,7 @@
             <div class="absolute inset-0 border-4 border-blue-50 rounded-full"></div>
             <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
             <div class="absolute inset-0 flex items-center justify-center">
-                <img src="../imagenes/logo.png" alt="Logo" class="w-16 animate-pulse">
+                <img src="imagenes/logo.png" alt="Logo" class="w-16 animate-pulse">
             </div>
         </div>
         <div class="text-center space-y-3">
@@ -247,18 +247,46 @@
             </h3>
 
             <!-- Start Menu -->
-            <div id="game-start-menu" class="flex flex-col items-center justify-center min-h-[300px]">
-                <p class="text-xl text-gray-700 mb-2">Mejora tu velocidad y precisión al escribir.</p>
-                <div id="personal-record-init" class="mb-6 bg-yellow-50 p-3 rounded-xl border border-yellow-200 hidden">
-                    <p class="text-sm font-bold text-yellow-800">Récord Personal: <span id="init-max-score">0</span> WPM</p>
+            <div id="game-start-menu" class="flex flex-col items-center justify-center min-h-[400px] p-6">
+                <div class="mb-8 relative">
+                    <div class="absolute inset-0 bg-purple-500 rounded-full opacity-10 animate-ping"></div>
+                    <img src="imagenes/manosteclado.jpg" alt="Teclado" class="w-48 h-48 object-cover rounded-3xl shadow-2xl border-4 border-white relative z-10">
                 </div>
-                <button id="start-game-button" class="px-8 py-4 rounded-xl font-bold text-xl
-                            bg-blue-600 text-white hover:bg-blue-700
-                            transition-all duration-300 ease-in-out
-                            shadow-lg hover:shadow-xl transform hover:-translate-y-1
-                            focus:outline-none focus:ring-4 focus:ring-blue-300">
-                    Comenzar Juego
+
+                <div class="text-center max-w-md mb-8">
+                    <h4 class="text-2xl font-black text-gray-900 uppercase tracking-tighter mb-2">Velocidad y Precisión</h4>
+                    <p class="text-gray-500 text-sm font-medium">Mejora tu agilidad al escribir. Evita 3 errores consecutivos o el tiempo te alcanzará.</p>
+                </div>
+
+                <div id="guest-mode-warning" class="mb-6 p-4 bg-orange-50 border border-orange-100 rounded-2xl hidden">
+                    <p class="text-[10px] font-bold text-orange-700 uppercase tracking-widest text-center">Inicia sesión para guardar tu WPM</p>
+                    <div class="flex gap-2 mt-3">
+                        <a href="login.html" class="flex-1 px-4 py-2 bg-white border border-orange-200 text-orange-700 text-[10px] font-black uppercase rounded-lg text-center">Entrar</a>
+                        <a href="register.html" class="flex-1 px-4 py-2 bg-orange-600 text-white text-[10px] font-black uppercase rounded-lg text-center shadow-md">Registro</a>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl mb-8">
+                    <div id="personal-record-init" class="bg-yellow-50 p-6 rounded-[2rem] border border-yellow-100 text-center shadow-sm">
+                        <p class="text-[10px] font-black text-yellow-600 uppercase tracking-widest mb-1">Mejor WPM</p>
+                        <p class="text-3xl font-black text-yellow-700"><span id="init-max-score">0</span></p>
+                        <p class="text-[9px] font-bold text-yellow-600/60 uppercase">Palabras/Min</p>
+                    </div>
+
+                    <div class="bg-purple-50 p-6 rounded-[2rem] border border-purple-100 shadow-sm">
+                         <p class="text-[10px] font-black text-purple-600 uppercase tracking-widest mb-3 text-center">Top Global</p>
+                         <div id="mini-leaderboard" class="space-y-2">
+                             <p class="text-[10px] text-purple-400 text-center italic">Cargando...</p>
+                         </div>
+                    </div>
+                </div>
+
+                <button id="start-game-button" class="group relative px-12 py-5 bg-purple-600 text-white font-black text-xl uppercase tracking-widest rounded-2xl shadow-2xl shadow-purple-200 hover:bg-purple-700 transition-all transform hover:-translate-y-1 overflow-hidden">
+                    <span class="relative z-10">Comenzar</span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </button>
+
+                <button id="continue-guest-btn" class="mt-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest hover:text-gray-600 transition-colors hidden">Continuar como invitado</button>
             </div>
 
             <!-- Game Play Area -->
@@ -513,17 +541,35 @@
 
         // Inicializa el juego al cargar la página o al volver a jugar
         window.initDexterityGame = async function() {
-            console.log('initDexterityGame called'); // Log de depuración
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const isGuest = !user;
 
-            // Cargar récord personal
-            try {
-                const records = await GamesAdapter.getPersonalRecord();
-                const myRecord = records["Destreza en el Teclado"];
-                if (myRecord) {
-                    document.getElementById('personal-record-init').classList.remove('hidden');
-                    document.getElementById('init-max-score').textContent = myRecord.maxScore;
+            if (window.GamesAdapter) {
+                const { lb, record } = await GamesAdapter.init('dexterity');
+
+                // Mini Leaderboard
+                const miniLb = document.getElementById('mini-leaderboard');
+                if (miniLb && lb && lb.global) {
+                    miniLb.innerHTML = lb.global.slice(0, 3).map((u, i) => `
+                        <div class="flex items-center justify-between text-[10px] font-bold">
+                            <span class="text-purple-700">${i+1}. ${u.nombre.split(' ')[0]}</span>
+                            <span class="text-purple-500">${u.promedio}</span>
+                        </div>
+                    `).join('');
                 }
-            } catch(e) {}
+
+                // Récord
+                const myRecord = record?.["Destreza en el Teclado"] || JSON.parse(localStorage.getItem('guest_record_dexterity') || 'null');
+                if (myRecord) {
+                    const scoreSpan = document.getElementById('init-max-score');
+                    if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || 0;
+                }
+            }
+
+            if (isGuest) {
+                document.getElementById('guest-mode-warning')?.classList.remove('hidden');
+                document.getElementById('continue-guest-btn')?.classList.remove('hidden');
+            }
 
             // Asignar elementos del DOM
             gameStartMenu = document.getElementById('game-start-menu');
@@ -547,7 +593,14 @@
             console.log('startGameButton:', startGameButton); // Log de depuración
 
             // Configurar Event Listeners
-            if (startGameButton) startGameButton.addEventListener('click', startGame);
+            if (startGameButton) {
+                startGameButton.addEventListener('click', () => {
+                    if (document.documentElement.requestFullscreen) {
+                        document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
+                    }
+                    startGame();
+                });
+            }
             // El listener 'input' es para palabras normales
             if (wordInput) wordInput.addEventListener('input', handleInput);
             // El listener 'keydown' es para atajos de teclado
@@ -948,7 +1001,16 @@
             if (finalWPM) finalWPM.textContent = wpm;
 
             // Guardar en el portal
-            GamesAdapter.saveResult("Destreza en el Teclado", `Completado con ${wpm} WPM`, wpm);
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (user) {
+                GamesAdapter.saveResult("Destreza en el Teclado", `Completado con ${wpm} WPM`, wpm);
+            } else {
+                const recordKey = 'guest_record_dexterity';
+                const existing = JSON.parse(localStorage.getItem(recordKey) || '{"maxScore": 0}');
+                if (wpm > existing.maxScore) {
+                    localStorage.setItem(recordKey, JSON.stringify({ maxScore: wpm, date: new Date().toISOString() }));
+                }
+            }
         }
 
         // Sale del juego y regresa al menú principal de actividades

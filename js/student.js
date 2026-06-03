@@ -960,10 +960,12 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId });
             if (res.status === 'success' && res.data && res.data.length > 0) {
-                // REQ: Filtro por Parcial en Analítica (Incidencia 5)
-                // Se asume que LearningProfile almacena la fecha o podemos filtrar por temas del parcial
-                // Por ahora, para garantizar frescura, solo mostramos temas con actualización reciente
                 const profileData = res.data;
+                const sortedByDominio = [...profileData].sort((a, b) => b.dominio - a.dominio);
+
+                const strengths = sortedByDominio.filter(i => i.dominio >= 80).slice(0, 3);
+                const weaknesses = sortedByDominio.filter(i => i.dominio < 60).reverse().slice(0, 3);
+
                 const avgDominio = Math.round(profileData.reduce((sum, item) => sum + item.dominio, 0) / profileData.length);
 
                 let classification = "Requiere Refuerzo";
@@ -974,28 +976,60 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (avgDominio >= 40) { classification = "En Desarrollo"; badgeClass = "bg-yellow-50 text-yellow-600"; }
 
                 profileContainer.innerHTML = `
-                    <div class="mt-6 pt-6 border-t border-gray-50 animate-fade-in">
-                        <div class="flex items-center justify-between mb-4">
+                    <div class="mt-8 pt-8 border-t border-gray-50 animate-fade-in">
+                        <div class="flex items-center justify-between mb-6">
                             <div>
-                                <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Perfil de Dominio</h4>
-                                <p class="text-sm font-bold text-gray-800">Dominio por Conceptos</p>
+                                <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Análisis de Desempeño</h4>
+                                <p class="text-base font-bold text-gray-800 tracking-tight">Tu Perfil de Aprendizaje Real</p>
                             </div>
-                            <span class="px-2 py-1 ${badgeClass} rounded-full text-[8px] font-black uppercase tracking-widest">${classification}</span>
+                            <div class="text-right">
+                                <span class="px-3 py-1 ${badgeClass} rounded-full text-[9px] font-black uppercase tracking-[0.1em] border border-current opacity-80">${classification}</span>
+                                <p class="text-[9px] text-gray-400 font-bold uppercase mt-2">Promedio General: ${avgDominio}%</p>
+                            </div>
                         </div>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                            ${profileData.slice(0, 4).map(item => `
-                                <div class="p-2 bg-gray-50 rounded-xl border border-gray-100">
-                                    <div class="flex justify-between items-center mb-1">
-                                        <span class="text-[8px] font-bold text-gray-500 uppercase truncate pr-1">${item.tema}</span>
-                                        <span class="text-[9px] font-black text-purple-600">${item.dominio}%</span>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Fortalezas -->
+                            <div class="bg-emerald-50/30 border border-emerald-100/50 p-5 rounded-[2rem]">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <div class="w-7 h-7 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xs shadow-sm">
+                                        <i class="fas fa-arrow-trend-up"></i>
                                     </div>
-                                    <div class="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
-                                        <div class="bg-purple-500 h-full transition-all duration-1000" style="width: ${item.dominio}%"></div>
-                                    </div>
+                                    <h5 class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Tus Fortalezas</h5>
                                 </div>
-                            `).join('')}
+                                <div class="space-y-3">
+                                    ${strengths.length > 0 ? strengths.map(s => `
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs font-bold text-gray-700 uppercase tracking-tighter">${s.tema}</span>
+                                            <span class="text-[10px] font-black text-emerald-600 bg-white px-2 py-0.5 rounded-lg shadow-sm border border-emerald-100">${s.dominio}%</span>
+                                        </div>
+                                    `).join('') : '<p class="text-[10px] text-gray-400 italic">Sigue practicando para identificar tus fortalezas</p>'}
+                                </div>
+                            </div>
+
+                            <!-- Debilidades / Recomendaciones -->
+                            <div class="bg-orange-50/30 border border-orange-100/50 p-5 rounded-[2rem]">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <div class="w-7 h-7 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-xs shadow-sm">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <h5 class="text-[10px] font-black text-orange-700 uppercase tracking-widest">Temas a Reforzar</h5>
+                                </div>
+                                <div class="space-y-4">
+                                    ${weaknesses.length > 0 ? weaknesses.map(w => `
+                                        <div class="flex flex-col gap-1">
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-xs font-bold text-gray-700 uppercase tracking-tighter">${w.tema}</span>
+                                                <span class="text-[10px] font-black text-orange-600">${w.dominio}%</span>
+                                            </div>
+                                            <button onclick="window.scrollTo({top: document.getElementById('resources-section')?.offsetTop || 0, behavior: 'smooth'})" class="w-max text-[9px] font-black text-orange-700 uppercase tracking-widest hover:underline flex items-center gap-1">
+                                                <i class="fas fa-book-open text-[8px]"></i> Ver Presentación
+                                            </button>
+                                        </div>
+                                    `).join('') : '<p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">¡Excelente! No tienes temas críticos pendientes</p>'}
+                                </div>
+                            </div>
                         </div>
-                        ${profileData.length > 4 ? `<p class="text-[8px] text-gray-400 font-medium uppercase mt-3 text-center">+ ${profileData.length - 4} temas adicionales registrados</p>` : ''}
                     </div>
                 `;
             }

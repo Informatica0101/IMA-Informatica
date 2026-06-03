@@ -24,13 +24,33 @@ const GamesAdapter = {
             actions: []
         };
         await this.showLoading(true);
-        // Pre-carga de datos críticos
-        const [lb, record] = await Promise.all([
-            this.getLeaderboard(gameId),
-            this.getPersonalRecord()
-        ]);
-        this.state.personalRecords = record;
-        return { lb, record };
+
+        // REQ: Pre-carga segura con timeout (Fase 2)
+        try {
+            const timeout = (ms) => new Promise(resolve => setTimeout(() => resolve('TIMEOUT'), ms));
+
+            const results = await Promise.race([
+                Promise.all([
+                    this.getLeaderboard(gameId).catch(e => null),
+                    this.getPersonalRecord().catch(e => ({}))
+                ]),
+                timeout(5000)
+            ]);
+
+            if (results === 'TIMEOUT') {
+                console.warn("[GamesAdapter] Timeout en pre-carga de datos, continuando con valores por defecto.");
+                this.state.personalRecords = {};
+                return { lb: null, record: {} };
+            }
+
+            const [lb, record] = results;
+            this.state.personalRecords = record || {};
+            return { lb, record: record || {} };
+        } catch (e) {
+            console.error("[GamesAdapter] Error crítico en init:", e);
+            this.state.personalRecords = {};
+            return { lb: null, record: {} };
+        }
     },
 
     async showLoading(active = true) {
