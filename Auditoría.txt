@@ -104,3 +104,26 @@ REPORTE DE AUDITORÍA MULTIDIMENSIONAL - 2026-06-18
 
 5. FUNCIONES HUÉRFANAS
 - loadQuestionsLegacy permanece como fallback de seguridad.
+
+AUDITORÍA DE INTEGRACIÓN FINAL - 2026-06-03
+
+Archivo: backend/user-service/Code.gs
+- [CONFIRMADO] El endpoint 'getGlobalTop' está presente y correctamente mapeado en doPost.
+- [CONFIRMADO] recordAnalytics implementa lógica de Confianza (basada en tiempo relativo), Adivinación (heurística de rapidez/error) y Dominio (70/30 ponderado).
+- [CONFIRMADO] updateLearningProfile persiste el dominio por tema (Algoritmos, Variables, etc.) con promedio ponderado.
+- [CONFIRMADO] getOrCreateSheet garantiza la existencia de las 7 hojas de analítica y estadística.
+
+Archivo: js/quizpro.js
+- [CONFIRMADO] Integración completa con GamesAdapter para ciclo de vida.
+- [CONFIRMADO] Implementación de captura de datos de comportamiento (responseTime, responseChanges) en checkAnswer.
+- [CONFIRMADO] Lógica de desbloqueo multifactor (Nota >= 70 AND Dominio >= 60/70) operativa en navigateToLevels.
+- [CONFIRMADO] Soporte para tipos de pregunta: ordering, matching, memory, transcription, completion.
+- [CONFIRMADO] Estandarización de respuestaCorrecta vía window.normalizeQuestion evita errores 'undefined'.
+
+Archivo: js/games-adapter.js
+- [CONFIRMADO] Gestión de loading-overlay con mensajes dinámicos académicos.
+- [CONFIRMADO] Centralización de recordAction para envío asíncrono a recordAnalytics.
+
+Archivo: js/config.js
+- [CONFIRMADO] Implementado Guardián de Alcance (isContentAuthorized) con normalización de parciales (I Parcial -> Primer Parcial).
+- [CONFIRMADO] Fallback de seguridad para GamesAdapter implementado.

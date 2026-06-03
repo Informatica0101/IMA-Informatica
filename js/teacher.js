@@ -1118,11 +1118,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const waLink = waPhone ? `https://wa.me/504${waPhone}` : '#';
 
             // Calcular carga académica total (A-73)
+            // REQ: Filtro Estricto por Parcial (Incidencia 5)
+            const activeParcial = window.normalizePartial(window.PARCIAL_ACTUAL);
+
             const subjectAssignments = allAssignmentsRaw.filter(a =>
                 norm(a.grado) === norm(grado) &&
                 (!a.seccion || norm(a.seccion) === norm(seccion) || norm(a.seccion) === 'todas') &&
                 (isGlobalSearch || norm(a.asignatura) === norm(asignatura)) &&
-                (isGlobalSearch || norm(a.parcial) === norm(parcial))
+                (isGlobalSearch || window.normalizePartial(a.parcial) === activeParcial)
             );
 
             const studentSubmissions = allActivityRaw.filter(sub =>
@@ -1130,7 +1133,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 norm(sub.grado) === norm(grado) &&
                 norm(sub.seccion) === norm(seccion) &&
                 norm(sub.asignatura) === norm(asignatura) &&
-                norm(sub.parcial) === norm(parcial)
+                (isGlobalSearch || window.normalizePartial(sub.parcial) === activeParcial)
             );
 
             // --- Ajuste de Lógica de Progreso (Req 2) ---

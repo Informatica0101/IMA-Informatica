@@ -33,3 +33,10 @@ ARCHIVO: README.md
 LIMPIEZA DE REPOSITORIO:
 - Eliminados archivos text.txt y introduccionDW.txt huérfanos identificados en auditoría.
 - Saneamiento de artefactos de agentes previos (.py, .json temporales).
+
+REVISIÓN FINAL - 2026-06-03
+- [CORREGIDO] backend/user-service/Code.gs: Endpoint 'getGlobalTop' ahora acepta gameId dinámico para rankings específicos por juego (Fase 4).
+- [CORREGIDO] backend/user-service/Code.gs: saveGameResult ahora registra TiempoTotal (totalTime) para alimentar analítica de rapidez.
+- [VERIFICADO] js/config.js: window.normalizeQuestion estandariza la detección de respuestas correctas eliminando errores de visualización en feedback.
+- [VERIFICADO] js/quizpro.js: Sincronización de Mastery Index en el flujo de resultados para desbloqueo dinámico de niveles.
+- [LIMPIEZA] Eliminado server.log y archivos .txt huérfanos confirmados en auditoría.

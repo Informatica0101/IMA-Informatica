@@ -11,7 +11,7 @@
 
 const SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios.
-  USER: 'https://script.google.com/macros/s/AKfycbyXNHgalLVxbiRQWpEJ1CBtmBuPBaTPrEQWKXRx3_geiQuzuObjKe1Z9id2ESJDb3I/exec',
+  USER: 'https://script.google.com/macros/s/AKfycbwbY_p_EvIdG_EFdq2pGU2mIqujZS856joehl7eyj6Xv1nRQnqyAFPQtjzzK6fQovU/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
   TASK: 'https://script.google.com/macros/s/AKfycby2mX2UHrGe0KyhBMomwmgYNvHge2Yw0HON6_jm4-mCmYrkpiZHoerwxMUm0M4Nbtg/exec',
@@ -148,6 +148,7 @@ if (typeof window.GamesAdapter === "undefined") {
         showLoading: () => Promise.resolve(),
         saveResult: () => Promise.resolve(),
         recordAction: () => {},
+        finishSession: () => Promise.resolve(),
         endSession: () => {},
         getLeaderboard: () => Promise.resolve(null),
         getPersonalRecord: () => Promise.resolve({})

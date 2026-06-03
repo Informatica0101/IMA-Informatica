@@ -396,7 +396,7 @@ function updateUserProfile(payload) {
  * H: grado
  */
 function saveGameResult(payload) {
-  const { userId, nombreAlumno, juego, asignatura, puntaje, nivel, grado } = payload || {};
+  const { userId, nombreAlumno, juego, asignatura, puntaje, nivel, grado, totalTime } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "Logros");
   const data = sheet.getDataRange().getValues();
@@ -430,10 +430,11 @@ function saveGameResult(payload) {
     if (score > oldScore) {
       sheet.getRange(existingIndex + 1, 1).setValue(new Date()); // fecha_logro
       sheet.getRange(existingIndex + 1, 6).setValue(score);    // porcentaje_obtenido
+      if (totalTime) sheet.getRange(existingIndex + 1, 9).setValue(totalTime);
     }
   } else {
-    // Estructura: [Fecha, UserId, Alumno, Juego, Asignatura, Puntaje, Nivel, Grado]
-    sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, asignatura || "General", score, normNivel, grado || ""]);
+    // Estructura: [Fecha, UserId, Alumno, Juego, Asignatura, Puntaje, Nivel, Grado, TiempoTotal]
+    sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, asignatura || "General", score, normNivel, grado || "", totalTime || 0]);
   }
   return { status: "success" };
 }
@@ -443,6 +444,9 @@ function saveGameResult(payload) {
  * Calcula el promedio global y por asignatura para el leaderboard.
  */
 function getGlobalTop(payload) {
+  const { gameId } = payload || {};
+  const targetGame = gameId ? normalizeString(gameId) : "quizpro";
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const logSheet = getOrCreateSheet(ss, "Logros");
   const logData = logSheet.getDataRange().getValues();
@@ -458,12 +462,12 @@ function getGlobalTop(payload) {
     usersMap[String(r[0])] = { nombre: r[1], grado: r[2], userId: r[0] };
   });
 
-  // 2. Procesar Logros de QuizPro
+  // 2. Procesar Logros
   const stats = {};
   logRows.forEach(r => {
     // Normalizar juego para comparación robusta
     const game = normalizeString(r[3]);
-    if (game !== "quizpro") return;
+    if (game !== targetGame) return;
 
     const userId = String(r[1]).trim();
     if (!userId) return;
@@ -741,7 +745,7 @@ function getOrCreateSheet(ss, name) {
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
-    if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Asignatura", "Puntaje", "Nivel", "Grado"]);
+    if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Asignatura", "Puntaje", "Nivel", "Grado", "TiempoTotal"]);
     if (name === "NoticiasPortal") sheet.appendRow(["Fecha", "Hora", "Título", "Contenido", "ImagenUrl", "Categoría"]);
     if (name === "Clases") sheet.appendRow(["Grado", "Seccion", "WhatsAppLink"]);
     if (name === "BancoPreguntas") {
@@ -971,7 +975,6 @@ function saveQuestion(payload) {
   const data = sheet.getDataRange().getValues();
   const headers = data[0];
 
-  const questionObj = payload;
   if (!questionObj.PreguntaID) questionObj.PreguntaID = "Q-" + Date.now() + "-" + Math.floor(Math.random()*1000);
   questionObj.UltimaActualizacion = new Date();
 

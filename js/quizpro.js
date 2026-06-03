@@ -350,6 +350,14 @@ async function startQuiz() {
                 console.log(`[QuizPro] Pregunta excluida por nivel incorrecto: ${q.id} (${qLevel} vs ${targetLevel})`);
                 return false;
             }
+
+            // REQ: Validación obligatoria de integridad (Incidencia 3)
+            const validation = window.validateQuestion(q);
+            if (!validation.valid) {
+                console.warn("[QuizPro] Pregunta descartada por integridad:", validation.error, q);
+                return false;
+            }
+
             return true;
         })
         .slice(0, 15);
