@@ -136,3 +136,47 @@ window.validateQuestion = function(q) {
 
     return { valid: true };
 };
+
+/**
+ * REQ: Fallback de seguridad para GamesAdapter (Incidencia 1)
+ * Previene errores de referencia si el script no carga a tiempo o falla.
+ */
+if (typeof window.GamesAdapter === "undefined") {
+    console.warn("[IMA-SYSTEM] GamesAdapter no detectado. Inicializando fallback seguro.");
+    window.GamesAdapter = {
+        init: () => Promise.resolve(),
+        showLoading: () => Promise.resolve(),
+        saveResult: () => Promise.resolve(),
+        recordAction: () => {},
+        endSession: () => {},
+        getLeaderboard: () => Promise.resolve(null),
+        getPersonalRecord: () => Promise.resolve({})
+    };
+}
+
+/**
+ * REQ: Normalización Universal de Preguntas (Incidencia 3)
+ * Estandariza el campo de respuesta correcta para eliminar el error "undefined".
+ */
+window.normalizeQuestion = function(q) {
+    if (!q) return null;
+
+    const respuestaCorrecta = q.respuestaCorrecta ??
+                             q.RespuestaCorrecta ??
+                             q.correctAnswer ??
+                             q.correct_answer ??
+                             q.correctType ??
+                             q.solution ??
+                             q.answer ??
+                             q.a ??
+                             null;
+
+    if (respuestaCorrecta === null) {
+        console.warn("[IMA-NORMALIZER] No se detectó respuesta correcta para la pregunta:", q);
+    }
+
+    return {
+        ...q,
+        respuestaCorrecta: (respuestaCorrecta !== null) ? String(respuestaCorrecta).trim() : null
+    };
+};

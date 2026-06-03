@@ -200,30 +200,48 @@ document.addEventListener('DOMContentLoaded', () => {
             // Por lo tanto, usaremos el JSON que generó Jules para "subirlo" como si el script corriera.
 
             const response = await fetch('migrated_questions.json');
-            if (!response.ok) throw new Error("No se encontró el archivo de migración (migrated_questions.json).");
+            if (!response.ok) throw new Error("No se encontró el archivo de migración (migrated_questions.json). El agente debe regenerarlo.");
             const questions = await response.json();
 
-            statusMsg.textContent = `Detectadas ${questions.length} preguntas. Subiendo al Banco Central...`;
+            statusMsg.textContent = `Detectadas ${questions.length} preguntas. Validando integridad...`;
+
+            // Filtro de integridad y validación obligatoria (Fase 4 / Incidencia 2)
+            let excludedCount = 0;
+            const validQuestions = questions.filter(q => {
+                const result = window.validateQuestion(q);
+                if (!result.valid) {
+                    console.log("EXCLUIDA:", q.Pregunta || "Sin Texto", "Motivo:", result.error);
+                    excludedCount++;
+                    return false;
+                }
+                return true;
+            });
+
+            console.log(`[MIGRACIÓN] Auditoría: Detectadas ${questions.length}, Válidas ${validQuestions.length}, Excluidas ${excludedCount}`);
+
+            if (validQuestions.length === 0) throw new Error("Ninguna pregunta pasó el filtro de validación de integridad.");
+
+            statusMsg.textContent = `Listas ${validQuestions.length} preguntas válidas. Subiendo al Banco Central...`;
 
             let successCount = 0;
             const chunkSize = 20;
-            for (let i = 0; i < questions.length; i += chunkSize) {
-                const chunk = questions.slice(i, i + chunkSize);
+            for (let i = 0; i < validQuestions.length; i += chunkSize) {
+                const chunk = validQuestions.slice(i, i + chunkSize);
                 await Promise.all(chunk.map(q => fetchApi('USER', 'saveQuestion', {
                     Asignatura: q.Asignatura,
                     Nivel: q.Nivel,
                     Tema: q.Tema || "General",
-                    TipoActividad: q.TipoActividad,
+                    TipoActividad: q.TipoActividad || "Selección múltiple",
                     Pregunta: q.Pregunta,
                     OpcionA: q.OpcionA,
                     OpcionB: q.OpcionB,
-                    OpcionC: q.OpcionC,
-                    OpcionD: q.OpcionD,
+                    OpcionC: q.OpcionC || "",
+                    OpcionD: q.OpcionD || "",
                     RespuestaCorrecta: q.RespuestaCorrecta,
                     Activa: true
                 })));
                 successCount += chunk.length;
-                statusMsg.textContent = `Progreso: ${successCount} / ${questions.length} preguntas migradas...`;
+                statusMsg.textContent = `Progreso: ${successCount} / ${validQuestions.length} preguntas migradas...`;
             }
 
             const statsRes = await fetch('migration_stats.json');
@@ -303,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ]);
 
                 const students = studentsRes.data || [];
-                const allTasks = (tasksRes.data || []).filter(t => norm(t.grado) === norm(grado) && (!t.seccion || norm(t.seccion) === norm(seccion)) && norm(t.parcial) === norm(parcial));
+                const allTasks = (tasksRes.data || []).filter(t => norm(t.grado) === norm(grado) && (!t.seccion || norm(t.seccion) === norm(seccion)) && window.normalizePartial(t.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL));
                 const allExams = (examsRes.data || []).filter(e => norm(e.grado) === norm(grado) && (!e.seccion || norm(e.seccion) === norm(seccion) || norm(e.seccion) === 'todas'));
                 const taskSubmissions = taskSubRes.data || [];
                 const examSubmissions = examSubRes.data || [];
@@ -1466,7 +1484,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]);
             const students = studentsRes.data || [];
             if (students.length === 0) { alert('Sin alumnos.'); return; }
-            const allTasks = (tasksRes.data || []).filter(t => norm(t.grado) === norm(grado) && (!t.seccion || norm(t.seccion) === norm(seccion)) && norm(t.parcial) === norm(parcial));
+            const allTasks = (tasksRes.data || []).filter(t => norm(t.grado) === norm(grado) && (!t.seccion || norm(t.seccion) === norm(seccion)) && window.normalizePartial(t.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL));
             const allExams = (examsRes.data || []).filter(e => norm(e.grado) === norm(grado) && (!e.seccion || norm(e.seccion) === norm(seccion) || norm(e.seccion) === 'todas'));
             const taskSubmissions = taskSubRes.data || [];
             const examSubmissions = examSubRes.data || [];

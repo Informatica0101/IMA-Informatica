@@ -208,10 +208,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.showMainContentSections = showMainContentSections;
-    window.loadPeripheralsGame = () => loadGame('peripherals', 'juegos/perifericos.html', 'js/perifericos_juego.js', 'initializePeripheralsGame', 'Juego de Periféricos');
-    window.loadWebMasterQuiz = () => loadGame('webmaster', 'juegos/webmaster_quiz.html', 'js/webmaster_quiz_juego.js', 'initQuizGame', 'WebMaster Quiz');
-    window.loadQuizPro = () => loadGame('quizpro', 'juegos/quizpro.html', 'js/quizpro.js', 'initQuizPro', 'QuizPro');
-    window.loadDexterityGame = () => loadGame('dexterity', 'juegos/destreza_teclado.html', 'js/destreza_teclado.js', 'initDexterityGame', 'Destreza en el Teclado');
+
+    // REQ: Garantía de orden de carga para Incidencia 1
+    async function safeLoadGame(gameId, html, js, initFn, title) {
+        if (!window.GamesAdapter) {
+            console.error("[IMA-LOADER] GamesAdapter no encontrado. Reintentando carga de script...");
+            const script = document.createElement('script');
+            script.src = 'js/games-adapter.js';
+            await new Promise(r => script.onload = r);
+        }
+        return loadGame(gameId, html, js, initFn, title);
+    }
+
+    window.loadPeripheralsGame = () => safeLoadGame('peripherals', 'juegos/perifericos.html', 'js/perifericos_juego.js', 'initializePeripheralsGame', 'Juego de Periféricos');
+    window.loadWebMasterQuiz = () => safeLoadGame('webmaster', 'juegos/webmaster_quiz.html', 'js/webmaster_quiz_juego.js', 'initQuizGame', 'WebMaster Quiz');
+    window.loadQuizPro = () => safeLoadGame('quizpro', 'juegos/quizpro.html', 'js/quizpro.js', 'initQuizPro', 'QuizPro');
+    window.loadDexterityGame = () => safeLoadGame('dexterity', 'juegos/destreza_teclado.html', 'js/destreza_teclado.js', 'initDexterityGame', 'Destreza en el Teclado');
 
     window.returnToMainContent = function() {
         const wrapper = document.getElementById('main-content-wrapper');
@@ -462,17 +474,29 @@ async function loadNews() {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = n.contenido;
 
-                // Extraer un fragmento representativo del contenido (primer párrafo o 180 caracteres)
+                // Extraer un fragmento representativo del contenido (Fase 13: Extracto Inteligente)
                 let excerpt = "";
                 const paragraphs = tempDiv.querySelectorAll('p');
+
                 if (paragraphs.length > 0) {
-                    excerpt = paragraphs[0].innerText.trim();
-                } else {
+                    // Buscar primer párrafo con contenido real
+                    for(const p of paragraphs) {
+                        const text = p.innerText.trim();
+                        if (text.length > 20) {
+                            excerpt = text;
+                            break;
+                        }
+                    }
+                }
+
+                if (!excerpt) {
                     excerpt = tempDiv.innerText.trim();
                 }
 
-                if (excerpt.length > 180) {
-                    excerpt = excerpt.substring(0, 177) + "...";
+                // Limitar longitud para vista previa
+                const limit = idx === 0 ? 250 : 120;
+                if (excerpt.length > limit) {
+                    excerpt = excerpt.substring(0, limit) + "...";
                 }
 
                 const imgUrl = window.convertDriveLink(n.imagenUrl);

@@ -1937,7 +1937,10 @@ function selectTopic(topic) {
 function selectDifficulty(difficulty) {
     selectedDifficulty = difficulty;
     // Shuffle and take only the first 10 questions for the session
-    const allQuestionsForLevel = [...quizData[selectedTopic][selectedDifficulty]];
+    // REQ: Filtro Estricto de Niveles (Incidencia 4)
+    const allQuestionsForLevel = [...quizData[selectedTopic][selectedDifficulty]]
+        .map(q => window.normalizeQuestion(q));
+
     shuffleArray(allQuestionsForLevel);
     currentQuestions = allQuestionsForLevel.slice(0, 10);
 
@@ -2474,6 +2477,9 @@ function checkAnswer(selectedIndex, correctAnswer) {
     }
 
 
+    const question = currentQuestions[currentQuestionIndex];
+    const finalCorrect = correctAnswer ?? question.respuestaCorrecta;
+
     // Captura de Analítica Unificada (Fase 5)
     if (window.GamesAdapter) {
         GamesAdapter.recordAction({
@@ -2482,14 +2488,14 @@ function checkAnswer(selectedIndex, correctAnswer) {
             preguntaId: 'wm_' + currentQuestionIndex,
             tema: selectedTopic,
             respuestaSeleccionada: selectedIndex,
-            respuestaCorrecta: correctAnswer,
-            esCorrecta: selectedIndex === correctAnswer,
+            respuestaCorrecta: finalCorrect,
+            esCorrecta: selectedIndex == finalCorrect,
             tiempoRespuesta: responseTime,
             cambiosRespuesta: responseChanges
         });
     }
 
-    if (selectedIndex === correctAnswer) {
+    if (selectedIndex == finalCorrect) {
         handleCorrectAnswer();
     } else {
         handleIncorrectAnswer();

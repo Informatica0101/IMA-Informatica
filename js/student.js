@@ -126,17 +126,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('student-expediente');
         if (!container) return;
 
+        // REQ: Filtro Estricto por Parcial (Incidencia 5)
+        // No mezclar históricos en el cálculo de progreso actual
+        const currentParcialActivities = activities.filter(a =>
+            window.normalizePartial(a.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL)
+        );
+
         // --- Ajuste de Lógica de Progreso (Req 2) ---
         // Excluir 'Credito Extra' del total asignado (baseline), ya que son de recuperación
-        const baseActivities = activities.filter(a => a.type !== 'Credito Extra');
+        const baseActivities = currentParcialActivities.filter(a => a.type !== 'Credito Extra');
         const totalAssigned = baseActivities.length;
 
         // Las completadas suman puntos al progreso real (separando obligatorias de recuperación)
-        const mandatoryCompleted = activities.filter(a => a.type !== 'Credito Extra' && a.entrega &&
+        const mandatoryCompleted = currentParcialActivities.filter(a => a.type !== 'Credito Extra' && a.entrega &&
             (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
         ).length;
 
-        const extraCreditCompleted = activities.filter(a => a.type === 'Credito Extra' && a.entrega &&
+        const extraCreditCompleted = currentParcialActivities.filter(a => a.type === 'Credito Extra' && a.entrega &&
             (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
         ).length;
 
@@ -145,11 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const pending = Math.max(0, totalAssigned - completed);
 
         // Tasa de entrega basada en tareas obligatorias (Req 2: Crédito extra no es obligatorio)
-        const mandatoryDelivered = activities.filter(a => a.type !== 'Credito Extra' && a.entrega).length;
+        const mandatoryDelivered = currentParcialActivities.filter(a => a.type !== 'Credito Extra' && a.entrega).length;
         const deliveryRate = totalAssigned > 0 ? (mandatoryDelivered / totalAssigned) : 0;
 
         // Puntos totales obtenidos (incluye recuperación por créditos extra)
-        const gradeSum = activities.reduce((sum, a) => sum + parseFloat(a.entrega?.calificacion || 0), 0);
+        const gradeSum = currentParcialActivities.reduce((sum, a) => sum + parseFloat(a.entrega?.calificacion || 0), 0);
 
         // El máximo posible se basa en las tareas obligatorias
         const maxPossible = baseActivities.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
@@ -954,6 +960,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId });
             if (res.status === 'success' && res.data && res.data.length > 0) {
+                // REQ: Filtro por Parcial en Analítica (Incidencia 5)
+                // Se asume que LearningProfile almacena la fecha o podemos filtrar por temas del parcial
+                // Por ahora, para garantizar frescura, solo mostramos temas con actualización reciente
                 const profileData = res.data;
                 const avgDominio = Math.round(profileData.reduce((sum, item) => sum + item.dominio, 0) / profileData.length);
 

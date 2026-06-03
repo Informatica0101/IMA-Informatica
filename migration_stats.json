@@ -1,9 +1,6 @@
 {
-  "totalDetectadas": 3,
-  "totalMigradas": 3,
-  "asignaturas": {
-    "Informatica I": 1,
-    "Programación": 1,
-    "Diseño Web": 1
-  }
+  "totalDetectadas": 65,
+  "totalParseadas": 65,
+  "totalPreguntas": 771,
+  "descartadas": 0
 }

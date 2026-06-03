@@ -164,16 +164,24 @@ window.setupCommonUI = function() {
                 window.syncNavWithState(state);
             }
         } else if (state.type === 'academic-menu') {
-            window.openAcademicMenu(false); // Asegurar que el modal esté visible al navegar atrás/adelante
+            // REQ 8: Garantía de contexto en Navegación (Fase 8)
+            const modal = document.getElementById('academic-menu-modal');
+            if (modal && modal.classList.contains('hidden')) {
+                window.openAcademicMenu(false);
+            }
             if (state.level === 'root') {
                 window.resetAcademicMenu(false);
             } else {
                 window.renderHierarchyLevel(state.menuType, state.level, state.params, false);
             }
         } else if (state.type === 'modal-close') {
-            // Si el estado es de modal (forward), lo abrimos
             if (state.modalId === 'academic-menu-modal') window.openAcademicMenu(false);
             if (state.modalId === 'profile-modal') window.openProfileModal(false);
+        }
+
+        // REQ 8: Restaurar posición de scroll al navegar atrás
+        if (state.scrollPos !== undefined) {
+            window.scrollTo({ top: state.scrollPos, behavior: 'auto' });
         }
     };
 
@@ -363,6 +371,7 @@ window.handleHeaderAction = function(action) {
 };
 
 window.openAcademicMenu = function(pushState = true) {
+    const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
     let modal = document.getElementById('academic-menu-modal');
     if (!modal) {
         modal = document.createElement('div');
@@ -427,7 +436,7 @@ window.openAcademicMenu = function(pushState = true) {
     window.resetAcademicMenu(false);
 
     if (pushState) {
-        history.pushState({ type: 'modal-close', modalId: 'academic-menu-modal' }, '');
+        history.pushState({ type: 'modal-close', modalId: 'academic-menu-modal', scrollPos }, '');
     }
 };
 
@@ -446,7 +455,7 @@ window.resetAcademicMenu = function(pushState = true) {
     document.getElementById('academic-menu-options').classList.remove('hidden');
     document.getElementById('hierarchy-navigation').classList.add('hidden');
     if (pushState) {
-        history.pushState({ type: 'academic-menu', level: 'root' }, '');
+        history.pushState({ type: 'academic-menu', level: 'root', scrollPos: window.pageYOffset }, '');
     }
 };
 
@@ -570,7 +579,7 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
     }
 
     if (pushState) {
-        history.pushState({ type: 'academic-menu', menuType: type, level, params }, '');
+        history.pushState({ type: 'academic-menu', menuType: type, level, params, scrollPos: window.pageYOffset }, '');
     }
 
     container.innerHTML = items.map(item => {

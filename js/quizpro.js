@@ -338,7 +338,22 @@ async function startQuiz() {
         });
     }
 
-    currentQuizQuestions = interleaved.slice(0, 15);
+    // REQ: Normalización y Filtro Estricto de Niveles (Incidencias 3 y 4)
+    currentQuizQuestions = interleaved
+        .map(q => window.normalizeQuestion(q))
+        .filter(q => {
+            const qLevel = window.getStandardLevelName(q.nivel || selectedDifficulty);
+            const targetLevel = window.getStandardLevelName(selectedDifficulty);
+
+            // Regla Estricta: Solo preguntas del nivel seleccionado
+            if (qLevel !== targetLevel) {
+                console.log(`[QuizPro] Pregunta excluida por nivel incorrecto: ${q.id} (${qLevel} vs ${targetLevel})`);
+                return false;
+            }
+            return true;
+        })
+        .slice(0, 15);
+
     currentIndex = 0;
     score = 0;
     timerSeconds = 0;
@@ -920,6 +935,10 @@ function checkAnswer(selected, correct, btn) {
     let q = currentQuizQuestions[currentIndex];
     const user = JSON.parse(localStorage.getItem('currentUser'));
 
+    // REQ: Normalización de Pregunta para Incidencia 3
+    q = window.normalizeQuestion(q);
+    const finalCorrect = correct || q.respuestaCorrecta || "No disponible";
+
     // Captura de Analítica Unificada (Fase 5)
     if (window.GamesAdapter) {
         GamesAdapter.recordAction({
@@ -928,8 +947,8 @@ function checkAnswer(selected, correct, btn) {
             preguntaId: q.id,
             tema: (q.tags && q.tags.length > 0) ? q.tags[0] : 'General',
             respuestaSeleccionada: selected,
-            respuestaCorrecta: correct,
-            esCorrecta: String(selected).trim().toLowerCase() === String(correct).trim().toLowerCase(),
+            respuestaCorrecta: finalCorrect,
+            esCorrecta: String(selected).trim().toLowerCase() === String(finalCorrect).trim().toLowerCase(),
             tiempoRespuesta: responseTime,
             cambiosRespuesta: responseChanges
         });
@@ -962,13 +981,15 @@ function checkAnswer(selected, correct, btn) {
         feedback.className = 'text-center h-8 font-bold text-emerald-500';
         feedback.textContent = '¡Correcto!';
         score++;
+        console.log(`[QuizPro] Pregunta ${currentIndex} Correcta. Mastery: ${q.tags?.[0] || 'N/A'}`);
     } else {
         if (btn) btn.classList.add('incorrect', 'border-red-500', 'bg-red-50', 'text-red-700');
         feedback.className = 'text-center h-8 font-bold text-red-500';
 
-        // Garantía de Retroalimentación: Buscar respuesta en el objeto q si 'correct' llega undefined
-        const finalCorrect = correct || q?.answer || (q?.pairs ? "Ver correspondencias" : "No disponible");
+        // Garantía de Retroalimentación (Fase 3 / Incidencia 3): Eliminación definitiva de 'undefined'
+        // finalCorrect ya fue definido arriba mediante normalizeQuestion
 
+        console.error(`[QuizPro] Error en Pregunta ${currentIndex}. Esperaba: ${finalCorrect}, Recibió: ${selected}`);
         feedback.textContent = `Incorrecto. Era: ${finalCorrect}`;
         incorrectAnswers.push(q);
 

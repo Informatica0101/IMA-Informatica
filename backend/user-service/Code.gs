@@ -956,6 +956,16 @@ function getQuestionBank(payload) {
 }
 
 function saveQuestion(payload) {
+  const questionObj = payload;
+
+  // Guardián de Integridad en Backend (Fase 4)
+  const required = ['Asignatura', 'Nivel', 'Pregunta', 'RespuestaCorrecta'];
+  for (const field of required) {
+    if (!questionObj[field] || questionObj[field].toString().trim() === "") {
+       throw new Error(`Campo requerido faltante en Backend: ${field}`);
+    }
+  }
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "BancoPreguntas");
   const data = sheet.getDataRange().getValues();
