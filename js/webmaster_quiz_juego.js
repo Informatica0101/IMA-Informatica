@@ -2474,16 +2474,10 @@ function checkAnswer(selectedIndex, correctAnswer) {
     }
 
 
-    // Captura de Analítica (Fase 5)
+    // Captura de Analítica Unificada (Fase 5)
     if (window.GamesAdapter) {
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        const q = currentQuestions[currentQuestionIndex];
-        const analyticsPayload = {
-            userId: user?.userId,
-            gameId: 'webmaster',
-            gameName: 'WebMaster Quiz',
+        GamesAdapter.recordAction({
             asignatura: 'Diseño Web',
-            grado: user?.grado || 'Duodécimo',
             nivel: selectedDifficulty,
             preguntaId: 'wm_' + currentQuestionIndex,
             tema: selectedTopic,
@@ -2492,8 +2486,7 @@ function checkAnswer(selectedIndex, correctAnswer) {
             esCorrecta: selectedIndex === correctAnswer,
             tiempoRespuesta: responseTime,
             cambiosRespuesta: responseChanges
-        };
-        fetchApi('USER', 'recordAnalytics', analyticsPayload);
+        });
     }
 
     if (selectedIndex === correctAnswer) {
@@ -2543,8 +2536,10 @@ function endQuiz() {
         quizFinalTime.textContent = finalTimeFormatted;
     }
 
-    // Guardar en el portal
-    GamesAdapter.saveResult("WebMaster Quiz", `${selectedTopic.toUpperCase()} - ${selectedDifficulty} (${currentScore} pts)`, currentScore);
+    // Guardar en el portal vía Adaptador Unificado
+    if (window.GamesAdapter) {
+        GamesAdapter.finishSession('Diseño Web', selectedDifficulty, currentScore);
+    }
 
     // Check if there's a next level
     const difficultyOrder = ['basico', 'intermedio', 'avanzado'];
@@ -2576,21 +2571,19 @@ function shuffleArray(array) {
 // --- Global Initialization Function for the Quiz Game ---
 // This function will be called by index.html after the quiz HTML content is loaded.
 window.initQuizGame = async function() {
-    if (window.GamesAdapter) window.GamesAdapter.showLoading(true);
-    // Cargar récord personal
-    try {
-        const records = await GamesAdapter.getPersonalRecord();
-        const myRecord = records["WebMaster Quiz"];
-        if (myRecord) {
-            const recordDiv = document.getElementById('personal-record-init');
-            const scoreSpan = document.getElementById('init-max-score');
-            if (recordDiv && scoreSpan) {
-                recordDiv.classList.remove('hidden');
-                scoreSpan.textContent = myRecord.maxScore;
-            }
+    if (window.GamesAdapter) {
+        await GamesAdapter.init('webmaster');
+    }
+
+    // Cargar récord personal (Sincronizado con Adaptador)
+    const myRecord = GamesAdapter.state?.personalRecords?.["WebMaster Quiz"];
+    if (myRecord) {
+        const recordDiv = document.getElementById('personal-record-init');
+        const scoreSpan = document.getElementById('init-max-score');
+        if (recordDiv && scoreSpan) {
+            recordDiv.classList.remove('hidden');
+            scoreSpan.textContent = myRecord.maxScore;
         }
-    } catch(e) {
-        console.error("Error loading record:", e);
     }
 
     // Assign DOM elements now that they are guaranteed to be in the document
@@ -2690,6 +2683,16 @@ window.initQuizGame = async function() {
     ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(event => {
         document.addEventListener(event, resetInactivityTimer);
     });
+
+    // Control de Abandono (Fase 11)
+    const handleAbandonment = () => {
+        if (quizPlayArea && !quizPlayArea.classList.contains('hidden')) {
+            alert('Evaluación cancelada por cambio de pestaña o ventana.');
+            location.reload();
+        }
+    };
+    window.addEventListener('blur', handleAbandonment);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') handleAbandonment(); });
 
     if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
     // Initial screen setup - moved inside initQuizGame

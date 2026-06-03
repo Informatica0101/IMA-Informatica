@@ -58,23 +58,20 @@ let localGameStorage; // Variable to hold the gameDataStorage object passed from
 // Function to initialize DOM elements and attach event listeners
 // This function now accepts the gameDataStorage object
 async function initializePeripheralsGame(gameDataStorage) {
-    if (window.GamesAdapter) window.GamesAdapter.showLoading(true);
+    if (window.GamesAdapter) {
+        await GamesAdapter.init('perifericos');
+    }
     localGameStorage = gameDataStorage; // Store the passed object
 
-    // Cargar récord personal
-    try {
-        const records = await GamesAdapter.getPersonalRecord();
-        const myRecord = records["Periféricos"];
-        if (myRecord) {
-            const recordDiv = document.getElementById('personal-record-init');
-            const scoreSpan = document.getElementById('init-max-score');
-            if (recordDiv && scoreSpan) {
-                recordDiv.classList.remove('hidden');
-                scoreSpan.textContent = myRecord.maxScore;
-            }
+    // Cargar récord personal (Sincronizado con Adaptador)
+    const myRecord = GamesAdapter.state?.personalRecords?.["Periféricos"];
+    if (myRecord) {
+        const recordDiv = document.getElementById('personal-record-init');
+        const scoreSpan = document.getElementById('init-max-score');
+        if (recordDiv && scoreSpan) {
+            recordDiv.classList.remove('hidden');
+            scoreSpan.textContent = myRecord.maxScore;
         }
-    } catch(e) {
-        console.error("Error loading record:", e);
     }
 
     // Use a setTimeout to ensure all DOM elements are parsed and available
@@ -135,6 +132,16 @@ async function initializePeripheralsGame(gameDataStorage) {
 
         // Initial state for the game, now that elements are guaranteed to be ready
         resetGame();
+
+        // Control de Abandono (Fase 11)
+        const handleAbandonment = () => {
+            if (gamePlayArea && !gamePlayArea.classList.contains('hidden')) {
+                alert('Evaluación cancelada por cambio de pestaña o ventana.');
+                location.reload();
+            }
+        };
+        window.addEventListener('blur', handleAbandonment);
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') handleAbandonment(); });
 
     }, 200); // 200ms delay to ensure DOM is fully ready
 }
@@ -215,15 +222,10 @@ function checkAnswer(selectedType) {
 
     if (answerButtons) answerButtons.forEach(button => button.disabled = true); // Disable all answer buttons immediately
 
-    // Captura de Analítica (Fase 5)
+    // Captura de Analítica Unificada (Fase 5)
     if (window.GamesAdapter) {
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        const analyticsPayload = {
-            userId: user?.userId,
-            gameId: 'perifericos',
-            gameName: 'Juego de Periféricos',
+        GamesAdapter.recordAction({
             asignatura: 'Informática I',
-            grado: user?.grado || 'Décimo',
             nivel: 'Básico',
             preguntaId: 'perif_' + peripheral.name,
             tema: 'Hardware',
@@ -232,8 +234,7 @@ function checkAnswer(selectedType) {
             esCorrecta: selectedType === correctType,
             tiempoRespuesta: responseTime,
             cambiosRespuesta: responseChanges
-        };
-        fetchApi('USER', 'recordAnalytics', analyticsPayload);
+        });
     }
 
     if (selectedType === correctType) {
@@ -319,8 +320,10 @@ function endGame() {
     if (incorrectAnswersDisplay) incorrectAnswersDisplay.textContent = errors;
     if (finalTimeDisplay) finalTimeDisplay.textContent = finalTimeFormatted;
 
-    // Guardar en el portal
-    GamesAdapter.saveResult("Periféricos", `Completado con ${score} aciertos en ${finalTimeFormatted}`, score);
+    // Guardar en el portal vía Adaptador Unificado
+    if (window.GamesAdapter) {
+        GamesAdapter.finishSession('Informática I', 'Básico', score);
+    }
 }
 
 function resetGame() {

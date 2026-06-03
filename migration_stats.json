@@ -1,0 +1,9 @@
+{
+  "totalDetectadas": 3,
+  "totalMigradas": 3,
+  "asignaturas": {
+    "Informatica I": 1,
+    "Programación": 1,
+    "Diseño Web": 1
+  }
+}

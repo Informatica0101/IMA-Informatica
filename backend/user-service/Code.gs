@@ -833,29 +833,49 @@ function recordAnalytics(payload) {
   return { status: "success", metrics: { indiceConfianza, indiceAdivinacion, indiceDominio } };
 }
 
+/**
+ * Actualiza el Perfil de Dominio por Concepto (Fase 2)
+ * Implementa un promedio ponderado (70% histórico / 30% actual) para reflejar progreso real.
+ */
 function updateLearningProfile(ss, userId, asignatura, tema, nivel, esCorrecta, dominioActual) {
-  if (!tema) return;
+  if (!tema || tema === 'General') return; // Evitar dilución de analítica con temas genéricos
+
   const sheet = getOrCreateSheet(ss, "LearningProfile");
   const data = sheet.getDataRange().getValues();
 
+  // Normalización para búsqueda robusta
+  const sUserId = String(userId);
+  const sAsig = normalizeSubjectInBackend(asignatura);
+  const sTema = tema.trim();
+  const sNivel = nivel;
+
   let rowIndex = -1;
   for (let i = 1; i < data.length; i++) {
-    if (data[i][1] === userId && data[i][2] === asignatura && data[i][3] === tema && data[i][4] === nivel) {
+    if (String(data[i][1]) === sUserId &&
+        normalizeSubjectInBackend(data[i][2]) === sAsig &&
+        data[i][3] === sTema &&
+        data[i][4] === sNivel) {
       rowIndex = i;
       break;
     }
   }
 
   if (rowIndex !== -1) {
-    const intentos = parseInt(data[rowIndex][5]) + 1;
-    const aciertos = parseInt(data[rowIndex][6]) + (esCorrecta ? 1 : 0);
+    const intentos = (parseInt(data[rowIndex][5]) || 0) + 1;
+    const aciertos = (parseInt(data[rowIndex][6]) || 0) + (esCorrecta ? 1 : 0);
     const porcentaje = Math.round((aciertos / intentos) * 100);
-    const nuevoDominio = Math.round((parseFloat(data[rowIndex][8]) * 0.7) + (dominioActual * 0.3));
 
+    // Promedio Ponderado: El desempeño actual pesa un 30% sobre el acumulado (Fase 8)
+    const dominioHistorico = parseFloat(data[rowIndex][8]) || 0;
+    const nuevoDominio = Math.max(0, Math.min(100, Math.round((dominioHistorico * 0.7) + (dominioActual * 0.3))));
+
+    // Columnas: attempts(F), hits(G), percent(H), masteryIndex(I), lastUpdate(J)
     sheet.getRange(rowIndex + 1, 6, 1, 5).setValues([[intentos, aciertos, porcentaje, nuevoDominio, new Date()]]);
+    logDebug(`Dominio actualizado para ${sTema}: ${nuevoDominio}%`);
   } else {
-    const profileId = "PRF-" + Date.now();
-    sheet.appendRow([profileId, userId, asignatura, tema, nivel, 1, esCorrecta ? 1 : 0, esCorrecta ? 100 : 0, dominioActual, new Date()]);
+    const profileId = "PRF-" + Date.now() + "-" + Math.floor(Math.random() * 100);
+    // [profileId, userId, asignatura, tema, nivel, intentos, aciertos, porcentaje, indiceDominio, ultimaActualizacion]
+    sheet.appendRow([profileId, sUserId, sAsig, sTema, sNivel, 1, esCorrecta ? 1 : 0, esCorrecta ? 100 : 0, dominioActual, new Date()]);
   }
 }
 

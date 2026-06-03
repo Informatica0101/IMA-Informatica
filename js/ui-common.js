@@ -705,7 +705,7 @@ window.renderCommonNav = function() {
                 return html;
             } else {
                 // REQ 7: Los estudiantes solo ven el contenido autorizado (Garantía de Scope)
-                return filteredSubjects.filter(s => window.isContentAuthorized(s.partial)).map(subj => `
+                return filteredSubjects.filter(s => window.isContentAuthorized(s.partial, s.name)).map(subj => `
                     <button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle('hidden')">
                         ${subj.name} <span>&#9662;</span>
                     </button>

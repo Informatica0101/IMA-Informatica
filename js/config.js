@@ -116,3 +116,23 @@ window.isContentAuthorized = function(contentPartial) {
 
     return false;
 };
+
+/**
+ * Validador de estructura de preguntas para el Banco Central.
+ * Asegura que los datos cumplen con el esquema requerido antes de persistir.
+ */
+window.validateQuestion = function(q) {
+    const required = ['Asignatura', 'Nivel', 'Pregunta', 'RespuestaCorrecta'];
+    for (const field of required) {
+        if (!q[field] || q[field].toString().trim() === "") return { valid: false, error: `Campo requerido faltante: ${field}` };
+    }
+
+    // Validar que al menos haya 2 opciones si es V/F o 3-4 si es Opción Múltiple
+    if (q.TipoActividad === 'verdadero_falso') {
+        if (!q.OpcionA || !q.OpcionB) return { valid: false, error: "Verdadero/Falso requiere OpcionA y OpcionB" };
+    } else if (q.TipoActividad === 'opcion_multiple' || !q.TipoActividad) {
+        if (!q.OpcionA || !q.OpcionB || !q.OpcionC) return { valid: false, error: "Opción Múltiple requiere al menos 3 opciones (A, B, C)" };
+    }
+
+    return { valid: true };
+};

@@ -1,0 +1,36 @@
+[
+  {
+    "Asignatura": "Informatica I",
+    "Nivel": "Básico",
+    "Tema": "Hardware",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de los siguientes es un periférico de entrada?",
+    "OpcionA": "Monitor",
+    "OpcionB": "Teclado",
+    "OpcionC": "Impresora",
+    "OpcionD": "Altavoces",
+    "RespuestaCorrecta": "B"
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "Lógica",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "Un algoritmo es una secuencia finita de pasos para resolver un problema.",
+    "OpcionA": "Verdadero",
+    "OpcionB": "Falso",
+    "RespuestaCorrecta": "A"
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Básico",
+    "Tema": "HTML",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué etiqueta se utiliza para crear un hipervínculo?",
+    "OpcionA": "<link>",
+    "OpcionB": "<a>",
+    "OpcionC": "<href>",
+    "OpcionD": "<url>",
+    "RespuestaCorrecta": "B"
+  }
+]

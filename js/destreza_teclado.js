@@ -175,7 +175,10 @@ function calculateWPM() {
 // --- Lógica del Juego ---
 
 // Inicializa el juego al cargar la página o al volver a jugar
-window.initDexterityGame = function() {
+window.initDexterityGame = async function() {
+    if (window.GamesAdapter) {
+        await GamesAdapter.init('destreza');
+    }
     console.log('initDexterityGame called'); // Log de depuración
     // Asignar elementos del DOM
     gameStartMenu = document.getElementById('game-start-menu');
@@ -209,6 +212,17 @@ window.initDexterityGame = function() {
     if (exitResultsButton) exitResultsButton.addEventListener('click', exitGame);
 
     if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
+
+    // Control de Abandono (Fase 11)
+    const handleAbandonment = () => {
+        if (gamePlayArea && !gamePlayArea.classList.contains('hidden')) {
+            alert('Sesión cancelada por cambio de ventana.');
+            location.reload();
+        }
+    };
+    window.addEventListener('blur', handleAbandonment);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') handleAbandonment(); });
+
     // Mostrar menú de inicio al cargar
     showScreen('game-start-menu');
 };
@@ -447,15 +461,10 @@ function handleInput() {
     // Caso 3: La longitud de la entrada coincide con la longitud de la palabra objetivo
     if (inputText.length === targetWord.length) {
         const responseTime = Date.now() - questionStartTime;
-        // Captura de Analítica (Fase 5)
+        // Captura de Analítica Unificada (Fase 5)
         if (window.GamesAdapter) {
-            const user = JSON.parse(localStorage.getItem('currentUser'));
-            const analyticsPayload = {
-                userId: user?.userId,
-                gameId: 'destreza',
-                gameName: 'Destreza en el Teclado',
+            GamesAdapter.recordAction({
                 asignatura: 'Ofimática I',
-                grado: user?.grado || 'Décimo',
                 nivel: ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel],
                 preguntaId: 'kbd_' + currentWord.word,
                 tema: 'Escritura',
@@ -464,8 +473,7 @@ function handleInput() {
                 esCorrecta: inputText.toLowerCase() === targetWord.toLowerCase(),
                 tiempoRespuesta: responseTime,
                 cambiosRespuesta: responseChanges
-            };
-            fetchApi('USER', 'recordAnalytics', analyticsPayload);
+            });
         }
 
         // Para la coincidencia final, comparamos el input y el target en minúsculas.
@@ -641,7 +649,7 @@ function endGame() {
 
     // Integración con GamesAdapter
     if (window.GamesAdapter) {
-        GamesAdapter.saveResult("Destreza Teclado", `Puntaje: ${totalScore} (WPM: ${wpm}, Precisión: ${precision}%)`, totalScore);
+        GamesAdapter.finishSession('Ofimática I', ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel], totalScore);
     }
 
     console.log(`Final Correct Words: ${correctWordsCount}`); // Log de depuración

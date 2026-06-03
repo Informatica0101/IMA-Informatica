@@ -24,19 +24,16 @@ window.userGameStats = {}; // Cache de logros para validación de bloqueos
 window.globalTopData = null;
 
 window.initQuizPro = async function() {
-    if (window.GamesAdapter) window.GamesAdapter.showLoading(true);
+    // REQ: Uso del Adaptador Unificado (Fase 3)
+    if (window.GamesAdapter) {
+        await GamesAdapter.init('quizpro');
+    }
 
     try {
-        // Bloqueo de Ciclo de Vida: No permitir acceso hasta preparar estadísticas y ranking
-        await Promise.all([
-            window.loadPerformanceTable(),
-            loadGlobalTop()
-        ]);
-        console.log("[QuizPro] Datos cargados: estadísticas y ranking listos.");
+        await window.loadPerformanceTable();
+        // loadGlobalTop se maneja internamente por el adaptador
     } catch (e) {
-        console.error("[QuizPro] Error en precarga:", e);
-    } finally {
-        if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
+        console.error("[QuizPro] Error en carga de tablas:", e);
     }
 
     const handleAbandonment = () => {
@@ -160,16 +157,16 @@ function checkCrossGradeLock(subjectName, targetGrade) {
     const levels = ['Básico', 'Intermedio', 'Avanzado'];
     for (const req of subjectsToApprove) {
         for (const lvl of levels) {
-            // Nota: El backend ahora retorna el promedio de dominio en s.dominioPromedio si usamos getLearningProfile
-            // Pero como checkCrossGradeLock usa userGameStats (de getGameStats), usaremos una aproximación o fetch adicional
+            // FASE 13: Validación Cross-Grade (Nota >= 70 + Dominio >= 60)
             const hasApproval = statsArray.some(s =>
                 window.normalizeSubject(s.subject) === req.name &&
                 window.parseGrade(s.grade) === req.gradeNum &&
                 window.getStandardLevelName(s.level) === lvl &&
-                parseFloat(s.maxScore || 0) >= 70
+                parseFloat(s.maxScore || 0) >= 70 &&
+                parseFloat(s.dominioPromedio || s.dominio || 0) >= 60
             );
             if (!hasApproval) {
-                console.log(`Locking ${subjectName}: Missing ${req.name} ${lvl} (${req.gradeNum})`);
+                console.log(`Locking ${subjectName}: Missing ${req.name} ${lvl} (${req.gradeNum}) con dominio suficiente.`);
                 return true;
             }
         }
@@ -198,24 +195,29 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
         }
     }
 
-    // REQ 3.B: Progresión Interna por Niveles (A-149: Fix Level Unlock)
+    // REQ 3.B: Progresión Interna por Niveles (Fase 13: Mastery-Based)
     const stats = Object.values(window.userGameStats).filter(s =>
         window.normalizeSubject(s.subject) === window.normalizeSubject(subjectName) &&
         window.parseGrade(s.grade) === window.parseGrade(gradeLabel)
     );
 
-    const basicScore = stats.find(s => window.getStandardLevelName(s.level) === 'Básico')?.maxScore || 0;
-    const interScore = stats.find(s => window.getStandardLevelName(s.level) === 'Intermedio')?.maxScore || 0;
+    const basicStat = stats.find(s => window.getStandardLevelName(s.level) === 'Básico');
+    const interStat = stats.find(s => window.getStandardLevelName(s.level) === 'Intermedio');
+
+    const basicScore = basicStat?.maxScore || 0;
+    const basicDominio = basicStat?.dominioPromedio || basicStat?.dominio || 0;
+
+    const interScore = interStat?.maxScore || 0;
+    const interDominio = interStat?.dominioPromedio || interStat?.dominio || 0;
 
     const btnInter = document.getElementById('btn-intermedio');
     const cardInter = document.getElementById('level-intermedio');
     const btnAvan = document.getElementById('btn-avanzado');
     const cardAvan = document.getElementById('level-avanzado');
 
-    // Bypass Profesor (REQ 5)
-    // FASE 13: Desbloqueo basado en Nota e Índice de Dominio
-    const canUnlockInter = isTeacher || (basicScore >= 70); // Requiere dominio tema implementado en recordAnalytics
-    const canUnlockAvan = isTeacher || (basicScore >= 70 && interScore >= 70);
+    // FASE 13: Los niveles se desbloquean si Nota >= 70 Y Dominio >= 60/70
+    const canUnlockInter = isTeacher || (basicScore >= 70 && basicDominio >= 60);
+    const canUnlockAvan = isTeacher || (basicScore >= 70 && interScore >= 70 && basicDominio >= 60 && interDominio >= 70);
 
     // UI Intermedio
     if (canUnlockInter) {
@@ -367,13 +369,32 @@ async function loadQuestions() {
             // Transformar datos crudos del Banco al formato de QuizPro
             const bankQuestions = res.data.map(q => {
                 // Heurística de Multi-Modalidad (Fase 4)
-                // Si la pregunta tiene un formato compatible, podemos generar variantes
-                const type = q.TipoActividad || "Selección múltiple";
+                let type = q.TipoActividad || "Selección múltiple";
+                let options = [q.OpcionA, q.OpcionB, q.OpcionC, q.OpcionD].filter(o => o && o.trim() !== "");
+                let items = [];
+                let pairs = [];
+
+                // Adaptar estructuras según el tipo de actividad
+                if (type === 'ordering') {
+                    items = options; // En ordering, las opciones A-D son los pasos a ordenar
+                } else if (type === 'matching' || type === 'memory') {
+                    // En matching, guardamos pares en formato term|def en las opciones
+                    options.forEach(opt => {
+                        if (opt.includes('|')) {
+                            const [term, def] = opt.split('|');
+                            pairs.push({ term: term.trim(), definition: def.trim() });
+                        }
+                    });
+                } else if (type === 'Identificar el componente') {
+                    // Opciones son los nombres de componentes, la imagen está en q.Imagen
+                }
 
                 return {
                     id: q.PreguntaID,
                     question: q.Pregunta,
-                    options: [q.OpcionA, q.OpcionB, q.OpcionC, q.OpcionD].filter(o => o && o.trim() !== ""),
+                    options: options,
+                    items: items,
+                    pairs: pairs,
                     answer: q.RespuestaCorrecta,
                     type: type,
                     explanation: q.Explicacion,
@@ -691,7 +712,23 @@ function showQuestion() {
             btn.onclick = () => checkAnswer(opt, q.answer, btn);
             optionsContainer.appendChild(btn);
         });
+    } else if (q.type === 'Identificar el componente') {
+        optionsContainer.classList.remove('hidden');
+        const balanced = getBalancedOptions(q.options, q.answer);
+        balanced.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-card w-full p-4 text-center border-2 border-gray-100 rounded-xl font-bold text-gray-700 bg-white hover:bg-blue-50 transition-all uppercase tracking-tighter';
+            btn.textContent = opt;
+            btn.onclick = () => checkAnswer(opt, q.answer, btn);
+            optionsContainer.appendChild(btn);
+        });
     } else if (q.type === 'Completar espacios' || q.type === 'completion' || q.type === 'fill-in-the-blanks') {
+        fibContainer.classList.remove('hidden');
+        const input = document.getElementById('fib-input');
+        input.value = '';
+        input.placeholder = "Tu respuesta...";
+        setTimeout(() => input.focus(), 100);
+    } else if (q.type === 'memory') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
         pairsList.innerHTML = '<div class="memory-grid" id="memory-grid"></div>';
@@ -754,25 +791,42 @@ function showQuestion() {
     } else if (q.type === 'ordering') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
-        pairsList.innerHTML = '<div class="space-y-2" id="ordering-list"></div>';
+        pairsList.innerHTML = `
+            <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100">
+                <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-4">Estructura Lógica</p>
+                <div class="space-y-2" id="ordering-list"></div>
+            </div>`;
         const list = document.getElementById('ordering-list');
 
         const shuffled = shuffleArray([...q.items]);
         shuffled.forEach((item, idx) => {
             const el = document.createElement('div');
-            el.className = 'p-3 bg-white border-2 border-gray-100 rounded-xl cursor-pointer hover:border-blue-500 transition-all flex items-center gap-3';
-            el.innerHTML = `<span class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center text-[10px] font-bold text-gray-400">${idx+1}</span> <span class="text-xs font-medium text-gray-700">${item}</span>`;
-            el.onclick = () => {
-                const parent = el.parentNode;
-                if (el.nextSibling) parent.insertBefore(el.nextSibling, el);
-                else parent.prepend(el);
-                responseChanges++;
-            };
+            el.className = 'p-4 bg-white border-2 border-gray-100 rounded-2xl cursor-move hover:border-blue-300 transition-all flex items-center justify-between group';
+            el.innerHTML = `
+                <div class="flex items-center gap-4">
+                    <span class="w-6 h-6 bg-blue-50 text-blue-400 rounded-lg flex items-center justify-center text-[10px] font-black">${idx+1}</span>
+                    <span class="text-xs font-bold text-gray-700 font-mono">${item}</span>
+                </div>
+                <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button class="w-8 h-8 bg-gray-100 rounded-lg hover:bg-gray-200" onclick="window.moveOrderItem(this, -1); event.stopPropagation();"><i class="fas fa-chevron-up text-[10px]"></i></button>
+                    <button class="w-8 h-8 bg-gray-100 rounded-lg hover:bg-gray-200" onclick="window.moveOrderItem(this, 1); event.stopPropagation();"><i class="fas fa-chevron-down text-[10px]"></i></button>
+                </div>`;
             list.appendChild(el);
         });
 
+        window.moveOrderItem = (btn, dir) => {
+            const row = btn.closest('#ordering-list > div');
+            if (dir === -1 && row.previousElementSibling) row.parentNode.insertBefore(row, row.previousElementSibling);
+            else if (dir === 1 && row.nextElementSibling) row.parentNode.insertBefore(row.nextElementSibling, row);
+            responseChanges++;
+            // Re-numerar
+            Array.from(list.children).forEach((child, i) => {
+                child.querySelector('span').textContent = i + 1;
+            });
+        };
+
         window.submitMatching = function() {
-            const currentOrder = Array.from(document.querySelectorAll('#ordering-list > div')).map(el => el.innerText.split('\n')[1] || el.innerText.replace(/^\d+\s/, ''));
+            const currentOrder = Array.from(document.querySelectorAll('#ordering-list > div')).map(el => el.querySelector('.font-mono').textContent.trim());
             let allCorrect = true;
             q.items.forEach((item, idx) => {
                 if (currentOrder[idx] !== item) allCorrect = false;
@@ -866,14 +920,10 @@ function checkAnswer(selected, correct, btn) {
     let q = currentQuizQuestions[currentIndex];
     const user = JSON.parse(localStorage.getItem('currentUser'));
 
-    // Captura de Analítica Individual (Fase 5)
+    // Captura de Analítica Unificada (Fase 5)
     if (window.GamesAdapter) {
-        const analyticsPayload = {
-            userId: user?.userId,
-            gameId: 'quizpro',
-            gameName: 'QuizPro',
+        GamesAdapter.recordAction({
             asignatura: selectedAsignatura,
-            grado: selectedGrado,
             nivel: window.getStandardLevelName(selectedDifficulty),
             preguntaId: q.id,
             tema: (q.tags && q.tags.length > 0) ? q.tags[0] : 'General',
@@ -882,8 +932,7 @@ function checkAnswer(selected, correct, btn) {
             esCorrecta: String(selected).trim().toLowerCase() === String(correct).trim().toLowerCase(),
             tiempoRespuesta: responseTime,
             cambiosRespuesta: responseChanges
-        };
-        fetchApi('USER', 'recordAnalytics', analyticsPayload);
+        });
     }
 
     const allBtns = document.querySelectorAll('.option-card');
@@ -916,12 +965,19 @@ function checkAnswer(selected, correct, btn) {
     } else {
         if (btn) btn.classList.add('incorrect', 'border-red-500', 'bg-red-50', 'text-red-700');
         feedback.className = 'text-center h-8 font-bold text-red-500';
-        const displayCorrect = (correct !== undefined && correct !== null) ? correct : "No disponible";
-        feedback.textContent = `Incorrecto. Era: ${displayCorrect}`;
+
+        // Garantía de Retroalimentación: Buscar respuesta en el objeto q si 'correct' llega undefined
+        const finalCorrect = correct || q?.answer || (q?.pairs ? "Ver correspondencias" : "No disponible");
+
+        feedback.textContent = `Incorrecto. Era: ${finalCorrect}`;
         incorrectAnswers.push(q);
+
+        // Resaltar la opción correcta en la interfaz
         allBtns.forEach(b => {
-            if (correct && b.textContent.trim() === String(correct).trim()) {
-                b.classList.add('correct', 'border-emerald-500', 'text-emerald-600');
+            const btnText = b.textContent.trim().toLowerCase();
+            const correctText = String(finalCorrect).trim().toLowerCase();
+            if (finalCorrect && btnText === correctText) {
+                b.classList.add('correct', 'border-emerald-500', 'text-emerald-600', 'bg-emerald-50/50');
             }
         });
     }
