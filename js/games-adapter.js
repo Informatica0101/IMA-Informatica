@@ -1,7 +1,7 @@
 /**
  * Adaptador Unificado para Minijuegos (Fase 1)
  */
-const GamesAdapter = {
+window.GamesAdapter = {
     // REQ: Mensajes dinámicos de carga
     loadingMessages: [
         "Cargando estadísticas...",
@@ -16,7 +16,7 @@ const GamesAdapter = {
         personalRecords: {}
     },
 
-    async init(gameId) {
+    async init(gameId, autoHide = true) {
         console.log(`[GamesAdapter] Iniciando sesión para: ${gameId}`);
         this.state.currentSession = {
             gameId,
@@ -24,13 +24,42 @@ const GamesAdapter = {
             actions: []
         };
         await this.showLoading(true);
-        // Pre-carga de datos críticos
-        const [lb, record] = await Promise.all([
-            this.getLeaderboard(gameId),
-            this.getPersonalRecord()
-        ]);
-        this.state.personalRecords = record;
-        return { lb, record };
+
+        // REQ: Pre-carga segura con timeout (Fase 2)
+        try {
+            const timeout = (ms) => new Promise(resolve => setTimeout(() => resolve('TIMEOUT'), ms));
+
+            const results = await Promise.race([
+                Promise.all([
+                    this.getLeaderboard(gameId).catch(e => null),
+                    this.getPersonalRecord().catch(e => ({}))
+                ]),
+                timeout(5000)
+            ]);
+
+            if (results === 'TIMEOUT') {
+                console.warn("[GamesAdapter] Timeout en pre-carga de datos, continuando con valores por defecto.");
+                this.state.personalRecords = {};
+                if (autoHide) await this.showLoading(false);
+                return { lb: { global: [], subjectTops: {} }, record: {} };
+            }
+
+            const [lb, record] = results;
+            this.state.personalRecords = record || {};
+
+            // REQ: Asegurar que el ranking tenga estructura base (v3.2)
+            const safeLb = lb || { global: [], subjectTops: {} };
+
+            return { lb: safeLb, record: record || {} };
+        } catch (e) {
+            console.error("[GamesAdapter] Error crítico en init:", e);
+            this.state.personalRecords = {};
+            return { lb: { global: [], subjectTops: {} }, record: {} };
+        } finally {
+            // REQ: Liberar loader siempre ( QA Automático )
+            // Si autoHide es false, el llamador es responsable de cerrar el loader tras renderizar.
+            if (autoHide) await this.showLoading(false);
+        }
     },
 
     async showLoading(active = true) {
@@ -124,9 +153,12 @@ const GamesAdapter = {
     async getLeaderboard(gameId) {
         try {
             const res = await fetchApi('USER', 'getGlobalTop', { gameId });
-            return res.status === 'success' ? res : null;
+            // REQ: Manejo seguro de datos vacíos (v3.2)
+            if (res && res.status === 'success') return res;
+            return { status: 'success', global: [], subjectTops: {} };
         } catch (e) {
-            return null;
+            console.warn(`[GamesAdapter] Error obteniendo leaderboard para ${gameId}:`, e);
+            return { status: 'success', global: [], subjectTops: {} };
         }
     },
 
@@ -135,14 +167,33 @@ const GamesAdapter = {
         if (!user) return {};
         try {
             const res = await fetchApi('USER', 'getGameStats', { userId: user.userId });
-            return res.status === 'success' ? res.data : {};
+            // REQ: Manejo seguro de datos vacíos (v3.2)
+            if (res && res.status === 'success' && res.data) return res.data;
+            return {};
         } catch (e) {
+            console.warn("[GamesAdapter] Error obteniendo record personal:", e);
             return {};
         }
     }
 };
 
-window.GamesAdapter = GamesAdapter;
+/**
+ * REQ: Wake Lock API (v3.2)
+ * Evita que la pantalla se apague durante el juego.
+ */
+let wakeLock = null;
+async function requestWakeLock() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log('[GamesAdapter] Wake Lock activado');
+        }
+    } catch (err) {
+        console.warn('[GamesAdapter] Fallo Wake Lock:', err);
+    }
+}
+window.requestWakeLock = requestWakeLock;
+
 
 // REQ: Garantía de disponibilidad para Incidencia 1
 console.log("[GamesAdapter] Cargado correctamente.");

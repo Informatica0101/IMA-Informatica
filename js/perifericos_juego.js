@@ -58,21 +58,44 @@ let localGameStorage; // Variable to hold the gameDataStorage object passed from
 // Function to initialize DOM elements and attach event listeners
 // This function now accepts the gameDataStorage object
 async function initializePeripheralsGame(gameDataStorage) {
-    if (window.GamesAdapter) {
-        await GamesAdapter.init('perifericos');
-    }
-    localGameStorage = gameDataStorage; // Store the passed object
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const isGuest = !user;
 
-    // Cargar récord personal (Sincronizado con Adaptador)
-    const myRecord = GamesAdapter.state?.personalRecords?.["Periféricos"];
-    if (myRecord) {
-        const recordDiv = document.getElementById('personal-record-init');
-        const scoreSpan = document.getElementById('init-max-score');
-        if (recordDiv && scoreSpan) {
-            recordDiv.classList.remove('hidden');
-            scoreSpan.textContent = myRecord.maxScore;
+    if (window.GamesAdapter) {
+        const { lb, record } = await GamesAdapter.init('perifericos');
+
+        // Mini Leaderboard
+        const miniLb = document.getElementById('mini-leaderboard');
+        if (miniLb && lb && lb.global) {
+            miniLb.innerHTML = lb.global.slice(0, 3).map((u, i) => `
+                <div class="flex items-center justify-between text-[10px] font-bold">
+                    <span class="text-indigo-700">${i+1}. ${u.nombre.split(' ')[0]}</span>
+                    <span class="text-indigo-500">${u.promedio}%</span>
+                </div>
+            `).join('');
+        }
+
+        // Récord
+        const myRecord = record?.["Juego de Periféricos"] || JSON.parse(localStorage.getItem('guest_record_perifericos') || 'null');
+        if (myRecord) {
+            const scoreSpan = document.getElementById('init-max-score');
+            if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || 0;
         }
     }
+
+    if (isGuest) {
+        document.getElementById('guest-mode-warning')?.classList.remove('hidden');
+        const guestBtn = document.getElementById('continue-guest-btn');
+        if (guestBtn) {
+            guestBtn.classList.remove('hidden');
+            guestBtn.onclick = () => {
+                document.getElementById('guest-mode-warning')?.classList.add('hidden');
+                guestBtn.classList.add('hidden');
+            };
+        }
+    }
+
+    localGameStorage = gameDataStorage; // Store the passed object
 
     // Use a setTimeout to ensure all DOM elements are parsed and available
     // before attempting to get their references and attach listeners.
@@ -105,7 +128,15 @@ async function initializePeripheralsGame(gameDataStorage) {
         }
 
         // Attach Event Listeners - MOVED INSIDE THIS setTimeout
-        if (startGameButton) startGameButton.addEventListener('click', startGame);
+        if (startGameButton) {
+            startGameButton.addEventListener('click', () => {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
+                }
+                if (window.requestWakeLock) window.requestWakeLock();
+                startGame();
+            });
+        }
         if (endGameButton) endGameButton.addEventListener('click', endGame);
         // Ensure retryGameButton is not null before attaching listener
         const retryGameButton = document.getElementById('retry-game-button'); // Re-get inside here
@@ -322,7 +353,16 @@ function endGame() {
 
     // Guardar en el portal vía Adaptador Unificado
     if (window.GamesAdapter) {
-        GamesAdapter.finishSession('Informática I', 'Básico', score);
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (user) {
+            GamesAdapter.finishSession('Informática I', 'Básico', score);
+        } else {
+            const recordKey = 'guest_record_perifericos';
+            const existing = JSON.parse(localStorage.getItem(recordKey) || '{"maxScore": 0}');
+            if (score > existing.maxScore) {
+                localStorage.setItem(recordKey, JSON.stringify({ maxScore: score, date: new Date().toISOString() }));
+            }
+        }
     }
 }
 

@@ -32,8 +32,13 @@ window.initQuizPro = async function() {
     try {
         await window.loadPerformanceTable();
         // loadGlobalTop se maneja internamente por el adaptador
+        await loadGlobalTop(); // Inyectar ranking en el home
     } catch (e) {
         console.error("[QuizPro] Error en carga de tablas:", e);
+    } finally {
+        if (window.GamesAdapter) {
+            await GamesAdapter.showLoading(false);
+        }
     }
 
     const handleAbandonment = () => {
@@ -283,6 +288,11 @@ window.backToLevelsAfterResult = function() {
 
 window.selectLevel = function(level) {
     selectedDifficulty = level;
+    // Activar Fullscreen y Wake Lock al entrar al nivel (v3.2)
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
+    }
+    if (window.requestWakeLock) window.requestWakeLock();
     startQuiz();
 };
 
@@ -381,6 +391,27 @@ async function loadQuestions() {
     allPresentationQuestions = [];
     console.log(`[QuizPro] Consultando Banco Central para: ${selectedAsignatura} (${selectedDifficulty})`);
 
+    // FASE 1: Consumo Local (JSON) como fuente primaria
+    try {
+        const localRes = await fetch('js/questions-bank.json');
+        if (localRes.ok) {
+            const localData = await localRes.json();
+            const filteredLocal = localData.filter(q =>
+                window.normalizeSubject(q.Asignatura) === window.normalizeSubject(selectedAsignatura) &&
+                window.getStandardLevelName(q.Nivel) === window.getStandardLevelName(selectedDifficulty)
+            );
+
+            if (filteredLocal.length > 0) {
+                console.log(`[QuizPro] Cargadas ${filteredLocal.length} preguntas desde JSON local.`);
+                allPresentationQuestions = transformBankQuestions(filteredLocal);
+                return;
+            }
+        }
+    } catch (e) {
+        console.warn("[QuizPro] Fallo carga de JSON local, reintentando con API...", e);
+    }
+
+    // FASE 2: Consumo API (Google Sheets) como fuente secundaria
     try {
         const res = await fetchApi('USER', 'getQuestionBank', {
             asignatura: selectedAsignatura,
@@ -389,62 +420,8 @@ async function loadQuestions() {
         });
 
         if (res.status === 'success' && res.data) {
-            // Transformar datos crudos del Banco al formato de QuizPro
-            const bankQuestions = res.data.map(q => {
-                // Heurística de Multi-Modalidad (Fase 4)
-                let type = q.TipoActividad || "Selección múltiple";
-                let options = [q.OpcionA, q.OpcionB, q.OpcionC, q.OpcionD].filter(o => o && o.trim() !== "");
-                let items = [];
-                let pairs = [];
-
-                // Adaptar estructuras según el tipo de actividad
-                if (type === 'ordering') {
-                    items = options; // En ordering, las opciones A-D son los pasos a ordenar
-                } else if (type === 'matching' || type === 'memory') {
-                    // En matching, guardamos pares en formato term|def en las opciones
-                    options.forEach(opt => {
-                        if (opt.includes('|')) {
-                            const [term, def] = opt.split('|');
-                            pairs.push({ term: term.trim(), definition: def.trim() });
-                        }
-                    });
-                } else if (type === 'Identificar el componente') {
-                    // Opciones son los nombres de componentes, la imagen está en q.Imagen
-                }
-
-                return {
-                    id: q.PreguntaID,
-                    question: q.Pregunta,
-                    options: options,
-                    items: items,
-                    pairs: pairs,
-                    answer: q.RespuestaCorrecta,
-                    type: type,
-                    explanation: q.Explicacion,
-                    image: q.Imagen,
-                    subject: q.Asignatura,
-                    nivel: q.Nivel,
-                    tags: [q.Tema]
-                };
-            });
-
-            // Generador de Distractores Inteligentes (Fase 3)
-            // Si una pregunta no tiene suficientes opciones, las tomamos de otras respuestas correctas del mismo tema
-            bankQuestions.forEach(q => {
-                if (q.options.length < 4 && q.type === "Selección múltiple") {
-                    const sameTopicAnswers = bankQuestions
-                        .filter(other => other.id !== q.id && other.tags[0] === q.tags[0])
-                        .map(other => other.answer);
-
-                    while (q.options.length < 4 && sameTopicAnswers.length > 0) {
-                        const extra = sameTopicAnswers.shift();
-                        if (!q.options.includes(extra)) q.options.push(extra);
-                    }
-                }
-            });
-
-            allPresentationQuestions = bankQuestions;
-            console.log(`[QuizPro] Cargadas ${allPresentationQuestions.length} preguntas desde el Banco Central.`);
+            allPresentationQuestions = transformBankQuestions(res.data);
+            console.log(`[QuizPro] Cargadas ${allPresentationQuestions.length} preguntas desde la API del Banco Central.`);
         }
 
         // Fallback: Si el banco está vacío para esta nueva asignatura, intentar cargar desde presentaciones legacy
@@ -457,6 +434,68 @@ async function loadQuestions() {
         console.error("[QuizPro] Error cargando desde el Banco:", e);
         await loadQuestionsLegacy();
     }
+}
+
+/**
+ * Transforma los datos crudos del banco (JSON o API) al formato interno de QuizPro
+ */
+function transformBankQuestions(data) {
+    const bankQuestions = data.map(rawQ => {
+                // REQ: Normalizar integridad antes de transformar (v3.2)
+                const q = window.normalizeQuestion(rawQ);
+
+                // Heurística de Multi-Modalidad (Fase 4)
+                let type = q.TipoActividad || "Selección múltiple";
+                let options = [q.OpcionA, q.OpcionB, q.OpcionC, q.OpcionD].filter(o => o && o.trim() !== "");
+                let items = q.items || [];
+                let pairs = q.pairs || [];
+
+                // Adaptar estructuras según el tipo de actividad si vienen vacíos
+                if (type === 'ordering' && items.length === 0) {
+                    items = options; // En ordering, las opciones A-D son los pasos a ordenar
+                } else if ((type === 'matching' || type === 'memory') && pairs.length === 0) {
+                    // En matching, guardamos pares en formato term|def en las opciones
+                    options.forEach(opt => {
+                        if (opt.includes('|')) {
+                            const [term, def] = opt.split('|');
+                            pairs.push({ term: term.trim(), definition: def.trim() });
+                        }
+                    });
+                } else if (type === 'Identificar el componente') {
+                    // Opciones son los nombres de componentes, la imagen está en q.Imagen
+                }
+
+                return {
+                    id: q.PreguntaID || `bank_${Math.random().toString(36).substr(2, 9)}`,
+                    question: q.Pregunta,
+                    options: options,
+                    items: items,
+                    pairs: pairs,
+                    answer: q.RespuestaCorrecta,
+                    type: type,
+                    explanation: q.Explicacion,
+                    image: q.Imagen,
+                    subject: q.Asignatura,
+                    nivel: q.Nivel,
+                    tags: [q.Tema || "General"]
+                };
+            });
+
+            // Generador de Distractores Inteligentes (Fase 3)
+            bankQuestions.forEach(q => {
+                if (q.options.length < 4 && (q.type === "Selección múltiple" || q.type === "opcion_multiple")) {
+                    const sameTopicAnswers = bankQuestions
+                        .filter(other => other.id !== q.id && other.tags[0] === q.tags[0])
+                        .map(other => other.answer);
+
+                    while (q.options.length < 4 && sameTopicAnswers.length > 0) {
+                        const extra = sameTopicAnswers.shift();
+                        if (!q.options.includes(extra)) q.options.push(extra);
+                    }
+                }
+            });
+
+            return bankQuestions;
 }
 
 async function loadQuestionsLegacy() {
@@ -754,48 +793,79 @@ function showQuestion() {
     } else if (q.type === 'memory') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
-        pairsList.innerHTML = '<div class="memory-grid" id="memory-grid"></div>';
+
+        // Estilización de alta densidad para Memoria (v3.2)
+        pairsList.innerHTML = `
+            <div class="bg-blue-600/5 p-6 rounded-[2.5rem] border border-blue-100 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em]">Reto de Memoria</p>
+                    <div id="memory-stats" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                        Pares: <span id="matched-count" class="text-emerald-500">0</span> / ${q.pairs.length}
+                    </div>
+                </div>
+                <div class="memory-grid" id="memory-grid"></div>
+            </div>
+        `;
         const grid = document.getElementById('memory-grid');
 
         const getIcon = (tags = []) => {
-            if (tags.includes("Programación")) return "fa-terminal";
-            if (tags.includes("Web")) return "fa-code";
-            if (tags.includes("Ofimática")) return "fa-file-alt";
-            if (tags.includes("Hardware")) return "fa-microchip";
-            if (tags.includes("Periféricos")) return "fa-keyboard";
-            if (tags.includes("Seguridad")) return "fa-shield-alt";
+            const t = (tags || []).join(' ');
+            if (t.includes("Programación")) return "fa-terminal";
+            if (t.includes("Web") || t.includes("HTML")) return "fa-code";
+            if (t.includes("Ofimática") || t.includes("Excel")) return "fa-file-alt";
+            if (t.includes("Hardware")) return "fa-microchip";
+            if (t.includes("Periféricos")) return "fa-keyboard";
+            if (t.includes("Seguridad")) return "fa-shield-alt";
             return "fa-brain";
         };
-        const icon = getIcon(q.tags);
+        const icon = getIcon(q.tags || [q.Tema]);
 
         const items = shuffleArray([...q.pairs.map(p => ({v: p.term, k: p.term})), ...q.pairs.map(p => ({v: p.definition, k: p.term}))]);
         let selectedCards = [];
+        let matchedCount = 0;
 
         items.forEach(item => {
             const card = document.createElement('div');
-            card.className = 'memory-card';
+            card.className = 'memory-card group';
             card.innerHTML = `
-                <div class="memory-card-inner">
-                    <div class="memory-card-front">
-                        <i class="fas ${icon} text-gray-300 text-2xl mb-1"></i>
-                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">IMA</span>
+                <div class="memory-card-inner shadow-lg group-hover:shadow-blue-200/50 transition-shadow duration-500">
+                    <div class="memory-card-front flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-2xl">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm mb-2 group-hover:scale-110 transition-transform">
+                            <i class="fas ${icon} text-blue-500/40 text-xl"></i>
+                        </div>
+                        <span class="text-[7px] font-black text-slate-400 uppercase tracking-widest">Descubrir</span>
                     </div>
-                    <div class="memory-card-back">
-                        <span class="text-[9px] sm:text-[11px] font-bold text-gray-800 leading-tight">${item.v}</span>
+                    <div class="memory-card-back flex items-center justify-center p-3 bg-white border-2 border-blue-500 rounded-2xl shadow-inner">
+                        <span class="text-[9px] font-bold text-gray-800 leading-tight text-center">${item.v}</span>
                     </div>
                 </div>`;
 
             card.onclick = () => {
-                if (selectedCards.length < 2 && !card.classList.contains('revealed')) {
+                if (selectedCards.length < 2 && !card.classList.contains('revealed') && !card.classList.contains('matched')) {
                     card.classList.add('revealed');
                     selectedCards.push({card, item});
 
                     if (selectedCards.length === 2) {
                         if (selectedCards[0].item.k === selectedCards[1].item.k) {
-                            selectedCards.forEach(c => c.card.classList.add('matched'));
-                            score += 0.25;
-                            selectedCards = [];
+                            // ¡Match!
+                            setTimeout(() => {
+                                selectedCards.forEach(c => {
+                                    c.card.classList.add('matched');
+                                    c.card.querySelector('.memory-card-back').classList.replace('border-blue-500', 'border-emerald-500');
+                                    c.card.querySelector('.memory-card-back').classList.add('bg-emerald-50');
+                                });
+                                matchedCount++;
+                                document.getElementById('matched-count').textContent = matchedCount;
+                                score += (1 / q.pairs.length); // Prorratear punto
+                                selectedCards = [];
+
+                                if (matchedCount === q.pairs.length) {
+                                    document.getElementById('finish-memory-btn').classList.replace('bg-gray-400', 'bg-blue-600');
+                                    document.getElementById('finish-memory-btn').classList.add('animate-bounce');
+                                }
+                            }, 500);
                         } else {
+                            // Fallo
                             setTimeout(() => {
                                 selectedCards.forEach(c => c.card.classList.remove('revealed'));
                                 selectedCards = [];
@@ -806,10 +876,20 @@ function showQuestion() {
             };
             grid.appendChild(card);
         });
+
         const btn = document.createElement('button');
-        btn.className = 'mt-6 w-full py-4 bg-gray-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-800 transition-colors shadow-lg';
-        btn.textContent = "Finalizar Reto de Memoria";
-        btn.onclick = () => { currentIndex++; if(currentIndex < currentQuizQuestions.length) showQuestion(); else endQuiz(); };
+        btn.id = 'finish-memory-btn';
+        btn.className = 'w-full py-5 bg-gray-400 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-xl';
+        btn.textContent = "Validar Reto de Memoria";
+        btn.onclick = () => {
+            if (matchedCount === q.pairs.length) {
+                currentIndex++;
+                if(currentIndex < currentQuizQuestions.length) showQuestion();
+                else endQuiz();
+            } else {
+                alert("Debes encontrar todos los pares antes de continuar.");
+            }
+        };
         matchingContainer.appendChild(btn);
     } else if (q.type === 'ordering') {
         matchingContainer.classList.remove('hidden');
@@ -874,8 +954,8 @@ function showQuestion() {
                             <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-gray-200">
                                 <input type="text" maxlength="1"
                                     class="matching-letter-input w-8 h-8 text-center font-bold border-2 border-blue-100 rounded-lg focus:border-blue-500 outline-none uppercase text-xs"
-                                    data-term="${pair.term}">
-                                    oninput="responseChanges++"
+                                    data-term="${pair.term}"
+                                    oninput="responseChanges++" />
                                 <span class="text-[11px] font-semibold text-gray-700">${pair.term}</span>
                             </div>
                         `).join('')}
@@ -912,6 +992,18 @@ function showQuestion() {
         // Remover elementos de transcripción si existen
         const existingTarget = fibContainer.querySelector('.transcription-target');
         if (existingTarget) existingTarget.remove();
+    } else if (q.type === 'verdadero_falso') {
+        optionsContainer.classList.remove('hidden');
+        const options = ["Verdadero", "Falso"];
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-card w-full p-4 text-center border-2 border-gray-100 rounded-xl font-black text-gray-700 bg-white hover:bg-blue-50 transition-all uppercase tracking-tighter';
+            btn.textContent = opt;
+            // Map Verdadero/Falso to A/B for internal answer checking consistency
+            const val = opt === "Verdadero" ? "A" : "B";
+            btn.onclick = () => checkAnswer(val, q.answer, btn);
+            optionsContainer.appendChild(btn);
+        });
     } else {
         optionsContainer.classList.remove('hidden');
         const balanced = getBalancedOptions(q.options, q.answer);

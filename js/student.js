@@ -66,7 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para obtener Tareas y Exámenes
     async function fetchAllActivities() {
         if (!tasksList) return;
-        tasksList.innerHTML = '<div class="p-12 text-center"><i class="fas fa-spinner fa-spin text-blue-600 text-3xl mb-4"></i><p class="text-gray-500 font-medium">Sincronizando expediente académico...</p></div>';
+
+        if (window.GamesAdapter) {
+            window.GamesAdapter.showLoading(true);
+        } else {
+            tasksList.innerHTML = '<div class="p-12 text-center"><i class="fas fa-spinner fa-spin text-blue-600 text-3xl mb-4"></i><p class="text-gray-500 font-medium">Sincronizando expediente académico...</p></div>';
+        }
+
         try {
             const payload = { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion };
 
@@ -118,7 +124,21 @@ document.addEventListener('DOMContentLoaded', () => {
             renderParcialTabs(allActivities);
 
         } catch (error) {
-            tasksList.innerHTML = `<p class="text-red-500">Error al cargar actividades: ${error.message}</p>`;
+            console.error("[IMA-STUDENT] Error en fetchAllActivities:", error);
+            // REQ: Manejo de respuesta vacía amigable (v3.3)
+            tasksList.innerHTML = `
+                <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100">
+                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 uppercase tracking-tighter mb-2">¡Sincronizando!</h3>
+                    <p class="text-gray-400 text-xs font-medium uppercase tracking-widest leading-relaxed">
+                        No hemos podido obtener tus tareas en este momento. Por favor, reintenta en unos instantes.
+                    </p>
+                    <button onclick="location.reload()" class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg">Reintentar</button>
+                </div>`;
+        } finally {
+            if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         }
     }
 
@@ -369,7 +389,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!activities || activities.length === 0) {
             tabsContainer.innerHTML = '';
-            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades disponibles.</p>';
+            tasksList.innerHTML = `
+                <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100 animate-fade-in">
+                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 uppercase tracking-tighter mb-2">¡Sin pendientes!</h3>
+                    <p class="text-gray-400 text-xs font-medium uppercase tracking-widest leading-relaxed">
+                        No se han encontrado tareas ni exámenes asignados para tu grado y sección en este momento.
+                    </p>
+                </div>`;
             return;
         }
 
@@ -411,7 +440,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderActivities(filtered) {
         if (!filtered || filtered.length === 0) {
-            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades registradas para esta materia en este parcial.</p>';
+            tasksList.innerHTML = `
+                <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100 animate-fade-in">
+                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 uppercase tracking-tighter mb-2">¡Todo al día!</h3>
+                    <p class="text-gray-400 text-xs font-medium uppercase tracking-widest leading-relaxed">
+                        No hay actividades pendientes ni registradas para esta materia en el parcial seleccionado.
+                    </p>
+                </div>`;
             return;
         }
         tasksList.innerHTML = filtered.map(activity => {
@@ -685,16 +723,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Generar vista previa inicial (thumbnail placeholder o real si es imagen)
             let thumbnailHtml = `<div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><i class="fas fa-file"></i></div>`;
-            if (currentFile.type.startsWith('image/')) {
-                // (Tarea HEIC) Fallback para HEIC ya que el navegador no lo renderiza nativamente en <img>
-                if (currentFile.name.toLowerCase().endsWith('.heic')) {
+            const ext = currentFileName.split('.').pop().toLowerCase();
+
+            if (currentFile.type.startsWith('image/') || ext === 'heic') {
+                if (ext === 'heic') {
                     thumbnailHtml = `<div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-400"><i class="fas fa-image"></i></div>`;
                 } else {
                     const tempUrl = URL.createObjectURL(currentFile);
                     thumbnailHtml = `<img src="${tempUrl}" class="w-12 h-12 object-cover rounded-lg shadow-inner">`;
                 }
-            } else if (currentFile.type === 'application/pdf') {
+            } else if (currentFile.type === 'application/pdf' || ext === 'pdf') {
                 thumbnailHtml = `<div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-red-400"><i class="fas fa-file-pdf"></i></div>`;
+            } else if (['html', 'css', 'js', 'psc'].includes(ext)) {
+                const colors = { html: 'text-orange-500', css: 'text-blue-500', js: 'text-yellow-500', psc: 'text-green-500' };
+                const icons = { html: 'fa-code', css: 'fa-css3', js: 'fa-js', psc: 'fa-terminal' };
+                thumbnailHtml = `<div class="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center ${colors[ext] || 'text-gray-400'}"><i class="fas ${icons[ext] || 'fa-file-code'}"></i></div>`;
             }
 
             li.innerHTML = `
@@ -835,7 +878,31 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
             if (files.length === 0) return;
-            startAutomatedUpload(files);
+
+            const MAX_SIZE_MB = 10;
+            const ALLOWED_EXT = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'pdf', 'html', 'css', 'js', 'psc'];
+
+            const validFiles = [];
+            for (const file of files) {
+                const ext = file.name.split('.').pop().toLowerCase();
+                const sizeMB = file.size / (1024 * 1024);
+
+                if (!ALLOWED_EXT.includes(ext)) {
+                    alert(`El archivo "${file.name}" no tiene un formato permitido.`);
+                    continue;
+                }
+                if (sizeMB > MAX_SIZE_MB) {
+                    alert(`El archivo "${file.name}" excede el límite de ${MAX_SIZE_MB}MB.`);
+                    continue;
+                }
+                validFiles.push(file);
+            }
+
+            if (validFiles.length > 0) {
+                startAutomatedUpload(validFiles);
+            } else {
+                fileInput.value = '';
+            }
         });
     }
 
@@ -960,10 +1027,30 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId });
             if (res.status === 'success' && res.data && res.data.length > 0) {
-                // REQ: Filtro por Parcial en Analítica (Incidencia 5)
-                // Se asume que LearningProfile almacena la fecha o podemos filtrar por temas del parcial
-                // Por ahora, para garantizar frescura, solo mostramos temas con actualización reciente
                 const profileData = res.data;
+
+                // REQ: Recomendaciones académicas con enlaces directos
+                const findPresentation = (tema) => {
+                    if (!window.presentationData) return null;
+                    for (const grade of window.presentationData) {
+                        for (const subject of grade.subjects) {
+                            for (const topic of subject.topics) {
+                                if (topic.title.toLowerCase().includes(tema.toLowerCase()) ||
+                                    tema.toLowerCase().includes(topic.title.toLowerCase())) {
+                                    return topic.file;
+                                }
+                            }
+                        }
+                    }
+                    return null;
+                };
+
+                const sortedByDominio = [...profileData].sort((a, b) => b.dominio - a.dominio);
+
+                // REQ: Filtrar temas genéricos (v3.2)
+                const strengths = sortedByDominio.filter(i => i.dominio >= 80 && i.tema !== 'General').slice(0, 3);
+                const weaknesses = sortedByDominio.filter(i => i.dominio < 60 && i.tema !== 'General').reverse().slice(0, 3);
+
                 const avgDominio = Math.round(profileData.reduce((sum, item) => sum + item.dominio, 0) / profileData.length);
 
                 let classification = "Requiere Refuerzo";
@@ -973,29 +1060,81 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (avgDominio >= 60) { classification = "Competente"; badgeClass = "bg-blue-50 text-blue-600"; }
                 else if (avgDominio >= 40) { classification = "En Desarrollo"; badgeClass = "bg-yellow-50 text-yellow-600"; }
 
-                profileContainer.innerHTML = `
-                    <div class="mt-6 pt-6 border-t border-gray-50 animate-fade-in">
-                        <div class="flex items-center justify-between mb-4">
+                // REQ: Recomendación Directa (v3.2) - Banner de Alerta Crítica
+                let alertBanner = '';
+                const criticalTopic = weaknesses.find(w => w.dominio < 50);
+                if (criticalTopic) {
+                    const presFile = findPresentation(criticalTopic.tema);
+                    alertBanner = `
+                        <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-xl flex items-center justify-between animate-pulse">
                             <div>
-                                <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Perfil de Dominio</h4>
-                                <p class="text-sm font-bold text-gray-800">Dominio por Conceptos</p>
+                                <p class="text-[10px] font-black text-red-600 uppercase tracking-widest">Alerta de Aprendizaje</p>
+                                <p class="text-xs font-bold text-gray-800">Dominio crítico en: ${criticalTopic.tema}</p>
                             </div>
-                            <span class="px-2 py-1 ${badgeClass} rounded-full text-[8px] font-black uppercase tracking-widest">${classification}</span>
+                            ${presFile ? `<button onclick="window.open('${presFile}', '_blank')" class="px-4 py-2 bg-red-600 text-white text-[9px] font-black uppercase rounded-lg shadow-lg">Repasar Ahora</button>` : ''}
                         </div>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                            ${profileData.slice(0, 4).map(item => `
-                                <div class="p-2 bg-gray-50 rounded-xl border border-gray-100">
-                                    <div class="flex justify-between items-center mb-1">
-                                        <span class="text-[8px] font-bold text-gray-500 uppercase truncate pr-1">${item.tema}</span>
-                                        <span class="text-[9px] font-black text-purple-600">${item.dominio}%</span>
+                    `;
+                }
+
+                profileContainer.innerHTML = `
+                    ${alertBanner}
+                    <div class="mt-8 pt-8 border-t border-gray-50 animate-fade-in">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Análisis de Desempeño</h4>
+                                <p class="text-base font-bold text-gray-800 tracking-tight">Tu Perfil de Aprendizaje Real</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-3 py-1 ${badgeClass} rounded-full text-[9px] font-black uppercase tracking-[0.1em] border border-current opacity-80">${classification}</span>
+                                <p class="text-[9px] text-gray-400 font-bold uppercase mt-2">Promedio General: ${avgDominio}%</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Fortalezas -->
+                            <div class="bg-emerald-50/30 border border-emerald-100/50 p-5 rounded-[2rem]">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <div class="w-7 h-7 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xs shadow-sm">
+                                        <i class="fas fa-arrow-trend-up"></i>
                                     </div>
-                                    <div class="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
-                                        <div class="bg-purple-500 h-full transition-all duration-1000" style="width: ${item.dominio}%"></div>
-                                    </div>
+                                    <h5 class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Tus Fortalezas</h5>
                                 </div>
-                            `).join('')}
+                                <div class="space-y-3">
+                                    ${strengths.length > 0 ? strengths.map(s => `
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs font-bold text-gray-700 uppercase tracking-tighter">${s.tema}</span>
+                                            <span class="text-[10px] font-black text-emerald-600 bg-white px-2 py-0.5 rounded-lg shadow-sm border border-emerald-100">${s.dominio}%</span>
+                                        </div>
+                                    `).join('') : '<p class="text-[10px] text-gray-400 italic">Sigue practicando para identificar tus fortalezas</p>'}
+                                </div>
+                            </div>
+
+                            <!-- Debilidades / Recomendaciones -->
+                            <div class="bg-orange-50/30 border border-orange-100/50 p-5 rounded-[2rem]">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <div class="w-7 h-7 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-xs shadow-sm">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <h5 class="text-[10px] font-black text-orange-700 uppercase tracking-widest">Temas a Reforzar</h5>
+                                </div>
+                                <div class="space-y-4">
+                                    ${weaknesses.length > 0 ? weaknesses.map(w => {
+                                        const file = findPresentation(w.tema);
+                                        const action = file ? `window.open('${file}', '_blank')` : "window.scrollTo({top: document.getElementById('resources-section')?.offsetTop || 0, behavior: 'smooth'})";
+                                        return `
+                                        <div class="flex flex-col gap-1">
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-xs font-bold text-gray-700 uppercase tracking-tighter">${w.tema}</span>
+                                                <span class="text-[10px] font-black text-orange-600">${w.dominio}%</span>
+                                            </div>
+                                            <button onclick="${action}" class="w-max text-[9px] font-black text-orange-700 uppercase tracking-widest hover:underline flex items-center gap-1">
+                                                <i class="fas fa-book-open text-[8px]"></i> ${file ? 'Repasar Ahora' : 'Ver Presentación'}
+                                            </button>
+                                        </div>
+                                    `;}).join('') : '<p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">¡Excelente! No tienes temas críticos pendientes</p>'}
+                                </div>
+                            </div>
                         </div>
-                        ${profileData.length > 4 ? `<p class="text-[8px] text-gray-400 font-medium uppercase mt-3 text-center">+ ${profileData.length - 4} temas adicionales registrados</p>` : ''}
                     </div>
                 `;
             }

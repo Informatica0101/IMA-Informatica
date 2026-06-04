@@ -1,60 +1,62 @@
-# Normas de Generación de Presentaciones Académicas (ISEMED)
+# Normas de Estandarización de Presentaciones IMA (v5.0)
 
-Este documento establece las normas obligatorias para la creación y actualización de presentaciones didácticas dentro de la plataforma académica.
+Este documento define las reglas técnicas y pedagógicas obligatorias para todas las presentaciones HTML dentro del ecosistema educativo de la institución.
+
+---
 
 ## 1. Estructura Obligatoria (16 Diapositivas)
 
-Todas las presentaciones deben constar de exactamente 16 diapositivas distribuidas de la siguiente manera:
+Toda presentación debe seguir exactamente este orden:
 
-*   **Diapositiva 1:** Portada del tema (Regla de Conservación Estricta).
-    *   **Estructura:** Se debe mantener la estructura original de la plantilla base sin modificaciones estructurales.
-    *   **Elementos Obligatorios (en orden):**
-        1. Logo de la institución (sin cambios en dimensiones o posición).
-        2. Nombre del tema (Título principal).
-        3. Nombre de la asignatura.
-        4. Nombre del grado y sección.
-        5. Nombre del docente.
-        6. Fecha de la clase.
-    *   **Restricciones de Estilo:** Prohibido modificar tipografía, tamaños de letra, colores, alineación (centrada) o espaciados. El título debe estar separado del resto por dos espacios visuales.
-    *   **Modificaciones Permitidas:** Únicamente el texto del tema, fecha y asignatura.
-*   **Diapositivas 2 a 6:** Desarrollo del Tema Principal 1. Explicaciones claras y ejemplos estructurados.
-*   **Diapositiva 7:** Ejercicio Práctico del Tema Principal 1. Incluye definiciones y conceptos clave.
-*   **Diapositivas 8 a 12:** Desarrollo del Tema Principal 2 (o continuación avanzada del tema).
-*   **Diapositiva 13:** Ejercicio Práctico del Tema Principal 2.
-*   **Diapositivas 14 a 15:** Cuestionario Interactivo (Evaluación).
-    *   Mínimo 10 preguntas (5 por diapositiva).
-    *   **Reglas del Quiz:**
-        *   La respuesta correcta debe tener una longitud similar a las demás opciones (no debe destacar por ser más corta ni más larga).
-        *   La posición de la respuesta correcta debe variar obligatoriamente respecto a la pregunta anterior (no repetir ubicación consecutiva).
-*   **Diapositiva 16:** Asignación (Tarea) indicada en el plan de clases.
+1.  **Diapositiva 1: Portada Institucional**
+    - Logo centralizado (../imagenes/logo.png).
+    - Título del Tema (font-black, poppins).
+    - Metadatos: Asignatura, Grado/Sección, Docente, Fecha.
+2.  **Diapositiva 2: Objetivos de la Clase**
+    - Al menos 2 objetivos de aprendizaje claros y medibles.
+3.  **Diapositivas 3-10: Desarrollo de Contenido**
+    - Combinación de texto narrativo, diagramas e imágenes.
+    - Los bloques de código deben usar `<pre><code>`.
+4.  **Diapositivas 11-12: Cuestionario Interactivo**
+    - 5 preguntas por diapositiva.
+    - Integración con QuizPro (deben ser detectables por regex).
+5.  **Diapositiva 13: Resumen Ejecutivo**
+    - Puntos clave para el estudio.
+6.  **Diapositiva 14: Asignación Práctica**
+    - Instrucciones de la tarea, puntaje y fecha de entrega.
+7.  **Diapositiva 15: Glosario de Términos**
+8.  **Diapositiva 16: Cierre y Créditos Institucionales**
 
-## 2. Reglas de Diseño y Estilo
+---
 
-*   **Estilo Visual:** Diseño sobrio, profesional y académico.
-*   **Densidad de Información:** Evitar la saturación de texto. Priorizar la legibilidad.
-*   **Fuentes y Tipografía:** Utilizar 'Inter' para cuerpo de texto y 'Poppins' para títulos.
-*   **Colores Institucionales:** Respetar la paleta definida en el sistema (Azul, Naranja, Gris, Blanco).
-*   **Gráficos:** Se prohíben imágenes externas para diagramas o esquemas. Deben generarse mediante HTML, CSS o JavaScript nativo.
-*   **Estructura de Ejemplos:** Todos los ejemplos de código deben ser duales, mostrando explícitamente:
-    1. Implementación en HTML.
-    2. Implementación en CSS.
-*   **Framework:** Utilizar Tailwind CSS v4 para el estilizado.
+## 2. Diseño y UX Institucional
 
-## 3. Sistema de Navegación
+- **Encabezado (#page-header):** Logo, "ISEMED", "Área de Informática", link a Inicio.
+- **Pie de Página (#page-footer):** Bandera de HN, Copyright, Versión del diseño.
+- **Tipografía:** Inter (Cuerpo), Poppins (Títulos).
+- **Consistencia:** Usar Tailwind CSS para espaciados y bordes redondeados (rounded-xl/2xl).
 
-La presentación debe responder a los siguientes controles:
+---
 
-*   **Avanzar:** Clic izquierdo, Barra espaciadora o Flecha derecha.
-*   **Retroceder:** Tecla Retroceso (Backspace) o Flecha izquierda.
-*   **Pantalla Completa (F11):** Al estar en modo pantalla completa, se deben ocultar automáticamente el encabezado, pie de página y botones de navegación de la interfaz global para maximizar el área de proyección.
+## 3. Navegación Universal (Requerimiento Crítico)
 
-## 4. Restricciones de Contenido
+### Escritorio
+- **Clicks:** Click izquierdo en mitad derecha (Avanzar), mitad izquierda (Retroceder).
+- **Teclado:** `Flecha Derecha`, `Espacio`, `PageDown` (Avanzar) | `Flecha Izquierda`, `PageUp` (Retroceder).
 
-*   **Fuentes Autorizadas:** Únicamente se permite extraer información de los PDFs oficiales proporcionados en la carpeta de la asignatura correspondiente.
-*   **Análisis de Planes de Clase:** Es obligatorio identificar el tema correspondiente a la fecha exacta mediante el Plan de Clases oficial.
-*   **Coherencia Temporal:** Revisar el tema anterior y siguiente para evitar saltos lógicos o repeticiones innecesarias.
-*   **Temas Secundarios:** Solo se permite complementar información externa (como ejercicios de PSeInt o estructuras de control) si están explícitamente mencionados en el plan de clases.
+### Móvil / PWA
+- **Gestos:** Swipe Izquierda (Avanzar), Swipe Derecha (Retroceder).
+- **Toques:** Tap lado derecho (Avanzar), Tap lado izquierdo (Retroceder).
+- **Fullscreen:** Doble toque en la primera diapositiva.
 
-## 5. Integración al Sistema
+### Modo Pantalla Completa
+- Se debe invocar via `requestFullscreen()`.
+- El encabezado y pie de página **DEBEN ocultarse** automáticamente.
+- Se debe usar `Wake Lock API` para prevenir que la pantalla se apague durante la lectura.
 
-Las presentaciones terminadas deben integrarse en el archivo `js/data.js` para ser visibles en la sección "Cursos" del menú principal, respetando los filtros de Rol, Grado, Sección y Asignatura.
+---
+
+## 4. Auditoría de Datos
+- Las preguntas deben seguir el esquema: `{ question: "", options: [], answer: "" }`.
+- Todas las imágenes deben tener un `alt` descriptivo.
+- Las rutas a recursos compartidos deben usar rutas relativas (`../imagenes/`).

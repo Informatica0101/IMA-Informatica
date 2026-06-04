@@ -199,8 +199,17 @@ document.addEventListener('DOMContentLoaded', () => {
             // En el backend ya tenemos generateMigrationReport, pero la extracción es local al repo.
             // Por lo tanto, usaremos el JSON que generó Jules para "subirlo" como si el script corriera.
 
-            const response = await fetch('migrated_questions.json');
-            if (!response.ok) throw new Error("No se encontró el archivo de migración (migrated_questions.json). El agente debe regenerarlo.");
+            const migrateUrl = 'migrated_questions.json';
+            const response = await fetch(migrateUrl);
+            if (!response.ok) throw new Error(`No se encontró el archivo de migración (${migrateUrl}). El agente debe regenerarlo.`);
+
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                const text = await response.text();
+                console.error(`[MIGRATION_ERROR] Se esperaba JSON pero se recibió: ${contentType}. Snippet: ${text.substring(0, 100)}`);
+                throw new Error(`Respuesta inválida del servidor (no es JSON). Revisa la consola para más detalles.`);
+            }
+
             const questions = await response.json();
 
             statusMsg.textContent = `Detectadas ${questions.length} preguntas. Validando integridad...`;
@@ -756,7 +765,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
-        submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8"><div class="loading-spinner"></div> Cargando actividad...</td></tr>';
+
+        if (window.GamesAdapter) {
+            window.GamesAdapter.showLoading(true);
+        } else {
+            submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8"><div class="loading-spinner"></div> Cargando actividad...</td></tr>';
+        }
+
         try {
             const payload = { profesorId: currentUser.userId };
             const [taskSubmissions, examSubmissions, tasksRes, examsRes] = await Promise.all([
@@ -778,7 +793,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             renderCurrentLevel();
         } catch (error) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500">Error: ${error.message}</td></tr>`;
+            console.error("[IMA-TEACHER] Error en fetchTeacherActivity:", error);
+            submissionsTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center p-12">
+                        <div class="text-gray-400 italic mb-4 text-sm">Fallo en la comunicación con el servidor central.</div>
+                        <button onclick="location.reload()" class="px-6 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg">Reintentar</button>
+                    </td>
+                </tr>`;
+        } finally {
+            if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         }
     }
 
