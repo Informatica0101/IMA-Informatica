@@ -30,9 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const startBtn = document.getElementById('start-exam-btn');
         let timeLimitFromApi = 0;
 
+        // REQ: Asegurar sesión activa (v3.3)
+        if (!currentUser || !currentUser.userId) {
+            alert("Sesión no válida. Regrese al portal.");
+            window.location.href = "login.html";
+            return;
+        }
+
         try {
             // Apuntar al microservicio de exámenes
-            const result = await fetchApi('EXAM', 'getExamQuestions', { examenId });
+            const result = await fetchApi('EXAM', 'getExamQuestions', { examenId, userId: currentUser.userId });
             if (result.status === 'success' && result.data) {
                 const { titulo, tiempoLimite, preguntas } = result.data;
                 examTitleEl.textContent = titulo;
@@ -345,9 +352,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    examForm.addEventListener('submit', (e) => {
+    examForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        submitExam(false);
+
+        // REQ: Confirmación de entrega (v3.3)
+        if (confirm("¿Estás seguro de que deseas finalizar tu examen? Esta acción no se puede deshacer.")) {
+            await submitExam(false);
+        }
     });
 
     loadExam();

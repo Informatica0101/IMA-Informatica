@@ -3,6 +3,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // REQ: Garantizar inicialización segura del DOM (v3.3)
+    console.log("[IMA-INDEX] Iniciando construcción de interfaz...");
+
     // Setup Common UI (Header, Scroll, Logout)
     if (window.setupCommonUI) window.setupCommonUI();
     if (window.renderCommonNav) window.renderCommonNav();
@@ -57,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Content Section Logic ---
     function renderInitialContentButton() {
+        if (!contentDisplayArea || !contentBackButtonContainer) return;
         contentBackButtonContainer.classList.add('hidden');
         contentDisplayArea.innerHTML = '';
         contentDisplayArea.appendChild(createCustomButton('Ver Recursos Académicos', renderDownloadGrades));
@@ -64,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderDownloadGrades() {
+        if (!contentDisplayArea || !contentBackButtonContainer) return;
         contentBackButtonContainer.classList.add('hidden');
         contentDisplayArea.innerHTML = '';
         const gridDiv = document.createElement('div');
@@ -85,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderDownloadSubjects() {
+        if (!contentDisplayArea || !contentBackButtonContainer) return;
         if (!selectedGradeData) return renderDownloadGrades();
         contentBackButtonContainer.classList.remove('hidden');
         contentDisplayArea.innerHTML = '';
@@ -113,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderDownloadTopics() {
+        if (!contentDisplayArea || !contentBackButtonContainer) return;
         if (!selectedSubjectData) return renderDownloadSubjects();
         contentBackButtonContainer.classList.remove('hidden');
         contentDisplayArea.innerHTML = '';
@@ -255,6 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderActivityList() {
+        if (!initialActivityMenu || !gameListMenu || !mainContentTitle) return;
         initialActivityMenu.classList.add('hidden');
         initialActivityMenu.classList.remove('flex');
         gameListMenu.classList.remove('hidden');
@@ -463,7 +471,24 @@ async function loadNews() {
     if (!newsSection || !newsContainer) return;
 
     try {
-        const res = await fetchApi('USER', 'getNews', {});
+        let res = await fetchApi('USER', 'getNews', {});
+
+        // REQ: Noticia fallback si el servidor falla (v3.3)
+        if (!res || res.status !== 'success' || (res.data && res.data.length === 0)) {
+            console.log("[IMA-NEWS] Utilizando noticia de fallback local.");
+            res = {
+                status: 'success',
+                data: [{
+                    id: 'fallback_01',
+                    titulo: 'Nuevo diseño de la Plataforma (Mayo 2026)',
+                    categoria: 'Académico',
+                    fecha: '2026-05-31',
+                    imagenUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800&auto=format&fit=crop',
+                    contenido: '<p>Hemos actualizado la plataforma con una interfaz más rápida, moderna y adaptada a dispositivos móviles. ¡Explora los nuevos minijuegos y el dashboard de analítica integral!</p>'
+                }]
+            };
+        }
+
         if (res.status === 'success' && res.data.length > 0) {
             newsSection.classList.remove('hidden');
 

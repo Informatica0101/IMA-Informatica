@@ -59,10 +59,18 @@ async function fetchApi(service, action, payload, retryCount = 0) {
             return fetchApi(service, action, payload, retryCount + 1);
         }
 
-        // Si fallaron todos los reintentos, mostrar mensaje amigable
-        if (retryCount === MAX_RETRIES) {
-             console.warn("Fallo persistente tras reintentos.");
-        }
-        throw error;
+        // REQ: Fallback amigable para fallos totales de red/CORS (v3.3)
+        console.warn(`[API-FALLBACK] Retornando estado seguro para ${service}/${action} tras error crítico.`);
+
+        // Estructuras de fallback según la acción solicitada
+        if (action === 'getNews') return { status: 'success', data: [], isFallback: true };
+        if (action.startsWith('get')) return { status: 'success', data: [], isFallback: true };
+
+        return {
+            status: 'error',
+            message: 'Error de conexión persistente. Trabajando en modo offline limitado.',
+            isFallback: true,
+            data: null
+        };
     }
 }

@@ -28,7 +28,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (result.status === 'success' && result.data) {
                     const storage = rememberMe ? localStorage : sessionStorage;
-                    storage.setItem('currentUser', JSON.stringify(result.data));
+
+                    // REQ: Persistencia de datos académicos reales (v3.3)
+                    const userData = {
+                        ...result.data,
+                        loginTimestamp: Date.now()
+                    };
+
+                    storage.setItem('currentUser', JSON.stringify(userData));
+                    console.log(`[IMA-AUTH] Sesión iniciada para ${userData.nombre} (${userData.rol})`);
 
                     if (result.data.rol === 'Profesor') {
                         window.location.href = 'teacher-dashboard.html';

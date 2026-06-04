@@ -793,7 +793,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             renderCurrentLevel();
         } catch (error) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500">Error: ${error.message}</td></tr>`;
+            console.error("[IMA-TEACHER] Error en fetchTeacherActivity:", error);
+            submissionsTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center p-12">
+                        <div class="text-gray-400 italic mb-4 text-sm">Fallo en la comunicación con el servidor central.</div>
+                        <button onclick="location.reload()" class="px-6 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg">Reintentar</button>
+                    </td>
+                </tr>`;
         } finally {
             if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         }

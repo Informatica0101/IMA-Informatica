@@ -124,7 +124,19 @@ document.addEventListener('DOMContentLoaded', () => {
             renderParcialTabs(allActivities);
 
         } catch (error) {
-            tasksList.innerHTML = `<p class="text-red-500">Error al cargar actividades: ${error.message}</p>`;
+            console.error("[IMA-STUDENT] Error en fetchAllActivities:", error);
+            // REQ: Manejo de respuesta vacía amigable (v3.3)
+            tasksList.innerHTML = `
+                <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100">
+                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 uppercase tracking-tighter mb-2">¡Sincronizando!</h3>
+                    <p class="text-gray-400 text-xs font-medium uppercase tracking-widest leading-relaxed">
+                        No hemos podido obtener tus tareas en este momento. Por favor, reintenta en unos instantes.
+                    </p>
+                    <button onclick="location.reload()" class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg">Reintentar</button>
+                </div>`;
         } finally {
             if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         }

@@ -1,7 +1,7 @@
 /**
  * Adaptador Unificado para Minijuegos (Fase 1)
  */
-const GamesAdapter = {
+window.GamesAdapter = {
     // REQ: Mensajes dinámicos de carga
     loadingMessages: [
         "Cargando estadísticas...",
@@ -194,7 +194,6 @@ async function requestWakeLock() {
 }
 window.requestWakeLock = requestWakeLock;
 
-window.GamesAdapter = GamesAdapter;
 
 // REQ: Garantía de disponibilidad para Incidencia 1
 console.log("[GamesAdapter] Cargado correctamente.");
