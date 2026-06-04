@@ -1,8 +1,8 @@
-TAREAS PENDIENTES
+TAREAS PENDIENTES DE REVISIÓN
 1. Ampliación del banco a 100 preguntas por nivel/asignatura.
 2. Incorporación de nuevas asignaturas exclusivas (Redes y POO).
 
-TAREAS PENDIENTES DE REVISIÓN
+TAREAS COMPLETADAS
 1. Implementación de Analítica Avanzada (ICR v3.1) y Progresión Académica (Fases 1-13).
 2. Auditoría Pedagógica y Reclasificación Temática de 771 preguntas (Phase 10).
 3. Migración del banco de preguntas a Google Sheets (BancoPreguntas).

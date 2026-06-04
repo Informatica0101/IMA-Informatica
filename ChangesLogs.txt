@@ -56,3 +56,11 @@ ARCHIVO: js/questions-bank.json
 - Masivo: Reclasificación temática de 771 preguntas anteriormente etiquetadas como "General".
 - Corrección: Normalización de campos RespuestaCorrecta a formato estándar (A, B, C, D) en 9 reactivos críticos.
 - Estructuración: Asignación de temas específicos (ej. "Ingeniería de Requisitos", "Sistemas de Numeración", "Estilos CSS") basada en auditoría de contenido.
+
+REVISIÓN DE REGRESIONES Y UX GLOBAL - 2026-06-18
+- ARCHIVO: js/quizpro.js: Refactorizado initQuizPro con manejo de errores y cierre de loader.
+- ARCHIVO: js/api.js: Implementado API Guard para manejo robusto de errores de red (Validación Content-Type).
+- ARCHIVO: juegos/*.html: Normalización masiva de rutas de logo y activación de Fullscreen API.
+- ARCHIVO: js/student.js: Integrado findPresentation para recomendaciones académicas directas.
+- ARCHIVO: js/webmaster_quiz_juego.js & js/perifericos_juego.js: Implementado Guest Mode y vinculación con rankings.
+- ARCHIVO: Normas_Presentaciones.md: Actualización a v5.0 con nuevas reglas de navegación.

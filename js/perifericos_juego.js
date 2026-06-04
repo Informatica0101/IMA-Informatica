@@ -85,7 +85,14 @@ async function initializePeripheralsGame(gameDataStorage) {
 
     if (isGuest) {
         document.getElementById('guest-mode-warning')?.classList.remove('hidden');
-        document.getElementById('continue-guest-btn')?.classList.remove('hidden');
+        const guestBtn = document.getElementById('continue-guest-btn');
+        if (guestBtn) {
+            guestBtn.classList.remove('hidden');
+            guestBtn.onclick = () => {
+                document.getElementById('guest-mode-warning')?.classList.add('hidden');
+                guestBtn.classList.add('hidden');
+            };
+        }
     }
 
     localGameStorage = gameDataStorage; // Store the passed object

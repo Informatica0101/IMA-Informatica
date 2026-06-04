@@ -961,6 +961,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId });
             if (res.status === 'success' && res.data && res.data.length > 0) {
                 const profileData = res.data;
+
+                // REQ: Recomendaciones académicas con enlaces directos
+                const findPresentation = (tema) => {
+                    if (!window.presentationData) return null;
+                    for (const grade of window.presentationData) {
+                        for (const subject of grade.subjects) {
+                            for (const topic of subject.topics) {
+                                if (topic.title.toLowerCase().includes(tema.toLowerCase()) ||
+                                    tema.toLowerCase().includes(topic.title.toLowerCase())) {
+                                    return topic.file;
+                                }
+                            }
+                        }
+                    }
+                    return null;
+                };
+
                 const sortedByDominio = [...profileData].sort((a, b) => b.dominio - a.dominio);
 
                 const strengths = sortedByDominio.filter(i => i.dominio >= 80).slice(0, 3);
@@ -1016,17 +1033,20 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <h5 class="text-[10px] font-black text-orange-700 uppercase tracking-widest">Temas a Reforzar</h5>
                                 </div>
                                 <div class="space-y-4">
-                                    ${weaknesses.length > 0 ? weaknesses.map(w => `
+                                    ${weaknesses.length > 0 ? weaknesses.map(w => {
+                                        const file = findPresentation(w.tema);
+                                        const action = file ? `window.open('${file}', '_blank')` : "window.scrollTo({top: document.getElementById('resources-section')?.offsetTop || 0, behavior: 'smooth'})";
+                                        return `
                                         <div class="flex flex-col gap-1">
                                             <div class="flex items-center justify-between">
                                                 <span class="text-xs font-bold text-gray-700 uppercase tracking-tighter">${w.tema}</span>
                                                 <span class="text-[10px] font-black text-orange-600">${w.dominio}%</span>
                                             </div>
-                                            <button onclick="window.scrollTo({top: document.getElementById('resources-section')?.offsetTop || 0, behavior: 'smooth'})" class="w-max text-[9px] font-black text-orange-700 uppercase tracking-widest hover:underline flex items-center gap-1">
-                                                <i class="fas fa-book-open text-[8px]"></i> Ver Presentación
+                                            <button onclick="${action}" class="w-max text-[9px] font-black text-orange-700 uppercase tracking-widest hover:underline flex items-center gap-1">
+                                                <i class="fas fa-book-open text-[8px]"></i> ${file ? 'Repasar Ahora' : 'Ver Presentación'}
                                             </button>
                                         </div>
-                                    `).join('') : '<p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">¡Excelente! No tienes temas críticos pendientes</p>'}
+                                    `;}).join('') : '<p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">¡Excelente! No tienes temas críticos pendientes</p>'}
                                 </div>
                             </div>
                         </div>

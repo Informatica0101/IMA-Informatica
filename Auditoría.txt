@@ -144,3 +144,10 @@ AUDITORÍA DE BANCO DE PREGUNTAS (ICR v3.1 & Phase 10) - 2026-06-18
 - [RECLASIFICACIÓN] 80 preguntas de Ofimática migradas de "General" a: "Excel: Formato Condicional", "Excel: Automatización (VBA)".
 - [RECLASIFICACIÓN] 155 preguntas de Programación migradas de "General" a: "Lógica de Programación", "Estructuras de Control", "Bases de Datos".
 - [RECLASIFICACIÓN] 69 preguntas con Asignatura "General" reasignadas a "Análisis y Diseño" (con temas de SDLC, Gestión de Proyectos) e "Informática I".
+
+AUDITORÍA DE ARQUITECTURA Y REGRESIONES - 2026-06-18
+- [CORREGIDO] Loader de QuizPro: Agregado bloque finally para liberación garantizada del overlay.
+- [AUDITADO] Banco JSON Local: Normalización de 771 registros a camelCase y eliminación de tags "General".
+- [CORREGIDO] Rutas de Activos: Corregida ruta src="imagenes/logo.png" por src="../imagenes/logo.png" en juegos/.
+- [CORREGIDO] Seguridad de API: Implementado API Guard en js/api.js para validar JSON vs HTML.
+- [VERIFICADO] Modo Invitado: Confirmada persistencia local para WebMaster y Periféricos.

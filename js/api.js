@@ -29,11 +29,23 @@ async function fetchApi(service, action, payload) {
         }
 
         const textResponse = await response.text();
+        const contentType = response.headers.get('content-type');
+
+        // REQ: Validación de content-type antes de parsear (Fase 8)
+        if (contentType && contentType.includes('text/html')) {
+            console.error("RECIBIDO HTML EN LUGAR DE JSON:", {
+                url: url,
+                action: action,
+                snippet: textResponse.substring(0, 200)
+            });
+            throw new Error(`Error: El servidor respondió con HTML (posible 404 o error de script). Acción: ${action}`);
+        }
+
         try {
             return JSON.parse(textResponse);
         } catch (e) {
             console.error("Respuesta no es JSON válido:", textResponse);
-            throw new Error("El servidor devolvió una respuesta inválida.");
+            throw new Error(`El servidor devolvió una respuesta inválida (no-JSON). URL: ${url}`);
         }
 
     } catch (error) {

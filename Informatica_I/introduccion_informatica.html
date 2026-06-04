@@ -292,6 +292,20 @@
                 }
             }, {passive: true});
 
+
+            // REQ: Navegación por clicks (Escritorio)
+            document.addEventListener("click", (e) => {
+                if (e.target.closest("a, button, input")) return;
+                const halfWidth = window.innerWidth / 2;
+                if (e.clientX > halfWidth) {
+                   if (typeof showSlide === "function") showSlide(currentSlideIndex + 1);
+                   else if (typeof nextSlide === "function") nextSlide();
+                } else {
+                   if (typeof showSlide === "function") showSlide(currentSlideIndex - 1);
+                   else if (typeof prevSlide === "function") prevSlide();
+                }
+            });
+
             // Double tap for fullscreen
             let lastTap = 0;
             container.addEventListener('touchstart', (e) => {

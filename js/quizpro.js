@@ -32,8 +32,13 @@ window.initQuizPro = async function() {
     try {
         await window.loadPerformanceTable();
         // loadGlobalTop se maneja internamente por el adaptador
+        await loadGlobalTop(); // Inyectar ranking en el home
     } catch (e) {
         console.error("[QuizPro] Error en carga de tablas:", e);
+    } finally {
+        if (window.GamesAdapter) {
+            await GamesAdapter.showLoading(false);
+        }
     }
 
     const handleAbandonment = () => {
@@ -900,8 +905,8 @@ function showQuestion() {
                             <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-gray-200">
                                 <input type="text" maxlength="1"
                                     class="matching-letter-input w-8 h-8 text-center font-bold border-2 border-blue-100 rounded-lg focus:border-blue-500 outline-none uppercase text-xs"
-                                    data-term="${pair.term}">
-                                    oninput="responseChanges++"
+                                    data-term="${pair.term}"
+                                    oninput="responseChanges++">
                                 <span class="text-[11px] font-semibold text-gray-700">${pair.term}</span>
                             </div>
                         `).join('')}
