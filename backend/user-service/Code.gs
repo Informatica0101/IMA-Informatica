@@ -815,7 +815,7 @@ function getOrCreateSheet(ss, name) {
 
 function recordAnalytics(payload) {
   const {
-    userId, gameId, asignatura, grado, nivel, preguntaId,
+    userId, gameId, asignatura, grado, nivel, preguntaId, 
     esCorrecta, tiempoRespuesta, cambiosRespuesta, tema
   } = payload || {};
 
@@ -835,13 +835,13 @@ function recordAnalytics(payload) {
   const analyticsSheet = getOrCreateSheet(ss, "QuizProAnalytics");
   const analyticsData = analyticsSheet.getDataRange().getValues().slice(1);
   const userLogs = analyticsData.filter(r => String(r[2]) === String(userId));
-
+  
   const isCalibrationMode = userLogs.length < ANALYTICS_CONFIG.CALIBRATION.THRESHOLD;
   const globalAnalytics = analyticsData.filter(r => String(r[9]) === String(preguntaId));
-
+  
   // 2. Cálculo de Tiempo Base (TRc)
-  let avgPregunta = globalAnalytics.length > 0
-    ? globalAnalytics.reduce((s, r) => s + (parseFloat(r[13]) || 0), 0) / globalAnalytics.length
+  let avgPregunta = globalAnalytics.length > 0 
+    ? globalAnalytics.reduce((s, r) => s + (parseFloat(r[13]) || 0), 0) / globalAnalytics.length 
     : 5000; // Fallback 5s
 
   // Ancla Obligatoria para Cold Start
@@ -850,7 +850,7 @@ function recordAnalytics(payload) {
     avgEstudiante_Historico = userLogs.reduce((s, r) => s + (parseFloat(r[13]) || 0), 0) / userLogs.length;
   } else if (isCalibrationMode) {
     // Buscar ancla: Informática - Décimo - Básico
-    const anchorLogs = analyticsData.filter(r =>
+    const anchorLogs = analyticsData.filter(r => 
       normalizeString(r[6]) === normalizeString(ANALYTICS_CONFIG.CALIBRATION.ANCHOR_SUBJECT) &&
       parseGrade(r[7]) === ANALYTICS_CONFIG.CALIBRATION.ANCHOR_GRADE &&
       getStandardLevelName(r[8]) === ANALYTICS_CONFIG.CALIBRATION.ANCHOR_LEVEL
@@ -888,10 +888,10 @@ function recordAnalytics(payload) {
   const W_ICR = ANALYTICS_CONFIG.WEIGHTS.ICR;
   const exactitud = esCorrecta ? 100 : 0;
   const dificultad = parseFloat(dificultadPregunta || 50);
-
-  const ICR = (exactitud * W_ICR.exactitud) +
-              (eficiencia * W_ICR.eficiencia) +
-              (dificultad * W_ICR.dificultad) +
+  
+  const ICR = (exactitud * W_ICR.exactitud) + 
+              (eficiencia * W_ICR.eficiencia) + 
+              (dificultad * W_ICR.dificultad) + 
               (consistencia * W_ICR.consistencia);
 
   // 6. Probabilidad de Adivinación (GP)
@@ -900,9 +900,9 @@ function recordAnalytics(payload) {
     ? (globalAnalytics.filter(r => r[12] === true || r[12] === "true").length / globalAnalytics.length) * 100
     : 50;
 
-  const GP = (puntajeRapidez * W_GP.rapidez) +
-             ((100 - exactitud) * W_GP.error) +
-             (dificultad * W_GP.dificultad) +
+  const GP = (puntajeRapidez * W_GP.rapidez) + 
+             ((100 - exactitud) * W_GP.error) + 
+             (dificultad * W_GP.dificultad) + 
              ((100 - aciertosGlobales) * W_GP.global);
 
   // 7. Persistencia de Registro Individual
@@ -919,14 +919,14 @@ function recordAnalytics(payload) {
   // 9. Actualizar Leaderboard
   updateLeaderboard(ss, gameId, userId, asignatura, grado, ICR);
 
-  return {
-    status: "success",
-    metrics: {
-      icr: Math.round(ICR),
-      gp: Math.round(GP),
+  return { 
+    status: "success", 
+    metrics: { 
+      icr: Math.round(ICR), 
+      gp: Math.round(GP), 
       mastery: Math.round(ICR),
       isCalibration: isCalibrationMode
-    }
+    } 
   };
 }
 
