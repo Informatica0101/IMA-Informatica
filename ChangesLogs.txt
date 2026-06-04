@@ -64,3 +64,34 @@ REVISIÓN DE REGRESIONES Y UX GLOBAL - 2026-06-18
 - ARCHIVO: js/student.js: Integrado findPresentation para recomendaciones académicas directas.
 - ARCHIVO: js/webmaster_quiz_juego.js & js/perifericos_juego.js: Implementado Guest Mode y vinculación con rankings.
 - ARCHIVO: Normas_Presentaciones.md: Actualización a v5.0 con nuevas reglas de navegación.
+
+IMPLEMENTACIÓN DE INTEGRIDAD Y UX GLOBAL (v3.2) - 2026-06-18
+
+ARCHIVO: js/config.js
+- Línea 14: Actualizada URL del microservicio IMA-USER para sincronización institucional.
+- Líneas 124-150: Refactorizada función window.validateQuestion. Ahora realiza una normalización previa para soportar llaves en inglés y español. Se flexibilizó la validación para tipos de datos complejos (ordering/matching).
+- Líneas 162-230: Refactorizada función window.normalizeQuestion. Se implementó un mapeo exhaustivo de llaves (subject -> Asignatura, question -> Pregunta, etc.) para garantizar la integridad del banco central. Agregada generación automática de ID único si falta.
+
+ARCHIVO: js/games-adapter.js
+- Líneas 53-56: Asegurada liberación del #loading-overlay mediante bloque finally en la inicialización de sesiones.
+- Líneas 147-165: Implementados fallbacks robustos para datos vacíos en leaderboards y récords personales.
+- Líneas 173-189: Implementada Wake Lock API expuesta globalmente como window.requestWakeLock para evitar suspensiones durante el juego.
+
+ARCHIVO: js/quizpro.js
+- Líneas 289-298: Integración de Fullscreen API y Wake Lock al iniciar cualquier nivel de evaluación.
+- Líneas 435-480: Actualizada función transformBankQuestions para utilizar el nuevo normalizador de integridad.
+- Líneas 793-875: Rediseño visual de la actividad de Memoria. Implementada cuadrícula de alta densidad, iconografía temática dinámica y barra de progreso de pares encontrados.
+- Líneas 946-956: Implementado soporte para tipo de pregunta 'verdadero_falso' con botones de acción inmediata.
+
+ARCHIVO: juegos/webmaster_quiz.html & juegos/perifericos.html & juegos/destreza_teclado.html
+- Estructura: Rediseño completo de las pantallas de inicio (Start Menu) con layouts de dos columnas.
+- UI: Implementación de Tailwind v4, tipografía Poppins/Inter, e iconografía de FontAwesome.
+- Datos: Vinculación de mini-leaderboards y récords personales dinámicos en la pantalla de bienvenida.
+- Rutas: Normalización masiva de rutas de logo (../imagenes/logo.png) para compatibilidad con despliegue.
+
+ARCHIVO: js/student.js
+- Líneas 980-983: Filtrado de temas "General" en el perfil de fortalezas y debilidades.
+- Líneas 994-1010: Implementado sistema de Recomendación Directa mediante Banner de Alerta Crítica (Mastery < 50%) con enlaces funcionales a presentaciones.
+
+ARCHIVO: Normas_Presentaciones.md
+- Actualización a v5.0: Documentadas reglas de navegación universal, modo pantalla completa obligatorio y uso de Wake Lock API.

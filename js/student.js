@@ -980,8 +980,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const sortedByDominio = [...profileData].sort((a, b) => b.dominio - a.dominio);
 
-                const strengths = sortedByDominio.filter(i => i.dominio >= 80).slice(0, 3);
-                const weaknesses = sortedByDominio.filter(i => i.dominio < 60).reverse().slice(0, 3);
+                // REQ: Filtrar temas genéricos (v3.2)
+                const strengths = sortedByDominio.filter(i => i.dominio >= 80 && i.tema !== 'General').slice(0, 3);
+                const weaknesses = sortedByDominio.filter(i => i.dominio < 60 && i.tema !== 'General').reverse().slice(0, 3);
 
                 const avgDominio = Math.round(profileData.reduce((sum, item) => sum + item.dominio, 0) / profileData.length);
 
@@ -992,7 +993,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (avgDominio >= 60) { classification = "Competente"; badgeClass = "bg-blue-50 text-blue-600"; }
                 else if (avgDominio >= 40) { classification = "En Desarrollo"; badgeClass = "bg-yellow-50 text-yellow-600"; }
 
+                // REQ: Recomendación Directa (v3.2) - Banner de Alerta Crítica
+                let alertBanner = '';
+                const criticalTopic = weaknesses.find(w => w.dominio < 50);
+                if (criticalTopic) {
+                    const presFile = findPresentation(criticalTopic.tema);
+                    alertBanner = `
+                        <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-xl flex items-center justify-between animate-pulse">
+                            <div>
+                                <p class="text-[10px] font-black text-red-600 uppercase tracking-widest">Alerta de Aprendizaje</p>
+                                <p class="text-xs font-bold text-gray-800">Dominio crítico en: ${criticalTopic.tema}</p>
+                            </div>
+                            ${presFile ? `<button onclick="window.open('${presFile}', '_blank')" class="px-4 py-2 bg-red-600 text-white text-[9px] font-black uppercase rounded-lg shadow-lg">Repasar Ahora</button>` : ''}
+                        </div>
+                    `;
+                }
+
                 profileContainer.innerHTML = `
+                    ${alertBanner}
                     <div class="mt-8 pt-8 border-t border-gray-50 animate-fade-in">
                         <div class="flex items-center justify-between mb-6">
                             <div>

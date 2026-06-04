@@ -133,6 +133,7 @@ async function initializePeripheralsGame(gameDataStorage) {
                 if (document.documentElement.requestFullscreen) {
                     document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
                 }
+                if (window.requestWakeLock) window.requestWakeLock();
                 startGame();
             });
         }

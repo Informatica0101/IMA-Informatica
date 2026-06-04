@@ -122,16 +122,28 @@ window.isContentAuthorized = function(contentPartial) {
  * Asegura que los datos cumplen con el esquema requerido antes de persistir.
  */
 window.validateQuestion = function(q) {
+    // Normalizar antes de validar para ser flexible con nombres de campos (v3.2)
+    const normalized = window.normalizeQuestion(q);
+
     const required = ['Asignatura', 'Nivel', 'Pregunta', 'RespuestaCorrecta'];
+
+    // Saltamos validación de RespuestaCorrecta para tipos que manejan datos complejos como pares o items
+    if (normalized.TipoActividad === 'ordering' || normalized.TipoActividad === 'matching') {
+        const index = required.indexOf('RespuestaCorrecta');
+        if (index > -1) required.splice(index, 1);
+    }
+
     for (const field of required) {
-        if (!q[field] || q[field].toString().trim() === "") return { valid: false, error: `Campo requerido faltante: ${field}` };
+        if (!normalized[field] || normalized[field].toString().trim() === "") {
+            return { valid: false, error: `Campo requerido faltante: ${field}` };
+        }
     }
 
     // Validar que al menos haya 2 opciones si es V/F o 3-4 si es Opción Múltiple
-    if (q.TipoActividad === 'verdadero_falso') {
-        if (!q.OpcionA || !q.OpcionB) return { valid: false, error: "Verdadero/Falso requiere OpcionA y OpcionB" };
-    } else if (q.TipoActividad === 'opcion_multiple' || !q.TipoActividad) {
-        if (!q.OpcionA || !q.OpcionB || !q.OpcionC) return { valid: false, error: "Opción Múltiple requiere al menos 3 opciones (A, B, C)" };
+    if (normalized.TipoActividad === 'verdadero_falso') {
+        if (!normalized.OpcionA || !normalized.OpcionB) return { valid: false, error: "Verdadero/Falso requiere OpcionA y OpcionB" };
+    } else if (normalized.TipoActividad === 'opcion_multiple' || normalized.TipoActividad === 'Selección múltiple') {
+        if (!normalized.OpcionA || !normalized.OpcionB || !normalized.OpcionC) return { valid: false, error: "Opción Múltiple requiere al menos 3 opciones (A, B, C)" };
     }
 
     return { valid: true };
@@ -162,22 +174,59 @@ if (typeof window.GamesAdapter === "undefined") {
 window.normalizeQuestion = function(q) {
     if (!q) return null;
 
-    const respuestaCorrecta = q.respuestaCorrecta ??
-                             q.RespuestaCorrecta ??
+    // Mapeo crítico para resolver errores de integridad (v3.2)
+    const id = q.id || q.ID || q.PreguntaID || `bank_${Math.random().toString(36).substr(2, 9)}`;
+    const Asignatura = q.Asignatura || q.subject || q.asignatura || "Informática I";
+    const Pregunta = q.Pregunta || q.question || q.pregunta || "";
+    const TipoActividad = q.TipoActividad || q.type || q.tipoActividad || "opcion_multiple";
+    const Nivel = q.Nivel || q.nivel || "Básico";
+    const Tema = q.Tema || q.tema || (q.tags && q.tags[0]) || "General";
+    const Grado = q.Grado || q.grado || 10;
+
+    const OpcionA = q.OpcionA || q.opcionA || (q.options && q.options[0]) || "";
+    const OpcionB = q.OpcionB || q.opcionB || (q.options && q.options[1]) || "";
+    const OpcionC = q.OpcionC || q.opcionC || (q.options && q.options[2]) || "";
+    const OpcionD = q.OpcionD || q.opcionD || (q.options && q.options[3]) || "";
+
+    const respuestaCorrecta = q.RespuestaCorrecta ??
+                             q.respuestaCorrecta ??
+                             q.answer ??
                              q.correctAnswer ??
                              q.correct_answer ??
                              q.correctType ??
                              q.solution ??
-                             q.answer ??
                              q.a ??
                              null;
 
-    if (respuestaCorrecta === null) {
+    if (respuestaCorrecta === null && TipoActividad !== 'ordering' && TipoActividad !== 'matching') {
         console.warn("[IMA-NORMALIZER] No se detectó respuesta correcta para la pregunta:", q);
     }
 
     return {
         ...q,
+        id,
+        Asignatura,
+        Pregunta,
+        TipoActividad,
+        Nivel,
+        Tema,
+        Grado,
+        OpcionA,
+        OpcionB,
+        OpcionC,
+        OpcionD,
+        RespuestaCorrecta: (respuestaCorrecta !== null) ? String(respuestaCorrecta).trim() : null,
+        // Mantener campos para compatibilidad con código existente que use camelCase
+        asignatura: Asignatura,
+        pregunta: Pregunta,
+        tipoActividad: TipoActividad,
+        nivel: Nivel,
+        tema: Tema,
+        grado: Grado,
+        opcionA: OpcionA,
+        opcionB: OpcionB,
+        opcionC: OpcionC,
+        opcionD: OpcionD,
         respuestaCorrecta: (respuestaCorrecta !== null) ? String(respuestaCorrecta).trim() : null
     };
 };

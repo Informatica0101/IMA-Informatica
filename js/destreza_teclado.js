@@ -230,6 +230,14 @@ window.initDexterityGame = async function() {
 // Inicia un nuevo juego
 function startGame() {
     console.log('startGame function called'); // Log de depuración
+
+    // Habilitar pantalla completa (v3.2)
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
+    }
+    // Activar Wake Lock (v3.2)
+    if (window.requestWakeLock) window.requestWakeLock();
+
     resetGame();
     gameActive = true; // El juego está activo
     showScreen('game-play-area');
