@@ -66,7 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para obtener Tareas y Exámenes
     async function fetchAllActivities() {
         if (!tasksList) return;
-        tasksList.innerHTML = '<div class="p-12 text-center"><i class="fas fa-spinner fa-spin text-blue-600 text-3xl mb-4"></i><p class="text-gray-500 font-medium">Sincronizando expediente académico...</p></div>';
+
+        if (window.GamesAdapter) {
+            window.GamesAdapter.showLoading(true);
+        } else {
+            tasksList.innerHTML = '<div class="p-12 text-center"><i class="fas fa-spinner fa-spin text-blue-600 text-3xl mb-4"></i><p class="text-gray-500 font-medium">Sincronizando expediente académico...</p></div>';
+        }
+
         try {
             const payload = { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion };
 
@@ -119,6 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             tasksList.innerHTML = `<p class="text-red-500">Error al cargar actividades: ${error.message}</p>`;
+        } finally {
+            if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         }
     }
 
@@ -369,7 +377,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!activities || activities.length === 0) {
             tabsContainer.innerHTML = '';
-            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades disponibles.</p>';
+            tasksList.innerHTML = `
+                <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100 animate-fade-in">
+                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 uppercase tracking-tighter mb-2">¡Sin pendientes!</h3>
+                    <p class="text-gray-400 text-xs font-medium uppercase tracking-widest leading-relaxed">
+                        No se han encontrado tareas ni exámenes asignados para tu grado y sección en este momento.
+                    </p>
+                </div>`;
             return;
         }
 
@@ -411,7 +428,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderActivities(filtered) {
         if (!filtered || filtered.length === 0) {
-            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades registradas para esta materia en este parcial.</p>';
+            tasksList.innerHTML = `
+                <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100 animate-fade-in">
+                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 uppercase tracking-tighter mb-2">¡Todo al día!</h3>
+                    <p class="text-gray-400 text-xs font-medium uppercase tracking-widest leading-relaxed">
+                        No hay actividades pendientes ni registradas para esta materia en el parcial seleccionado.
+                    </p>
+                </div>`;
             return;
         }
         tasksList.innerHTML = filtered.map(activity => {
@@ -685,16 +711,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Generar vista previa inicial (thumbnail placeholder o real si es imagen)
             let thumbnailHtml = `<div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><i class="fas fa-file"></i></div>`;
-            if (currentFile.type.startsWith('image/')) {
-                // (Tarea HEIC) Fallback para HEIC ya que el navegador no lo renderiza nativamente en <img>
-                if (currentFile.name.toLowerCase().endsWith('.heic')) {
+            const ext = currentFileName.split('.').pop().toLowerCase();
+
+            if (currentFile.type.startsWith('image/') || ext === 'heic') {
+                if (ext === 'heic') {
                     thumbnailHtml = `<div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-400"><i class="fas fa-image"></i></div>`;
                 } else {
                     const tempUrl = URL.createObjectURL(currentFile);
                     thumbnailHtml = `<img src="${tempUrl}" class="w-12 h-12 object-cover rounded-lg shadow-inner">`;
                 }
-            } else if (currentFile.type === 'application/pdf') {
+            } else if (currentFile.type === 'application/pdf' || ext === 'pdf') {
                 thumbnailHtml = `<div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-red-400"><i class="fas fa-file-pdf"></i></div>`;
+            } else if (['html', 'css', 'js', 'psc'].includes(ext)) {
+                const colors = { html: 'text-orange-500', css: 'text-blue-500', js: 'text-yellow-500', psc: 'text-green-500' };
+                const icons = { html: 'fa-code', css: 'fa-css3', js: 'fa-js', psc: 'fa-terminal' };
+                thumbnailHtml = `<div class="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center ${colors[ext] || 'text-gray-400'}"><i class="fas ${icons[ext] || 'fa-file-code'}"></i></div>`;
             }
 
             li.innerHTML = `
@@ -835,7 +866,31 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
             if (files.length === 0) return;
-            startAutomatedUpload(files);
+
+            const MAX_SIZE_MB = 10;
+            const ALLOWED_EXT = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'pdf', 'html', 'css', 'js', 'psc'];
+
+            const validFiles = [];
+            for (const file of files) {
+                const ext = file.name.split('.').pop().toLowerCase();
+                const sizeMB = file.size / (1024 * 1024);
+
+                if (!ALLOWED_EXT.includes(ext)) {
+                    alert(`El archivo "${file.name}" no tiene un formato permitido.`);
+                    continue;
+                }
+                if (sizeMB > MAX_SIZE_MB) {
+                    alert(`El archivo "${file.name}" excede el límite de ${MAX_SIZE_MB}MB.`);
+                    continue;
+                }
+                validFiles.push(file);
+            }
+
+            if (validFiles.length > 0) {
+                startAutomatedUpload(validFiles);
+            } else {
+                fileInput.value = '';
+            }
         });
     }
 

@@ -11,12 +11,26 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="InformaticApp">
     <link rel="apple-touch-icon" href="IMA-Logo.png">
+    <meta name="description" content="Panel del estudiante para la gestión de tareas, exámenes y seguimiento del progreso académico.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=21">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
+
+    <!-- Loader Global -->
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999] opacity-0 pointer-events-none">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
+        </div>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Cargando...</p>
+        <div class="w-48 h-1 bg-gray-100 rounded-full mt-6 overflow-hidden">
+            <div id="loading-bar" class="bg-blue-600 h-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+    </div>
 
     <!-- ENCABEZADO INSTITUCIONAL (A-75) -->
     <header id="main-header" class="fixed w-full z-[100] transition-all duration-300 bg-white border-b border-gray-100">

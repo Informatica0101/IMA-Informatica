@@ -765,7 +765,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
-        submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8"><div class="loading-spinner"></div> Cargando actividad...</td></tr>';
+
+        if (window.GamesAdapter) {
+            window.GamesAdapter.showLoading(true);
+        } else {
+            submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8"><div class="loading-spinner"></div> Cargando actividad...</td></tr>';
+        }
+
         try {
             const payload = { profesorId: currentUser.userId };
             const [taskSubmissions, examSubmissions, tasksRes, examsRes] = await Promise.all([
@@ -788,6 +794,8 @@ document.addEventListener('DOMContentLoaded', () => {
             renderCurrentLevel();
         } catch (error) {
             submissionsTableBody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500">Error: ${error.message}</td></tr>`;
+        } finally {
+            if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         }
     }
 

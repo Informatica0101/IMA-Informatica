@@ -8,7 +8,8 @@
  * @param {object} payload - Los datos para la acción.
  * @returns {Promise<object>} La respuesta del servicio parseada como JSON.
  */
-async function fetchApi(service, action, payload) {
+async function fetchApi(service, action, payload, retryCount = 0) {
+    const MAX_RETRIES = 2;
     if (!SERVICE_URLS[service]) {
         throw new Error(`URL para el servicio "${service}" no encontrada.`);
     }
@@ -49,7 +50,19 @@ async function fetchApi(service, action, payload) {
         }
 
     } catch (error) {
-        console.error(`Error al llamar al servicio ${service} con acción ${action}:`, error);
+        console.error(`Intento ${retryCount + 1} fallido para ${service}/${action}:`, error);
+
+        if (retryCount < MAX_RETRIES && (error.message.includes('fetch') || error.message.includes('Network') || error.message.includes('Failed'))) {
+            const delay = 1000 * (retryCount + 1);
+            console.log(`Reintentando en ${delay}ms...`);
+            await new Promise(r => setTimeout(r, delay));
+            return fetchApi(service, action, payload, retryCount + 1);
+        }
+
+        // Si fallaron todos los reintentos, mostrar mensaje amigable
+        if (retryCount === MAX_RETRIES) {
+             console.warn("Fallo persistente tras reintentos.");
+        }
         throw error;
     }
 }
