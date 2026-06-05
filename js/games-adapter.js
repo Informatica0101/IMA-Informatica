@@ -62,7 +62,19 @@ window.GamesAdapter = {
         }
     },
 
-    async showLoading(active = true) {
+    async showLoading(active = true, container = null) {
+        // REQ: Soporte para Spinner Contextual (Ticket 3)
+        if (container && active) {
+            console.log("[GamesAdapter] Mostrando loader contextual en:", container.id || container.className);
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center p-8 animate-fade-in contextual-loader w-full col-span-full">
+                    <div class="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+                    <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest animate-pulse">${this.loadingMessages[Math.floor(Math.random() * this.loadingMessages.length)]}</p>
+                </div>
+            `;
+            return Promise.resolve();
+        }
+
         const overlay = document.getElementById('loading-overlay');
         const msgEl = document.getElementById('loading-msg');
         const bar = document.getElementById('loading-bar');
@@ -81,6 +93,9 @@ window.GamesAdapter = {
                 i++;
             }, 800);
         } else {
+            // Limpiar loaders contextuales si existen
+            document.querySelectorAll('.contextual-loader').forEach(el => el.remove());
+
             // REQ 9: Asegurar renderizado final antes de ocultar (Fase 9)
             clearInterval(this.loadingInterval);
             if (bar) bar.style.width = '100%';
@@ -107,7 +122,7 @@ window.GamesAdapter = {
         this.state.currentSession.actions.push(action);
 
         // Envío asíncrono para no bloquear UI
-        const user = JSON.parse(localStorage.getItem('currentUser'));
+        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         if (user) {
             fetchApi('USER', 'recordAnalytics', {
                 userId: user.userId,
@@ -123,10 +138,24 @@ window.GamesAdapter = {
         const session = this.state.currentSession;
         if (!session) return;
 
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (!user) return;
-
+        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         const totalTime = Date.now() - session.startTime;
+
+        // REQ: Persistencia local para Invitados (Ticket 2)
+        if (!user) {
+            console.log("[GamesAdapter] Modo Invitado: Guardando récord local.");
+            const guestRecords = JSON.parse(localStorage.getItem('guest_records') || '{}');
+            if (!guestRecords[session.gameId] || finalScore > guestRecords[session.gameId].score) {
+                guestRecords[session.gameId] = {
+                    score: finalScore,
+                    date: new Date().toISOString(),
+                    level,
+                    asignatura
+                };
+                localStorage.setItem('guest_records', JSON.stringify(guestRecords));
+            }
+            return Promise.resolve({ status: 'success', mode: 'guest' });
+        }
 
         try {
             await fetchApi('USER', 'saveGameResult', {
@@ -163,8 +192,14 @@ window.GamesAdapter = {
     },
 
     async getPersonalRecord() {
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (!user) return {};
+        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+
+        // REQ: Consultar récords locales para Invitados
+        if (!user) {
+            const guestRecords = JSON.parse(localStorage.getItem('guest_records') || '{}');
+            return guestRecords;
+        }
+
         try {
             const res = await fetchApi('USER', 'getGameStats', { userId: user.userId });
             // REQ: Manejo seguro de datos vacíos (v3.2)

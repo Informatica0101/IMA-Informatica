@@ -67,9 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchAllActivities() {
         if (!tasksList) return;
 
-        // REQ: Pantalla de carga profesional (v4.0)
+        // REQ: Spinner Contextual (Ticket 3) - No bloquea la UI global
         if (window.GamesAdapter) {
-            window.GamesAdapter.showLoading(true);
+            window.GamesAdapter.showLoading(true, tasksList);
         } else {
             tasksList.innerHTML = '<div class="p-12 text-center"><i class="fas fa-spinner fa-spin text-blue-600 text-3xl mb-4"></i><p class="text-gray-500 font-medium">Sincronizando expediente académico...</p></div>';
         }
@@ -77,14 +77,15 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const payload = { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion };
 
-            const [tasksResult, examsResult] = await Promise.all([
+            // REQ: Mitigación de Latencia mediante Paralelismo (Ticket 4)
+            const [tasksResult, examsResult, profileResult] = await Promise.all([
                 fetchApi('TASK', 'getStudentTasks', payload),
-                fetchApi('EXAM', 'getStudentExams', payload)
+                fetchApi('EXAM', 'getStudentExams', payload),
+                fetchAndRenderLearningProfile(true) // Obtener datos de perfil sin renderizar aún
             ]);
 
             const allActivities = [];
             if (tasksResult.status === 'success' && tasksResult.data) {
-                // Saneamiento de datos: Asegurar que asignatura y parcial existan y estén limpios
                 allActivities.push(...tasksResult.data.map(task => ({
                     ...task,
                     type: task.tipo || 'Tarea',
@@ -115,13 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             allActivitiesData = allActivities;
 
-            // Task 4: Render Expediente
+            // Renderizado Sincronizado de Componentes
             renderStudentExpediente(allActivities);
 
-            // Fase 9: Render Perfil de Dominio
-            fetchAndRenderLearningProfile();
+            // Renderizar perfil si los datos fueron exitosos
+            if (profileResult) renderLearningProfileData(profileResult);
 
-            // Iniciar renderizado jerárquico (Parcial -> Asignatura -> Actividades)
             if (allActivities.length > 0) {
                 renderParcialTabs(allActivities);
             } else {
@@ -1035,15 +1035,25 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchAllActivities();
     initWhatsAppButton();
 
-    async function fetchAndRenderLearningProfile() {
+    async function fetchAndRenderLearningProfile(dataOnly = false) {
+        try {
+            const res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId });
+            if (res.status === 'success' && res.data && res.data.length > 0) {
+                if (dataOnly) return res.data;
+                renderLearningProfileData(res.data);
+            }
+            return null;
+        } catch (e) {
+            console.error("Error al cargar perfil de dominio:", e);
+            return null;
+        }
+    }
+
+    function renderLearningProfileData(profileData) {
         const profileContainer = document.getElementById('learning-profile-integration');
         if (!profileContainer) return;
 
         try {
-            const res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId });
-            if (res.status === 'success' && res.data && res.data.length > 0) {
-                const profileData = res.data;
-
                 // REQ: Recomendaciones académicas con enlaces directos
                 const findPresentation = (tema) => {
                     if (!window.presentationData) return null;
@@ -1093,7 +1103,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 profileContainer.innerHTML = `
                     ${alertBanner}
-                    <div class="mt-8 pt-8 border-t border-gray-50 animate-fade-in">
+                    <div class="mt-8 pt-8 border-t border-gray-50 animate-fade-in-up">
                         <div class="flex items-center justify-between mb-6">
                             <div>
                                 <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Análisis de Desempeño</h4>
@@ -1154,7 +1164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
         } catch (e) {
-            console.error("Error al cargar perfil de dominio:", e);
+            console.error("Error al renderizar perfil de dominio:", e);
         }
     }
 

@@ -766,9 +766,9 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
 
-        // REQ: Pantalla de carga profesional (v4.0)
+        // REQ: Spinner Contextual (Ticket 3) - No bloquea la UI global
         if (window.GamesAdapter) {
-            window.GamesAdapter.showLoading(true);
+            window.GamesAdapter.showLoading(true, submissionsTableBody);
         } else {
             submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8"><div class="loading-spinner"></div> Cargando actividad...</td></tr>';
         }

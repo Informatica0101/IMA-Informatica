@@ -3,6 +3,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // REQ: Priorización de Carga (Ticket 4)
+    loadNews();
+
     // REQ: Garantizar inicialización segura del DOM (v3.3)
     console.log("[IMA-INDEX] Iniciando construcción de interfaz...");
 
@@ -299,7 +302,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderInitialContentButton();
     renderInitialActivityButton();
     setupGlobalAuth();
-    loadNews();
     renderWelcomeMessage();
 
     // --- Handle Action from URL (A-28) ---
@@ -484,6 +486,15 @@ async function loadNews() {
     const newsSection = document.getElementById('news-section');
     const newsContainer = document.getElementById('news-container');
     if (!newsSection || !newsContainer) return;
+
+    // REQ: Spinner Contextual para Noticias (Ticket 3)
+    newsSection.classList.remove('hidden');
+    newsContainer.innerHTML = `
+        <div class="col-span-full flex flex-col items-center justify-center p-12 animate-fade-in">
+            <div class="w-10 h-10 border-4 border-blue-50 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] animate-pulse">Sincronizando Novedades...</p>
+        </div>
+    `;
 
     try {
         let res = await fetchApi('USER', 'getNews', {});

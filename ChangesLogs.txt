@@ -126,3 +126,21 @@ ARCHIVO: student-dashboard.html & teacher-dashboard.html
 ARCHIVO: js/exam.js
 - [IMPLEMENTADO] Integración con GamesAdapter.showLoading durante la carga de preguntas para mejorar el feedback visual.
 - [IMPLEMENTADO] Registro analítico de intentos de entrega (submit_exam_attempt) para trazabilidad pedagógica.
+
+OPTIMIZACIÓN DE UX Y PERSISTENCIA (Tickets 2, 3 & 4) - 2026-06-18
+
+ARCHIVO: js/games-adapter.js
+- [IMPLEMENTADO] Spinner Contextual: showLoading ahora acepta un parámetro container para renderizado local.
+- [IMPLEMENTADO] Persistencia de Invitados: finishSession y getPersonalRecord ahora gestionan récords locales en localStorage.guest_records.
+- [OPTIMIZADO] Detección de Sesión: Agregado soporte para sessionStorage en todos los métodos de estado.
+
+ARCHIVO: js/student.js
+- [OPTIMIZADO] Mitigación de Latencia: Refactorizada fetchAllActivities para ejecutar peticiones de tareas, exámenes y perfil en paralelo mediante Promise.all.
+- [IMPLEMENTADO] Carga No Bloqueante: Sustituido overlay global por spinner contextual en el contenedor de tareas.
+
+ARCHIVO: js/teacher.js
+- [IMPLEMENTADO] Carga No Bloqueante: fetchTeacherActivity ahora utiliza el spinner contextual en la tabla de entregas.
+
+ARCHIVO: js/index-ui.js
+- [OPTIMIZADO] Priorización de Noticias: loadNews se invoca al inicio del ciclo DOMContentLoaded para reducir el tiempo visual de carga.
+- [IMPLEMENTADO] Feedback Inmediato: Agregado loader contextual al contenedor de noticias.
