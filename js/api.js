@@ -59,8 +59,24 @@ async function fetchApi(service, action, payload, retryCount = 0) {
             return fetchApi(service, action, payload, retryCount + 1);
         }
 
-        // REQ: Fallback amigable para fallos totales de red/CORS (v3.3)
+        // REQ: Fallback amigable y notificación de error (v4.0)
         console.warn(`[API-FALLBACK] Retornando estado seguro para ${service}/${action} tras error crítico.`);
+
+        // Notificación visual no bloqueante (Toast)
+        const errorToast = document.createElement('div');
+        errorToast.className = 'fixed bottom-20 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-4 rounded-2xl shadow-2xl z-[9999] flex items-center gap-4 animate-fade-in-up border border-red-400/30 backdrop-blur-md';
+        errorToast.innerHTML = `
+            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-wifi-slash"></i>
+            </div>
+            <div class="flex-grow">
+                <p class="text-[10px] font-black uppercase tracking-widest leading-none mb-1">Error de Conexión</p>
+                <p class="text-xs font-medium opacity-90">El servicio ${service} no responde. Los datos pueden estar desactualizados.</p>
+            </div>
+            <button onclick="location.reload()" class="bg-white text-red-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter hover:bg-gray-100 transition-colors">Reintentar</button>
+        `;
+        document.body.appendChild(errorToast);
+        setTimeout(() => errorToast.classList.add('opacity-0', 'pointer-events-none', 'transition-opacity', 'duration-500'), 8000);
 
         // Estructuras de fallback según la acción solicitada
         if (action === 'getNews') return { status: 'success', data: [], isFallback: true };

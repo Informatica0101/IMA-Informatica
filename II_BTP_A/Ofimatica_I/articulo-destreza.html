@@ -1010,11 +1010,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -1025,11 +1025,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

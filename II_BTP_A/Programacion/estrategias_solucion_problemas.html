@@ -61,7 +61,7 @@
     <main class="flex-grow flex justify-center items-center p-3">
         <div id="presentation-container" class="relative">
             <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
+            <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
                 <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
                 <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Estrategias de Solución de Problemas</h2>
                 <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 3: División en Subproblemas</p>
@@ -70,10 +70,7 @@
                     <p>Fecha: 22 de febrero de 2026</p>
                     <p>Grado: Undécimo de Informática - Sección "A"</p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 2: Introducción -->
-            <div id="slide-2" class="slide">
+<div id="slide-2" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Qué es una Estrategia de Solución?</h3>
                 <div class="concept-box">
                     <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
@@ -83,11 +80,7 @@
                         <p class="font-bold text-blue-600 mb-2">🎯 Objetivo de hoy:</p>
                         <p class="text-xs sm:text-sm">Aprender a descomponer problemas complejos en partes pequeñas y manejables.</p>
                     </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 3: División en Subproblemas -->
-            <div id="slide-3" class="slide">
+<div id="slide-3" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">División en Subproblemas</h3>
                 <div class="concept-box">
                     <p class="text-sm sm:text-base text-gray-700">
@@ -95,14 +88,7 @@
                     </p>
                     <div class="mt-4 grid grid-cols-1 gap-2">
                         <div class="step-box">🧩 <strong>Simplificación:</strong> Cada parte es más fácil de entender.</div>
-                        <div class="step-box">🛠️ <strong>Independencia:</strong> Se pueden resolver por separado.</div>
-                        <div class="step-box">🔗 <strong>Combinación:</strong> Las soluciones parciales se unen para resolver el todo.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 4: Diseño Descendente (Top-Down) -->
-            <div id="slide-4" class="slide">
+<div id="slide-4" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Diseño Descendente (Top-Down)</h3>
                 <p class="text-sm text-gray-600 mb-4">Es la técnica de ir de lo general a lo particular.</p>
                 <div class="space-y-3 max-w-2xl mx-auto text-left">
@@ -110,19 +96,7 @@
                         <p class="font-bold text-blue-700 text-sm">1. Nivel Superior:</p>
                         <p class="text-xs text-gray-600">Se define el problema global sin entrar en detalles.</p>
                     </div>
-                    <div class="p-4 bg-white border-l-4 border-blue-400 shadow-sm">
-                        <p class="font-bold text-blue-600 text-sm">2. Niveles Intermedios:</p>
-                        <p class="text-xs text-gray-600">Se desglosa en módulos o funciones principales.</p>
-                    </div>
-                    <div class="p-4 bg-white border-l-4 border-blue-300 shadow-sm">
-                        <p class="font-bold text-blue-500 text-sm">3. Nivel de Detalle:</p>
-                        <p class="text-xs text-gray-600">Se llega a las instrucciones básicas de programación.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Refinamiento por Pasos -->
-            <div id="slide-5" class="slide">
+<div id="slide-5" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Refinamiento por Pasos</h3>
                 <div class="concept-box">
                     <p class="text-sm text-gray-700 mb-4 italic">"Divide y vencerás"</p>
@@ -132,36 +106,14 @@
                             <p class="font-bold text-blue-600">¿QUÉ HACE?</p>
                             <p class="text-[10px] text-gray-500">(Propósito del módulo)</p>
                         </div>
-                        <div class="text-center p-3 bg-white border rounded">
-                            <p class="font-bold text-green-600">¿CÓMO LO HACE?</p>
-                            <p class="text-[10px] text-gray-500">(Lógica interna)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: Ejemplo: Cocinar un Pastel -->
-            <div id="slide-6" class="slide">
+<div id="slide-6" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo Cotidiano: Cocinar un Pastel</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl">
                     <div class="p-3 bg-yellow-50 border rounded shadow-sm">
                         <p class="font-bold text-xs uppercase text-yellow-700">Subproblema 1</p>
                         <p class="text-[10px] mt-1">Conseguir ingredientes (harina, huevos, azúcar).</p>
                     </div>
-                    <div class="p-3 bg-orange-50 border rounded shadow-sm">
-                        <p class="font-bold text-xs uppercase text-orange-700">Subproblema 2</p>
-                        <p class="text-[10px] mt-1">Preparar la mezcla (mezclar y batir).</p>
-                    </div>
-                    <div class="p-3 bg-red-50 border rounded shadow-sm">
-                        <p class="font-bold text-xs uppercase text-red-700">Subproblema 3</p>
-                        <p class="text-[10px] mt-1">Hornear y decorar.</p>
-                    </div>
-                </div>
-                <p class="mt-6 text-xs text-gray-500">¡Si fallas en un subproblema, fallas en la solución global!</p>
-            </div>
-
-            <!-- Diapositiva 7: Estrategias de Programación -->
-            <div id="slide-7" class="slide">
+<div id="slide-7" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Estrategias en Programación</h3>
                 <div class="concept-box">
                     <ul class="text-sm space-y-4">
@@ -171,11 +123,7 @@
                     <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded text-center">
                         <p class="text-xs font-bold text-green-700">Ventaja: Facilita encontrar errores (depuración).</p>
                     </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Análisis de Entradas y Salidas -->
-            <div id="slide-8" class="slide">
+<div id="slide-8" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Análisis: Entradas y Salidas</h3>
                 <p class="text-sm text-gray-600 mb-6">Al dividir, cada módulo tiene sus propios datos:</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -183,21 +131,7 @@
                         <p class="font-bold text-blue-800">ENTRADAS</p>
                         <p class="text-xs">Datos necesarios para trabajar.</p>
                     </div>
-                    <div class="flex items-center">➡️</div>
-                    <div class="p-4 bg-purple-100 rounded-xl w-48">
-                        <p class="font-bold text-purple-800">PROCESO</p>
-                        <p class="text-xs">Transformación de datos.</p>
-                    </div>
-                    <div class="flex items-center">➡️</div>
-                    <div class="p-4 bg-green-100 rounded-xl w-48">
-                        <p class="font-bold text-green-800">SALIDAS</p>
-                        <p class="text-xs">Resultados obtenidos.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Ejercicio Práctico: Inscripción -->
-            <div id="slide-9" class="slide">
+<div id="slide-9" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio: Algoritmo de Inscripción</h3>
                 <div class="concept-box">
                     <p class="font-bold mb-3 text-sm">Problema: Inscribirse en el colegio.</p>
@@ -207,11 +141,7 @@
                         <p><strong>Paso 3:</strong> Realizar pago de matrícula.</p>
                         <p><strong>Paso 4:</strong> Recibir confirmación y horario.</p>
                     </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 10: Importancia de la Depuración -->
-            <div id="slide-10" class="slide">
+<div id="slide-10" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Depuración por Módulos</h3>
                 <div class="concept-box">
                     <p class="text-sm text-gray-700 leading-relaxed">
@@ -222,77 +152,110 @@
                         <p class="font-bold text-sm">¿Dónde está el bug?</p>
                         <p class="text-[10px] text-gray-500">Es más fácil buscar en 10 líneas que en 1000.</p>
                     </div>
-                </div>
-            </div>
 
-            <!-- Diapositiva 11: Cuestionario (1-5) -->
-            <div id="slide-11" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 1)</h3>
-                <div id="quiz-container-1" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-1" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-1" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-1" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter">1</span> de 5</p>
-                </div>
-            </div>
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
 
-            <!-- Diapositiva 12: Cuestionario (6-10) -->
-            <div id="slide-12" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 2)</h3>
-                <div id="quiz-container-2" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-2" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-2" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-2" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter-2">6</span> de 10</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Resumen -->
-            <div id="slide-13" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen de la Clase</h3>
-                <div class="max-w-3xl mx-auto grid grid-cols-2 gap-4">
-                    <div class="p-4 bg-blue-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-blue-700">Conceptos Clave:</p>
-                        <ul class="text-[10px] space-y-1">
-                            <li>• División en subproblemas.</li>
-                            <li>• Diseño Top-Down.</li>
-                            <li>• Refinamiento sucesivo.</li>
-                            <li>• Independencia modular.</li>
-                        </ul>
-                    </div>
-                    <div class="p-4 bg-green-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-green-700">Ventajas:</p>
-                        <ul class="text-[10px] space-y-1">
-                            <li>• Facilidad de comprensión.</li>
-                            <li>• Depuración rápida.</li>
-                            <li>• Reutilización de código.</li>
-                        </ul>
-                    </div>
-                </div>
-                <p class="mt-8 font-bold text-blue-600">"Un viaje de mil millas comienza con el primer paso."</p>
-            </div>
-
-            <!-- Diapositiva 14: Tarea -->
-            <div id="slide-14" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Asignación (Tarea)</h3>
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-indigo-200 max-w-3xl">
-                    <h4 class="font-bold text-indigo-800 mb-3">📋 Tarea: Resolución por Subproblemas</h4>
-                    <div class="text-left space-y-4 text-sm">
-                        <p><strong>Actividad:</strong> Elige uno de los siguientes problemas y divídelo en al menos 4 subproblemas detallados:</p>
-                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
-                            <li>Organizar una fiesta de cumpleaños.</li>
-                            <li>Lavar y guardar toda la ropa de la semana.</li>
-                            <li>Preparar una exposición de informática.</li>
-                        </ul>
-                        <p class="mt-4 bg-white p-3 rounded border italic text-xs">Presentar en tu cuaderno de forma clara y jerárquica.</p>
-                        <div class="pt-4 border-t flex justify-between font-bold text-indigo-900">
-                            <span>Fecha: 01/03/2026</span>
-                            <span>Valor: 5%</span>
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
                         </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
+            </div>
+        </div>
                     </div>
                 </div>
             </div>
@@ -483,21 +446,21 @@
             }, 10);
         }
 
-        nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
-        prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
+        nextButton.addEventListener('click', () => nextSlide());
+        prevButton.addEventListener('click', () => prevSlide());
 
         const presentationContainer = document.getElementById('presentation-container');
         presentationContainer.addEventListener('click', (e) => {
             if (e.target.closest('button') || e.target.closest('a')) return;
             const rect = presentationContainer.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
-            if (clickX > rect.width / 2) showSlide(currentSlideIndex + 1);
-            else showSlide(currentSlideIndex - 1);
+            if (clickX > rect.width / 2) nextSlide();
+            else prevSlide();
         });
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('current-year').textContent = new Date().getFullYear();
-            showSlide(0); handleFullscreenChange();
+            currentSlideIndex = 0; showSlide(currentSlideIndex); handleFullscreenChange();
         });
 
 
@@ -528,8 +491,8 @@
 
     // Navigation improvements (2026)
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
+        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : nextSlide();
+        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : prevSlide();
     });
 
     (function() {
@@ -539,8 +502,8 @@
         container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
         container.addEventListener('touchend', e => {
             let teX = e.changedTouches[0].screenX;
-            if (tsX - teX > 50) typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-            if (teX - tsX > 50) typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
+            if (tsX - teX > 50) typeof nextSlide === 'function' ? nextSlide() : nextSlide();
+            if (teX - tsX > 50) typeof prevSlide === 'function' ? prevSlide() : prevSlide();
         }, {passive: true});
     })();
 
@@ -575,11 +538,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -590,11 +553,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

@@ -194,7 +194,7 @@
         <div id="presentation-container" class="relative">
 
             <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
+            <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
                 <img src="../../imagenes/logo.png" alt="Logo del instituto" style="width: 300px; height: auto;" class="mb-8">
                 <h2 class="text-2xl mb-4 text-blue-600">Tablas y Columnas Avanzadas</h2>
                 <p class="text-base text-gray-600">Diseño Web II</p>
@@ -203,18 +203,29 @@
                     <p>Fecha: 12 de septiembre de 2025</p>
                     <p>Grado: Duodécimo Sección "A"</p>
                 </div>
-            </div>
 
-            <!-- Diapositiva 2: ¿Qué son? -->
-            <div id="slide-2" class="slide">
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
+                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
+                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
+                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+<div id="slide-2" class="slide">
                 <h3 class="text-3xl mb-6 text-blue-500">¿Qué son las Tablas y Columnas Avanzadas?</h3>
                 <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
                     Las tablas y columnas avanzadas en el desarrollo web se refieren al uso de sistemas de maquetación modernos como CSS Grid y Flexbox para crear diseños complejos y responsivos que se adaptan a cualquier dispositivo.
                 </p>
             </div>
-
-            <!-- Diapositiva 3: La Evolución del Maquetado Web -->
-            <div id="slide-3" class="slide">
+<div id="slide-3" class="slide">
                 <h3 class="text-3xl mb-6 text-blue-500">La Evolución del Maquetado Web</h3>
                 <ul class="mt-4 text-left text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-4">
                     <li><strong>Tablas HTML:</strong> El método tradicional, utilizado principalmente para organizar datos tabulares.</li>
@@ -222,37 +233,25 @@
                     <li><strong>CSS Grid (Cuadrículas):</strong> Un sistema bidimensional para crear layouts complejos y de dos dimensiones.</li>
                 </ul>
             </div>
-
-            <!-- Diapositiva 4: Flexbox vs. CSS Grid -->
-            <div id="slide-4" class="slide">
+<div id="slide-4" class="slide">
                 <h3 class="text-3xl mb-6 text-blue-500">Flexbox vs. CSS Grid</h3>
                 <ul class="mt-4 text-left text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-4">
                     <li><strong>Flexbox:</strong> Ideal para componentes que necesitan alineación en una sola dimensión (fila o columna), como una barra de navegación o una lista de tarjetas.</li>
                     <li><strong>CSS Grid:</strong> Perfecto para la maquetación general de una página, permitiendo crear layouts bidimensionales complejos como "dashboards" con control total sobre filas y columnas.</li>
                 </ul>
             </div>
-
-            <!-- Diapositiva 5: Introducción a CSS Grid -->
-            <div id="slide-5" class="slide">
+<div id="slide-5" class="slide">
                 <h3 class="text-3xl mb-6 text-blue-500">Introducción a CSS Grid</h3>
                 <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
                     CSS Grid permite dividir el espacio de la página en filas y columnas, facilitando la creación de layouts complejos como "dashboards".
 
                 </p>
             </div>
-
-            <!-- Diapositiva 6: Ejemplo de CSS Grid -->
-            <div id="slide-6" class="slide">
+<div id="slide-6" class="slide">
                 <h3 class="text-3xl mb-6 text-blue-500">Ejemplo de CSS Grid</h3>
                 <div class="grid w-11/12 h-3/4 gap-4" style="grid-template-areas: 'header header' 'sidebar main'; grid-template-columns: 1fr 3fr; grid-template-rows: 80px 1fr;">
                     <div class="bg-blue-200 rounded-lg p-4 flex items-center justify-center text-blue-800 font-bold text-2xl" style="grid-area: header;">Encabezado</div>
-                    <div class="bg-green-200 rounded-lg p-4 flex items-center justify-center text-green-800 font-bold text-2xl" style="grid-area: sidebar;">Barra lateral</div>
-                    <div class="bg-yellow-200 rounded-lg p-4 flex items-center justify-center text-yellow-800 font-bold text-2xl" style="grid-area: main;">Contenido Principal</div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Introducción a Flexbox -->
-            <div id="slide-7" class="slide">
+<div id="slide-7" class="slide">
                 <h3 class="text-3xl mb-6 text-blue-500">Introducción a Flexbox</h3>
                 <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
                     Flexbox es una herramienta poderosa para alinear y distribuir el espacio entre los elementos en un contenedor. Es perfecto para componentes como menús de navegación, galerías o formularios.
@@ -262,68 +261,122 @@
                     <p class="font-mono text-lg bg-gray-100 p-4 rounded-lg">Ejemplo: `display: flex;`</p>
                     <p class="font-mono text-lg bg-gray-100 p-4 rounded-lg mt-4">`justify-content: center;` `align-items: center;`</p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 8: Ejemplo de Flexbox -->
-            <div id="slide-8" class="slide">
+<div id="slide-8" class="slide">
                 <h3 class="text-3xl mb-6 text-blue-500">Ejemplo de Flexbox</h3>
                 <div class="flex flex-col md:flex-row justify-center items-center w-full md:w-3/4 h-1/2 space-y-4 md:space-y-0 md:space-x-4">
                     <div class="bg-purple-200 rounded-xl p-6 shadow-lg flex-1 text-purple-800 font-bold flex items-center justify-center text-lg w-full md:w-auto">
                         Tarjeta 1
                     </div>
-                    <div class="bg-pink-200 rounded-xl p-6 shadow-lg flex-1 text-pink-800 font-bold flex items-center justify-center text-lg w-full md:w-auto">
-                        Tarjeta 2
-                    </div>
-                    <div class="bg-teal-200 rounded-xl p-6 shadow-lg flex-1 text-teal-800 font-bold flex items-center justify-center text-lg w-full md:w-auto">
-                        Tarjeta 3
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Diseño Responsivo con Grid y Flexbox -->
-            <div id="slide-9" class="slide">
+<div id="slide-9" class="slide">
                 <h3 class="text-3xl mb-6 text-blue-500">Diseño Responsivo con Grid y Flexbox</h3>
                 <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
                     La verdadera fortaleza de Grid y Flexbox es su capacidad para crear diseños <strong>responsivos</strong>. Combinados con las clases de Tailwind CSS, se adaptan perfectamente a pantallas de todos los tamaños.
                 </p>
             </div>
 
-            <!-- Diapositiva 10: Cuestionario -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">¡Pon a prueba tus conocimientos!</h3>
-                <div id="quiz-container" class="bg-gray-100 p-8 rounded-lg shadow-md max-w-3xl w-full text-center">
-                    <div id="quiz-question" class="text-2xl font-semibold mb-6 text-gray-800"></div>
-                    <div id="quiz-options" class="flex flex-col space-y-4"></div>
-                    <div id="quiz-feedback" class="mt-6 text-lg font-bold"></div>
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
                 </div>
             </div>
+        </div>
 
-            <!-- Diapositiva 11: Síntesis del Tema -->
-            <div id="slide-11" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">Síntesis</h3>
-                <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    El dominio de sistemas de maquetación avanzados como CSS Grid y Flexbox es crucial para el desarrollo web moderno, permitiendo la creación de interfaces de usuario complejas, flexibles y profesionales.
-                </p>
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
             </div>
-
-            <!-- Diapositiva 12: Tarea -->
-            <div id="slide-12" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">Asignación de Tareas</h3>
-                <div class="bg-gray-100 p-8 rounded-lg shadow-inner max-w-3xl text-left">
-                    <p class="text-lg text-gray-700 mb-4 font-bold">Tarea:</p>
-                    <p class="text-base text-gray-700 mb-4">
-                        Diseñen un dashboard responsivo utilizando HTML y CSS Grid o Flexbox, aplicando las técnicas avanzadas que hemos visto en clase.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Fin de la Presentación -->
-            <div id="slide-13" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">¡Gracias!</h3>
-                <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    Si tienen alguna duda, no duden en preguntar.
-                </p>
-            </div>
+        </div>
 
         </div>
 
@@ -507,19 +560,19 @@
         }
 
         nextButton.addEventListener('click', () => {
-            showSlide(currentSlideIndex + 1);
+            nextSlide();
         });
 
         prevButton.addEventListener('click', () => {
-            showSlide(currentSlideIndex - 1);
+            prevSlide();
         });
 
         // Navegación con las teclas de flecha
         document.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowRight') {
-                showSlide(currentSlideIndex + 1);
+                nextSlide();
             } else if (event.key === 'ArrowLeft') {
-                showSlide(currentSlideIndex - 1);
+                prevSlide();
             }
         });
 
@@ -550,7 +603,7 @@
             if (currentYearSpan) {
                 currentYearSpan.textContent = new Date().getFullYear();
             }
-            showSlide(0); handleFullscreenChange();
+            currentSlideIndex = 0; showSlide(currentSlideIndex); handleFullscreenChange();
         });
     </script>
 
@@ -583,11 +636,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -598,11 +651,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

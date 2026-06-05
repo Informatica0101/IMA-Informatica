@@ -27,16 +27,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await fetchApi('USER', 'loginUser', { identifier, password });
 
                 if (result.status === 'success' && result.data) {
+                    // REQ: Implementar lógica de "Recordarme" (v4.0)
+                    // Si el usuario marcó "Recordarme", usamos localStorage (persiste tras cerrar navegador)
+                    // Si no, usamos sessionStorage (se borra al cerrar la pestaña)
+                    // Además, para evitar conflictos, limpiamos el otro storage.
                     const storage = rememberMe ? localStorage : sessionStorage;
+                    const otherStorage = rememberMe ? sessionStorage : localStorage;
+
+                    otherStorage.removeItem('currentUser');
 
                     // REQ: Persistencia de datos académicos reales (v3.3)
                     const userData = {
                         ...result.data,
-                        loginTimestamp: Date.now()
+                        loginTimestamp: Date.now(),
+                        remembered: rememberMe
                     };
 
                     storage.setItem('currentUser', JSON.stringify(userData));
-                    console.log(`[IMA-AUTH] Sesión iniciada para ${userData.nombre} (${userData.rol})`);
+                    console.log(`[IMA-AUTH] Sesión iniciada para ${userData.nombre} (${userData.rol}). Recordar: ${rememberMe}`);
 
                     if (result.data.rol === 'Profesor') {
                         window.location.href = 'teacher-dashboard.html';
@@ -46,9 +54,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     // Feedback detallado según respuesta del servidor
                     let msg = "Error al iniciar sesión.";
-                    if (result.message?.includes("password")) msg = "La contraseña ingresada es incorrecta.";
-                    else if (result.message?.includes("not found")) msg = "El usuario o correo no existe en el sistema.";
-                    else msg = result.message || msg;
+                    const serverMsg = (result.message || "").toLowerCase();
+
+                    if (serverMsg.includes("password") || serverMsg.includes("contraseña")) {
+                        msg = "La contraseña ingresada es incorrecta. Por favor, verifica e intenta de nuevo.";
+                    } else if (serverMsg.includes("not found") || serverMsg.includes("no encontrado") || serverMsg.includes("exist")) {
+                        msg = "El usuario o correo no existe en nuestro sistema. Verifica que esté bien escrito o regístrate.";
+                    } else {
+                        msg = result.message || msg;
+                    }
 
                     alert(msg);
                 }

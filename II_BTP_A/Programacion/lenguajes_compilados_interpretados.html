@@ -177,7 +177,7 @@
     <main>
         <div id="presentation-container">
             <!-- Diapositiva 1: Portada -->
-            <div class="slide active">
+            <div class="slide active" id="slide-1" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
                 <h2>Lenguajes compilados e interpretados / Estructuras de control (Bucle Para)</h2>
                 <div class="mt-8 text-lg text-gray-500">
@@ -185,19 +185,29 @@
                     <p>Fecha: 26 de abril de 2026</p>
                     <p>Grado: II BTP Informática Sección "A"</p>
                 </div>
-            </div>
 
-            <!-- Diapositiva 2: Concepto de Compilación -->
             <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
+                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
+                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
+                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+<div class="slide">
                 <h3>El Proceso de Compilación</h3>
                 <p>Un compilador es un programa que traduce un programa escrito en un lenguaje de alto nivel a lenguaje de máquina.</p>
                 <div class="concept-box">
                     <p><strong>Traducción Previa:</strong> El compilador traduce el código completo antes de que el programa se ejecute, creando un archivo llamado "código objeto".</p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 3: Ventajas de la Compilación -->
-            <div class="slide">
+<div class="slide">
                 <h3>Ventajas de los Lenguajes Compilados</h3>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
                     <li><strong>Velocidad:</strong> El programa se ejecuta mucho más rápido porque ya está en lenguaje de máquina.</li>
@@ -205,18 +215,13 @@
                     <li><strong>Seguridad:</strong> El código fuente no necesita ser distribuido con el ejecutable.</li>
                 </ul>
             </div>
-
-            <!-- Diapositiva 4: Concepto de Interpretación -->
-            <div class="slide">
+<div class="slide">
                 <h3>El Proceso de Interpretación</h3>
                 <p>Un intérprete traduce y ejecuta el programa línea por línea, conforme sea necesario durante el proceso de datos.</p>
                 <div class="concept-box border-yellow-500">
                     <p><strong>Traducción en Tiempo Real:</strong> No se graba un código objeto; el intérprete debe estar presente cada vez que se corre el programa.</p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 5: Ventajas de la Interpretación -->
-            <div class="slide">
+<div class="slide">
                 <h3>Ventajas de los Lenguajes Interpretados</h3>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
                     <li><strong>Tiempo de Diseño:</strong> Es más rápido desarrollar porque no hay que esperar a que el código se compile tras cada cambio.</li>
@@ -224,42 +229,20 @@
                     <li><strong>Multiplataforma:</strong> El mismo código fuente puede correr en distintos sistemas que tengan el intérprete.</li>
                 </ul>
             </div>
-
-            <!-- Diapositiva 6: Comparativa Final -->
-            <div class="slide">
+<div class="slide">
                 <h3>Compilación vs Interpretación</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div class="bg-blue-50 p-6 rounded-lg border-t-4 border-blue-500 text-left">
                         <h4 class="font-bold text-xl mb-2">Compilados</h4>
                         <p class="text-base">Ejecución rápida, requieren paso de traducción previo. Ejemplos: C++, Java (Híbrido).</p>
                     </div>
-                    <div class="bg-yellow-50 p-6 rounded-lg border-t-4 border-yellow-500 text-left">
-                        <h4 class="font-bold text-xl mb-2">Interpretados</h4>
-                        <p class="text-base">Ejecución más lenta, desarrollo más ágil. Ejemplos: Python, PHP, JavaScript.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Ejercicio 1 -->
-            <div class="slide">
+<div class="slide">
                 <h3>Ejercicio 1: Identificación</h3>
                 <p>En tu cuaderno, haz una lista de 3 lenguajes de programación que conozcas e investiga si son principalmente compilados o interpretados.</p>
                 <div class="concept-box bg-blue-50 border-blue-400">
                     <p><strong>Pregunta de reflexión:</strong> ¿Por qué crees que los videojuegos de alta gama suelen escribirse en lenguajes compilados como C++?</p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 8: Introducción a los Bucles -->
-            <div class="slide">
-                <h3>Estructuras de Control: Bucles</h3>
-                <p>Un bucle es una estructura que permite repetir un bloque de instrucciones.</p>
-                <div class="concept-box">
-                    <p><strong>¿Cuándo se utilizan?</strong> Se usan cuando necesitamos realizar una misma tarea múltiples veces sobre diferentes datos o simplemente repetir un proceso un número determinado de veces.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: El Bucle "Para" (For) -->
-            <div class="slide">
+<div class="slide">
                 <h3>El Bucle "Para"</h3>
                 <p>Se utiliza específicamente cuando conocemos de antemano el número exacto de veces que queremos que se repita la acción.</p>
                 <div class="bg-gray-100 p-4 rounded text-left mt-4 font-mono text-lg">
@@ -267,10 +250,7 @@
                     &nbsp;&nbsp;Instrucciones...<br>
                     FinPara
                 </div>
-            </div>
-
-            <!-- Diapositiva 10: Explicación de la Sintaxis -->
-            <div class="slide">
+<div class="slide">
                 <h3>Componentes del Bucle Para</h3>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
                     <li><strong>Variable de control:</strong> Almacena el número de la repetición actual.</li>
@@ -279,72 +259,109 @@
                 </ul>
             </div>
 
-            <!-- Diapositiva 11: Ejemplo Simple -->
             <div class="slide">
-                <h3>Ejemplo: Imprimir números del 1 al 5</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-gray-100 p-4 rounded text-left font-mono">
-                        Para i = 1 Hasta 5 Hacer<br>
-                        &nbsp;&nbsp;Escribir i<br>
-                        FinPara
-                    </div>
-                    <div class="bg-blue-50 p-4 rounded text-left">
-                        <p class="font-bold">Resultado:</p>
-                        <p>1, 2, 3, 4, 5</p>
-                    </div>
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
                 </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
             </div>
 
-            <!-- Diapositiva 12: Bucle Para en otros Lenguajes -->
             <div class="slide">
-                <h3>Sintaxis en C, C++ y JavaScript</h3>
-                <p>Curiosamente, estos tres lenguajes comparten la misma sintaxis para el bucle for:</p>
-                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-lg">
-                    for (int i = 1; i <= 5; i++) {<br>
-                    &nbsp;&nbsp;// Instrucciones en C/C++<br>
-                    }<br><br>
-                    for (let i = 1; i <= 5; i++) {<br>
-                    &nbsp;&nbsp;// Instrucciones en JavaScript<br>
-                    }
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
                 </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
             </div>
 
-            <!-- Diapositiva 13: Ejercicio 2 -->
-            <div class="slide">
-                <h3>Ejercicio 2: Práctica de Lógica</h3>
-                <p>Escribe en pseudocódigo un bucle "Para" que imprima la tabla del 2 (del 2 al 20).</p>
-                <div class="concept-box bg-green-50 border-green-400">
-                    <p><strong>Pista:</strong> Puedes usar el incremento o multiplicar la variable de control por 2 en cada vuelta.</p>
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
                 </div>
             </div>
+        </div>
 
-            <!-- Diapositiva 14: Cuestionario Interactivo (Parte 1) -->
-            <div class="slide">
-                <h3>Cuestionario: Evaluación</h3>
-                <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
-                    <div class="quiz-options flex flex-col gap-2"></div>
-                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
-                </div>
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
             </div>
-
-            <!-- Diapositiva 15: Cuestionario Interactivo (Parte 2) -->
-            <div class="slide">
-                <h3>Cuestionario: Continuación</h3>
-                <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
-                    <div class="quiz-options flex flex-col gap-2"></div>
-                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 16: Fin y Asignación -->
-            <div class="slide">
-                <h2>¡Muchas Gracias!</h2>
-                <div class="concept-box border-blue-600">
-                    <p><strong>Asignación:</strong> Realizar ejercicios prácticos de bucles (Para) en el cuaderno para reforzar la lógica de iteración.</p>
-                    <p class="mt-4 text-sm">Fecha de entrega: Próxima clase.</p>
-                </div>
+        </div>
             </div>
         </div>
 
@@ -365,7 +382,7 @@
         const slideCounter = document.getElementById('slide-counter');
         const header = document.getElementById('page-header');
         const footer = document.getElementById('page-footer');
-        let currentSlide = 0;
+        var currentSlideIndex = 0;
 
         const quizData = [
             { q: "¿Qué hace un compilador con el código fuente?", options: ["Ejecuta línea a línea", "Genera código objeto", "Borra el código fuente", "Lo envía por internet"], a: "Genera código objeto" },
@@ -384,15 +401,15 @@
         function showSlide(n) {
             slides[currentSlide].classList.remove('active');
             slides[currentSlide].style.display = 'none';
-            currentSlide = (n + slides.length) % slides.length;
+            currentSlideIndex = (n + slides.length) % slides.length;
             slides[currentSlide].style.display = 'flex';
             setTimeout(() => slides[currentSlide].classList.add('active'), 10);
 
             slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
-            prevBtn.disabled = currentSlide === 0;
-            nextBtn.disabled = currentSlide === slides.length - 1;
+            prevBtn.disabled = currentSlideIndex === 0;
+            nextBtn.disabled = currentSlideIndex === slides.length - 1;
 
-            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
+            if (currentSlideIndex === 13 || currentSlideIndex === 14) loadQuiz();
         }
 
         function loadQuiz() {
@@ -410,8 +427,8 @@
                 return;
             }
 
-            if (currentSlide === 13 && currentQuiz >= 5) { showSlide(14); return; }
-            if (currentSlide === 14 && currentQuiz < 5) { showSlide(13); return; }
+            if (currentSlideIndex === 13 && currentQuiz >= 5) { showSlide(14); return; }
+            if (currentSlideIndex === 14 && currentQuiz < 5) { showSlide(13); return; }
 
             const data = quizData[currentQuiz];
             questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
@@ -436,7 +453,7 @@
                     }
                     setTimeout(() => {
                         currentQuiz++;
-                        if (currentQuiz === 5 && currentSlide === 13) {
+                        if (currentQuiz === 5 && currentSlideIndex === 13) {
                             showSlide(14);
                         } else {
                             loadQuiz();
@@ -465,7 +482,7 @@
         window.addEventListener('resize', handleFullscreen);
         document.addEventListener('fullscreenchange', handleFullscreen);
 
-        showSlide(0);
+        currentSlideIndex = 0; showSlide(currentSlideIndex);
         handleFullscreen();
     </script>
 
@@ -498,11 +515,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -513,11 +530,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

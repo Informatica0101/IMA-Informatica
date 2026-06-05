@@ -219,6 +219,33 @@
             border-color: #ef4444 !important; /* Tailwind red-500 */
             transition: border-color 0.1s ease-out;
         }
+
+        /* Panel de caracteres para Laptop */
+        .accent-panel {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+            width: 100%;
+            max-width: 400px;
+        }
+        .accent-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+            font-weight: 800;
+            color: #475569;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+        .accent-btn:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            color: #1d4ed8;
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body class="font-inter antialiased text-gray-900">
@@ -246,6 +273,45 @@
                 Destreza en el Teclado
             </h3>
 
+
+            <!-- Setup Screen (Accessibility & UX) -->
+            <div id="game-setup-screen" class="hidden flex-col items-center justify-center min-h-[500px] animate-fade-in-down p-6">
+                <div class="max-w-md w-full space-y-8">
+                    <div class="bg-blue-50 p-6 rounded-3xl border border-blue-100 mb-8">
+                        <i class="fas fa-laptop text-4xl text-blue-600 mb-4"></i>
+                        <h4 class="text-lg font-bold text-blue-900 mb-2 uppercase tracking-tighter">Recomendación</h4>
+                        <p class="text-sm text-blue-700 leading-relaxed">
+                            Para una experiencia óptima y alcanzar la máxima velocidad, se recomienda realizar esta actividad en una <strong>computadora o laptop</strong> con teclado físico.
+                        </p>
+                    </div>
+
+                    <h4 class="text-xl font-black text-gray-900 uppercase tracking-tighter mb-6">¿Qué equipo estás usando?</h4>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button onclick="selectKeyboardType('desktop')" class="group p-6 bg-white border-2 border-gray-100 rounded-3xl hover:border-purple-500 transition-all flex flex-col items-center gap-4 shadow-sm hover:shadow-xl">
+                            <div class="w-16 h-16 bg-gray-50 group-hover:bg-purple-50 rounded-2xl flex items-center justify-center text-3xl text-gray-400 group-hover:text-purple-600 transition-colors">
+                                <i class="fas fa-keyboard"></i>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold text-gray-900 uppercase text-xs">Escritorio</p>
+                                <p class="text-[9px] text-gray-400 uppercase font-medium">Con teclado numérico</p>
+                            </div>
+                        </button>
+
+                        <button onclick="selectKeyboardType('laptop')" class="group p-6 bg-white border-2 border-gray-100 rounded-3xl hover:border-blue-500 transition-all flex flex-col items-center gap-4 shadow-sm hover:shadow-xl">
+                            <div class="w-16 h-16 bg-gray-50 group-hover:bg-blue-50 rounded-2xl flex items-center justify-center text-3xl text-gray-400 group-hover:text-blue-600 transition-colors">
+                                <i class="fas fa-laptop"></i>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold text-gray-900 uppercase text-xs">Laptop</p>
+                                <p class="text-[9px] text-gray-400 uppercase font-medium">Sin teclado numérico</p>
+                            </div>
+                        </button>
+                    </div>
+
+                    <button id="back-to-menu-btn" onclick="showScreen('game-start-menu')" class="mt-8 text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-gray-600">Regresar al menú</button>
+                </div>
+            </div>
             <!-- Start Menu -->
             <div id="game-start-menu" class="max-w-4xl mx-auto w-full flex flex-col items-center justify-center min-h-[500px] animate-fade-in-down p-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
@@ -271,7 +337,7 @@
                         </div>
 
                         <div class="pt-4">
-                            <button id="start-game-button" class="group relative px-10 py-5 bg-purple-600 text-white font-black text-sm uppercase tracking-widest rounded-2xl shadow-2xl shadow-purple-100 hover:bg-purple-700 transition-all transform hover:-translate-y-1 overflow-hidden w-full lg:w-max">
+                            <button id="start-game-button-real" class="group relative px-10 py-5 bg-purple-600 text-white font-black text-sm uppercase tracking-widest rounded-2xl shadow-2xl shadow-purple-100 hover:bg-purple-700 transition-all transform hover:-translate-y-1 overflow-hidden w-full lg:w-max">
                                 <span class="relative z-10 flex items-center justify-center gap-3">
                                     Calibrar Dedos <i class="fas fa-hand-sparkles text-purple-200 group-hover:rotate-12 transition-transform"></i>
                                 </span>
@@ -339,6 +405,7 @@
                     <p id="special-char-hint" class="text-sm text-gray-600 font-mono hidden"></p>
                 </div>
 
+                <div id="accent-panel-container" class="hidden mt-4 pt-4 border-t border-gray-100"></div>
                 <input type="text" id="word-input" class="w-full max-w-xl p-4 text-2xl text-center rounded-xl border-2 border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-md mb-6" placeholder="Escribe la palabra aquí..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
 
                 <button id="exit-game-button" class="px-6 py-3 rounded-xl font-bold text-lg
@@ -500,7 +567,8 @@
             const screens = [
                 gameStartMenu,
                 gamePlayArea,
-                gameResultScreen
+                gameResultScreen,
+                document.getElementById("game-setup-screen")
             ];
             screens.forEach(screen => {
                 if (screen) {
@@ -560,6 +628,48 @@
         // --- Lógica del Juego ---
 
         // Inicializa el juego al cargar la página o al volver a jugar
+
+        let keyboardType = 'desktop';
+
+        window.selectKeyboardType = function(type) {
+            keyboardType = type;
+            startGame();
+        };
+
+        function renderAccentPanel() {
+            const container = document.getElementById('accent-panel-container');
+            if (!container) return;
+
+            if (keyboardType === 'laptop') {
+                const chars = [
+                    {c: 'á', a: '160'}, {c: 'é', a: '130'}, {c: 'í', a: '161'}, {c: 'ó', a: '162'}, {c: 'ú', a: '163'},
+                    {c: 'ñ', a: '164'}, {c: 'ü', a: '129'}, {c: '¿', a: '168'}, {c: '¡', a: '173'}, {c: '€', a: '0128'}
+                ];
+                container.innerHTML = `
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-3">Atajos para Laptop (Click o Alt+Código)</p>
+                    <div class="accent-panel mx-auto">
+                        ${chars.map(char => `
+                            <button type="button" onclick="insertChar('${char.c}')" class="accent-btn group flex flex-col items-center">
+                                <span>${char.c}</span>
+                                <span class="text-[7px] text-gray-300 group-hover:text-blue-400">Alt+${char.a}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        window.insertChar = function(char) {
+            if (wordInput && !wordInput.disabled) {
+                wordInput.value += char;
+                handleInput();
+                wordInput.focus();
+            }
+        };
+
         window.initDexterityGame = async function() {
             const user = JSON.parse(localStorage.getItem('currentUser'));
             const isGuest = !user;
@@ -593,7 +703,7 @@
 
             // Asignar elementos del DOM
             gameStartMenu = document.getElementById('game-start-menu');
-            startGameButton = document.getElementById('start-game-button');
+            startGameButton = document.getElementById('start-game-button-real');
             gamePlayArea = document.getElementById('game-play-area');
             correctWordsDisplay = document.getElementById('correct-words-display');
             // Referencia actualizada
@@ -613,12 +723,10 @@
             console.log('startGameButton:', startGameButton); // Log de depuración
 
             // Configurar Event Listeners
+
             if (startGameButton) {
                 startGameButton.addEventListener('click', () => {
-                    if (document.documentElement.requestFullscreen) {
-                        document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
-                    }
-                    startGame();
+                    showScreen('game-setup-screen');
                 });
             }
             // El listener 'input' es para palabras normales
@@ -639,7 +747,7 @@
             resetGame();
             gameActive = true; // El juego está activo
             showScreen('game-play-area');
-            gameStartTime = Date.now();
+            gameStartTime = Date.now(); renderAccentPanel();
             loadNewWord();
             if (wordInput) wordInput.focus(); // Pone el foco en el input
 

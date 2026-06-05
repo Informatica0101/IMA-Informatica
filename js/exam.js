@@ -30,9 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const startBtn = document.getElementById('start-exam-btn');
         let timeLimitFromApi = 0;
 
-        // REQ: Asegurar sesión activa (v3.3)
-        if (!currentUser || !currentUser.userId) {
-            alert("Sesión no válida. Regrese al portal.");
+        // REQ: Asegurar sesión activa e integridad de datos (v4.0)
+        if (!currentUser || !currentUser.userId || !examenId) {
+            alert("Acceso no autorizado o ID de examen faltante. Regrese al portal.");
             window.location.href = "login.html";
             return;
         }
@@ -50,9 +50,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (originalQuestions.length > 0) {
                     questionsContainer.innerHTML = originalQuestions.map(renderQuestion).join('');
+
+                    // REQ: Restauración automática de progreso (v4.0)
                     loadProgress();
-                    // Escuchar cambios para autoguardado
-                    questionsContainer.addEventListener('input', saveProgress);
+
+                    // Escuchar cambios para autoguardado en tiempo real
+                    questionsContainer.addEventListener('input', () => {
+                        console.log("[IMA-EXAM] Detectado cambio en respuesta. Autoguardando...");
+                        saveProgress();
+                    });
+
+                    // Soporte para cambios en radio/checkbox que a veces no disparan 'input' en todos los browsers
+                    questionsContainer.addEventListener('change', saveProgress);
                 } else {
                     questionsContainer.innerHTML = '<p class="text-gray-500">Este examen no tiene preguntas actualmente.</p>';
                     const submitBtn = document.querySelector('button[type="submit"]');

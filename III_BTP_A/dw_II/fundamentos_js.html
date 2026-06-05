@@ -490,7 +490,7 @@
 
     <div class="presentation-container">
         <!-- Diapositiva 1: Título y Datos Generales -->
-        <div class="slide active" id="slide-1"> <!-- Añadimos 'active' por defecto a la primera diapositiva -->
+        <div class="slide active" id="slide-1" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp; <!-- Añadimos 'active' por defecto a la primera diapositiva -->
             <div class="slide-content">
                 <img src="../../imagenes/logo.png"
                      alt="Logo Instituto Maria Auxiliadora"
@@ -501,10 +501,23 @@
                 <p>Fecha: 13 de Julio de 2025.</p>
                 <h3 class="mt-4">Fundamentos de JavaScript</h3>
             </div>
-        </div>
 
-        <!-- Diapositiva 2: ¿Qué es JavaScript? -->
-        <div class="slide" id="slide-2">
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
+                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
+                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
+                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+<div class="slide" id="slide-2">
             <div class="slide-content">
                 <h2>¿Qué es JavaScript?</h2>
                 <p>JavaScript (JS) es un <strong>lenguaje de programación ligero e interpretado</strong>, fundamental para el desarrollo web moderno.</p>
@@ -516,10 +529,7 @@
                 </ul>
                 <img src="../../imagenes/js_logo.svg" alt="Logo de JavaScript" class="img-slide" loading="lazy">
             </div>
-        </div>
-
-        <!-- Diapositiva 3: Variables en JavaScript (Concepto) -->
-        <div class="slide" id="slide-3">
+<div class="slide" id="slide-3">
             <div class="slide-content">
                 <h2>Variables en JavaScript</h2>
                 <p>Las variables son contenedores para almacenar datos. JS tiene tres palabras clave para declararlas:</p>
@@ -529,10 +539,7 @@
                     <li><strong><code>const</code></strong>: Introducido en ES6. Alcance de bloque. No puede ser reasignada ni redeclarada. Debe inicializarse.</li>
                 </ul>
             </div>
-        </div>
-
-        <!-- Diapositiva 4: Ejemplo de Variables -->
-        <div class="slide" id="slide-4">
+<div class="slide" id="slide-4">
             <div class="slide-content">
                 <h2>Ejemplo: Declaración de Variables</h2>
                 <div class="example-layout">
@@ -548,18 +555,7 @@
                             <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Nueva edad: "</span> <span class="operator">+</span> <span class="variable">edad</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
                             <span class="line"><span class="comment">// PI = 3.14; // Error: No se puede reasignar const</span></span>
                         </div>
-                        <button class="run-code-btn" data-target-slide="4">▶️ Ejecutar Código</button>
-                    </div>
-                    <div class="output-panel">
-                        <h3>Salida de Consola:</h3>
-                        <div class="console-output" id="console-output-4"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Diapositiva 5: Tipos de Datos (Concepto) -->
-        <div class="slide" id="slide-5">
+<div class="slide" id="slide-5">
             <div class="slide-content">
                 <h2>Tipos de Datos Fundamentales</h2>
                 <p>JavaScript maneja varios tipos de datos para representar información:</p>
@@ -571,10 +567,7 @@
                     <li><strong><code>Object</code></strong>: Colección de pares clave-valor (ej. <code>{nombre: "Juan", edad: 25}</code>).</li>
                 </ul>
             </div>
-        </div>
-
-        <!-- Diapositiva 6: Ejemplo de Tipos de Datos -->
-        <div class="slide" id="slide-6">
+<div class="slide" id="slide-6">
             <div class="slide-content">
                 <h2>Ejemplo: Tipos de Datos</h2>
                 <div class="example-layout">
@@ -592,61 +585,7 @@
                             <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Tipo de colores: "</span> <span class="operator">+</span> <span class="keyword">typeof</span> <span class="variable">colores</span><span class="punctuation">)</span><span class="punctuation">;</span> <span class="comment">// Arrays son de tipo 'object'</span></span>
                             <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Tipo de usuario: "</span> <span class="operator">+</span> <span class="keyword">typeof</span> <span class="variable">usuario</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
                         </div>
-                        <button class="run-code-btn" data-target-slide="6">▶️ Ejecutar Código</button>
-                    </div>
-                    <div class="output-panel">
-                        <h3>Salida de Consola:</h3>
-                        <div class="console-output" id="console-output-6"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Diapositiva 7: Operadores (Concepto) -->
-        <div class="slide" id="slide-7">
-            <div class="slide-content">
-                <h2>Operadores en JavaScript</h2>
-                <p>Los operadores se usan para realizar operaciones sobre valores (operandos).</p>
-                <ul class="mx-auto text-left">
-                    <li><strong>Aritméticos</strong>: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code> (módulo).</li>
-                    <li><strong>Asignación</strong>: <code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>.</li>
-                    <li><strong>Comparación</strong>: <code>==</code> (igualdad de valor), <code>===</code> (igualdad estricta), <code>!=</code>, <code>!==</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>.</li>
-                    <li><strong>Lógicos</strong>: <code>&&</code> (AND), <code>||</code> (OR), <code>!</code> (NOT).</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Diapositiva 8: Ejemplo de Operadores -->
-        <div class="slide" id="slide-8">
-            <div class="slide-content">
-                <h2>Ejemplo: Operadores</h2>
-                <div class="example-layout">
-                    <div class="code-panel">
-                        <h3>Sintaxis del Código:</h3>
-                        <div class="code-editable" contenteditable="true" data-slide-id="8">
-                            <span class="line"><span class="keyword">let</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">5</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="keyword">let</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">3</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="keyword">let</span> <span class="variable">resultado</span> <span class="operator">=</span> <span class="variable">x</span> <span class="operator">+</span> <span class="variable">y</span><span class="punctuation">;</span> <span class="comment">// Cambia '+' por '-', '*', '/' o '%' para otras operaciones.</span></span>
-                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Resultado de la operación: "</span> <span class="operator">+</span> <span class="variable">resultado</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="variable">x</span> <span class="operator">+=</span> <span class="number">2</span><span class="punctuation">;</span> <span class="comment">// x es ahora 7 (operador de asignación)</span></span>
-                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Nuevo valor de x (después de x += 2): "</span> <span class="operator">+</span> <span class="variable">x</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="keyword">let</span> <span class="variable">esMayor</span> <span class="operator">=</span> <span class="variable">x</span> <span class="operator">></span> <span class="variable">y</span><span class="punctuation">;</span> <span class="comment">// operador de comparación</span></span>
-                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"¿Es x mayor que y?: "</span> <span class="operator">+</span> <span class="variable">esMayor</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="keyword">let</span> <span class="variable">condicion</span> <span class="operator">=</span> <span class="punctuation">(</span><span class="variable">x</span> <span class="operator">></span> <span class="number">0</span> <span class="operator">&&</span> <span class="variable">y</span> <span class="operator"><</span> <span class="number">10</span><span class="punctuation">)</span><span class="punctuation">;</span> <span class="comment">// operador lógico</span></span>
-                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Condición lógica (x > 0 && y < 10): "</span> <span class="operator">+</span> <span class="variable">condicion</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
-                        </div>
-                        <button class="run-code-btn" data-target-slide="8">▶️ Ejecutar Código</button>
-                    </div>
-                    <div class="output-panel">
-                        <h3>Salida de Consola:</h3>
-                        <div class="console-output" id="console-output-8"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Diapositiva 9: Estructuras de Control (Condicionales - Concepto) -->
-        <div class="slide" id="slide-9">
+<div class="slide" id="slide-9">
             <div class="slide-content">
                 <h2>Estructuras de Control: Condicionales</h2>
                 <p>Permiten ejecutar código basado en ciertas condiciones.</p>
@@ -655,10 +594,7 @@
                     <li><strong><code>switch</code></strong>: Para evaluar una expresión contra múltiples casos.</li>
                 </ul>
             </div>
-        </div>
-
-        <!-- Diapositiva 10: Ejemplo if/else -->
-        <div class="slide" id="slide-10">
+<div class="slide" id="slide-10">
             <div class="slide-content">
                 <h2>Ejemplo: Condicional <code>if/else</code></h2>
                 <div class="example-layout">
@@ -674,18 +610,7 @@
                             <span class="line">  <span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Buenas noches"</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
                             <span class="line"><span class="punctuation">}</span></span>
                         </div>
-                        <button class="run-code-btn" data-target-slide="10">▶️ Ejecutar Código</button>
-                    </div>
-                    <div class="output-panel">
-                        <h3>Salida de Consola:</h3>
-                        <div class="console-output" id="console-output-10"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Diapositiva 11: Estructuras de Control (Bucles - Concepto) -->
-        <div class="slide" id="slide-11">
+<div class="slide" id="slide-11">
             <div class="slide-content">
                 <h2>Estructuras de Control: Bucles</h2>
                 <p>Permiten repetir un bloque de código múltiples veces.</p>
@@ -694,224 +619,110 @@
                     <li><strong><code>while</code></strong>: Para bucles que continúan mientras una condición sea verdadera.</li>
                 </ul>
             </div>
-        </div>
 
-        <!-- Diapositiva 12: Ejemplo Bucle for -->
-        <div class="slide" id="slide-12">
-            <div class="slide-content">
-                <h2>Ejemplo: Bucle <code>for</code></h2>
-                <div class="example-layout">
-                    <div class="code-panel">
-                        <h3>Sintaxis del Código:</h3>
-                        <div class="code-editable" contenteditable="true" data-slide-id="12">
-                            <span class="line"><span class="keyword">for</span> <span class="punctuation">(</span><span class="keyword">let</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span><span class="punctuation">;</span> <span class="variable">i</span> <span class="operator"><</span> <span class="number">5</span><span class="punctuation">;</span> <span class="variable">i</span><span class="operator">++</span><span class="punctuation">)</span> <span class="punctuation">{</span></span>
-                            <span class="line">  <span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Iteración "</span> <span class="operator">+</span> <span class="variable">i</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="punctuation">}</span></span>
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
                         </div>
-                        <button class="run-code-btn" data-target-slide="12">▶️ Ejecutar Código</button>
-                    </div>
-                    <div class="output-panel">
-                        <h3>Salida de Consola:</h3>
-                        <div class="console-output" id="console-output-12"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Diapositiva 13: Ejemplo Bucle while -->
-        <div class="slide" id="slide-13">
-            <div class="slide-content">
-                <h2>Ejemplo: Bucle <code>while</code></h2>
-                <div class="example-layout">
-                    <div class="code-panel">
-                        <h3>Sintaxis del Código:</h3>
-                        <div class="code-editable" contenteditable="true" data-slide-id="13">
-                            <span class="line"><span class="keyword">let</span> <span class="variable">contador</span> <span class="operator">=</span> <span class="number">0</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="keyword">while</span> <span class="punctuation">(</span><span class="variable">contador</span> <span class="operator"><</span> <span class="number">3</span><span class="punctuation">)</span> <span class="punctuation">{</span></span>
-                            <span class="line">  <span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"Contador: "</span> <span class="operator">+</span> <span class="variable">contador</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
-                            <span class="line">  <span class="variable">contador</span><span class="operator">++</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="punctuation">}</span></span>
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
                         </div>
-                        <button class="run-code-btn" data-target-slide="13">▶️ Ejecutar Código</button>
-                    </div>
-                    <div class="output-panel">
-                        <h3>Salida de Consola:</h3>
-                        <div class="console-output" id="console-output-13"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Diapositiva 14: Funciones en JavaScript (Concepto) -->
-        <div class="slide" id="slide-14">
-            <div class="slide-content">
-                <h2>Funciones en JavaScript</h2>
-                <p>Las funciones son bloques de código reutilizables que realizan una tarea específica.</p>
-                <ul class="mx-auto text-left">
-                    <li><strong>Declaración de función</strong>: Definidas con la palabra clave <code>function</code>.</li>
-                    <li><strong>Expresión de función</strong>: Asignadas a una variable.</li>
-                    <li><strong>Funciones flecha (Arrow Functions)</strong>: Sintaxis más concisa (ES6).</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Diapositiva 15: Ejemplo Declaración de Función -->
-        <div class="slide" id="slide-15">
-            <div class="slide-content">
-                <h2>Ejemplo: Declaración de Función</h2>
-                <div class="example-layout">
-                    <div class="code-panel">
-                        <h3>Sintaxis del Código:</h3>
-                        <div class="code-editable" contenteditable="true" data-slide-id="15">
-                            <span class="line"><span class="comment">// Declaración de función</span></span>
-                            <span class="line"><span class="keyword">function</span> <span class="function-name">saludar</span><span class="punctuation">(</span><span class="parameter">nombre</span><span class="punctuation">)</span> <span class="punctuation">{</span></span>
-                            <span class="line">  <span class="keyword">return</span> <span class="string">"Hola, "</span> <span class="operator">+</span> <span class="parameter">nombre</span> <span class="operator">+</span> <span class="string">"!"</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="punctuation">}</span></span>
-                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="function-name">saludar</span><span class="punctuation">(</span><span class="string">"Pedro"</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span> <span class="comment">// Llama a la función</span></span>
-                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="function-name">saludar</span><span class="punctuation">(</span><span class="string">"María"</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
                         </div>
-                        <button class="run-code-btn" data-target-slide="15">▶️ Ejecutar Código</button>
-                    </div>
-                    <div class="output-panel">
-                        <h3>Salida de Consola:</h3>
-                        <div class="console-output" id="console-output-15"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Diapositiva 16: Ejemplo Expresión de Función -->
-        <div class="slide" id="slide-16">
-            <div class="slide-content">
-                <h2>Ejemplo: Expresión de Función</h2>
-                <div class="example-layout">
-                    <div class="code-panel">
-                        <h3>Sintaxis del Código:</h3>
-                        <div class="code-editable" contenteditable="true" data-slide-id="16">
-                            <span class="line"><span class="comment">// Expresión de función</span></span>
-                            <span class="line"><span class="keyword">const</span> <span class="variable">sumar</span> <span class="operator">=</span> <span class="keyword">function</span><span class="punctuation">(</span><span class="parameter">a</span><span class="punctuation">,</span> <span class="parameter">b</span><span class="punctuation">)</span> <span class="punctuation">{</span></span>
-                            <span class="line">  <span class="keyword">return</span> <span class="parameter">a</span> <span class="operator">+</span> <span class="parameter">b</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="punctuation">}</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"5 + 3 = "</span> <span class="operator">+</span> <span class="variable">sumar</span><span class="punctuation">(</span><span class="number">5</span><span class="punctuation">,</span> <span class="number">3</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"10 + 7 = "</span> <span class="operator">+</span> <span class="variable">sumar</span><span class="punctuation">(</span><span class="number">10</span><span class="punctuation">,</span> <span class="number">7</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
                         </div>
-                        <button class="run-code-btn" data-target-slide="16">▶️ Ejecutar Código</button>
-                    </div>
-                    <div class="output-panel">
-                        <h3>Salida de Consola:</h3>
-                        <div class="console-output" id="console-output-16"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Diapositiva 17: Ejemplo Función Flecha -->
-        <div class="slide" id="slide-17">
-            <div class="slide-content">
-                <h2>Ejemplo: Función Flecha (Arrow Function)</h2>
-                <div class="example-layout">
-                    <div class="code-panel">
-                        <h3>Sintaxis del Código:</h3>
-                        <div class="code-editable" contenteditable="true" data-slide-id="17">
-                            <span class="line"><span class="comment">// Función flecha</span></span>
-                            <span class="line"><span class="keyword">const</span> <span class="variable">multiplicar</span> <span class="operator">=</span> <span class="punctuation">(</span><span class="parameter">a</span><span class="punctuation">,</span> <span class="parameter">b</span><span class="punctuation">)</span> <span class="operator">=></span> <span class="parameter">a</span> <span class="operator">*</span> <span class="parameter">b</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"4 * 2 = "</span> <span class="operator">+</span> <span class="variable">multiplicar</span><span class="punctuation">(</span><span class="number">4</span><span class="punctuation">,</span> <span class="number">2</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
-                            <span class="line"><span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"6 * 3 = "</span> <span class="operator">+</span> <span class="variable">multiplicar</span><span class="punctuation">(</span><span class="number">6</span><span class="punctuation">,</span> <span class="number">3</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
                         </div>
-                        <button class="run-code-btn" data-target-slide="17">▶️ Ejecutar Código</button>
-                    </div>
-                    <div class="output-panel">
-                        <h3>Salida de Consola:</h3>
-                        <div class="console-output" id="console-output-17"></div>
-                    </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
                 </div>
             </div>
         </div>
 
-        <!-- Diapositiva 18: Cómo insertar JavaScript en HTML -->
-        <div class="slide" id="slide-18">
-            <div class="slide-content">
-                <h2>Cómo insertar JavaScript en HTML</h2>
-                <p>Hay tres formas principales de integrar JavaScript en tus páginas web:</p>
-
-                <h3>1. JavaScript Inline</h3>
-                <p>Directamente en las etiquetas HTML usando atributos de evento.</p>
-                <div class="code-panel" style="width: 100%; max-width: 500px;">
-                    <h3>Sintaxis del Código:</h3>
-                    <div class="code-editable" contenteditable="true" data-slide-id="18-inline">
-                        <span class="line"><span class="comment">&lt;!-- HTML --&gt;</span></span>
-                        <span class="line"><span class="html-tag">&lt;button</span> <span class="html-attribute">onclick</span><span class="operator">=</span><span class="string">"alert('¡Hola desde JS Inline!')"</span><span class="html-tag">&gt;</span>Haz clic<span class="html-tag">&lt;/button&gt;</span></span>
-                    </div>
-                    <button class="run-code-btn" data-target-slide="18-inline">▶️ Ejecutar Código (Alert)</button>
-                </div>
-                <p class="mt-4">
-                    <em>Nota: El botón de "Ejecutar Código" para este ejemplo usará `alert()`. En un entorno real, preferirías un mensaje en la consola o un modal personalizado.</em>
-                </p>
-
-                <h3 class="mt-8">2. JavaScript Interno</h3>
-                <p>Dentro de la etiqueta <code>&lt;script&gt;</code> en el mismo archivo HTML.</p>
-                <div class="code-panel" style="width: 100%; max-width: 500px;">
-                    <h3>Sintaxis del Código:</h3>
-                    <div class="code-editable" contenteditable="true" data-slide-id="18-internal">
-                        <span class="line"><span class="comment">&lt;!-- En la sección &lt;head&gt; o al final de &lt;body&gt; --&gt;</span></span>
-                        <span class="line"><span class="html-tag">&lt;script&gt;</span></span>
-                        <span class="line">  <span class="builtin">console</span><span class="punctuation">.</span><span class="method">log</span><span class="punctuation">(</span><span class="string">"¡Hola desde JavaScript Interno!"</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
-                        <span class="line"><span class="html-tag">&lt;/script&gt;</span></span>
-                    </div>
-                    <button class="run-code-btn" data-target-slide="18-internal">▶️ Ejecutar Código</button>
-                </div>
-
-                <h3 class="mt-8">3. JavaScript Externo</h3>
-                <p>En un archivo <code>.js</code> separado, enlazado con la etiqueta <code>&lt;script src="..."&gt;</code>.</p>
-                <div class="code-panel" style="width: 100%; max-width: 500px;">
-                    <h3>Sintaxis del Código:</h3>
-                    <div class="code-editable" contenteditable="true" data-slide-id="18-external">
-                        <span class="line"><span class="comment">&lt;!-- En tu archivo HTML --&gt;</span></span>
-                        <span class="line"><span class="html-tag">&lt;script</span> <span class="html-attribute">src</span><span class="operator">=</span><span class="string">"mi_script.js"</span><span class="html-tag">&gt;&lt;/script&gt;</span></span>
-                        <span class="line"></span>
-                        <span class="line"><span class="comment">// Contenido de mi_script.js</span></span>
-                        <span class="line"><span class="comment">// console.log("¡Hola desde JavaScript Externo!");</span></span>
-                    </div>
-                    <!-- No hay botón de ejecutar para externo ya que requiere un archivo separado -->
-                </div>
-                 <div class="output-panel" style="width: 100%; max-width: 500px;">
-                    <h3>Salida de Consola (para Interno):</h3>
-                    <div class="console-output" id="console-output-18-internal"></div>
-                    <h3>Salida de Consola (para Inline):</h3>
-                    <div class="console-output" id="console-output-18-inline"></div>
-                </div>
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
             </div>
         </div>
-
-        <!-- Diapositiva 19: Asignación de Tareas (Anteriormente slide-18) -->
-        <div class="slide" id="slide-19">
-            <div class="slide-content">
-                <h2>Asignación de Tareas</h2>
-                <p><strong>Tarea</strong>: Creación de un script JavaScript con variables y operadores básicos.</p>
-                <p class="text-sm text-left mx-auto max-w-xl">
-                    Desarrollar un archivo JavaScript (<code>.js</code>) que realice las siguientes operaciones:
-                </p>
-                <ol class="mx-auto text-left">
-                    <li>Declarar variables usando <code>var</code>, <code>let</code> y <code>const</code> para almacenar diferentes tipos de datos (número, cadena de texto, booleano).</li>
-                    <li>Realizar al menos tres operaciones aritméticas con números (suma, resta, multiplicación, división, módulo).</li>
-                    <li>Utilizar al menos dos operadores de asignación (ej. <code>+=</code>, <code>-=</code>).</li>
-                    <li>Implementar al menos dos comparaciones (ej. <code>&gt;</code>, <code>===</code>).</li>
-                    <li>Usar al menos un operador lógico (<code>&&</code> o <code>||</code>).</li>
-                    <li>Mostrar los resultados de todas las operaciones en la consola del navegador (usando <code>console.log()</code>).</li>
-                </ol>
-                <p class="mt-4"><strong>Fecha de Entrega</strong>: 20 de Julio de 2025.</p>
-                <p><strong>Ponderación</strong>: TC 5%.</p>
-            </div>
-        </div>
-
-        <!-- Diapositiva 20: Cierre de la Clase (Anteriormente slide-19) -->
-        <div class="slide" id="slide-20">
-            <div class="slide-content">
-                <h2>Cierre de la Clase</h2>
-                <p>Hoy hemos cubierto los <strong>fundamentos esenciales de JavaScript</strong>, un pilar del desarrollo web.</p>
-                <p>Comprendimos variables, tipos de datos, operadores, y estructuras de control y funciones.</p>
-                <p class="mt-8 text-lg font-semibold text-gray-700">¡Gracias por su atención y participación!</p>
-            </div>
         </div>
 
         <!-- Botones de navegación -->
@@ -1184,11 +995,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -1199,11 +1010,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

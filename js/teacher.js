@@ -766,6 +766,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
 
+        // REQ: Pantalla de carga profesional (v4.0)
         if (window.GamesAdapter) {
             window.GamesAdapter.showLoading(true);
         } else {
@@ -899,7 +900,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = grados.filter(g => norm(g).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado Académico</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Navegación</th></tr>`;
-        if (filtered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-8 text-gray-500">No hay grados.</td></tr>'; return; }
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = `
+                <tr>
+                    <td colspan="2" class="text-center p-12">
+                        <div class="flex flex-col items-center gap-4 text-gray-400">
+                            <i class="fas fa-folder-open text-4xl opacity-20"></i>
+                            <p class="text-[10px] font-bold uppercase tracking-widest">No se encontraron grados académicos con actividad.</p>
+                        </div>
+                    </td>
+                </tr>`;
+            return;
+        }
         submissionsTableBody.innerHTML = filtered.map((grado, idx) => `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn group" data-index="${idx}">
                 <td class="p-4">
@@ -930,6 +942,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = secciones.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Sección</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = `<tr><td colspan="2" class="text-center p-12 text-gray-400 font-bold text-[10px] uppercase tracking-widest">No hay secciones registradas para este grado.</td></tr>`;
+            return;
+        }
         submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">Sección ${seccion}</td><td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Ver Asignaturas &rsaquo;</span></td></tr>`).join('');
     }
 
