@@ -91,6 +91,7 @@ function normalizePartial(p) {
     if (n.includes("cuarto") || n === "iv parcial") return "Cuarto Parcial";
     return p;
 }
+window.normalizePartial = normalizePartial;
 
 window.isContentAuthorized = function(contentPartial) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
