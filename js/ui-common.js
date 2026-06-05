@@ -47,7 +47,7 @@ window.setupCommonUI = function() {
         const modal = document.getElementById('profile-modal');
         if (!modal) return;
 
-        const user = JSON.parse(localStorage.getItem('currentUser'));
+        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         if (!user) {
             // Si no hay sesión, invitar a login (si existe modal de login)
             const loginModal = document.getElementById('login-modal');
@@ -108,13 +108,14 @@ window.setupCommonUI = function() {
     // --- Logout Logic (Global) ---
     window.handleLogout = () => {
         localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
         window.location.href = 'login.html';
     };
 
     // Portal Redirect Logic
     const portalLink = document.getElementById('nav-portal-link');
     const mobilePortalLink = document.getElementById('mobile-portal-link');
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
 
     if (currentUser) {
         const dest = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
@@ -245,7 +246,7 @@ window.setupCommonUI = function() {
     if (profileForm) {
         profileForm.onsubmit = async (e) => {
             e.preventDefault();
-            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
             if (!user) {
                 alert('Sesión no encontrada. Por favor inicie sesión de nuevo.');
                 window.location.href = 'login.html';
@@ -467,7 +468,7 @@ window.openAcademicHierarchy = function(type) {
 window.showAcademicHierarchy = function(type) {
     const options = document.getElementById('academic-menu-options');
     const nav = document.getElementById('hierarchy-navigation');
-    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}');
     const isProfesor = user.rol === 'Profesor';
 
     if (options) options.classList.add('hidden');
@@ -483,7 +484,7 @@ window.showAcademicHierarchy = function(type) {
 window.renderHierarchyLevel = function(type, level, params = {}, pushState = true) {
     const container = document.getElementById('hierarchy-options');
     const label = document.getElementById('hierarchy-label');
-    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}');
     const role = user.rol || 'Invitado';
 
     if (!container) return;
@@ -618,7 +619,7 @@ window.renderCommonNav = function() {
     const mobileCoursesMenu = document.getElementById('mobile-courses-menu');
     const mobileContentMenu = document.getElementById('mobile-content-menu');
 
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     const isProfesor = currentUser && currentUser.rol === 'Profesor';
 
     function buildHierarchy(data) {

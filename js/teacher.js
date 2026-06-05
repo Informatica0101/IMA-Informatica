@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let submissionsTableBody = document.getElementById('submissions-table-body');
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
 
     if (!currentUser || !RoleCapabilities.canManageExams(currentUser)) {
         window.location.href = 'login.html';

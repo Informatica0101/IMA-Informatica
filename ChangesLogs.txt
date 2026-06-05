@@ -95,3 +95,34 @@ ARCHIVO: js/student.js
 
 ARCHIVO: Normas_Presentaciones.md
 - Actualización a v5.0: Documentadas reglas de navegación universal, modo pantalla completa obligatorio y uso de Wake Lock API.
+
+RESTAURACIÓN DE CONECTIVIDAD Y ESTABILIDAD (v3.3) - 2026-06-18
+
+Global:
+- [OPTIMIZADO] Actualización masiva de versiones de activos (?v=22) en todos los archivos HTML para forzar limpieza de caché.
+- [OPTIMIZADO] Estandarización del orden de carga de scripts: js/games-adapter.js ahora precede a toda lógica de juego e interfaz.
+
+ARCHIVO: js/config.js
+- [IMPLEMENTADO] Exportación global window.SERVICE_URLS para garantizar visibilidad en módulos asíncronos.
+- [OPTIMIZADO] Refactorización de window.GamesAdapter (Fallback) para devolver estructuras de datos compatibles (lb, record) y evitar errores de desestructuración.
+
+ARCHIVO: js/api.js
+- [OPTIMIZADO] Refactorización de fetchApi: Implementada captura limpia de errores de red/CORS, retornando objetos estructurados de fallback ({status: 'success', data: [], isFallback: true}) en lugar de excepciones.
+- [CORREGIDO] Agregada validación if(document.body) antes de inyectar el error Toast para evitar fallos durante la carga inicial.
+
+ARCHIVO: js/index-ui.js
+- [CORREGIDO] Auditoría de seguridad del DOM: Agregadas comprobaciones de nulidad en renderWelcomeMessage, renderAccessButton, y carga de noticias.
+- [IMPLEMENTADO] Sistema de Fallback Visual en loadNews: Renderiza noticia institucional local del 31 de mayo de 2026 si el servidor no responde o devuelve datos vacíos.
+
+ARCHIVO: js/auth.js
+- [IMPLEMENTADO] Persistencia académica completa: El handshake de login ahora captura y almacena userId, nombre, email, rol, grado, seccion, numeroLista y telefono en localStorage/sessionStorage.
+
+ARCHIVO: js/student.js & js/teacher.js & js/exam.js & js/ui-common.js
+- [OPTIMIZADO] Soporte híbrido localStorage || sessionStorage para detección de sesión, permitiendo mayor flexibilidad en la persistencia del usuario.
+
+ARCHIVO: student-dashboard.html & teacher-dashboard.html
+- [LIMPIEZA] Eliminados marcadores de posición estáticos en tablas de tareas y reportes para asegurar que solo se muestren datos reales del backend.
+
+ARCHIVO: js/exam.js
+- [IMPLEMENTADO] Integración con GamesAdapter.showLoading durante la carga de preguntas para mejorar el feedback visual.
+- [IMPLEMENTADO] Registro analítico de intentos de entrega (submit_exam_attempt) para trazabilidad pedagógica.

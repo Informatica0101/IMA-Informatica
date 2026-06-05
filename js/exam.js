@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     if (!currentUser) { window.location.href = 'login.html'; return; }
 
     const examTitleEl = document.getElementById('exam-title');
@@ -37,18 +37,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (window.GamesAdapter) window.GamesAdapter.showLoading(true);
+
         try {
             // Apuntar al microservicio de exámenes
             const result = await fetchApi('EXAM', 'getExamQuestions', { examenId, userId: currentUser.userId });
             if (result.status === 'success' && result.data) {
                 const { titulo, tiempoLimite, preguntas } = result.data;
-                examTitleEl.textContent = titulo;
+                if (examTitleEl) examTitleEl.textContent = titulo;
                 timeLimitFromApi = tiempoLimite;
 
                 // Se asigna un array vacío por defecto si la propiedad 'preguntas' no existe.
                 originalQuestions = preguntas || [];
 
-                if (originalQuestions.length > 0) {
+                if (originalQuestions.length > 0 && questionsContainer) {
                     questionsContainer.innerHTML = originalQuestions.map(renderQuestion).join('');
 
                     // REQ: Restauración automática de progreso (v4.0)
@@ -83,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else { throw new Error(result.message); }
         } catch (error) {
-            questionsContainer.innerHTML = `<p class="text-red-500 text-center py-10 font-bold">Error al cargar el examen: ${error.message}</p>`;
+            if (questionsContainer) questionsContainer.innerHTML = `<p class="text-red-500 text-center py-10 font-bold">Error al cargar el examen: ${error.message}</p>`;
             // Si falla la carga, mostramos un botón de reintento o volvemos
             if (startBtn) {
                 startBtn.textContent = "Volver al Dashboard";
@@ -92,6 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.href = 'student-dashboard.html';
                 });
             }
+        } finally {
+            if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         }
     }
 
@@ -234,6 +238,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const respuestas = [];
         const questionBlocks = document.querySelectorAll('.question-block');
 
+        if (window.GamesAdapter) {
+            window.GamesAdapter.recordAction({
+                action: 'submit_exam_attempt',
+                examenId: examenId,
+                isBlocked: isBlocked
+            });
+        }
+
         questionBlocks.forEach(block => {
             const preguntaId = block.dataset.questionId;
             const preguntaTipo = block.dataset.questionType;
@@ -278,6 +290,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const payload = { examenId, userId: currentUser.userId, respuestas, estado: isBlocked ? 'Bloqueado' : 'Entregado' };
+
+            // Backup call to Analytics as per requirement
+            fetchApi('USER', 'recordAnalytics', {
+                userId: currentUser.userId,
+                action: 'exam_submit',
+                payload: { examenId, questionCount: respuestas.length, isBlocked }
+            }).catch(() => {});
+
             const result = await fetchApi('EXAM', 'submitExam', payload);
 
             if (result.status === 'success' && result.data) {

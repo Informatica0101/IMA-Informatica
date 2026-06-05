@@ -9,7 +9,7 @@
 // 8. Repite este proceso para CADA microservicio.
 // ----------------------------------------------------------
 
-const SERVICE_URLS = {
+window.SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios.
   USER: 'https://script.google.com/macros/s/AKfycbzChAgiijmvKABxJuNSi5M8nKUdoB_UJni5bbBQsAJiQygZPrqPWaR2KIo89UjyoBTn/exec',
 
@@ -153,19 +153,20 @@ window.validateQuestion = function(q) {
  * REQ: Fallback de seguridad para GamesAdapter (Incidencia 1)
  * Previene errores de referencia si el script no carga a tiempo o falla.
  */
-if (typeof window.GamesAdapter === "undefined") {
-    console.warn("[IMA-SYSTEM] GamesAdapter no detectado. Inicializando fallback seguro.");
-    window.GamesAdapter = {
-        init: () => Promise.resolve(),
-        showLoading: () => Promise.resolve(),
-        saveResult: () => Promise.resolve(),
-        recordAction: () => {},
-        finishSession: () => Promise.resolve(),
-        endSession: () => {},
-        getLeaderboard: () => Promise.resolve(null),
-        getPersonalRecord: () => Promise.resolve({})
-    };
-}
+window.GamesAdapter = window.GamesAdapter || {
+    isFallback: true,
+    init: () => Promise.resolve({ lb: { global: [], subjectTops: {} }, record: {} }),
+    showLoading: (active) => {
+        console.warn("[IMA-SYSTEM] GamesAdapter (Fallback) showLoading:", active);
+        return Promise.resolve();
+    },
+    saveResult: () => Promise.resolve({ status: 'success' }),
+    recordAction: () => {},
+    finishSession: () => Promise.resolve({ status: 'success' }),
+    endSession: () => {},
+    getLeaderboard: () => Promise.resolve({ status: 'success', global: [], subjectTops: {} }),
+    getPersonalRecord: () => Promise.resolve({})
+};
 
 /**
  * REQ: Normalización Universal de Preguntas (Incidencia 3)

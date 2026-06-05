@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg';
 
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
 
         window.downloadContentData.forEach(gradeData => {
             // Filtrado por Grado
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg';
 
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         const role = currentUser?.rol || 'Invitado';
 
         selectedGradeData.subjects.forEach(subjectData => {
@@ -328,9 +328,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Welcome Message Logic ---
     function renderWelcomeMessage() {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         const welcomeBadge = document.getElementById('user-welcome-badge');
-        if (currentUser && welcomeBadge) {
+        if (currentUser && welcomeBadge && currentUser.nombre) {
             const firstName = currentUser.nombre.split(' ')[0];
             welcomeBadge.innerHTML = `
                 <span class="relative flex h-2 w-2">
@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (openProfileBtn) {
         openProfileBtn.onclick = () => {
-            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
             if (!user) return;
             document.getElementById('profile-nombre').value = user.nombre;
             document.getElementById('profile-email').value = user.email || '';
@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderAccessButton() {
         if (!accessButtonContainer) return;
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         accessButtonContainer.innerHTML = '';
 
         if (currentUser) {
@@ -431,14 +431,14 @@ document.addEventListener('DOMContentLoaded', () => {
             portalBtn.className = 'px-10 py-5 rounded-2xl font-bold text-xl bg-blue-700 text-white hover:bg-blue-800 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
             portalBtn.textContent = 'Ir al Portal';
             portalBtn.setAttribute('aria-label', 'Ir a mi portal académico');
-            accessButtonContainer.appendChild(portalBtn);
+            if (accessButtonContainer) accessButtonContainer.appendChild(portalBtn);
         } else {
             const loginBtn = document.createElement('button');
             loginBtn.className = 'px-10 py-5 rounded-2xl font-bold text-xl bg-blue-700 text-white hover:bg-blue-800 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
             loginBtn.textContent = 'Iniciar Sesión';
             loginBtn.setAttribute('aria-label', 'Abrir panel de inicio de sesión');
             loginBtn.addEventListener("click", openModal);
-            accessButtonContainer.appendChild(loginBtn);
+            if (accessButtonContainer) accessButtonContainer.appendChild(loginBtn);
         }
     }
 
@@ -449,7 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * Global Authentication Helper
  */
 function setupGlobalAuth() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     const desktopPortalLink = document.getElementById('desktop-portal-link');
     const desktopCoursesNav = document.getElementById('desktop-courses-nav');
     const desktopResourcesNav = document.getElementById('desktop-resources-nav');
@@ -465,6 +465,7 @@ function setupGlobalAuth() {
         if (desktopLogoutBtn) {
             desktopLogoutBtn.onclick = () => {
                 localStorage.removeItem('currentUser');
+                sessionStorage.removeItem('currentUser');
                 window.location.reload();
             };
         }
@@ -488,13 +489,13 @@ async function loadNews() {
         let res = await fetchApi('USER', 'getNews', {});
 
         // REQ: Noticia fallback si el servidor falla (v3.3)
-        if (!res || res.status !== 'success' || (res.data && res.data.length === 0)) {
+        if (!res || res.status !== 'success' || !res.data || res.data.length === 0) {
             console.log("[IMA-NEWS] Utilizando noticia de fallback local.");
             res = {
                 status: 'success',
                 data: [{
                     id: 'fallback_01',
-                    titulo: 'Nuevo diseño de la Plataforma (Mayo 2026)',
+                    titulo: 'Nuevo diseño de la Plataforma (31 may 2026)',
                     categoria: 'Académico',
                     fecha: '2026-05-31',
                     imagenUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800&auto=format&fit=crop',
@@ -503,13 +504,14 @@ async function loadNews() {
             };
         }
 
-        if (res.status === 'success' && res.data.length > 0) {
+        if (res.status === 'success' && res.data && res.data.length > 0) {
+            console.log("[IMA-INDEX] Renderizando noticias:", res.data.length);
             newsSection.classList.remove('hidden');
 
             // Mostrar las 3 noticias más recientes (o todas si hay menos de 3)
             const newsToShow = res.data.slice(0, 3);
 
-            newsContainer.innerHTML = newsToShow.map((n, idx) => {
+            const newsHtml = newsToShow.map((n, idx) => {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = n.contenido;
 
@@ -538,7 +540,7 @@ async function loadNews() {
                     excerpt = excerpt.substring(0, limit) + "...";
                 }
 
-                const imgUrl = window.convertDriveLink(n.imagenUrl);
+                const imgUrl = (typeof window.convertDriveLink === 'function') ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl;
 
                 return `
                 <div class="${idx === 0 ? 'md:col-span-2 lg:col-span-2' : ''} bg-white rounded-[2rem] border border-gray-100 overflow-hidden group hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50 transition-all duration-500">
@@ -570,6 +572,8 @@ async function loadNews() {
                 </div>
                 `;
             }).join('');
+
+            newsContainer.innerHTML = newsHtml;
         }
     } catch (e) {
         console.error("Error loading news:", e);

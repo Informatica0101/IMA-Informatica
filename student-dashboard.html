@@ -14,7 +14,7 @@
     <meta name="description" content="Panel del estudiante para la gestión de tareas, exámenes y seguimiento del progreso académico.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=21">
+    <link rel="stylesheet" href="css/style.css?v=22">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
@@ -142,11 +142,11 @@
 
                     <!-- Navegación por Asignaturas (Task 9) -->
                     <div id="subject-nav-container" class="flex flex-wrap gap-2 mb-6 scroll-horizontal-clean">
-                        <!-- Botones de asignatura inyectados dinámicamente -->
+                        <!-- Se poblará vía js/student.js -->
                     </div>
 
                     <div id="subject-info-container" class="mb-6 hidden">
-                        <!-- Información del profesor y WhatsApp inyectado -->
+                        <!-- Se poblará vía js/student.js -->
                     </div>
 
                     <h2 class="text-lg font-semibold text-gray-900 uppercase tracking-tighter mb-4 flex items-center gap-2">
@@ -155,10 +155,10 @@
                     </h2>
 
                     <div id="parcial-tabs-container" class="mb-6">
-                        <!-- Las pestañas se cargarán aquí -->
+                        <!-- Se poblará vía js/student.js -->
                     </div>
                     <div id="tasks-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                        <!-- Las tareas se cargarán aquí -->
+                        <!-- Se poblará vía js/student.js -->
                     </div>
                 </section>
             </div>
@@ -275,12 +275,12 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=21"></script>
-    <script src="js/api.js?v=21"></script>
-    <script src="js/games-adapter.js?v=21"></script>
-    <script src="js/ui-common.js?v=21"></script>
-    <script src="js/data.js?v=21"></script>
-    <script src="js/student.js?v=21"></script>
+    <script src="js/config.js?v=22"></script>
+    <script src="js/api.js?v=22"></script>
+    <script src="js/games-adapter.js?v=22"></script>
+    <script src="js/ui-common.js?v=22"></script>
+    <script src="js/data.js?v=22"></script>
+    <script src="js/student.js?v=22"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (window.setupCommonUI) window.setupCommonUI();

@@ -38,7 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // REQ: Persistencia de datos académicos reales (v3.3)
                     const userData = {
-                        ...result.data,
+                        userId: result.data.userId || result.data.id,
+                        nombre: result.data.nombre,
+                        email: result.data.email,
+                        rol: result.data.rol || 'Estudiante',
+                        grado: result.data.grado,
+                        seccion: result.data.seccion,
+                        numeroLista: result.data.numeroLista,
+                        telefono: result.data.telefono,
                         loginTimestamp: Date.now(),
                         remembered: rememberMe
                     };

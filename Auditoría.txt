@@ -151,3 +151,31 @@ AUDITORÍA DE ARQUITECTURA Y REGRESIONES - 2026-06-18
 - [CORREGIDO] Rutas de Activos: Corregida ruta src="imagenes/logo.png" por src="../imagenes/logo.png" en juegos/.
 - [CORREGIDO] Seguridad de API: Implementado API Guard en js/api.js para validar JSON vs HTML.
 - [VERIFICADO] Modo Invitado: Confirmada persistencia local para WebMaster y Periféricos.
+
+AUDITORÍA DE CONECTIVIDAD Y ESTABILIDAD (v3.3) - 2026-06-18
+
+Archivo: js/config.js
+- [HALLAZGO] SERVICE_URLS no estaba exportado globalmente, lo que dificultaba el acceso desde otros módulos.
+- [HALLAZGO] El fallback de GamesAdapter era demasiado simple y no devolvía estructuras compatibles con los juegos.
+
+Archivo: js/api.js
+- [HALLAZGO] fetchApi lanzaba excepciones no controladas en fallos de red, rompiendo la ejecución de scripts posteriores.
+- [HALLAZGO] El error Toast intentaba inyectarse antes de que document.body estuviera disponible en algunos casos.
+
+Archivo: js/index-ui.js
+- [HALLAZGO] Varias manipulaciones del DOM carecían de comprobaciones de nulidad, causando TypeErrors si los elementos no existían en la página.
+- [HALLAZGO] loadNews no manejaba el caso de "sin noticias" o "error de servidor" con un fallback visual aceptable.
+
+Archivo: js/auth.js
+- [HALLAZGO] El login no persistía todos los campos académicos necesarios (grado, sección) en el objeto del usuario.
+
+Archivo: student-dashboard.html & teacher-dashboard.html
+- [HALLAZGO] Existían filas <tr> y elementos estáticos de ejemplo que ensuciaban la carga dinámica de datos reales.
+
+Archivo: js/exam.js
+- [HALLAZGO] loadExam no activaba el GamesAdapter.showLoading, dejando al usuario sin feedback visual durante la carga.
+- [HALLAZGO] No se registraba el intento de entrega en la analítica conductual.
+
+Archivo: Global (HTML)
+- [HALLAZGO] Inconsistencia en el orden de carga: games-adapter.js debe cargarse antes de los scripts dependientes.
+- [HALLAZGO] Versiones de caché (v21) obsoletas tras cambios mayores.
