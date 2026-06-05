@@ -341,7 +341,7 @@
 
     <div class="presentation-container">
         <!-- Slide 1: Título y Datos Generales -->
-        <div class="slide active" id="slide-1">
+        <div class="slide active" id="slide-1" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
             <div class="slide-content">
                 <img src="../../imagenes/logo.png"
                      alt="Logo Instituto Maria Auxiliadora"
@@ -352,10 +352,23 @@
                 <p>Fecha: 20 de Julio de 2025.</p>
                 <h3 class="mt-4">Dispositivos de Almacenamiento</h3>
             </div>
-        </div>
 
-        <!-- Slide 2: Introducción -->
-        <div class="slide" id="slide-2">
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
+                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
+                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
+                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+<div class="slide" id="slide-2">
             <div class="slide-content">
                 <h2>Introducción</h2>
                 <p>La capacidad de <strong>almacenar y recuperar información</strong> es crucial para las computadoras.</p>
@@ -365,10 +378,7 @@
                 </ul>
                 <img src="../../imagenes/almacenamiento_intro.png" alt="Ilustración de datos fluyendo hacia un almacenamiento" class="img-slide" loading="lazy">
             </div>
-        </div>
-
-        <!-- Slide 3: Jerarquía de la Memoria -->
-        <div class="slide" id="slide-3">
+<div class="slide" id="slide-3">
             <div class="slide-content">
                 <h2>Jerarquía de la Memoria</h2>
                 <p>Diferentes tipos de memoria y almacenamiento, organizados por <strong>velocidad, capacidad y costo</strong>.</p>
@@ -378,24 +388,7 @@
                 </ul>
                 <img src="../../imagenes/jerarquia_memoria.jpg" alt="Diagrama de jerarquía de memoria" class="img-slide" loading="lazy">
             </div>
-        </div>
-
-        <!-- Slide 4: Memoria RAM -->
-        <div class="slide" id="slide-4">
-            <div class="slide-content">
-                <h2>Memoria RAM (Random Access Memory)</h2>
-                <p>Memoria principal de la computadora, almacena datos y programas en uso.</p>
-                <ul class="mx-auto text-left">
-                    <li><strong>Volátil</strong>: Se borra al apagar.</li>
-                    <li><strong>Rápida</strong>: Acceso inmediato.</li>
-                    <li>Crucial para el rendimiento y la multitarea.</li>
-                </ul>
-                <img src="../../imagenes/ram.jpg" alt="Módulos de memoria RAM" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <!-- Slide 5: Memoria ROM -->
-        <div class="slide" id="slide-5">
+<div class="slide" id="slide-5">
             <div class="slide-content">
                 <h2>Memoria ROM (Read Only Memory)</h2>
                 <p>Almacena instrucciones básicas y esenciales para el arranque del sistema.</p>
@@ -405,10 +398,7 @@
                 </ul>
                 <img src="../../imagenes/rom.jpg" alt="Chip de memoria ROM" class="img-slide" loading="lazy">
             </div>
-        </div>
-
-        <!-- Slide 6: Discos Duros (HDD) -->
-        <div class="slide" id="slide-6">
+<div class="slide" id="slide-6">
             <div class="slide-content">
                 <h2>Discos Duros (HDD)</h2>
                 <p>Almacenamiento magnético con platos giratorios.</p>
@@ -419,10 +409,7 @@
                 </ul>
                 <img src="../../imagenes/hdd.jpg" alt="Imagen de un Disco Duro (HDD)" class="img-slide" loading="lazy">
             </div>
-        </div>
-
-        <!-- Slide 7: Unidades de Estado Sólido (SSD) -->
-        <div class="slide" id="slide-7">
+<div class="slide" id="slide-7">
             <div class="slide-content">
                 <h2>Unidades de Estado Sólido (SSD)</h2>
                 <p>Almacenamiento basado en memoria flash, sin partes móviles.</p>
@@ -433,10 +420,7 @@
                 </ul>
                 <img src="../../imagenes/ssd.jpg" alt="Imagen de una Unidad de Estado Sólido (SSD)" class="img-slide" loading="lazy">
             </div>
-        </div>
-
-        <!-- Slide 8: Unidades Flash (USB, SD) -->
-        <div class="slide" id="slide-8">
+<div class="slide" id="slide-8">
             <div class="slide-content">
                 <h2>Unidades Flash</h2>
                 <h3>Memorias USB, Tarjetas SD</h3>
@@ -447,10 +431,7 @@
                 </ul>
                 <img src="../../imagenes/usb_sd_card.png" alt="Memoria USB y Tarjeta SD" class="img-slide" loading="lazy">
             </div>
-        </div>
-
-        <!-- Slide 9: Discos Ópticos (CD, DVD, Blu-ray) -->
-        <div class="slide" id="slide-9">
+<div class="slide" id="slide-9">
             <div class="slide-content">
                 <h2>Discos Ópticos</h2>
                 <h3>CD, DVD, Blu-ray</h3>
@@ -461,10 +442,7 @@
                 </ul>
                 <img src="../../imagenes/cd_dvd_bluray.png" alt="Discos CD, DVD y Blu-ray" class="img-slide" loading="lazy">
             </div>
-        </div>
-
-        <!-- Slide 10: Almacenamiento en la Nube -->
-        <div class="slide" id="slide-10">
+<div class="slide" id="slide-10">
             <div class="slide-content">
                 <h2>Almacenamiento en la Nube</h2>
                 <p>Almacenamiento de datos en <strong>servidores remotos</strong> vía Internet.</p>
@@ -475,29 +453,110 @@
                 </ul>
                 <img src="../../imagenes/cloud_storage.png" alt="Ilustración de almacenamiento en la nube" class="img-slide" loading="lazy">
             </div>
-        </div>
 
-        <!-- Slide 11: Asignación de Tareas -->
-        <div class="slide" id="slide-11">
-            <div class="slide-content">
-                <h2>Asignación de Tareas</h2>
-                <p><strong>Tarea</strong>: Tabla con Características de Memoria y Ejemplos Reales.</p>
-                <p class="text-sm text-left mx-auto max-w-xl">
-                    Elaborar una tabla que detalle las características principales (ej., capacidad, velocidad, volatilidad, durabilidad) de los distintos tipos de memoria (RAM, ROM) y dispositivos de almacenamiento (HDD, SSD, Unidades Flash, Discos Ópticos, Nube), incluyendo al menos dos ejemplos reales de uso para cada uno.
-                </p>
-                <p class="mt-4"><strong>Fecha de Entrega</strong>: 27 de Julio de 2025.</p>
-                <p><strong>Ponderación</strong>: TC 5%.</p>
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
             </div>
         </div>
 
-        <!-- Slide 12: Cierre de la Clase -->
-        <div class="slide" id="slide-12">
-            <div class="slide-content">
-                <h2>Cierre de la Clase</h2>
-                <p>Los dispositivos de almacenamiento son <strong>esenciales</strong> para guardar y gestionar información.</p>
-                <p>Comprender sus tipos nos ayuda a <strong>gestionar y proteger nuestros datos</strong>.</p>
-                <p class="mt-8 text-lg font-semibold text-gray-700">¡Gracias por su atención y participación!</p>
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
             </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
+            </div>
+        </div>
         </div>
 
         <!-- Navigation Buttons -->
@@ -511,7 +570,7 @@
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        let currentSlide = 0;
+        var currentSlideIndex = 0;
 
         function showSlide(index) {
             slides.forEach((slide) => {
@@ -542,16 +601,16 @@
         }
 
         function nextSlide() {
-            if (currentSlide < slides.length - 1) {
-                currentSlide++;
-                showSlide(currentSlide);
+            if (currentSlideIndex < slides.length - 1) {
+                currentSlideIndex++;
+                showSlide(currentSlideIndex);
             }
         }
 
         function prevSlide() {
-            if (currentSlide > 0) {
-                currentSlide--;
-                showSlide(currentSlide);
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                showSlide(currentSlideIndex);
             }
         }
 
@@ -559,7 +618,7 @@
         prevBtn.addEventListener('click', prevSlide);
 
         window.onload = function() {
-            showSlide(currentSlide);
+            showSlide(currentSlideIndex);
         };
 
         document.addEventListener('keydown', (event) => {
@@ -675,11 +734,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -690,11 +749,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

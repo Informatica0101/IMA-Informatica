@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchAllActivities() {
         if (!tasksList) return;
 
+        // REQ: Pantalla de carga profesional (v4.0)
         if (window.GamesAdapter) {
             window.GamesAdapter.showLoading(true);
         } else {
@@ -121,7 +122,21 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchAndRenderLearningProfile();
 
             // Iniciar renderizado jerárquico (Parcial -> Asignatura -> Actividades)
-            renderParcialTabs(allActivities);
+            if (allActivities.length > 0) {
+                renderParcialTabs(allActivities);
+            } else {
+                // REQ: Manejo de respuesta vacía amigable (v3.3)
+                tasksList.innerHTML = `
+                    <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100 animate-fade-in">
+                        <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 uppercase tracking-tighter mb-2">¡Todo al día!</h3>
+                        <p class="text-gray-400 text-xs font-medium uppercase tracking-widest leading-relaxed">
+                            No se han encontrado tareas ni exámenes asignados en este momento.
+                        </p>
+                    </div>`;
+            }
 
         } catch (error) {
             console.error("[IMA-STUDENT] Error en fetchAllActivities:", error);

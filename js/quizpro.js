@@ -828,15 +828,15 @@ function showQuestion() {
             const card = document.createElement('div');
             card.className = 'memory-card group';
             card.innerHTML = `
-                <div class="memory-card-inner shadow-lg group-hover:shadow-blue-200/50 transition-shadow duration-500">
+                <div class="memory-card-inner shadow-lg group-hover:shadow-blue-200/50 transition-transform duration-500">
                     <div class="memory-card-front flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-2xl">
-                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm mb-2 group-hover:scale-110 transition-transform">
-                            <i class="fas ${icon} text-blue-500/40 text-xl"></i>
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-2 group-hover:scale-110 transition-transform">
+                            <i class="fas ${icon} text-blue-500/40 text-2xl"></i>
                         </div>
-                        <span class="text-[7px] font-black text-slate-400 uppercase tracking-widest">Descubrir</span>
+                        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Revelar</span>
                     </div>
-                    <div class="memory-card-back flex items-center justify-center p-3 bg-white border-2 border-blue-500 rounded-2xl shadow-inner">
-                        <span class="text-[9px] font-bold text-gray-800 leading-tight text-center">${item.v}</span>
+                    <div class="memory-card-back flex items-center justify-center p-4 bg-white border-2 border-blue-500 rounded-2xl shadow-xl">
+                        <span class="text-[10px] font-bold text-gray-800 leading-tight text-center uppercase tracking-tighter">${item.v}</span>
                     </div>
                 </div>`;
 
@@ -847,29 +847,34 @@ function showQuestion() {
 
                     if (selectedCards.length === 2) {
                         if (selectedCards[0].item.k === selectedCards[1].item.k) {
-                            // ¡Match!
+                            // ¡Match! (Efecto de éxito inmediato)
                             setTimeout(() => {
                                 selectedCards.forEach(c => {
                                     c.card.classList.add('matched');
-                                    c.card.querySelector('.memory-card-back').classList.replace('border-blue-500', 'border-emerald-500');
-                                    c.card.querySelector('.memory-card-back').classList.add('bg-emerald-50');
+                                    const back = c.card.querySelector('.memory-card-back');
+                                    back.classList.replace('border-blue-500', 'border-emerald-500');
+                                    back.classList.add('bg-emerald-50', 'scale-105');
+                                    // Partículas o efecto visual simple
+                                    c.card.style.zIndex = "10";
                                 });
                                 matchedCount++;
                                 document.getElementById('matched-count').textContent = matchedCount;
-                                score += (1 / q.pairs.length); // Prorratear punto
+                                score += (1 / q.pairs.length);
                                 selectedCards = [];
 
                                 if (matchedCount === q.pairs.length) {
-                                    document.getElementById('finish-memory-btn').classList.replace('bg-gray-400', 'bg-blue-600');
-                                    document.getElementById('finish-memory-btn').classList.add('animate-bounce');
+                                    const finishBtn = document.getElementById('finish-memory-btn');
+                                    finishBtn.classList.replace('bg-gray-400', 'bg-emerald-600');
+                                    finishBtn.classList.add('animate-bounce', 'shadow-emerald-200');
+                                    finishBtn.textContent = "¡Reto Completado! Continuar";
                                 }
-                            }, 500);
+                            }, 400);
                         } else {
-                            // Fallo
+                            // Fallo (Efecto de vibración opcional en el futuro)
                             setTimeout(() => {
                                 selectedCards.forEach(c => c.card.classList.remove('revealed'));
                                 selectedCards = [];
-                            }, 1000);
+                            }, 800);
                         }
                     }
                 }

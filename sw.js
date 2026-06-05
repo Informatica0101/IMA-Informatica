@@ -1,4 +1,4 @@
-const CACHE_NAME = 'informatic-app-v22';
+const CACHE_NAME = 'informatic-app-v4.0';
 const ASSETS = [
   './',
   './index.html',
@@ -91,21 +91,36 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Estrategia: Network First con fallback a Cache y timeout
+// Estrategia: Stale-While-Revalidate para mayor velocidad y resiliencia offline (v4.0)
 self.addEventListener('fetch', event => {
-  // Omitir peticiones a Google Apps Script (API) para que siempre vayan a la red
+  // Omitir peticiones a APIs dinámicas de Google Apps Script (siempre red)
   if (event.request.url.includes('script.google.com')) {
     return;
   }
 
+  // Ignorar peticiones de Analytics/Tracking si las hubiera
+  if (event.request.url.includes('analytics')) {
+    return;
+  }
+
   event.respondWith(
-    fetchWithTimeout(event.request, 3000)
-      .then(response => {
-        return response;
-      })
-      .catch(() => {
-        return caches.match(event.request);
-      })
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.match(event.request).then(cachedResponse => {
+        const fetchPromise = fetch(event.request).then(networkResponse => {
+          // Si la respuesta es válida, actualizamos el caché en segundo plano
+          if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+            cache.put(event.request, networkResponse.clone());
+          }
+          return networkResponse;
+        }).catch(() => {
+           // Si falla la red y no hay caché, podemos retornar un fallback opcional
+           console.log("[SW] Fallo de red y sin caché para:", event.request.url);
+        });
+
+        // Retornamos el caché inmediatamente si existe, si no, esperamos a la red
+        return cachedResponse || fetchPromise;
+      });
+    })
   );
 });
 

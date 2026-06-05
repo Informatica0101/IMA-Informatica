@@ -63,8 +63,7 @@
     <main class="flex-grow flex justify-center items-center p-3">
         <div id="presentation-container" class="relative">
             <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <img src="../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
+             <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
                 <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Alineación y Formato de Texto</h2>
                 <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 6: Perfeccionando el Contenido</p>
                 <div class="text-xs text-gray-500 space-y-1">
@@ -72,10 +71,23 @@
                     <p>Fecha: 15 de marzo de 2026</p>
                     <p>Grado: Duodécimo de Informática - Sección "A"</p>
                 </div>
-            </div>
 
-            <!-- Diapositiva 2: Alineación de Texto -->
-            <div id="slide-2" class="slide">
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
+                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
+                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
+                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+<div id="slide-2" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Alineación de Texto</h3>
                 <div class="concept-box">
                     <p class="text-sm sm:text-base text-gray-700 leading-relaxed text-left">
@@ -83,27 +95,13 @@
                     </p>
                     <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
                         <div class="p-2 border bg-white text-left">left (Izquierda)</div>
-                        <div class="p-2 border bg-white text-center">center (Centro)</div>
-                        <div class="p-2 border bg-white text-right">right (Derecha)</div>
-                        <div class="p-2 border bg-white text-justify">justify (Justificado)</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 3: Ejemplo de Alineación -->
-            <div id="slide-3" class="slide">
+<div id="slide-3" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Atributo Style</h3>
                 <div class="code-box">
                     &lt;<span class="code-tag">h1</span> <span class="code-attr">style</span>=<span class="code-val">"text-align: center;"</span>&gt;Título centrado&lt;/<span class="code-tag">h1</span>&gt;<br>
                     &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"text-align: justify;"</span>&gt;Texto justificado...&lt;/<span class="code-tag">p</span>&gt;
                 </div>
-                <div class="mt-4 p-4 bg-gray-50 border rounded w-full max-w-md">
-                    <p style="text-align: center;" class="text-xs font-bold">ESTE ES UN TÍTULO CENTRADO</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 4: Formato de Texto (Negrita e Italica) -->
-            <div id="slide-4" class="slide">
+<div id="slide-4" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Formato: Negrita e Itálica</h3>
                 <p class="text-sm text-gray-600 mb-4">Podemos usar etiquetas HTML o propiedades CSS:</p>
                 <div class="grid grid-cols-2 gap-4 w-full max-w-2xl">
@@ -112,41 +110,19 @@
                         <p class="text-[10px]">&lt;b&gt; o &lt;strong&gt;</p>
                         <p class="text-[10px]">CSS: font-weight: bold;</p>
                     </div>
-                    <div class="p-3 bg-white border rounded">
-                        <p class="font-bold text-xs mb-2">Cursiva (Itálica)</p>
-                        <p class="text-[10px]">&lt;i&gt; o &lt;em&gt;</p>
-                        <p class="text-[10px]">CSS: font-style: italic;</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Subrayado y Tachado -->
-            <div id="slide-5" class="slide">
+<div id="slide-5" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Decoración de Texto</h3>
                 <p class="text-sm text-gray-600 mb-4">Usamos la propiedad <span class="font-bold">text-decoration</span>.</p>
                 <div class="code-box">
                     &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"text-decoration: underline;"</span>&gt;Subrayado&lt;/<span class="code-tag">p</span>&gt;<br>
                     &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"text-decoration: line-through;"</span>&gt;Tachado&lt;/<span class="code-tag">p</span>&gt;
                 </div>
-                <div class="mt-4 flex space-x-4">
-                    <span class="underline">Texto Subrayado</span>
-                    <span class="line-through">Texto Tachado</span>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: Transformación de Texto -->
-            <div id="slide-6" class="slide">
+<div id="slide-6" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Mayúsculas y Minúsculas</h3>
                 <p class="text-sm text-gray-600 mb-4">La propiedad <span class="font-bold">text-transform</span>.</p>
                 <div class="space-y-2 text-left max-w-sm mx-auto">
                     <div class="p-2 border bg-white text-xs uppercase">uppercase (TODO MAYÚSCULAS)</div>
-                    <div class="p-2 border bg-white text-xs lowercase">LOWERCASE (todo minúsculas)</div>
-                    <div class="p-2 border bg-white text-xs capitalize">capitalize (primeras letras mayúsculas)</div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Espaciado entre líneas -->
-            <div id="slide-7" class="slide">
+<div id="slide-7" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Interlineado (Line-height)</h3>
                 <div class="concept-box">
                     <p class="text-sm text-gray-700 leading-relaxed text-left">
@@ -155,36 +131,13 @@
                     <div class="code-box mt-3">
                         style="line-height: 1.5;"
                     </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Etiquetas de Formato HTML5 -->
-            <div id="slide-8" class="slide">
+<div id="slide-8" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etiquetas Semánticas de Texto</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
                     <div class="p-2 border text-left text-[10px]">
                         <strong>&lt;mark&gt;</strong>: Texto resaltado (amarillo).
                     </div>
-                    <div class="p-2 border text-left text-[10px]">
-                        <strong>&lt;small&gt;</strong>: Texto más pequeño.
-                    </div>
-                    <div class="p-2 border text-left text-[10px]">
-                        <strong>&lt;del&gt;</strong>: Texto eliminado (tachado).
-                    </div>
-                    <div class="p-2 border text-left text-[10px]">
-                        <strong>&lt;ins&gt;</strong>: Texto insertado (subrayado).
-                    </div>
-                    <div class="p-2 border text-left text-[10px]">
-                        <strong>&lt;sub&gt;</strong>: Subíndice (H<sub>2</sub>O).
-                    </div>
-                    <div class="p-2 border text-left text-[10px]">
-                        <strong>&lt;sup&gt;</strong>: Superíndice (x<sup>2</sup>).
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Ejercicio Práctico -->
-            <div id="slide-9" class="slide">
+<div id="slide-9" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio: Perfeccionando el Estilo</h3>
                 <div class="concept-box">
                     <p class="font-bold mb-3 text-sm">Crea un archivo HTML y aplica:</p>
@@ -195,119 +148,110 @@
                         <li>Aplica subrayado a un enlace o frase clave.</li>
                     </ul>
                 </div>
+
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
             </div>
 
-            <!-- Diapositiva 10: Importancia de la Legibilidad -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Diseño para Leer</h3>
-                <div class="concept-box">
-                    <p class="text-sm text-gray-700 leading-relaxed text-center">
-                        El formato y la alineación no son solo estética; guían el ojo del usuario a través del contenido.
-                    </p>
-                    <div class="mt-4 p-4 bg-white border border-yellow-200 rounded shadow-inner text-center">
-                        <p class="font-bold text-sm text-yellow-700">"El buen diseño es invisible hasta que falta."</p>
-                    </div>
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
                 </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
             </div>
 
-            <!-- Diapositiva 11: Cuestionario (1-5) -->
-            <div id="slide-11" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 1)</h3>
-                <div id="quiz-container-1" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-1" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-1" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-1" class="mt-3 text-sm font-bold"></div>
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
                 </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter">1</span> de 5</p>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
                 </div>
             </div>
+        </div>
 
-            <!-- Diapositiva 12: Cuestionario (6-10) -->
-            <div id="slide-12" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 2)</h3>
-                <div id="quiz-container-2" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-2" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-2" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-2" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter-2">6</span> de 10</p>
-                </div>
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
             </div>
-
-            <!-- Diapositiva 13: Resumen -->
-            <div id="slide-13" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen de la Clase</h3>
-                <div class="max-w-3xl mx-auto grid grid-cols-2 gap-4">
-                    <div class="p-4 bg-blue-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-blue-700">Alineación:</p>
-                        <ul class="text-[10px] space-y-1">
-                            <li>• text-align: left, center, right, justify.</li>
-                        </ul>
-                    </div>
-                    <div class="p-4 bg-green-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-green-700">Formato:</p>
-                        <ul class="text-[10px] space-y-1">
-                            <li>• text-decoration, text-transform.</li>
-                            <li>• line-height, mark, sub/sup.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 14: Tarea -->
-<div id="slide-14" class="slide">
-    <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">
-        Asignación (Tarea)
-    </h3>
-
-    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-indigo-200 max-w-3xl">
-
-        <h4 class="font-bold text-indigo-800 mb-3">
-            📋 Propiedades CSS de texto
-        </h4>
-
-        <div class="text-left space-y-4 text-sm">
-
-            <p>
-                <strong>Actividad:</strong> En tu CV personal y en tu archivo
-                <strong>index.html</strong> del repositorio de tus tareas,
-                aplica las siguientes propiedades CSS:
-            </p>
-
-            <ol class="list-disc pl-5 space-y-2 text-gray-700">
-
-                <li>
-                    Aplicar alineación de texto:
-                    <ul class="list-disc pl-5">
-                        <li>Un título h1 centrado.</li>
-                        <li>Un título h2 alineado a la derecha.</li>
-                        <li>Un párrafo p justificado.</li>
-                    </ul>
-                </li>
-
-                <li>
-                    Crear una lista no ordenada (ul) que tenga:
-                    <ul class="list-disc pl-5">
-                        <li>Un elemento en cursiva.</li>
-                        <li>Un elemento en negrita.</li>
-                        <li>Un elemento subrayado.</li>
-                        <li>Un elemento tachado.</li>
-                    </ul>
-                </li>
-
-                <li>
-                    Aplicar a la lista un interlineado
-                    (line-height) de 1.5.
-                </li>
-
-            </ol>
-
-            <div class="pt-4 border-t flex justify-between font-bold text-indigo-900">
-                <span>Fecha: 22/03/2026</span>
-                <span>Valor: 5%</span>
-            </div>
+        </div>
 
         </div>
 
@@ -498,21 +442,21 @@
             }, 10);
         }
 
-        nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
-        prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
+        nextButton.addEventListener('click', () => nextSlide());
+        prevButton.addEventListener('click', () => prevSlide());
 
         const presentationContainer = document.getElementById('presentation-container');
         presentationContainer.addEventListener('click', (e) => {
             if (e.target.closest('button') || e.target.closest('a')) return;
             const rect = presentationContainer.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
-            if (clickX > rect.width / 2) showSlide(currentSlideIndex + 1);
-            else showSlide(currentSlideIndex - 1);
+            if (clickX > rect.width / 2) nextSlide();
+            else prevSlide();
         });
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('current-year').textContent = new Date().getFullYear();
-            showSlide(0); handleFullscreenChange();
+            currentSlideIndex = 0; showSlide(currentSlideIndex); handleFullscreenChange();
         });
 
 
@@ -543,8 +487,8 @@
 
     // Navigation improvements (2026)
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
+        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : nextSlide();
+        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : prevSlide();
     });
 
     (function() {
@@ -554,8 +498,8 @@
         container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
         container.addEventListener('touchend', e => {
             let teX = e.changedTouches[0].screenX;
-            if (tsX - teX > 50) typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-            if (teX - tsX > 50) typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
+            if (tsX - teX > 50) typeof nextSlide === 'function' ? nextSlide() : nextSlide();
+            if (teX - tsX > 50) typeof prevSlide === 'function' ? prevSlide() : prevSlide();
         }, {passive: true});
     })();
 
@@ -590,11 +534,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -605,11 +549,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

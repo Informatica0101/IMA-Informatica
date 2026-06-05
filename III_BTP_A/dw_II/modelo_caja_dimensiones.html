@@ -188,7 +188,7 @@
     <main>
         <div id="presentation-container">
             <!-- Diapositiva 1: Portada -->
-            <div class="slide active">
+            <div class="slide active" id="slide-1" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
                 <h2>Modelo de Caja y Dimensiones en CSS</h2>
                 <div class="mt-8 text-lg text-gray-500">
@@ -196,19 +196,29 @@
                     <p>Fecha: 17 de mayo de 2026</p>
                     <p>Grado: III BTP Informática Sección "A"</p>
                 </div>
-            </div>
 
-            <!-- Diapositiva 2: ¿Qué es el Modelo de Caja? -->
             <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
+                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
+                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
+                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+<div class="slide">
                 <h3>El Modelo de Caja (Box Model)</h3>
                 <p>En CSS, cada elemento HTML se considera como una caja rectangular.</p>
                 <div class="concept-box">
                     <p>Este modelo permite controlar el espacio, el borde y el contenido de cada elemento de forma independiente.</p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 3: Partes de la Caja -->
-            <div class="slide">
+<div class="slide">
                 <h3>Componentes de la Caja</h3>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
                     <li><strong>Contenido:</strong> Donde aparece el texto o imágenes.</li>
@@ -217,9 +227,7 @@
                     <li><strong>Margen:</strong> Espacio exterior que separa la caja de otras cajas.</li>
                 </ul>
             </div>
-
-            <!-- Diapositiva 4: Visualización Gráfica -->
-            <div class="slide">
+<div class="slide">
                 <h3>Esquema Visual</h3>
                 <div class="box-visualizer">
                     <p class="text-xs mb-1 font-bold">Margin</p>
@@ -228,14 +236,7 @@
                         <div class="bg-orange-100 p-4">
                              <p class="text-xs mb-1 font-bold">Padding</p>
                              <div class="box-content text-center">CONTENIDO</div>
-                        </div>
-                    </div>
-                </div>
-                <p class="mt-4 text-sm italic">El margen es transparente y no tiene color de fondo.</p>
-            </div>
-
-            <!-- Diapositiva 5: Propiedades de Margen -->
-            <div class="slide">
+<div class="slide">
                 <h3>Márgenes (Margin)</h3>
                 <p>Controla el espacio fuera del elemento.</p>
                 <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-orange-500">
@@ -244,32 +245,21 @@
                     margin-bottom: 20px;<br>
                     margin-left: 15px;
                 </div>
-                <p class="mt-4 text-base">Abreviado: <strong>margin: 20px 15px;</strong> (Arriba/Abajo Izq/Der)</p>
-            </div>
-
-            <!-- Diapositiva 6: Propiedades de Padding -->
-            <div class="slide">
+<div class="slide">
                 <h3>Relleno (Padding)</h3>
                 <p>Espacio entre el contenido y el borde. Afecta el tamaño visual del fondo del elemento.</p>
                 <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-orange-400">
                     padding: 10px 20px 10px 20px;<br>
                     background-color: yellow;
                 </div>
-                <p class="mt-4 text-base italic">El color de fondo se extiende por el área del padding.</p>
-            </div>
-
-            <!-- Diapositiva 7: Dimensiones: Width y Height -->
-            <div class="slide">
+<div class="slide">
                 <h3>Dimensiones del Contenido</h3>
                 <p>Propiedades <strong>width</strong> (ancho) y <strong>height</strong> (alto).</p>
                 <div class="concept-box">
                     <p>Por defecto, en el modelo estándar, el ancho total es: <br>
                     <em>Ancho = width + padding + border</em></p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 8: Box-Sizing: Border-Box -->
-            <div class="slide">
+<div class="slide">
                 <h3>Cambiando el Cálculo: Border-Box</h3>
                 <p>Es la mejor práctica moderna. Incluye el padding y el borde dentro del ancho definido.</p>
                 <div class="bg-gray-800 text-white p-6 rounded text-left mt-4 font-mono text-lg">
@@ -277,11 +267,7 @@
                     &nbsp;&nbsp;box-sizing: border-box;<br>
                     }
                 </div>
-                <p class="mt-4 text-sm">Esto evita que los elementos se "rompan" al añadir padding.</p>
-            </div>
-
-            <!-- Diapositiva 9: Unidades de Medida en Dimensiones -->
-            <div class="slide">
+<div class="slide">
                 <h3>Unidades Comunes</h3>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
                     <li><strong>px:</strong> Píxeles (Fijo).</li>
@@ -291,83 +277,109 @@
                 </ul>
             </div>
 
-            <!-- Diapositiva 10: Centrado con Márgenes -->
             <div class="slide">
-                <h3>Truco: Centrado Horizontal</h3>
-                <p>Para centrar un bloque, dale un ancho fijo y márgenes automáticos a los lados.</p>
-                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-green-500">
-                    width: 50%;<br>
-                    margin: 0 auto;
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
                 </div>
             </div>
+        </div>
 
-            <!-- Diapositiva 11: Dimensiones Máximas y Mínimas -->
-            <div class="slide">
-                <h3>Límites: Max y Min</h3>
-                <p>Permiten que el diseño sea flexible pero controlado.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div class="bg-orange-50 p-4 rounded text-left">
-                        <p class="font-bold">max-width: 1200px;</p>
-                        <p class="text-sm">No crecerá más allá de 1200px aunque la pantalla sea enorme.</p>
-                    </div>
-                    <div class="bg-orange-50 p-4 rounded text-left">
-                        <p class="font-bold">min-height: 300px;</p>
-                        <p class="text-sm">Garantiza un espacio mínimo incluso si no hay mucho texto.</p>
-                    </div>
-                </div>
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
             </div>
-
-            <!-- Diapositiva 12: Desbordamiento (Overflow) -->
-            <div class="slide">
-                <h3>Desbordamiento (Overflow)</h3>
-                <p>Controla qué pasa cuando el contenido es más grande que la caja.</p>
-                <ul class="text-left mt-4 list-disc list-inside text-base">
-                    <li><strong>visible:</strong> El contenido sale de la caja (default).</li>
-                    <li><strong>hidden:</strong> Se recorta lo que sobra.</li>
-                    <li><strong>scroll:</strong> Añade barras de desplazamiento siempre.</li>
-                    <li><strong>auto:</strong> Añade barras solo si es necesario.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 13: Ejercicio Práctico en Clase -->
-            <div class="slide">
-                <h3>Ejercicio: La Tarjeta Perfecta</h3>
-                <p>Crea un archivo HTML con una caja que tenga:</p>
-                <ul class="text-left mt-4 list-decimal list-inside text-base">
-                    <li>Ancho de 300px y Alto de 200px.</li>
-                    <li>Fondo celeste y borde azul de 2px.</li>
-                    <li>Padding de 20px para que el texto no toque el borde.</li>
-                    <li>Margen de 50px arriba para separarlo del título.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 14: Cuestionario (Parte 1) -->
-            <div class="slide">
-                <h3>Cuestionario: Evaluación</h3>
-                <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
-                    <div class="quiz-options flex flex-col gap-2"></div>
-                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 15: Cuestionario (Parte 2) -->
-            <div class="slide">
-                <h3>Cuestionario: Continuación</h3>
-                <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
-                    <div class="quiz-options flex flex-col gap-2"></div>
-                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 16: Fin y Asignación -->
-            <div class="slide">
-                <h2>¡Muchas Gracias!</h2>
-                <div class="concept-box border-orange-600">
-                    <p><strong>Asignación:</strong> Diseñar en papel un layout de 3 columnas indicando qué márgenes y rellenos usarías para que no se peguen entre sí.</p>
-                    <p class="mt-4 text-sm">Fecha de entrega: Próxima semana.</p>
-                </div>
+        </div>
             </div>
         </div>
 
@@ -388,7 +400,7 @@
         const slideCounter = document.getElementById('slide-counter');
         const header = document.getElementById('page-header');
         const footer = document.getElementById('page-footer');
-        let currentSlide = 0;
+        var currentSlideIndex = 0;
 
         const quizData = [
             { q: "¿Qué es el Modelo de Caja?", options: ["Un tipo de base de datos", "Un esquema de cada elemento HTML", "Una etiqueta para imágenes", "Un motor de búsqueda"], a: "Un esquema de cada elemento HTML" },
@@ -407,15 +419,15 @@
         function showSlide(n) {
             slides[currentSlide].classList.remove('active');
             slides[currentSlide].style.display = 'none';
-            currentSlide = (n + slides.length) % slides.length;
+            currentSlideIndex = (n + slides.length) % slides.length;
             slides[currentSlide].style.display = 'flex';
             setTimeout(() => slides[currentSlide].classList.add('active'), 10);
 
             slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
-            prevBtn.disabled = currentSlide === 0;
-            nextBtn.disabled = currentSlide === slides.length - 1;
+            prevBtn.disabled = currentSlideIndex === 0;
+            nextBtn.disabled = currentSlideIndex === slides.length - 1;
 
-            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
+            if (currentSlideIndex === 13 || currentSlideIndex === 14) loadQuiz();
         }
 
         function loadQuiz() {
@@ -433,8 +445,8 @@
                 return;
             }
 
-            if (currentSlide === 13 && currentQuiz >= 5) { showSlide(14); return; }
-            if (currentSlide === 14 && currentQuiz < 5) { showSlide(13); return; }
+            if (currentSlideIndex === 13 && currentQuiz >= 5) { showSlide(14); return; }
+            if (currentSlideIndex === 14 && currentQuiz < 5) { showSlide(13); return; }
 
             const data = quizData[currentQuiz];
             questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
@@ -459,7 +471,7 @@
                     }
                     setTimeout(() => {
                         currentQuiz++;
-                        if (currentQuiz === 5 && currentSlide === 13) {
+                        if (currentQuiz === 5 && currentSlideIndex === 13) {
                             showSlide(14);
                         } else {
                             loadQuiz();
@@ -488,7 +500,7 @@
         window.addEventListener('resize', handleFullscreen);
         document.addEventListener('fullscreenchange', handleFullscreen);
 
-        showSlide(0);
+        currentSlideIndex = 0; showSlide(currentSlideIndex);
         handleFullscreen();
     </script>
 
@@ -521,11 +533,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -536,11 +548,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

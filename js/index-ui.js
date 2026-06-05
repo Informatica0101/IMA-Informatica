@@ -306,8 +306,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function processUrlAction() {
         const urlParams = new URLSearchParams(window.location.search);
         const action = urlParams.get('action');
+        const game = urlParams.get('loadGame');
+
         if (action) {
             window.handleHeaderAction(action);
+        }
+
+        if (game) {
+            console.log(`[IMA-INDEX] Auto-loading game: ${game}`);
+            switch(game) {
+                case 'peripherals': window.loadPeripheralsGame(); break;
+                case 'webmaster': window.loadWebMasterQuiz(); break;
+                case 'quizpro': window.loadQuizPro(); break;
+                case 'dexterity': window.loadDexterityGame(); break;
+            }
         }
     }
 
@@ -416,13 +428,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentUser) {
             const portalBtn = document.createElement('a');
             portalBtn.href = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
-            portalBtn.className = 'px-10 py-5 rounded-2xl font-medium text-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
+            portalBtn.className = 'px-10 py-5 rounded-2xl font-bold text-xl bg-blue-700 text-white hover:bg-blue-800 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
             portalBtn.textContent = 'Ir al Portal';
+            portalBtn.setAttribute('aria-label', 'Ir a mi portal académico');
             accessButtonContainer.appendChild(portalBtn);
         } else {
             const loginBtn = document.createElement('button');
-            loginBtn.className = 'px-10 py-5 rounded-2xl font-medium text-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
+            loginBtn.className = 'px-10 py-5 rounded-2xl font-bold text-xl bg-blue-700 text-white hover:bg-blue-800 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
             loginBtn.textContent = 'Iniciar Sesión';
+            loginBtn.setAttribute('aria-label', 'Abrir panel de inicio de sesión');
             loginBtn.addEventListener("click", openModal);
             accessButtonContainer.appendChild(loginBtn);
         }

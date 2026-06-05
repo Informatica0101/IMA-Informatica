@@ -536,7 +536,7 @@
         <div id="presentation-container">
 
             <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
+            <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
                 <div class="slide-content-area">
                     <img src="../../imagenes/logo.png" alt="Logo de la Institución" style="width: 300px; height: auto;" class="mx-auto mb-8 cover-logo">
                     <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Manipulación del DOM</h1>
@@ -546,10 +546,23 @@
                     <p class="text-xl text-gray-600 mb-2">San Pedro Sula</p>
                     <p class="text-xl text-gray-600">03 de agosto del 2025</p>
                 </div>
-            </div>
 
-            <!-- Diapositiva 2: Introducción al DOM -->
-            <div id="slide-2" class="slide">
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
+                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
+                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
+                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+<div id="slide-2" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Dominio del DOM</h2>
                     <p class="text-lg text-gray-700 mb-6">El <strong class="code-term">D</strong>ocument <strong class="code-term">O</strong>bject <strong class="code-term">M</strong>odel (<span class="code-term">DOM</span>) es una interfaz de programación para documentos <span class="code-term">HTML</span> y <span class="code-term">XML</span>.</p>
@@ -559,10 +572,7 @@
                     </ul>
                     <img src="../../imagenes/dom_concept.png" width="300px" height="auto" alt="Concepto del DOM" class="content-image-style">
                 </div>
-            </div>
-
-            <!-- Diapositiva 3: Estructura del DOM (Árbol) -->
-            <div id="slide-3" class="slide">
+<div id="slide-3" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Estructura del DOM (Árbol)</h2>
                     <p class="text-lg text-gray-700 mb-6">El <span class="code-term">DOM</span> organiza los elementos de una página web en una estructura jerárquica, similar a un árbol.</p>
@@ -572,10 +582,7 @@
                         <li>Los nodos tienen relaciones: padres, hijos, hermanos.</li>
                     </ul>
                 </div>
-            </div>
-
-            <!-- Diapositiva 4: Tipos de Nodos Principales -->
-            <div id="slide-4" class="slide">
+<div id="slide-4" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Tipos de Nodos Principales</h2>
                     <p class="text-lg text-gray-700 mb-6">El <span class="code-term">DOM</span> se compone de diferentes tipos de nodos:</p>
@@ -584,34 +591,14 @@
                             <h3 class="text-2xl font-semibold text-blue-700 mb-3"><strong class="code-term">Nodo Documento</strong></h3>
                             <p class="text-base text-gray-700">Representa todo el documento <span class="code-term">HTML</span> (el objeto <span class="code-term">document</span>). Es la raíz del árbol.</p>
                         </div>
-                        <div class="bg-green-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-2xl font-semibold text-green-700 mb-3"><strong class="code-term">Nodo Elemento</strong></h3>
-                            <p class="text-base text-gray-700">Representa una etiqueta <span class="code-term">HTML</span> (ej. <span class="code-term">&lt;div&gt;</span>, <span class="code-term">&lt;p&gt;</span>, <span class="code-term">&lt;img&gt;</span>). Puede tener hijos y atributos.</p>
-                        </div>
-                        <div class="bg-purple-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-2xl font-semibold text-purple-700 mb-3"><strong class="code-term">Nodo Texto</strong></h3>
-                            <p class="text-base text-gray-700">Representa el contenido de texto dentro de un elemento (ej. "Hola mundo" dentro de <span class="code-term">&lt;p&gt;</span>).</p>
-                        </div>
-                        <div class="bg-red-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-2xl font-semibold text-red-700 mb-3"><strong class="code-term">Nodo Atributo</strong></h3>
-                            <p class="text-base text-gray-700">Representa un atributo de una etiqueta <span class="code-term">HTML</span> (ej. <span class="code-term">id="miId"</span>, <span class="code-term">class="clase"</span>, <span class="code-term">src="imagen.jpg"</span>).</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Introducción a la Selección de Elementos -->
-            <div id="slide-5" class="slide">
+<div id="slide-5" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Selección de Elementos del DOM</h2>
                     <p class="text-lg text-gray-700 mb-6">Antes de poder manipular cualquier parte de una página web con <span class="code-term">JavaScript</span>, primero debemos <strong class="code-term">seleccionar</strong> los elementos específicos con los que queremos interactuar.</p>
                     <p class="text-base text-gray-700">Existen varios métodos para hacer esto, y cada uno es útil en diferentes situaciones.</p>
                     <img src="../../imagenes/dom_selection_intro.png" width="250px" height="auto" alt="Introducción a la selección de elementos" class="content-image-style">
                 </div>
-            </div>
-
-            <!-- Diapositiva 6: Explicación de 'document' -->
-            <div id="slide-6" class="slide">
+<div id="slide-6" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">El Objeto Global <strong class="code-term">document</strong></h2>
                     <p class="text-lg text-gray-700 mb-6">En el contexto del <span class="code-term">DOM</span>, <strong class="code-term">document</strong> es el objeto global que representa toda la página web cargada en el navegador.</p>
@@ -622,17 +609,7 @@
                     </ul>
                     <div class="code-editor-container">
                         <div class="line-numbers"></div>
-                        <pre><code class="language-js">
-<span class="comment">// Accediendo al título de la página a través del objeto document</span>
-<span class="keyword">const</span> <span class="variable">tituloPagina</span> = <span class="keyword">document</span>.<span class="property">title</span>;
-<span class="function">console</span>.<span class="method">log</span>(<span class="variable">tituloPagina</span>); <span class="comment">// Muestra el título de la etiqueta &lt;title&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: document.getElementById() -->
-            <div id="slide-7" class="slide">
+<div id="slide-7" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">document.getElementById('idElemento')</span></h2>
                     <p class="text-lg text-gray-700 mb-6">Este método es el más común para seleccionar un <strong class="code-term">único elemento</strong> en tu <span class="code-term">HTML</span>, siempre y cuando tenga un atributo <span class="code-term">id</span> único.</p>
@@ -643,24 +620,7 @@
                     </ul>
                     <div class="code-editor-container">
                         <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- archivo HTML --&gt;</span>
-<span class="tag">&lt;div</span> <span class="attribute">id</span>=<span class="string">"miContenedor"</span><span class="tag">&gt;</span>
-  <span class="tag">&lt;p&gt;</span>Este es un párrafo dentro del contenedor.<span class="tag">&lt;/p&gt;</span>
-<span class="tag">&lt;/div&gt;</span>
-
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">contenedor</span> = <span class="keyword">document</span>.<span class="method">getElementById</span>(<span class="string">'miContenedor'</span>);
-  <span class="function">console</span>.<span class="method">log</span>(<span class="variable">contenedor</span>.<span class="property">textContent</span>); <span class="comment">// "Este es un párrafo dentro del contenedor."</span>
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: document.querySelector() -->
-            <div id="slide-8" class="slide">
+<div id="slide-8" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">document.querySelector('selectorCSS')</span></h2>
                     <p class="text-lg text-gray-700 mb-6">Este método es muy versátil, ya que te permite seleccionar el <strong class="code-term">primer elemento</strong> que coincida con un selector <span class="code-term">CSS</span> específico.</p>
@@ -671,25 +631,7 @@
                     </ul>
                     <div class="code-editor-container">
                         <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- HTML de ejemplo --&gt;</span>
-<span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"caja"</span><span class="tag">&gt;</span>Caja Uno<span class="tag">&lt;/div&gt;</span>
-<span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"caja"</span><span class="tag">&gt;</span>Caja Dos<span class="tag">&lt;/div&gt;</span>
-<span class="tag">&lt;p</span> <span class="attribute">id</span>=<span class="string">"mensaje"</span><span class="tag">&gt;</span>Hola mundo.<span class="tag">&lt;/p&gt;</span>
-
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">primeraCaja</span> = <span class="keyword">document</span>.<span class="method">querySelector</span>(<span class="string">'.caja'</span>); <span class="comment">// Selecciona la primera div con clase "caja"</span>
-  <span class="function">console</span>.<span class="method">log</span>(<span class="variable">primeraCaja</span>.<span class="property">textContent</span>); <span class="comment">// "Caja Uno"</span>
-  <span class="keyword">const</span> <span class="variable">miMensaje</span> = <span class="keyword">document</span>.<span class="method">querySelector</span>(<span class="string">'#mensaje'</span>); <span class="comment">// Selecciona por ID</span>
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: document.querySelectorAll() -->
-            <div id="slide-9" class="slide">
+<div id="slide-9" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">document.querySelectorAll('selectorCSS')</span></h2>
                     <p class="text-lg text-gray-700 mb-6">Similar a <strong class="code-term">querySelector</strong>, pero este método devuelve una <strong class="code-term">NodeList</strong> (una colección de nodos) de <strong class="code-term">todos los elementos</strong> que coinciden con el selector <span class="code-term">CSS</span>.</p>
@@ -700,436 +642,110 @@
                     </ul>
                     <div class="code-editor-container">
                         <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- HTML de ejemplo --&gt;</span>
-<span class="tag">&lt;li</span> <span class="attribute">class</span>=<span class="string">"item-lista"</span><span class="tag">&gt;</span>Manzana<span class="tag">&lt;/li&gt;</span>
-<span class="tag">&lt;li</span> <span class="attribute">class</span>=<span class="string">"item-lista"</span><span class="tag">&gt;</span>Pera<span class="tag">&lt;/li&gt;</span>
-<span class="tag">&lt;li</span> <span class="attribute">class</span>=<span class="string">"item-lista"</span><span class="tag">&gt;</span>Naranja<span class="tag">&lt;/li&gt;</span>
 
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">items</span> = <span class="keyword">document</span>.<span class="method">querySelectorAll</span>(<span class="string">'.item-lista'</span>);
-  <span class="function">console</span>.<span class="method">log</span>(<span class="variable">items</span>.<span class="property">length</span>); <span class="comment">// 3</span>
-  <span class="variable">items</span>.<span class="method">forEach</span>(<span class="variable">item</span> => {
-    <span class="function">console</span>.<span class="method">log</span>(<span class="variable">item</span>.<span class="property">textContent</span>); <span class="comment">// "Manzana", "Pera", "Naranja"</span>
-  });
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
 
-            <!-- Diapositiva 10: document.getElementsByClassName() -->
-            <div id="slide-10" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">document.getElementsByClassName('nombreClase')</span></h2>
-                    <p class="text-lg text-gray-700 mb-6">Este método selecciona todos los elementos que tienen una <strong class="code-term">clase CSS específica</strong>.</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li><strong class="code-term">getElementsByClassName</strong>: Busca elementos por su atributo "<span class="code-term">class</span>".</li>
-                        <li>Devuelve un <strong class="code-term">HTMLCollection</strong>, que es similar a un array, pero no tiene todos los métodos de un array (ej. no <span class="code-term">forEach</span> directo, se necesita convertir o usar un bucle <span class="code-term">for</span>).</li>
-                    </ul>
-                    <div class="code-editor-container">
-                        <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- HTML de ejemplo --&gt;</span>
-<span class="tag">&lt;p</span> <span class="attribute">class</span>=<span class="string">"texto-resaltado"</span><span class="tag">&gt;</span>Importante 1<span class="tag">&lt;/p&gt;</span>
-<span class="tag">&lt;span</span> <span class="attribute">class</span>=<span class="string">"texto-resaltado"</span><span class="tag">&gt;</span>Importante 2<span class="tag">&lt;/span&gt;</span>
-
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">resaltados</span> = <span class="keyword">document</span>.<span class="method">getElementsByClassName</span>(<span class="string">'texto-resaltado'</span>);
-  <span class="function">console</span>.<span class="method">log</span>(<span class="variable">resaltados</span>.<span class="property">length</span>); <span class="comment">// 2</span>
-  <span class="comment">// Para usar forEach, convertir a Array: Array.from(resaltados).forEach(...)</span>
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 11: document.getElementsByTagName() -->
-            <div id="slide-11" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">document.getElementsByTagName('nombreEtiqueta')</span></h2>
-                    <p class="text-lg text-gray-700 mb-6">Este método te permite seleccionar todos los elementos que tienen una <strong class="code-term">etiqueta HTML específica</strong> (ej. <span class="code-term">&lt;p&gt;</span>, <span class="code-term">&lt;div&gt;</span>, <span class="code-term">&lt;a&gt;</span>).</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li><strong class="code-term">getElementsByTagName</strong>: Busca elementos por su nombre de etiqueta <span class="code-term">HTML</span>.</li>
-                        <li>También devuelve un <strong class="code-term">HTMLCollection</strong>.</li>
-                    </ul>
-                    <div class="code-editor-container">
-                        <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- HTML de ejemplo --&gt;</span>
-<span class="tag">&lt;ul&gt;</span>
-  <span class="tag">&lt;li&gt;</span>Elemento de lista 1<span class="tag">&lt;/li&gt;</span>
-  <span class="tag">&lt;li&gt;</span>Elemento de lista 2<span class="tag">&lt;/li&gt;</span>
-<span class="tag">&lt;/ul&gt;</span>
-
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">listItems</span> = <span class="keyword">document</span>.<span class="method">getElementsByTagName</span>(<span class="string">'li'</span>);
-  <span class="function">console</span>.<span class="method">log</span>(<span class="variable">listItems</span>.<span class="property">length</span>); <span class="comment">// 2</span>
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Introducción a la Modificación de Contenido -->
-            <div id="slide-12" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Modificación de Contenido del DOM</h2>
-                    <p class="text-lg text-gray-700 mb-6">Una vez que hemos seleccionado un elemento, una de las tareas más comunes es cambiar su contenido, ya sea texto simple o incluso añadir más <span class="code-term">HTML</span>.</p>
-                    <p class="text-base text-gray-700">Exploraremos dos propiedades clave para lograr esto.</p>
-                    <img src="../../imagenes/dom_modify_content_intro.png" width="300px" height="auto" alt="Introducción a la modificación de contenido" class="content-image-style">
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: element.textContent -->
-            <div id="slide-13" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">elemento.textContent</span></h2>
-                    <p class="text-lg text-gray-700 mb-6">La propiedad <span class="code-term">textContent</span> te permite obtener o establecer el <strong class="code-term">contenido de texto plano</strong> de un elemento y todos sus descendientes.</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li>Solo maneja texto; cualquier etiqueta <span class="code-term">HTML</span> dentro se interpretará como texto literal.</li>
-                        <li>Es útil para actualizar texto simple de forma segura, evitando inyecciones de <span class="code-term">HTML</span> maliciosas.</li>
-                    </ul>
-                    <div class="code-editor-container">
-                        <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- HTML de ejemplo --&gt;</span>
-<span class="tag">&lt;p</span> <span class="attribute">id</span>=<span class="string">"saludo"</span><span class="tag">&gt;</span>Hola, <span class="tag">&lt;strong&gt;</span>usuario<span class="tag">&lt;/strong&gt;</span>.<span class="tag">&lt;/p&gt;</span>
-
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">parrafoSaludo</span> = <span class="keyword">document</span>.<span class="method">getElementById</span>(<span class="string">'saludo'</span>);
-  <span class="function">console</span>.<span class="method">log</span>(<span class="variable">parrafoSaludo</span>.<span class="property">textContent</span>); <span class="comment">// "Hola, usuario."</span>
-  <span class="variable">parrafoSaludo</span>.<span class="property">textContent</span> = <span class="string">'¡Bienvenido al DOM!'</span>; <span class="comment">// Cambia el texto</span>
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 14: element.innerHTML -->
-            <div id="slide-14" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">elemento.innerHTML</span></h2>
-                    <p class="text-lg text-gray-700 mb-6">La propiedad <span class="code-term">innerHTML</span> te permite obtener o establecer el <strong class="code-term">contenido HTML completo</strong> (incluyendo etiquetas) de un elemento.</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li>Puedes insertar <span class="code-term">HTML</span> válido, y el navegador lo renderizará.</li>
-                        <li><strong class="code-term">Cuidado</strong>: Puede ser vulnerable a ataques de inyección de código (<span class="code-term">XSS</span>) si se usa con contenido no confiable.</li>
-                    </ul>
-                    <div class="code-editor-container">
-                        <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- HTML de ejemplo --&gt;</span>
-<span class="tag">&lt;div</span> <span class="attribute">id</span>=<span class="string">"areaContenido"</span><span class="tag">&gt;</span>
-  <span class="tag">&lt;p&gt;</span>Contenido original.<span class="tag">&lt;/p&gt;</span>
-<span class="tag">&lt;/div&gt;</span>
-
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">area</span> = <span class="keyword">document</span>.<span class="method">getElementById</span>(<span class="string">'areaContenido'</span>);
-  <span class="variable">area</span>.<span class="property">innerHTML</span> = <span class="string">'&lt;h3&gt;Nuevo Título&lt;/h3&gt;&lt;p&gt;Texto &lt;strong&gt;dinámico&lt;/strong&gt;.&lt;/p&gt;'</span>;
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 15: Introducción a Atributos y Estilos -->
-            <div id="slide-15" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Modificación de Atributos y Estilos</h2>
-                    <p class="text-lg text-gray-700 mb-6">Más allá del contenido, el <span class="code-term">DOM</span> nos permite controlar las propiedades (atributos) y la apariencia (estilos) de los elementos <span class="code-term">HTML</span>.</p>
-                    <p class="text-base text-gray-700">Esto es crucial para la interactividad y el diseño dinámico.</p>
-                    <img src="../../imagenes/dom_attributes_styles.png" width="300px" height="auto" alt="Modificación de atributos y estilos" class="content-image-style">
-                </div>
-            </div>
-
-            <!-- Diapositiva 16: setAttribute, getAttribute, removeAttribute -->
-            <div id="slide-16" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">setAttribute()</span>, <span class="code-term">getAttribute()</span>, <span class="code-term">removeAttribute()</span></h2>
-                    <p class="text-lg text-gray-700 mb-6">Estos métodos permiten manipular los atributos de un elemento <span class="code-term">HTML</span> (ej. <span class="code-term">src</span> de una imagen, <span class="code-term">href</span> de un enlace, <span class="code-term">data-*</span> personalizados).</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li><strong class="code-term">setAttribute(nombre, valor)</strong>: Establece o cambia el valor de un atributo.</li>
-                        <li><strong class="code-term">getAttribute(nombre)</strong>: Obtiene el valor actual de un atributo.</li>
-                        <li><strong class="code-term">removeAttribute(nombre)")</strong>: Elimina un atributo de un elemento.</li>
-                    </ul>
-                    <div class="code-editor-container">
-                        <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- HTML de ejemplo --&gt;</span>
-<span class="tag">&lt;img</span> <span class="attribute">id</span>=<span class="string">"miImagen"</span> <span class="attribute">src</span>=<span class="string">"original.jpg"</span> <span class="attribute">alt</span>=<span class="string">"Imagen original"</span><span class="tag">&gt;</span>
-<span class="tag">&lt;a</span> <span class="attribute">id</span>=<span class="string">"miEnlace"</span> <span class="attribute">href</span>=<span class="string">"#"</span><span class="tag">&gt;</span>Ir a Google<span class="tag">&lt;/a&gt;</span>
-
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">imagen</span> = <span class="keyword">document</span>.<span class="method">getElementById</span>(<span class="string">'miImagen'</span>);
-  <span class="variable">imagen</span>.<span class="method">setAttribute</span>(<span class="string">'src'</span>, <span class="string">'nueva.jpg'</span>); <span class="comment">// Cambia la fuente</span>
-  <span class="function">console</span>.<span class="method">log</span>(<span class="variable">imagen</span>.<span class="method">getAttribute</span>(<span class="string">'alt'</span>)); <span class="comment">// "Imagen original"</span>
-  <span class="variable">imagen</span>.<span class="method">removeAttribute</span>(<span class="string">'alt'</span>); <span class="comment">// Elimina el atributo alt</span>
-  <span class="keyword">document</span>.<span class="method">getElementById</span>(<span class="string">'miEnlace'</span>).<span class="method">setAttribute</span>(<span class="string">'href'</span>, <span class="string">'https://www.google.com'</span>);
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 17: element.style -->
-            <div id="slide-17" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">elemento.style.propiedadCSS</span></h2>
-                    <p class="text-lg text-gray-700 mb-6">La propiedad <span class="code-term">style</span> de un elemento te permite acceder y modificar directamente los estilos <span class="code-term">CSS</span> en línea de ese elemento.</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li>Cada propiedad <span class="code-term">CSS</span> se convierte en una propiedad <span class="code-term">JavaScript</span> (ej. <span class="code-term">background-color</span> es <span class="code-term">backgroundColor</span>).</li>
-                        <li>Ideal para cambios de estilo rápidos y específicos, pero para estilos complejos o múltiples, es mejor usar clases <span class="code-term">CSS</span>.</li>
-                    </ul>
-                    <div class="code-editor-container">
-                        <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- HTML de ejemplo --&gt;</span>
-<span class="tag">&lt;div</span> <span class="attribute">id</span>=<span class="string">"cajaEstilo"</span><span class="tag">&gt;</span>Esta caja cambiará de estilo.<span class="tag">&lt;/div&gt;</span>
-
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">caja</span> = <span class="keyword">document</span>.<span class="method">getElementById</span>(<span class="string">'cajaEstilo'</span>);
-  <span class="variable">caja</span>.<span class="property">style</span>.<span class="property">backgroundColor</span> = <span class="string">'#FFD700'</span>; <span class="comment">// Color oro</span>
-  <span class="variable">caja</span>.<span class="property">style</span>.<span class="property">border</span> = <span class="string">'2px solid #DAA520'</span>;
-  <span class="variable">caja</span>.<span class="property">style</span>.<span class="property">padding</span> = <span class="string">'10px'</span>;
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 18: element.classList (add, remove, toggle) -->
-            <div id="slide-18" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">elemento.classList</span> (add, remove, toggle)</h2>
-                    <p class="text-lg text-gray-700 mb-6">La propiedad <span class="code-term">classList</span> es la forma preferida de manipular las clases <span class="code-term">CSS</span> de un elemento, lo que permite aplicar y quitar grupos de estilos de manera eficiente.</p><br>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li><strong class="code-term">add('clase')</strong>: Añade una o más clases.</li>
-                        <li><strong class="code-term">remove('clase')")</strong>: Elimina una o más clases.</li>
-                        <li><strong class="code-term">toggle('clase')")</strong>: Añade la clase si no existe, la elimina si sí existe.</li>
-                        <li><strong class="code-term">contains('clase')")</strong>: Verifica si un elemento tiene una clase.</li>
-                    </ul>
-                    <br>
-                    <div class="code-editor-container">
-                        <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- HTML de ejemplo --&gt;</span>
-<span class="tag">&lt;button</span> <span class="attribute">id</span>=<span class="string">"botonAccion"</span> <span class="attribute">class</span>=<span class="string">"btn"</span><span class="tag">&gt;</span>Activar/Desactivar<span class="tag">&lt;/button&gt;</span>
-<span class="tag">&lt;style&gt;</span>
-  <span class="comment">.btn { padding: 10px; background-color: gray; }</span>
-  <span class="comment">.activo { background-color: green; color: white; }</span>
-<span class="tag">&lt;/style&gt;</span>
-
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">boton</span> = <span class="keyword">document</span>.<span class="method">getElementById</span>(<span class="string">'botonAccion'</span>);
-  <span class="variable">boton</span>.<span class="property">addEventListener</span>(<span class="string">'click'</span>, () => {
-    <span class="variable">boton</span>.<span class="property">classList</span>.<span class="method">toggle</span>(<span class="string">'activo'</span>); <span class="comment">// Alterna la clase 'activo'</span>
-    <span class="function">console</span>.<span class="method">log</span>(<span class="variable">boton</span>.<span class="property">classList</span>.<span class="method">contains</span>(<span class="string">'activo'</span>));
-  });
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 19: Introducción a Creación y Eliminación -->
-            <div id="slide-19" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Creación y Eliminación de Elementos</h2>
-                    <p class="text-lg text-gray-700 mb-6">El <span class="code-term">DOM</span> no solo permite modificar elementos existentes, sino también crear nuevos desde cero o eliminar los que ya no son necesarios.</p>
-                    <p class="text-base text-gray-700">Esto es fundamental para construir interfaces de usuario dinámicas y reactivas.</p>
-                    <img src="../../imagenes/dom_create_delete_intro.png" width="300px" height="auto" alt="Introducción a la creación y eliminación" class="content-image-style">
-                </div>
-            </div>
-
-            <!-- Diapositiva 20: document.createElement() -->
-            <div id="slide-20" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">document.createElement('etiqueta')</span></h2>
-                    <p class="text-lg text-gray-700 mb-6">Este método crea un <strong class="code-term">nuevo nodo de elemento HTML</strong> del tipo especificado (ej. <span class="code-term">&lt;div&gt;</span>, <span class="code-term">&lt;p&gt;</span>, <span class="code-term">&lt;img&gt;</span>).</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li>El elemento se crea en memoria, pero <strong class="code-term">no se añade automáticamente</strong> a la página.</li>
-                        <li>Necesitas usar métodos como <span class="code-term">appendChild()</span> para insertarlo en el <span class="code-term">DOM</span> visible.</li>
-                    </ul>
-                    <div class="code-editor-container">
-                        <div class="line-numbers"></div>
-                        <pre><code class="language-js">
-<span class="comment">// Crear un nuevo párrafo</span>
-<span class="keyword">const</span> <span class="variable">nuevoParrafo</span> = <span class="keyword">document</span>.<span class="method">createElement</span>(<span class="string">'p'</span>);
-
-<span class="comment">// Asignar contenido de texto</span>
-<span class="variable">nuevoParrafo</span>.<span class="property">textContent</span> = <span class="string">'Este es un párrafo creado dinámicamente.'</span>;
-
-<span class="comment">// Asignar una clase CSS (opcional)</span>
-<span class="variable">nuevoParrafo</span>.<span class="property">classList</span>.<span class="method">add</span>(<span class="string">'mensaje-dinamico'</span>);
-
-<span class="comment">// En este punto, 'nuevoParrafo' existe, pero aún no está en la página.</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 21: padre.appendChild(hijo) -->
-            <div id="slide-21" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">padre.appendChild(hijo)</span></h2>
-                    <p class="text-lg text-gray-700 mb-6">Este método añade un nodo (elemento, texto, etc.) como el <strong class="code-term">último hijo</strong> de un elemento padre especificado.</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li>Es la forma más común de insertar elementos en el <span class="code-term">DOM</span>.</li>
-                        <li>Si el nodo hijo ya existe en el <span class="code-term">DOM</span>, <span class="code-term">appendChild</span> lo moverá a la nueva posición.</li>
-                    </ul>
-                    <div class="code-editor-container">
-                        <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- HTML de ejemplo --&gt;</span>
-<span class="tag">&lt;div</span> <span class="attribute">id</span>=<span class="string">"listaTareas"</span><span class="tag">&gt;</span>
-  <span class="tag">&lt;p&gt;</span>Tareas pendientes:<span class="tag">&lt;/p&gt;</span>
-  <span class="tag">&lt;ul</span> <span class="attribute">id</span>=<span class="string">"miLista"</span><span class="tag">&gt;</span>
-    <span class="tag">&lt;li&gt;</span>Comprar leche<span class="tag">&lt;/li&gt;</span>
-  <span class="tag">&lt;/ul&gt;</span>
-<span class="tag">&lt;/div&gt;</span>
-
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">lista</span> = <span class="keyword">document</span>.<span class="method">getElementById</span>(<span class="string">'miLista'</span>);
-  <span class="keyword">const</span> <span class="variable">nuevoItem</span> = <span class="keyword">document</span>.<span class="method">createElement</span>(<span class="string">'li'</span>);
-  <span class="variable">nuevoItem</span>.<span class="property">textContent</span> = <span class="string">'Estudiar DOM'</span>;
-  <span class="variable">lista</span>.<span class="method">appendChild</span>(<span class="variable">nuevoItem</span>); <span class="comment">// Añade "Estudiar DOM" al final de la lista</span>
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 22: padre.removeChild(hijo) -->
-            <div id="slide-22" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">padre.removeChild(hijo)</span></h2>
-                    <p class="text-lg text-gray-700 mb-6">Este método elimina un nodo hijo específico del <span class="code-term">DOM</span>. Para que funcione, debes llamar al método desde el <strong class="code-term">elemento padre</strong> del nodo que quieres eliminar.</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li>Necesitas una referencia tanto al padre como al hijo.</li>
-                        <li>Es importante verificar si el hijo existe antes de intentar eliminarlo para evitar errores.</li>
-                    </ul>
-                    <div class="code-editor-container">
-                        <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- HTML de ejemplo --&gt;</span>
-<span class="tag">&lt;div</span> <span class="attribute">id</span>=<span class="string">"contenedorPadre"</span><span class="tag">&gt;</span>
-  <span class="tag">&lt;p</span> <span class="attribute">id</span>=<span class="string">"parrafoAborrar"</span><span class="tag">&gt;</span>Este párrafo desaparecerá.<span class="tag">&lt;/p&gt;</span>
-  <span class="tag">&lt;span&gt;</span>Este span se quedará.<span class="tag">&lt;/span&gt;</span>
-<span class="tag">&lt;/div&gt;</span>
-
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">padre</span> = <span class="keyword">document</span>.<span class="method">getElementById</span>(<span class="string">'contenedorPadre'</span>);
-  <span class="keyword">const</span> <span class="variable">hijoAEliminar</span> = <span class="keyword">document</span>.<span class="method">getElementById</span>(<span class="string">'parrafoAborrar'</span>);
-
-  <span class="keyword">if</span> (<span class="variable">hijoAEliminar</span>) { <span class="comment">// Verificar que el elemento existe</span>
-    <span class="variable">padre</span>.<span class="method">removeChild</span>(<span class="variable">hijoAEliminar</span>); <span class="comment">// Elimina el párrafo</span>
-  }
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 23: Introducción a Eventos del DOM -->
-            <div id="slide-23" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Eventos del DOM</h2>
-                    <p class="text-lg text-gray-700 mb-6">Los eventos son la forma en que <span class="code-term">JavaScript</span> "escucha" y reacciona a las interacciones del usuario o a los cambios en el navegador.</p>
-                    <p class="text-base text-gray-700">Permiten que tu página web sea interactiva, respondiendo a <span class="code-term">clics</span>, pulsaciones de teclas, envíos de formularios y más.</p>
-                    <img src="../../imagenes/dom_events_intro.png" width="300px" height="auto" alt="Introducción a eventos del DOM" class="content-image-style">
-                </div>
-            </div>
-
-            <!-- Diapositiva 24: element.addEventListener() -->
-            <div id="slide-24" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4"><span class="code-term">elemento.addEventListener('evento', funcion)</span></h2>
-                    <p class="text-lg text-gray-700 mb-6">Este método es la forma estándar y recomendada de registrar un "escuchador de eventos" en un elemento.</p><br>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li><strong class="code-term">'evento'</strong>: El tipo de evento a escuchar (ej. <span class="code-term">'click'</span>, <span class="code-term">'mouseover'</span>, <span class="code-term">'keydown'</span>).</li>
-                        <li><strong class="code-term">funcion</strong>: La función que se ejecutará cuando el evento ocurra.</li>
-                        <li>Puedes añadir múltiples escuchadores para el mismo evento en el mismo elemento.</li>
-                    </ul>
-                    <br>
-                    <div class="code-editor-container">
-                        <div class="line-numbers"></div>
-                        <pre><code class="language-html">
-<span class="comment">&lt;!-- HTML de ejemplo --&gt;</span>
-<span class="tag">&lt;button</span> <span class="attribute">id</span>=<span class="string">"botonInteractivo"</span><span class="tag">&gt;</span>Haz Clic Aquí<span class="tag">&lt;/button&gt;</span>
-<span class="tag">&lt;p</span> <span class="attribute">id</span>=<span class="string">"mensajeInteractivo"</span><span class="tag">&gt;</span>Esperando interacción...<span class="tag">&lt;/p&gt;</span>
-
-<span class="comment">&lt;!-- JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-  <span class="keyword">const</span> <span class="variable">boton</span> = <span class="keyword">document</span>.<span class="method">getElementById</span>(<span class="string">'botonInteractivo'</span>);
-  <span class="keyword">const</span> <span class="variable">mensaje</span> = <span class="keyword">document</span>.<span class="method">getElementById</span>(<span class="string">'mensajeInteractivo'</span>);
-
-  <span class="variable">boton</span>.<span class="property">addEventListener</span>(<span class="string">'click'</span>, <span class="keyword">function</span>() {
-    <span class="variable">mensaje</span>.<span class="property">textContent</span> = <span class="string">'¡Has hecho clic en el botón!'</span>;
-    <span class="variable">boton</span>.<span class="property">style</span>.<span class="property">backgroundColor</span> = <span class="string">'#34D399'</span>; <span class="comment">// Verde</span>
-  });
-
-  <span class="variable">boton</span>.<span class="method">addEventListener</span>(<span class="string">'mouseover'</span>, () => {
-    <span class="variable">boton</span>.<span class="property">style</span>.<span class="property">transform</span> = <span class="string">'scale(1.05)'</span>;
-  });
-
-  <span class="variable">boton</span>.<span class="method">addEventListener</span>(<span class="string">'mouseout'</span>, () => {
-    <span class="variable">boton</span>.<span class="property">style</span>.<span class="property">transform</span> = <span class="string">'scale(1)'</span>;
-  });
-<span class="tag">&lt;/script&gt;</span>
-                        </code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 25: Minijuego: Preguntas sobre DOM -->
-            <div id="slide-25" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">¡Minijuego: Pon a Prueba tus Conocimientos del DOM!</h2>
-                    <p class="text-lg text-gray-700 mb-6">Responde las siguientes preguntas.</p>
-
-                    <div id="dom-quiz-container" class="bg-gray-100 p-6 rounded-lg shadow-md w-full max-w-lg flex flex-col items-center">
-                        <p id="dom-question-text" class="quiz-question-text">Cargando pregunta...</p>
-                        <div id="dom-quiz-options-container" class="quiz-options-container">
-                            <!-- Botones de opciones se generarán aquí dinámicamente -->
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
                         </div>
-                        <p id="dom-quiz-feedback" class="quiz-feedback"></p>
-                        <p class="text-lg text-gray-700">Aciertos: <span id="dom-quiz-score" class="font-bold text-indigo-700">0</span> / <span id="dom-quiz-total-questions" class="font-bold text-indigo-700">0</span></p>
-                        <div class="flex flex-col sm:flex-row gap-3 mt-6">
-                            <button id="dom-next-question-button" class="quiz-next-button" style="display: none;">Siguiente Pregunta</button>
-                            <button id="dom-restart-quiz-button" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-lg transition duration-200" style="display: none;">Reiniciar Quiz</button>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
                         </div>
-                    </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
                 </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
             </div>
 
-            <!-- Diapositiva 26: Asignación de Tarea -->
-            <div id="slide-26" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-700 font-extrabold mb-4">Asignación de Tarea</h2>
-                    <div class="bg-yellow-50 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
-                        <p class="text-xl font-semibold text-yellow-800 mb-4">Para entregar el 17 de agosto de 2025:</p>
-                        <ol class="list-decimal list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-md">
-                            <li>Crea una página <span class="code-term">HTML</span> simple (<span class="code-term">index.html</span>) con al menos un <span class="code-term">div</span>, un <span class="code-term">p</span> y un <span class="code-term">button</span>.</li>
-                            <li>Usa <span class="code-term">JavaScript</span> (en un archivo <span class="code-term">script.js</span> enlazado) para:
-                                <ul>
-                                    <li>Cambiar el texto del <span class="code-term">p</span> al hacer clic en el <span class="code-term">button</span>.</li>
-                                    <li>Añadir una nueva clase <span class="code-term">CSS</span> al <span class="code-term">div</span> al pasar el ratón por encima.</li>
-                                    <li>Crear un nuevo elemento <span class="code-term">li</span> y añadirlo a una lista <span class="code-term">ul</span> existente cuando se cargue la página.</li>
-                                </ul>
-                            </li>
-                            <li>Asegúrate de que el código <span class="code-term">JavaScript</span> esté bien comentado y sea legible.</li>
-                        </ol>
-                    </div>
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
+            </div>
+        </div>
                 </div>
             </div>
 
@@ -1663,11 +1279,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -1678,11 +1294,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

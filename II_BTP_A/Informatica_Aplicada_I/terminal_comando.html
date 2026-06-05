@@ -413,7 +413,7 @@
 
             <div id="slides-wrapper" class="cmd-content flex-grow relative">
                 <!-- Slide 1: Portada -->
-                <div id="slide-1" class="slide active">
+                <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
                     <p class="cmd-prompt-static">C:\Users\Docente></p>
                     <img src="../../imagenes/ascii-art.png" alt="Arte ASCII de un terminal" class="cover-image mx-auto">
                     <p class="cmd-output-line text-2xl font-bold mt-4 text-center">Terminal de Comandos (CMD)</p>
@@ -425,23 +425,22 @@
                     <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
                 </div>
 
-                <!-- Slide 2: Introducción a la CLI -->
-                <div id="slide-2" class="slide">
-                    <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\CLI.</p>
-                    <p class="cmd-output-line mt-4 font-bold text-2xl">¿Qué es la Línea de Comandos (CLI)?</p>
-                    <p class="cmd-output-line mt-2">La <strong>CLI (Command Line Interface)</strong> es un método de interacción con tu computadora mediante comandos de texto. A diferencia de la interfaz gráfica (GUI) que usas con ventanas e iconos, en la CLI escribes instrucciones directas.</p>
-                    <p class="cmd-output-line mt-2"><strong>Ventajas de la CLI:</strong></p>
-                    <ul class="list-disc list-inside text-left mt-2 ml-4">
-                        <li class="cmd-output-line"><strong>Control Preciso:</strong> Permite realizar tareas muy específicas y potentes.</li>
-                        <li class="cmd-output-line"><strong>Automatización:</strong> Ideal para escribir scripts que realicen tareas repetitivas.</li>
-                        <li class="cmd-output-line"><strong>Eficiencia:</strong> Para usuarios avanzados, es más rápido que navegar con el ratón.</li>
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
+                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
+                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
+                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
+                        </li>
                     </ul>
-                    <img src="../../imagenes/cli-vs-gui.png" alt="Comparación entre CLI y GUI" class="mt-8 mx-auto">
-                    <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
                 </div>
-
-                <!-- Slide 3: Comandos Básicos de Navegación -->
-                <div id="slide-3" class="slide">
+            </div>
+<div id="slide-3" class="slide">
                     <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\NAV_BASIC.</p>
                     <p class="cmd-output-line mt-4 font-bold text-2xl">Comandos Básicos de Navegación</p>
                     <p class="cmd-output-line mt-2">Estos comandos te permiten moverte entre las carpetas (directorios) de tu sistema de archivos.</p>
@@ -451,9 +450,7 @@
                     </ul>
                     <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
                 </div>
-
-                <!-- Slide 4: Ejemplos: Comandos de Navegación -->
-                <div id="slide-4" class="slide">
+<div id="slide-4" class="slide">
                     <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\NAV_BASIC_EJEMPLOS.</p>
                     <p class="cmd-output-line mt-4 font-bold text-2xl">Ejemplos: Comandos de Navegación</p>
                     <div class="bg-gray-900 p-4 rounded-md mt-6 w-full max-w-xl text-left text-sm font-mono">
@@ -465,11 +462,7 @@
                         <p class="cmd-output-line text-gray-400">// Va directamente a la ruta especificada.</p>
                         <p class="cmd-output-line"><code>C:\Users\Docente>pwd</code> <span class="text-gray-400">// (Linux/macOS) Muestra la ruta completa actual.</span></p>
                     </div>
-                    <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
-                </div>
-
-                <!-- Slide 5: Comandos de Gestión de Archivos y Directorios (Parte 1) -->
-                <div id="slide-5" class="slide">
+<div id="slide-5" class="slide">
                     <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\FILE_DIR_1.</p>
                     <p class="cmd-output-line mt-4 font-bold text-2xl">Gestión de Archivos y Directorios (Parte 1)</p>
                     <p class="cmd-output-line mt-2">Aprende a listar el contenido de las carpetas y a crear o eliminar directorios.</p>
@@ -480,9 +473,7 @@
                     </ul>
                     <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
                 </div>
-
-                <!-- Slide 6: Ejemplos: Gestión de Archivos y Directorios (Parte 1) -->
-                <div id="slide-6" class="slide">
+<div id="slide-6" class="slide">
                     <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\FILE_DIR_1_EJEMPLOS.</p>
                     <p class="cmd-output-line mt-4 font-bold text-2xl">Ejemplos: Gestión de Archivos (Parte 1)</p>
                     <div class="bg-gray-900 p-4 rounded-md mt-6 w-full max-w-xl text-left text-sm font-mono">
@@ -495,11 +486,7 @@
                         <p class="cmd-output-line"><code>C:\Users\Docente>rd /s /q MiCarpeta</code></p>
                         <p class="cmd-output-line text-gray-400">// (Windows) Elimina 'MiCarpeta' y todo su contenido sin confirmación.</p>
                     </div>
-                    <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
-                </div>
-
-                <!-- Slide 7: Comandos de Gestión de Archivos y Directorios (Parte 2) -->
-                <div id="slide-7" class="slide">
+<div id="slide-7" class="slide">
                     <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\FILE_DIR_2.</p>
                     <p class="cmd-output-line mt-4 font-bold text-2xl">Gestión de Archivos y Directorios (Parte 2)</p>
                     <p class="cmd-output-line mt-2">Aprende a copiar, mover, renombrar y eliminar archivos.</p>
@@ -510,9 +497,7 @@
                     </ul>
                     <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
                 </div>
-
-                <!-- Slide 8: Ejemplos: Gestión de Archivos y Directorios (Parte 2) -->
-                <div id="slide-8" class="slide">
+<div id="slide-8" class="slide">
                     <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\FILE_DIR_2_EJEMPLOS.</p>
                     <p class="cmd-output-line mt-4 font-bold text-2xl">Ejemplos: Gestión de Archivos (Parte 2)</p>
                     <div class="bg-gray-900 p-4 rounded-md mt-6 w-full max-w-xl text-left text-sm font-mono">
@@ -525,11 +510,7 @@
                         <p class="cmd-output-line"><code>C:\Users\Docente>rm -r ProyectoLinux/</code></p>
                         <p class="cmd-output-line text-gray-400">// (Linux) Elimina el directorio 'ProyectoLinux' y su contenido.</p>
                     </div>
-                    <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
-                </div>
-
-                <!-- Slide 9: Comandos Adicionales Útiles -->
-                <div id="slide-9" class="slide">
+<div id="slide-9" class="slide">
                     <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\ADD_CMDS.</p>
                     <p class="cmd-output-line mt-4 font-bold text-2xl">Comandos Adicionales Útiles</p>
                     <p class="cmd-output-line mt-2">Estos comandos te ayudarán en tu día a día con la terminal.</p>
@@ -540,9 +521,7 @@
                     </ul>
                     <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
                 </div>
-
-                <!-- Slide 10: Ejemplos: Comandos Adicionales Útiles -->
-                <div id="slide-10" class="slide">
+<div id="slide-10" class="slide">
                     <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\ADD_CMDS_EJEMPLOS.</p>
                     <p class="cmd-output-line mt-4 font-bold text-2xl">Ejemplos: Comandos Adicionales</p>
                     <div class="bg-gray-900 p-4 rounded-md mt-6 w-full max-w-xl text-left text-sm font-mono">
@@ -553,89 +532,110 @@
                         <p class="cmd-output-line"><code>C:\Users\Docente>cls</code></p>
                         <p class="cmd-output-line text-gray-400">// Limpia toda la pantalla de la terminal.</p>
                     </div>
-                    <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
-                </div>
 
-                <!-- Slide 11: Introducción a Shell Scripting -->
-                <div id="slide-11" class="slide">
-                    <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\SHELL_SCRIPT.</p>
-                    <p class="cmd-output-line mt-4 font-bold text-2xl">Introducción a Shell Scripting</p>
-                    <p class="cmd-output-line mt-2">El <strong>Shell Scripting</strong> es la capacidad de escribir secuencias de comandos (scripts) para automatizar tareas repetitivas en la terminal. Un script es un archivo de texto con una serie de comandos que se ejecutan en orden.</p>
-                    <p class="cmd-output-line mt-2"><strong>¿Por qué es útil?</strong></p>
-                    <ul class="list-disc list-inside text-left mt-2 ml-4">
-                        <li class="cmd-output-line"><strong>Automatización:</strong> Realiza tareas tediosas sin intervención manual.</li>
-                        <li class="cmd-output-line"><strong>Eficiencia:</strong> Ejecuta múltiples comandos rápidamente.</li>
-                        <li class="cmd-output-line"><strong>Consistencia:</strong> Asegura que las tareas se hagan siempre igual.</li>
-                    </ul>
-                    <p class="cmd-output-line mt-4"><strong>Ejemplo de script simple para Windows (<code>.bat</code>):</strong></p>
-                    <p class="cmd-output-line mt-2">Este script crea una carpeta y mueve todos los archivos de texto (<code>.txt</code>) a ella.</p>
-                    <pre><code class="language-batch">@echo off
-REM Desactiva la visualización de los comandos.
-echo Organizando archivos...
-REM Muestra un mensaje.
-mkdir DocumentosOrganizados >nul 2>&1
-REM Crea 'DocumentosOrganizados'. (>nul 2>&1 evita mensajes si ya existe)
-move *.txt DocumentosOrganizados >nul 2>&1
-REM Mueve todos los archivos .txt al nuevo directorio.
-echo Archivos .txt movidos.
-REM Muestra un mensaje de confirmación.
-pause
-REM Pausa la ejecución hasta que se presione una tecla.
-</code></pre>
-                    <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
-                </div>
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
 
-                <!-- Slide 12: Ejercicio Práctico 1: Organización de Archivos -->
-                <div id="slide-12" class="slide">
-                    <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\EX1_ORG.</p>
-                    <p class="cmd-output-line mt-4 font-bold text-2xl">Ejercicio Práctico 1: Organización de Archivos</p>
-                    <p class="cmd-output-line mt-2"><strong>Objetivo:</strong> Automatizar la organización de archivos por tipo.</p>
-                    <p class="cmd-output-line mt-2">Crea un script (ej. <code>organizar.bat</code>) que:</p>
-                    <ul class="list-disc list-inside text-left mt-4 space-y-2">
-                        <li class="cmd-output-line">Cree una carpeta llamada <code>Reportes_Diarios</code> si no existe.</li>
-                        <li class="cmd-output-line">Mueva todos los archivos <code>.csv</code> del directorio actual a <code>Reportes_Diarios</code>.</li>
-                        <li class="cmd-output-line">Muestre un mensaje de confirmación al finalizar.</li>
-                        <li class="cmd-output-line">*(Opcional para Windows)*: Añade una pausa al final.</li>
-                    </ul>
-                    <img src="../../imagenes/ejercicio-organizacion.png" alt="Ejemplo de ejercicio de organización de archivos" class="mt-8 mx-auto">
-                    <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
-                </div>
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
 
-                <!-- Slide 13: Ejercicio Práctico 2: Monitoreo Básico -->
-                <div id="slide-13" class="slide">
-                    <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\EX2_MON.</p>
-                    <p class="cmd-output-line mt-4 font-bold text-2xl">Ejercicio Práctico 2: Monitoreo Básico del Sistema</p>
-                    <p class="cmd-output-line mt-2"><strong>Objetivo:</strong> Registrar información básica del sistema.</p>
-                    <p class="cmd-output-line mt-2">Crea un script (ej. <code>monitorear.bat</code>) que:</p>
-                    <ul class="list-disc list-inside text-left mt-4 space-y-2">
-                        <li class="cmd-output-line">Muestre la fecha y hora actual.</li>
-                        <li class="cmd-output-line">Muestre el espacio libre en disco de la unidad C: (Windows) o del sistema de archivos raíz (Linux).</li>
-                        <li class="cmd-output-line">Registre esta información en un archivo <code>monitoreo.log</code>, añadiendo al final.</li>
-                        <li class="cmd-output-line">*(Pista)*: Usa <code>date /t</code>, <code>time /t</code>, <code>fsutil volume diskfree C:</code> (Windows) o <code>date</code>, <code>df -h /</code> (Linux). Usa <code>>></code> para añadir al archivo.</li>
-                    </ul>
-                    <img src="../../imagenes/ejercicio-monitoreo.png" alt="Ejemplo de ejercicio de monitoreo de sistema" class="mt-8 mx-auto">
-                    <p class="cmd-output-line mt-4"><span class="final-cursor">_</span></p>
-                </div>
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
 
-                <!-- Slide 14: Asignación de Tareas -->
-                <div id="slide-14" class="slide">
-                    <p class="cmd-prompt-static">C:\IMA\IIBTP\Informatica\ASSIGN_TASK.</p>
-                    <p class="cmd-output-line text-xl mt-4 text-center font-bold">Asignación de Tareas: Mi Primer Script Automatizado</p>
-                    <p class="cmd-output-line text-lg mt-4 text-center"><strong>Crea un script sencillo</strong> (para Windows o Linux/macOS) que automatice una tarea de organización de directorios o archivos. Por ejemplo:</p>
-                    <ul class="list-disc list-inside text-left mt-4 space-y-2 mx-auto max-w-xl">
-                        <li class="cmd-output-line">Mover todos los archivos de un tipo específico (ej. <code>.jpg</code>, <code>.pdf</code>) a una carpeta dedicada.</li>
-                        <li class="cmd-output-line">Crear una estructura de carpetas para un nuevo proyecto (ej. <code>src</code>, <code>docs</code>, <code>assets</code>).</li>
-                        <li class="cmd-output-line">Eliminar archivos temporales o vaciar una carpeta de descargas.</li>
-                    </ul>
-                    <p class="cmd-output-line text-lg mt-4 text-center"><strong>Tu entrega debe incluir:</strong></p>
-                    <ul class="list-disc list-inside text-left mt-2 space-y-1 mx-auto max-w-xl">
-                        <li class="cmd-output-line">El <strong>código completo</strong> del script.</li>
-                        <li class="cmd-output-line"><strong>Comentarios claros</strong> dentro del script explicando cada comando y su propósito.</li>
-                        <li class="cmd-output-line">Una <strong>breve documentación</strong> (en un archivo de texto o PDF) que explique el objetivo del script y cómo se utiliza.</li>
-                    </ul>
-                    <p class="cmd-output-line text-lg mt-4 text-center"><strong>Fecha de entrega:</strong> 27 de julio del 2025</p>
-                    <p class="cmd-output-line text-lg mt-2 text-center"><strong>Ponderación:</strong> 5% de la nota final.</p>
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
                 </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
+            </div>
+        </div>
             </div>
 
             <!-- Navigation Buttons -->
@@ -852,13 +852,13 @@ REM Pausa la ejecución hasta que se presione una tecla.
 
         function nextSlide() {
             if (currentSlideIndex < slides.length - 1) {
-                showSlide(currentSlideIndex + 1);
+                nextSlide();
             }
         }
 
         function prevSlide() {
             if (currentSlideIndex > 0) {
-                showSlide(currentSlideIndex - 1);
+                prevSlide();
             }
         }
 
@@ -887,7 +887,7 @@ REM Pausa la ejecución hasta que se presione una tecla.
             initializeTextElements();
 
             // Show the first slide and apply its animations
-            showSlide(0); handleFullscreenChange();
+            currentSlideIndex = 0; showSlide(currentSlideIndex); handleFullscreenChange();
         });
 
     function handleFullscreenChange() {
@@ -995,11 +995,11 @@ REM Pausa la ejecución hasta que se presione una tecla.
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -1010,11 +1010,11 @@ REM Pausa la ejecución hasta que se presione una tecla.
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

@@ -175,7 +175,7 @@
     <main>
         <div id="presentation-container">
             <!-- Diapositiva 1: Portada -->
-            <div class="slide active">
+            <div class="slide active" id="slide-1" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
                 <h2>Programación orientada a bases de datos</h2>
                 <div class="mt-8 text-lg text-gray-500">
@@ -184,19 +184,29 @@
                     <p>Lic. Pablo Antonio Peña Mancia</p>
                     <p>31 de mayo de 2026</p>
                 </div>
-            </div>
 
-            <!-- Diapositiva 2: Concepto de Bases de Datos -->
             <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
+                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
+                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
+                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+<div class="slide">
                 <h3>¿Qué es una Base de Datos?</h3>
                 <p>Es un banco de datos o conjunto de datos que pertenecen al mismo contexto, almacenados sistemáticamente para su posterior uso.</p>
                 <div class="concept-box">
                     <p>Son programas que administran información, la ordenan y la hacen fácil de buscar y encontrar.</p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 3: Usos Principales -->
-            <div class="slide">
+<div class="slide">
                 <h3>Usos y Funciones</h3>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
                     <li><strong>Almacenamiento:</strong> Guardar grandes volúmenes de datos.</li>
@@ -205,18 +215,13 @@
                     <li><strong>Distribución:</strong> Imprimir o compartir información en diversos formatos.</li>
                 </ul>
             </div>
-
-            <!-- Diapositiva 4: Paradigma Declarativo -->
-            <div class="slide">
+<div class="slide">
                 <h3>Enfoque Declarativo</h3>
                 <p>Los lenguajes orientados a bases de datos son <strong>declarativos</strong> y no imperativos.</p>
                 <div class="concept-box border-blue-400">
                     <p>El problema es "qué" se quiere buscar o hacer en la base de datos, y no se enfatiza el "cómo" realizar el proceso paso a paso.</p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 5: Ventajas y Desventajas -->
-            <div class="slide">
+<div class="slide">
                 <h3>Balance de Uso</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div class="text-left">
@@ -227,48 +232,24 @@
                             <li>Comunicación eficiente.</li>
                         </ul>
                     </div>
-                    <div class="text-left">
-                        <p class="font-bold text-red-600">Desventajas:</p>
-                        <ul class="list-disc list-inside text-sm">
-                            <li>Enormes cantidades de datos sin control.</li>
-                            <li>Riesgos de seguridad en el acceso.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: SGBD -->
-            <div class="slide">
+<div class="slide">
                 <h3>Sistemas Gestores (SGBD)</h3>
                 <p>Permiten almacenar y posteriormente acceder a los datos de forma rápida y estructurada mediante software especializado.</p>
                 <div class="concept-box bg-blue-50">
                     <p>Ejemplo: SQL Server, MySQL o Access sirven como intermediarios entre el usuario y los datos físicos.</p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 7: Ejercicio 1 -->
-            <div class="slide">
+<div class="slide">
                 <h3>Ejercicio 1: Aplicaciones</h3>
                 <p>Investiga y anota en tu cuaderno 3 ejemplos de bases de datos que utilices en tu vida diaria (ej: redes sociales, bancos, etc.) y qué datos crees que almacenan.</p>
             </div>
-
-            <!-- Diapositiva 8: Clasificación por Variabilidad -->
-            <div class="slide">
+<div class="slide">
                 <h3>Bases de Datos por su Variabilidad</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                     <div class="bg-gray-50 p-6 rounded-lg border-t-4 border-gray-400 text-left">
                         <h4 class="font-bold text-xl mb-2">Estáticas</h4>
                         <p class="text-base">De sólo lectura. Usadas para datos históricos y estudio de comportamiento en el tiempo.</p>
                     </div>
-                    <div class="bg-blue-50 p-6 rounded-lg border-t-4 border-blue-500 text-left">
-                        <h4 class="font-bold text-xl mb-2">Dinámicas</h4>
-                        <p class="text-base">La información se modifica con el tiempo. Permite actualizar, añadir y borrar datos.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Clasificación por Contenido -->
-            <div class="slide">
+<div class="slide">
                 <h3>Según su Contenido</h3>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
                     <li><strong>Bibliográficas:</strong> Contienen un "representante" (autor, título) pero no el texto completo.</li>
@@ -278,71 +259,109 @@
                 </ul>
             </div>
 
-            <!-- Diapositiva 10: Modelo Jerárquico -->
             <div class="slide">
-                <h3>Modelo Jerárquico</h3>
-                <p>Los datos se organizan en forma similar a un árbol invertido.</p>
-                <div class="concept-box border-gray-300">
-                    <p>Un nodo padre puede tener varios hijos. El nodo superior se llama <strong>raíz</strong> y los que no tienen hijos se llaman <strong>hojas</strong>.</p>
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
                 </div>
-                <p class="mt-4 text-sm italic">Limitación: Incapacidad de representar eficientemente la redundancia.</p>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
             </div>
 
-            <!-- Diapositiva 11: Modelo de Red -->
             <div class="slide">
-                <h3>Modelo de Red</h3>
-                <p>Es una mejora del jerárquico que permite que un mismo nodo tenga <strong>varios padres</strong>.</p>
-                <div class="concept-box">
-                    <p>Ofrece una solución al problema de redundancia, pero su administración es compleja y suele ser usado principalmente por programadores.</p>
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
                 </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
             </div>
 
-            <!-- Diapositiva 12: Modelo Relacional -->
-            <div class="slide">
-                <h3>Modelo Relacional</h3>
-                <p>El más utilizado actualmente. Postulado en 1970 por <strong>Edgar Frank Codd</strong> de IBM.</p>
-                <div class="concept-box border-green-500">
-                    <ul class="list-disc list-inside space-y-2">
-                        <li>Usa "relaciones" (conjuntos de datos llamados tuplas).</li>
-                        <li>Se visualiza como <strong>tablas</strong> compuestas por filas y columnas.</li>
-                        <li>Fácil de entender y utilizar para usuarios comunes.</li>
-                    </ul>
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
                 </div>
             </div>
+        </div>
 
-            <!-- Diapositiva 13: Ejercicio 2 -->
-            <div class="slide">
-                <h3>Ejercicio 2: Clasificación</h3>
-                <p>Dibuja en tu cuaderno un esquema simple que represente la diferencia visual entre un Modelo Jerárquico (Árbol) y un Modelo Relacional (Tabla).</p>
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
             </div>
-
-            <!-- Diapositiva 14: Cuestionario (Parte 1) -->
-            <div class="slide">
-                <h3>Cuestionario: Evaluación</h3>
-                <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
-                    <div class="quiz-options flex flex-col gap-2"></div>
-                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 15: Cuestionario (Parte 2) -->
-            <div class="slide">
-                <h3>Cuestionario: Continuación</h3>
-                <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
-                    <div class="quiz-options flex flex-col gap-2"></div>
-                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 16: Fin y Asignación -->
-            <div class="slide">
-                <h2>¡Muchas Gracias!</h2>
-                <div class="concept-box border-blue-600">
-                    <p><strong>Asignación:</strong> Realizar en PSeInt ejercicios que utilicen arreglos unidimensionales (Dimensión) para guardar una lista de nombres.</p>
-                    <p class="mt-4 text-sm">Fecha de entrega: Próxima clase presencial.</p>
-                </div>
+        </div>
             </div>
         </div>
 
@@ -363,7 +382,7 @@
         const slideCounter = document.getElementById('slide-counter');
         const header = document.getElementById('page-header');
         const footer = document.getElementById('page-footer');
-        let currentSlide = 0;
+        var currentSlideIndex = 0;
 
         const quizData = [
             { q: "¿Qué define a una base de datos?", options: ["Banco de datos", "Sectores de red", "Memoria de RAM", "Espacio de disco"], a: "Banco de datos" },
@@ -382,15 +401,15 @@
         function showSlide(n) {
             slides[currentSlide].classList.remove('active');
             slides[currentSlide].style.display = 'none';
-            currentSlide = (n + slides.length) % slides.length;
+            currentSlideIndex = (n + slides.length) % slides.length;
             slides[currentSlide].style.display = 'flex';
             setTimeout(() => slides[currentSlide].classList.add('active'), 10);
 
             slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
-            prevBtn.disabled = currentSlide === 0;
-            nextBtn.disabled = currentSlide === slides.length - 1;
+            prevBtn.disabled = currentSlideIndex === 0;
+            nextBtn.disabled = currentSlideIndex === slides.length - 1;
 
-            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
+            if (currentSlideIndex === 13 || currentSlideIndex === 14) loadQuiz();
         }
 
         function loadQuiz() {
@@ -408,8 +427,8 @@
                 return;
             }
 
-            if (currentQuiz < 5 && currentSlide === 14) { showSlide(13); return; }
-            if (currentQuiz >= 5 && currentSlide === 13) { showSlide(14); return; }
+            if (currentQuiz < 5 && currentSlideIndex === 14) { showSlide(13); return; }
+            if (currentQuiz >= 5 && currentSlideIndex === 13) { showSlide(14); return; }
 
             const data = quizData[currentQuiz];
             questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
@@ -434,7 +453,7 @@
                     }
                     setTimeout(() => {
                         currentQuiz++;
-                        if (currentQuiz === 5 && currentSlide === 13) {
+                        if (currentQuiz === 5 && currentSlideIndex === 13) {
                             showSlide(14);
                         } else {
                             loadQuiz();
@@ -463,7 +482,7 @@
         window.addEventListener('resize', handleFullscreen);
         document.addEventListener('fullscreenchange', handleFullscreen);
 
-        showSlide(0);
+        currentSlideIndex = 0; showSlide(currentSlideIndex);
         handleFullscreen();
     </script>
 
@@ -496,11 +515,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -511,11 +530,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

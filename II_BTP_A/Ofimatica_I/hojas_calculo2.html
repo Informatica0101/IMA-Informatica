@@ -370,7 +370,7 @@
         <div id="presentation-container">
 
             <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
+            <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
                 <div class="slide-content-area">
                     <img src="../../imagenes/logo.png" alt="Logo de la Institución" style="width: 300px; height: auto;" class="mx-auto mb-8 cover-logo">
                     <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Excel: Funcionalidades Avanzadas</h1>
@@ -380,10 +380,23 @@
                     <p class="text-xl text-gray-600 mb-2">San Pedro Sula</p>
                     <p class="text-xl text-gray-600">11 de agosto del 2025</p>
                 </div>
-            </div>
 
-            <!-- Diapositiva 2: Introducción -->
-            <div id="slide-2" class="slide">
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
+                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
+                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
+                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+<div id="slide-2" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Más Allá de las Fórmulas Básicas</h2>
                     <p class="text-lg text-gray-700 mb-6">Excel no es solo para realizar cálculos simples. Ofrece herramientas poderosas para <strong>analizar, resumir y presentar</strong> grandes volúmenes de datos de manera efectiva.</p>
@@ -394,10 +407,7 @@
                     </ul>
                     <img src="../../imagenes/hoja_calculo.png" width="250" height="auto" alt="Gráficos y Tablas Dinámicas" class="content-image-style">
                 </div>
-            </div>
-
-            <!-- Diapositiva 3: Fórmulas Lógicas (Función SI/IF) -->
-            <div id="slide-3" class="slide">
+<div id="slide-3" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Fórmulas Lógicas: La Función SI (IF)</h2>
                     <p class="text-lg text-gray-700 mb-6">La <strong>Función SI (IF)</strong> es una de las fórmulas lógicas más utilizadas en Excel. Permite realizar <strong>evaluaciones condicionales</strong>: si una condición es verdadera, realiza una acción; si es falsa, realiza otra.</p>
@@ -407,10 +417,7 @@
                     </ul>
                     <img src="../../imagenes/condicionalSI.PNG" width="350" height="auto" alt="Función SI Lógica" class="content-image-style">
                 </div>
-            </div>
-
-            <!-- Diapositiva 4: Estructura de la Función SI (IF) -->
-            <div id="slide-4" class="slide">
+<div id="slide-4" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Estructura de la Función SI (IF)</h2>
                     <p class="text-lg text-gray-700 mb-6">La sintaxis básica de la función SI es simple y consta de tres argumentos:</p>
@@ -422,10 +429,7 @@
                     </ul>
                     <img src="../../imagenes/sintaxisSI.png" width="350" height="auto" alt="Sintaxis Función SI Excel" class="content-image-style">
                 </div>
-            </div>
-
-            <!-- Diapositiva 5: Ejemplos de Función SI (IF) -->
-            <div id="slide-5" class="slide">
+<div id="slide-5" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Ejemplos Prácticos de la Función SI (IF)</h2>
                     <p class="text-lg text-gray-700 mb-6">La función SI permite diversas aplicaciones, desde simples verificaciones hasta lógica anidada.</p>
@@ -435,22 +439,7 @@
                             <p class="text-base text-gray-700">Si la calificación (celda B2) es mayor o igual a 70, mostrar "Aprobado", de lo contrario "Reprobado".</p>
                             <p class="text-sm font-mono bg-gray-100 p-2 rounded mt-2">=SI(B2>=70; "Aprobado"; "Reprobado")</p>
                         </div>
-                        <div class="bg-green-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold text-green-700 mb-3"><strong>Ejemplo con Valores Numéricos: Bonificación</strong></h3>
-                            <p class="text-base text-gray-700">Si las ventas (celda C2) superan 1000, dar una bonificación de 50; de lo contrario, 0.</p>
-                            <p class="text-sm font-mono bg-gray-100 p-2 rounded mt-2">=SI(C2>1000; 50; 0)</p>
-                        </div>
-                        <div class="bg-purple-50 p-6 rounded-lg shadow-md col-span-2">
-                            <h3 class="text-xl font-semibold text-purple-700 mb-3"><strong>Función SI Anidada: Sistema de Calificaciones (A, B, C)</strong></h3>
-                            <p class="text-base text-gray-700">Asignar una letra (A, B, C) según el puntaje (D2): A si >=90, B si >=80, C si >=70, "D" en otro caso.</p>
-                            <p class="text-sm font-mono bg-gray-100 p-2 rounded mt-2">=SI(D2>=90; "A"; SI(D2>=80; "B"; SI(D2>=70; "C"; "D")))</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6 (Original 3): Importancia de los Gráficos -->
-            <div id="slide-6" class="slide">
+<div id="slide-6" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Visualización de Datos con Gráficos</h2>
                     <p class="text-lg text-gray-700 mb-6">Los gráficos transforman datos complejos en representaciones visuales <strong>fáciles de entender</strong>. Son esenciales para identificar <strong>tendencias, patrones y anomalías</strong> rápidamente, lo que facilita la toma de decisiones.</p>
@@ -460,9 +449,6 @@
                         <li>Permiten comunicar información de forma más impactante.</li>
                     </ul>
                 </div>
-            </div>
-
-            <!-- Diapositiva 7 (Original 4): Tipos de Gráficos Comunes -->
 <div id="slide-7" class="slide">
   <div class="slide-content-area">
     <h2 class="text-indigo-400 font-bold mb-2">Tipos de Gráficos en Excel</h2>
@@ -478,43 +464,7 @@
         <img src="../../imagenes/grafico_columnas.png" alt="Gráfico de Columnas"
           class="w-full max-w-[300px] h-auto" style="display: block;" />
       </div>
-      <div class="bg-green-50 p-2 rounded-lg shadow-md flex flex-col items-center">
-        <h3 class="text-xl font-semibold text-green-700 mb-1 text-center">
-          <strong>Gráfico Circular (Pastel)</strong></h3>
-        <p class="text-base text-gray-700 mb-1 text-center">
-          Muestra proporciones de un total.</p>
-        <img src="../../imagenes/grafico_circular.png" alt="Gráfico Circular"
-          class="w-full max-w-[300px] h-auto" style="display: block;" />
-      </div>
-      <div class="bg-purple-50 p-2 rounded-lg shadow-md flex flex-col items-center">
-        <h3 class="text-xl font-semibold text-purple-700 mb-1 text-center">
-          <strong>Gráfico de Líneas</strong>
-        </h3>
-        <p class="text-base text-gray-700 mb-1 text-center">
-          Tendencias de datos a lo largo del tiempo.
-        </p>
-        <img src="../../imagenes/grafico_linea.png" alt="Gráfico de Líneas"
-          class="w-full max-w-[250px] h-auto" style="display: block;" />
-      </div>
-
-      <div class="bg-red-50 p-2 rounded-lg shadow-md flex flex-col items-center">
-        <h3 class="text-xl font-semibold text-red-700 mb-1 text-center">
-          <strong>Gráfico de Dispersión</strong>
-        </h3>
-        <p class="text-base text-gray-700 mb-1 text-center">
-          Relación entre dos conjuntos de valores numéricos.
-        </p>
-        <img src="../../imagenes/grafico_dispersion.png" alt="Gráfico de Dispersión"
-          class="w-full max-w-[250px] h-auto" style="display: block;" />
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-            <!-- Diapositiva 8 (Original 5): Insertar un Gráfico -->
-            <div id="slide-8" class="slide">
+<div id="slide-8" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Pasos para Insertar un Gráfico</h2>
                     <p class="text-lg text-gray-700 mb-6">El proceso es intuitivo y se realiza a través de la cinta de opciones de Excel.</p>
@@ -526,10 +476,7 @@
                     </ol>
                     <img src="../../imagenes/insertar_graficos.png" alt="Insertar Gráfico Excel" class="content-image-style">
                 </div>
-            </div>
-
-            <!-- Diapositiva 9 (Original 6): Elementos de un Gráfico -->
-            <div id="slide-9" class="slide">
+<div id="slide-9" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Componentes Clave de un Gráfico</h2>
                     <p class="text-lg text-gray-700 mb-6">Conocer las partes de un gráfico facilita su creación y edición.</p>
@@ -543,98 +490,110 @@
                     </ul>
                     <img src="../../imagenes/grafico_partes.png" width="350" height="auto" alt="Elementos de un Gráfico" class="content-image-style">
                 </div>
+
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
             </div>
 
-            <!-- Diapositiva 10 (Original 7): Tablas Dinámicas - ¿Qué son? -->
-            <div id="slide-10" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Tablas Dinámicas: Resumen de Datos</h2>
-                    <p class="text-lg text-gray-700 mb-6">Una <strong>Tabla Dinámica (PivotTable)</strong> es una herramienta interactiva que permite <strong>resumir, analizar, explorar y presentar</strong> datos grandes y complejos de forma flexible.</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li>Permiten ver patrones y tendencias en datos que de otra forma serían difíciles de analizar.</li>
-                        <li>Son "dinámicas" porque puedes reorganizar los datos rápidamente arrastrando campos.</li>
-                    </ul>
-                    <img src="../../imagenes/tabla_dinamica_intro.png" width="550" height="auto" alt="Tabla Dinámica Introducción" class="content-image-style">
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
                 </div>
             </div>
+        </div>
 
-            <!-- Diapositiva 11 (Original 8): Componentes de una Tabla Dinámica -->
-            <div id="slide-11" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Campos de una Tabla Dinámica</h2>
-                    <p class="text-lg text-gray-700 mb-6">Una tabla dinámica se organiza en cuatro áreas principales, controladas por los campos que arrastras desde la lista de campos.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl text-left mt-6">
-                        <div class="bg-blue-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold text-blue-700 mb-3"><strong>Filtros de Informe</strong></h3>
-                            <p class="text-base text-gray-700">Permiten filtrar la vista general de la tabla.</p>
-                        </div>
-                        <div class="bg-green-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold text-green-700 mb-3"><strong>Etiquetas de Fila</strong></h3>
-                            <p class="text-base text-gray-700">Los campos que se muestran en las filas de la tabla.</p>
-                        </div>
-                        <div class="bg-purple-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold text-purple-700 mb-3"><strong>Etiquetas de Columna</strong></h3>
-                            <p class="text-base text-gray-700">Los campos que se muestran en las columnas de la tabla.</p>
-                        </div>
-                        <div class="bg-red-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold text-red-700 mb-3"><strong>Valores</strong></h3>
-                            <p class="text-base text-gray-700">Contienen los datos numéricos que se agregan (suman, cuentan, promedian, etc.).</p>
-                        </div>
-                    </div>
-                </div>
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
             </div>
-
-            <!-- Diapositiva 12 (Original 9): Crear una Tabla Dinámica -->
-            <div id="slide-12" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Pasos para Crear una Tabla Dinámica</h2>
-                    <p class="text-lg text-gray-700 mb-6">Un proceso sencillo que transforma un rango de datos en un resumen poderoso.</p>
-                    <ol class="list-decimal list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li><strong>Seleccionar datos:</strong> Resalte el rango de celdas que desea analizar.</li>
-                        <li><strong>Ir a la pestaña Insertar:</strong> En la cinta de opciones de Excel, haga clic en "Insertar".</li>
-                        <li><strong>Seleccionar Tabla Dinámica:</strong> En el grupo "Tablas", haga clic en "Tabla Dinámica" o "Tabla Dinámica Recomendadas".</li>
-                        <li><strong>Configurar rango y ubicación:</strong> Verifique que el rango de datos sea correcto y elija si desea la tabla en una "Nueva hoja de cálculo" o en una "Hoja de cálculo existente".</li>
-                        <li><strong>Arrastrar campos:</strong> En el panel "Campos de tabla dinámica", arrastre los campos a las áreas de Filtros, Columnas, Filas y Valores según su análisis.</li>
-                    </ol>
-                    <img src="../../imagenes/tabla_dinamica_insertar.png" alt="Crear Tabla Dinámica Excel" class="content-image-style">
-                </div>
-            </div>
-
-            <!-- Diapositiva 13 (Original 10): Ejercicio Práctico: Gráficos -->
-            <div id="slide-13" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-700 font-extrabold mb-4">Ejercicio Práctico: Gráficos 📊</h2>
-                    <div class="bg-blue-50 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
-                        <p class="text-xl font-semibold text-blue-800 mb-4">Escenario: Ventas de Productos Mensuales</p>
-                        <ol class="list-decimal list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-md">
-                            <li>Cree una tabla en Excel con dos columnas: "Mes" (Enero, Febrero, Marzo...) y "Ventas" (valores numéricos aleatorios para cada mes).</li>
-                            <li>Seleccione los datos y <strong>cree un gráfico de columnas</strong> que muestre las ventas por mes.</li>
-                            <li><strong>Personalice el gráfico:</strong> Añada un título significativo (ej., "Ventas Mensuales"), etiquetas de datos y cambie el color de las columnas a su preferencia.</li>
-                            <li>Cree un segundo gráfico, esta vez un <strong>gráfico de líneas</strong>, para mostrar la tendencia de las ventas a lo largo del tiempo.</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 14 (Original 11): Ejercicio Práctico: Tablas Dinámicas -->
-            <div id="slide-14" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-700 font-extrabold mb-4">Ejercicio Práctico: Tablas Dinámicas 📈</h2>
-                    <div class="bg-green-50 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
-                        <p class="text-xl font-semibold text-green-800 mb-4">Escenario: Análisis de Pedidos de Clientes</p>
-                        <ol class="list-decimal list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-md">
-                            <li>Cree una tabla en Excel con las siguientes columnas y al menos 20 filas de datos de ejemplo: "Cliente" (Cliente A, B, C), "Producto" (Laptop, Teclado, Monitor, Mouse), "Región" (Norte, Sur, Este, Oeste), "Cantidad" (números aleatorios), "Precio Unitario" (números aleatorios).</li>
-                            <li>Inserte una <strong>Tabla Dinámica</strong> basada en estos datos en una nueva hoja.</li>
-                            <li>Configure la tabla dinámica para mostrar:
-                                <ul>
-                                    <li><strong>Filas:</strong> Cliente</li>
-                                    <li><strong>Columnas:</strong> Región</li>
-                                    <li><strong>Valores:</strong> Suma de Cantidad</li>
-                                </ul>
-                            </li>
-                            <li><strong>Experimente:</strong> Mueva "Producto" a los Filtros de Informe y filtre por un producto específico. Mueva "Producto" a las Filas para ver un desglose por cliente y producto.</li>
-                        </ol>
-                    </div>
+        </div>
                 </div>
             </div>
 
@@ -994,11 +953,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -1009,11 +968,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

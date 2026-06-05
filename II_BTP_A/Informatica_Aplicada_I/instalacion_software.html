@@ -251,7 +251,7 @@
         <div id="presentation-container" class="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden min-h-[60vh] flex flex-col justify-between">
 
             <!-- Slide 1: Portada -->
-            <div id="slide-1" class="slide active">
+            <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
                 <img src="../../imagenes/logo.png" alt="Logo de la Institución" style="width: 400px; height: auto;" class="mx-auto mb-8 cover-logo">
                 <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Instalación de Software y Virtualización</h1>
                 <h3 class="text-2xl text-gray-700 mb-2">Informática Aplicada I</h3>
@@ -261,8 +261,22 @@
                 <p class="text-xl text-gray-600">03 de agosto del 2025</p>
             </div>
 
-            <!-- Slide 2: ¿Qué es la Instalación de Software? -->
-            <div id="slide-2" class="slide">
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
+                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
+                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
+                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+<div id="slide-2" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">¿Qué es la Instalación de Software?</h2>
                 <p class="text-lg text-gray-700 mb-6">Proceso de preparar un programa para su ejecución en una computadora.</p>
                 <img src="../../imagenes/instalacion_software_concepto.png" width="250" height="auto" alt="Concepto de Instalación de Software" class="max-w-md mx-auto content-image-style">
@@ -271,9 +285,7 @@
                     <li>Crear accesos directos y registrar componentes.</li>
                 </ul>
             </div>
-
-            <!-- Slide 3: Tipos de Instaladores (Interfaz Gráfica - GUI) -->
-            <div id="slide-3" class="slide">
+<div id="slide-3" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">Tipos de Instaladores (<i>GUI</i>)</h2>
                 <p class="text-lg text-gray-700 mb-6">Los más comunes para usuarios, con asistentes visuales.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
@@ -284,19 +296,7 @@
                             <li><i>.msi</i> (Microsoft Installer)</li>
                         </ul>
                     </div>
-                    <div class="bg-green-50 p-6 rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-green-700 mb-3">macOS</h3>
-                        <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                            <li><i>.dmg</i> (Imágenes de disco)</li>
-                            <li><i>.pkg</i> (Paquetes de instalación)</li>
-                        </ul>
-                    </div>
-                </div>
-                <img src="../../imagenes/instaladores_gui.png" width="250" height="auto" alt="Ejemplos de Instaladores Gráficos" class="max-w-xl mx-auto content-image-style mt-6">
-            </div>
-
-            <!-- Slide 4: Instalación por Línea de Comandos (CLI) -->
-            <div id="slide-4" class="slide">
+<div id="slide-4" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">Instalación por Línea de Comandos (<i>CLI</i>)</h2>
                 <p class="text-lg text-gray-700 mb-6">Uso de la terminal para mayor control y automatización.</p>
                 <img src="../../imagenes/instalacion_cli.png" width="250" height="auto" alt="Instalación por Línea de Comandos" class="max-w-md mx-auto content-image-style">
@@ -308,9 +308,7 @@
                 </ul>
                 <p class="text-base text-gray-700 mt-4">Ventajas: Automatización, resolución de dependencias.</p>
             </div>
-
-            <!-- Slide 5: ¿Qué es la Virtualización? -->
-            <div id="slide-5" class="slide">
+<div id="slide-5" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">¿Qué es la Virtualización?</h2>
                 <p class="text-lg text-gray-700 mb-6">Tecnología para crear versiones virtuales de recursos informáticos.</p>
                 <img src="../../imagenes/virtualizacion_concepto.png" width="250" height="auto" alt="Concepto de Virtualización" class="max-w-md mx-auto content-image-style">
@@ -321,9 +319,7 @@
                     <li>Controlada por un <strong>Hypervisor</strong>.</li>
                 </ul>
             </div>
-
-            <!-- Slide 6: Ventajas de la Virtualización -->
-            <div id="slide-6" class="slide">
+<div id="slide-6" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">Ventajas de la Virtualización</h2>
                 <p class="text-lg text-gray-700 mb-6">Beneficios clave de usar máquinas virtuales.</p>
                 <img src="../../imagenes/ventajas_virtualizacion.png" width="250" height="auto" alt="Ventajas de la Virtualización" class="max-w-md mx-auto content-image-style">
@@ -335,9 +331,7 @@
                     <li><strong>Seguridad:</strong> Ejecutar software de riesgo sin afectar el sistema principal.</li>
                 </ul>
             </div>
-
-            <!-- Slide 7: Tipos de Hypervisores -->
-            <div id="slide-7" class="slide">
+<div id="slide-7" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">Tipos de Hypervisores</h2>
                 <p class="text-lg text-gray-700 mb-6">El software que gestiona las máquinas virtuales.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
@@ -349,20 +343,7 @@
                             <li>Ejemplos: VMware ESXi, Microsoft Hyper-V.</li>
                         </ul>
                     </div>
-                    <div class="bg-green-50 p-6 rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-green-700 mb-3">Tipo 2 (<i>Hosted</i>)</h3>
-                        <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                            <li>Se instala como una aplicación sobre un SO anfitrión.</li>
-                            <li>Más fácil de usar para usuarios domésticos.</li>
-                            <li>Ejemplos: Oracle VirtualBox, VMware Workstation.</li>
-                        </ul>
-                    </div>
-                </div>
-                <img src="../../imagenes/tipos_hypervisores.png" width="250" height="auto" alt="Tipos de Hypervisores" class="max-w-xl mx-auto content-image-style mt-6">
-            </div>
-
-            <!-- Slide 8: Software de Virtualización Popular -->
-            <div id="slide-8" class="slide">
+<div id="slide-8" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">Software de Virtualización Popular</h2>
                 <p class="text-lg text-gray-700 mb-6">Herramientas ampliamente utilizadas para crear y gestionar VMs.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl text-center">
@@ -371,21 +352,7 @@
                         <p class="text-xl font-medium text-gray-800">Oracle VirtualBox</p>
                         <p class="text-base text-gray-600">Gratuito, código abierto (Tipo 2)</p>
                     </div>
-                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
-                        <img src="../../imagenes/vmware_logo.png" alt="Logo VMware" class="h-16 mx-auto mb-3">
-                        <p class="text-xl font-medium text-gray-800">VMware Workstation / Fusion</p>
-                        <p class="text-base text-gray-600">Comercial, profesional (Tipo 2)</p>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm col-span-full">
-                        <img src="../../imagenes/hyperv_logo.png" alt="Logo Hyper-V" class="h-16 mx-auto mb-3">
-                        <p class="text-xl font-medium text-gray-800">Microsoft Hyper-V</p>
-                        <p class="text-base text-gray-600">Integrado en Windows Pro/Enterprise (Tipo 1)</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 9: ¿Sabías que...? -->
-            <div id="slide-9" class="slide">
+<div id="slide-9" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">¿Sabías que...?</h2>
                 <ul class="list-disc list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-xl">
                     <li>La virtualización se originó en IBM en la década de 1960.</li>
@@ -396,38 +363,109 @@
                 <img src="../../imagenes/curiosidades_instalacion_virtualizacion.png" alt="Curiosidades sobre Instalación y Virtualización" class="max-w-md mx-auto content-image-style mt-6">
             </div>
 
-            <!-- Slide 10: ¿Verdadero o Falso? -->
-            <div id="slide-10" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">¿Verdadero o Falso?</h2>
-                <p class="text-lg text-gray-700 mb-6">¡Evalúa tus conocimientos sobre instalación y virtualización!</p>
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
 
-                <div id="game-area-it" class="bg-gray-100 p-6 rounded-lg shadow-md w-full max-w-lg flex flex-col items-center">
-                    <p id="statement-text" class="text-2xl font-bold text-indigo-800 mb-6 text-center">Cargando afirmación...</p>
-                    <div class="flex flex-wrap justify-center gap-4 mb-6">
-                        <button class="it-game-button bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-answer="true">Verdadero</button>
-                        <button class="it-game-button bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-answer="false">Falso</button>
-                    </div>
-                    <p id="it-feedback" class="text-xl font-semibold mb-4"></p>
-                    <p class="text-lg text-gray-700">Aciertos: <span id="it-score" class="font-bold text-indigo-700">0</span> / <span id="it-total-questions" class="font-bold text-indigo-700">0</span></p>
-                    <button id="it-next-button" class="mt-6 bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-5 rounded-lg transition duration-200">Siguiente</button>
-                    <button id="it-restart-button" class="mt-3 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-lg transition duration-200">Reiniciar Juego</button>
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
                 </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
             </div>
 
-            <!-- Slide 11: Asignación de Tarea -->
-            <div id="slide-11" class="slide">
-                <h2 class="text-indigo-700 font-extrabold mb-4">Asignación de Tarea</h2>
-                <div class="bg-yellow-50 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
-                    <p class="text-xl font-semibold text-yellow-800 mb-4">Para entregar el 10 de agosto de 2025:</p>
-                    <p class="text-base text-gray-700 space-y-3 text-left mx-auto max-w-md">
-                        Redacta un <strong>ensayo</strong> sobre las <strong>precauciones y buenas costumbres</strong> que se deben tener al momento de instalar programas en una computadora. El ensayo debe tener una extensión de:
-                        <ul class="list-disc list-inside ml-4 mt-2">
-                            <li>Página y media (1.5 páginas) si usas un cuaderno espiral grande.</li>
-                            <li>Dos páginas (2 páginas) si usas un cuaderno pequeño.</li>
-                        </ul>
-                        Asegúrate de incluir aspectos como: verificar la fuente del software, leer los términos y condiciones, evitar barras de herramientas no deseadas, el uso de antivirus, y la importancia de los permisos de instalación.
-                    </p>
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
                 </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
+            </div>
+        </div>
             </div>
 
             <!-- Navigation Buttons -->
@@ -512,7 +550,7 @@
                 newSlideElement.style.animationName = (direction === 'next' ? 'fadeInUp' : 'fadeInDown');
 
             } else if (!currentActiveSlide && index === 0) {
-                // This block specifically handles the very first load if showSlide(0) is called
+                // This block specifically handles the very first load if currentSlideIndex = 0; showSlide(currentSlideIndex) is called
                 // and no slide is active yet. It ensures the first slide is shown without animation.
                 newSlideElement.classList.add('active');
                 newSlideElement.style.display = 'flex';
@@ -796,11 +834,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -811,11 +849,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

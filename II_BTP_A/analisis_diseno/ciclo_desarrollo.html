@@ -561,7 +561,7 @@
         <div id="presentation-container" class="relative w-full max-w-6xl bg-white rounded-lg shadow-xl overflow-hidden min-h-[80vh] flex flex-col justify-between">
 
             <!-- Slide 1: Portada -->
-            <div id="slide-1" class="slide active">
+            <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
                 <img src="../../imagenes/logo.png" alt="Logo de la Institución" style="width: 400px; height: auto;" class="mx-auto mb-8 cover-logo">
                 <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Ciclos de Vida de Desarrollo (SDLC)</h1>
                 <h3 class="text-2xl text-gray-700 mb-2">Análisis y Diseño I</h3>
@@ -571,8 +571,22 @@
                 <p class="text-xl text-gray-600">20 de julio del 2025</p>
             </div>
 
-            <!-- Slide 2: ¿Qué es un Ciclo de Vida de Desarrollo de Software (SDLC)? -->
-            <div id="slide-2" class="slide">
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
+                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
+                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
+                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+<div id="slide-2" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">1. ¿Qué es un Ciclo de Vida de Desarrollo de Software (SDLC)?</h2>
                 <p class="text-lg text-gray-700 mb-6">El <span class="font-bold">Ciclo de Vida de Desarrollo de Software (SDLC)</span> es un proceso estructurado que guía la creación de un sistema de software, desde la concepción inicial hasta su retiro.</p>
                 <h3 class="text-indigo-500 font-semibold mb-4">Importancia:</h3>
@@ -583,116 +597,20 @@
                     <li>Mejora la eficiencia y la predictibilidad.</li>
                 </ul>
             </div>
-
-            <!-- Slide 3: Modelo Cascada (Waterfall Model) -->
-            <div id="slide-3" class="slide">
+<div id="slide-3" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">2. Modelo Cascada (Waterfall Model)</h2>
                 <p class="text-lg text-gray-700 mb-6">Es un enfoque lineal y secuencial donde cada fase debe completarse antes de que la siguiente pueda comenzar.</p>
                 <h3 class="text-indigo-500 font-semibold mb-2">Fases:</h3>
                 <div class="diagram-container cascade-diagram">
                     <div class="step-container" style="--indent: 0px;">
                         <div class="diagram-box">Requisitos</div>
-                        <div class="arrow-down-right-connector">
-                            <span class="arrow-vertical-line"></span>
-                            <span class="arrow-horizontal-line"></span>
-                            <span class="arrow-head-right"></span>
-                        </div>
-                    </div>
-                    <div class="step-container" style="--indent: 80px;">
-                        <div class="diagram-box">Diseño</div>
-                        <div class="arrow-down-right-connector">
-                            <span class="arrow-vertical-line"></span>
-                            <span class="arrow-horizontal-line"></span>
-                            <span class="arrow-head-right"></span>
-                        </div>
-                    </div>
-                    <div class="step-container" style="--indent: 160px;">
-                        <div class="diagram-box">Implementación</div>
-                        <div class="arrow-down-right-connector">
-                            <span class="arrow-vertical-line"></span>
-                            <span class="arrow-horizontal-line"></span>
-                            <span class="arrow-head-right"></span>
-                        </div>
-                    </div>
-                    <div class="step-container" style="--indent: 240px;">
-                        <div class="diagram-box">Pruebas</div>
-                        <div class="arrow-down-right-connector">
-                            <span class="arrow-vertical-line"></span>
-                            <span class="arrow-horizontal-line"></span>
-                            <span class="arrow-head-right"></span>
-                        </div>
-                    </div>
-                    <div class="step-container" style="--indent: 320px;">
-                        <div class="diagram-box">Despliegue</div>
-                        <div class="arrow-down-right-connector">
-                            <span class="arrow-vertical-line"></span>
-                            <span class="arrow-horizontal-line"></span>
-                            <span class="arrow-head-right"></span>
-                        </div>
-                    </div>
-                    <div class="step-container" style="--indent: 400px;">
-                        <div class="diagram-box">Mantenimiento</div>
-                        <!-- No arrow for the last one -->
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4 mt-6 w-full max-w-xl">
-                    <div class="bg-green-50 p-4 rounded-lg shadow-sm">
-                        <h4 class="font-semibold text-green-700">Ventajas:</h4>
-                        <ul class="list-disc list-inside text-sm text-green-600">
-                            <li>Simple y fácil de entender.</li>
-                            <li>Fases claras y bien definidas.</li>
-                            <li>Adecuado para proyectos con requisitos estables.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-red-50 p-4 rounded-lg shadow-sm">
-                        <h4 class="font-semibold text-red-700">Desventajas:</h4>
-                        <ul class="list-disc list-inside text-sm text-red-600">
-                            <li>Inflexible a cambios.</li>
-                            <li>Riesgos altos en etapas tardías.</li>
-                            <li>Poca interacción con el cliente.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 4: Modelo Espiral (Spiral Model) -->
-            <div id="slide-4" class="slide">
+<div id="slide-4" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">3. Modelo Espiral (Spiral Model)</h2>
                 <p class="text-lg text-gray-700 mb-6">Un modelo iterativo y basado en riesgos que combina elementos del modelo cascada y del prototipado.</p>
                 <h3 class="text-indigo-500 font-semibold mb-2">Fases Iterativas:</h3>
                 <div class="spiral-diagram">
                     <div class="diagram-box box-planificacion">Planificación</div>
-                    <div class="diagram-box box-analisis">Análisis de Riesgos</div>
-                    <div class="diagram-box box-desarrollo">Desarrollo</div>
-                    <div class="diagram-box box-evaluacion">Evaluación</div>
-
-                    <span class="arrow arrow-1">→</span> <!-- Planificacion -> Analisis -->
-                    <span class="arrow arrow-2">→</span> <!-- Analisis -> Desarrollo -->
-                    <span class="arrow arrow-3">→</span> <!-- Desarrollo -> Evaluacion -->
-                    <span class="arrow arrow-4">→</span> <!-- Evaluacion -> Planificacion -->
-                </div>
-                <div class="grid grid-cols-2 gap-4 mt-6 w-full max-w-xl">
-                    <div class="bg-green-50 p-4 rounded-lg shadow-sm">
-                        <h4 class="font-semibold text-green-700">Ventajas:</h4>
-                        <ul class="list-disc list-inside text-sm text-green-600">
-                            <li>Excelente gestión de riesgos.</li>
-                            <li>Flexible y adaptable a cambios.</li>
-                            <li>Adecuado para proyectos grandes y complejos.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-red-50 p-4 rounded-lg shadow-sm">
-                        <h4 class="font-semibold text-red-700">Desventajas:</h4>
-                        <ul class="list-disc list-inside text-sm text-red-600">
-                            <li>Más complejo y costoso.</li>
-                            <li>Requiere experiencia en gestión de riesgos.</li>
-                            <li>Puede ser difícil de controlar.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 5: Modelos Ágiles (Agile Models) -->
-            <div id="slide-5" class="slide">
+<div id="slide-5" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">4. Modelos Ágiles (Agile Models)</h2>
                 <p class="text-lg text-gray-700 mb-6">Enfoques iterativos e incrementales que priorizan la flexibilidad, la colaboración y la entrega rápida de software funcional.</p>
                 <h3 class="text-indigo-500 font-semibold mb-2">Principios Clave:</h3>
@@ -705,24 +623,7 @@
                 <img src="../../imagenes/manifiesto-agil-scrum.png" alt="Diagrama de Metodología Ágil o Ciclo Scrum" class="agile-manifesto-image mx-auto content-image-style">
                 <p class="text-base text-gray-600 mt-4">Ejemplos: Scrum, Kanban, Extreme Programming (XP).</p>
             </div>
-
-            <!-- Slide 6: Modelo Scrum (Ejemplo de Ágil) -->
-            <div id="slide-6" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">5. Modelo Scrum (Ejemplo Ágil)</h2>
-                <p class="text-lg text-gray-700 mb-6">Un framework ágil para gestionar proyectos complejos, enfatizando el trabajo en equipo, la rendición de cuentas y el progreso iterativo.</p>
-                <h3 class="text-indigo-500 font-semibold mb-2">Elementos Clave:</h3>
-                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                    <li><span class="font-bold">Sprints:</span> Iteraciones cortas y de tiempo fijo (1-4 semanas).</li>
-                    <li><span class="font-bold">Product Backlog:</span> Lista priorizada de funcionalidades.</li>
-                    <li><span class="font-bold">Sprint Backlog:</span> Tareas seleccionadas para un sprint.</li>
-                    <li><span class="font-bold">Daily Scrum:</span> Reunión diaria corta del equipo.</li>
-                    <li><span class="font-bold">Roles:</span> Product Owner, Scrum Master, Equipo de Desarrollo.</li>
-                </ul>
-                <img src="../../imagenes/modelo_scrum.png" alt="Diagrama del Modelo Scrum" class="agile-manifesto-image mx-auto content-image-style">
-            </div>
-
-            <!-- Slide 7: Comparación de Modelos SDLC -->
-            <div id="slide-7" class="slide">
+<div id="slide-7" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">6. Comparación de Modelos SDLC</h2>
                 <table class="comparison-table">
                     <thead>
@@ -767,9 +668,7 @@
                     </tbody>
                 </table>
             </div>
-
-            <!-- Slide 8: ¿Cuándo Elegir Cada Modelo? -->
-            <div id="slide-8" class="slide">
+<div id="slide-8" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">7. ¿Cuándo Elegir Cada Modelo?</h2>
                 <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-4">
                     <li><h3 class="font-semibold text-indigo-500 inline">Modelo Cascada:</h3> Proyectos pequeños y bien definidos, con requisitos estables y poca incertidumbre. Cuando el cliente tiene una visión clara desde el inicio.</li>
@@ -778,43 +677,7 @@
                 </ul>
                 <div class="sdlc-choice-diagram">
                     <div class="decision-box">¿Requisitos estables y claros?</div>
-                    <div class="line"></div>
-                    <div class="arrow-down"></div>
-                    <div class="branch">
-                        <div class="branch-item">
-                            <span class="font-bold text-green-700">SÍ</span>
-                            <div class="branch-line"></div>
-                            <div class="arrow-down"></div>
-                            <div class="choice-box bg-green-100 border-green-500 text-green-800">Modelo Cascada</div>
-                        </div>
-                        <div class="branch-item">
-                            <span class="font-bold text-red-700">NO</span>
-                            <div class="branch-line"></div>
-                            <div class="arrow-down"></div>
-                            <div class="decision-box">¿Alto riesgo o requisitos muy cambiantes?</div>
-                            <div class="line"></div>
-                            <div class="arrow-down"></div>
-                            <div class="branch">
-                                <div class="branch-item">
-                                    <span class="font-bold text-green-700">SÍ</span>
-                                    <div class="branch-line"></div>
-                                    <div class="arrow-down"></div>
-                                    <div class="choice-box bg-blue-100 border-blue-500 text-blue-800">Modelo Espiral</div>
-                                </div>
-                                <div class="branch-item">
-                                    <span class="font-bold text-red-700">NO</span>
-                                    <div class="branch-line"></div>
-                                    <div class="arrow-down"></div>
-                                    <div class="choice-box bg-purple-100 border-purple-500 text-purple-800">Modelos Ágiles</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 9: Ejercicio Práctico: Selección de Modelo SDLC -->
-            <div id="slide-9" class="slide">
+<div id="slide-9" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">Ejercicio Práctico: Selección de Modelo SDLC</h2>
                 <p class="text-lg text-gray-700 mb-6">Discute y justifica cuál modelo SDLC sería el más apropiado para cada escenario:</p>
                 <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-4">
@@ -825,14 +688,117 @@
                 <p class="text-base text-gray-600 mt-8">Prepárense para argumentar sus elecciones en clase.</p>
             </div>
 
-            <!-- Slide 10: Asignación de Tareas -->
-            <div id="slide-10" class="slide">
-                <h2 class="text-indigo-700 font-extrabold mb-4">Asignación de Tareas</h2>
-                <p class="text-xl text-gray-600 mb-6">1. <span class="font-bold">Elaborar un cuadro comparativo</span> de los modelos SDLC (Cascada, Espiral, Ágil) incluyendo sus fases, ventajas y desventajas.</p>
-                <p class="text-xl text-gray-600 mb-6">2. Para un <span class="font-bold">caso práctico dado</span> (que se proporcionará en clase o se definirá), <span class="font-bold">argumentar la selección de un modelo SDLC específico</span>, justificando por qué es el más apropiado.</p>
-                <p class="text-lg text-gray-500">Fecha de entrega: 27 de julio del 2025</p>
-                <p class="text-lg text-gray-500">Ponderación: 5%</p>
+                <div class="slide">
+                    <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Desarrollo de Contenido</h3>
+                    <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">Perspectivas futuras y tendencias tecnológicas.</p>
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 mt-8">
+                         <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Información en desarrollo</p>
+                    </div>
+                </div>
+
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
             </div>
+
+            <div class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
+                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
+                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
+                        </div>
+
+                </div>
+                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+            </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
+            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
+                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
+            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
+                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
+                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
+                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-2xl">
+                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
+                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
+            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
+            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
+            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
+                © 2026 Instituto María Auxiliadora • ISEMED
+            </div>
+        </div>
 
             <!-- Navigation Buttons -->
             <div class="flex justify-between w-full p-4 mt-auto">
@@ -916,7 +882,7 @@
                 newSlideElement.style.animationName = (direction === 'next' ? 'fadeInUp' : 'fadeInDown');
 
             } else if (!currentActiveSlide && index === 0) {
-                // This block specifically handles the very first load if showSlide(0) is called
+                // This block specifically handles the very first load if currentSlideIndex = 0; showSlide(currentSlideIndex) is called
                 // and no slide is active yet. It ensures the first slide is shown without animation.
                 newSlideElement.classList.add('active');
                 newSlideElement.style.display = 'flex';
@@ -1102,11 +1068,11 @@
         (function() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                   if (typeof showSlide === 'function') nextSlide();
                    else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                   if (typeof showSlide === 'function') prevSlide();
                    else if (typeof prevSlide === 'function') prevSlide();
                 }
             });
@@ -1117,11 +1083,11 @@
             container.addEventListener('touchend', e => {
                 let teX = e.changedTouches[0].screenX;
                 if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex + 1);
+                    if (typeof showSlide === 'function') nextSlide();
                     else if (typeof nextSlide === 'function') nextSlide();
                 }
                 if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') showSlide(currentSlideIndex - 1);
+                    if (typeof showSlide === 'function') prevSlide();
                     else if (typeof prevSlide === 'function') prevSlide();
                 }
             }, {passive: true});

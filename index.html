@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Area de Informatica</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Portal Académico - Área de Informática ISEMED</title>
     <link rel="icon" type="image/png" href="IMA-Logo.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
@@ -40,8 +40,8 @@
         <div class="container mx-auto px-4 md:px-6 flex justify-between items-center h-16 md:h-20">
             <!-- Logos e Identidad: Siempre Visibles -->
             <div class="flex items-center gap-4">
-                <a href="index.html" class="flex items-center gap-3 group">
-                    <img src="imagenes/logo.png" alt="Logo Institucional ISEMED" class="logo-img transition-transform duration-300 group-hover:scale-105">
+                <a href="index.html" class="flex items-center gap-3 group" title="Ir al inicio">
+                    <img src="imagenes/logo.png" alt="Escudo oficial del Instituto ISEMED - Área de Informática" class="logo-img transition-transform duration-300 group-hover:scale-105">
                     <div class="header-title-container">
                         <h1 class="text-sm md:text-xl font-black text-gray-900 uppercase tracking-tighter leading-none">ISEMED</h1>
                         <p class="text-[9px] md:text-[11px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
@@ -50,26 +50,26 @@
             </div>
 
             <!-- Navegación Escritorio: Horizontal y Permanente (Req 2) -->
-            <nav class="hidden md:flex items-center gap-0">
-                <a href="index.html" class="nav-link-desktop active">Inicio</a>
+            <nav class="hidden md:flex items-center gap-0" aria-label="Navegación principal">
+                <a href="index.html" class="nav-link-desktop active" aria-current="page">Inicio</a>
                 <a href="login.html" id="nav-portal-link" class="nav-link-desktop">Portal</a>
 
                 <!-- Dropdown Cursos -->
                 <div class="relative group">
-                    <button class="nav-link-desktop flex items-center gap-1">
-                        Cursos <i class="fas fa-chevron-down text-[8px] opacity-50 group-hover:rotate-180 transition-transform"></i>
+                    <button class="nav-link-desktop flex items-center gap-1" aria-haspopup="true" aria-expanded="false">
+                        Cursos <i class="fas fa-chevron-down text-[8px] opacity-50 group-hover:rotate-180 transition-transform" aria-hidden="true"></i>
                     </button>
-                    <div class="absolute left-0 mt-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 border border-gray-100 z-[110]">
+                    <div class="absolute left-0 mt-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 border border-gray-100 z-[110]" role="menu">
                         <div id="desktop-courses-menu"></div>
                     </div>
                 </div>
 
                 <!-- Dropdown Contenido -->
                 <div class="relative group">
-                    <button class="nav-link-desktop flex items-center gap-1">
-                        Contenido <i class="fas fa-chevron-down text-[8px] opacity-50 group-hover:rotate-180 transition-transform"></i>
+                    <button class="nav-link-desktop flex items-center gap-1" aria-haspopup="true" aria-expanded="false">
+                        Contenido <i class="fas fa-chevron-down text-[8px] opacity-50 group-hover:rotate-180 transition-transform" aria-hidden="true"></i>
                     </button>
-                    <div class="absolute left-0 mt-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 border border-gray-100 z-[110]">
+                    <div class="absolute left-0 mt-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 border border-gray-100 z-[110]" role="menu">
                         <div id="desktop-content-menu"></div>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
 
             <!-- Bandera de Honduras: Siempre Visible -->
             <div class="flex items-center gap-4">
-                <img src="imagenes/bandera-de-honduras.png" alt="Bandera Nacional de Honduras" class="hn-flag opacity-100 block transition-transform hover:scale-110">
+                <img src="imagenes/bandera-de-honduras.png" alt="Bandera Nacional de la República de Honduras" class="hn-flag opacity-100 block transition-transform hover:scale-110">
             </div>
         </div>
     </header>
@@ -100,14 +100,14 @@
                         Aquí formamos corazones con <span class="text-blue-600">amor, fé, esperanza y tecnología</span>
                     </h1>
                     <div class="flex flex-wrap justify-center md:justify-start gap-4 pt-4">
-                        <a href="login.html" class="px-8 py-4 bg-blue-600 text-white font-semibold rounded-2xl shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all transform hover:-translate-y-1">Empezar Ahora</a>
+                        <a href="login.html" class="px-8 py-4 bg-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-200 hover:bg-blue-800 transition-all transform hover:-translate-y-1" aria-label="Empezar ahora en la plataforma">Empezar Ahora</a>
                         <a href="#news-section" class="px-8 py-4 bg-gray-50 text-gray-700 font-semibold rounded-2xl hover:bg-gray-100 transition-all">Ver Noticias</a>
                     </div>
                 </div>
                 <div class="md:w-2/5 animate-fade-in-up animation-delay-2000 hidden md:block">
                     <div class="relative">
                         <div class="absolute inset-0 bg-blue-600 rounded-[3rem] rotate-6 opacity-5"></div>
-                        <img src="imagenes/logo.png" alt="Escudo del Área de Informática" class="relative z-10 w-full max-w-sm mx-auto drop-shadow-2xl">
+                        <img src="imagenes/logo.png" alt="Logo del Área de Informática de ISEMED" class="relative z-10 w-full max-w-sm mx-auto drop-shadow-2xl">
                     </div>
                 </div>
             </div>
