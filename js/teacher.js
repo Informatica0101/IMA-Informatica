@@ -123,9 +123,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const configRes = await fetchApi('USER', 'getAcademicConfig');
             if (configRes.status === 'success' && configRes.data.ParcialActual) {
                 parcialSelect.value = configRes.data.ParcialActual;
+                window.PARCIAL_ACTUAL = configRes.data.ParcialActual;
             }
 
-            renderAsignaturasCheckboxes();
+            await renderAsignaturasCheckboxes();
         } catch (e) {
             console.error("Error cargando config académica:", e);
         }
@@ -775,12 +776,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const payload = { profesorId: currentUser.userId };
-            const [taskSubmissions, examSubmissions, tasksRes, examsRes] = await Promise.all([
+            // REQ: Mitigación de Latencia (Ticket 4) - Parallel fetch of config and activity
+            const [taskSubmissions, examSubmissions, tasksRes, examsRes, configRes] = await Promise.all([
                 fetchApi('TASK', 'getTeacherActivity', payload),
                 fetchApi('EXAM', 'getTeacherExamActivity', payload),
                 fetchApi('TASK', 'getAllTasks', payload),
-                fetchApi('EXAM', 'getAllExams', payload)
+                fetchApi('EXAM', 'getAllExams', payload),
+                fetchApi('USER', 'getAcademicConfig')
             ]);
+
+            if (configRes && configRes.status === 'success' && configRes.data.ParcialActual) {
+                window.PARCIAL_ACTUAL = configRes.data.ParcialActual;
+                console.log("[IMA-TEACHER] Configuración académica sincronizada:", window.PARCIAL_ACTUAL);
+            }
 
             allActivityRaw = [
                 ...((taskSubmissions.data || [])).map(s => ({ ...s, tipo: 'Tarea' })),

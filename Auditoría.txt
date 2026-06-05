@@ -179,3 +179,14 @@ Archivo: js/exam.js
 Archivo: Global (HTML)
 - [HALLAZGO] Inconsistencia en el orden de carga: games-adapter.js debe cargarse antes de los scripts dependientes.
 - [HALLAZGO] Versiones de caché (v21) obsoletas tras cambios mayores.
+
+AUDITORÍA DE REGRESIÓN CRÍTICA - 2026-06-18
+Archivo: js/config.js
+- [HALLAZGO] La función 'normalizePartial' está definida pero NO exportada al objeto global 'window'.
+- [IMPACTO] Esto causa un 'TypeError: window.normalizePartial is not a function' en student.js y teacher.js, bloqueando la carga de actividades académicas.
+
+Archivo: js/student.js
+- [HALLAZGO] fetchAllActivities utiliza Promise.all para paralelismo (Ticket 4), pero si ocurre un error durante el procesamiento de datos post-fetch (ej. por el fallo de normalizePartial), el loader de GamesAdapter podría no liberarse correctamente si no está en un bloque try/finally robusto.
+
+Archivo: js/teacher.js
+- [HALLAZGO] Múltiples llamadas secuenciales a fetchApi detectadas en el flujo de administración académica (loadAcademicAdminData -> renderAsignaturasCheckboxes), violando la arquitectura de latencia mínima de Ticket 4.

@@ -144,3 +144,12 @@ ARCHIVO: js/teacher.js
 ARCHIVO: js/index-ui.js
 - [OPTIMIZADO] Priorización de Noticias: loadNews se invoca al inicio del ciclo DOMContentLoaded para reducir el tiempo visual de carga.
 - [IMPLEMENTADO] Feedback Inmediato: Agregado loader contextual al contenedor de noticias.
+
+FECHA: 2026-06-18
+ARCHIVO: js/config.js
+- Línea 94: Exportada función normalizePartial al objeto window.
+ARCHIVO: js/student.js
+- Línea 87: Implementado bloque try/catch interno en fetchAllActivities para proteger el ciclo de vida del loader.
+ARCHIVO: js/teacher.js
+- Línea 126: Sincronización de window.PARCIAL_ACTUAL agregada a loadAcademicAdminData.
+- Línea 780: Refactorizada fetchTeacherActivity para incluir getAcademicConfig en Promise.all (Ticket 4).

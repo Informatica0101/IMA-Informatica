@@ -85,42 +85,46 @@ document.addEventListener('DOMContentLoaded', () => {
             ]);
 
             const allActivities = [];
-            if (tasksResult.status === 'success' && tasksResult.data) {
-                allActivities.push(...tasksResult.data.map(task => ({
-                    ...task,
-                    type: task.tipo || 'Tarea',
-                    asignatura: (task.asignatura || 'General').trim(),
-                    parcial: (task.parcial || 'Sin Parcial').trim()
-                })));
+            try {
+                if (tasksResult.status === 'success' && tasksResult.data) {
+                    allActivities.push(...tasksResult.data.map(task => ({
+                        ...task,
+                        type: task.tipo || 'Tarea',
+                        asignatura: (task.asignatura || 'General').trim(),
+                        parcial: (task.parcial || 'Sin Parcial').trim()
+                    })));
+                }
+                if (examsResult.status === 'success' && examsResult.data) {
+                    allActivities.push(...examsResult.data.map(exam => ({
+                        ...exam,
+                        type: 'Examen',
+                        asignatura: (exam.asignatura || 'General').trim(),
+                        parcial: (exam.parcial || 'Sin Parcial').trim()
+                    })));
+                }
+
+                allActivities.sort((a, b) => {
+                    const isReviewed = (act) => {
+                        if (!act.entrega) return false;
+                        const s = act.entrega.estado;
+                        return (s === 'Completada' || s === 'Revisada' || s === 'Finalizado' || s === 'Rechazada');
+                    };
+                    const revA = isReviewed(a);
+                    const revB = isReviewed(b);
+                    if (revA !== revB) return revA ? 1 : -1;
+                    return new Date(b.fechaLimite) - new Date(a.fechaLimite);
+                });
+
+                allActivitiesData = allActivities;
+
+                // Renderizado Sincronizado de Componentes
+                renderStudentExpediente(allActivities);
+
+                // Renderizar perfil si los datos fueron exitosos
+                if (profileResult) renderLearningProfileData(profileResult);
+            } catch (innerError) {
+                console.error("[IMA-STUDENT] Fallo en procesamiento de actividades:", innerError);
             }
-            if (examsResult.status === 'success' && examsResult.data) {
-                allActivities.push(...examsResult.data.map(exam => ({
-                    ...exam,
-                    type: 'Examen',
-                    asignatura: (exam.asignatura || 'General').trim(),
-                    parcial: (exam.parcial || 'Sin Parcial').trim()
-                })));
-            }
-
-            allActivities.sort((a, b) => {
-                const isReviewed = (act) => {
-                    if (!act.entrega) return false;
-                    const s = act.entrega.estado;
-                    return (s === 'Completada' || s === 'Revisada' || s === 'Finalizado' || s === 'Rechazada');
-                };
-                const revA = isReviewed(a);
-                const revB = isReviewed(b);
-                if (revA !== revB) return revA ? 1 : -1;
-                return new Date(b.fechaLimite) - new Date(a.fechaLimite);
-            });
-
-            allActivitiesData = allActivities;
-
-            // Renderizado Sincronizado de Componentes
-            renderStudentExpediente(allActivities);
-
-            // Renderizar perfil si los datos fueron exitosos
-            if (profileResult) renderLearningProfileData(profileResult);
 
             if (allActivities.length > 0) {
                 renderParcialTabs(allActivities);
@@ -1162,7 +1166,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                 `;
-            }
         } catch (e) {
             console.error("Error al renderizar perfil de dominio:", e);
         }

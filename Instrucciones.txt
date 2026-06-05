@@ -1,4 +1,5 @@
 TAREAS PENDIENTES DE REVISIÓN
+7. Hotfix: Regresión en Dashboard y Sincronización Académica.
 1. Ampliación del banco a 100 preguntas por nivel/asignatura.
 2. Incorporación de nuevas asignaturas exclusivas (Redes y POO).
 3. Análisis y alineación con directrices de desarrollo (Ticket 1).
