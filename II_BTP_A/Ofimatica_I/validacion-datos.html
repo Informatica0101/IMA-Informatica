@@ -300,38 +300,29 @@
 </head>
 <body class="antialiased">
 
-    <!-- ENCABEZADO INSTITUCIONAL -->
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left transition-all duration-300">
+    <!-- Header de la página -->
+    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
         <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../../imagenes/logo.png" id="header-logo" alt="Logo" class="w-16 sm:w-20 h-auto">
-            <div class="leading-none">
-                <h1 class="text-sm sm:text-base font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
-                <p class="text-[8px] sm:text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
-            </div>
+            <!-- Logo con URL -->
+             <a href="../../index.html">
+            <img src="../../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
+            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Validación y Filtrado de Datos</h1>
         </div>
         <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-4">
-                <li><a href="../../index.html" id="nav-home-link" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest transition-colors">Inicio</a></li>
+            <ul class="flex space-x-2 sm:space-x-3">
+                <li><a href="../../index.html" class="text-gray-600 hover:text-cyan-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
+                <li><a href="../../index.html" class="text-gray-600 hover:text-cyan-500 transition-colors text-xs sm:text-sm">Acerca de</a></li>
+                <li><a href="../../index.html" class="text-gray-600 hover:text-cyan-500 transition-colors text-xs sm:text-sm">Contacto</a></li>
             </ul>
         </nav>
     </header>
-
-
-
-
-
-
-
-
-    <!-- Header de la página -->
-
 
     <!-- Contenido principal de la presentación -->
     <main class="flex-grow flex justify-center items-center p-3">
         <div id="presentation-container" class="relative">
 
             <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
+            <div id="slide-1" class="slide active">
                 <!-- Logo con URL -->
                 <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-3 sm:mb-7">
                 <h2 class="text-lg sm:text-xl mb-1 sm:mb-3 text-cyan-600">Herramientas de <strong>Validación y Filtrado de Datos</strong></h2>
@@ -341,23 +332,10 @@
                     <p>Fecha: Domingo 05 de octubre del 2025</p>
                     <p>Grado: Undécimo de Informática</p>
                 </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
-                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
-                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
-                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
-                        </li>
-                    </ul>
-                </div>
             </div>
-<div id="slide-2" class="slide">
+
+            <!-- Diapositiva 2: Introducción a la Calidad de Datos -->
+            <div id="slide-2" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">La Importancia de la <strong>Calidad de Datos</strong></h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
                     En una hoja de cálculo, la toma de decisiones depende de la <strong>exactitud</strong> de los datos. Las herramientas de validación y filtrado nos ayudan a mantener la <strong>integridad y consistencia</strong> de la información.
@@ -366,7 +344,13 @@
                 <div class="mt-5 max-w-3xl w-full">
                     <img src="../../imagenes/fujo_datos.jpg" alt="Diagrama de flujo de datos y decisiones" class="w-full h-48 object-contain rounded-md mx-auto" onerror="this.parentElement.textContent='ESPACIO PARA IMAGEN: Flujo de Datos y Decisiones (calidad_datos.png)'; this.remove();">
                 </div>
-<div id="slide-3" class="slide">
+                <div class="mt-5 text-sm sm:text-base bg-indigo-50 p-3 rounded-lg shadow-md max-w-3xl">
+                    <strong>Recuerde:</strong> Datos limpios equivalen a análisis confiables y mejores decisiones.
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: Integridad y Consistencia -->
+            <div id="slide-3" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Fundamentos: <strong>Integridad y Consistencia</strong></h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-7">
                     Estas dos cualidades son el pilar de cualquier base de datos bien estructurada.
@@ -376,7 +360,15 @@
                         <p class="font-bold text-indigo-800 text-lg mb-1">Integridad</p>
                         <p class="text-sm text-gray-700">Asegurar que los datos sean <strong>correctos</strong>, <strong>completos</strong> y que no se hayan modificado o dañado accidentalmente. La Validación ayuda a garantizarla.</p>
                     </div>
-<div id="slide-4" class="slide overflow-y-auto">
+                    <div class="bg-teal-50 p-4 rounded-lg shadow-xl flex-1 border-b-4 border-teal-500">
+                        <p class="font-bold text-teal-800 text-lg mb-1">Consistencia</p>
+                        <p class="text-sm text-gray-700">Mantener <strong>uniformidad</strong> en el formato y tipo de datos. Por ejemplo, si una columna es de fechas, todas deben tener el mismo formato (DD/MM/AAAA).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: Concepto de Validación de Datos (CON LA VENTANA INTERACTIVA) -->
+            <div id="slide-4" class="slide overflow-y-auto">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">1. Herramienta de <strong>Validación de Datos</strong></h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
                     La Validación de Datos es una función que permite <strong>restringir</strong> el tipo de información o los valores que los usuarios pueden introducir en una celda.
@@ -391,7 +383,124 @@
                             <h2 class="text-sm font-semibold text-gray-700">Validación de datos</h2>
                             <button onclick="slide4CloseModal()" class="text-gray-500 hover:text-gray-900 text-xl leading-none px-2 rounded-sm transition duration-100" aria-label="Cerrar">×</button>
                         </div>
-<div id="slide-5" class="slide">
+
+                        <!-- Pestañas de Navegación -->
+                        <div class="flex px-4 pt-3">
+                            <div id="slide4-tab-configuracion" class="tab active" data-tab="configuracion">Configuración</div>
+                            <div id="slide4-tab-mensaje-entrada" class="tab" data-tab="mensaje-entrada">Mensaje de entrada</div>
+                            <div id="slide4-tab-error" class="tab" data-tab="alerta-error">Alerta de error</div>
+                        </div>
+
+                        <!-- Contenido de las Pestañas -->
+                        <div id="slide4-tab-content-container" class="p-4 pt-0 border-t border-gray-300">
+                            <!-- Contenido de Configuración -->
+                            <div id="slide4-content-configuracion" class="tab-content active bg-white p-4 border border-gray-300 rounded-b-md rounded-tr-md">
+                                <div class="space-y-4">
+                                    <h3 class="text-sm font-semibold text-gray-700 mb-2">Criterios de validación</h3>
+
+                                    <!-- Permitir -->
+                                    <div class="flex items-center space-x-4">
+                                        <label for="slide4-allow-select" class="w-1/4 text-sm font-medium text-gray-600">Permitir:</label>
+                                        <select id="slide4-allow-select" class="excel-input w-3/4 p-1 text-sm bg-white rounded">
+                                            <option value="entero">Número entero</option>
+                                            <option value="decimal">Decimal</option>
+                                            <option value="lista" selected>Lista</option>
+                                            <option value="fecha">Fecha</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Datos -->
+                                    <div class="flex items-center space-x-4">
+                                        <label for="slide4-data-select" class="w-1/4 text-sm font-medium text-gray-600">Datos:</label>
+                                        <select id="slide4-data-select" class="excel-input w-3/4 p-1 text-sm bg-white rounded">
+                                            <option value="entre" selected>entre</option>
+                                            <option value="no_entre">no está entre</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Origen (Solo visible para 'Lista') -->
+                                    <div id="slide4-source-section" class="space-y-2">
+                                        <div class="flex items-center space-x-4">
+                                            <label for="slide4-source-input" class="w-1/4 text-sm font-medium text-gray-600">Origen:</label>
+                                            <input type="text" id="slide4-source-input" value="Gerente, Analista, Soporte" class="excel-input w-3/4 p-1 text-sm rounded">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6">
+                                    <div class="excel-table-container">
+                                        <table class="excel-table w-full table-fixed border-collapse">
+                                            <thead>
+                                                <tr>
+                                                    <th class="w-1/12"></th>
+                                                    <th class="w-11/12">Columna de Ejemplo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th>1</th>
+                                                    <td class="bg-yellow-50 border-yellow-400">Gerente (Validado)</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>2</th>
+                                                    <td>Analista</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>3</th>
+                                                    <td>Soporte</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contenido de Mensaje de Entrada -->
+                            <div id="slide4-content-mensaje-entrada" class="tab-content hidden bg-white p-4 border border-gray-300 rounded-b-md rounded-tr-md">
+                                <div class="space-y-4">
+                                    <p class="text-sm font-medium text-gray-700">Aparece cuando el usuario selecciona la celda. ¡Es la instrucción preventiva!</p>
+                                    <label for="slide4-input-title" class="block text-xs font-medium text-gray-600">Título:</label>
+                                    <input type="text" id="slide4-input-title" value="¡ATENCIÓN! Usar lista." class="excel-input w-full p-1 text-sm rounded">
+
+                                    <label for="slide4-input-message" class="block text-xs font-medium text-gray-600">Mensaje de entrada:</label>
+                                    <textarea id="slide4-input-message" rows="3" class="excel-input w-full p-1 text-sm rounded resize-none">Seleccione el cargo de la lista desplegable. No ingrese texto manualmente.</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Contenido de Alerta de Error -->
+                            <div id="slide4-content-alerta-error" class="tab-content hidden bg-white p-4 border border-gray-300 rounded-b-md rounded-tr-md">
+                                <div class="space-y-4">
+                                    <p class="text-sm font-medium text-gray-700">Aparece si el usuario introduce un dato no válido.</p>
+                                    <div class="flex items-center space-x-4">
+                                        <label for="slide4-style-select" class="w-1/4 text-sm font-medium text-gray-600">Estilo:</label>
+                                        <select id="slide4-style-select" class="excel-input w-3/4 p-1 text-sm bg-white rounded">
+                                            <option value="detener" selected>Detener (Stop)</option>
+                                            <option value="advertencia">Advertencia (Warning)</option>
+                                        </select>
+                                    </div>
+
+                                    <label for="slide4-error-title" class="block text-xs font-medium text-gray-600">Título:</label>
+                                    <input type="text" id="slide4-error-title" value="ERROR DE DATOS" class="excel-input w-full p-1 text-sm rounded">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pie de Página y Botones -->
+                        <div class="bg-gray-100 p-3 border-t border-gray-300 flex justify-end space-x-2">
+                            <button onclick="slide4SaveChanges()" class="excel-button-sim text-sm">Aceptar</button>
+                            <button onclick="slide4CloseModal()" class="px-4 py-1.5 text-sm font-semibold text-gray-700 bg-white border border-gray-400 rounded-md hover:bg-gray-50 transition duration-100">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- FIN DE VENTANA DE SIMULACIÓN DE VALIDACIÓN -->
+
+                <div class="mt-4 text-sm sm:text-base bg-red-50 p-3 rounded-lg max-w-3xl">
+                    <strong>Función Clave:</strong> Evitar errores de entrada de datos desde el origen.
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Tipos de Criterios de Validación -->
+            <div id="slide-5" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Criterios Comunes de <strong>Validación</strong></h3>
                 <div class="bg-gray-100 p-3 sm:p-5 rounded-lg shadow-inner max-w-3xl w-full text-left mt-3">
                     <ul class="list-disc list-inside ml-4 mt-2 text-sm space-y-2">
@@ -402,7 +511,25 @@
                         <li><strong>Personalizada:</strong> Permite usar una fórmula para definir reglas complejas.</li>
                     </ul>
                 </div>
-<div id="slide-6" class="slide">
+
+                <!-- SIMULACIÓN EN HTML/CSS/JS (Criterio: Lista Desplegable) -->
+                <div class="mt-5">
+                    <p class="text-xs text-gray-500 mb-2">Ejemplo práctico de validación por <strong>Lista</strong>:</p>
+                    <div id="validation-simulation">
+                        <span id="selected-value" class="text-gray-700">Seleccione un Cargo</span>
+                        <svg class="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <div id="dropdown-list" style="display: none;">
+                            <button data-value="Gerente">Gerente</button>
+                            <button data-value="Analista">Analista</button>
+                            <button data-value="Soporte Técnico">Soporte Técnico</button>
+                            <button data-value="Ventas">Ventas</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: Mensajes de Validación (Input y Error) -->
+            <div id="slide-6" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500"><strong>Mensajes de Validación</strong></h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
                     Son cruciales para guiar al usuario y notificarle cuando comete un error.
@@ -412,7 +539,19 @@
                         <p class="font-bold text-green-800">Mensaje de Entrada (Input)</p>
                         <p class="text-sm text-gray-700">Aparece cuando la celda es seleccionada. Sirve como una <strong>instrucción preventiva</strong>.</p>
                     </div>
-<div id="slide-7" class="slide">
+                    <div class="bg-red-100 p-4 rounded-lg shadow-md flex-1">
+                        <p class="font-bold text-red-800">Mensaje de Error (Alerta)</p>
+                        <p class="text-sm text-gray-700">Aparece cuando el usuario ingresa un dato inválido. Puede ser un simple <strong>Aviso</strong> o una <strong>Detención</strong> obligatoria.</p>
+                    </div>
+                </div>
+                <!-- Espacio para Imagen de Mensajes de Validación (Mantenemos placeholder local para estas imágenes) -->
+                <div class="mt-5 max-w-3xl w-full">
+                    <img src="../../imagenes/mensaje-error.PNG" alt="Ejemplo de mensaje de error de validación" class="w-full h-48 object-contain rounded-md mx-auto" onerror="this.parentElement.textContent='ESPACIO PARA IMAGEN: Alerta de Error de Validación (mensajes_error.png)'; this.remove();">
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Concepto de Filtrado de Datos -->
+            <div id="slide-7" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">2. Herramienta de <strong>Filtrado de Datos</strong></h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
                     El Filtrado es el proceso de <strong>mostrar solo las filas</strong> que cumplen con un criterio específico, mientras que el resto de las filas se <strong>ocultan temporalmente</strong>. Esto facilita el análisis y la visualización de subconjuntos de datos.
@@ -421,7 +560,13 @@
                 <div class="mt-5 max-w-3xl w-full">
                     <img src="../../imagenes/filtro.PNG" alt="Ícono de embudo de filtrado" class="w-full h-48 object-contain rounded-md mx-auto" onerror="this.parentElement.textContent='ESPACIO PARA IMAGEN: Icono de Embudo de Filtrado (icono_filtrado.png)'; this.remove();">
                 </div>
-<div id="slide-8" class="slide">
+                <div class="mt-3 bg-yellow-50 p-3 rounded-lg text-sm max-w-3xl">
+                    <strong>Función Clave:</strong> Simplificar la visualización y análisis de grandes tablas.
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Tipos de Filtrado -->
+            <div id="slide-8" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Tipos de <strong>Filtros</strong> y Aplicaciones</h3>
                 <div class="bg-gray-100 p-3 sm:p-5 rounded-lg shadow-inner max-w-3xl w-full text-left mt-3">
                     <ul class="list-disc list-inside ml-4 mt-2 text-sm space-y-2">
@@ -432,7 +577,14 @@
                         <li><strong>Filtro Avanzado:</strong> Permite definir criterios complejos en un rango separado (usando AND/OR) para una extracción sofisticada.</li>
                     </ul>
                 </div>
-<div id="slide-9" class="slide">
+                <!-- Espacio para Imagen de Opciones de Filtrado (Mantenemos placeholder local para estas imágenes) -->
+                <div class="mt-5 max-w-3xl w-full">
+                    <img src="../../imagenes/opciones-filtro.png" alt="Menú de opciones de filtrado en una columna" class="w-full h-48 object-contain rounded-md mx-auto" onerror="this.parentElement.textContent='ESPACIO PARA IMAGEN: Menú de Opciones de Filtro (opciones_filtrado.png)'; this.remove();">
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Proceso de Aplicación (Validación) -->
+            <div id="slide-9" class="slide">
                 <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Proceso: Aplicación de <strong>Validación</strong></h3>
                 <div class="bg-yellow-50 p-4 sm:p-5 rounded-lg shadow-inner max-w-3xl w-full text-left mt-3">
                     <p class="font-bold mb-2 text-base text-yellow-800">Pasos Generales:</p>
@@ -445,110 +597,120 @@
                         <li>Configurar los <strong>Mensajes de Entrada y Error</strong>.</li>
                     </ol>
                 </div>
+            </div>
 
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
+            <!-- Diapositiva 10: Proceso de Aplicación (Filtrado) - CON TABLA INTERACTIVA -->
+            <div id="slide-10" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Proceso: Aplicación de <strong>Filtrado</strong></h3>
+                <div class="bg-blue-50 p-4 sm:p-5 rounded-lg shadow-inner max-w-3xl w-full text-left mt-3">
+                    <p class="font-bold mb-2 text-base text-blue-800">Pasos Generales:</p>
+                    <ol class="list-decimal list-inside ml-4 mt-2 text-sm space-y-1">
+                        <li><strong>Seleccionar</strong> la tabla o el rango de encabezados que contienen los datos.</li>
+                        <li>Ir a la pestaña <strong>Datos</strong>.</li>
+                        <li>Hacer clic en el icono de <strong>Filtro</strong> (generalmente un embudo).</li>
+                        <li>Aparecerán flechas en los encabezados. Hacer clic en la flecha de la columna deseada.</li>
+                        <li>Elegir los <strong>Criterios</strong> (ej. Desmarcar todos los países excepto "Honduras").</li>
+                        <li>El filtro <strong>oculta</strong> las filas que no cumplen el criterio.</li>
+                    </ol>
                 </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
 
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
-            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
-                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
-            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
-                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
-                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
-                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
-                </div>
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
-                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+                <div class="mt-5 w-full flex flex-col items-center">
+                    <p class="text-xs text-gray-500 mb-2">Ejemplo práctico: Filtrar por <strong>Departamento</strong> = 'Ventas'</p>
+                    <table id="filter-example-table" class="example-table">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">ID</th>
+                                <th class="w-1/4">Nombre</th>
+                                <th class="w-1/4" id="header-departamento">
+                                    Departamento
+                                    <span id="filter-icon" class="filter-icon" onclick="toggleFilter()">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a1 1 0 011-1h8a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L5.293 7.707A1 1 0 015 7V4z"/></svg>
+                                    </span>
+                                </th>
+                                <th class="w-1/4">Salario (L.)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-dept="Ventas">
+                                <td>101</td>
+                                <td>Ana P.</td>
+                                <td>Ventas</td>
+                                <td>18,500</td>
+                            </tr>
+                            <tr data-dept="IT">
+                                <td>102</td>
+                                <td>Carlos M.</td>
+                                <td>IT</td>
+                                <td>22,000</td>
+                            </tr>
+                            <tr data-dept="Marketing">
+                                <td>103</td>
+                                <td>Elena G.</td>
+                                <td>Marketing</td>
+                                <td>19,000</td>
+                            </tr>
+                            <tr data-dept="Ventas">
+                                <td>104</td>
+                                <td>Juan R.</td>
+                                <td>Ventas</td>
+                                <td>17,200</td>
+                            </tr>
+                            <tr data-dept="IT">
+                                <td>105</td>
+                                <td>Laura S.</td>
+                                <td>IT</td>
+                                <td>25,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button id="filter-toggle-button" onclick="toggleFilter()" class="mt-4 px-4 py-2 text-sm font-semibold text-white bg-teal-500 rounded-lg shadow-md hover:bg-teal-600 transition duration-150">
+                        Aplicar Filtro: Mostrar solo "Ventas"
+                    </button>
+                    <button id="filter-reset-button" onclick="resetFilter()" class="mt-2 px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150 hidden">
+                        Limpiar Filtro
+                    </button>
                 </div>
             </div>
-        </div>
 
-        <div class="slide">
-            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
-            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
-            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
-                © 2026 Instituto María Auxiliadora • ISEMED
+            <!-- Diapositiva 11: Cuestionario -->
+            <div id="slide-11" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">¡<strong>Cuestionario</strong> de Validación y Filtrado!</h3>
+                <div id="quiz-container" class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-md max-w-3xl w-full text-center">
+                    <div id="quiz-question" class="text-base sm:text-xl font-semibold mb-2 sm:mb-5 text-gray-800"></div>
+                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-3"></div>
+                    <div id="quiz-feedback" class="mt-3 sm:mt-5 text-sm sm:text-base font-bold"></div>
+                </div>
             </div>
-        </div>
+
+            <!-- Diapositiva 12: Tarea Asignada -->
+            <div id="slide-12" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500">Asignación: <strong>Ejercicios de Validación Práctica</strong></h3>
+                <div class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-inner max-w-3xl text-left">
+                    <p class="text-sm sm:text-base text-gray-700 mb-2 font-bold text-red-700">Desarrollo en Hoja de Cálculo:</p>
+                    <p class="text-xs sm:text-sm text-gray-700 mb-4">
+                        Crear una tabla de 5 columnas con las siguientes reglas de <strong>Validación de Datos</strong>. Debe incluir el <strong>Mensaje de Entrada</strong> y el <strong>Mensaje de Error</strong> de Detención en cada columna:
+                    </p>
+                    <p class="text-sm sm:text-base text-gray-700 mb-2 font-bold">Validaciones a Aplicar:</p>
+                    <ul class="list-disc list-inside ml-4 mt-2 text-xs sm:text-sm space-y-2">
+                        <li><strong>Columna 1 (Nombre):</strong> Validación de <strong>Longitud de Texto</strong> (Mínimo 5, Máximo 30 caracteres).</li>
+                        <li><strong>Columna 2 (ID Producto):</strong> Validación de <strong>Lista</strong> desplegable con 4 opciones predefinidas.</li>
+                        <li><strong>Columna 3 (Precio):</strong> Validación de <strong>Decimal</strong> (Mayor que 0.00).</li>
+                        <li><strong>Columna 4 (Fecha de Venta):</strong> Validación de <strong>Fecha</strong> (Entre el 01/01/2025 y 05/10/2025).</li>
+                        <li><strong>Columna 5 (Cantidad):</strong> Validación de <strong>Número Entero</strong> (Entre 1 y 100).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 13: Conclusión -->
+            <div id="slide-13" class="slide">
+                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-cyan-500"><strong>Conclusión y Preguntas</strong></h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+                    Dominar la validación y el filtrado es esencial para transformar grandes volúmenes de datos brutos en información <strong>confiable</strong> y fácil de analizar. Estas herramientas son su primera línea de defensa contra los errores.
+                </p>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mt-5 font-bold text-cyan-600">
+                    ¡Gracias por su atención! ¿Tienen alguna duda sobre la aplicación de estas herramientas en Excel o Google Sheets?
+                </p>
+            </div>
         </div>
 
         <!-- Botones de navegación -->
@@ -560,7 +722,13 @@
     </main>
 
     <!-- Pie de página -->
-
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
+            <!-- Bandera con URL -->
+            <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 
     <!-- Scripts para la navegación, la lógica del cuestionario y la simulación -->
     <script>
@@ -863,18 +1031,18 @@
         }
 
         nextButton.addEventListener('click', () => {
-            nextSlide();
+            showSlide(currentSlideIndex + 1);
         });
 
         prevButton.addEventListener('click', () => {
-            prevSlide();
+            showSlide(currentSlideIndex - 1);
         });
 
         document.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowRight') {
-                nextSlide();
+                showSlide(currentSlideIndex + 1);
             } else if (event.key === 'ArrowLeft') {
-                prevSlide();
+                showSlide(currentSlideIndex - 1);
             }
         });
 
@@ -903,90 +1071,8 @@
                 currentYearSpan.textContent = new Date().getFullYear();
             }
             setupValidationSimulation();
-            currentSlideIndex = 0; showSlide(currentSlideIndex); handleFullscreenChange();
+            showSlide(0); handleFullscreenChange();
         });
     </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- PIE DE PÁGINA INSTITUCIONAL -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-[10px] p-4 transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <img src="../../imagenes/bandera-de-honduras.png" id="footer-flag" alt="HN" class="w-10 h-auto">
-            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
-        </div>
-    </footer>
-
-
-    <!-- LOGICA DE NAVEGACIÓN ESTÁNDAR (Fase 6) -->
-    <script>
-        (function() {
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') nextSlide();
-                   else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') prevSlide();
-                   else if (typeof prevSlide === 'function') prevSlide();
-                }
-            });
-
-            const container = document.getElementById('presentation-container') || document.body;
-            let tsX = 0;
-            container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-            container.addEventListener('touchend', e => {
-                let teX = e.changedTouches[0].screenX;
-                if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') nextSlide();
-                    else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') prevSlide();
-                    else if (typeof prevSlide === 'function') prevSlide();
-                }
-            }, {passive: true});
-
-            // Double tap for fullscreen
-            let lastTap = 0;
-            container.addEventListener('touchstart', (e) => {
-                const now = Date.now();
-                if (now - lastTap < 300) {
-                    if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(err => console.error(err));
-                    } else {
-                        document.exitFullscreen();
-                    }
-                }
-                lastTap = now;
-            }, {passive: true});
-
-            function handleFS() {
-                const isFS = document.fullscreenElement;
-                const h = document.getElementById('page-header');
-                const f = document.getElementById('page-footer');
-                if (h) h.style.display = isFS ? 'none' : 'flex';
-                if (f) f.style.display = isFS ? 'none' : 'block';
-            }
-            document.addEventListener('fullscreenchange', handleFS);
-            document.addEventListener('webkitfullscreenchange', handleFS);
-            document.addEventListener('mozfullscreenchange', handleFS);
-            document.addEventListener('MSFullscreenChange', handleFS);
-        })();
-    </script>
-
 </body>
 </html>

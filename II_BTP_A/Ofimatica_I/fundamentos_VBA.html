@@ -129,61 +129,50 @@
 </head>
 <body class="antialiased">
 
-    <!-- ENCABEZADO INSTITUCIONAL -->
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left transition-all duration-300">
+    <!-- Header de la página -->
+    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
         <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../../imagenes/logo.png" id="header-logo" alt="Logo" class="w-16 sm:w-20 h-auto">
-            <div class="leading-none">
-                <h1 class="text-sm sm:text-base font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
-                <p class="text-[8px] sm:text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
-            </div>
+            <img src="../../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
+            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Fundamentos de Programación VBA</h1>
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-4">
-                <li><a href="../../index.html" id="nav-home-link" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest transition-colors">Inicio</a></li>
-            </ul>
+        <nav class="mt-3 sm:mt-0 flex items-center space-x-3">
+            <ul class="flex space-x-2 sm:space-x-3"><li><a href="../../index.html" class="text-gray-600 hover:text-indigo-500 transition-colors text-xs sm:text-sm">Inicio</a></li></ul>
         </nav>
     </header>
-
-
-
-
-
-
-
-
-    <!-- Header de la página -->
-
 
     <!-- Contenido principal de la presentación -->
     <main class="flex-grow flex justify-center items-center p-3">
         <div id="presentation-container" class="relative">
 
             <!-- Slide 1: Portada -->
-            <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
+            <div id="slide-1" class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo de la Institución" class="w-40 sm:w-56 md:w-72 h-auto mb-3 sm:mb-7">
                 <h2 class="text-3xl sm:text-5xl mb-1 sm:mb-3 text-indigo-700 font-extrabold">FUNDAMENTOS DE VBA</h2>
                 <div class="mt-5 sm:mt-10 text-base sm:text-xl text-gray-700 space-y-2">
                     <p>Asignatura: <b>Ofimática I</b></p>
                     <p>Grado: <b>Undécimo de Informática</b></p>
                 </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
-                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
-                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
-                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
-                        </li>
-                    </ul>
+                <div class="mt-7 sm:mt-10 text-sm sm:text-base text-gray-500">
+                    <p>Docente: Pablo Antonio Peña</p>
                 </div>
             </div>
-<div id="slide-3" class="slide">
+
+            <!-- Slide 2: ¿Qué es VBA? -->
+            <div id="slide-2" class="slide">
+                <h3 class="section-header">1. ¿Qué es VBA?</h3>
+                <div class="max-w-3xl text-left mx-auto">
+                    <p class="text-sm sm:text-lg text-gray-700 leading-relaxed">
+                        <b>Visual Basic for Applications (<code>VBA</code>)</b> es un lenguaje de programación orientado a eventos (POO) diseñado específicamente para extender y automatizar las aplicaciones de <code>Microsoft Office</code> (Excel, Access, Word).
+                    </p>
+                    <div class="example-box mt-6">
+                        <p class="font-semibold text-indigo-700 mb-2">Su Propósito Principal: La Automatización</p>
+                        <p class="text-gray-700">Sirve para crear <b>Macros</b>, que son secuencias de comandos para realizar tareas repetitivas automáticamente. Por ejemplo, generar un reporte con un solo clic.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: El Entorno de VBA (VBE) -->
+            <div id="slide-3" class="slide">
                 <h3 class="section-header">2. El Entorno de Desarrollo (VBE)</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
                     Es nuestra "área de trabajo". Aquí es donde escribimos y probamos el código <code>VBA</code>.
@@ -194,7 +183,9 @@
                     <li><b>Módulo:</b> Es el "documento" donde escribimos nuestro código. Se crea desde <code class="bg-gray-200 p-1 rounded">Insertar > Módulo</code>.</li>
                 </ul>
             </div>
-<div id="slide-4" class="slide">
+
+            <!-- Slide 4: Objeto, Propiedad, Método -->
+            <div id="slide-4" class="slide">
                 <h3 class="section-header">3. Objeto, Propiedad y Método</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
                     VBA funciona como dar órdenes en español: necesitas un <b>sujeto</b>, un <b>atributo</b> y una <b>acción</b>.
@@ -226,7 +217,9 @@
                     </tbody>
                 </table>
             </div>
-<div id="slide-5" class="slide">
+
+            <!-- Slide 5: Ejemplo Práctico de Objeto/Propiedad -->
+            <div id="slide-5" class="slide">
                 <h3 class="section-header">Ejemplo: Objeto y Propiedad</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">Para cambiar el valor de la celda A1, le decimos a VBA: "Quiero que la <b>Celda A1</b>, cambie su <b>valor</b> a 'Hola Mundo'".</p>
                 <div class="code-block w-full max-w-2xl">
@@ -235,7 +228,11 @@
 <span class="code-object">Range</span>(<span class="code-string">"A1"</span>).<span class="code-property">Value</span> = <span class="code-string">"Hola Mundo"</span>
                     </pre>
                 </div>
-<div id="slide-6" class="slide">
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mt-6">Aquí, <code>Range("A1")</code> es el objeto y <code>.Value</code> es la propiedad que estamos cambiando.</p>
+            </div>
+
+            <!-- Slide 6: Variables -->
+            <div id="slide-6" class="slide">
                 <h3 class="section-header">4. Variables: Guardando Información</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">Una <b>variable</b> es como una caja con un nombre donde podemos guardar datos temporalmente (como un texto o un número).</p>
                 <div class="code-block w-full max-w-2xl">
@@ -247,7 +244,14 @@
 <span class="code-object">saludo</span> = <span class="code-string">"Bienvenido a VBA"</span>
                     </pre>
                 </div>
-<div id="slide-7" class="slide">
+                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2 max-w-2xl mx-auto">
+                    <li><code>Dim</code> es la palabra clave para "declarar" o crear una variable.</li>
+                    <li><code>String</code> es el tipo de dato para guardar texto.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 7: MsgBox -->
+            <div id="slide-7" class="slide">
                 <h3 class="section-header">5. Interactuando con el Usuario: <code>MsgBox</code></h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">La función <code>MsgBox</code> es la forma más sencilla de mostrar un mensaje emergente al usuario.</p>
                 <div class="code-block w-full max-w-2xl">
@@ -256,7 +260,18 @@
 <span class="code-object">MsgBox</span> <span class="code-string">"¡Mi primera macro funciona!"</span>
                     </pre>
                 </div>
-<div id="slide-8" class="slide">
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mt-6">También podemos mostrar el contenido de una variable.</p>
+                <div class="code-block w-full max-w-2xl">
+                    <pre>
+<span class="code-keyword">Dim</span> <span class="code-object">saludo</span> <span class="code-keyword">As</span> <span class="code-object">String</span>
+<span class="code-object">saludo</span> = <span class="code-string">"Bienvenido a VBA"</span>
+<span class="code-object">MsgBox</span> <span class="code-object">saludo</span>
+                    </pre>
+                </div>
+            </div>
+
+            <!-- Slide 8: Tu Primer Macro -->
+            <div id="slide-8" class="slide">
                 <h3 class="section-header">6. Tu Primer Macro: "Hola Mundo"</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">Todo el código VBA se escribe dentro de un procedimiento que empieza con <code>Sub</code> y termina con <code>End Sub</code>.</p>
                 <div class="code-block w-full max-w-2xl">
@@ -273,7 +288,10 @@
 <span class="code-keyword">End Sub</span>
                     </pre>
                 </div>
-<div id="slide-9" class="slide">
+            </div>
+
+            <!-- Slide 9: Cómo Ejecutar una Macro (NUEVA) -->
+            <div id="slide-9" class="slide">
                 <h3 class="section-header">7. Cómo Ejecutar tu Macro</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">Una vez escrito el código, hay varias formas de ponerlo en marcha:</p>
                 <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-3 max-w-2xl mx-auto">
@@ -283,7 +301,9 @@
                 </ul>
                 <img src="../../imagenes/macros.PNG" alt="Diálogo de Macros en Excel" class="max-w-md mx-auto content-image-style mt-4">
             </div>
-<div id="slide-10" class="slide">
+
+            <!-- Slide 10: Guardando el Libro (NUEVA) -->
+            <div id="slide-10" class="slide">
                 <h3 class="section-header">8. ¡Importante! Guardar tu Trabajo</h3>
                 <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
                     Para que tu código VBA se guarde, el libro de Excel <strong>DEBE</strong> ser guardado en un formato especial.
@@ -292,116 +312,67 @@
                     <p class="font-semibold text-red-700 mb-2">Formato Requerido: Libro de Excel habilitado para macros (*.xlsm)</p>
                     <p class="text-gray-700">Si lo guardas como un libro normal (`.xlsx`), ¡todo tu código VBA se borrará sin advertencia!</p>
                 </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+                <img src="../../imagenes/dialogo.PNG" alt="Diálogo de Guardar Como en Excel mostrando el formato .xlsm" class="max-w-xl mx-auto content-image-style mt-4">
             </div>
 
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
-            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
-                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
-            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
-                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
-                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
-                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
-                </div>
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
-                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+            <!-- Slide 11: Quiz -->
+            <div id="slide-11" class="slide">
+                <h3 class="section-header">9. ¡Pon a prueba tus conocimientos!</h3>
+                <div id="quiz-container" class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-md max-w-3xl w-full text-center">
+                    <div id="quiz-question" class="text-base sm:text-xl font-semibold mb-2 sm:mb-5 text-gray-800"></div>
+                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-3"></div>
+                    <div id="quiz-feedback" class="mt-3 sm:mt-5 text-sm sm:text-base font-bold"></div>
                 </div>
             </div>
-        </div>
 
-        <div class="slide">
-            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
-            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
-            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
-                © 2026 Instituto María Auxiliadora • ISEMED
+            <!-- Slide 12: Asignación Práctica (NUEVA) -->
+            <div id="slide-12" class="slide">
+                <h3 class="section-header">10. Asignación Práctica</h3>
+                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
+                    Abre un nuevo libro de Excel, ve al editor de VBA (<kbd>Alt + F11</kbd>), inserta un módulo y escribe la siguiente macro:
+                </p>
+                <div class="example-box max-w-2xl mx-auto">
+                    <p class="font-semibold text-indigo-700 mb-3">Tarea: Macro de Presentación</p>
+                    <p class="text-gray-700">Crea una macro llamada <code>MiPresentacion</code> que haga lo siguiente:</p>
+                    <ol class="list-decimal list-inside ml-4 text-gray-700 mt-2 space-y-2">
+                        <li>Escriba tu nombre completo en la celda <strong>B2</strong>.</li>
+                        <li>Escriba la fecha de hoy en la celda <strong>B3</strong> (Pista: usa la función <code>Date</code>).</li>
+                        <li>Muestre un <code>MsgBox</code> que diga "Tarea completada".</li>
+                    </ol>
+                    <p class="text-gray-700 mt-4">Finalmente, guarda el libro como <strong>"Tarea1_TuNombre.xlsm"</strong> y ejecútala.</p>
+                </div>
             </div>
-        </div>
+
+            <!-- Slide 13: Gracias -->
+            <div id="slide-13" class="slide">
+                <h3 class="section-header">¡Gracias!</h3>
+                <p class="text-2xl sm:text-3xl text-gray-700 font-semibold mt-4 max-w-3xl">
+                    ¡Ahora tienes las herramientas para empezar a automatizar en Excel!
+                </p>
+                <p class="text-lg sm:text-xl text-indigo-600 mt-8">
+                    ¿Preguntas?
+                </p>
+                <img src="../../imagenes/logo.png" alt="Logo de la Institución" class="w-24 sm:w-32 h-auto mt-10">
+            </div>
 
         </div>
     </main>
 
     <!-- Pie de página (Ahora incluye navegación) -->
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2 flex flex-col items-center justify-center">
+        <!-- Contenido principal del footer -->
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
+            <p class="text-sm">Ofimática I | Undécimo de Informática | © <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED.</p>
+        </div>
 
+        <!-- Controles de Navegación integrados en el footer -->
+        <div class="flex items-center justify-center space-x-4 mt-2 mb-1">
+            <button id="prev-btn" class="nav-button bg-indigo-500 hover:bg-indigo-600 text-white rounded-full px-4 py-2 text-xs transition-colors shadow-md">Anterior</button>
+            <div id="slide-counter" class="font-semibold text-white text-sm">1 / 13</div>
+            <button id="next-btn" class="nav-button bg-indigo-500 hover:bg-indigo-600 text-white rounded-full px-4 py-2 text-xs transition-colors shadow-md">Siguiente</button>
+        </div>
+    </footer>
 
     <!-- Scripts para la navegación, el quiz y la funcionalidad de pantalla completa -->
     <script>
@@ -562,16 +533,16 @@
             }, 10);
         }
         nextButton.addEventListener('click', () => {
-            nextSlide();
+            showSlide(currentSlideIndex + 1);
         });
         prevButton.addEventListener('click', () => {
-            prevSlide();
+            showSlide(currentSlideIndex - 1);
         });
         document.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowRight') {
-                nextSlide();
+                showSlide(currentSlideIndex + 1);
             } else if (event.key === 'ArrowLeft') {
-                prevSlide();
+                showSlide(currentSlideIndex - 1);
             }
         });
 
@@ -590,7 +561,7 @@
             if (currentYearSpan) {
                 currentYearSpan.textContent = new Date().getFullYear();
             }
-            currentSlideIndex = 0; showSlide(currentSlideIndex); handleFullscreenChange();
+            showSlide(0); handleFullscreenChange();
         });
 
     function handleFullscreenChange() {
@@ -615,87 +586,5 @@
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- PIE DE PÁGINA INSTITUCIONAL -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-[10px] p-4 transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <img src="../../imagenes/bandera-de-honduras.png" id="footer-flag" alt="HN" class="w-10 h-auto">
-            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
-        </div>
-    </footer>
-
-
-    <!-- LOGICA DE NAVEGACIÓN ESTÁNDAR (Fase 6) -->
-    <script>
-        (function() {
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') nextSlide();
-                   else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') prevSlide();
-                   else if (typeof prevSlide === 'function') prevSlide();
-                }
-            });
-
-            const container = document.getElementById('presentation-container') || document.body;
-            let tsX = 0;
-            container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-            container.addEventListener('touchend', e => {
-                let teX = e.changedTouches[0].screenX;
-                if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') nextSlide();
-                    else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') prevSlide();
-                    else if (typeof prevSlide === 'function') prevSlide();
-                }
-            }, {passive: true});
-
-            // Double tap for fullscreen
-            let lastTap = 0;
-            container.addEventListener('touchstart', (e) => {
-                const now = Date.now();
-                if (now - lastTap < 300) {
-                    if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(err => console.error(err));
-                    } else {
-                        document.exitFullscreen();
-                    }
-                }
-                lastTap = now;
-            }, {passive: true});
-
-            function handleFS() {
-                const isFS = document.fullscreenElement;
-                const h = document.getElementById('page-header');
-                const f = document.getElementById('page-footer');
-                if (h) h.style.display = isFS ? 'none' : 'flex';
-                if (f) f.style.display = isFS ? 'none' : 'block';
-            }
-            document.addEventListener('fullscreenchange', handleFS);
-            document.addEventListener('webkitfullscreenchange', handleFS);
-            document.addEventListener('mozfullscreenchange', handleFS);
-            document.addEventListener('MSFullscreenChange', handleFS);
-        })();
-    </script>
-
 </body>
 </html>
