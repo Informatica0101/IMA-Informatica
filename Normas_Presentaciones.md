@@ -1,9 +1,11 @@
-# Normas de Estandarización de Presentaciones IMA (v7.0)
+# Normas de Estandarización de Presentaciones IMA
 
 ## Propósito
 Este documento define las reglas técnicas, visuales, pedagógicas y de compatibilidad obligatorias para todas las presentaciones HTML del ecosistema educativo IMA.
 
 Ninguna presentación será válida si no cumple el 100% de estas normas.
+
+Usar la ultima presentacion como plantilla.
 
 ---
 
@@ -28,7 +30,7 @@ Elementos obligatorios:
 - Fecha
 
 Restricciones:
-- No modificar proporciones del logo
+- No modificar proporciones del logo en la portada de la plantilla. 
 - No cambiar alineación base
 - Mantener jerarquía visual institucional
 
@@ -107,7 +109,6 @@ Debe incluir:
 
 ## Paleta institucional
 - Azul
-- Naranja
 - Gris
 - Blanco
 
@@ -116,8 +117,8 @@ Debe incluir:
 # 3. Encabezado y pie global
 
 Obligatorio:
-- #page-header (igual a index.html)
-- #page-footer (igual a index.html)
+- igual a index.html
+- igual a index.html
 
 No se permiten versiones alternativas.
 
@@ -152,6 +153,17 @@ Comportamiento:
 - Deben tener alt obligatorio
 - No desbordar diapositiva
 - Siempre responsivas
+  
+# 6.1 Iconografía
+En caso de no contar con imagenes, usar iconografía
+-correspondiente al contexto del tema 
+
+# 6.2 Gráficos, Diagramas y Figuras. 
+En caso de que no se disponga de imágenes externas, se deben generar los elementos visuales directamente utilizando HTML, CSS y JavaScript.
+
+Esto incluye la creación de gráficos, diagramas, esquemas y figuras necesarias para la presentación, siempre que el contenido lo requiera para su correcta comprensión.
+
+La representación visual debe construirse de forma nativa dentro de la presentación, priorizando el uso de código estructurado en lugar de recursos externos, especialmente cuando se trate de ilustrar conceptos o reforzar contenido pedagógico.
 
 ---
 
