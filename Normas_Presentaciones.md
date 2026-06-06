@@ -12,20 +12,16 @@ Toda presentación debe seguir exactamente este orden:
     - Logo centralizado (../imagenes/logo.png).
     - Título del Tema (font-black, poppins).
     - Metadatos: Asignatura, Grado/Sección, Docente, Fecha.
-2.  **Diapositiva 2: Objetivos de la Clase**
-    - Al menos 2 objetivos de aprendizaje claros y medibles.
-3.  **Diapositivas 3-10: Desarrollo de Contenido**
-    - Combinación de texto narrativo, diagramas e imágenes.
+2.  **Diapositivas 2 a 6:** Desarrollo del Tema Principal 1. Explicaciones claras y ejemplos estructurados.
+*   **Diapositiva 7:** Ejercicio Práctico del Tema Principal 1. Incluye definiciones y conceptos clave.
+*   **Diapositivas 8 a 12:** Desarrollo del Tema Principal 2 o continuación avanzada del tema si no hay tema segundario.
+*   **Diapositiva 13:** Ejercicio Práctico del Tema Principal 2 o ejercicio para resolver en clase.
     - Los bloques de código deben usar `<pre><code>`.
-4.  **Diapositivas 11-12: Cuestionario Interactivo**
+4.  **Diapositivas 14-15: Cuestionario Interactivo**
     - 5 preguntas por diapositiva.
     - Integración con QuizPro (deben ser detectables por regex).
-5.  **Diapositiva 13: Resumen Ejecutivo**
-    - Puntos clave para el estudio.
-6.  **Diapositiva 14: Asignación Práctica**
+5.**Diapositiva 14: Asignación Práctica**
     - Instrucciones de la tarea, puntaje y fecha de entrega.
-7.  **Diapositiva 15: Glosario de Términos**
-8.  **Diapositiva 16: Cierre y Créditos Institucionales**
 
 ---
 
