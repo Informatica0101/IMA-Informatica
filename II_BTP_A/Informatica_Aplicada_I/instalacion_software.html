@@ -217,41 +217,84 @@
 </head>
 <body class="font-['Inter'] bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
-    <!-- ENCABEZADO INSTITUCIONAL -->
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../../imagenes/logo.png" id="header-logo" alt="Logo" class="w-16 sm:w-20 h-auto">
-            <div class="leading-none">
-                <h1 class="text-sm sm:text-base font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
-                <p class="text-[8px] sm:text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
-            </div>
+    <!-- Desktop Navigation -->
+    <header class="bg-white shadow-md py-4 px-6 sticky top-0 z-50 hidden md:block">
+        <div class="container mx-auto flex items-center justify-between">
+            <!-- Left Section: Logo -->
+            <a href="../../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
+                <img src="../../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
+            </a>
+
+            <!-- Center Section: Area de Informatica -->
+            <span class="font-extrabold text-2xl text-center flex-grow">Area de Informatica</span>
+
+            <!-- Right Section: Desktop Nav Links -->
+            <nav class="flex space-x-6">
+                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Inicio</a>
+                <!-- Dropdown Menu for Asignaturas -->
+                <div class="relative group">
+                    <button class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300 focus:outline-none flex items-center">
+                        Asignaturas
+                        <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 invisible group-hover:visible group-focus-within:visible">
+                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Informática I</a>
+                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ofimática I</a>
+                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
+                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
+                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseño Web II</a>
+                    </div>
+                </div>
+                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
+            </nav>
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-4">
-                <li><a href="../../index.html" id="nav-home-link" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest transition-colors">Inicio</a></li>
-            </ul>
-        </nav>
     </header>
 
-
-
-
-
-
-
-
-    <!-- Desktop Navigation -->
-
-
     <!-- Mobile Navigation (hidden by default, shown on small screens) -->
-
+    <header class="bg-white shadow-md py-4 px-4 flex justify-between items-center md:hidden">
+        <!-- Logo and Area de Informatica for mobile -->
+        <a href="../../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
+            <img src="../../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
+            <span class="font-extrabold text-xl">Area de Informatica</span>
+        </a>
+        <!-- Hamburger Icon -->
+        <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+        <!-- Mobile Menu Sidebar -->
+        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 p-6 flex flex-col">
+            <button id="close-mobile-menu" class="self-end text-gray-600 hover:text-indigo-600 focus:outline-none mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <nav class="flex flex-col space-y-4">
+                <a href="../../index.html" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Inicio</a>
+                <!-- Mobile Dropdown for Asignaturas -->
+                <div class="relative">
+                    <button id="mobile-asignaturas-button" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300 focus:outline-none flex items-center justify-between w-full">
+                        Asignaturas
+                        <svg class="ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="mobile-asignaturas-dropdown" class="hidden mt-2 pl-4 flex flex-col space-y-2">
+                        <a href="../../index.html" class="block text-base text-gray-700 hover:text-indigo-600">Informática I</a>
+                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Ofimática I</a>
+                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
+                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
+                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Diseño Web II</a>
+                    </div>
+                </div>
+                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
+            </nav>
+        </div>
+    </header>
 
     <main class="flex-grow container mx-auto px-4 py-8 flex flex-col items-center justify-center relative">
         <!-- Presentation Slides Container -->
         <div id="presentation-container" class="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden min-h-[60vh] flex flex-col justify-between">
 
             <!-- Slide 1: Portada -->
-            <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
+            <div id="slide-1" class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo de la Institución" style="width: 400px; height: auto;" class="mx-auto mb-8 cover-logo">
                 <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Instalación de Software y Virtualización</h1>
                 <h3 class="text-2xl text-gray-700 mb-2">Informática Aplicada I</h3>
@@ -261,22 +304,8 @@
                 <p class="text-xl text-gray-600">03 de agosto del 2025</p>
             </div>
 
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
-                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
-                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
-                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-<div id="slide-2" class="slide">
+            <!-- Slide 2: ¿Qué es la Instalación de Software? -->
+            <div id="slide-2" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">¿Qué es la Instalación de Software?</h2>
                 <p class="text-lg text-gray-700 mb-6">Proceso de preparar un programa para su ejecución en una computadora.</p>
                 <img src="../../imagenes/instalacion_software_concepto.png" width="250" height="auto" alt="Concepto de Instalación de Software" class="max-w-md mx-auto content-image-style">
@@ -285,7 +314,9 @@
                     <li>Crear accesos directos y registrar componentes.</li>
                 </ul>
             </div>
-<div id="slide-3" class="slide">
+
+            <!-- Slide 3: Tipos de Instaladores (Interfaz Gráfica - GUI) -->
+            <div id="slide-3" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">Tipos de Instaladores (<i>GUI</i>)</h2>
                 <p class="text-lg text-gray-700 mb-6">Los más comunes para usuarios, con asistentes visuales.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
@@ -296,7 +327,19 @@
                             <li><i>.msi</i> (Microsoft Installer)</li>
                         </ul>
                     </div>
-<div id="slide-4" class="slide">
+                    <div class="bg-green-50 p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-green-700 mb-3">macOS</h3>
+                        <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
+                            <li><i>.dmg</i> (Imágenes de disco)</li>
+                            <li><i>.pkg</i> (Paquetes de instalación)</li>
+                        </ul>
+                    </div>
+                </div>
+                <img src="../../imagenes/instaladores_gui.png" width="250" height="auto" alt="Ejemplos de Instaladores Gráficos" class="max-w-xl mx-auto content-image-style mt-6">
+            </div>
+
+            <!-- Slide 4: Instalación por Línea de Comandos (CLI) -->
+            <div id="slide-4" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">Instalación por Línea de Comandos (<i>CLI</i>)</h2>
                 <p class="text-lg text-gray-700 mb-6">Uso de la terminal para mayor control y automatización.</p>
                 <img src="../../imagenes/instalacion_cli.png" width="250" height="auto" alt="Instalación por Línea de Comandos" class="max-w-md mx-auto content-image-style">
@@ -308,7 +351,9 @@
                 </ul>
                 <p class="text-base text-gray-700 mt-4">Ventajas: Automatización, resolución de dependencias.</p>
             </div>
-<div id="slide-5" class="slide">
+
+            <!-- Slide 5: ¿Qué es la Virtualización? -->
+            <div id="slide-5" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">¿Qué es la Virtualización?</h2>
                 <p class="text-lg text-gray-700 mb-6">Tecnología para crear versiones virtuales de recursos informáticos.</p>
                 <img src="../../imagenes/virtualizacion_concepto.png" width="250" height="auto" alt="Concepto de Virtualización" class="max-w-md mx-auto content-image-style">
@@ -319,7 +364,9 @@
                     <li>Controlada por un <strong>Hypervisor</strong>.</li>
                 </ul>
             </div>
-<div id="slide-6" class="slide">
+
+            <!-- Slide 6: Ventajas de la Virtualización -->
+            <div id="slide-6" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">Ventajas de la Virtualización</h2>
                 <p class="text-lg text-gray-700 mb-6">Beneficios clave de usar máquinas virtuales.</p>
                 <img src="../../imagenes/ventajas_virtualizacion.png" width="250" height="auto" alt="Ventajas de la Virtualización" class="max-w-md mx-auto content-image-style">
@@ -331,7 +378,9 @@
                     <li><strong>Seguridad:</strong> Ejecutar software de riesgo sin afectar el sistema principal.</li>
                 </ul>
             </div>
-<div id="slide-7" class="slide">
+
+            <!-- Slide 7: Tipos de Hypervisores -->
+            <div id="slide-7" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">Tipos de Hypervisores</h2>
                 <p class="text-lg text-gray-700 mb-6">El software que gestiona las máquinas virtuales.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
@@ -343,7 +392,20 @@
                             <li>Ejemplos: VMware ESXi, Microsoft Hyper-V.</li>
                         </ul>
                     </div>
-<div id="slide-8" class="slide">
+                    <div class="bg-green-50 p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-green-700 mb-3">Tipo 2 (<i>Hosted</i>)</h3>
+                        <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
+                            <li>Se instala como una aplicación sobre un SO anfitrión.</li>
+                            <li>Más fácil de usar para usuarios domésticos.</li>
+                            <li>Ejemplos: Oracle VirtualBox, VMware Workstation.</li>
+                        </ul>
+                    </div>
+                </div>
+                <img src="../../imagenes/tipos_hypervisores.png" width="250" height="auto" alt="Tipos de Hypervisores" class="max-w-xl mx-auto content-image-style mt-6">
+            </div>
+
+            <!-- Slide 8: Software de Virtualización Popular -->
+            <div id="slide-8" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">Software de Virtualización Popular</h2>
                 <p class="text-lg text-gray-700 mb-6">Herramientas ampliamente utilizadas para crear y gestionar VMs.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl text-center">
@@ -352,7 +414,21 @@
                         <p class="text-xl font-medium text-gray-800">Oracle VirtualBox</p>
                         <p class="text-base text-gray-600">Gratuito, código abierto (Tipo 2)</p>
                     </div>
-<div id="slide-9" class="slide">
+                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
+                        <img src="../../imagenes/vmware_logo.png" alt="Logo VMware" class="h-16 mx-auto mb-3">
+                        <p class="text-xl font-medium text-gray-800">VMware Workstation / Fusion</p>
+                        <p class="text-base text-gray-600">Comercial, profesional (Tipo 2)</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm col-span-full">
+                        <img src="../../imagenes/hyperv_logo.png" alt="Logo Hyper-V" class="h-16 mx-auto mb-3">
+                        <p class="text-xl font-medium text-gray-800">Microsoft Hyper-V</p>
+                        <p class="text-base text-gray-600">Integrado en Windows Pro/Enterprise (Tipo 1)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 9: ¿Sabías que...? -->
+            <div id="slide-9" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">¿Sabías que...?</h2>
                 <ul class="list-disc list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-xl">
                     <li>La virtualización se originó en IBM en la década de 1960.</li>
@@ -363,109 +439,38 @@
                 <img src="../../imagenes/curiosidades_instalacion_virtualizacion.png" alt="Curiosidades sobre Instalación y Virtualización" class="max-w-md mx-auto content-image-style mt-6">
             </div>
 
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
+            <!-- Slide 10: ¿Verdadero o Falso? -->
+            <div id="slide-10" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">¿Verdadero o Falso?</h2>
+                <p class="text-lg text-gray-700 mb-6">¡Evalúa tus conocimientos sobre instalación y virtualización!</p>
 
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
-            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
-                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
-            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
-                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
-                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
-                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
-                </div>
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
-                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+                <div id="game-area-it" class="bg-gray-100 p-6 rounded-lg shadow-md w-full max-w-lg flex flex-col items-center">
+                    <p id="statement-text" class="text-2xl font-bold text-indigo-800 mb-6 text-center">Cargando afirmación...</p>
+                    <div class="flex flex-wrap justify-center gap-4 mb-6">
+                        <button class="it-game-button bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-answer="true">Verdadero</button>
+                        <button class="it-game-button bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-answer="false">Falso</button>
+                    </div>
+                    <p id="it-feedback" class="text-xl font-semibold mb-4"></p>
+                    <p class="text-lg text-gray-700">Aciertos: <span id="it-score" class="font-bold text-indigo-700">0</span> / <span id="it-total-questions" class="font-bold text-indigo-700">0</span></p>
+                    <button id="it-next-button" class="mt-6 bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-5 rounded-lg transition duration-200">Siguiente</button>
+                    <button id="it-restart-button" class="mt-3 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-lg transition duration-200">Reiniciar Juego</button>
                 </div>
             </div>
-        </div>
 
-        <div class="slide">
-            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
-            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
-            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
-                © 2026 Instituto María Auxiliadora • ISEMED
-            </div>
-        </div>
+            <!-- Slide 11: Asignación de Tarea -->
+            <div id="slide-11" class="slide">
+                <h2 class="text-indigo-700 font-extrabold mb-4">Asignación de Tarea</h2>
+                <div class="bg-yellow-50 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
+                    <p class="text-xl font-semibold text-yellow-800 mb-4">Para entregar el 10 de agosto de 2025:</p>
+                    <p class="text-base text-gray-700 space-y-3 text-left mx-auto max-w-md">
+                        Redacta un <strong>ensayo</strong> sobre las <strong>precauciones y buenas costumbres</strong> que se deben tener al momento de instalar programas en una computadora. El ensayo debe tener una extensión de:
+                        <ul class="list-disc list-inside ml-4 mt-2">
+                            <li>Página y media (1.5 páginas) si usas un cuaderno espiral grande.</li>
+                            <li>Dos páginas (2 páginas) si usas un cuaderno pequeño.</li>
+                        </ul>
+                        Asegúrate de incluir aspectos como: verificar la fuente del software, leer los términos y condiciones, evitar barras de herramientas no deseadas, el uso de antivirus, y la importancia de los permisos de instalación.
+                    </p>
+                </div>
             </div>
 
             <!-- Navigation Buttons -->
@@ -484,7 +489,14 @@
     </main>
 
     <!-- Footer -->
-
+    <footer class="bg-gray-900 text-gray-300 py-6 px-6 mt-8">
+        <div class="container mx-auto text-center text-sm">
+            <p class="flex items-center justify-center">
+                &copy;&nbsp;<span id="current-year"></span>&nbsp;Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
+                <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" style="width: 50px; height: auto; margin-left: 0.5rem;">
+            </p>
+        </div>
+    </footer>
 
     <script>
         // --- Mobile Menu Logic ---
@@ -550,7 +562,7 @@
                 newSlideElement.style.animationName = (direction === 'next' ? 'fadeInUp' : 'fadeInDown');
 
             } else if (!currentActiveSlide && index === 0) {
-                // This block specifically handles the very first load if currentSlideIndex = 0; showSlide(currentSlideIndex) is called
+                // This block specifically handles the very first load if showSlide(0) is called
                 // and no slide is active yet. It ensures the first slide is shown without animation.
                 newSlideElement.classList.add('active');
                 newSlideElement.style.display = 'flex';
@@ -804,87 +816,5 @@
     ];
 
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- PIE DE PÁGINA INSTITUCIONAL -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-[10px] p-4 transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <img src="../../imagenes/bandera-de-honduras.png" id="footer-flag" alt="HN" class="w-10 h-auto">
-            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
-        </div>
-    </footer>
-
-
-    <!-- LOGICA DE NAVEGACIÓN ESTÁNDAR (Fase 6) -->
-    <script>
-        (function() {
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') nextSlide();
-                   else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') prevSlide();
-                   else if (typeof prevSlide === 'function') prevSlide();
-                }
-            });
-
-            const container = document.getElementById('presentation-container') || document.body;
-            let tsX = 0;
-            container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-            container.addEventListener('touchend', e => {
-                let teX = e.changedTouches[0].screenX;
-                if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') nextSlide();
-                    else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') prevSlide();
-                    else if (typeof prevSlide === 'function') prevSlide();
-                }
-            }, {passive: true});
-
-            // Double tap for fullscreen
-            let lastTap = 0;
-            container.addEventListener('touchstart', (e) => {
-                const now = Date.now();
-                if (now - lastTap < 300) {
-                    if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(err => console.error(err));
-                    } else {
-                        document.exitFullscreen();
-                    }
-                }
-                lastTap = now;
-            }, {passive: true});
-
-            function handleFS() {
-                const isFS = document.fullscreenElement;
-                const h = document.getElementById('page-header');
-                const f = document.getElementById('page-footer');
-                if (h) h.style.display = isFS ? 'none' : 'flex';
-                if (f) f.style.display = isFS ? 'none' : 'block';
-            }
-            document.addEventListener('fullscreenchange', handleFS);
-            document.addEventListener('webkitfullscreenchange', handleFS);
-            document.addEventListener('mozfullscreenchange', handleFS);
-            document.addEventListener('MSFullscreenChange', handleFS);
-        })();
-    </script>
-
 </body>
 </html>
