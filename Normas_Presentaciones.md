@@ -96,6 +96,12 @@ Debe incluir:
 - Puntaje
 - Fecha de entrega
 
+# Restricciones de Contenido
+
+*   **Fuentes Autorizadas:** Únicamente se permite extraer información de los PDFs oficiales proporcionados en la carpeta de la asignatura correspondiente.
+*   **Análisis de Planes de Clase:** Es obligatorio identificar el tema correspondiente a la fecha exacta mediante el Plan de Clases oficial.
+*   **Coherencia Temporal:** Revisar el tema anterior y siguiente para evitar saltos lógicos o repeticiones innecesarias.
+*   **Temas Secundarios:** Solo se permite complementar información externa (como ejercicios de PSeInt o estructuras de control) si están explícitamente mencionados en el plan de clases.
 ---
 
 # 2. Diseño institucional
