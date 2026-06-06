@@ -2,819 +2,287 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presentación: Instalación de Software y Virtualización</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Instalación de Software y Virtualización - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Reduce base font size for overall scaling */
-        html {
-            font-size: 80%; /* Reduces overall size by 20% */
-        }
-
-        /* Custom animations for transitions */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeOutUp {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px); /* Changed for slide-in effect */
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeOutDown {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(20px); /* Changed for slide-out effect */
-            }
-        }
-
-        /* Specific styles for slides */
-        .slide {
-            display: none; /* Hidden by default */
-            animation-duration: 0.5s;
-            animation-fill-mode: forwards;
-            /* Ensure it fills the parent container fully */
-            position: absolute; /* Position absolutely within presentation-container */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%; /* Fill the height of the presentation-container */
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-            box-sizing: border-box;
-            background-color: white; /* Ensure background is white during transition */
-        }
-
-        .slide.active {
-            display: flex; /* Show active slide */
-            animation-name: fadeInUp; /* Animation for entering slide */
-            position: relative; /* Make active slide take up space */
-            z-index: 1; /* Ensure it's above any lingering old slides */
-        }
-
-        .slide.leaving {
-            animation-name: fadeOutDown; /* Animation for leaving slide */
-            position: absolute; /* It needs to stay absolute to animate out */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 20; /* Ensure it animates on top of the incoming slide */
-            display: flex; /* Keep it flex during animation */
-        }
-
-        /* Custom styles for navigation buttons */
-        .nav-button {
-            background-color: #4F46E5; /* Indigo 600 */
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-
-        .nav-button:hover {
-            background-color: #4338CA; /* Indigo 700 */
-            transform: translateY(-2px);
-        }
-
-        .nav-button:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Mobile navigation menu specific styles */
-        .mobile-menu {
-            transition: transform 0.3s ease-out;
-            transform: translateX(100%); /* Hidden by default */
-        }
-
-        .mobile-menu.open {
-            transform: translateX(0); /* Visible when open */
-        }
-
-        /* Ensure content takes available space */
-        .content-area {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-        }
-
-        /* Responsive adjustments for text and images */
-        .slide h1 {
-            font-size: 2.5rem; /* Default for larger screens */
-        }
-        .slide h2 {
-            font-size: 2rem;
-        }
-        .slide p, .slide ul {
-            font-size: 1.1rem;
-            max-width: 800px; /* Limit text width for readability */
-            margin: 0 auto;
-        }
-        /* General image styling - removed border-radius and box-shadow */
-        .slide img {
-            max-width: 80%;
-            height: auto;
-        }
-
-        /* Specific style for content images (not cover logo) */
-        .content-image-style {
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            margin-top: 1.5rem;
-        }
-
-        /* Specific style for the cover logo to ensure no square shadow */
-        .cover-logo {
-            box-shadow: none !important; /* Override any potential inherited shadows */
-        }
-
-
-        @media (max-width: 768px) {
-            html {
-                font-size: 75%; /* Further reduce for smaller screens */
-            }
-            .slide h1 {
-                font-size: 2rem;
-            }
-            .slide h2 {
-                font-size: 1.75rem;
-            }
-            .slide p, .slide ul {
-                font-size: 1rem;
-                padding: 0 1rem;
-            }
-            .slide {
-                padding: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            html {
-                font-size: 70%;
-            }
-            .slide h1 {
-                font-size: 1.75rem;
-            }
-            .slide h2 {
-                font-size: 1.5rem;
-            }
-            .slide p, .slide ul {
-                font-size: 0.9rem;
-            }
-            .slide img {
-                max-width: 95%;
-            }
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="font-['Inter'] bg-gray-50 text-gray-800 flex flex-col min-h-screen">
-
-    <!-- Desktop Navigation -->
-    <header class="bg-white shadow-md py-4 px-6 sticky top-0 z-50 hidden md:block">
-        <div class="container mx-auto flex items-center justify-between">
-            <!-- Left Section: Logo -->
-            <a href="../../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
-                <img src="../../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
-            </a>
-
-            <!-- Center Section: Area de Informatica -->
-            <span class="font-extrabold text-2xl text-center flex-grow">Area de Informatica</span>
-
-            <!-- Right Section: Desktop Nav Links -->
-            <nav class="flex space-x-6">
-                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Inicio</a>
-                <!-- Dropdown Menu for Asignaturas -->
-                <div class="relative group">
-                    <button class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300 focus:outline-none flex items-center">
-                        Asignaturas
-                        <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 invisible group-hover:visible group-focus-within:visible">
-                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Informática I</a>
-                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ofimática I</a>
-                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
-                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
-                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseño Web II</a>
-                    </div>
-                </div>
-                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
-            </nav>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Preparando entorno...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <!-- Mobile Navigation (hidden by default, shown on small screens) -->
-    <header class="bg-white shadow-md py-4 px-4 flex justify-between items-center md:hidden">
-        <!-- Logo and Area de Informatica for mobile -->
-        <a href="../../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
-            <img src="../../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
-            <span class="font-extrabold text-xl">Area de Informatica</span>
-        </a>
-        <!-- Hamburger Icon -->
-        <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-        </button>
-        <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
-        <!-- Mobile Menu Sidebar -->
-        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 p-6 flex flex-col">
-            <button id="close-mobile-menu" class="self-end text-gray-600 hover:text-indigo-600 focus:outline-none mb-4">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <nav class="flex flex-col space-y-4">
-                <a href="../../index.html" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Inicio</a>
-                <!-- Mobile Dropdown for Asignaturas -->
-                <div class="relative">
-                    <button id="mobile-asignaturas-button" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300 focus:outline-none flex items-center justify-between w-full">
-                        Asignaturas
-                        <svg class="ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div id="mobile-asignaturas-dropdown" class="hidden mt-2 pl-4 flex flex-col space-y-2">
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:text-indigo-600">Informática I</a>
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Ofimática I</a>
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Diseño Web II</a>
-                    </div>
-                </div>
-                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
-            </nav>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Instalación de Software y Virtualización</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Informática Aplicada I</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
+            </div>
         </div>
-    </header>
 
-    <main class="flex-grow container mx-auto px-4 py-8 flex flex-col items-center justify-center relative">
-        <!-- Presentation Slides Container -->
-        <div id="presentation-container" class="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden min-h-[60vh] flex flex-col justify-between">
-
-            <!-- Slide 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo de la Institución" style="width: 400px; height: auto;" class="mx-auto mb-8 cover-logo">
-                <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Instalación de Software y Virtualización</h1>
-                <h3 class="text-2xl text-gray-700 mb-2">Informática Aplicada I</h3>
-                <p class="text-xl text-gray-600 mb-2">Undécimo A</p>
-                <p class="text-xl text-gray-600 mb-2">Docente: Pablo Antonio Peña</p>
-                <p class="text-xl text-gray-600 mb-2">San Pedro Sula</p>
-                <p class="text-xl text-gray-600">03 de agosto del 2025</p>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es la Instalación?</h2>
+            <div class="concept-box">
+                <p>Es el proceso de preparar un programa para ser ejecutado en el sistema. Implica copiar archivos, registrar librerías y configurar parámetros iniciales.</p>
             </div>
+            <i class="fas fa-box-open text-6xl text-blue-300 mt-4"></i>
+        </div>
 
-            <!-- Slide 2: ¿Qué es la Instalación de Software? -->
-            <div id="slide-2" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">¿Qué es la Instalación de Software?</h2>
-                <p class="text-lg text-gray-700 mb-6">Proceso de preparar un programa para su ejecución en una computadora.</p>
-                <img src="../../imagenes/instalacion_software_concepto.png" width="250" height="auto" alt="Concepto de Instalación de Software" class="max-w-md mx-auto content-image-style">
-                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                    <li>Copiar archivos, configurar ajustes del sistema.</li>
-                    <li>Crear accesos directos y registrar componentes.</li>
-                </ul>
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tipos de Instalación</h2>
+            <ul class="text-left max-w-xl space-y-4">
+                <li><i class="fas fa-check text-green-500 mr-2"></i> <strong>Típica:</strong> Configuración estándar para la mayoría de usuarios.</li>
+                <li><i class="fas fa-cogs text-blue-500 mr-2"></i> <strong>Personalizada:</strong> El usuario elige qué componentes instalar.</li>
+                <li><i class="fas fa-bolt text-yellow-500 mr-2"></i> <strong>Silenciosa:</strong> Se realiza sin intervención del usuario.</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es la Virtualización?</h2>
+            <div class="concept-box border-purple-400">
+                <p>Es la tecnología que permite crear una representación virtual de recursos físicos (como una computadora completa) dentro de otra computadora.</p>
             </div>
+            <i class="fas fa-layer-group text-6xl text-purple-400 mt-4"></i>
+        </div>
 
-            <!-- Slide 3: Tipos de Instaladores (Interfaz Gráfica - GUI) -->
-            <div id="slide-3" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">Tipos de Instaladores (<i>GUI</i>)</h2>
-                <p class="text-lg text-gray-700 mb-6">Los más comunes para usuarios, con asistentes visuales.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
-                    <div class="bg-blue-50 p-6 rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-blue-700 mb-3">Windows</h3>
-                        <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                            <li><i>.exe</i> (ejecutables autoextraíbles)</li>
-                            <li><i>.msi</i> (Microsoft Installer)</li>
-                        </ul>
-                    </div>
-                    <div class="bg-green-50 p-6 rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-green-700 mb-3">macOS</h3>
-                        <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                            <li><i>.dmg</i> (Imágenes de disco)</li>
-                            <li><i>.pkg</i> (Paquetes de instalación)</li>
-                        </ul>
-                    </div>
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Máquina Virtual (VM)</h2>
+            <p>Es un software que emula una computadora física. Tiene su propia CPU virtual, memoria, disco y puede ejecutar un Sistema Operativo independiente.</p>
+            <i class="fas fa-desktop text-6xl text-gray-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Hypervisor</h2>
+            <div class="concept-box">
+                <p>Es el software "maestro" que gestiona las máquinas virtuales y reparte los recursos del hardware físico entre ellas.</p>
+            </div>
+            <p class="mt-4 font-bold">Tipos: Nativo (Tipo 1) y Alojado (Tipo 2).</p>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Hypervisor Tipo 2</h2>
+            <p>Se instala como un programa más dentro de Windows o Linux. Es ideal para estudiantes y pruebas personales.</p>
+            <div class="flex space-x-12 mt-6">
+                <div class="text-center"><i class="fas fa-cube text-5xl"></i><br>VirtualBox</div>
+                <div class="text-center"><i class="fas fa-clone text-5xl"></i><br>VMware Player</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ventajas de Virtualizar</h2>
+            <ul class="text-left space-y-2 max-w-xl">
+                <li><i class="fas fa-shield-alt text-green-500 mr-2"></i> <strong>Aislamiento:</strong> Si la VM falla, el PC real no se afecta.</li>
+                <li><i class="fas fa-copy text-blue-500 mr-2"></i> <strong>Snapshots:</strong> Guardar el estado actual y volver atrás si algo falla.</li>
+                <li><i class="fas fa-microchip text-red-500 mr-2"></i> <strong>Consolidación:</strong> Muchos SO en un solo servidor.</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Requisitos de Hardware</h2>
+            <p>Virtualizar consume muchos recursos físicos. Se recomienda:</p>
+            <div class="grid grid-cols-2 gap-4 mt-4 font-bold text-sm">
+                <div class="p-2 border">Mucha RAM (mínimo 8GB)</div>
+                <div class="p-2 border">CPU con VT-x o AMD-V</div>
+                <div class="p-2 border">SSD rápido</div>
+                <div class="p-2 border">Espacio en disco</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Uso en Servidores (Nube)</h2>
+            <p>La mayoría de los servidores en Internet son realmente Máquinas Virtuales corriendo sobre potentes computadoras físicas.</p>
+            <i class="fas fa-cloud text-6xl text-sky-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Instalación en la VM</h2>
+            <p>Para instalar un SO en una VM se suele usar un archivo <strong>.ISO</strong>, que es la copia digital de un DVD de instalación.</p>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Portabilidad</h2>
+            <p>Una máquina virtual entera se puede guardar en una USB y llevarse a otra computadora sin necesidad de reinstalar nada.</p>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Concepto de "Anfitrión" e "Invitado"</h2>
+            <ul class="text-left max-w-lg space-y-4">
+                <li><strong>Anfitrión (Host):</strong> Tu computadora real.</li>
+                <li><strong>Invitado (Guest):</strong> El sistema que vive dentro de la VM.</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">DISEÑO DE VM</h3>
+                <p>Investigar los requisitos mínimos de Windows 11. Luego, diseñar cómo configurarían una Máquina Virtual para este sistema: ¿Cuánta RAM le darían? ¿Cuántos procesadores? ¿Cuánto espacio en disco?</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
                 </div>
-                <img src="../../imagenes/instaladores_gui.png" width="250" height="auto" alt="Ejemplos de Instaladores Gráficos" class="max-w-xl mx-auto content-image-style mt-6">
-            </div>
-
-            <!-- Slide 4: Instalación por Línea de Comandos (CLI) -->
-            <div id="slide-4" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">Instalación por Línea de Comandos (<i>CLI</i>)</h2>
-                <p class="text-lg text-gray-700 mb-6">Uso de la terminal para mayor control y automatización.</p>
-                <img src="../../imagenes/instalacion_cli.png" width="250" height="auto" alt="Instalación por Línea de Comandos" class="max-w-md mx-auto content-image-style">
-                <h3 class="text-xl font-semibold text-purple-700 mt-6 mb-3">Gestores de Paquetes:</h3>
-                <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                    <li><i>apt</i> (Debian/Ubuntu): `sudo apt install nombre_paquete`</li>
-                    <li><i>yum / dnf</i> (Red Hat/Fedora)</li>
-                    <li><i>pip</i> (Python): `pip install nombre_modulo`</li>
-                </ul>
-                <p class="text-base text-gray-700 mt-4">Ventajas: Automatización, resolución de dependencias.</p>
-            </div>
-
-            <!-- Slide 5: ¿Qué es la Virtualización? -->
-            <div id="slide-5" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">¿Qué es la Virtualización?</h2>
-                <p class="text-lg text-gray-700 mb-6">Tecnología para crear versiones virtuales de recursos informáticos.</p>
-                <img src="../../imagenes/virtualizacion_concepto.png" width="250" height="auto" alt="Concepto de Virtualización" class="max-w-md mx-auto content-image-style">
-                <h3 class="text-xl font-semibold text-purple-700 mt-6 mb-3">Máquina Virtual (<i>VM</i>):</h3>
-                <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                    <li>Emulación de un sistema informático completo.</li>
-                    <li>Ejecuta un SO invitado sobre un SO anfitrión.</li>
-                    <li>Controlada por un <strong>Hypervisor</strong>.</li>
-                </ul>
-            </div>
-
-            <!-- Slide 6: Ventajas de la Virtualización -->
-            <div id="slide-6" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">Ventajas de la Virtualización</h2>
-                <p class="text-lg text-gray-700 mb-6">Beneficios clave de usar máquinas virtuales.</p>
-                <img src="../../imagenes/ventajas_virtualizacion.png" width="250" height="auto" alt="Ventajas de la Virtualización" class="max-w-md mx-auto content-image-style">
-                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                    <li><strong>Aislamiento:</strong> Entornos separados y seguros.</li>
-                    <li><strong>Consolidación:</strong> Múltiples SO en una sola máquina física.</li>
-                    <li><strong>Portabilidad:</strong> Mover VMs fácilmente entre hosts.</li>
-                    <li><strong>Desarrollo y Pruebas:</strong> Entornos seguros para experimentar.</li>
-                    <li><strong>Seguridad:</strong> Ejecutar software de riesgo sin afectar el sistema principal.</li>
-                </ul>
-            </div>
-
-            <!-- Slide 7: Tipos de Hypervisores -->
-            <div id="slide-7" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">Tipos de Hypervisores</h2>
-                <p class="text-lg text-gray-700 mb-6">El software que gestiona las máquinas virtuales.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
-                    <div class="bg-blue-50 p-6 rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-blue-700 mb-3">Tipo 1 (<i>Bare-Metal</i>)</h3>
-                        <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                            <li>Se instala directamente sobre el hardware.</li>
-                            <li>Alto rendimiento, seguridad.</li>
-                            <li>Ejemplos: VMware ESXi, Microsoft Hyper-V.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-green-50 p-6 rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-green-700 mb-3">Tipo 2 (<i>Hosted</i>)</h3>
-                        <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                            <li>Se instala como una aplicación sobre un SO anfitrión.</li>
-                            <li>Más fácil de usar para usuarios domésticos.</li>
-                            <li>Ejemplos: Oracle VirtualBox, VMware Workstation.</li>
-                        </ul>
-                    </div>
-                </div>
-                <img src="../../imagenes/tipos_hypervisores.png" width="250" height="auto" alt="Tipos de Hypervisores" class="max-w-xl mx-auto content-image-style mt-6">
-            </div>
-
-            <!-- Slide 8: Software de Virtualización Popular -->
-            <div id="slide-8" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">Software de Virtualización Popular</h2>
-                <p class="text-lg text-gray-700 mb-6">Herramientas ampliamente utilizadas para crear y gestionar VMs.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl text-center">
-                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
-                        <img src="../../imagenes/virtualbox_logo.png" alt="Logo VirtualBox" class="h-16 mx-auto mb-3">
-                        <p class="text-xl font-medium text-gray-800">Oracle VirtualBox</p>
-                        <p class="text-base text-gray-600">Gratuito, código abierto (Tipo 2)</p>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
-                        <img src="../../imagenes/vmware_logo.png" alt="Logo VMware" class="h-16 mx-auto mb-3">
-                        <p class="text-xl font-medium text-gray-800">VMware Workstation / Fusion</p>
-                        <p class="text-base text-gray-600">Comercial, profesional (Tipo 2)</p>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm col-span-full">
-                        <img src="../../imagenes/hyperv_logo.png" alt="Logo Hyper-V" class="h-16 mx-auto mb-3">
-                        <p class="text-xl font-medium text-gray-800">Microsoft Hyper-V</p>
-                        <p class="text-base text-gray-600">Integrado en Windows Pro/Enterprise (Tipo 1)</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 9: ¿Sabías que...? -->
-            <div id="slide-9" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">¿Sabías que...?</h2>
-                <ul class="list-disc list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-xl">
-                    <li>La virtualización se originó en IBM en la década de 1960.</li>
-                    <li>El término "<i>sandbox</i>" (entorno aislado) está relacionado con la virtualización.</li>
-                    <li>La virtualización es la base de la "Computación en la Nube" (<i>Cloud Computing</i>).</li>
-                    <li>Puedes instalar casi cualquier SO en una VM, ideal para pruebas.</li>
-                </ul>
-                <img src="../../imagenes/curiosidades_instalacion_virtualizacion.png" alt="Curiosidades sobre Instalación y Virtualización" class="max-w-md mx-auto content-image-style mt-6">
-            </div>
-
-            <!-- Slide 10: ¿Verdadero o Falso? -->
-            <div id="slide-10" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">¿Verdadero o Falso?</h2>
-                <p class="text-lg text-gray-700 mb-6">¡Evalúa tus conocimientos sobre instalación y virtualización!</p>
-
-                <div id="game-area-it" class="bg-gray-100 p-6 rounded-lg shadow-md w-full max-w-lg flex flex-col items-center">
-                    <p id="statement-text" class="text-2xl font-bold text-indigo-800 mb-6 text-center">Cargando afirmación...</p>
-                    <div class="flex flex-wrap justify-center gap-4 mb-6">
-                        <button class="it-game-button bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-answer="true">Verdadero</button>
-                        <button class="it-game-button bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-answer="false">Falso</button>
-                    </div>
-                    <p id="it-feedback" class="text-xl font-semibold mb-4"></p>
-                    <p class="text-lg text-gray-700">Aciertos: <span id="it-score" class="font-bold text-indigo-700">0</span> / <span id="it-total-questions" class="font-bold text-indigo-700">0</span></p>
-                    <button id="it-next-button" class="mt-6 bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-5 rounded-lg transition duration-200">Siguiente</button>
-                    <button id="it-restart-button" class="mt-3 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-lg transition duration-200">Reiniciar Juego</button>
-                </div>
-            </div>
-
-            <!-- Slide 11: Asignación de Tarea -->
-            <div id="slide-11" class="slide">
-                <h2 class="text-indigo-700 font-extrabold mb-4">Asignación de Tarea</h2>
-                <div class="bg-yellow-50 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
-                    <p class="text-xl font-semibold text-yellow-800 mb-4">Para entregar el 10 de agosto de 2025:</p>
-                    <p class="text-base text-gray-700 space-y-3 text-left mx-auto max-w-md">
-                        Redacta un <strong>ensayo</strong> sobre las <strong>precauciones y buenas costumbres</strong> que se deben tener al momento de instalar programas en una computadora. El ensayo debe tener una extensión de:
-                        <ul class="list-disc list-inside ml-4 mt-2">
-                            <li>Página y media (1.5 páginas) si usas un cuaderno espiral grande.</li>
-                            <li>Dos páginas (2 páginas) si usas un cuaderno pequeño.</li>
-                        </ul>
-                        Asegúrate de incluir aspectos como: verificar la fuente del software, leer los términos y condiciones, evitar barras de herramientas no deseadas, el uso de antivirus, y la importancia de los permisos de instalación.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Navigation Buttons -->
-            <div class="flex justify-between w-full p-4 mt-auto">
-                <button id="prev-slide" class="nav-button flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    Anterior
-                </button>
-                <span id="slide-counter" class="text-gray-600 font-medium text-lg flex items-center">1 / 11</span>
-                <button id="next-slide" class="nav-button flex items-center">
-                    Siguiente
-                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </button>
             </div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-6 px-6 mt-8">
-        <div class="container mx-auto text-center text-sm">
-            <p class="flex items-center justify-center">
-                &copy;&nbsp;<span id="current-year"></span>&nbsp;Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
-                <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" style="width: 50px; height: auto; margin-left: 0.5rem;">
-            </p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
-        // --- Mobile Menu Logic ---
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-        const mobileAsignaturasButton = document.getElementById('mobile-asignaturas-button');
-        const mobileAsignaturasDropdown = document.getElementById('mobile-asignaturas-dropdown');
-
-        function toggleMobileMenu() {
-            mobileMenu.classList.toggle('open');
-            mobileMenuOverlay.classList.toggle('hidden');
-        }
-
-        mobileMenuButton.addEventListener('click', toggleMobileMenu);
-        closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
-        mobileMenuOverlay.addEventListener('click', toggleMobileMenu); // Close when clicking outside
-
-        mobileAsignaturasButton.addEventListener('click', () => {
-            mobileAsignaturasDropdown.classList.toggle('hidden');
-            // Rotate arrow icon
-            mobileAsignaturasButton.querySelector('svg').classList.toggle('rotate-180');
-        });
-
-        // --- Presentation Logic ---
-        const slides = document.querySelectorAll('.slide');
-        const prevButton = document.getElementById('prev-slide');
-        const nextButton = document.getElementById('next-slide');
-        const slideCounter = document.getElementById('slide-counter');
         let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
-        function updateSlideCounter() {
-            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-        }
-
-        function showSlide(index, direction = 'next') {
-            // Ensure index is within bounds
-            if (index < 0 || index >= slides.length) {
-                return;
-            }
-
-            const currentActiveSlide = document.querySelector('.slide.active');
-            const newSlideElement = slides[index];
-
-            // If there's an active slide and it's not the same as the new one
-            if (currentActiveSlide && currentActiveSlide !== newSlideElement) {
-                // Animate out the current slide
-                currentActiveSlide.classList.add('leaving'); // Add leaving class for its animation
-                currentActiveSlide.style.animationName = (direction === 'next' ? 'fadeOutDown' : 'fadeOutUp');
-
-                // Listen for animation end to fully hide the leaving slide
-                currentActiveSlide.addEventListener('animationend', function handler() {
-                    currentActiveSlide.classList.remove('active', 'leaving'); // Remove both active and leaving
-                    currentActiveSlide.style.display = 'none'; // Hide it completely
-                    currentActiveSlide.style.animationName = ''; // Clear animation
-                    currentActiveSlide.removeEventListener('animationend', handler);
-                }, { once: true });
-
-                // Animate in the new slide
-                newSlideElement.classList.add('active'); // Make it active so it takes up space
-                newSlideElement.style.display = 'flex'; // Ensure it's displayed
-                newSlideElement.style.animationName = (direction === 'next' ? 'fadeInUp' : 'fadeInDown');
-
-            } else if (!currentActiveSlide && index === 0) {
-                // This block specifically handles the very first load if showSlide(0) is called
-                // and no slide is active yet. It ensures the first slide is shown without animation.
-                newSlideElement.classList.add('active');
-                newSlideElement.style.display = 'flex';
-                newSlideElement.style.animationName = ''; // No animation on initial display
-            }
-
-            currentSlideIndex = index;
-            updateSlideCounter();
-            updateNavigationButtons();
-
-            // Special handling for the game slide to initialize it when shown
-            if (newSlideElement.id === 'slide-10') { // Changed to slide-10 for the new minigame
-                initializeITGame();
-            }
-        }
-
-
-        function updateNavigationButtons() {
-            prevButton.disabled = currentSlideIndex === 0;
-            nextButton.disabled = currentSlideIndex === slides.length - 1;
-        }
-
-        function nextSlide() {
-            if (currentSlideIndex < slides.length - 1) {
-                showSlide(currentSlideIndex + 1, 'next');
-            }
-        }
-
-        function prevSlide() {
-            if (currentSlideIndex > 0) {
-                showSlide(currentSlideIndex - 1, 'prev');
-            }
-        }
-
-        // Event Listeners for Navigation Buttons
-        prevButton.addEventListener('click', prevSlide);
-        nextButton.addEventListener('click', nextSlide);
-
-        // Keyboard Navigation
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowRight') {
-                nextSlide();
-            } else if (event.key === 'ArrowLeft') {
-                prevSlide();
-            }
-        });
-
-        // --- Minijuego de Informática Aplicada Logic ---
-        const itGameData = [
-            { statement: "Un archivo .exe es un instalador gráfico común en Windows.", answer: true },
-            { statement: "La virtualización solo permite ejecutar un sistema operativo invitado a la vez.", answer: false },
-            { statement: "Un hypervisor Tipo 1 se instala directamente sobre el hardware físico.", answer: true },
-            { statement: "El comando 'pip install' se usa para instalar paquetes en sistemas Linux basados en Debian.", answer: false },
-            { statement: "Las máquinas virtuales ofrecen aislamiento, lo que mejora la seguridad.", answer: true },
-            { statement: "VMware Workstation es un ejemplo de hypervisor Tipo 1 (bare-metal).", answer: false },
-            { statement: "La instalación desde código fuente es el método más sencillo para usuarios principiantes.", answer: false },
-            { statement: "La virtualización ayuda a la consolidación de hardware, reduciendo costos.", answer: true }
+        const quizQuestions = [
+            { q: "Software que gestiona VMs:", a: "B", options: ["BIOS", "Hypervisor", "Kernel", "Drivers"] },
+            { q: "¿Qué es una VM?", a: "C", options: ["Virus Mortal", "Video Musical", "Máquina Virtual", "Modo Veloz"] },
+            { q: "Tu PC real se llama:", a: "A", options: ["Anfitrión", "Invitado", "Esclavo", "Cliente"] },
+            { q: "Instalación sin intervención:", a: "D", options: ["Típica", "Full", "Manual", "Silenciosa"] },
+            { q: "Guardar estado de una VM:", a: "B", options: ["Copy", "Snapshot", "Delete", "Render"] },
+            { q: "Formato de imagen de disco:", a: "C", options: [".mp3", ".docx", ".iso", ".txt"] },
+            { q: "Hypervisor Tipo 2 corre en:", a: "A", options: ["Un SO anfitrión", "Hardware puro", "Un celular", "El BIOS"] },
+            { q: "¿Qué consume más una VM?", a: "D", options: ["Teclado", "Mouse", "Luz", "RAM"] },
+            { q: "Ventaja de aislamiento:", a: "B", options: ["Más color", "Más seguridad", "Menos costo", "Menos peso"] },
+            { q: "VirtualBox es un Hypervisor:", a: "A", options: ["Tipo 2", "Tipo 1", "Tipo 3", "Nulo"] }
         ];
 
-        let currentITQuestionIndex = 0;
-        let itScore = 0;
-        let shuffledITQuestions = [];
-
-        const statementTextDisplay = document.getElementById('statement-text');
-        const itGameButtons = document.querySelectorAll('.it-game-button');
-        const itFeedbackDisplay = document.getElementById('it-feedback');
-        const itScoreDisplay = document.getElementById('it-score');
-        const itTotalQuestionsDisplay = document.getElementById('it-total-questions');
-        const itNextButton = document.getElementById('it-next-button');
-        const itRestartButton = document.getElementById('it-restart-button');
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        function initializeITGame() {
-            shuffledITQuestions = shuffleArray([...itGameData]); // Create a shuffled copy
-            currentITQuestionIndex = 0;
-            itScore = 0;
-            itTotalQuestionsDisplay.textContent = shuffledITQuestions.length;
-            updateITGameDisplay();
-            enableITGameButtons();
-            itNextButton.style.display = 'none'; // Hide next button initially
-            itRestartButton.style.display = 'none'; // Hide restart button initially
-        }
-
-        function updateITGameDisplay() {
-            if (currentITQuestionIndex < shuffledITQuestions.length) {
-                statementTextDisplay.textContent = shuffledITQuestions[currentITQuestionIndex].statement;
-                itFeedbackDisplay.textContent = "";
-                itScoreDisplay.textContent = itScore;
-                enableITGameButtons();
-                itNextButton.style.display = 'none'; // Hide next button until answered
-            } else {
-                statementTextDisplay.textContent = "¡Juego Terminado!";
-                itFeedbackDisplay.textContent = `Tu puntuación final es: ${itScore} de ${shuffledITQuestions.length}`;
-                disableITGameButtons();
-                itNextButton.style.display = 'none';
-                itRestartButton.style.display = 'block'; // Show restart button
-            }
-        }
-
-        function handleITAnswer(selectedAnswer) {
-            const correctAnswer = shuffledITQuestions[currentITQuestionIndex].answer;
-            const isCorrect = (selectedAnswer === 'true' && correctAnswer === true) || (selectedAnswer === 'false' && correctAnswer === false);
-
-            if (isCorrect) {
-                itFeedbackDisplay.textContent = "¡Correcto!";
-                itFeedbackDisplay.classList.remove('text-red-600');
-                itFeedbackDisplay.classList.add('text-green-600');
-                itScore++;
-            } else {
-                itFeedbackDisplay.textContent = `Incorrecto. La respuesta correcta es: ${correctAnswer ? 'Verdadero' : 'Falso'}.`;
-                itFeedbackDisplay.classList.remove('text-green-600');
-                itFeedbackDisplay.classList.add('text-red-600');
-            }
-            itScoreDisplay.textContent = itScore;
-            disableITGameButtons();
-            if (currentITQuestionIndex < shuffledITQuestions.length - 1) {
-                itNextButton.style.display = 'block'; // Show next button
-            } else {
-                itRestartButton.style.display = 'block'; // Show restart button if last question
-            }
-        }
-
-        function enableITGameButtons() {
-            itGameButtons.forEach(button => {
-                button.disabled = false;
-                button.classList.remove('opacity-50', 'cursor-not-allowed');
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
             });
         }
 
-        function disableITGameButtons() {
-            itGameButtons.forEach(button => {
-                button.disabled = true;
-                button.classList.add('opacity-50', 'cursor-not-allowed');
-            });
-        }
-
-        itGameButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                handleITAnswer(event.target.dataset.answer);
-            });
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-
-        itNextButton.addEventListener('click', () => {
-            currentITQuestionIndex++;
-            updateITGameDisplay();
-        });
-
-        itRestartButton.addEventListener('click', () => {
-            initializeITGame();
-        });
-
-
-        // --- Initialize on DOMContentLoaded ---
-        document.addEventListener('DOMContentLoaded', () => { handleFullscreenChange();
-            // Set current year in footer
-            const currentYearSpan = document.getElementById('current-year');
-            if (currentYearSpan) { // Added a check to prevent TypeError if element is not found
-                currentYearSpan.textContent = new Date().getFullYear();
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
             }
-
-            // Initialize the first slide directly without calling showSlide,
-            // to ensure it's immediately visible and not subject to initial animation issues.
-            slides[0].classList.add('active');
-            slides[0].style.display = 'flex';
-            slides[0].style.animationName = ''; // No animation on initial display
-
-            currentSlideIndex = 0; // Ensure index is correctly set for the first slide
-            updateSlideCounter(); // Update counter for initial display
-            updateNavigationButtons(); // Update buttons for initial display
+            lastTap = n;
         });
 
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
-        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-        }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-    const quizData = [
-        {
-            q: "¿Qué es la instalación de software?",
-            options: ["Proceso de preparar un programa para su ejecución", "Solo copiar archivos a una memoria USB", "Comprar una computadora nueva", "Borrar archivos temporales"],
-            a: "Proceso de preparar un programa para su ejecución"
-        },
-        {
-            q: "¿Cuál de estos es un tipo de instalador común en Windows?",
-            options: [".exe y .msi", ".dmg y .pkg", ".apk", ".deb"],
-            a: ".exe y .msi"
-        },
-        {
-            q: "¿Qué ventaja ofrece la instalación por línea de comandos (CLI)?",
-            options: ["Automatización y resolución de dependencias", "Es más colorida", "No requiere teclado", "Solo funciona sin internet"],
-            a: "Automatización y resolución de dependencias"
-        },
-        {
-            q: "¿Qué es la virtualización?",
-            options: ["Tecnología para crear versiones virtuales de recursos", "Jugar videojuegos en línea", "Usar lentes de realidad virtual", "Navegar por internet de forma anónima"],
-            a: "Tecnología para crear versiones virtuales de recursos"
-        },
-        {
-            q: "El software que gestiona las máquinas virtuales se llama:",
-            options: ["Hypervisor", "Antivirus", "Kernel", "BIOS"],
-            a: "Hypervisor"
-        },
-        {
-            q: "Ejemplo de Hypervisor Tipo 2 (Hosted):",
-            options: ["Oracle VirtualBox", "VMware ESXi", "Microsoft Hyper-V", "Linux Kernel"],
-            a: "Oracle VirtualBox"
-        },
-        {
-            q: "¿Cuál es una ventaja de la virtualización?",
-            options: ["Aislamiento y consolidación de hardware", "Aumenta el consumo de energía", "Hace que el hardware sea más lento", "Solo sirve para ver películas"],
-            a: "Aislamiento y consolidación de hardware"
-        },
-        {
-            q: "Un Hypervisor Tipo 1 se instala:",
-            options: ["Directamente sobre el hardware", "Sobre un sistema operativo anfitrión", "Como un plugin del navegador", "Solo en dispositivos móviles"],
-            a: "Directamente sobre el hardware"
-        },
-        {
-            q: "¿Qué gestor de paquetes se usa comúnmente en Debian/Ubuntu?",
-            options: ["apt", "pip", "dnf", "npm"],
-            a: "apt"
-        },
-        {
-            q: "¿Dónde se originó la virtualización en la década de 1960?",
-            options: ["IBM", "Microsoft", "Apple", "Google"],
-            a: "IBM"
-        }
-    ];
-
-</script>
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('inf_instalacion', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
+    </script>
 </body>
 </html>

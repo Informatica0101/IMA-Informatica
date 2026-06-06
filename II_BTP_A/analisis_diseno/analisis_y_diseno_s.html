@@ -2,272 +2,291 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presentación: Introducción a Análisis y Diseño de Sistemas I</title>
-    <link rel="stylesheet" href="estilos.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Análisis y Diseño de Sistemas - IMA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
+    </style>
 </head>
-<body>
-    <img src="../../imagenes/logo.png"
-         alt="Logo pequeño"
-         class="logo-fixed">
-
-    <div class="presentation-container">
-        <div class="slide active" id="slide-1">
-            <div class="slide-content">
-                <img src="../../imagenes/logo.png"
-                     alt="Logo Instituto Maria Auxiliadora"
-                     class="logo-institucion">
-                <p>Análisis y Diseño de Sistemas I.</p>
-                <p>Undécimo Grado (II BTP) Sección "A"</p>
-                <p>Docente: Pablo Antonio Peña.</p>
-                <p>06 de Julio de 2025.</p>
-                <h3 class="mt-4">Analisis y Diseño de Sistemas</h3>
-            </div>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-
-        <div class="slide" id="slide-2">
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Introducción al Análisis y Diseño</h2>
-                <p>Comprender el proceso de <strong>desarrollo de soluciones informáticas</strong> complejas.</p>
-                <ul class="mx-auto text-left">
-                    <li>Dotar de conocimientos y herramientas para la conceptualización.</li>
-                    <li>Planificación y especificación detallada de sistemas de información.</li>
-                </ul>
-                <img src="../../imagenes/ads_intro_diagram.png" alt="Diagrama de flujo de desarrollo de software" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <div class="slide" id="slide-3">
-            <div class="slide-content">
-                <h2 class="text-indigo-700">¿Qué es un Sistema?</h2>
-                <p>Conjunto de componentes interrelacionados que trabajan juntos para lograr un <strong>objetivo común</strong>.</p>
-                <ul class="mx-auto text-left">
-                    <li>Combina hardware, software, datos, personas y procesos.</li>
-                    <li>Producción de información y apoyo a operaciones.</li>
-                </ul>
-                <img src="../../imagenes/sistema_interconectado.gif" alt="Ilustración de red de nodos interconectados" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <div class="slide" id="slide-4">
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Análisis de Sistemas</h2>
-                <p>Proceso de investigar un problema o necesidad de negocio para determinar <strong>qué debe hacer</strong> un nuevo sistema.</p>
-                <ul class="mx-auto text-left">
-                    <li>Recolección y examen de datos.</li>
-                    <li>Comprensión de flujos de información actuales.</li>
-                    <li>Identificación de requisitos funcionales y no funcionales.</li>
-                </ul>
-                <img src="../../imagenes/analisis_investigacion.jpg" alt="Persona investigando un problema con diagramas" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <div class="slide" id="slide-5">
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Diseño de Sistemas</h2>
-                <p>Proceso de especificar <strong>cómo se construirá</strong> un nuevo sistema para satisfacer los requisitos.</p>
-                <ul class="mx-auto text-left">
-                    <li>Arquitectura del sistema, estructura de datos.</li>
-                    <li>Interfaz de usuario, módulos de software e interacciones.</li>
-                </ul>
-                <img src="../../imagenes/diseno_planos.jpg" alt="Planos arquitectónicos o diagramas de diseño" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <div class="slide" id="slide-6">
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Importancia del Análisis y Diseño</h2>
-                <p>Establecen los <strong>cimientos</strong> del proyecto de software.</p>
-                <ul class="mx-auto text-left">
-                    <li>Reduce errores y retrabajo.</li>
-                    <li>Mejora la satisfacción del usuario.</li>
-                    <li>Gestión eficiente de recursos.</li>
-                    <li>Sistemas más robustos y escalables.</li>
-                </ul>
-                <img src="../../imagenes/importancia_cimientos.jpg" alt="Ilustración de cimientos sólidos de un edificio" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <div class="slide" id="slide-7">
-            <div class="slide-content">
-                <h2 class="text-indigo-700">El Ciclo de Vida del Desarrollo de Sistemas (SDLC)</h2>
-                <p>Marco de trabajo que define las etapas de un proyecto de software.</p>
-                <ul class="mx-auto text-left">
-                    <li><strong>Fases</strong>: Planificación, Análisis, Diseño, Implementación, Prueba, Despliegue, Mantenimiento.</li>
-                    <li>Análisis y Diseño: El corazón del SDLC.</li>
-                </ul>
-                <img src="../../imagenes/sdlc_diagrama_flujo.png" alt="Diagrama de flujo del ciclo de vida del desarrollo de sistemas" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <div class="slide" id="slide-8">
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Rol del Analista de Sistemas</h2>
-                <p>Profesional que actúa como el <strong>puente esencial</strong> entre usuarios y desarrolladores.</p>
-                <ul class="mx-auto text-left">
-                    <li>Identifica y documenta requisitos.</li>
-                    <li>Diseña la arquitectura lógica del sistema.</li>
-                    <li>Facilita la comunicación.</li>
-                    <li>Habilidades: <strong>comunicación, lógica, resolución de problemas.</strong></li>
-                </ul>
-                <img src="../../imagenes/analista_puente.jpg" alt="Ilustración de un puente conectando dos lados" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <div class="slide" id="slide-9">
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Asignación de Tareas</h2>
-                <p><strong>Tarea</strong>: Investigación de Definiciones Clave y Mapa Conceptual.</p>
-                <p class="text-sm text-left mx-auto max-w-xl">
-                    Los estudiantes deberán investigar y definir conceptos clave de análisis y diseño de sistemas (sistema, análisis, diseño, desarrollo de software). Posteriormente, elaborarán un mapa conceptual que estructure lógicamente dichos fundamentos, destacando las relaciones entre ellos.
-                </p>
-                <p class="mt-4"><strong>Fecha de Entrega</strong>: 13 de Julio de 2025.</p>
-                <p><strong>Ponderación</strong>: TC 5%.</p>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-10">
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Cierre de la Clase</h2>
-                <p>El análisis y diseño son los <strong>cimientos</strong> para soluciones tecnológicas exitosas.</p>
-                <p>Un buen entendimiento de estas fases es <strong>crucial</strong> para el desarrollo de software robusto.</p>
-                <p class="mt-8 text-lg font-semibold text-gray-700">¡Gracias por su atención y participación!</p>
-            </div>
-        </div>
-
-        <div class="nav-buttons">
-            <button id="prevBtn" class="nav-button" disabled>Anterior</button>
-            <button id="nextBtn" class="nav-button">Siguiente</button>
-        </div>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Iniciando sistema...</p>
     </div>
 
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
+    </header>
+
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Introducción al Análisis y Diseño</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Análisis y Diseño de Sistemas</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es un Sistema?</h2>
+            <div class="concept-box">
+                <p>Es un conjunto de componentes que interactúan entre sí para lograr un objetivo común. En informática, nos enfocamos en los <strong>Sistemas de Información (SI)</strong>.</p>
+            </div>
+            <i class="fas fa-network-wired text-6xl text-blue-300 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Componentes de un SI</h2>
+            <ul class="grid grid-cols-2 gap-4 text-left max-w-xl">
+                <li class="p-2 border rounded"><i class="fas fa-desktop mr-2"></i> Hardware</li>
+                <li class="p-2 border rounded"><i class="fas fa-code mr-2"></i> Software</li>
+                <li class="p-2 border rounded"><i class="fas fa-users mr-2"></i> Personas</li>
+                <li class="p-2 border rounded"><i class="fas fa-database mr-2"></i> Datos</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Análisis vs. Diseño</h2>
+            <div class="grid grid-cols-2 gap-6 max-w-3xl">
+                <div class="p-4 border-l-4 border-blue-500 bg-blue-50">
+                    <h3 class="font-bold">Análisis</h3>
+                    <p class="text-sm">¿QUÉ se necesita? Entender el problema y los requisitos del cliente.</p>
+                </div>
+                <div class="p-4 border-l-4 border-green-500 bg-green-50">
+                    <h3 class="font-bold">Diseño</h3>
+                    <p class="text-sm">¿CÓMO se va a hacer? Crear el plano técnico de la solución.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Analista de Sistemas</h2>
+            <div class="concept-box border-yellow-400">
+                <p>Es el puente entre los usuarios (que tienen el problema) y los programadores (que crean la solución). Debe ser un gran comunicador y solucionador de problemas.</p>
+            </div>
+            <i class="fas fa-user-tie text-6xl text-gray-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ciclo de Vida (SDLC)</h2>
+            <p>Es el proceso que sigue un sistema desde que nace como idea hasta que se retira del uso. Consta de varias fases secuenciales.</p>
+            <i class="fas fa-redo-alt text-6xl text-blue-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Importancia del Análisis</h2>
+            <div class="concept-box bg-red-50 border-red-500">
+                <p>Detectar un error en la fase de análisis cuesta $1. Corregirlo cuando el sistema ya está programado puede costar $1,000.</p>
+            </div>
+            <i class="fas fa-search text-6xl text-red-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Recolección de Datos</h2>
+            <p>¿Cómo sabemos qué construir?</p>
+            <ul class="flex space-x-6 mt-4 text-xs font-bold">
+                <li><i class="fas fa-comments"></i> Entrevistas</li>
+                <li><i class="fas fa-list-alt"></i> Encuestas</li>
+                <li><i class="fas fa-eye"></i> Observación</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Diagramas de Flujo</h2>
+            <p>Herramienta visual para representar la lógica de un proceso o el movimiento de los datos en el sistema.</p>
+            <i class="fas fa-project-diagram text-6xl text-gray-500 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Requisitos Funcionales</h2>
+            <p>Son las acciones que el sistema DEBE realizar. <br>Ejemplo: "El sistema debe permitir imprimir un reporte de ventas."</p>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Requisitos No Funcionales</h2>
+            <p>Son las características de calidad del sistema. <br>Ejemplo: "El sistema debe cargar en menos de 2 segundos."</p>
+            <i class="fas fa-tachometer-alt text-6xl text-green-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estudio de Factibilidad</h2>
+            <p>Determina si el proyecto se puede hacer considerando:</p>
+            <ul class="mt-4 space-y-2 font-bold text-sm">
+                <li>Técnica (¿Tenemos la tecnología?)</li>
+                <li>Económica (¿Tenemos el dinero?)</li>
+                <li>Operativa (¿La gente lo usará?)</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Prototipo</h2>
+            <p>Es una versión preliminar del sistema que sirve para que el usuario vea cómo quedará el diseño final sin necesidad de programarlo todo.</p>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">CASO DE ESTUDIO</h3>
+                <p>Identificar un problema en el colegio (ej. filas largas en cafetería) y listar 3 requisitos funcionales para un sistema que lo solucione.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
+        </div>
+    </footer>
+
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
+        let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        let currentSlide = 0;
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
+
+        const quizQuestions = [
+            { q: "¿Qué es el Análisis?", a: "C", options: ["Programar", "Vender", "¿QUÉ se necesita?", "Reparar PC"] },
+            { q: "¿Qué es el Diseño?", a: "B", options: ["Dibujar", "¿CÓMO se hará?", "Pintar", "Hackear"] },
+            { q: "Puente entre usuario y coder:", a: "A", options: ["Analista", "Gerente", "Director", "Alumno"] },
+            { q: "¿Qué significa SDLC?", a: "D", options: ["Sist. de Luz", "Solo Datos", "Super Data Link", "Ciclo de Vida"] },
+            { q: "Componente humano del SI:", a: "C", options: ["Mouse", "Windows", "Personas", "Cables"] },
+            { q: "Factibilidad económica mira:", a: "B", options: ["Velocidad", "Dinero", "Gente", "Luz"] },
+            { q: "Requisito de velocidad es:", a: "A", options: ["No Funcional", "Funcional", "Básico", "Nulo"] },
+            { q: "Acción de ver al usuario:", a: "C", options: ["Encuesta", "Cine", "Observación", "Sueño"] },
+            { q: "Maqueta del sistema:", a: "D", options: ["Final", "Boceto", "DER", "Prototipo"] },
+            { q: "Un SI interactúa para un:", a: "B", options: ["Virus", "Objetivo", "Juego", "Chat"] }
+        ];
 
         function showSlide(index) {
-            slides.forEach((slide) => {
-                slide.classList.remove('active');
-                slide.querySelectorAll('.slide-content > *').forEach(el => {
-                    el.style.opacity = '0';
-                    el.style.transform = 'translateY(20px)';
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
+        }
+
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
                 });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
             });
-            if (slides[index]) {
-                slides[index].classList.add('active');
-            }
-            prevBtn.disabled = index === 0;
-            nextBtn.disabled = index === slides.length - 1;
-            setTimeout(() => {
-                const activeSlideContent = slides[index].querySelectorAll('.slide-content > *');
-                activeSlideContent.forEach((el, i) => {
-                    el.style.transitionDelay = `${0.1 + i * 0.05}s`;
-                    el.style.opacity = '1';
-                    el.style.transform = 'translateY(0)';
-                });
-            }, 50);
         }
-        function nextSlide() {
-            if (currentSlide < slides.length - 1) {
-                currentSlide++;
-                showSlide(currentSlide);
+
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
+        });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
             }
-        }
-        function prevSlide() {
-            if (currentSlide > 0) {
-                currentSlide--;
-                showSlide(currentSlide);
-            }
-        }
-        nextBtn.addEventListener('click', nextSlide);
-        prevBtn.addEventListener('click', prevSlide);
-        window.onload = function() {
-            showSlide(currentSlide);
-        };
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowRight') {
-                nextSlide();
-            } else if (event.key === 'ArrowLeft') {
-                prevSlide();
-            }
+            lastTap = n;
         });
 
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
-        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-        }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-    const quizData = [
-        {
-            q: "¿Cuál es el objetivo principal de Análisis y Diseño de Sistemas I?",
-            options: ["Comprender el desarrollo de soluciones informáticas", "Solo aprender a programar en Java", "Reparar computadoras físicamente", "Diseñar logotipos para empresas"],
-            a: "Comprender el desarrollo de soluciones informáticas"
-        },
-        {
-            q: "¿Qué es un sistema en el contexto de esta clase?",
-            options: ["Conjunto de componentes interrelacionados con un objetivo común", "Solo una computadora potente", "Un programa de oficina", "Un grupo de personas sin tecnología"],
-            a: "Conjunto de componentes interrelacionados con un objetivo común"
-        },
-        {
-            q: "El proceso de investigar 'qué debe hacer' un nuevo sistema se llama:",
-            options: ["Análisis de Sistemas", "Diseño de Sistemas", "Implementación", "Codificación"],
-            a: "Análisis de Sistemas"
-        },
-        {
-            q: "El proceso de especificar 'cómo se construirá' el sistema se llama:",
-            options: ["Diseño de Sistemas", "Análisis de Requisitos", "Mantenimiento", "Pruebas unitarias"],
-            a: "Diseño de Sistemas"
-        },
-        {
-            q: "¿Cuál de estos NO es un beneficio de un buen análisis y diseño?",
-            options: ["Aumento de errores y retrabajo", "Mejora la satisfacción del usuario", "Gestión eficiente de recursos", "Sistemas más robustos"],
-            a: "Aumento de errores y retrabajo"
-        },
-        {
-            q: "¿Qué significa la sigla SDLC?",
-            options: ["System Development Life Cycle", "Software Design Logic Center", "Structured Data Logical Core", "Secure Delivery Life Cycle"],
-            a: "System Development Life Cycle"
-        },
-        {
-            q: "¿Cuál es el 'puente' esencial entre usuarios y desarrolladores?",
-            options: ["Analista de Sistemas", "El Programador", "El Gerente de Ventas", "El Soporte Técnico"],
-            a: "Analista de Sistemas"
-        },
-        {
-            q: "Una fase del SDLC que ocurre después del Diseño es:",
-            options: ["Implementación", "Planificación", "Análisis", "Investigación preliminar"],
-            a: "Implementación"
-        },
-        {
-            q: "¿Qué habilidades son fundamentales para un analista de sistemas?",
-            options: ["Comunicación, lógica y resolución de problemas", "Solo velocidad al teclear", "Solo diseño gráfico", "Fuerza física"],
-            a: "Comunicación, lógica y resolución de problemas"
-        },
-        {
-            q: "El análisis y diseño se consideran los __________ del proyecto de software.",
-            options: ["Cimientos", "Adornos", "Obstáculos", "Costos innecesarios"],
-            a: "Cimientos"
-        }
-    ];
-
-</script>
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('ads_introduccion', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
+    </script>
 </body>
 </html>

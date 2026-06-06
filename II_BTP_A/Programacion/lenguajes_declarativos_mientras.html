@@ -2,475 +2,316 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lenguajes declarativos / Bucle Mientras</title>
-    <!-- CDN de Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Google Fonts - Inter & Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Declarativos y Bucle Mientras - IMA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Universal box-sizing */
-        * {
-            box-sizing: border-box;
-        }
-
-        /* Configuración base */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            color: #1f2937;
-        }
-
-        /* Contenedor principal */
-        main {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        #presentation-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-color: #ffffff;
-            overflow: hidden;
-        }
-
-        /* Estilo para cada diapositiva */
-        .slide {
-            width: 100%;
-            height: 100%;
-            padding: 4rem;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-        }
-
-        .slide.active {
-            display: flex;
-            opacity: 1;
-            animation: fadeIn 0.8s forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Tipografía proyectable (Estándar 2026) */
-        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3rem; color: #0d6efd; margin-bottom: 1.5rem; }
-        h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.25rem; line-height: 1.4; color: #1f2937; margin-bottom: 1.5rem; }
-        p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 900px; }
-
-        .concept-box {
-            background-color: #f9fafb;
-            border-left: 8px solid #0d6efd;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            text-align: left;
-            margin-top: 2rem;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        /* Botones de navegación */
-        .nav-button {
-            background-color: #0d6efd;
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: all 0.3s;
-            cursor: pointer;
-            border: none;
-        }
-
-        .nav-button:hover { background-color: #0b5ed7; transform: scale(1.05); }
-        .nav-button:disabled { background-color: #d1d5db; cursor: not-allowed; transform: scale(1); }
-
-        #slide-counter {
-            position: absolute;
-            bottom: 1.5rem;
-            right: 2rem;
-            font-weight: 600;
-            color: #9ca3af;
-            z-index: 10;
-        }
-
-        /* Quiz */
-        .quiz-option {
-            width: 100%;
-            padding: 1rem;
-            margin: 0.25rem 0;
-            border: 2px solid #e5e7eb;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            background: white;
-            font-size: 1.1rem;
-        }
-        .quiz-option:hover { background-color: #eff6ff; border-color: #3b82f6; }
-        .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
-        .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
-
-        /* Adaptación Móvil */
-        @media (max-width: 768px) {
-            .slide { padding: 2rem 1.5rem; }
-            h2 { font-size: 1.75rem; }
-            h3 { font-size: 1.4rem; }
-            p, li { font-size: 1rem; line-height: 1.4; }
-            .concept-box { padding: 1rem; border-left-width: 4px; margin-top: 1rem; }
-            .nav-button { padding: 0.5rem 1rem; font-size: 0.875rem; }
-            #slide-counter { bottom: 1rem; right: 1rem; font-size: 0.75rem; }
-            .quiz-option { padding: 0.75rem; font-size: 0.9rem; }
-            #page-header h1 { font-size: 1rem; }
-            #page-header img { width: 100px !important; }
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="antialiased">
-
-    <header id="page-header" class="w-full bg-white p-4 shadow-sm flex justify-between items-center z-50">
-        <div class="flex items-center space-x-4">
-            <img src="../../imagenes/logo.png" alt="Logo IMA" style="width: 150px; height: auto;">
-            <h1 class="text-xl font-bold text-gray-800">Programación I</h1>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <nav>
-            <a href="../../index.html" class="text-gray-600 hover:text-blue-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
-        </nav>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Evaluando condiciones...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <main>
-        <div id="presentation-container">
-            <!-- Diapositiva 1: Portada -->
-            <div class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
-                <h2>Lenguajes declarativos y características / Estructuras de control (Mientras)</h2>
-                <div class="mt-8 text-lg text-gray-500">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 03 de mayo de 2026</p>
-                    <p>Grado: II BTP Informática Sección "A"</p>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-4xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Lenguajes Declarativos y Bucle MIENTRAS</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Programación I</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lenguajes Declarativos</h2>
+            <div class="concept-box">
+                <p>A diferencia de los imperativos (que dicen CÓMO hacer algo), los declarativos se centran en <strong>QUÉ</strong> se quiere obtener.</p>
+                <p class="mt-4 font-bold">Principal ejemplo: SQL (Lenguaje de Consulta Estructurado).</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Diferencia de Enfoque</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
+                <div class="p-4 bg-slate-50 border rounded">
+                    <p class="font-bold">Imperativo</p>
+                    <p class="text-xs">"Ve a la cocina, abre la nevera, saca el agua, tráela".</p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 2: Concepto de Lenguaje Declarativo -->
-            <div class="slide">
-                <h3>Lenguajes Declarativos</h3>
-                <p>Son aquellos en los cuales se le indica a la computadora <strong>qué</strong> es lo que se desea obtener o qué es lo que se está buscando.</p>
-                <div class="concept-box">
-                    <p>En lugar de proveer una solución paso a paso (el "cómo"), el programador describe el problema y deja la interpretación a un motor de ejecución.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 3: Características Principales -->
-            <div class="slide">
-                <h3>Características Clave</h3>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><strong>Orientación a resultados:</strong> Foco en la lógica del algoritmo, no en el control de la secuencia.</li>
-                    <li><strong>Transparencia referencial:</strong> Las variables suelen tener un solo valor asignado (sin asignación destructiva).</li>
-                    <li><strong>Inmutabilidad:</strong> El orden de ejecución no suele afectar el resultado final.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 4: Ejemplos de Lenguajes Declarativos -->
-            <div class="slide">
-                <h3>Ejemplos Comunes</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div class="bg-blue-50 p-6 rounded-lg border-t-4 border-blue-500 text-left">
-                        <h4 class="font-bold text-xl mb-2">SQL</h4>
-                        <p class="text-base">Usado para describir qué datos extraer de una base de datos (SELECT nombre FROM empleados...).</p>
-                    </div>
-                    <div class="bg-gray-50 p-6 rounded-lg border-t-4 border-gray-500 text-left">
-                        <h4 class="font-bold text-xl mb-2">HTML</h4>
-                        <p class="text-base">Describe la estructura de una página web (qué elementos hay) sin detallar cómo dibujarlos píxel por píxel.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Ventajas y Desventajas -->
-            <div class="slide">
-                <h3>Balance del Paradigma</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <div class="text-left">
-                        <p class="font-bold text-green-600">Ventajas:</p>
-                        <ul class="list-disc list-inside text-sm">
-                            <li>Alto nivel de abstracción.</li>
-                            <li>Soluciones fáciles de entender por humanos.</li>
-                            <li>Ideal para Inteligencia Artificial y Bases de Datos.</li>
-                        </ul>
-                    </div>
-                    <div class="text-left">
-                        <p class="font-bold text-red-600">Desventajas:</p>
-                        <ul class="list-disc list-inside text-sm">
-                            <li>Menos eficiente (fase de interpretación extra).</li>
-                            <li>Restringido a problemas específicos.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: Comparativa: Declarativo vs Imperativo -->
-            <div class="slide">
-                <h3>Declarativo vs Imperativo</h3>
-                <p>Mientras el imperativo dice "Camina 10 pasos, dobla a la derecha, camina 5 pasos", el declarativo dice:</p>
-                <div class="concept-box border-blue-400">
-                    <p class="italic text-center font-bold">"Quiero estar en la panadería".</p>
-                </div>
-                <p class="mt-4 text-sm">El "cómo" llegar queda a cargo del sistema subyacente.</p>
-            </div>
-
-            <!-- Diapositiva 7: Ejercicio 1 -->
-            <div class="slide">
-                <h3>Ejercicio 1: Identificación</h3>
-                <p>Investiga y anota en tu cuaderno si los siguientes lenguajes son Declarativos o Imperativos:</p>
-                <ul class="mt-4 font-mono text-xl">
-                    <li>Prolog</li>
-                    <li>C++</li>
-                    <li>HTML</li>
-                    <li>Java</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 8: Estructuras de Control: Mientras -->
-            <div class="slide">
-                <h3>El Bucle "Mientras" (While)</h3>
-                <p>Es una estructura que repite un bloque de instrucciones <strong>mientras</strong> una condición sea verdadera.</p>
-                <div class="concept-box">
-                    <p>La condición se evalúa <strong>antes</strong> de ejecutar el cuerpo del bucle. Si es falsa desde el inicio, el bucle nunca se ejecuta.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Sintaxis del Mientras -->
-            <div class="slide">
-                <h3>Sintaxis en Pseudocódigo</h3>
-                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-blue-500">
-                    Mientras (condición) Hacer<br>
-                    &nbsp;&nbsp;Instrucciones...<br>
-                    FinMientras
-                </div>
-                <p class="mt-6 text-sm italic">Es vital que dentro de las instrucciones algo cambie la condición para evitar un bucle infinito.</p>
-            </div>
-
-            <!-- Diapositiva 10: Funcionamiento Lógico -->
-            <div class="slide">
-                <h3>Flujo de Ejecución</h3>
-                <ol class="text-left mt-6 list-decimal list-inside space-y-4">
-                    <li>Se evalúa la condición lógica.</li>
-                    <li>Si es <strong>Verdadera</strong>, se ejecutan las instrucciones y se vuelve al paso 1.</li>
-                    <li>Si es <strong>Falsa</strong>, se salta el bucle y continúa el programa.</li>
-                </ol>
-            </div>
-
-            <!-- Diapositiva 11: Ejemplo Práctico -->
-            <div class="slide">
-                <h3>Ejemplo: Contador hasta 5</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-gray-100 p-4 rounded text-left font-mono">
-                        i = 1<br>
-                        Mientras (i <= 5) Hacer<br>
-                        &nbsp;&nbsp;Escribir i<br>
-                        &nbsp;&nbsp;i = i + 1<br>
-                        FinMientras
-                    </div>
-                    <div class="bg-blue-50 p-4 rounded text-left flex flex-col justify-center">
-                        <p class="font-bold">Salida esperada:</p>
-                        <p>1, 2, 3, 4, 5</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Casos de Uso del Mientras -->
-            <div class="slide">
-                <h3>¿Cuándo usar "Mientras"?</h3>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li>Cuando <strong>no sabemos</strong> cuántas veces se repetirá el proceso (ej: esperar a que el usuario presione una tecla).</li>
-                    <li>Para validar entradas de datos.</li>
-                    <li>Para procesos que dependen de estados externos (ej: lectura de archivos).</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 13: Ejercicio 2 -->
-            <div class="slide">
-                <h3>Ejercicio 2: Validación</h3>
-                <p>Escribe en tu cuaderno un algoritmo que pida una contraseña y use un bucle "Mientras" para repetir la solicitud hasta que la contraseña sea "1234".</p>
-                <div class="concept-box bg-green-50 border-green-400">
-                    <p><strong>Criterio:</strong> El programa debe terminar inmediatamente cuando el usuario acierte.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 14: Cuestionario Interactivo (Parte 1) -->
-            <div class="slide">
-                <h3>Cuestionario: Evaluación</h3>
-                <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
-                    <div class="quiz-options flex flex-col gap-2"></div>
-                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 15: Cuestionario Interactivo (Parte 2) -->
-            <div class="slide">
-                <h3>Cuestionario: Continuación</h3>
-                <div class="quiz-container max-w-2xl w-full">
-                    <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
-                    <div class="quiz-options flex flex-col gap-2"></div>
-                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 16: Fin y Asignación -->
-            <div class="slide">
-                <h2>¡Muchas Gracias!</h2>
-                <div class="concept-box border-blue-600">
-                    <p><strong>Asignación:</strong> Realizar en el cuaderno 3 ejercicios de algoritmos que utilicen el bucle "Mientras".</p>
-                    <p class="mt-4 text-sm">Fecha de entrega: Próxima clase.</p>
+                <div class="p-4 bg-blue-50 border rounded">
+                    <p class="font-bold">Declarativo</p>
+                    <p class="text-xs">"Quiero un vaso de agua". (El sistema decide los pasos).</p>
                 </div>
             </div>
         </div>
 
-        <!-- Controles -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-4 z-20">
-            <button id="prev-btn" class="nav-button">Anterior</button>
-            <button id="next-btn" class="nav-button">Siguiente</button>
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Bucle MIENTRAS (WHILE)</h2>
+            <div class="concept-box">
+                <p>Es una estructura de control que repite un bloque de código <strong>mientras una condición sea VERDADERA</strong>.</p>
+                <p class="mt-2 text-sm italic">Se usa cuando NO sabemos exactamente cuántas veces se repetirá el ciclo.</p>
+            </div>
+            <i class="fas fa-redo-alt text-6xl text-blue-200 mt-4 animate-spin-slow"></i>
         </div>
-        <div id="slide-counter">1 / 16</div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructura del WHILE</h2>
+            <div class="code-block">
+                <p>MIENTRAS condicion == VERDADERA HACER</p>
+                <p>&nbsp;&nbsp;// Instrucciones</p>
+                <p>&nbsp;&nbsp;// Importante: Cambiar la condición dentro</p>
+                <p>FINMIENTRAS</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Condición de Salida</h2>
+            <div class="concept-box">
+                <p>Para evitar un <strong>bucle infinito</strong>, dentro del MIENTRAS debe ocurrir algo que eventualmente haga que la condición sea falsa.</p>
+                <p class="mt-2 text-sm font-bold">Ejemplo: Incrementar un contador o leer un nuevo valor.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
+            <div class="concept-box">
+                <p>Escribe el pseudocódigo para un algoritmo que pida una contraseña y se repita MIENTRAS la contraseña sea incorrecta.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Diferencia FOR vs WHILE</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl">
+                <div class="p-4 border rounded text-left">
+                    <h4 class="font-bold">PARA (FOR)</h4>
+                    <p class="text-xs">Número de vueltas fijo y conocido.</p>
+                </div>
+                <div class="p-4 border rounded text-left">
+                    <h4 class="font-bold">MIENTRAS (WHILE)</h4>
+                    <p class="text-xs">Depende de un evento o condición externa.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Validación de Datos</h2>
+            <p>El bucle WHILE es ideal para validar que el usuario ingrese datos correctos:</p>
+            <div class="code-block mt-4">
+                <p>LEER nota</p>
+                <p>MIENTRAS nota < 0 O nota > 100 HACER</p>
+                <p>&nbsp;&nbsp;ESCRIBIR "Error, ingrese nota válida"</p>
+                <p>&nbsp;&nbsp;LEER nota</p>
+                <p>FINMIENTRAS</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Sentinelas</h2>
+            <div class="concept-box border-yellow-400">
+                <p>Un sentinela es un valor especial que se usa para terminar un bucle (ej. "Ingresa 0 para salir").</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejemplo en SQL</h2>
+            <p>SQL es declarativo. No decimos cómo buscar, solo qué queremos:</p>
+            <div class="code-block bg-slate-800">
+                <p>SELECT nombre, nota</p>
+                <p>FROM alumnos</p>
+                <p>WHERE nota >= 70;</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Poder de Adaptación</h2>
+            <p class="italic text-2xl">"Los bucles condicionales permiten que los programas reaccionen al entorno y a la interacción impredecible del usuario."</p>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Avanzado</h2>
+            <p class="mb-4">Cajero Automático (Simulación):</p>
+            <div class="code-block">
+                <p>saldo <- 1000</p>
+                <p>MIENTRAS saldo > 0 HACER</p>
+                <p>&nbsp;&nbsp;LEER retiro</p>
+                <p>&nbsp;&nbsp;IF retiro <= saldo THEN</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;saldo <- saldo - retiro</p>
+                <p>&nbsp;&nbsp;ELSE</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;PRINT "Fondos insuficientes"</p>
+                <p>&nbsp;&nbsp;ENDIF</p>
+                <p>FINMIENTRAS</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none">
+                <h3 class="font-black text-xl mb-4 uppercase">CONTROL DE ACCESO</h3>
+                <p>Escribir el pseudocódigo que pida una clave. El programa debe repetirse infinitamente hasta que el usuario ingrese la palabra "SECRET-2026".</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <footer id="page-footer" class="w-full bg-gray-900 text-white text-center p-2 text-sm">
-        <div class="flex items-center justify-center space-x-2">
-            <img src="../../imagenes/bandera-de-honduras.png" alt="Honduras" width="60">
-            <p>© 2026 Instituto María Auxiliadora - Área de Informática</p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
+        let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
-        const nextBtn = document.getElementById('next-btn');
         const prevBtn = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
-        let currentSlide = 0;
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
-        const quizData = [
-            { q: "¿Qué describe un lenguaje declarativo?", options: ["Pasos para resolverlo", "Lo que se busca", "Cómo mover la memoria", "Órdenes secuenciales"], a: "Lo que se busca" },
-            { q: "¿Cuál es un ejemplo de lenguaje declarativo?", options: ["C++", "SQL", "Java", "Python"], a: "SQL" },
-            { q: "¿Qué pasa con el orden de ejecución en declarativos?", options: ["Es lo más importante", "No es importante", "Debe ser alfabético", "Lo decide el usuario"], a: "No es importante" },
-            { q: "¿Cuál es una ventaja de este paradigma?", options: ["Es el más veloz", "Alta abstracción", "Usa menos RAM", "Funciona sin CPU"], a: "Alta abstracción" },
-            { q: "¿Qué estructura es fundamental en lenguajes lógicos?", options: ["Los arreglos", "Las listas", "Los punteros", "Los archivos .exe"], a: "Las listas" },
-            { q: "¿Cuándo se evalúa la condición en el bucle 'Mientras'?", options: ["Al final del bucle", "Antes de ejecutar", "Solo una vez al inicio", "Nunca se evalúa"], a: "Antes de ejecutar" },
-            { q: "¿Qué sucede si la condición es falsa desde el inicio?", options: ["El bucle corre una vez", "Nunca se ejecuta", "El programa se traba", "Se borra el código"], a: "Nunca se ejecuta" },
-            { q: "¿Qué evitamos al cambiar la variable dentro del bucle?", options: ["Que el programa sea lento", "Un bucle infinito", "Que se apague la PC", "Un error de sintaxis"], a: "Un bucle infinito" },
-            { q: "¿Cuál es un uso común del bucle Mientras?", options: ["Saber el fin exacto", "Validar entrada", "Para no usar variables", "Es solo para SQL"], a: "Validar entrada" },
-            { q: "¿En qué lenguaje declarativo se basa Prolog?", options: ["Programación imperativa", "Prog. lógica", "Diseño gráfico", "Ensamblador"], a: "Prog. lógica" }
+        const quizQuestions = [
+            { q: "¿Qué lenguaje dice QUÉ quiere obtener?", a: "C", options: ["Imperativo", "Binario", "Declarativo", "Físico"] },
+            { q: "¿Bucle que depende de una condición?", a: "B", options: ["FOR", "WHILE (Mientras)", "Fijo", "Circular"] },
+            { q: "SQL es un lenguaje de tipo:", a: "C", options: ["Diseño", "Juegos", "Declarativo", "Bajo Nivel"] },
+            { q: "¿Para qué sirve un sentinela?", a: "D", options: ["Acelerar", "Borrar", "Error", "Terminar un bucle"] },
+            { q: "El bucle WHILE se repite si es:", a: "A", options: ["Verdadero", "Falso", "Nulo", "Grande"] },
+            { q: "Acción de asegurar datos válidos:", a: "B", options: ["Borrado", "Validación", "Suma", "Cierre"] },
+            { q: "¿Qué falta si hay bucle infinito?", a: "C", options: ["RAM", "Monitor", "Condición de salida", "Cable"] },
+            { q: "Lenguaje que dice CÓMO hacer pasos:", a: "D", options: ["Abstracto", "Musical", "SQL", "Imperativo"] },
+            { q: "Un contador dentro de WHILE debe:", a: "A", options: ["Actualizarse", "Borrarse", "Ser PI", "Ser cero siempre"] },
+            { q: "WHILE es útil si el total de vueltas es:", a: "B", options: ["Fijo", "Desconocido", "Infinito", "Cero"] }
         ];
-        let currentQuiz = 0;
 
-        function showSlide(n) {
-            slides[currentSlide].classList.remove('active');
-            slides[currentSlide].style.display = 'none';
-            currentSlide = (n + slides.length) % slides.length;
-            slides[currentSlide].style.display = 'flex';
-            setTimeout(() => slides[currentSlide].classList.add('active'), 10);
-
-            slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
-            prevBtn.disabled = currentSlide === 0;
-            nextBtn.disabled = currentSlide === slides.length - 1;
-
-            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        function loadQuiz() {
-            const currentSlideEl = slides[currentSlide];
-            const questionEl = currentSlideEl.querySelector('.quiz-question');
-            const optionsEl = currentSlideEl.querySelector('.quiz-options');
-            const feedbackEl = currentSlideEl.querySelector('.quiz-feedback');
-
-            if (!questionEl) return;
-
-            if (currentQuiz >= quizData.length) {
-                questionEl.textContent = "¡Cuestionario completado!";
-                optionsEl.innerHTML = "";
-                feedbackEl.textContent = "Has respondido todas las preguntas.";
-                return;
-            }
-
-            if (currentSlide === 13 && currentQuiz >= 5) { showSlide(14); return; }
-            if (currentSlide === 14 && currentQuiz < 5) { showSlide(13); return; }
-
-            const data = quizData[currentQuiz];
-            questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
-            optionsEl.innerHTML = "";
-            feedbackEl.textContent = "";
-
-            data.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.textContent = opt;
-                btn.className = "quiz-option";
-                btn.onclick = () => {
-                    const btns = optionsEl.querySelectorAll('button');
-                    btns.forEach(b => b.disabled = true);
-                    if (opt === data.a) {
-                        btn.classList.add('correct');
-                        feedbackEl.textContent = "¡Correcto!";
-                        feedbackEl.style.color = "#16a34a";
-                    } else {
-                        btn.classList.add('incorrect');
-                        feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
-                        feedbackEl.style.color = "#dc2626";
-                    }
-                    setTimeout(() => {
-                        currentQuiz++;
-                        if (currentQuiz === 5 && currentSlide === 13) {
-                            showSlide(14);
-                        } else {
-                            loadQuiz();
-                        }
-                    }, 2000);
-                };
-                optionsEl.appendChild(btn);
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
             });
         }
 
-        nextBtn.onclick = () => showSlide(currentSlide + 1);
-        prevBtn.onclick = () => showSlide(currentSlide - 1);
-
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') showSlide(currentSlide + 1);
-            if (e.key === 'ArrowLeft') showSlide(currentSlide - 1);
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
+        });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
         });
 
-        // Fullscreen Logic
-        function handleFullscreen() {
-            const isFull = window.innerHeight >= screen.height - 10 || document.fullscreenElement;
-            header.style.setProperty('display', isFull ? 'none' : 'flex', 'important');
-            footer.style.setProperty('display', isFull ? 'none' : 'block', 'important');
-        }
-
-        window.addEventListener('resize', handleFullscreen);
-        document.addEventListener('fullscreenchange', handleFullscreen);
-
-        showSlide(0);
-        handleFullscreen();
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('lenguajes_declarativos_mientras', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
     </script>
 </body>
 </html>

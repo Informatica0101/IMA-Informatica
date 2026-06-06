@@ -2,1056 +2,300 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Area de Informatica - Evolución de la Computación</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Evolución de la Computación - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Reduce base font size for overall scaling */
-        html {
-            font-size: 80%; /* Reduces overall size by 20% */
-        }
-
-        /* Custom animations for transitions */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeOutUp {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes blob {
-            0% {
-                transform: translate(0px, 0px) scale(1);
-            }
-            33% {
-                transform: translate(30px, -50px) scale(1.1);
-            }
-            66% {
-                transform: translate(-20px, 20px) scale(0.9);
-            }
-            100% {
-                transform: translate(0px, 0px) scale(1);
-            }
-        }
-
-        .animate-fade-in-down {
-            animation: fadeInDown 0.5s ease-out forwards;
-        }
-
-        .animate-fade-out-up {
-            animation: fadeOutUp 0.3s ease-in forwards;
-        }
-
-        .animate-fade-in-up {
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-
-        .animate-blob {
-            animation: blob 7s infinite;
-        }
-
-        .animation-delay-2000 {
-            animation-delay: 2s;
-        }
-
-        .animation-delay-4000 {
-            animation-delay: 4s;
-        }
-
-        /* General body styling */
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            color: #1a202c; /* gray-900 */
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden; /* Prevent horizontal scroll */
-        }
-
-        /* Mobile menu specific styles for height and visibility */
-        .mobile-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh; /* Full viewport height */
-            background-color: white;
-            z-index: 40;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 2rem;
-            animation: fadeInDown 0.5s ease-out forwards;
-        }
-
-        .mobile-menu-item-container {
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
-        }
-
-        .mobile-menu-item-container.hidden-height {
-            max-height: 0;
-            opacity: 0;
-        }
-
-        .mobile-menu-item-container.visible-height {
-            max-height: 1000px; /* Large enough to contain content */
-            opacity: 1;
-        }
-
-        /* Desktop dropdown specific styles */
-        .group .group-hover\:opacity-100 {
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease-in-out;
-            transform: scale(0.95);
-            transform-origin: top;
-        }
-
-        .group:hover .group-hover\:opacity-100 {
-            opacity: 1;
-            visibility: visible;
-            transform: scale(1);
-        }
-
-        .group\/grade .group-hover\/grade\:opacity-100 {
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease-in-out;
-            transform: scale(0.95);
-            transform-origin: left;
-        }
-
-        .group\/grade:hover .group-hover\/grade\:opacity-100 {
-            opacity: 1;
-            visibility: visible;
-            transform: scale(1);
-        }
-
-        .group\/subject .group-hover\/subject\:opacity-100 {
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease-in-out;
-            transform: scale(0.95);
-            transform-origin: left;
-        }
-
-        .group\/subject:hover .group-hover\/subject\:opacity-100 {
-            opacity: 1;
-            visibility: visible;
-            transform: scale(1);
-        }
-
-        /* Ensure header is at the very top */
-        header {
-            top: 0 !important;
-            transition: transform 0.3s ease-in-out; /* Smooth transition for hiding/showing */
-        }
-
-        /* Class to hide the header */
-        .header-hidden {
-            transform: translateY(-100%); /* Move header completely out of view */
-        }
-
-        .timeline-container {
-            width: 100%;
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .timeline-bar {
-            height: 5px;
-            background: rgba(255, 255, 255, 0.2);
-            position: relative;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .timeline-progress {
-            height: 100%;
-            width: 0;
-            background: linear-gradient(to right, #00c9ff, #92fe9d);
-            transition: width 1.2s cubic-bezier(0.65, 0, 0.35, 1);
-        }
-
-        .year-counter {
-            position: absolute;
-            top: -45px;
-            left: 0;
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #92fe9d;
-            text-shadow: 0 0 8px rgba(146, 254, 157, 0.7);
-            transition: left 1.2s cubic-bezier(0.65, 0, 0.35, 1);
-        }
-
-        .slides-container {
-            width: 100%;
-            height: 480px;
-            position: relative;
-            overflow: hidden;
-            border-radius: 15px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
-            background: rgba(10, 25, 47, 0.9);
-            margin-bottom: 20px;
-        }
-
-        .slide {
-            position: absolute;
-            top: 0;
-            right: -100%;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            padding: 25px;
-            transition: right 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            opacity: 0;
-        }
-
-        .slide.active {
-            right: 0;
-            opacity: 1;
-        }
-
-        .slide-image {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-        }
-
-        .slide-image img {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-            transform: scale(0.9);
-            transition: transform 0.6s ease;
-        }
-
-        .slide.active .slide-image img {
-            transform: scale(1);
-        }
-
-        .slide-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .slide-year {
-            font-size: 3.8rem;
-            font-weight: bold;
-            color: #00c9ff;
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px rgba(0, 201, 255, 0.4);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease 0.2s;
-        }
-
-        .slide.active .slide-year {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .slide-title {
-            font-size: 1.8rem;
-            margin-bottom: 12px;
-            color: #92fe9d;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease 0.4s;
-        }
-
-        .slide.active .slide-title {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .slide-description {
-            font-size: 1rem;
-            line-height: 1.5;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease 0.6s;
-        }
-
-        .slide.active .slide-description {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .future-slide {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
-            padding: 30px;
-        }
-
-        .future-content {
-            text-align: center;
-        }
-
-        .future-content h2 {
-            font-size: 2.2rem;
-            margin-bottom: 20px;
-            color: #ffcc00;
-        }
-
-        .future-content p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .tech-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .tech-item {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        .tech-item:hover {
-            transform: translateY(-8px);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .tech-item i {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            color: #00c9ff;
-        }
-
-        .tech-item h3 {
-            font-size: 1rem;
-            margin-bottom: 8px;
-        }
-
-        .tech-item p {
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        .nav-button {
-            background: linear-gradient(to right, #00c9ff, #92fe9d);
-            color: #0f2027;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-        }
-
-        .nav-button:disabled {
-            background: #555;
-            color: #999;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .progress-indicator {
-            display: flex;
-            justify-content: center;
-            margin-top: 15px;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .progress-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .progress-dot.active {
-            background: #00c9ff;
-            transform: scale(1.2);
-        }
-
-        @media (max-width: 900px) {
-            .slide {
-                flex-direction: column;
-                padding: 15px;
-            }
-
-            .slide-image {
-                padding: 10px;
-                max-height: 40%;
-            }
-
-            .slide-content {
-                padding: 10px;
-            }
-
-            .slide-year {
-                font-size: 3rem;
-            }
-
-            .slide-title {
-                font-size: 1.6rem;
-            }
-
-            h1 {
-                font-size: 2.2rem;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-
-            .slides-container {
-                height: 520px;
-            }
-        }
-
-        @keyframes yearCounter {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); }
-        }
-
-        .counter-animation {
-            animation: yearCounter 0.4s ease;
-        }
-
-        .timeline-marker {
-            position: absolute;
-            top: -12px;
-            height: 28px;
-            width: 2px;
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        .timeline-info {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            max-width: 300px;
-            display: none;
-        }
-
-        .timeline-bar:hover .timeline-info {
-            display: block;
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="font-inter antialiased text-gray-900 bg-gray-50">
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
+        </div>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Viajando en el tiempo...</p>
+    </div>
 
-    <!-- Header -->
-    <header id="main-header" class="bg-white shadow-md py-0 px-1 md:px-3 fixed w-full z-50">
-        <div class="container mx-auto flex justify-between items-center">
-            <!-- Logo -->
-            <a href="../index.html" class="flex items-center space-x-4">
-                <img src="../imagenes/logo.png" alt="Logo" width="120" height="auto">
-                <span class="text-2xl font-bold text-blue-800">Area de Informatica</span>
-            </a>
-
-            <!-- Desktop Navigation -->
-            <nav class="hidden md:flex space-x-6">
-                <a href="../index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Inicio</a>
-                <!-- Nested Dropdown for Grados (Cursos) -->
-                <div class="relative group">
-                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
-                        Cursos <span class="ml-1 text-xs">&#9662;</span>
-                    </button>
-                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
-                        <div id="desktop-grades-menu"></div>
-                    </div>
-                </div>
-                <!-- Nested Dropdown for Recursos Adicionales -->
-                <div class="relative group">
-                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
-                        Recursos Adicionales <span class="ml-1 text-xs">&#9662;</span>
-                    </button>
-                    <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
-                        <div id="desktop-additional-resources-menu"></div>
-                    </div>
-                </div>
-                <a href="../pseudocode.html" target="_blank" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Pseudocódigo</a>
-                <a href="https://wa.me/50488422786" target="_blank" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Contacto</a>
-            </nav>
-
-            <!-- Flag Image for Desktop -->
-            <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="120" height="auto" class="hidden md:block">
-
-            <!-- Mobile Hamburger Menu -->
-            <div class="md:hidden">
-                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path id="mobile-menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
             </div>
         </div>
-
-        <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu-overlay" class="hidden">
-            <button id="mobile-menu-close-button" class="absolute top-4 right-6 text-gray-700 focus:outline-none">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-            <nav class="flex flex-col space-y-5 mt-12 w-full px-5">
-                <a href="../index.html" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Inicio</a>
-                <!-- Mobile Grados Menu (Cursos) -->
-                <div class="w-full">
-                    <button id="mobile-courses-toggle" class="w-full text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 flex justify-between items-center transition-colors duration-200 border-b border-gray-200">
-                        Cursos
-                        <span id="mobile-courses-arrow" class="transform transition-transform duration-300">&#9656;</span>
-                    </button>
-                    <div id="mobile-grades-container" class="mobile-menu-item-container hidden-height">
-                        <div class="pl-3 pt-1 flex flex-col space-y-2" id="mobile-grades-menu">
-                            <!-- Grades will be injected here by JS -->
-                        </div>
-                    </div>
-                </div>
-                <!-- Mobile Recursos Adicionales Menu -->
-                <div class="w-full">
-                    <button id="mobile-additional-resources-toggle" class="w-full text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 flex justify-between items-center transition-colors duration-200">
-                        Recursos Adicionales
-                        <span id="mobile-additional-resources-arrow" class="transform transition-transform duration-300">&#9656;</span>
-                    </button>
-                    <div id="mobile-additional-resources-container" class="mobile-menu-item-container hidden-height">
-                        <div class="pl-3 pt-1 flex flex-col space-y-2" id="mobile-additional-resources-menu">
-                            <!-- Additional Resources will be injected here by JS -->
-                        </div>
-                    </div>
-                </div>
-                <a href="../pseudocode.html" target="_blank" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Pseudocódigo</a>
-                <a href="https://wa.me/50488422786" target="_blank" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Contacto</a>
-            </nav>
-        </div>
+        <a href="../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <main class="mt-[5rem]">
-        <div class="container">
-        <header>
-            <h1><i class="fas fa-history"></i> Evolución de la Computación</h1>
-            <p class="subtitle">Proporción temporal corregida - Ahora con escala cronológica precisa</p>
-        </header>
-
-        <div class="timeline-container">
-            <div class="year-counter">1600</div>
-            <div class="timeline-bar">
-                <div class="timeline-progress"></div>
-                <!-- Los marcadores se generarán dinámicamente con JS -->
-            </div>
-            <div class="timeline-info">
-                <strong>Proporción corregida:</strong> La barra ahora refleja con precisión la distancia temporal entre eventos basada en años reales, no en conteo de slides.
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase">Evolución de la Computación</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Informática I</p>
+                <p>Décimo Grado - Sección A/B</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
         </div>
 
-        <!-- Botones de navegación en posición superior -->
-        <div class="nav-buttons">
-            <button class="nav-button" id="prevBtn" disabled>
-                <i class="fas fa-arrow-left"></i> Anterior
-            </button>
-            <button class="nav-button" id="nextBtn">
-                Siguiente <i class="fas fa-arrow-right"></i>
-            </button>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Ábaco (1600 a.C.)</h2>
+            <div class="concept-box text-center">
+                <p>Considerado el primer dispositivo de cálculo manual. Permite realizar operaciones aritméticas básicas mediante cuentas deslizantes.</p>
+            </div>
+            <img src="../imagenes/abaco.jpg" alt="Ábaco" class="h-48 mt-4 rounded-lg shadow-md">
         </div>
 
-        <div class="slides-container">
-            <!-- Slide 1: Ábaco -->
-            <div class="slide active">
-                <div class="slide-image">
-                    <img src="../imagenes/abaco.jpg" alt="Ábaco antiguo">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1600</div>
-                    <h2 class="slide-title">Ábaco</h2>
-                    <p class="slide-description">Considerado el primer dispositivo de cálculo, el ábaco se originó en la antigua Mesopotamia y fue perfeccionado por culturas como la china y romana. Permite realizar operaciones aritméticas básicas mediante cuentas deslizantes.</p>
-                </div>
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Pascalina (1642)</h2>
+            <div class="concept-box">
+                <p>Inventada por Blaise Pascal. Fue la primera calculadora mecánica que funcionaba a base de ruedas y engranajes.</p>
             </div>
+            <img src="../imagenes/pascalina.jpg" alt="Pascalina" class="h-48 mt-4 rounded-lg shadow-md">
+        </div>
 
-            <!-- Slide 2: Pascalina -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/pascalina.jpg" alt="Pascalina">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1642</div>
-                    <h2 class="slide-title">Pascalina</h2>
-                    <p class="slide-description">Inventada por Blaise Pascal, fue la primera calculadora mecánica capaz de realizar sumas y restas de forma directa. Utilizaba una serie de ruedas dentadas para representar números decimales.</p>
-                </div>
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Máquina Analítica (1837)</h2>
+            <div class="concept-box">
+                <p>Charles Babbage diseñó el primer concepto de computadora programable, con unidad de control y memoria.</p>
             </div>
+            <img src="../imagenes/maquina_analitica.jpg" alt="Babbage" class="h-48 mt-4 rounded-lg shadow-md">
+        </div>
 
-            <!-- Slide 3: Máquina Analítica -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/maquina_analitica.jpg" alt="Máquina Analítica">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1837</div>
-                    <h2 class="slide-title">Máquina Analítica</h2>
-                    <p class="slide-description">Diseñada por Charles Babbage, es considerada el primer concepto de computadora programable. Su diseño incluía componentes equivalentes a la unidad aritmética-lógica, memoria y flujo de control.</p>
-                </div>
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Válvulas de Vacío (1904)</h2>
+            <div class="concept-box">
+                <p>Componente electrónico fundamental para las computadoras de Primera Generación. Eran grandes, lentas y generaban mucho calor.</p>
             </div>
+            <img src="../imagenes/valvulas_vacio.jpg" alt="Válvulas" class="h-48 mt-4 rounded-lg shadow-md">
+        </div>
 
-            <!-- Slide 4: Máquina tabuladora -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/maquina_tabuladora.jpg" alt="Máquina Tabuladora">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1890</div>
-                    <h2 class="slide-title">Máquina Tabuladora</h2>
-                    <p class="slide-description">Desarrollada por Herman Hollerith para el censo de EE.UU., utilizaba tarjetas perforadas para procesar datos. Esta máquina redujo el tiempo de procesamiento de años a meses.</p>
-                </div>
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">ENIAC (1946)</h2>
+            <div class="concept-box text-center">
+                <p>La primera computadora digital electrónica de propósito general. Ocupaba una habitación completa y pesaba 27 toneladas.</p>
             </div>
+            <img src="../imagenes/eniac.jpg" alt="ENIAC" class="h-48 mt-4 rounded-lg shadow-md">
+        </div>
 
-            <!-- Slide 5: Válvulas de vacío -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/valvulas_vacio.jpg" alt="Válvulas de Vacío">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1904</div>
-                    <h2 class="slide-title">Válvulas de Vacío</h2>
-                    <p class="slide-description">Inventadas por John Ambrose Fleming, permitieron el desarrollo de las primeras computadoras electrónicas. Estas válvulas actuaban como interruptores y amplificadores en circuitos electrónicos.</p>
-                </div>
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico</h2>
+            <div class="concept-box">
+                <p>Dibuja en tu cuaderno una línea de tiempo y ubica cronológicamente los 5 hitos mencionados anteriormente.</p>
             </div>
+        </div>
 
-            <!-- Slide 6: Z3 -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/z3.jpg" alt="Z3">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1941</div>
-                    <h2 class="slide-title">Z3 - Primera Computadora Programable</h2>
-                    <p class="slide-description">Desarrollada por Konrad Zuse, fue la primera máquina programable y completamente automática. Utilizaba relés electromecánicos y era capaz de realizar cálculos complejos.</p>
-                </div>
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Transistor (1947)</h2>
+            <div class="concept-box">
+                <p>Dio inicio a la Segunda Generación. Reemplazó a las válvulas de vacío, haciendo las computadoras más pequeñas, rápidas y confiables.</p>
             </div>
+            <img src="../imagenes/transistor.jpg" alt="Transistor" class="h-48 mt-4">
+        </div>
 
-            <!-- Slide 7: ENIAC -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/eniac.jpg" alt="ENIAC">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1946</div>
-                    <h2 class="slide-title">ENIAC</h2>
-                    <p class="slide-description">La primera computadora digital electrónica de propósito general. Ocupaba 167 m², pesaba 27 toneladas y consumía 150 kW. Fue desarrollada por el Ejército de EE.UU. para cálculos de artillería.</p>
-                </div>
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Circuito Integrado (1958)</h2>
+            <div class="concept-box">
+                <p>Jack Kilby integró múltiples transistores en un solo chip de silicio. Nace la Tercera Generación.</p>
             </div>
+            <img src="../imagenes/circuito_integrado.jpg" alt="Chip" class="h-48 mt-4">
+        </div>
 
-            <!-- Slide 8: Transistor -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/transistor.jpg" alt="Transistor">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1947</div>
-                    <h2 class="slide-title">Invención del Transistor</h2>
-                    <p class="slide-description">Desarrollado en los laboratorios Bell por Bardeen, Brattain y Shockley, el transistor revolucionó la electrónica. Reemplazó a los tubos de vacío, permitiendo dispositivos más pequeños y eficientes.</p>
-                </div>
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Microprocesador (1971)</h2>
+            <div class="concept-box">
+                <p>Intel lanzó el 4004. Toda la CPU en un solo chip. Inicia la Cuarta Generación y la era de las PC personales.</p>
             </div>
+            <img src="../imagenes/intel4004.jpg" alt="Intel 4004" class="h-48 mt-4">
+        </div>
 
-            <!-- Slide 9: IBM 701 -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/ibm701.jpg" alt="IBM 701">
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Apple I y IBM PC</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl">
+                <div>
+                    <img src="../imagenes/apple1.jpg" alt="Apple I" class="h-32 mx-auto mb-2">
+                    <p class="font-bold">Apple I (1976)</p>
                 </div>
-                <div class="slide-content">
-                    <div class="slide-year">1953</div>
-                    <h2 class="slide-title">IBM 701</h2>
-                    <p class="slide-description">Primera computadora científica comercial de IBM. Conocida como "Defense Calculator", fue diseñada para aplicaciones científicas y militares. Podía realizar 2.200 multiplicaciones por segundo.</p>
-                </div>
-            </div>
-
-            <!-- Slide 10: Circuito Integrado -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/circuito_integrado.jpg" alt="Circuito Integrado">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1958</div>
-                    <h2 class="slide-title">Circuito Integrado</h2>
-                    <p class="slide-description">Inventado por Jack Kilby de Texas Instruments, permitió integrar múltiples componentes electrónicos en un solo chip. Esta innovación hizo posible la miniaturización de las computadoras.</p>
-                </div>
-            </div>
-
-            <!-- Slide 11: ARPANET -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/arpanet.jpg" alt="ARPANET">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1969</div>
-                    <h2 class="slide-title">Nacimiento de ARPANET</h2>
-                    <p class="slide-description">Precursora de Internet, envió su primer mensaje entre UCLA y Stanford. Este proyecto militar evolucionó hacia una red global que transformó la comunicación, comercio y sociedad.</p>
-                </div>
-            </div>
-
-            <!-- Slide 12: Microprocesador -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/intel4004.jpg" alt="Microprocesador">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1971</div>
-                    <h2 class="slide-title">Primer Microprocesador</h2>
-                    <p class="slide-description">Intel 4004, el primer microprocesador disponible comercialmente. Este chip de 4 bits contenía 2,300 transistores y marcó el inicio de la revolución de las computadoras personales.</p>
-                </div>
-            </div>
-
-            <!-- Slide 13: Apple I -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/apple1.jpg" alt="Apple I">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1976</div>
-                    <h2 class="slide-title">Apple I</h2>
-                    <p class="slide-description">Primer producto de Apple, diseñado por Steve Wozniak. Vendido como placa base con CPU, memoria y chip de video, requería teclado y monitor. Solo se fabricaron 200 unidades.</p>
-                </div>
-            </div>
-
-            <!-- Slide 14: World Wide Web -->
-            <div class="slide">
-                <div class="slide-image">
-                    <img src="../imagenes/www.jpg" alt="World Wide Web">
-                </div>
-                <div class="slide-content">
-                    <div class="slide-year">1989</div>
-                    <h2 class="slide-title">World Wide Web</h2>
-                    <p class="slide-description">Inventada por Tim Berners-Lee en el CERN, creó un sistema de información accesible globalmente. Combinó hipertexto, Internet y multimedia, revolucionando el acceso a la información.</p>
-                </div>
-            </div>
-
-            <!-- Slide 15: Futuro (estilo cinta) -->
-            <div class="slide future-slide">
-                <div class="future-content">
-                    <h2><i class="fas fa-rocket"></i> El Futuro de la Computación</h2>
-                    <p>Estamos en el umbral de revoluciones tecnológicas que transformarán nuestra relación con las computadoras:</p>
-
-                    <div class="tech-grid">
-                        <div class="tech-item">
-                            <i class="fas fa-atom"></i>
-                            <h3>Computación Cuántica</h3>
-                            <p>Ordenadores que aprovechan la física cuántica para resolver problemas imposibles para computadoras actuales</p>
-                        </div>
-
-                        <div class="tech-item">
-                            <i class="fas fa-brain"></i>
-                            <h3>Inteligencia Artificial</h3>
-                            <p>Sistemas capaces de aprender, razonar y crear con capacidad cada vez más similar a la humana</p>
-                        </div>
-
-                        <div class="tech-item">
-                            <i class="fas fa-dna"></i>
-                            <h3>Bioinformática</h3>
-                            <p>Fusión de biología y computación para medicina personalizada y tratamientos revolucionarios</p>
-                        </div>
-
-                        <div class="tech-item">
-                            <i class="fas fa-microchip"></i>
-                            <h3>Nanotecnología</h3>
-                            <p>Computación a escala molecular con dispositivos miles de veces más pequeños y eficientes</p>
-                        </div>
-                    </div>
-
-                    <p style="margin-top: 25px; font-style: italic; color: #ffcc00;">"El futuro ya está aquí, solo que no está uniformemente distribuido" - William Gibson</p>
+                <div>
+                    <img src="../imagenes/ibm701.jpg" alt="IBM" class="h-32 mx-auto mb-2">
+                    <p class="font-bold">IBM PC (1981)</p>
                 </div>
             </div>
         </div>
 
-        <div class="progress-indicator">
-            <div class="progress-dot active"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
-            <div class="progress-dot"></div>
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">WWW (1989)</h2>
+            <div class="concept-box">
+                <p>Tim Berners-Lee inventa la World Wide Web, conectando al mundo a través de la información hipertextual.</p>
+            </div>
+            <img src="../imagenes/www.jpg" alt="WWW" class="h-48 mt-4">
         </div>
-    </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Futuro</h2>
+            <div class="grid grid-cols-2 gap-4 text-left max-w-4xl">
+                <div class="p-4 bg-slate-50 rounded">
+                    <h4 class="font-bold">IA e IA Generativa</h4>
+                    <p class="text-xs">Sistemas que aprenden y crean.</p>
+                </div>
+                <div class="p-4 bg-slate-50 rounded">
+                    <h4 class="font-bold">Computación Cuántica</h4>
+                    <p class="text-xs">Poder de procesamiento masivo.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none">
+                <h3 class="font-black text-xl mb-4">MAPA MENTAL</h3>
+                <p>Realizar un mapa mental sobre las 5 generaciones de computadoras, indicando el componente principal de cada una.</p>
+                <p class="mt-4 font-bold">Valor: 10%</p>
+            </div>
+        </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-5 text-center">
-            <p class="text-base mb-3">
-                &copy; <span id="current-year"></span> Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
-            </p>
-            <div class="flex justify-center space-x-5">
-                <a href="../index.html" class="text-gray-400 hover:text-white transition-colors duration-200">Privacidad</a>
-                <a href="../index.html" class="text-gray-400 hover:text-white transition-colors duration-200">Términos</a>
-                <a href="../index.html" class="text-gray-400 hover:text-white transition-colors duration-200">Soporte</a>
-            </div>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/games-adapter.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const slides = document.querySelectorAll('.slide');
-            const progressDots = document.querySelectorAll('.progress-dot');
-            const nextBtn = document.getElementById('nextBtn');
-            const prevBtn = document.getElementById('prevBtn');
-            const yearCounter = document.querySelector('.year-counter');
-            const timelineProgress = document.querySelector('.timeline-progress');
-            const timelineBar = document.querySelector('.timeline-bar');
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
-            // Años reales de cada evento (el último es el futuro, asignamos 2023)
-            const years = [1600, 1642, 1837, 1890, 1904, 1941, 1946, 1947, 1953, 1958, 1969, 1971, 1976, 1989, 2023];
-            const totalSlides = slides.length;
-            let currentSlide = 0;
+        const quizQuestions = [
+            { q: "¿Primer dispositivo de cálculo?", a: "A", options: ["Ábaco", "Calculadora", "PC", "Pascalina"] },
+            { q: "¿Quién inventó la Pascalina?", a: "C", options: ["Steve Jobs", "Bill Gates", "Blaise Pascal", "Newton"] },
+            { q: "ENIAC funcionaba con:", a: "B", options: ["Transistores", "Válvulas de vacío", "Chips", "Agua"] },
+            { q: "¿Qué invento inició la 2da Generación?", a: "D", options: ["Rueda", "Internet", "Chip", "Transistor"] },
+            { q: "¿Quién inventó la WWW?", a: "A", options: ["Tim Berners-Lee", "Mark Zuckerberg", "Elon Musk", "Google"] },
+            { q: "El primer microprocesador fue:", a: "C", options: ["Ryzen", "Core i7", "Intel 4004", "Pentium"] },
+            { q: "La 3ra Generación usó:", a: "B", options: ["Madera", "Circuitos Integrados", "Vapor", "Válvulas"] },
+            { q: "¿Año del IBM PC?", a: "D", options: ["1950", "2000", "1995", "1981"] },
+            { q: "Charles Babbage diseñó la:", a: "A", options: ["Máquina Analítica", "MacBook", "Radio", "Calculadora"] },
+            { q: "IA es parte de la generación:", a: "C", options: ["Primera", "Segunda", "Quinta / Actual", "Antigua"] }
+        ];
 
-            // Calcula la posición proporcional basada en años reales
-            function calculatePosition(year) {
-                const minYear = Math.min(...years);
-                const maxYear = Math.max(...years);
-                const range = maxYear - minYear;
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
+        }
 
-                // Si es el primer evento, posición 0%
-                if (year === minYear) return 0;
-
-                // Si es el último evento, posición 100%
-                if (year === maxYear) return 100;
-
-                // Calcula la posición proporcional
-                return ((year - minYear) / range) * 100;
-            }
-
-            // Genera marcadores en la línea de tiempo basados en años reales
-            function createTimelineMarkers() {
-                // Elimina marcadores existentes
-                document.querySelectorAll('.timeline-marker').forEach(marker => marker.remove());
-
-                // Crea nuevos marcadores proporcionales
-                years.forEach(year => {
-                    const position = calculatePosition(year);
-                    const marker = document.createElement('div');
-                    marker.className = 'timeline-marker';
-                    marker.style.left = `${position}%`;
-                    marker.title = `Año: ${year} (${position.toFixed(1)}%)`;
-                    timelineBar.appendChild(marker);
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
                 });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
+            });
+        }
+
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
+        });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
             }
-
-            // Función para animar el contador de años
-            function animateYearCounter(targetYear) {
-                const startYear = parseInt(yearCounter.textContent);
-                const duration = 800; // 0.8 segundos
-                const increment = targetYear > startYear ? 1 : -1;
-                const range = Math.abs(targetYear - startYear);
-                const stepTime = Math.min(duration / range, 10);
-
-                let current = startYear;
-                const timer = setInterval(() => {
-                    current += increment;
-                    yearCounter.textContent = current;
-
-                    // Aplicar animación de escalado
-                    yearCounter.classList.add('counter-animation');
-                    setTimeout(() => {
-                        yearCounter.classList.remove('counter-animation');
-                    }, 250);
-
-                    if (current === targetYear) {
-                        clearInterval(timer);
-                    }
-                }, stepTime);
-            }
-
-            // Función para mostrar un slide específico
-            function showSlide(n) {
-                // Ocultar slide actual
-                slides[currentSlide].classList.remove('active');
-                progressDots[currentSlide].classList.remove('active');
-
-                // Actualizar índice del slide
-                currentSlide = (n + totalSlides) % totalSlides;
-
-                // Mostrar nuevo slide
-                slides[currentSlide].classList.add('active');
-                progressDots[currentSlide].classList.add('active');
-
-                // Actualizar año
-                const targetYear = years[currentSlide];
-                animateYearCounter(targetYear);
-
-                // Actualizar barra de progreso con proporción temporal real
-                const position = calculatePosition(targetYear);
-                timelineProgress.style.width = `${position}%`;
-
-                // Actualizar posición del contador de año
-                yearCounter.style.left = `${position}%`;
-
-                // Actualizar estado de los botones
-                prevBtn.disabled = currentSlide === 0;
-                nextBtn.disabled = currentSlide === totalSlides - 1;
-            }
-
-            // Crear marcadores de tiempo proporcionales
-            createTimelineMarkers();
-
-            // Event listeners para botones
-            nextBtn.addEventListener('click', () => {
-                showSlide(currentSlide + 1);
-            });
-
-            prevBtn.addEventListener('click', () => {
-                showSlide(currentSlide - 1);
-            });
-
-            // Event listeners para los puntos de progreso
-            progressDots.forEach((dot, index) => {
-                dot.addEventListener('click', () => {
-                    showSlide(index);
-                });
-            });
-
-            // Autoavance cada 8 segundos
-            let autoSlide = setInterval(() => {
-                if (currentSlide < totalSlides - 1) {
-                    showSlide(currentSlide + 1);
-                }
-            }, 8000);
-
-            // Pausar autoavance cuando el mouse está sobre la presentación
-            const slidesContainer = document.querySelector('.slides-container');
-            slidesContainer.addEventListener('mouseenter', () => {
-                clearInterval(autoSlide);
-            });
-
-            slidesContainer.addEventListener('mouseleave', () => {
-                autoSlide = setInterval(() => {
-                    if (currentSlide < totalSlides - 1) {
-                        showSlide(currentSlide + 1);
-                    }
-                }, 8000);
-            });
-
-            // Set current year in footer
-            document.getElementById('current-year').textContent = new Date().getFullYear();
+            lastTap = n;
         });
 
-        const quizData = [
-            {
-                q: "¿Cuál es considerado el primer dispositivo de cálculo, originado en Mesopotamia?",
-                options: ["Ábaco", "Pascalina", "Máquina Analítica", "ENIAC"],
-                a: "Ábaco"
-            },
-            {
-                q: "¿Quién inventó la Pascalina, la primera calculadora mecánica?",
-                options: ["Blaise Pascal", "Charles Babbage", "Konrad Zuse", "Steve Wozniak"],
-                a: "Blaise Pascal"
-            },
-            {
-                q: "¿Qué máquina es considerada el primer concepto de computadora programable?",
-                options: ["Máquina Analítica", "Z3", "IBM 701", "Apple I"],
-                a: "Máquina Analítica"
-            },
-            {
-                q: "¿Qué tecnología permitió el paso a las computadoras electrónicas a principios del siglo XX?",
-                options: ["Válvulas de vacío", "Transistores", "Microprocesadores", "Engranajes"],
-                a: "Válvulas de vacío"
-            },
-            {
-                q: "¿Cuál fue la primera máquina programable y completamente automática (1941)?",
-                options: ["Z3", "ENIAC", "Harvard Mark I", "Colossus"],
-                a: "Z3"
-            },
-            {
-                q: "¿Qué invento de 1947 permitió crear dispositivos más pequeños y eficientes que los tubos de vacío?",
-                options: ["Transistor", "Circuito Integrado", "Relé", "Fibra Óptica"],
-                a: "Transistor"
-            },
-            {
-                q: "¿Quién inventó el circuito integrado en 1958?",
-                options: ["Jack Kilby", "Bill Gates", "Alan Turing", "Tim Berners-Lee"],
-                a: "Jack Kilby"
-            },
-            {
-                q: "¿Qué red militar precursora de Internet nació en 1969?",
-                options: ["ARPANET", "WWW", "Intranet", "Ethernet"],
-                a: "ARPANET"
-            },
-            {
-                q: "¿Cuál fue el primer microprocesador comercial lanzado en 1971?",
-                options: ["Intel 4004", "Intel 8080", "MOS 6502", "Zilog Z80"],
-                a: "Intel 4004"
-            },
-            {
-                q: "¿Quién inventó la World Wide Web (WWW) en el CERN en 1989?",
-                options: ["Tim Berners-Lee", "Vint Cerf", "Larry Page", "Steve Jobs"],
-                a: "Tim Berners-Lee"
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('articulo_lineadetiempo', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
             }
-        ];
+            initQuiz();
+            showSlide(0);
+        };
     </script>
 </body>
 </html>

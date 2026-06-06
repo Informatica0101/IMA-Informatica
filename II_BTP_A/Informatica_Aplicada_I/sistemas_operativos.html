@@ -2,497 +2,302 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilos.css">
-    <title>Informatica Aplicada</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Sistemas Operativos - IMA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
+    </style>
 </head>
-<body>
-    <div class="xp-desktop-icons">
-        <div class="xp-icon">
-            <img src="../../imagenes/My Computer.png" alt="My Computer">
-            <span>My Computer</span>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <div class="xp-icon">
-            <img src="../../imagenes/My Documents.png" alt="My Documents">
-            <span>My Documents</span>
-        </div>
-        <div class="xp-icon">
-            <img src="../../imagenes/My Pictures.png" alt="My Pictures">
-            <span>My Pictures</span>
-        </div>
-        <div class="xp-icon">
-            <img src="../../imagenes/My Videos.png" alt="My Videos">
-            <span>My Videos</span>
-        </div>
-        <div class="xp-icon">
-            <img src="../../imagenes/Internet Explorer 6.png" alt="Internet Explorer 6">
-            <span>Internet Explorer</span>
-        </div>
-        <div class="xp-icon">
-            <img src="../../imagenes/MSN Messenger.png" alt="MSN Messenger">
-            <span>MSN Messenger</span>
-        </div>
-        <div class="xp-icon">
-            <img src="../../imagenes/Notepad.png" alt="Notepad">
-            <span>Notepad</span>
-        </div>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Cargando el núcleo...</p>
     </div>
 
-    <img src="../../imagenes/logo.png" alt="Logo pequeño" class="logo-fixed">
-
-    <div class="presentation-container">
-        <div class="slide active" id="slide-1">
-            <div class="xp-titlebar">
-                Presentación del Curso
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
-                </div>
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
             </div>
-            <div class="slide-content">
-                <img src="../../imagenes/logo.png"
-                     alt="Logo Instituto Maria Auxiliadora"
-                     class="logo-institucion">
-                <p>Informática Aplicada I.</p>
-                <p>Undécimo Grado (II BTP) Sección "A"</p>
-                <p>Docente: Pablo Antonio Peña.</p>
-                <p>Fecha: 06 de Julio de 2025.</p>
-                <h3 class="mt-4">Fundamentos de Sistemas Operativos</h3>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
+    </header>
+
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Fundamentos de Sistemas Operativos</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Informática Aplicada I</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
         </div>
 
-        <div class="slide" id="slide-2">
-            <div class="xp-titlebar">
-                Informática Aplicada I
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
-                </div>
-            </div>
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Informática Aplicada I</h2>
-                <p>Proporcionar conocimientos y habilidades para interactuar de forma <strong>avanzada</strong> con sistemas operativos y redes.</p>
-                <ul class="mx-auto text-left">
-                    <li>Desarrollo de competencias técnicas.</li>
-                    <li>Resolución de problemas en entornos computacionales.</li>
-                </ul>
-                <img src="../../imagenes/ia_intro_os.png" alt="Ilustración de concepto de SO" class="img-slide" loading="lazy">
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Corazón del Software</h2>
+            <div class="concept-box">
+                <p>El Sistema Operativo (SO) es el programa base que gestiona todos los recursos de hardware y software de la computadora.</p>
+                <p class="mt-4 font-bold">Sin un SO, el hardware es inútil para el usuario promedio.</p>
             </div>
         </div>
 
-        <div class="slide" id="slide-3">
-            <div class="xp-titlebar">
-                ¿Qué es un Sistema Operativo?
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Funciones Vitales</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
+                <div class="p-4 bg-slate-50 border rounded">
+                    <p class="font-bold">Gestión de Procesos</p>
+                    <p class="text-xs">Asigna tiempo de CPU a cada programa.</p>
                 </div>
-            </div>
-            <div class="slide-content">
-                <h2 class="text-indigo-700">¿Qué es un Sistema Operativo? (SO)</h2>
-                <p>Software <strong>fundamental</strong> que controla el hardware de una computadora y proporciona servicios a los programas de aplicación.</p>
-                <ul class="mx-auto text-left">
-                    <li>Intermediario entre usuario y hardware.</li>
-                    <li>Administra todos los recursos del sistema.</li>
-                </ul>
-                <img src="../../imagenes/so_concepto.png" alt="Diagrama de un SO con hardware y software" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <div class="slide" id="slide-4">
-            <div class="xp-titlebar">
-                Gestión de Procesos
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
+                <div class="p-4 bg-slate-50 border rounded">
+                    <p class="font-bold">Gestión de Memoria</p>
+                    <p class="text-xs">Administra la RAM disponible.</p>
                 </div>
-            </div>
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Gestión de Procesos</h2>
-                <p>El SO asigna tiempo de CPU a cada programa en ejecución (proceso).</p>
-                <ul class="mx-auto text-left">
-                    <li>Permite la <strong>multitarea</strong>.</li>
-                    <li>Inicia, detiene, reanuda y sincroniza procesos.</li>
-                </ul>
-                <img src="../../imagenes/gestion_procesos.jpg" alt="Ilustración de la gestión de procesos" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <div class="slide" id="slide-5">
-            <div class="xp-titlebar">
-                Gestión de Memoria
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
+                <div class="p-4 bg-slate-50 border rounded">
+                    <p class="font-bold">Gestión de Archivos</p>
+                    <p class="text-xs">Crea y organiza la estructura en discos.</p>
                 </div>
-            </div>
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Gestión de Memoria</h2>
-                <p>Administra la memoria principal (RAM) de la computadora.</p>
-                <ul class="mx-auto text-left">
-                    <li>Optimiza el uso de la RAM.</li>
-                    <li><strong>Paginación</strong>: Divide memoria en bloques fijos.</li>
-                    <li><strong>Memoria Virtual</strong>: Usa disco duro como RAM adicional.</li>
-                </ul>
-                <img src="../../imagenes/gestion_memoria.jpg" alt="Diagrama de la gestión de memoria" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <div class="slide" id="slide-6">
-            <div class="xp-titlebar">
-                Gestión de Almacenamiento de Archivos
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
-                </div>
-            </div>
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Gestión de Almacenamiento de Archivos</h2>
-                <p>Organiza, almacena, recupera, protege y elimina archivos y directorios.</p>
-                <ul class="mx-auto text-left">
-                    <li><strong>Sistema de Archivos</strong>: Estructura lógica para datos.</li>
-                    <li><strong>Directorios/Carpetas</strong>: Agrupan archivos.</li>
-                </ul>
-                <img src="../../imagenes/gestion_archivos.png" alt="Ilustración de carpetas y archivos en un sistema operativo" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <div class="slide" id="slide-7">
-            <div class="xp-titlebar">
-                Gestión de Entrada/Salida (I/O)
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
-                </div>
-            </div>
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Gestión de Entrada/Salida (I/O)</h2>
-                <p>Controla la comunicación entre CPU y dispositivos periféricos (teclado, monitor, etc.).</p>
-                <ul class="mx-auto text-left">
-                    <li>Permite interacción usuario-máquina.</li>
-                    <li>Mediante <strong>Controladores de Dispositivo (Drivers)</strong>.</li>
-                </ul>
-                <img src="../../imagenes/gestion_io_devices.png" alt="Diagrama de dispositivos de entrada y salida" class="img-slide" loading="lazy">
-            </div>
-        </div>
-
-        <div class="slide" id="slide-8">
-            <div class="xp-titlebar">
-                Interfaz de Usuario
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
-                </div>
-            </div>
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Interfaz de Usuario</h2>
-                <p>El medio a través del cual el usuario interactúa con la computadora.</p>
-                <ul class="mx-auto text-left">
-                    <li><strong>CLI (Línea de Comandos)</strong>: Comandos de texto (ej. Bash, CMD).</li>
-                    <li><strong>GUI (Gráfica)</strong>: Ventanas, iconos, menús (ej. Windows, macOS).</li>
-                </ul>
-                <div class="flex justify-center gap-4 mt-4">
-                    <img src="../../imagenes/terminal_cli.png" alt="Interfaz de Línea de Comandos (CLI)" class="img-slide" style="max-width: 180px;" loading="lazy">
-                    <img src="../../imagenes/desktop_gui.jpg" alt="Interfaz Gráfica de Usuario (GUI)" class="img-slide" style="max-width: 180px;" loading="lazy">
+                <div class="p-4 bg-slate-50 border rounded">
+                    <p class="font-bold">Interfaz de Usuario</p>
+                    <p class="text-xs">Permite al humano interactuar con la máquina.</p>
                 </div>
             </div>
         </div>
 
-        <div class="slide" id="slide-9">
-            <div class="xp-titlebar">
-                Seguridad y Protección
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
-                </div>
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Kernel (Núcleo)</h2>
+            <div class="concept-box">
+                <p>Es la parte más interna del SO. Gestiona el acceso seguro al hardware. Siempre reside en la memoria RAM mientras la PC está encendida.</p>
             </div>
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Seguridad y Protección</h2>
-                <p>El SO protege los recursos del sistema contra accesos no autorizados y software malicioso.</p>
-                <ul class="mx-auto text-left">
-                    <li>Gestión de permisos de usuario.</li>
-                    <li>Autenticación (contraseñas).</li>
-                    <li>Cortafuegos básicos y actualizaciones de seguridad.</li>
-                </ul>
-                <img src="../../imagenes/seguridad_so.jpg" alt="Ilustración de seguridad en sistemas operativos" class="img-slide" loading="lazy">
+            <i class="fas fa-atom text-6xl text-blue-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tipos de SO</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl">
+                <div class="p-4 border rounded"><strong>Escritorio:</strong> Windows, macOS, Linux.</div>
+                <div class="p-4 border rounded"><strong>Móviles:</strong> Android, iOS.</div>
+                <div class="p-4 border rounded"><strong>Servidores:</strong> Linux Server, Windows Server.</div>
             </div>
         </div>
 
-        <div class="slide" id="slide-10">
-            <div class="xp-titlebar">
-                Ejemplos de Sistemas Operativos
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
-                </div>
-            </div>
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Ejemplos de Sistemas Operativos</h2>
-                <h3>Desktop y Servidores</h3>
-                <ul class="mx-auto text-left">
-                    <li><strong>Microsoft Windows</strong>: Más usado en PCs.</li>
-                    <li><strong>macOS (Apple)</strong>: Diseño elegante, uso en Macs.</li>
-                    <li><strong>Linux</strong>: Código abierto, robusto, en servidores.</li>
-                </ul>
-                <div class="flex justify-center gap-4 mt-4">
-                    <img src="../../imagenes/windows_logo.png" alt="Logo de Microsoft Windows" class="img-slide" style="max-width: 180px;" loading="lazy">
-                    <img src="../../imagenes/macos_logo.png" alt="Logo de macOS" class="img-slide" style="max-width: 180px;" loading="lazy">
-                    <img src="../../imagenes/linux_logo.png" alt="Logo de Linux" class="img-slide" style="max-width: 180px;" loading="lazy">
-                </div>
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Multitarea y Multiusuario</h2>
+            <div class="concept-box border-green-400">
+                <p><strong>Multitarea:</strong> Capacidad de correr varios programas al mismo tiempo.</p>
+                <p class="mt-2"><strong>Multiusuario:</strong> Permite que varias personas usen el sistema simultáneamente.</p>
             </div>
         </div>
 
-        <div class="slide" id="slide-11">
-            <div class="xp-titlebar">
-                Sistemas Operativos Móviles
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
+            <div class="concept-box">
+                <p>Abre el "Administrador de Tareas" en tu computadora y observa cuántos procesos se están ejecutando y cuánta RAM consumen.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Controladores (Drivers)</h2>
+            <p>Son pequeños programas que enseñan al SO cómo comunicarse con un hardware específico (impresora, tarjeta de video, etc.).</p>
+            <i class="fas fa-plug text-6xl text-slate-300 mt-8"></i>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Sistemas de Archivos</h2>
+            <div class="concept-box bg-blue-50">
+                <p>Es la forma en que el SO organiza los datos en el disco. <br>Ejemplos: <strong>NTFS</strong> (Windows), <strong>APFS</strong> (macOS), <strong>EXT4</strong> (Linux).</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Seguridad del SO</h2>
+            <p>El SO debe protegerse contra malware, gestionar permisos de usuario y cifrar datos sensibles.</p>
+            <i class="fas fa-shield-alt text-6xl text-green-500 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Virtualización</h2>
+            <p>Permite ejecutar un SO dentro de otro como si fuera una aplicación (Máquina Virtual). Útil para pruebas y servidores.</p>
+            <i class="fas fa-boxes text-6xl text-blue-300 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evolución Constante</h2>
+            <p class="italic text-2xl">"Los sistemas operativos de hoy son el resultado de décadas de optimización para hacer la tecnología invisible y potente a la vez."</p>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Prioridad</h2>
+            <div class="code-block">
+                <p>// Algoritmo de Planificación (Round Robin)</p>
+                <p>WHILE procesos_en_cola > 0</p>
+                <p>&nbsp;&nbsp;LET p = obtener_siguiente()</p>
+                <p>&nbsp;&nbsp;EJECUTAR(p, tiempo_limite)</p>
+                <p>&nbsp;&nbsp;IF NOT terminado(p) THEN</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;volver_a_cola(p)</p>
+                <p>&nbsp;&nbsp;ENDIF</p>
+                <p>ENDWHILE</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">HISTORIA DE LOS SO</h3>
+                <p>Investigar y realizar una línea de tiempo simple que incluya el nacimiento de MS-DOS, Windows 95, Android y Windows 11.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
                 </div>
             </div>
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Sistemas Operativos Móviles</h2>
-                <p>Diseñados para smartphones y tabletas.</p>
-                <ul class="mx-auto text-left">
-                    <li><strong>Android (Google)</strong>: Basado en Linux, más extendido.</li>
-                    <li><strong>iOS (Apple)</strong>: Propietario, para iPhone y iPad.</li>
-                </ul>
-                <div class="flex justify-center gap-4 mt-4">
-                    <img src="../../imagenes/android_logo.png" alt="Logo de Android" class="img-slide" style="max-width: 180px;" loading="lazy">
-                    <img src="../../imagenes/ios_logo.png" alt="Logo de iOS" class="img-slide" style="max-width: 180px;" loading="lazy">
-                </div>
-            </div>
         </div>
+    </main>
 
-        <div class="slide" id="slide-12">
-            <div class="xp-titlebar">
-                Asignación de Tareas
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
-                </div>
-            </div>
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Asignación de Tareas</h2>
-                <p><strong>Tarea</strong>: Investigación y Presentación de SO</p>
-                <p class="text-sm text-left mx-auto max-w-xl">
-                    Los estudiantes deberán investigar un sistema operativo de su elección (que no sea Windows o macOS), identificar sus características principales, ventajas, desventajas y ejemplos de uso. La investigación debe culminar en una breve presentación (digital o escrita) que resuma estos puntos clave.
-                </p>
-                <p class="mt-4"><strong>Fecha de Entrega</strong>: 13 de Julio de 2025.</p>
-                <p><strong>Ponderación</strong>: TC 5%.</p>
-            </div>
-        </div>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
 
-        <div class="slide" id="slide-13">
-            <div class="xp-titlebar">
-                Cierre de la Clase
-                <div class="xp-window-buttons">
-                    <div class="xp-btn min" title="Minimizar"><span>_</span></div>
-                    <div class="xp-btn max" title="Maximizar"><span>▢</span></div>
-                    <div class="xp-btn close" title="Cerrar"><span>x</span></div>
-                </div>
-            </div>
-            <div class="slide-content">
-                <h2 class="text-indigo-700">Cierre de la Clase</h2>
-                <p>Los sistemas operativos son el software <strong>esencial</strong> para el funcionamiento de las computadoras.</p>
-                <p>Comprender sus funciones y tipos es <strong>clave</strong> para un uso eficiente de la tecnología.</p>
-                <p class="mt-8 text-lg font-semibold text-gray-700">¡Gracias por su atención y participación!</p>
-            </div>
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
+    </footer>
 
-        <!-- Navigation Buttons -->
-        <div class="nav-buttons">
-            <button id="prevBtn" class="nav-button" disabled>Anterior</button>
-            <button id="nextBtn" class="nav-button">Siguiente</button>
-        </div>
-    </div>
-
-    <div class="xp-taskbar">
-        <div class="xp-taskbar-start">
-            <img src="../../imagenes/inicio_xp.png" alt="Inicio" class="xp-start-btn">
-        </div>
-        <div class="xp-taskbar-tasks" id="xpTaskButtons">
-            <button class="xp-task-btn active" id="xpActiveTask">Presentación: Fundamentos de Sistemas Operativos</button>
-        </div>
-        <div class="xp-taskbar-bar"></div>
-        <div class="xp-taskbar-clock" id="xpClock"></div>
-    </div>
-
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
+        let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        let currentSlide = 0;
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
+
+        const quizQuestions = [
+            { q: "¿Cuál es el núcleo del SO?", a: "B", options: ["Shell", "Kernel", "User", "Hardware"] },
+            { q: "Administra la memoria RAM:", a: "A", options: ["Gestión de memoria", "Gestión de video", "Calculadora", "Antivirus"] },
+            { q: "Enseña al SO a usar hardware:", a: "C", options: ["Cable", "Monitor", "Driver / Controlador", "Batería"] },
+            { q: "Ejecutar varios programas a la vez:", a: "D", options: ["Lento", "Único", "Simple", "Multitarea"] },
+            { q: "SO de código abierto popular:", a: "A", options: ["Linux", "Windows", "macOS", "MS-DOS"] },
+            { q: "Interfaz de solo texto:", a: "B", options: ["GUI", "CLI", "USB", "HDMI"] },
+            { q: "Reside siempre en la RAM:", a: "C", options: ["Chrome", "Juego", "Kernel", "Word"] },
+            { q: "Formato de archivo para Windows:", a: "D", options: ["APFS", "EXT4", "FAT16", "NTFS"] },
+            { q: "Un SO móvil es:", a: "A", options: ["Android", "Excel", "Ubuntu", "Windows Server"] },
+            { q: "SO para empresas y redes:", a: "B", options: ["Personal", "Servidor", "Hogar", "Mini"] }
+        ];
 
         function showSlide(index) {
-            slides.forEach((slide) => {
-                slide.classList.remove('active');
-                slide.querySelectorAll('.slide-content > *').forEach(el => {
-                    el.style.opacity = '0';
-                    el.style.transform = 'translateY(20px)';
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
+        }
+
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
                 });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
             });
-            if (slides[index]) {
-                slides[index].classList.add('active');
-            }
-            prevBtn.disabled = index === 0;
-            nextBtn.disabled = index === slides.length - 1;
-            setTimeout(() => {
-                const activeSlideContent = slides[index].querySelectorAll('.slide-content > *');
-                activeSlideContent.forEach((el, i) => {
-                    el.style.transitionDelay = `${0.2 + i * 0.2}s`;
-                    el.style.opacity = '1';
-                    el.style.transform = 'translateY(0)';
-                });
-            }, 50);
         }
-        function nextSlide() {
-            if (currentSlide < slides.length - 1) {
-                currentSlide++;
-                showSlide(currentSlide);
+
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
+        });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
             }
-        }
-        function prevSlide() {
-            if (currentSlide > 0) {
-                currentSlide--;
-                showSlide(currentSlide);
+            lastTap = n;
+        });
+
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('ia_sistemas_operativos', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
             }
-        }
-        nextBtn.addEventListener('click', nextSlide);
-        prevBtn.addEventListener('click', prevSlide);
-        window.onload = function() {
-            showSlide(currentSlide);
+            initQuiz();
+            showSlide(0);
         };
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowRight') {
-                nextSlide();
-            } else if (event.key === 'ArrowLeft') {
-                prevSlide();
-            }
-        });
-
-        // Reloj para la barra de tareas XP
-        function updateXpClock() {
-            const clock = document.getElementById('xpClock');
-            const now = new Date();
-            let h = now.getHours();
-            let m = now.getMinutes();
-            if (m < 10) m = '0' + m;
-            clock.textContent = h + ':' + m;
-        }
-        setInterval(updateXpClock, 1000);
-        updateXpClock();
-
-        // Actualiza el nombre de la ventana activa en la barra de tareas según el slide
-        function updateTaskbarTitle() {
-            const slides = document.querySelectorAll('.slide');
-            const activeSlide = document.querySelector('.slide.active .xp-titlebar');
-            const taskBtn = document.getElementById('xpActiveTask');
-            if (activeSlide && taskBtn) {
-                taskBtn.textContent = activeSlide.childNodes[0].nodeValue.trim();
-            }
-        }
-        document.addEventListener('DOMContentLoaded', function() { handleFullscreenChange();
-            updateTaskbarTitle();
-            // Si ya tienes eventos para cambiar de slide, llama updateTaskbarTitle() después de cada cambio
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            prevBtn.addEventListener('click', updateTaskbarTitle);
-            nextBtn.addEventListener('click', updateTaskbarTitle);
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-                    setTimeout(updateTaskbarTitle, 100);
-                }
-            });
-        });
-
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
-        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-        }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-    const quizData = [
-        {
-            q: "¿Qué es un Sistema Operativo (SO)?",
-            options: ["Software que controla el hardware y da servicios a programas", "Un navegador de internet", "Un editor de fotos", "Una red social"],
-            a: "Software que controla el hardware y da servicios a programas"
-        },
-        {
-            q: "¿Qué función permite al SO ejecutar varios programas a la vez?",
-            options: ["Gestión de Procesos (Multitarea)", "Paginación", "Drivers", "Seguridad"],
-            a: "Gestión de Procesos (Multitarea)"
-        },
-        {
-            q: "La memoria RAM es administrada por la función de:",
-            options: ["Gestión de Memoria", "Gestión de Archivos", "Interfaz de Usuario", "Seguridad"],
-            a: "Gestión de Memoria"
-        },
-        {
-            q: "¿Cómo se llama el uso del disco duro como RAM adicional?",
-            options: ["Memoria Virtual", "Memoria Flash", "Paginación", "Caché de CPU"],
-            a: "Memoria Virtual"
-        },
-        {
-            q: "El medio por el cual el usuario interactúa con la computadora se llama:",
-            options: ["Interfaz de Usuario", "Hardware", "Fuente de poder", "Bus de datos"],
-            a: "Interfaz de Usuario"
-        },
-        {
-            q: "¿Qué significa CLI?",
-            options: ["Command Line Interface", "Computer Logic Interconnect", "Central Line Internal", "Critical Link Index"],
-            a: "Command Line Interface"
-        },
-        {
-            q: "¿Qué componentes permiten la comunicación entre CPU y periféricos?",
-            options: ["Controladores (Drivers)", "Cables de red", "Pestañas", "Ventanas"],
-            a: "Controladores (Drivers)"
-        },
-        {
-            q: "¿Cuál de estos es un ejemplo de sistema operativo móvil?",
-            options: ["Android", "Windows 11", "macOS", "Linux Ubuntu"],
-            a: "Android"
-        },
-        {
-            q: "Linux es conocido por ser un sistema operativo de:",
-            options: ["Código abierto", "Uso exclusivo de Apple", "Solo para smartphones", "Pago obligatorio"],
-            a: "Código abierto"
-        },
-        {
-            q: "La gestión de archivos organiza los datos en:",
-            options: ["Directorios y archivos", "Celdas y filas", "Párrafos y estilos", "Nodos y ramas"],
-            a: "Directorios y archivos"
-        }
-    ];
-
-</script>
+    </script>
 </body>
 </html>

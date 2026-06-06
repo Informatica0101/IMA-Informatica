@@ -2,500 +2,299 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fuentes y Color de Fondo - Diseño Web I</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Fuentes y Color de Fondo - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; }
-        html { font-size: 90%; }
-        html, body { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow-x: hidden; }
-        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #374151; justify-content: space-between; }
-        #presentation-container { width: 100%; height: calc(100vh - 7rem); position: relative; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); overflow: hidden; display: flex; justify-content: center; align-items: center; margin: 0 auto; max-width: 100vw; }
-        .slide { width: 100%; height: 100%; padding: 1.8rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: opacity 0.5s ease-in-out; position: absolute; top: 0; left: 0; opacity: 0; -ms-overflow-style: none; scrollbar-width: none; overflow-y: auto; }
-        .slide::-webkit-scrollbar { display: none; }
-        .slide.active { display: flex; opacity: 1; animation-name: fadeIn; animation-duration: 0.8s; animation-fill-mode: forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { .slide h2, .slide h3 { font-size: 1.4rem; } .slide p, .slide li { font-size: 0.9rem; } .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
-        .quiz-option-button { transition: background-color 0.3s, transform 0.2s; text-align: left; padding-left: 1.5rem; }
-        .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
-        .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
-        .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
-        .code-box { background: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 8px; font-family: monospace; text-align: left; width: 100%; max-width: 500px; margin: 0.5rem 0; overflow-x: auto; }
-        .code-tag { color: #f472b6; }
-        .code-attr { color: #fbbf24; }
-        .code-val { color: #34d399; }
-
-        .slide p { font-size: 1.5rem !important; line-height: 1.6 !important; }
-        .slide h3 { font-size: 2.25rem !important; line-height: 1.4 !important; }
-        @media (max-width: 768px) {
-            .slide p { font-size: 1.3rem !important; }
-            .slide h3 { font-size: 1.8rem !important; }
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="antialiased">
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
-            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Diseño Web I</h1>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-2 sm:space-x-3">
-                <li><a href="../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
-            </ul>
-        </nav>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Pintando el lienzo...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <main class="flex-grow flex justify-center items-center p-3">
-        <div id="presentation-container" class="relative">
-            <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <img src="../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
-                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Fuentes y Color de Fondo</h2>
-                <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 5: Introducción al Estilo (CSS)</p>
-                <div class="text-xs text-gray-500 space-y-1">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 08 de marzo de 2026</p>
-                    <p>Grado: Duodécimo de Informática - Sección "A"</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 2: ¿Qué es CSS? -->
-            <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Qué es CSS?</h3>
-                <div class="concept-box">
-                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed text-left">
-                        <strong>CSS</strong> (Cascading Style Sheets) es el lenguaje que usamos para darle estilo a nuestro HTML.
-                    </p>
-                    <ul class="list-disc ml-8 mt-4 text-xs sm:text-sm space-y-2 text-left">
-                        <li>🦴 HTML = Estructura (Huesos).</li>
-                        <li>💄 CSS = Presentación (Piel y maquillaje).</li>
-                        <li>🎨 Permite cambiar colores, fuentes, tamaños y mucho más.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Diapositiva 3: Estilos en línea (Inline) -->
-            <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Estilos en Línea</h3>
-                <p class="text-sm text-gray-600 mb-4">Es la forma más rápida de aplicar estilos directamente en una etiqueta HTML usando el atributo <span class="font-bold">style</span>.</p>
-                <div class="code-box">
-                    &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"propiedad: valor;"</span>&gt;Texto&lt;/<span class="code-tag">p</span>&gt;
-                </div>
-                <p class="mt-4 text-xs text-gray-500">Cada estilo termina con un punto y coma (;).</p>
-            </div>
-
-            <!-- Diapositiva 4: Propiedad Color -->
-            <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cambiando el color del texto</h3>
-                <p class="text-sm text-gray-600 mb-4">Usamos la propiedad <span class="font-bold">color</span> para cambiar el color de la letra.</p>
-                <div class="code-box">
-                    &lt;<span class="code-tag">h1</span> <span class="code-attr">style</span>=<span class="code-val">"color: blue;"</span>&gt;Título Azul&lt;/<span class="code-tag">h1</span>&gt;
-                </div>
-                <div class="mt-4 flex space-x-2 justify-center">
-                    <div class="w-6 h-6 bg-red-500 rounded-full"></div>
-                    <div class="w-6 h-6 bg-green-500 rounded-full"></div>
-                    <div class="w-6 h-6 bg-blue-500 rounded-full"></div>
-                    <div class="w-6 h-6 bg-yellow-500 rounded-full"></div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Propiedad Background-Color -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Color de Fondo</h3>
-                <p class="text-sm text-gray-600 mb-4">Usamos <span class="font-bold">background-color</span> para el fondo de un elemento o de toda la página.</p>
-                <div class="code-box">
-                    &lt;<span class="code-tag">body</span> <span class="code-attr">style</span>=<span class="code-val">"background-color: lightyellow;"</span>&gt;
-                </div>
-                <div class="concept-box mt-4 text-xs">
-                    <p>También puedes aplicarlo a párrafos, títulos o divisiones para resaltarlos.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: Propiedad Font-Family -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cambiando el tipo de letra</h3>
-                <p class="text-sm text-gray-600 mb-4">Usamos <span class="font-bold">font-family</span> para elegir la fuente.</p>
-                <div class="code-box">
-                    &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"font-family: Arial;"</span>&gt;Texto en Arial&lt;/<span class="code-tag">p</span>&gt;
-                </div>
-                <div class="grid grid-cols-2 gap-2 mt-4 max-w-xs mx-auto text-xs">
-                    <div style="font-family: serif;">Serif</div>
-                    <div style="font-family: sans-serif;">Sans-serif</div>
-                    <div style="font-family: monospace;">Monospace</div>
-                    <div style="font-family: cursive;">Cursive</div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Propiedad Font-Size -->
-            <div id="slide-7" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Tamaño de la fuente</h3>
-                <p class="text-sm text-gray-600 mb-4">Usamos <span class="font-bold">font-size</span> para definir qué tan grande es el texto.</p>
-                <div class="code-box">
-                    &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"font-size: 20px;"</span>&gt;Texto grande&lt;/<span class="code-tag">p</span>&gt;
-                </div>
-                <p class="mt-4 text-xs text-gray-500">La unidad de medida más común es el píxel (px).</p>
-            </div>
-
-            <!-- Diapositiva 8: Combinando Estilos -->
-            <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Combinando varios estilos</h3>
-                <p class="text-sm text-gray-600 mb-4">Puedes poner muchas propiedades dentro del mismo atributo style separadas por punto y coma.</p>
-                <div class="code-box text-[10px]">
-                    &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"color: red; font-size: 18px; font-family: Verdana;"</span>&gt;<br>
-                    &nbsp;&nbsp;Este texto es rojo, de 18px y fuente Verdana.<br>
-                    &lt;/<span class="code-tag">p</span>&gt;
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Ejercicio Práctico -->
-            <div id="slide-9" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio: Mi página colorida</h3>
-                <div class="concept-box">
-                    <p class="font-bold mb-3 text-sm">Abre tu archivo del CV anterior y aplica:</p>
-                    <ul class="list-decimal ml-8 text-xs space-y-2">
-                        <li>Cambia el color de fondo de la página.</li>
-                        <li>Pon tu nombre en color azul y un tamaño de 30px.</li>
-                        <li>Cambia la fuente de los párrafos a 'Arial' o 'Verdana'.</li>
-                        <li>Resalta un título con un color de fondo diferente.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Diapositiva 10: Importancia del Diseño -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">La Experiencia del Usuario</h3>
-                <div class="concept-box">
-                    <p class="text-sm text-gray-700 leading-relaxed text-center">
-                        Un buen uso de colores y fuentes no solo hace que la web sea bonita, sino que sea más fácil de leer y navegar.
-                    </p>
-                    <div class="mt-4 p-4 bg-white border border-yellow-200 rounded shadow-inner text-center">
-                        <p class="font-bold text-sm text-yellow-700">"El diseño es el embajador silencioso de tu marca."</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 11: Cuestionario (1-5) -->
-            <div id="slide-11" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 1)</h3>
-                <div id="quiz-container-1" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-1" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-1" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-1" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter">1</span> de 5</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Cuestionario (6-10) -->
-            <div id="slide-12" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 2)</h3>
-                <div id="quiz-container-2" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-2" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-2" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-2" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter-2">6</span> de 10</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Resumen -->
-            <div id="slide-13" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen de la Clase</h3>
-                <div class="max-w-3xl mx-auto grid grid-cols-2 gap-4">
-                    <div class="p-4 bg-blue-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-blue-700">Atributo style:</p>
-                        <ul class="text-[10px] space-y-1">
-                            <li>• color: Texto.</li>
-                            <li>• background-color: Fondo.</li>
-                        </ul>
-                    </div>
-                    <div class="p-4 bg-green-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-green-700">Tipografía:</p>
-                        <ul class="text-[10px] space-y-1">
-                            <li>• font-family: Tipo.</li>
-                            <li>• font-size: Tamaño (px).</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 14: Tarea -->
-            <div id="slide-14" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Asignación (Tarea)</h3>
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-indigo-200 max-w-3xl">
-                    <h4 class="font-bold text-indigo-800 mb-3">📋 Tarea: Curriculum con Estilo</h4>
-                    <div class="text-left space-y-4 text-sm">
-                        <p><strong>Actividad:</strong> Aplica estilos básicos a tu página de Curriculum Vitae (CV) usando CSS en línea.</p>
-                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
-                            <li>Define un color de fondo para la página.</li>
-                            <li>Aplica diferentes colores a los encabezados (h1, h2).</li>
-                            <li>Cambia el tamaño y tipo de fuente de los párrafos.</li>
-                            <li>Asegura que los estilos estén bien escritos (propiedad: valor;).</li>
-                        </ul>
-                        <div class="pt-4 border-t flex justify-between font-bold text-indigo-900">
-                            <span>Fecha: 15/03/2026</span>
-                            <span>Valor: 5%</span>
-                        </div>
-                    </div>
-                </div>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Fuentes y Color de Fondo</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Diseño Web I</p>
+                <p>Duodécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
         </div>
 
-        <!-- Botones de navegación -->
-        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
-            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
-            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Propiedad color</h2>
+            <div class="concept-box">
+                <p>Define el color del texto. Podemos usar nombres (red), hexadecimal (#FF0000) o RGB (rgb(255,0,0)).</p>
+            </div>
+            <i class="fas fa-palette text-6xl text-red-500 mt-4"></i>
         </div>
-        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 14</div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">background-color</h2>
+            <div class="concept-box border-yellow-400">
+                <p>Define el color de fondo de un elemento. Se puede aplicar al <code>body</code> para toda la página o a bloques específicos (div, p) para resaltarlos.</p>
+            </div>
+            <div class="w-20 h-20 bg-blue-100 border border-blue-300 mt-4 rounded"></div>
+        </div>
+
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Propiedad font-family</h2>
+            <p>Define el tipo de letra. Siempre debemos incluir una "fuente de respaldo" por si el usuario no tiene instalada la principal.</p>
+            <div class="code-block mt-4">font-family: 'Poppins', Arial, sans-serif;</div>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Familias Genéricas</h2>
+            <ul class="grid grid-cols-3 gap-4 mt-6">
+                <li class="p-4 border font-serif">Serif (Con remates)</li>
+                <li class="p-4 border font-sans">Sans-serif (Lisas)</li>
+                <li class="p-4 border font-mono">Monospace (Ancho fijo)</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Propiedad font-size</h2>
+            <div class="concept-box border-green-500">
+                <p>Define el tamaño del texto. Unidades comunes:</p>
+                <ul class="list-disc ml-8 mt-2 text-sm">
+                    <li><strong>px:</strong> Píxeles (Tamaño fijo).</li>
+                    <li><strong>em / rem:</strong> Unidades relativas (Recomendado para móviles).</li>
+                    <li><strong>%:</strong> Porcentaje.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio: Estilo de Título</h2>
+            <div class="concept-box">
+                <p>Escribe el CSS para que un H1 tenga:</p>
+                <ul class="list-disc ml-8 mt-2 text-sm">
+                    <li>Color de fondo gris oscuro.</li>
+                    <li>Texto de color blanco.</li>
+                    <li>Fuente tipo Monospace.</li>
+                    <li>Tamaño de 24 píxeles.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Propiedad font-weight</h2>
+            <p>Define el grosor de la letra. Valores: <code>normal, bold, lighter</code> o números (100 a 900).</p>
+            <p class="font-black text-4xl mt-4">PESO 900</p>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Propiedad font-style</h2>
+            <p>Permite poner el texto en cursiva.</p>
+            <div class="code-block mt-4">font-style: italic;</div>
+            <p class="italic mt-2">Este texto está en itálica.</p>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Fuentes de Google (Google Fonts)</h2>
+            <div class="concept-box">
+                <p>Permite usar miles de fuentes gratuitas cargándolas desde la nube. Solo necesitas copiar un enlace <code>&lt;link&gt;</code> en tu HTML.</p>
+            </div>
+            <i class="fab fa-google text-6xl text-blue-600 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Opacidad: opacity</h2>
+            <p>Define la transparencia de un elemento y su contenido. Valores del <strong>0.0</strong> (invisible) al <strong>1.0</strong> (opaco).</p>
+            <div class="w-32 h-10 bg-blue-500 mx-auto mt-4 opacity-50">50% Opacidad</div>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Colores RGBA</h2>
+            <p>A diferencia de opacity, <code>rgba</code> permite dar transparencia <strong>solo al fondo</strong> sin afectar al texto.</p>
+            <div class="code-block mt-4">background-color: rgba(255, 0, 0, 0.5);</div>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Atajo: font</h2>
+            <div class="concept-box bg-slate-100">
+                <p>Se pueden resumir todas las propiedades de fuente en una sola línea.</p>
+                <p class="font-mono mt-2">font: italic bold 20px Arial;</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">DISEÑO DE PÁGINA</h3>
+                <p>Crear un archivo HTML llamado 'estilos.html' y aplicar:</p>
+                <ul class="list-disc ml-6 mt-2 text-sm">
+                    <li>Color de fondo de página 'crema' o 'lightgray'.</li>
+                    <li>Título principal en azul marino y fuente Poppins.</li>
+                    <li>Párrafos en gris oscuro y tamaño 1.1rem.</li>
+                    <li>Un contenedor (div) con fondo semitransparente (rgba).</li>
+                </ul>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
-            <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Diseño Web I</p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/games-adapter.js"></script>
     <script>
-        const slides = document.querySelectorAll('.slide');
-        const nextButton = document.getElementById('next-btn');
-        const prevButton = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
         let currentSlideIndex = 0;
-        let isTransitioning = false;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
         const quizQuestions = [
-            {
-                question: "¿Cuál es la función del atributo 'style' en una etiqueta HTML?",
-                options: ["Aplicar estilos CSS directamente al elemento", "Cambiar el nombre del archivo", "Crear una nueva página", "Borrar el contenido"],
-                correctAnswer: "Aplicar estilos CSS directamente al elemento"
-            },
-            {
-                question: "¿Qué propiedad de estilo cambia el color del texto?",
-                options: ["color", "background-color", "text-style", "font-paint"],
-                correctAnswer: "color"
-            },
-            {
-                question: "¿Qué propiedad de estilo cambia el tamaño de la fuente?",
-                options: ["font-size", "text-size", "font-weight", "size-text"],
-                correctAnswer: "font-size"
-            },
-            {
-                question: "¿Qué propiedad se usa para alinear el texto al centro?",
-                options: ["text-align: center", "align: middle", "center: true", "justify: center"],
-                correctAnswer: "text-align: center"
-            },
-            {
-                question: "¿Cómo se representa el color negro en código hexadecimal?",
-                options: ["#000000", "#FFFFFF", "#FF0000", "#123456"],
-                correctAnswer: "#000000"
-            },
-            {
-                question: "1. ¿Qué significan las siglas CSS?",
-                options: ["Creative Style Sheets", "Cascading Style Sheets", "Computer Style Syntax", "Color Style Sheet"],
-                correctAnswer: "Cascading Style Sheets"
-            },
-            {
-                question: "2. ¿Qué atributo se usa para aplicar estilos directamente en una etiqueta?",
-                options: ["class", "id", "style", "css"],
-                correctAnswer: "style"
-            },
-            {
-                question: "3. ¿Qué propiedad cambia el color de la letra?",
-                options: ["background-color", "font-color", "color", "text-style"],
-                correctAnswer: "color"
-            },
-            {
-                question: "4. ¿Qué propiedad cambia el color de fondo?",
-                options: ["background-color", "bg-color", "color", "fill-color"],
-                correctAnswer: "background-color"
-            },
-            {
-                question: "5. ¿Qué propiedad define el tipo de letra?",
-                options: ["font-style", "font-type", "font-family", "font-text"],
-                correctAnswer: "font-family"
-            },
-            {
-                question: "6. ¿Qué unidad se usa comúnmente para el tamaño de fuente (font-size)?",
-                options: ["cm", "kg", "px (píxeles)", "lt"],
-                correctAnswer: "px (píxeles)"
-            },
-            {
-                question: "7. ¿Cómo se separan múltiples estilos dentro del atributo style?",
-                options: ["Con comas (,)", "Con espacios", "Con punto y coma (;)", "Con guiones (-)"],
-                correctAnswer: "Con punto y coma (;)"
-            },
-            {
-                question: "8. ¿Cuál es la forma correcta de escribir un estilo?",
-                options: ["color = red", "color: red;", "color: red", "style: color red"],
-                correctAnswer: "color: red;"
-            },
-            {
-                question: "9. Si HTML es el esqueleto, ¿qué es CSS?",
-                options: ["El cerebro", "La piel y el vestido", "Los músculos", "El corazón"],
-                correctAnswer: "La piel y el vestido"
-            },
-            {
-                question: "10. ¿A qué etiquetas se les puede aplicar el atributo style?",
-                options: ["Solo a <p>", "Solo a <body>", "A casi cualquier etiqueta HTML", "Solo a enlaces"],
-                correctAnswer: "A casi cualquier etiqueta HTML"
-            }
+            { q: "¿Qué propiedad cambia el color de letra?", a: "A", options: ["color", "font-color", "text-color", "paint"] },
+            { q: "Propiedad para el color de fondo:", a: "C", options: ["color-bg", "background", "background-color", "fill"] },
+            { q: "¿Qué hace font-family?", a: "B", options: ["Cambia tamaño", "Cambia tipo de letra", "Cambia peso", "Cambia idioma"] },
+            { q: "Fuente con remates decorativos:", a: "D", options: ["Sans-serif", "Monospace", "Fantasy", "Serif"] },
+            { q: "Unidad relativa recomendada:", a: "A", options: ["rem", "px", "cm", "in"] },
+            { q: "Poner texto en cursiva:", a: "B", options: ["font-weight", "font-style", "text-italic", "decoration"] },
+            { q: "Grosor de la letra:", a: "C", options: ["font-size", "font-type", "font-weight", "boldness"] },
+            { q: "¿Qué significa RGBA?", a: "A", options: ["Red Green Blue Alpha", "Real Gold Base Art", "Run Go Back Again", "Radio Grid Blue All"] },
+            { q: "Opacity 0 significa:", a: "D", options: ["Opaco", "Azul", "Brillante", "Invisible"] },
+            { q: "Fuente de ancho fijo:", a: "B", options: ["Arial", "Monospace", "Times", "Verdana"] }
         ];
 
-        let currentQuizPart1Index = 0;
-        let currentQuizPart2Index = 5;
-
-        function updateQuizPart1() {
-            if (currentQuizPart1Index >= 5) return;
-            const questionElement = document.getElementById('quiz-question-1');
-            const optionsElement = document.getElementById('quiz-options-1');
-            const feedbackElement = document.getElementById('quiz-feedback-1');
-            const counterElement = document.getElementById('question-counter');
-            const currentQuestion = quizQuestions[currentQuizPart1Index];
-            questionElement.textContent = currentQuestion.question;
-            optionsElement.innerHTML = '';
-            feedbackElement.textContent = '';
-            counterElement.textContent = currentQuizPart1Index + 1;
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
-                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 1);
-                optionsElement.appendChild(button);
-            });
-        }
-
-        function updateQuizPart2() {
-            if (currentQuizPart2Index >= 10) return;
-            const questionElement = document.getElementById('quiz-question-2');
-            const optionsElement = document.getElementById('quiz-options-2');
-            const feedbackElement = document.getElementById('quiz-feedback-2');
-            const counterElement = document.getElementById('question-counter-2');
-            const currentQuestion = quizQuestions[currentQuizPart2Index];
-            questionElement.textContent = currentQuestion.question;
-            optionsElement.innerHTML = '';
-            feedbackElement.textContent = '';
-            counterElement.textContent = currentQuizPart2Index + 1;
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
-                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 2);
-                optionsElement.appendChild(button);
-            });
-        }
-
-        function checkQuizAnswer(selected, correct, feedbackElement, buttons, part) {
-            Array.from(buttons).forEach(button => {
-                button.disabled = true;
-                if (button.textContent === correct) button.classList.add('correct');
-                else if (button.textContent === selected) button.classList.add('incorrect');
-            });
-            if (selected === correct) {
-                feedbackElement.textContent = '¡Correcto!';
-                feedbackElement.style.color = '#065f46';
-            } else {
-                feedbackElement.textContent = `Incorrecto. La respuesta es: ${correct}`;
-                feedbackElement.style.color = '#991b1b';
-            }
-            setTimeout(() => {
-                if (part === 1) {
-                    currentQuizPart1Index++;
-                    if (currentQuizPart1Index < 5) updateQuizPart1();
-                } else {
-                    currentQuizPart2Index++;
-                    if (currentQuizPart2Index < 10) updateQuizPart2();
-                }
-            }, 1500);
-        }
-
         function showSlide(index) {
-            if (isTransitioning || index < 0 || index >= slides.length) return;
-            isTransitioning = true;
-            const presentationContainer = document.getElementById('presentation-container');
-
-            slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
             currentSlideIndex = index;
-            if (currentSlideIndex === 10) { currentQuizPart1Index = 0; setTimeout(updateQuizPart1, 100); }
-            else if (currentSlideIndex === 11) { currentQuizPart2Index = 5; setTimeout(updateQuizPart2, 100); }
-            const activeSlide = slides[currentSlideIndex];
-            activeSlide.style.display = 'flex';
-            setTimeout(() => {
-                activeSlide.classList.add('active');
-                slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-                prevButton.disabled = currentSlideIndex === 0;
-                nextButton.disabled = currentSlideIndex === slides.length - 1;
-                isTransitioning = false;
-            }, 10);
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
-        prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
-
-        const presentationContainer = document.getElementById('presentation-container');
-        presentationContainer.addEventListener('click', (e) => {
-            if (e.target.closest('button') || e.target.closest('a')) return;
-            const rect = presentationContainer.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            if (clickX > rect.width / 2) showSlide(currentSlideIndex + 1);
-            else showSlide(currentSlideIndex - 1);
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('current-year').textContent = new Date().getFullYear();
-            showSlide(0); handleFullscreenChange();
-        });
-
-
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) || (window.innerHeight >= screen.height - 10);
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-            document.body.classList.add('is-fullscreen');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-            document.body.classList.remove('is-fullscreen');
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
+            });
         }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-    window.addEventListener('resize', handleFullscreenChange);
 
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
+        });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
+        });
 
-    // Navigation improvements (2026)
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
-    });
-
-    (function() {
-        const container = document.getElementById('presentation-container');
-        if (!container) return;
-        let tsX = 0;
-        container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-        container.addEventListener('touchend', e => {
-            let teX = e.changedTouches[0].screenX;
-            if (tsX - teX > 50) typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-            if (teX - tsX > 50) typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
-        }, {passive: true});
-    })();
-
-</script>
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('dw_fuentes', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
+    </script>
 </body>
 </html>

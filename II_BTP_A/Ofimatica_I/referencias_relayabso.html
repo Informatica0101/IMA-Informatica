@@ -2,574 +2,294 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Referencias de Celda en Hojas de Cálculo</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Referencias Relativas y Absolutas - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Universal box-sizing for a consistent design */
-        * {
-            box-sizing: border-box;
-        }
-
-        /* Base configuration for page layout */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Inter', sans-serif;
-            background-color: #f9fafb;
-            color: #374151;
-        }
-
-        /* Main container for the presentation */
-        main {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-            position: relative;
-        }
-
-        /* Presentation styles */
-        #presentation-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-color: #ffffff;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .slide {
-            width: 100%;
-            height: 100%;
-            padding: 4rem;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            overflow-y: auto;
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-        .slide::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
-        }
-
-        .slide.active {
-            display: flex;
-            opacity: 1;
-            animation-name: fadeIn;
-            animation-duration: 0.8s;
-            animation-fill-mode: forwards;
-        }
-
-        .slide h2, .slide h3 {
-            font-weight: 800;
-            color: #1f2937;
-        }
-
-        .slide p, .slide li {
-            font-size: 1.125rem;
-            line-height: 1.75rem;
-        }
-
-        /* Animation for slide transitions */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Styles for navigation buttons */
-        .nav-button {
-            background-color: #3b82f6;
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            transition: background-color 0.3s, transform 0.2s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-
-        .nav-button:hover {
-            background-color: #2563eb;
-            transform: scale(1.05);
-        }
-
-        .nav-button:disabled {
-            background-color: #d1d5db;
-            color: #9ca3af;
-            cursor: not-allowed;
-            transform: scale(1);
-        }
-
-        /* Styles for slide counter */
-        #slide-counter {
-            position: absolute;
-            bottom: 1.5rem;
-            right: 2rem;
-            font-weight: 600;
-            color: #9ca3af;
-            z-index: 10;
-        }
-
-        /* Specific styles for the quiz */
-        .quiz-option-button {
-            width: 100%;
-            text-align: left;
-            padding: 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: 0.5rem;
-            background-color: #e5e7eb;
-            transition: transform 0.2s;
-            cursor: pointer;
-        }
-
-        .quiz-option-button.correct {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-
-        .quiz-option-button.incorrect {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
-
-        .quiz-option-button:hover:not(:disabled) {
-            transform: scale(1.02);
-            background-color: #d1d5db;
-        }
-
-        .quiz-option-button:disabled {
-            cursor: not-allowed;
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="antialiased">
-    <!-- Header -->
-    <header id="page-header" class="w-full bg-white p-4 shadow-md flex justify-between items-center z-50">
-        <div class="flex items-center space-x-4">
-            <img src="../../imagenes/logo.png" alt="Logo de la institución" style="width: 180px; height: auto;">
-            <h1 class="text-xl font-bold text-gray-800">Referencias de Celda</h1>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <nav>
-            <ul class="flex space-x-4">
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors">Inicio</a></li>
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors">Acerca de</a></li>
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors">Contacto</a></li>
-            </ul>
-        </nav>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Fijando celdas...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <!-- Main content -->
-    <main>
-        <!-- Presentation container -->
-        <div id="presentation-container" class="relative">
-
-            <!-- Slide 1: Cover Page -->
-            <div id="slide-1" class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo" style="width: 300px; height: auto;" class="mb-8">
-                <h2 class="text-3xl mb-4 text-blue-600">Referencias Relativas y Absolutas</h2>
-                <p class="text-lg text-gray-600">Ofimática I</p>
-                <div class="mt-8 text-sm text-gray-500">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 07 de septiembre</p>
-                    <p>Grado: Undécimo Sección "A"</p>
-                </div>
-            </div>
-
-            <!-- Slide 2: What are Cell References? -->
-            <div id="slide-2" class="slide">
-                <h3 class="text-4xl mb-6 text-blue-500">¿Qué son las Referencias de Celda?</h3>
-                <p class="text-2xl text-gray-700 leading-relaxed max-w-3xl">
-                    Las <strong>referencias de celda</strong> indican a una hoja de cálculo dónde encontrar los datos que se usarán en una fórmula. Son esenciales para crear fórmulas dinámicas y eficientes que se pueden reutilizar.
-                </p>
-            </div>
-
-            <!-- Slide 3: Relative References -->
-            <div id="slide-3" class="slide">
-                <h3 class="text-4xl mb-6 text-blue-500">Referencias Relativas</h3>
-                <p class="text-2xl text-gray-700 leading-relaxed max-w-3xl">
-                    Una <strong>referencia relativa</strong> es la referencia estándar en una hoja de cálculo. Cuando copias una fórmula a otra celda, la referencia se ajusta automáticamente según su nueva posición.
-                </p>
-                <div class="mt-8 text-sm text-gray-500">
-                    <p class="text-xl font-bold mt-4">Ejemplo: `=A2+B2`</p>
-                </div>
-            </div>
-
-            <!-- Slide 4: Relative References Example -->
-            <div id="slide-4" class="slide">
-                <h3 class="text-4xl mb-6 text-blue-500">Ejemplo de Referencia Relativa</h3>
-                <p class="text-2xl text-gray-700 leading-relaxed max-w-3xl">
-                    Si la fórmula `=A2*B2` se copia de la celda C2 a la celda C3, la referencia cambia automáticamente a `=A3*B3` para mantener la relación de posición.
-                </p>
-                <div class="mt-8 text-sm text-gray-500">
-                    <img src="../../imagenes/referencias_relativas.gif" width="400" height="auto" alt="Diagrama de referencia relativa" class="rounded-lg shadow-md mt-4">
-                </div>
-            </div>
-
-            <!-- Slide 5: Absolute References -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-4xl mb-6 text-blue-500">Referencias Absolutas</h3>
-                <p class="text-2xl text-gray-700 leading-relaxed max-w-3xl">
-                    Una <strong>referencia absoluta</strong> no cambia cuando se copia a otra celda. Para crearla, se utiliza el signo de dólar (`$`) antes de la columna o la fila que quieres mantener fija.
-                </p>
-                <div class="mt-8 text-sm text-gray-500">
-                    <p class="text-xl font-bold mt-4">Ejemplo: `=$A$2`</p>
-                </div>
-            </div>
-
-            <!-- Slide 6: Absolute References Example -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-4xl mb-6 text-blue-500">Ejemplo de Referencia Absoluta</h3>
-                <p class="text-2xl text-gray-700 leading-relaxed max-w-3xl">
-                    Si la fórmula `=B2*$A$2` se copia a la celda C3, la referencia `$A$2` permanece inalterable, mientras que `B2` cambia a `B3`.
-                </p>
-                <div class="mt-8 text-sm text-gray-500">
-                    <img src="../../imagenes/referencias_absolutas.gif" width="400" height="auto" alt="Diagrama de referencia absoluta" class="rounded-lg shadow-md mt-4">
-                </div>
-            </div>
-
-            <!-- Slide 7: Mixed References -->
-            <div id="slide-7" class="slide">
-                <h3 class="text-4xl mb-6 text-blue-500">Referencias Mixtas</h3>
-                <p class="text-2xl text-gray-700 leading-relaxed max-w-3xl">
-                    Una <strong>referencia mixta</strong> combina una parte relativa y una absoluta. Fijas la columna o la fila, pero no ambas. Son muy útiles para crear tablas de doble entrada como una tabla de multiplicar.
-                </p>
-                <p class="text-xl text-gray-700 leading-relaxed mt-4 font-bold">
-                    Ejemplos: `$A2` (columna fija) y `A$2` (fila fija).
-                </p>
-            </div>
-
-            <!-- Slide 8: Practice Exercise -->
-            <div id="slide-8" class="slide">
-                <h3 class="text-4xl mb-6 text-blue-500">Ejercicio Práctico</h3>
-                <div class="bg-gray-100 p-8 rounded-lg shadow-inner max-w-3xl text-left">
-                    <p class="text-xl text-gray-700 mb-4 font-bold">Instrucciones:</p>
-                    <p class="text-lg text-gray-700 mb-4">
-                        En una hoja de cálculo, crea una tabla de multiplicación del 1 al 10. Usa una sola fórmula en la primera celda y luego arrástrala para completar el resto de la tabla. Asegúrate de usar <strong>referencias mixtas</strong> para lograrlo.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Slide 9: Summary Table -->
-            <div id="slide-9" class="slide">
-                <h3 class="text-4xl mb-6 text-blue-500">Resumen de Tipos de Referencia</h3>
-                <div class="flex justify-center items-center">
-                    <table class="table-auto w-full max-w-2xl bg-white border border-gray-300 rounded-lg shadow-md">
-                        <thead>
-                            <tr class="bg-blue-100 text-blue-800">
-                                <th class="px-4 py-2 border-r border-gray-300">Tipo</th>
-                                <th class="px-4 py-2 border-r border-gray-300">Formato</th>
-                                <th class="px-4 py-2">Comportamiento al Copiar</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="hover:bg-gray-50">
-                                <td class="border px-4 py-2 text-center text-lg">Relativa</td>
-                                <td class="border px-4 py-2 text-center text-lg">`A1`</td>
-                                <td class="border px-4 py-2 text-center text-lg">Se ajusta a la nueva celda.</td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="border px-4 py-2 text-center text-lg">Absoluta</td>
-                                <td class="border px-4 py-2 text-center text-lg">`$A$1`</td>
-                                <td class="border px-4 py-2 text-center text-lg">Permanece fija.</td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="border px-4 py-2 text-center text-lg">Mixta</td>
-                                <td class="border px-4 py-2 text-center text-lg">`$A1` o `A$1`</td>
-                                <td class="border px-4 py-2 text-center text-lg">Fija la fila o la columna.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Slide 10: Interactive Quiz -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-4xl mb-6 text-blue-500">¡Quiz Interactivo!</h3>
-                <div id="quiz-container" class="w-full max-w-2xl bg-white p-8 rounded-lg shadow-md text-left flex flex-col items-center">
-                    <p id="quiz-question" class="text-xl font-semibold mb-4 text-gray-800 text-center"></p>
-                    <div id="quiz-options-container" class="flex flex-col space-y-2 w-full"></div>
-                    <div id="quiz-feedback" class="mt-4 text-center font-bold"></div>
-                </div>
-            </div>
-
-            <!-- Slide 11: Assigned Task -->
-            <div id="slide-11" class="slide">
-                <h3 class="text-4xl mb-6 text-blue-500">Guía de Estudio</h3>
-                <div class="bg-gray-100 p-8 rounded-lg shadow-inner max-w-3xl">
-                    <p class="text-xl text-gray-700 mb-4">
-                        Continúa con los ejercicios de la <strong>Guía de Estudio</strong> para consolidar los conceptos de referencias relativas y absolutas.
-                    </p>
-                </div>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Referencias Relativas y Absolutas</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Ofimática I</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
         </div>
 
-        <!-- Presentation navigation buttons -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-4 z-20">
-            <button id="prev-btn" class="nav-button">Anterior</button>
-            <button id="next-btn" class="nav-button">Siguiente</button>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es una Referencia?</h2>
+            <div class="concept-box">
+                <p>Es la forma en que le decimos a Excel qué celda debe usar en un cálculo. <br>Por defecto, Excel usa referencias <strong>Relativas</strong>.</p>
+            </div>
         </div>
-        <div id="slide-counter">1 / 11</div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">1. Referencia Relativa</h2>
+            <div class="concept-box">
+                <p>Son aquellas que cambian automáticamente cuando arrastras la fórmula a otras celdas. Excel ajusta la posición basándose en la distancia a la celda original.</p>
+                <p class="mt-2 text-sm italic">Ejemplo: Si en B1 pones =A1 y arrastras hacia abajo, en B2 será =A2.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">2. Referencia Absoluta</h2>
+            <div class="concept-box border-red-400">
+                <p>Es una referencia que permanece <strong>fija</strong> sin importar a dónde se mueva o arrastre la fórmula. Se usa para celdas con valores constantes (ej. Tasa de Impuesto, Tipo de Cambio).</p>
+            </div>
+            <i class="fas fa-thumbtack text-6xl text-red-300 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Símbolo de Dólar ($)</h2>
+            <div class="concept-box">
+                <p>Para fijar una celda usamos el signo <strong>$</strong> antes de la letra y antes del número.</p>
+                <p class="mt-2 text-2xl text-center font-mono"><strong>$A$1</strong></p>
+                <p class="mt-4 text-xs text-center">Atajo de teclado: Presiona <strong>F4</strong> mientras escribes la fórmula.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">3. Referencia Mixta</h2>
+            <div class="concept-box border-purple-400">
+                <p>Fija solo la fila o solo la columna, dejando la otra libre.</p>
+                <ul class="list-disc ml-8 mt-2 text-sm">
+                    <li><strong>$A1:</strong> Fija la columna A, la fila cambia.</li>
+                    <li><strong>A$1:</strong> Fija la fila 1, la columna cambia.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
+            <div class="concept-box">
+                <p>Tienes una lista de precios en la columna A y el valor del ISV (15%) en la celda H1. ¿Cómo escribirías la fórmula en B1 para calcular el impuesto de modo que puedas arrastrarla hacia abajo sin que se mueva la referencia de H1?</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Errores por no Fijar</h2>
+            <div class="concept-box bg-red-50 border-red-200">
+                <p>Si olvidas poner el $, al arrastrar la fórmula hacia abajo, Excel buscará el valor en celdas vacías debajo de tu constante, produciendo resultados en cero o errores de #VALOR!</p>
+            </div>
+            <i class="fas fa-exclamation-circle text-6xl text-red-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Visualización de Fórmulas</h2>
+            <p>Puedes presionar <strong>CTRL + `</strong> (acento grave) para ver todas las fórmulas de tu hoja al mismo tiempo y verificar cuáles tienen el signo $.</p>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Uso en Modelos Financieros</h2>
+            <p>Las referencias absolutas permiten crear simuladores donde cambias un solo dato (ej. Tasa de Interés) y todo el modelo se actualiza correctamente.</p>
+            <i class="fas fa-calculator text-6xl text-blue-300 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Diferencia Visual</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-sm">
+                <div class="p-4 border bg-gray-50">=A1 (Relativa)</div>
+                <div class="p-4 border bg-blue-50">=$A$1 (Absoluta)</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Dominio de la Herramienta</h2>
+            <p class="italic text-2xl">"Entender el uso de los símbolos de dólar en Excel es el primer gran paso para dejar de ser un usuario básico y convertirse en un experto en automatización."</p>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Arrastre</h2>
+            <div class="code-block bg-slate-800">
+                <p>// Simulación de Arrastre (Relativo)</p>
+                <p>FOR i = 1 TO 10</p>
+                <p>&nbsp;&nbsp;LET B[i] = A[i] * 0.15 // El índice [i] cambia</p>
+                <p>ENDFOR</p>
+                <p>&nbsp;</p>
+                <p>// Simulación de Arrastre (Absoluto)</p>
+                <p>LET constante = H[1]</p>
+                <p>FOR i = 1 TO 10</p>
+                <p>&nbsp;&nbsp;LET B[i] = A[i] * constante // constante NO cambia</p>
+                <p>ENDFOR</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">CONVERTIDOR DE MONEDA</h3>
+                <p>Diseñar una tabla en Excel que convierta una lista de 10 precios en Lempiras a Dólares. Colocar el Tipo de Cambio en una celda separada y usar una referencia absoluta en la fórmula.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <!-- Footer -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-sm z-50">
-        <div class="flex items-center justify-center space-x-2">
-            <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="80" height="auto">
-            <p>© 2025 Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
-    <!-- Navigation and quiz script -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
-        // Add a global event handler to capture unhandled promise rejections
-        window.addEventListener('unhandledrejection', (event) => {
-            console.error('Unhandled promise rejection:', event.reason);
-            event.preventDefault(); // Prevents the browser console from showing the error
-        });
-
-        const slides = document.querySelectorAll('.slide');
-        const nextButton = document.getElementById('next-btn');
-        const prevButton = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
         let currentSlideIndex = 0;
-        let isTransitioning = false;
-        const quizContainer = document.getElementById('quiz-container');
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
-        function updateSlideCounter() {
-            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-        }
-
-        function updateNavigationButtons() {
-            prevButton.disabled = currentSlideIndex === 0;
-            nextButton.disabled = currentSlideIndex === slides.length - 1;
-        }
-
-        function showSlide(index) {
-            if (isTransitioning || index < 0 || index >= slides.length) {
-                return;
-            }
-
-            isTransitioning = true;
-            slides.forEach((slide) => {
-                slide.classList.remove('active');
-                slide.style.display = 'none';
-            });
-
-            currentSlideIndex = index;
-
-            const activeSlide = slides[currentSlideIndex];
-            activeSlide.style.display = 'flex';
-            setTimeout(() => {
-                activeSlide.classList.add('active');
-                updateSlideCounter();
-                updateNavigationButtons();
-                isTransitioning = false;
-                if (activeSlide.id === 'slide-10') {
-                    initializeQuiz();
-                }
-            }, 10);
-        }
-
-        nextButton.addEventListener('click', () => {
-            showSlide(currentSlideIndex + 1);
-        });
-
-        prevButton.addEventListener('click', () => {
-            showSlide(currentSlideIndex - 1);
-        });
-
-        // Navigation with arrow keys
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowRight') {
-                showSlide(currentSlideIndex + 1);
-            } else if (event.key === 'ArrowLeft') {
-                showSlide(currentSlideIndex - 1);
-            }
-        });
-
-        // Event listener for F11 key
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'F11') {
-                // Ocultar el encabezado y el pie de página
-                header.style.display = 'none';
-                footer.style.display = 'none';
-            }
-        });
-
-        // Event listener for fullscreen mode to show/hide header and footer
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-
-        function handleFullscreenChange() {
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                // Salir del modo de pantalla completa: mostrar el encabezado y el pie de página
-                header.style.display = 'flex';
-                footer.style.display = 'flex';
-            }
-        }
-
-        // --- Static Quiz Logic ---
         const quizQuestions = [
-            {
-                question: "¿Qué tipo de referencia de celda cambia automáticamente cuando se copia a otra celda?",
-                options: ["Absoluta", "Relativa", "Mixta", "Fija"],
-                correctAnswer: "Relativa"
-            },
-            {
-                question: "¿Qué carácter se utiliza para indicar una referencia absoluta?",
-                options: ["*", "&", "#", "$"],
-                correctAnswer: "$"
-            },
-            {
-                question: "La fórmula `=A1+B1` en la celda C1 se copia a la celda C2. ¿Qué fórmula aparecerá en C2?",
-                options: ["`=A1+B1`", "`=A2+B2`", "`=C1+D1`", "`=A1+C1`"],
-                correctAnswer: "`=A2+B2`"
-            },
-            {
-                question: "En la fórmula `=$A1`, la referencia a la columna está:",
-                options: ["Relativa", "Mixta", "Absoluta", "No existe"],
-                correctAnswer: "Absoluta"
-            },
-            {
-                question: "¿Cuál de las siguientes es una referencia mixta?",
-                options: ["`A1`", "`$A$1`", "`A$1`", "`1A`"],
-                correctAnswer: "`A$1`"
-            },
-            {
-                question: "Si quieres calcular una serie de precios con IVA, ¿qué tipo de referencia usarías para la celda que contiene el porcentaje de IVA?",
-                options: ["Relativa", "Absoluta", "Mixta", "Ninguna de las anteriores"],
-                correctAnswer: "Absoluta"
-            },
-            {
-                question: "Al copiar la fórmula `=B$2` de la celda C3 a C4, ¿cómo cambia la fórmula?",
-                options: ["`=B$2`", "`=B$3`", "`=C$2`", "`=C$3`"],
-                correctAnswer: "`=B$2`"
-            },
-            {
-                question: "¿Qué ocurre con una referencia relativa como `A5` si la fórmula se copia una fila hacia abajo y una columna a la derecha?",
-                options: ["`A6`", "`B5`", "`B6`", "`$A$5`"],
-                correctAnswer: "`B6`"
-            },
-            {
-                question: "Si quieres fijar la fila pero permitir que la columna cambie, ¿cuál es la sintaxis correcta?",
-                options: ["`$B5`", "`B$5`", "`B5$`", "`B$5$`"],
-                correctAnswer: "`B$5`"
-            },
-            {
-                question: "En una fórmula que utiliza `SUMA`, ¿qué tipo de referencia se usa normalmente para el rango de celdas?",
-                options: ["Absoluta", "Mixta", "Relativa", "Ninguna de las anteriores"],
-                correctAnswer: "Relativa"
-            }
+            { q: "¿Qué símbolo fija una celda?", a: "C", options: ["%", "&", "$", "#"] },
+            { q: "Atajo para poner $ rápido:", a: "B", options: ["F2", "F4", "F12", "CTRL+S"] },
+            { q: "Referencia que cambia al arrastrar:", a: "A", options: ["Relativa", "Absoluta", "Mixta", "Fija"] },
+            { q: "¿Qué es $C$5?", a: "D", options: ["Error", "Relativa", "Mixta", "Absoluta"] },
+            { q: "Para fijar solo la fila 2:", a: "C", options: ["$A$2", "A2", "A$2", "$A2"] },
+            { q: "Referencia ideal para Impuestos:", a: "B", options: ["Relativa", "Absoluta", "Circular", "Texto"] },
+            { q: "¿Qué pasa si olvidas el $?", a: "A", options: ["La referencia se mueve", "No pasa nada", "Se apaga la PC", "Se borra el disco"] },
+            { q: "Referencia $B10 es:", a: "C", options: ["Absoluta", "Relativa", "Mixta", "Nula"] },
+            { q: "Si arrastro =A1 a la derecha es:", a: "B", options: ["=A1", "=B1", "=$A$1", "=A2"] },
+            { q: "F4 alterna entre referencias:", a: "A", options: ["Verdadero", "Falso", "Solo en Word", "Solo en Mac"] }
         ];
 
-        let currentQuizQuestionIndex = 0;
-        const quizQuestionElement = document.getElementById('quiz-question');
-        const quizOptionsContainer = document.getElementById('quiz-options-container');
-        const quizFeedback = document.getElementById('quiz-feedback');
-
-        function initializeQuiz() {
-            currentQuizQuestionIndex = 0;
-            updateQuizDisplay();
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        function updateQuizDisplay() {
-            if (currentQuizQuestionIndex >= quizQuestions.length) {
-                quizQuestionElement.textContent = "¡Quiz terminado!";
-                quizOptionsContainer.innerHTML = '';
-                quizFeedback.textContent = '';
-                const restartButton = document.createElement('button');
-                restartButton.textContent = 'Reiniciar Quiz';
-                restartButton.classList.add('nav-button', 'mt-6', 'w-full', 'max-w-xs');
-                restartButton.addEventListener('click', initializeQuiz);
-                quizOptionsContainer.appendChild(restartButton);
-                return;
-            }
-
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            quizQuestionElement.textContent = currentQuestion.question;
-            quizOptionsContainer.innerHTML = '';
-            quizFeedback.textContent = '';
-
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.classList.add('quiz-option-button', 'rounded-md', 'shadow-sm', 'hover:bg-gray-200');
-                button.addEventListener('click', () => checkAnswer(button, option));
-                quizOptionsContainer.appendChild(button);
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
             });
         }
 
-        function checkAnswer(selectedButton, selectedOption) {
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            const buttons = quizOptionsContainer.querySelectorAll('.quiz-option-button');
-            const isCorrect = selectedOption === currentQuestion.correctAnswer;
-
-            buttons.forEach(button => {
-                button.disabled = true;
-                if (button.textContent === currentQuestion.correctAnswer) {
-                    button.classList.add('correct');
-                } else if (button.textContent === selectedOption) {
-                    button.classList.add('incorrect');
-                }
-            });
-
-            if (isCorrect) {
-                quizFeedback.textContent = '¡Correcto!';
-                quizFeedback.classList.remove('text-red-500');
-                quizFeedback.classList.add('text-green-500');
-            } else {
-                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.correctAnswer;
-                quizFeedback.classList.remove('text-green-500');
-                quizFeedback.classList.add('text-red-500');
-            }
-
-            setTimeout(() => {
-                currentQuizQuestionIndex++;
-                updateQuizDisplay();
-            }, 3000); // Advances after 3 seconds
-        }
-
-        // --- Initialization on DOMContentLoaded ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentYearSpan = document.getElementById('current-year');
-            if (currentYearSpan) {
-                currentYearSpan.textContent = new Date().getFullYear();
-            }
-            showSlide(0); handleFullscreenChange();
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
+        });
+
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('ofimatica_referencias', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
     </script>
 </body>
 </html>

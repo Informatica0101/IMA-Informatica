@@ -2,505 +2,286 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Evolución de la Escritura y la Digitalización de la Información</title>
-    <!-- CDN de Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Evolución de las Suites Informáticas - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Google Fonts - Cormorant Garamond para letra capital -->
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f9fafb; /* Color de fondo suave */
-            color: #374151; /* Color de texto principal */
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; /* Asegura que el body ocupe al menos toda la altura de la ventana */
-            overflow-x: hidden; /* Evita el scroll horizontal */
-        }
-
-        /* Estilos del encabezado y pie de página para que siempre estén visibles */
-        header, footer {
-            position: sticky; /* Se adhieren al top/bottom al hacer scroll */
-            z-index: 50; /* Asegura que estén por encima del contenido */
-            /* Eliminadas las clases de transición y transform para que no se oculten */
-        }
-
-        main {
-            flex-grow: 1; /* Permite que el contenido principal ocupe el espacio restante */
-            padding: 2rem 1rem; /* Padding general, más pequeño en móviles */
-            max-width: 1000px; /* Ancho máximo para el contenido del artículo */
-            margin: 0 auto; /* Centra el contenido */
-        }
-
-        article {
-            background-color: white;
-            padding: 2.5rem; /* Padding interno del artículo */
-            border-radius: 1rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-            line-height: 1.8; /* Espaciado de línea para mejor legibilidad */
-        }
-
-        h1 {
-            font-size: 3.5rem; /* Tamaño grande para el título principal */
-            font-weight: 900;
-            color: #1e3a8a; /* Azul oscuro */
-            text-align: center;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-        }
-
-        h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #1f2937; /* Gris oscuro */
-            margin-top: 3rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 3px solid #60a5fa; /* Borde azul claro */
-            padding-bottom: 0.5rem;
-        }
-
-        h3 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #374151; /* Gris medio oscuro */
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        p {
-            font-size: 1.15rem;
-            margin-bottom: 1.2rem;
-            text-align: justify;
-        }
-
-        ul, ol {
-            font-size: 1.1rem;
-            margin-left: 2rem;
-            margin-bottom: 1.2rem;
-            list-style-position: outside;
-        }
-
-        /* Estilo para la letra capital */
-        .first-main-paragraph::first-letter {
-            float: left;
-            font-size: 4.5em; /* Tamaño más grande para la letra capital */
-            line-height: 0.8; /* Ajusta la altura de línea para que se alinee mejor */
-            font-weight: bold;
-            margin-right: 0.1em; /* Espacio a la derecha de la letra */
-            color: #1e3a8a; /* Color que combine con los títulos */
-            font-family: 'Cormorant Garamond', serif; /* Nueva fuente para la letra capital */
-        }
-
-        /* Estilos para las figuras (imágenes con pie de foto) */
-        figure {
-            margin: 0; /* Reinicia el margen predeterminado de figure */
-            padding: 0;
-            background-color: #f0f4f8; /* Fondo ligero para la figura */
-            border-radius: 0.75rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            padding-bottom: 0.5rem; /* Espacio para la descripción */
-        }
-
-        figure img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 0.75rem; /* Bordes redondeados para la imagen */
-            display: block; /* Asegura que la imagen ocupe el ancho completo de la figura */
-            margin-bottom: 0.5rem; /* Espacio entre imagen y pie de foto */
-        }
-
-        .image-caption {
-            font-size: 0.9rem;
-            color: #6b7280;
-            text-align: center;
-            padding: 0 0.5rem; /* Padding para el texto de la descripción */
-            margin-top: 0; /* Elimina margen superior extra */
-            margin-bottom: 0.5rem; /* Margen inferior para separar de otros elementos */
-        }
-
-        /* Clases para flotar las imágenes */
-        .image-float-left {
-            float: left;
-            max-width: 60%;
-            width: 45%; /* Ancho para que el texto se envuelva */
-            margin: 1rem 1.5rem 1rem 0; /* top right bottom left */
-        }
-
-        .image-float-right {
-            float: right;
-            max-width: 60%;
-            width: 45%; /* Ancho para que el texto se envuelva */
-            margin: 1rem 0 1rem 1.5rem; /* top right bottom left */
-        }
-
-        /* Estilo para la imagen de portada del artículo (no flotante) */
-        .article-cover-image {
-            max-width: 60%; /* Ancho de la imagen de portada */
-            margin: 2rem auto; /* Centra la imagen */
-            display: block;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Limpia los flotantes después de cada sección para evitar problemas de diseño */
-        section::after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-
-        .sources {
-            margin-top: 4rem;
-            padding-top: 2rem;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .sources p {
-            font-size: 1rem;
-            color: #4b5563;
-        }
-
-        .sources a {
-            color: #4f46e5;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .sources a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-            h2 {
-                font-size: 2rem;
-            }
-            h3 {
-                font-size: 1.5rem;
-            }
-            p, ul, ol {
-                font-size: 1rem;
-            }
-            main {
-                padding: 1rem;
-            }
-            article {
-                padding: 1.5rem;
-            }
-
-            /* En pantallas pequeñas, las imágenes flotantes se vuelven de ancho completo y se centran */
-            .image-float-left, .image-float-right {
-                float: none;
-                width: 90%;
-                margin: 1.5rem auto;
-            }
-
-            .first-main-paragraph::first-letter {
-                font-size: 3em; /* Ajusta el tamaño de la letra capital en móviles */
-            }
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body>
-
-    <!-- Navegación de Escritorio -->
-    <header id="main-header" class="bg-white shadow-md py-4 px-6 top-0 z-50 hidden md:block">
-        <div class="container mx-auto flex items-center justify-between">
-            <!-- Sección Izquierda: Logo -->
-            <a href="../../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
-                <img src="../../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
-            </a>
-
-            <!-- Sección Central: Área de Informática -->
-            <span class="font-extrabold text-2xl text-center flex-grow">Evolucion de las Suites Informaticas</span>
-
-            <!-- Sección Derecha: Enlaces de Navegación de Escritorio -->
-            <nav class="flex space-x-6">
-                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300"> Regresar a Inicio</a>
-            </nav>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-    </header>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Recorriendo la historia...</p>
+    </div>
 
-    <!-- Navegación Móvil -->
-    <header id="mobile-header" class="bg-white shadow-md py-4 px-4 flex justify-between items-center md:hidden">
-        <!-- Logo y Área de Informática para móvil -->
-        <a href="../../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
-            <img src="../../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
-            <span class="font-extrabold text-xl">Evolución de las suites Informáticas </span>
-        </a>
-        <!-- Icono de Hamburguesa -->
-        <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-        </button>
-        <!-- Superposición del Menú Móvil -->
-        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
-        <!-- Barra Lateral del Menú Móvil -->
-        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 p-6 flex flex-col transform translate-x-full transition-transform duration-300">
-            <button id="close-mobile-menu" class="self-end text-gray-600 hover:text-indigo-600 focus:outline-none mb-4">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <nav class="flex flex-col space-y-4">
-                <a href="../../index.html" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Inicio</a>
-                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
-            </nav>
-        </div>
-    </header>
-
-    <main>
-        <article>
-            <h1>La Evolución de las Suites Informáticas</h1>
-            <p class="text-xl text-gray-600 text-center mb-8">Desde las tablillas de arcilla hasta la inteligencia artificial.</p>
-
-            <figure class="article-cover-image">
-                <img src="../../imagenes/evolucion_escritura_portada.png" alt="Representación de la evolución de la escritura">
-                <p class="image-caption">De los pictogramas a los píxeles.</p>
-            </figure>
-
-            <hr class="my-8">
-
-            <section>
-                <h2>Los Inicios de la Comunicación Escrita</h2>
-                <p class="first-main-paragraph">
-                    La necesidad de registrar información, transacciones y narrativas ha sido una fuerza impulsora en la historia de la humanidad. Las primeras formas de escritura surgieron de la complejidad de las sociedades agrícolas y el comercio.
-                </p>
-                <h3>La Escritura Cuneiforme (Mesopotamia, ~3500-3000 a.C.)</h3>
-                <figure class="image-float-right">
-                    <img src="../../imagenes/cuneiforme.png" alt="Tablilla de escritura cuneiforme">
-                    <p class="image-caption">Tablilla de arcilla con escritura cuneiforme.</p>
-                </figure>
-                <p>
-                    Considerada una de las primeras formas de escritura, la cuneiforme se desarrolló en Sumeria, Mesopotamia. Utilizaba una herramienta con forma de cuña para hacer impresiones en tablillas de arcilla húmeda. Inicialmente pictográfica, evolucionó hacia un sistema logográfico y silábico. Los escribas, una clase social altamente valorada, eran los encargados de dominar este complejo sistema.
-                </p>
-                <p>
-                    Su invención fue crucial para la administración de los templos, el registro de leyes y la contabilidad de bienes, marcando el inicio de la historia escrita.
-                </p>
-                <br>
-                <br>
-                <h3>Los Jeroglíficos Egipcios (~3200 a.C.)</h3>
-                <figure class="image-float-left">
-                    <img src="../../imagenes/jeroglificos.png" alt="Jeroglíficos egipcios">
-                    <p class="image-caption">Detalle de jeroglíficos egipcios en un papiro.</p>
-                </figure>
-                <p>
-                    Paralelamente, en el antiguo Egipto, surgieron los jeroglíficos, un sistema de escritura que combinaba logogramas, silabogramas y determinativos. Se utilizaban en monumentos, tumbas y papiros. La Piedra Rosetta, descubierta en 1799, fue clave para su desciframiento por Jean-François Champollion en 1822, abriendo una ventana al conocimiento de esta antigua civilización.
-                </p>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <h3>El Nacimiento del Alfabeto (Fenicios, ~1200 a.C.)</h3>
-                <figure class="image-float-right">
-                    <img src="../../imagenes/alfabeto_fenicio_griego_romano.png" alt="Evolución del alfabeto fenicio al romano">
-                    <p class="image-caption">Alfabeto fenicio y romano.</p>
-                </figure>
-
-                <p>
-                    Un logro monumental en la historia de la escritura fue el desarrollo del alfabeto fenicio. A diferencia de los sistemas anteriores que requerían miles de caracteres, el alfabeto fenicio era un sistema consonántico de solo 22 letras, mucho más fácil de aprender y adaptar. Su simplicidad facilitó su difusión por el Mediterráneo a través del comercio.
-                </p>
-                <p>
-                    Este alfabeto fue adaptado por los griegos, quienes añadieron vocales, creando el primer alfabeto completo. Posteriormente, los romanos lo adoptaron y lo adaptaron para formar el alfabeto latino, que es la base de la mayoría de los sistemas de escritura occidentales modernos y la columna vertebral de la comunicación global actual.
-                </p>
-            </section>
-
-            <hr class="my-8">
-
-            <section>
-                <h2>La Revolución de la Imprenta: Democratizando el Conocimiento</h2>
-                <p>
-                    Durante siglos, la copia de textos se realizó manualmente, un proceso lento y propenso a errores. Esto limitaba la difusión del conocimiento a élites y monasterios. Sin embargo, el siglo XV trajo consigo una invención que cambiaría el curso de la historia.
-                </p>
-                <br>
-                <h3>Johannes Gutenberg y la Imprenta de Tipos Móviles (~1440)</h3>
-                <figure class="image-float-left">
-                    <img src="../../imagenes/imprenta_gutenberg.png" alt="Réplica de la imprenta de Gutenberg">
-                    <p class="image-caption">Réplica de la imprenta de tipos móviles de Gutenberg.</p>
-                </figure>
-                <p>
-                    En Maguncia, Alemania, Johannes Gutenberg perfeccionó la imprenta de tipos móviles. Este invento permitió la producción masiva de libros de manera rápida y económica. La Biblia de Gutenberg, impresa alrededor de 1455, es su obra más famosa y un hito en la historia de la imprenta, demostrando la viabilidad de la producción en serie.
-                </p>
-                <p>
-                    El impacto de la imprenta fue inmenso: aceleró la difusión de ideas durante el Renacimiento y la Reforma, impulsó la alfabetización, estandarizó los idiomas y sentó las bases para la era de la información, transformando radicalmente la educación y la cultura.
-                </p>
-            </section>
-
-            <hr class="my-8">
-
-            <section>
-                <h2>La Era Digital: De la Máquina de Escribir al Computador Personal</h2>
-                <p>
-                    El siglo XIX vio el nacimiento de la máquina de escribir, un paso intermedio crucial hacia la digitalización. Sin embargo, la verdadera revolución llegó con la computación.
-                </p>
-                <h3>La Máquina de Escribir (finales del siglo XIX)</h3>
-                <figure class="image-float-right">
-                    <img src="../../imagenes/maquina_escribir.png" alt="Máquina de escribir antigua">
-                    <p class="image-caption">Máquina de escribir Remington, un ícono de la oficina.</p>
-                </figure>
-                <p>
-                    Inventada en varias formas a lo largo del siglo XIX, la máquina de escribir popularizó la creación de documentos mecanografiados, mejorando la legibilidad y la velocidad en comparación con la escritura manual. Christopher Latham Sholes es a menudo acreditado con la creación de la primera máquina de escribir comercialmente exitosa en 1868, que introdujo el familiar teclado QWERTY.
-                </p>
-                <br><br><br><br><br><br>
-                <h3>Los Primeros Computadores y la Entrada de Datos</h3>
-                <figure class="image-float-left">
-                    <img src="../../imagenes/tarjetas_perforadas.jpg" alt="Tarjetas perforadas para computadoras antiguas">
-                    <p class="image-caption">Tarjetas perforadas, un método temprano de entrada de datos.</p>
-                </figure>
-                <p>
-                    Los primeros computadores, como ENIAC (1946), utilizaban métodos de entrada de datos rudimentarios, como tarjetas perforadas y cintas de papel. La programación y la interacción eran un proceso lento y altamente técnico, accesible solo para especialistas.
-                </p>
-                <p>
-                    Con el tiempo, surgieron las terminales de texto y, en la década de 1960, los <strong>procesadores de texto</strong> comenzaron a desarrollarse en grandes computadoras (mainframes), permitiendo la edición de texto en pantalla antes de imprimirlo. Douglas Engelbart, en 1968, demostró el "Mother of All Demos", presentando conceptos revolucionarios como el ratón y la interfaz gráfica de usuario, que sentaron las bases para la interacción moderna con el texto y la computación personal.
-                </p>
-            </section>
-
-            <hr class="my-8">
-
-            <section>
-                <h2>La Digitalización Masiva de la Información y las Suites Dedicadas</h2>
-                <p>
-                    La llegada del computador personal en la década de 1980 y el auge de Internet en la de 1990 marcaron el inicio de la digitalización masiva de la información, transformando la forma en que accedemos y gestionamos el conocimiento. Paralelamente, la evolución de las suites informáticas dedicadas al manejo de información se volvió fundamental.
-                </p>
-                <h3>Hojas de Cálculo: El Análisis de Datos al Alcance de Todos</h3>
-                <figure class="image-float-right">
-                    <img src="../../imagenes/hoja_calculo.png" alt="Interfaz de una hoja de cálculo moderna">
-                    <p class="image-caption">Las hojas de cálculo automatizaron el análisis financiero y de datos.</p>
-                </figure>
-                <p>
-                    La aparición de las <strong>hojas de cálculo electrónicas</strong> fue un hito que transformó la forma en que las empresas y los individuos manejaban los números. <strong>VisiCalc</strong>, lanzado en 1979, fue pionero, permitiendo por primera vez a los usuarios crear modelos financieros complejos, realizar cálculos automáticos y ver el impacto de los cambios en tiempo real sin necesidad de reprogramar. Posteriormente, <strong>Lotus 1-2-3</strong> consolidó el mercado, y finalmente, <strong>Microsoft Excel</strong> se convirtió en el estándar de la industria, democratizando el análisis de datos y la contabilidad. Estas herramientas permitieron una manipulación de información numérica sin precedentes, desde presupuestos personales hasta complejos modelos de negocio.
-                </p>
-                <br><br>
-                <h3>Presentaciones: La Comunicación Visual Simplificada</h3>
-                <figure class="image-float-left">
-                    <img src="../../imagenes/software_presentaciones.png" alt="Interfaz de software de presentaciones">
-                    <p class="image-caption">El software de presentaciones transformó la forma de comunicar ideas.</p>
-                </figure>
-                <p>
-                    La necesidad de comunicar ideas de manera efectiva en entornos profesionales y educativos llevó al desarrollo de software de presentaciones. <strong>PowerPoint</strong> (lanzado por Microsoft en 1987 y adquirido en 1990) revolucionó este campo. Antes de PowerPoint, las presentaciones se hacían con transparencias, diapositivas físicas o rotafolios. Con esta herramienta, los usuarios podían diseñar diapositivas con texto, gráficos e imágenes de manera profesional y dinámica, facilitando la creación de material visual para reuniones, clases y conferencias. Su interfaz intuitiva lo convirtió rápidamente en el estándar para la comunicación visual, permitiendo a cualquier persona con una computadora crear materiales impactantes.
-                </p>
-                <h3>Bases de Datos en Suites: Gestión de Información Estructurada</h3>
-                <figure class="image-float-right">
-                    <img src="../../imagenes/base_datos_suite.png" alt="Interfaz de una base de datos de suite ofimática">
-                    <p class="image-caption">Las bases de datos en suites permitieron gestionar información sin programación avanzada.</p>
-                </figure>
-                <p>
-                    La gestión de grandes volúmenes de datos estructurados también encontró su lugar en las suites de oficina con la inclusión de aplicaciones como <strong>Microsoft Access</strong> (introducido con Office en 1992). Access permitió a usuarios sin conocimientos avanzados de programación crear y gestionar bases de datos relacionales, organizar grandes volúmenes de información, generar informes y formular consultas complejas. Esto fue fundamental para pequeñas y medianas empresas, así como para departamentos dentro de grandes corporaciones, que necesitaban manejar datos de clientes, inventarios o proyectos de manera estructurada sin depender de soluciones de software a medida o de programadores especializados.
-                </p>
-                <br><br>
-                <h3>Escáneres y OCR (Reconocimiento Óptico de Caracteres)</h3>
-                <figure class="image-float-left">
-                    <img src="../../imagenes/ocr.png" alt="Concepto de OCR">
-                    <p class="image-caption">El OCR convierte imágenes de texto en texto editable.</p>
-                </figure>
-                <p>
-                    Los escáneres permitieron convertir documentos físicos en imágenes digitales. La tecnología OCR, que convierte esas imágenes de texto en texto editable, fue crucial para la digitalización de bibliotecas, archivos y documentos históricos, haciendo que la información fuera buscable, analizable y accesible a una escala sin precedentes. Este avance fue fundamental para proyectos como Google Books.
-                </p>
-                <h3>Almacenamiento Digital y la Nube</h3>
-                <figure class="image-float-right">
-                    <img src="../../imagenes/cloud_storage.png" alt="Concepto de almacenamiento en la nube">
-                    <p class="image-caption">La nube: acceso a la información en cualquier momento y lugar.</p>
-                </figure>
-                <p>
-                    La capacidad de almacenar vastas cantidades de información en discos duros, unidades USB y, más recientemente, en la "nube" (servidores remotos accesibles por Internet) ha transformado por completo la gestión de datos. Esto ha democratizado el acceso a la información a una escala sin precedentes, permitiendo la colaboración global y el acceso instantáneo a bibliotecas enteras de conocimiento desde cualquier dispositivo conectado.
-                </p>
-            </section>
-
-            <hr class="my-8">
-
-            <section>
-                <h2>Software de Ingreso de Texto y la Perspectiva al Futuro</h2>
-                <p>
-                    Desde los procesadores de texto rudimentarios hasta las sofisticadas herramientas actuales, el software de ingreso de texto ha evolucionado drásticamente, y el futuro promete aún más innovaciones impulsadas por la inteligencia artificial.
-                </p>
-                <h3>Evolución de los Procesadores de Texto</h3>
-                <p>
-                    Programas como <strong>Microsoft Word</strong> y <strong>Google Docs</strong> han pasado de ser simples editores a suites colaborativas con funciones avanzadas de formato, revisión y publicación. Permiten a los usuarios crear, editar y compartir documentos con facilidad, incluso en tiempo real, rompiendo barreras geográficas y temporales para la productividad.
-                </p>
-                <h3>Nuevas Formas de Ingreso de Texto</h3>
-                <ul>
-                    <li>
-                        <strong>Reconocimiento de Voz:</strong> La capacidad de dictar texto directamente a una computadora o dispositivo móvil se ha vuelto cada vez más precisa y común, liberando las manos y acelerando la creación de contenido, especialmente útil para personas con discapacidades o para la transcripción rápida.
-                    </li>
-                    <li>
-                        <strong>Entrada Táctil y Gestual:</strong> Con la proliferación de pantallas táctiles en tabletas y smartphones, la escritura se ha adaptado a teclados virtuales y reconocimiento de escritura a mano. Los gestos también permiten interacciones rápidas y fluidas, redefiniendo la experiencia de usuario.
-                    </li>
-                    <li>
-                        <strong>Asistentes de Escritura con IA:</strong> Herramientas impulsadas por inteligencia artificial, como los modelos de lenguaje generativos (ej. Gemini, ChatGPT), pueden ayudar a redactar correos electrónicos, generar ideas, corregir gramática y estilo, e incluso escribir borradores completos de texto, transformando el proceso creativo y la eficiencia en la producción de contenido.
-                    </li>
-                </ul>
-                <figure class="image-float-right">
-                    <img src="../../imagenes/ia_escritura.jpg" alt="Inteligencia Artificial asistiendo la escritura">
-                    <p class="image-caption">La IA redefine el futuro de la creación de texto.</p>
-                </figure>
-                <h3>El Futuro: Interfaces Neuronales y Más Allí</h3>
-                <p>
-                    Mirando hacia el futuro, la investigación en <strong>interfaces cerebro-computadora (BCI)</strong> o interfaces neuronales sugiere la posibilidad de "escribir" directamente con el pensamiento, sin necesidad de movimientos físicos. Aunque aún en etapas tempranas, esta tecnología podría revolucionar la forma en que interactuamos con la información digital, abriendo nuevas vías para la comunicación y la creación.
-                </p>
-                <p>
-                    La digitalización de la información continuará su avance imparable, haciendo que el conocimiento sea aún más ubicuo y accesible. El software de ingreso de texto se volverá más intuitivo, predictivo y colaborativo, fusionándose con la inteligencia artificial para amplificar nuestras capacidades de comunicación y creación, llevándonos a una era de interacción humano-máquina sin precedentes.
-                </p>
-            </section>
-
-            <hr class="my-8">
-
-            <div class="sources">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">Fuentes de Consulta</h2>
-                <p><small><a href="https://es.wikipedia.org/wiki/Historia_de_la_escritura" target="_blank" rel="noopener noreferrer">Wikipedia: Historia de la escritura</a></small></p>
-                <p><small><a href="https://es.wikipedia.org/wiki/Johannes_Gutenberg" target="_blank" rel="noopener noreferrer">Wikipedia: Johannes Gutenberg</a></small></p>
-                <p><small><a href="https://www.britannica.com/technology/typewriter" target="_blank" rel="noopener noreferrer">Britannica: Typewriter</a></small></p>
-                <p><small><a href="https://www.computerhistory.org/timeline/1946/" target="_blank" rel="noopener noreferrer">Computer History Museum: ENIAC</a></small></p>
-                <p><small><a href="https://www.ibm.com/ibm/history/exhibits/attic/attic_015.html" target="_blank" rel="noopener noreferrer">IBM Archives: Douglas Engelbart</a></small></p>
-                <p><small><a href="https://cloud.google.com/workspace" target="_blank" rel="noopener noreferrer">Google Workspace</a></small></p>
-                <p><small><a href="https://www.microsoft.com/es-es/microsoft-365" target="_blank" rel="noopener noreferrer">Microsoft 365</a></small></p>
-                <p><small><a href="https://www.ibm.com/blogs/research/2023/07/20/ai-writing-assistants/" target="_blank" rel="noopener noreferrer">IBM Research: AI Writing Assistants</a></small></p>
-                <p><small><a href="https://es.wikipedia.org/wiki/VisiCalc" target="_blank" rel="noopener noreferrer">Wikipedia: VisiCalc</a></small></p>
-                <p><small><a href="https://es.wikipedia.org/wiki/Microsoft_PowerPoint" target="_blank" rel="noopener noreferrer">Wikipedia: Microsoft PowerPoint</a></small></p>
-                <p><small><a href="https://es.wikipedia.org/wiki/Microsoft_Access" target="_blank" rel="noopener noreferrer">Wikipedia: Microsoft Access</a></small></p>
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
             </div>
-        </article>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
+    </header>
+
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Evolución de las Suites Informáticas</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Ofimática I</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Orígenes de la Escritura</h2>
+            <div class="concept-box">
+                <p>Todo comenzó en Mesopotamia (~3500 a.C.) con la escritura <strong>cuneiforme</strong> en tablillas de arcilla. El objetivo siempre fue el mismo: registrar información de forma permanente.</p>
+            </div>
+            <i class="fas fa-scroll text-6xl text-amber-600 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Revolución de la Imprenta</h2>
+            <p>En 1440, Johannes Gutenberg inventa la imprenta de tipos móviles, permitiendo por primera vez la producción masiva de conocimiento. Es el ancestro directo de la impresora láser moderna.</p>
+            <i class="fas fa-print text-6xl text-gray-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Máquina de Escribir</h2>
+            <div class="concept-box">
+                <p>A finales del siglo XIX, la máquina de escribir introduce el teclado <strong>QWERTY</strong>, que seguimos usando hoy en nuestros teclados de computadora y celulares.</p>
+            </div>
+            <i class="fas fa-keyboard text-6xl text-slate-800 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Primeros Procesadores de Texto</h2>
+            <p>En los años 60 y 70 surgieron programas básicos en grandes computadoras. Permitían borrar y corregir en pantalla antes de imprimir, algo revolucionario en su época.</p>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Era de las PC (Años 80)</h2>
+            <div class="concept-box border-blue-400">
+                <p>Aparecen programas icónicos:</p>
+                <ul class="list-disc ml-8 mt-2">
+                    <li><strong>WordStar:</strong> El primero con éxito masivo.</li>
+                    <li><strong>WordPerfect:</strong> El estándar de los años 80.</li>
+                    <li><strong>VisiCalc:</strong> La primera hoja de cálculo.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio: Línea del Tiempo</h2>
+            <div class="concept-box">
+                <p>Ordenar cronológicamente: <br>1. Imprenta <br>2. Word para Windows <br>3. Escritura Cuneiforme <br>4. Máquina de escribir.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Nace Microsoft Office (1989)</h2>
+            <p>Microsoft agrupa Word, Excel y PowerPoint en un solo paquete. Por primera vez, los programas "hablan" el mismo idioma y comparten datos fácilmente.</p>
+            <i class="fab fa-microsoft text-6xl text-blue-600 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Revolución de la Nube</h2>
+            <div class="concept-box border-sky-400">
+                <p>Con <strong>Google Docs (2006)</strong> y Office 365, los documentos dejan de vivir en el disco duro para vivir en Internet, permitiendo el trabajo colaborativo en tiempo real.</p>
+            </div>
+            <i class="fas fa-cloud text-6xl text-sky-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">OCR: Digitalización de Papel</h2>
+            <p>La tecnología de Reconocimiento Óptico de Caracteres (OCR) permite que un escáner o una foto conviertan un papel físico en un texto editable en Word.</p>
+            <i class="fas fa-scanner text-6xl text-gray-500 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Formatos Estándar</h2>
+            <p>A lo largo de la historia hemos pasado de archivos propietarios (.doc) a estándares abiertos (.docx, .pdf) que garantizan que el documento se vea igual en cualquier equipo.</p>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Futuro: IA en la Suite</h2>
+            <div class="concept-box border-purple-500">
+                <p>Asistentes como Copilot o Gemini ya no solo corrigen ortografía, sino que pueden redactar borradores enteros, resumir documentos y crear gráficos con solo pedirlos.</p>
+            </div>
+            <i class="fas fa-robot text-6xl text-purple-600 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reto de Código: Formato</h2>
+            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl">
+                <p>// Algoritmo para verificar tipo de archivo</p>
+                <p>IF extension == ".docx" THEN</p>
+                <p>&nbsp;&nbsp;PRINT "Documento de Microsoft Word"</p>
+                <p>ELSE IF extension == ".xlsx" THEN</p>
+                <p>&nbsp;&nbsp;PRINT "Hoja de Cálculo de Excel"</p>
+                <p>ENDIF</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">HISTORIA DIGITAL</h3>
+                <p>Realizar una investigación sobre el programa <strong>WordStar</strong>. ¿En qué año salió? ¿Por qué dejó de usarse? Entregar un resumen de una página en Word (usando el formato .docx).</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <!-- Pie de Página -->
-    <footer id="main-footer" class="bg-gray-900 text-gray-300 py-6 px-6 mt-8">
-        <div class="container mx-auto text-center text-sm">
-            <p class="flex items-center justify-center">
-                &copy;&nbsp;<span id="current-year"></span>&nbsp;Instituto María Auxiliadora - Área de InformáticaSEMED. Todos los derechos reservados.
-                <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" style="width: 50px; height: auto; margin-left: 0.5rem;">
-            </p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
-        // --- Lógica del Menú Móvil ---
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
-        function toggleMobileMenu() {
-            mobileMenu.classList.toggle('translate-x-full');
-            mobileMenuOverlay.classList.toggle('hidden');
+        const quizQuestions = [
+            { q: "¿Dónde nació la escritura?", a: "B", options: ["Egipto", "Mesopotamia", "Grecia", "Roma"] },
+            { q: "¿Quién inventó la imprenta?", a: "C", options: ["Newton", "Einstein", "Gutenberg", "Gates"] },
+            { q: "El teclado QWERTY viene de:", a: "A", options: ["Máquina de escribir", "iPhone", "Windows", "Laptops"] },
+            { q: "Primera hoja de cálculo:", a: "D", options: ["Excel", "Lotus", "Calc", "VisiCalc"] },
+            { q: "¿Qué significa OCR?", a: "B", options: ["Only Code Read", "Reconocimiento Óptico", "Old Computer Run", "Output Central"] },
+            { q: "Google Docs es ofimática en:", a: "C", options: ["Diskette", "CD-ROM", "La Nube", "Papel"] },
+            { q: "Microsoft Office nació en:", a: "A", options: ["1989", "2010", "1950", "2020"] },
+            { q: "Extensión moderna de Word:", a: "B", options: [".doc", ".docx", ".txt", ".exe"] },
+            { q: "Formatos que no cambian el diseño:", a: "D", options: [".txt", ".xlsx", ".ppt", ".pdf"] },
+            { q: "IA de Microsoft en Office:", a: "C", options: ["Siri", "Alexa", "Copilot", "Cortana"] }
+        ];
+
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        mobileMenuButton.addEventListener('click', toggleMobileMenu);
-        closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
-        mobileMenuOverlay.addEventListener('click', toggleMobileMenu);
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
+            });
+        }
 
-        // --- Inicialización en DOMContentLoaded ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Establece el año actual en el pie de página
-            const currentYearSpan = document.getElementById('current-year');
-            if (currentYearSpan) {
-                currentYearSpan.textContent = new Date().getFullYear();
-            }
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
+        });
+
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('ofimatica_evolucion', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
     </script>
 </body>
 </html>

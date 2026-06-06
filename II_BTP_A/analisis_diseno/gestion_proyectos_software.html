@@ -2,807 +2,289 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presentación: Gestión de Proyectos de Software</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Gestión de Proyectos de Software - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Reduce base font size for overall scaling */
-        html {
-            font-size: 80%; /* Reduces overall size by 20% */
-        }
-
-        /* Custom animations for transitions */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeOutUp {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px); /* Changed for slide-in effect */
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeOutDown {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(20px); /* Changed for slide-out effect */
-            }
-        }
-
-        /* Specific styles for slides */
-        .slide {
-            display: none; /* Hidden by default */
-            animation-duration: 0.5s;
-            animation-fill-mode: forwards;
-            /* Ensure it fills the parent container fully */
-            position: absolute; /* Position absolutely within presentation-container */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%; /* Fill the height of the presentation-container */
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-            box-sizing: border-box;
-            background-color: white; /* Ensure background is white during transition */
-        }
-
-        .slide.active {
-            display: flex; /* Show active slide */
-            animation-name: fadeInUp; /* Animation for entering slide */
-            position: relative; /* Make active slide take up space */
-            z-index: 1; /* Ensure it's above any lingering old slides */
-        }
-
-        .slide.leaving {
-            animation-name: fadeOutDown; /* Animation for leaving slide */
-            position: absolute; /* It needs to stay absolute to animate out */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 20; /* Ensure it animates on top of the incoming slide */
-            display: flex; /* Keep it flex during animation */
-        }
-
-        /* Custom styles for navigation buttons */
-        .nav-button {
-            background-color: #4F46E5; /* Indigo 600 */
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-
-        .nav-button:hover {
-            background-color: #4338CA; /* Indigo 700 */
-            transform: translateY(-2px);
-        }
-
-        .nav-button:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Mobile navigation menu specific styles */
-        .mobile-menu {
-            transition: transform 0.3s ease-out;
-            transform: translateX(100%); /* Hidden by default */
-        }
-
-        .mobile-menu.open {
-            transform: translateX(0); /* Visible when open */
-        }
-
-        /* Ensure content takes available space */
-        .content-area {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-        }
-
-        /* Responsive adjustments for text and images */
-        .slide h1 {
-            font-size: 2.5rem; /* Default for larger screens */
-        }
-        .slide h2 {
-            font-size: 2rem;
-        }
-        .slide p, .slide ul {
-            font-size: 1.1rem;
-            max-width: 800px; /* Limit text width for readability */
-            margin: 0 auto;
-        }
-        /* General image styling - removed border-radius and box-shadow */
-        .slide img {
-            max-width: 80%;
-            height: auto;
-        }
-
-        /* Specific style for content images (not cover logo) */
-        .content-image-style {
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            margin-top: 1.5rem;
-        }
-
-        /* Specific style for the cover logo to ensure no square shadow */
-        .cover-logo {
-            box-shadow: none !important; /* Override any potential inherited shadows */
-            border-radius: 0 !important;
-        }
-
-
-        @media (max-width: 768px) {
-            html {
-                font-size: 75%; /* Further reduce for smaller screens */
-            }
-            .slide h1 {
-                font-size: 2rem;
-            }
-            .slide h2 {
-                font-size: 1.75rem;
-            }
-            .slide p, .slide ul {
-                font-size: 1rem;
-                padding: 0 1rem;
-            }
-            .slide {
-                padding: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            html {
-                font-size: 70%;
-            }
-            .slide h1 {
-                font-size: 1.75rem;
-            }
-            .slide h2 {
-                font-size: 1.5rem;
-            }
-            .slide p, .slide ul {
-                font-size: 0.9rem;
-            }
-            .slide img {
-                max-width: 95%;
-            }
-        }
-
-        /* Grid for icons/images */
-        .icon-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-            width: 100%;
-            max-width: 800px;
-        }
-
-        .icon-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 1rem;
-            background-color: #edf2f7; /* Light gray background */
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-        }
-
-        .icon-item img { /* Apply to images within icon-item */
-            width: 80px; /* Set fixed width for icons */
-            height: 80px; /* Set fixed height for icons */
-            object-fit: contain;
-            margin-bottom: 0.5rem;
-            border-radius: 0.5rem; /* Apply to images */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Apply to images */
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="font-['Inter'] bg-gray-50 text-gray-800 flex flex-col min-h-screen">
-
-    <!-- Desktop Navigation -->
-    <header class="bg-white shadow-md py-4 px-6 sticky top-0 z-50 hidden md:block">
-        <div class="container mx-auto flex items-center justify-between">
-            <!-- Left Section: Logo -->
-            <a href="../../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
-                <img src="../../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
-            </a>
-
-            <!-- Center Section: Area de Informatica -->
-            <span class="font-extrabold text-2xl text-center flex-grow">Area de Informatica</span>
-
-            <!-- Right Section: Desktop Nav Links -->
-            <nav class="flex space-x-6">
-                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Inicio</a>
-                <!-- Dropdown Menu for Asignaturas -->
-                <div class="relative group">
-                    <button class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300 focus:outline-none flex items-center">
-                        Asignaturas
-                        <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 invisible group-hover:visible group-focus-within:visible">
-                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Informática I</a>
-                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ofimática I</a>
-                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
-                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
-                        <a href="../../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseño Web II</a>
-                    </div>
-                </div>
-                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
-            </nav>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Planificando sprint...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <!-- Mobile Navigation (hidden by default, shown on small screens) -->
-    <header class="bg-white shadow-md py-4 px-4 flex justify-between items-center md:hidden">
-        <!-- Logo and Area de Informatica for mobile -->
-        <a href="../../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
-            <img src="../../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
-            <span class="font-extrabold text-xl">Area de Informatica</span>
-        </a>
-        <!-- Hamburger Icon -->
-        <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-        </button>
-        <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
-        <!-- Mobile Menu Sidebar -->
-        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 p-6 flex flex-col">
-            <button id="close-mobile-menu" class="self-end text-gray-600 hover:text-indigo-600 focus:outline-none mb-4">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <nav class="flex flex-col space-y-4">
-                <a href="../../index.html" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Inicio</a>
-                <!-- Mobile Dropdown for Asignaturas -->
-                <div class="relative">
-                    <button id="mobile-asignaturas-button" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300 focus:outline-none flex items-center justify-between w-full">
-                        Asignaturas
-                        <svg class="ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div id="mobile-asignaturas-dropdown" class="hidden mt-2 pl-4 flex flex-col space-y-2">
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:text-indigo-600">Informática I</a>
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Ofimática I</a>
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Diseño Web II</a>
-                    </div>
-                </div>
-                <a href="../../index.html" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Contenido de clase</a>
-            </nav>
-        </div>
-    </header>
-
-    <main class="flex-grow container mx-auto px-4 py-8 flex flex-col items-center justify-center relative">
-        <!-- Presentation Slides Container -->
-        <div id="presentation-container" class="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden min-h-[60vh] flex flex-col justify-between">
-
-            <!-- Slide 1: Portada -->
-            <div class="slide active" id="slide-1">
-                <div class="slide-content">
-                    <img src="../../imagenes/logo.png" alt="Logo de la Institución" class="w-48 mb-6 cover-logo">
-                    <h1 class="text-5xl font-extrabold text-blue-800 mb-4">Gestión de Proyectos de Software</h1>
-                    <p class="text-2xl text-gray-700 mb-2">Asignatura: <strong>Análisis y Diseño I</strong></p>
-                    <p class="text-xl text-gray-600 mb-2">Grado: Undécimo Sección "A"</p>
-                    <p class="text-xl text-gray-600 mb-2">Docente: Pablo Antonio Peña Mancia</p>
-                    <p class="text-lg text-gray-500">San Pedro Sula, Cortés, Honduras</p>
-                    <p class="text-lg text-gray-500">Fecha: 27 de Julio de 2025</p>
-                </div>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Gestión de Proyectos de Software</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Análisis y Diseño de Sistemas</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
-
-            <!-- Slide 2: ¿Qué es la Gestión de Proyectos de Software? -->
-            <div class="slide" id="slide-2">
-                <div class="slide-content">
-                    <h2 class="text-4xl font-bold mb-6">¿Qué es la Gestión de Proyectos de Software?</h2>
-                    <p class="text-xl leading-relaxed mb-6">Disciplina que <strong>organiza, planifica, ejecuta y controla</strong> recursos para lograr objetivos de software.</p>
-                    <p class="text-xl leading-relaxed mb-8">Asegura la entrega de productos de calidad, a tiempo y dentro del presupuesto.</p>
-                    <div class="flex justify-center">
-                        <!-- Reemplazo de SVG por PNG -->
-                        <img src="../../imagenes/icono_tiempo.png" alt="Icono de Tiempo" class="w-24 h-24 content-image-style">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 3: Importancia de la Gestión de Proyectos en Software -->
-            <div class="slide" id="slide-3">
-                <div class="slide-content">
-                    <h2 class="text-4xl font-bold mb-6">Importancia en el Desarrollo de Software</h2>
-                    <ul class="text-xl leading-relaxed space-y-4">
-                        <li><strong>Cumplimiento de Objetivos:</strong> Define metas claras.</li>
-                        <li><strong>Optimización de Recursos:</strong> Uso eficiente de personal y tecnología.</li>
-                        <li><strong>Control:</strong> Mantiene tiempo y presupuesto.</li>
-                        <li><strong>Gestión de Riesgos:</strong> Identifica y mitiga problemas.</li>
-                        <li><strong>Calidad:</strong> Asegura estándares del software.</li>
-                        <li><strong>Colaboración:</strong> Fomenta el trabajo en equipo.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Slide 4: Fases de la Gestión de Proyectos (Visión General) -->
-            <div class="slide" id="slide-4">
-                <div class="slide-content">
-                    <h2 class="text-4xl font-bold mb-6">Fases de la Gestión de Proyectos</h2>
-                    <p class="text-xl leading-relaxed mb-8">El ciclo de vida del proyecto organiza el trabajo en etapas clave.</p>
-                    <div class="icon-grid">
-                        <div class="icon-item">
-                            <!-- Reemplazo de SVG por PNG -->
-                            <img src="../../imagenes/icono_inicio.png" alt="Icono de Inicio" class="w-16 h-16">
-                            <p class="font-semibold text-lg">1. Inicio</p>
-                        </div>
-                        <div class="icon-item">
-                            <!-- Reemplazo de SVG por PNG -->
-                            <img src="../../imagenes/icono_planificacion.png" alt="Icono de Planificación" class="w-16 h-16">
-                            <p class="font-semibold text-lg">2. Planificación</p>
-                        </div>
-                        <div class="icon-item">
-                            <!-- Reemplazo de SVG por PNG -->
-                            <img src="../../imagenes/icono_ejecucion.png" alt="Icono de Ejecución" class="w-16 h-16">
-                            <p class="font-semibold text-lg">3. Ejecución</p>
-                        </div>
-                        <div class="icon-item">
-                            <!-- Reemplazo de SVG por PNG -->
-                            <img src="../../imagenes/icono_monitoreo.png" alt="Icono de Monitoreo y Control" class="w-16 h-16">
-                            <p class="font-semibold text-lg">4. Monitoreo y Control</p>
-                        </div>
-                        <div class="icon-item">
-                            <!-- Reemplazo de SVG por PNG -->
-                            <img src="../../imagenes/icono_cierre.png" alt="Icono de Cierre" class="w-16 h-16">
-                            <p class="font-semibold text-lg">5. Cierre</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 5: Roles Clave en la Gestión de Proyectos -->
-            <div class="slide" id="slide-5">
-                <div class="slide-content">
-                    <h2 class="text-4xl font-bold mb-6">Roles Clave</h2>
-                    <p class="text-xl leading-relaxed mb-8">El éxito de un proyecto depende de la clara definición y colaboración de los roles.</p>
-                    <div class="icon-grid">
-                        <div class="icon-item">
-                            <!-- Reemplazo de SVG por PNG -->
-                            <img src="../../imagenes/icono_gerente.png" alt="Icono de Gerente de Proyecto" class="w-16 h-16">
-                            <p class="font-semibold text-lg">Gerente de Proyecto</p>
-                            <p class="text-sm">Líder y responsable del proyecto.</p>
-                        </div>
-                        <div class="icon-item">
-                            <!-- Reemplazo de SVG por PNG -->
-                            <img src="../../imagenes/icono_equipo.png" alt="Icono de Equipo del Proyecto" class="w-16 h-16">
-                            <p class="font-semibold text-lg">Equipo del Proyecto</p>
-                            <p class="text-sm">Realizan el trabajo (desarrolladores, diseñadores, etc.).</p>
-                        </div>
-                        <div class="icon-item">
-                            <!-- Reemplazo de SVG por PNG -->
-                            <img src="../../imagenes/icono_stakeholders.png" alt="Icono de Stakeholders" class="w-16 h-16">
-                            <p class="font-semibold text-lg">Stakeholders</p>
-                            <p class="text-sm">Afectados o interesados en el proyecto (clientes, usuarios, etc.).</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 6: Herramientas para la Gestión de Proyectos -->
-            <div class="slide" id="slide-6">
-                <div class="slide-content">
-                    <h2 class="text-4xl font-bold mb-6">Herramientas para la Gestión</h2>
-                    <p class="text-xl leading-relaxed mb-8">Diversas herramientas facilitan la planificación, seguimiento y control de los proyectos.</p>
-                    <div class="icon-grid">
-                        <div class="icon-item">
-                            <!-- Reemplazo de SVG por PNG -->
-                            <img src="../../imagenes/icono_gantt.png" alt="Icono de Diagramas de Gantt" class="w-16 h-16">
-                            <p class="font-semibold text-lg">Diagramas de Gantt</p>
-                            <p class="text-sm">Visualizan el cronograma y dependencias.</p>
-                        </div>
-                        <div class="icon-item">
-                            <!-- Reemplazo de SVG por PNG -->
-                            <img src="../../imagenes/icono_pert.png" alt="Icono de Diagramas PERT" class="w-16 h-16">
-                            <p class="font-semibold text-lg">Diagramas PERT</p>
-                            <p class="text-sm">Estiman tiempos y dependencias de tareas.</p>
-                        </div>
-                        <div class="icon-item">
-                            <!-- Reemplazo de SVG por PNG -->
-                            <img src="../../imagenes/icono_software_gestion.png" alt="Icono de Software de Gestión" class="w-16 h-16">
-                            <p class="font-semibold text-lg">Software de Gestión</p>
-                            <p class="text-sm">Herramientas como Jira, Trello, Asana.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 7: Hitos y Cronogramas -->
-            <div class="slide" id="slide-7">
-                <div class="slide-content">
-                    <h2 class="text-4xl font-bold mb-6">Hitos y Cronogramas</h2>
-                    <p class="text-xl leading-relaxed mb-6">Un <strong>hito</strong> es un logro clave en el proyecto, sin duración. Un <strong>cronograma</strong> detalla tareas, duraciones y dependencias.</p>
-                    <ul class="text-xl leading-relaxed space-y-4">
-                        <li><strong>Hitos:</strong> Puntos de control, monitoreo de progreso.</li>
-                        <li><strong>Cronogramas:</strong> Planificación realista, secuencia lógica de actividades.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Slide 8: Análisis y Diseño: Un Componente Clave -->
-            <div class="slide" id="slide-8">
-                <div class="slide-content">
-                    <h2 class="text-4xl font-bold mb-6">Análisis y Diseño: Un Componente Clave</h2>
-                    <p class="text-xl leading-relaxed mb-6">Parte crucial de la <strong>planificación y ejecución</strong> en la gestión de proyectos de software.</p>
-                    <p class="text-xl leading-relaxed mb-8">Transforma los requisitos en un diseño detallado del sistema.</p>
-                    <div class="flex justify-center">
-                        <!-- Reemplazo de SVG por PNG -->
-                        <img src="../../imagenes/icono_analisis_diseno.png" alt="Icono de Análisis y Diseño" class="w-24 h-24 content-image-style">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 9: Análisis Orientado a Objetos (AOO) -->
-            <div class="slide" id="slide-9">
-                <div class="slide-content">
-                    <h2 class="text-4xl font-bold mb-6">Análisis Orientado a Objetos (AOO)</h2>
-                    <p class="text-xl leading-relaxed mb-6">Busca <strong>comprender el problema</strong> y crear un modelo visual del sistema, independiente de la tecnología.</p>
-                    <ul class="text-xl leading-relaxed space-y-4">
-                        <li>Traduce requisitos funcionales a <strong>conceptos de software</strong>.</li>
-                        <li>Identifica <strong>objetos</strong> y su <strong>comportamiento</strong>.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Slide 10: Artefactos Clave del AOO -->
-            <div class="slide" id="slide-10">
-                <div class="slide-content">
-                    <h2 class="text-4xl font-bold mb-6">Artefactos Clave del AOO</h2>
-                    <p class="text-xl leading-relaxed mb-6">Documentos y modelos esenciales en el AOO.</p>
-                    <ul class="text-xl leading-relaxed space-y-4">
-                        <li><strong>Modelo de Análisis:</strong> Vista interna del sistema.</li>
-                        <li><strong>Clases de Análisis:</strong> (Interfaz, Control, Entidad).</li>
-                        <li><strong>Diagramas:</strong> De Clases y de Comunicación.</li>
-                        <li><strong>Tarjetas CRC:</strong> Para modelar responsabilidades y colaboradores.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Slide 11: Modelado de Datos -->
-            <div class="slide" id="slide-11">
-                <div class="slide-content">
-                    <h2 class="text-4xl font-bold mb-6">Modelado de Datos</h2>
-                    <p class="text-xl leading-relaxed mb-6">Esencial en la fase de planificación para definir la estructura de la información.</p>
-                    <ul class="text-xl leading-relaxed space-y-4">
-                        <li><strong>Conceptual:</strong> Entidades y relaciones de alto nivel.</li>
-                        <li><strong>Lógico:</strong> Estructura de datos independiente de la base de datos.</li>
-                        <li><strong>Físico:</strong> Implementación específica en la base de datos.</li>
-                    </ul>
-                    <img src="../../imagenes/modelo_datos_vision.png" alt="Imagen de Visión General del Modelo de Datos" class="max-w-md mx-auto content-image-style">
-                </div>
-            </div>
-
-            <!-- Slide 12: Ejercicios de Reflexión -->
-            <div class="slide" id="slide-12">
-                <div class="slide-content">
-                    <h2 class="text-4xl font-bold mb-6">Ejercicios de Reflexión</h2>
-                    <div class="text-left text-xl leading-relaxed space-y-6">
-                        <p>1. ¿Cómo la <strong>gestión de riesgos</strong> en un proyecto de software puede prevenir fallos importantes?</p>
-                        <p>2. ¿Qué tipo de <strong>clase de análisis (Boundary, Control, Entity)</strong> usarías para representar la pantalla de inicio de sesión de un sistema ISEMED y por qué?</p>
-                        <p>3. Explica brevemente la importancia de un <strong>modelo de datos conceptual</strong> antes de diseñar una base de datos.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 13: Asignación de Tareas -->
-            <div class="slide" id="slide-13">
-                <div class="slide-content">
-                    <h2 class="text-4xl font-bold mb-6">Asignación de Tareas</h2>
-                    <p class="text-xl leading-relaxed mb-8"><strong>Tarea:</strong> Planificación Básica de un Módulo ISEMED</p>
-                    <ul class="text-xl leading-relaxed space-y-4 text-left">
-                        <li>Elige un módulo simple de un sistema ISEMED (ej. registro de calificaciones, gestión de asistencia).</li>
-                        <li>Identifica <strong>3 hitos clave</strong> para el desarrollo de este módulo.</li>
-                        <li>Para el módulo, propone una clase <strong>Boundary</strong>, una <strong>Control</strong> y una <strong>Entity</strong>, describiendo su rol.</li>
-                    </ul>
-                    <p class="text-2xl font-bold text-blue-700 mt-8">Fecha de Entrega: 03 de Agosto de 2025</p>
-                    <p class="text-xl text-gray-600 mt-2">Ponderación: 5%</p>
-                </div>
-            </div>
-
         </div>
 
-        <!-- Navigation Buttons -->
-        <div class="flex justify-between w-full p-4 mt-auto">
-            <button id="prev-slide" class="nav-button flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                Anterior
-            </button>
-            <span id="slide-counter" class="text-gray-600 font-medium text-lg flex items-center">1 / 13</span>
-            <button id="next-slide" class="nav-button flex items-center">
-                Siguiente
-                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-            </button>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es la Gestión de Proyectos?</h2>
+            <div class="concept-box">
+                <p>Es la aplicación de conocimientos, habilidades y herramientas para liderar el trabajo de un equipo y lograr objetivos específicos del software dentro de los límites de <strong>tiempo, costo y calidad</strong>.</p>
+            </div>
+            <i class="fas fa-tasks text-6xl text-blue-300 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Triángulo de Hierro</h2>
+            <div class="concept-box">
+                <p>Todo proyecto se balancea entre tres factores:</p>
+                <ul class="list-disc ml-8 mt-2 text-lg">
+                    <li><strong>Alcance:</strong> Lo que se va a construir.</li>
+                    <li><strong>Tiempo:</strong> Fecha de entrega.</li>
+                    <li><strong>Costo:</strong> El presupuesto disponible.</li>
+                </ul>
+            </div>
+            <p class="mt-4 italic">Si cambias uno, los otros dos se ven afectados.</p>
+        </div>
+
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Fases del Proyecto</h2>
+            <div class="grid grid-cols-5 gap-2 mt-4 text-[10px] font-bold">
+                <div class="p-2 border bg-blue-50">1. Inicio</div>
+                <div class="p-2 border bg-blue-100">2. Planeación</div>
+                <div class="p-2 border bg-blue-200">3. Ejecución</div>
+                <div class="p-2 border bg-blue-300">4. Control</div>
+                <div class="p-2 border bg-blue-400 text-white">5. Cierre</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Fase 1: Inicio</h2>
+            <p>Se define la visión del proyecto y se obtiene la autorización formal. Se identifica al <strong>Project Manager</strong> y a los interesados (Stakeholders).</p>
+            <i class="fas fa-flag-checkered text-6xl text-green-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Fase 2: Planeación</h2>
+            <div class="concept-box border-yellow-400">
+                <p>Se crea la <strong>EDT (Estructura de Desglose de Trabajo)</strong>, el cronograma y el plan de gestión de riesgos. Es la fase más importante para evitar el fracaso.</p>
+            </div>
+            <i class="fas fa-calendar-alt text-6xl text-yellow-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Fase 3: Ejecución</h2>
+            <p>El equipo desarrolla el código según lo planeado. El PM gestiona a las personas y los recursos para que el trabajo fluya sin bloqueos.</p>
+            <i class="fas fa-code text-6xl text-slate-700 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Fase 4: Seguimiento y Control</h2>
+            <div class="concept-box border-red-400">
+                <p>Se mide el progreso real contra lo planeado. Si hay desviaciones, se toman acciones correctivas inmediatamente.</p>
+            </div>
+            <i class="fas fa-search-dollar text-6xl text-red-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Fase 5: Cierre</h2>
+            <p>Entrega final al cliente, liberación del equipo de trabajo y realización de la "Lecciones Aprendidas" para mejorar en el futuro.</p>
+            <i class="fas fa-box-open text-6xl text-orange-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Metodologías Ágiles</h2>
+            <div class="concept-box border-purple-400">
+                <p>En lugar de una entrega final gigante, se hacen entregas pequeñas y funcionales cada 2 o 4 semanas (Sprints). Ejemplo: <strong>Scrum</strong>.</p>
+            </div>
+            <i class="fas fa-sync-alt text-6xl text-purple-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Gestión de Riesgos</h2>
+            <p>Identificar qué podría salir mal (ej. renuncia de un programador, corte de luz) y tener un <strong>Plan B</strong> listo.</p>
+            <i class="fas fa-exclamation-triangle text-6xl text-yellow-500 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Herramientas de Gestión</h2>
+            <ul class="flex space-x-12 mt-6">
+                <li class="text-center"><i class="fab fa-jira text-5xl"></i><br>Jira</li>
+                <li class="text-center"><i class="fab fa-trello text-5xl"></i><br>Trello</li>
+                <li class="text-center"><i class="fas fa-project-diagram text-5xl"></i><br>MS Project</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Hitos del Proyecto</h2>
+            <p>Son puntos de control importantes que no tienen duración (ej. "Firma del contrato", "Versión Beta terminada"). Sirven para celebrar el progreso.</p>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">CRONOGRAMA BÁSICO</h3>
+                <p>Elegir un sistema que quieran construir (ej. Control de Inventario). Listar 5 tareas principales y asignarles una duración estimada en días. Crear un pequeño diagrama de barras (Gantt) en el cuaderno.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-6 px-6 mt-8">
-        <div class="container mx-auto text-center text-sm">
-            <p class="flex items-center justify-center">
-                &copy;&nbsp;<span id="current-year"></span>&nbsp;Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
-                <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" style="width: 50px; height: auto; margin-left: 0.5rem;">
-            </p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
-        // --- Mobile Menu Logic ---
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-        const mobileAsignaturasButton = document.getElementById('mobile-asignaturas-button');
-        const mobileAsignaturasDropdown = document.getElementById('mobile-asignaturas-dropdown');
-
-        function toggleMobileMenu() {
-            mobileMenu.classList.toggle('open');
-            mobileMenuOverlay.classList.toggle('hidden');
-        }
-
-        mobileMenuButton.addEventListener('click', toggleMobileMenu);
-        closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
-        mobileMenuOverlay.addEventListener('click', toggleMobileMenu); // Close when clicking outside
-
-        mobileAsignaturasButton.addEventListener('click', () => {
-            mobileAsignaturasDropdown.classList.toggle('hidden');
-            // Rotate arrow icon
-            mobileAsignaturasButton.querySelector('svg').classList.toggle('rotate-180');
-        });
-
-        // --- Presentation Logic ---
-        const slides = document.querySelectorAll('.slide');
-        const prevButton = document.getElementById('prev-slide');
-        const nextButton = document.getElementById('next-slide');
-        const slideCounter = document.getElementById('slide-counter');
         let currentSlideIndex = 0;
-        let isTransitioning = false; // Flag to prevent rapid clicks during transition
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
-        function updateSlideCounter() {
-            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-        }
+        const quizQuestions = [
+            { q: "¿Qué NO es parte del triángulo de hierro?", a: "D", options: ["Alcance", "Tiempo", "Costo", "Color del Logo"] },
+            { q: "Fase donde se crea el código:", a: "B", options: ["Inicio", "Ejecución", "Cierre", "Control"] },
+            { q: "Líder del proyecto:", a: "C", options: ["Analista", "Programador", "Project Manager", "Cliente"] },
+            { q: "¿Qué fase es la 'EDT'?", a: "A", options: ["Planeación", "Cierre", "Inicio", "Control"] },
+            { q: "Metodología de entregas rápidas:", a: "D", options: ["Cascada", "Lenta", "Fija", "Ágil"] },
+            { q: "¿Qué es un hito?", a: "B", options: ["Una tarea larga", "Un logro clave sin duración", "Un error", "Una reunión"] },
+            { q: "Fase de 'Lecciones Aprendidas':", a: "C", options: ["Inicio", "Ejecución", "Cierre", "Análisis"] },
+            { q: "Acción ante un riesgo:", a: "A", options: ["Plan de mitigación", "Llorar", "Ignorarlo", "Borrar el disco"] },
+            { q: "Mide el avance vs el plan:", a: "B", options: ["Inicio", "Seguimiento y Control", "Diseño", "Marketing"] },
+            { q: "Entregas en Scrum se llaman:", a: "D", options: ["Pasos", "Meses", "Días", "Sprints"] }
+        ];
 
-        function showSlide(index, direction = 'next') {
-            // Prevent new transition if one is already in progress or index is out of bounds
-            if (isTransitioning || index < 0 || index >= slides.length) {
-                return;
-            }
-
-            const currentActiveSlide = document.querySelector('.slide.active');
-            const newSlideElement = slides[index];
-
-            if (currentActiveSlide && currentActiveSlide !== newSlideElement) {
-                isTransitioning = true; // Set flag
-                updateNavigationButtons(); // Disable buttons
-
-                // Step 1: Animate out the current slide
-                currentActiveSlide.classList.remove('active'); // Remove active immediately
-                currentActiveSlide.classList.add('leaving'); // Add leaving class to trigger fadeOut
-                currentActiveSlide.style.animationName = (direction === 'next' ? 'fadeOutDown' : 'fadeOutUp');
-
-                // Get actual animation duration from CSS
-                const animationDuration = parseFloat(getComputedStyle(currentActiveSlide).animationDuration) * 1000;
-
-                setTimeout(() => {
-                    // Step 2: Hide the old slide completely after its animation
-                    currentActiveSlide.style.display = 'none';
-                    currentActiveSlide.classList.remove('leaving');
-                    currentActiveSlide.style.animationName = ''; // Clear animation name
-
-                    // Step 3: Show and animate in the new slide
-                    newSlideElement.style.display = 'flex';
-                    newSlideElement.classList.add('active');
-                    newSlideElement.style.animationName = (direction === 'next' ? 'fadeInUp' : 'fadeInDown');
-                    newSlideElement.style.animationFillMode = 'forwards'; // Ensure it stays visible after animation
-
-                    isTransitioning = false; // Reset flag after transition
-                    updateNavigationButtons(); // Enable buttons
-                }, animationDuration);
-
-            } else if (!currentActiveSlide && index === 0) {
-                // Initial load: show the first slide without animation
-                newSlideElement.classList.add('active');
-                newSlideElement.style.display = 'flex';
-                newSlideElement.style.animationName = ''; // No animation on initial display
-            }
-
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
             currentSlideIndex = index;
-            updateSlideCounter();
-            // updateNavigationButtons() is called inside the setTimeout for transitions,
-            // and directly for initial load.
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-
-        function updateNavigationButtons() {
-            prevButton.disabled = currentSlideIndex === 0 || isTransitioning;
-            nextButton.disabled = currentSlideIndex === slides.length - 1 || isTransitioning;
-        }
-
-        function nextSlide() {
-            if (currentSlideIndex < slides.length - 1) {
-                showSlide(currentSlideIndex + 1, 'next');
-            }
-        }
-
-        function prevSlide() {
-            if (currentSlideIndex > 0) {
-                showSlide(currentSlideIndex - 1, 'prev');
-            }
-        }
-
-        // Event Listeners for Navigation Buttons
-        prevButton.addEventListener('click', prevSlide);
-        nextButton.addEventListener('click', nextSlide);
-
-        // Keyboard Navigation
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowRight') {
-                nextSlide();
-            } else if (event.key === 'ArrowLeft') {
-                prevSlide();
-            }
-        });
-
-        // Gallery functionality (if any, for future slides)
-        // This section is kept for consistency with the previous presentation structure
-        // but is not directly used in this specific presentation content.
-        const mainGalleryImage = document.getElementById('main-gallery-image');
-        const thumbnails = document.querySelectorAll('.thumbnail');
-
-        if (mainGalleryImage && thumbnails.length > 0) {
-            thumbnails.forEach(thumbnail => {
-                thumbnail.addEventListener('click', function() {
-                    const fullSrc = this.getAttribute('data-full-src');
-                    mainGalleryImage.src = fullSrc;
-                    // Optional: add a class to highlight the active thumbnail
-                    thumbnails.forEach(t => t.classList.remove('border-indigo-500'));
-                    this.classList.add('border-indigo-500');
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
                 });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
             });
         }
 
-
-        // --- Initialize on DOMContentLoaded ---
-        document.addEventListener('DOMContentLoaded', () => { handleFullscreenChange();
-            // Set current year in footer
-            const currentYearSpan = document.getElementById('current-year');
-            if (currentYearSpan) { // Added a check to prevent TypeError if element is not found
-                currentYearSpan.textContent = new Date().getFullYear();
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
+        });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
             }
-
-            // Initialize the first slide directly without calling showSlide,
-            // to ensure it's immediately visible and not subject to initial animation issues.
-            slides[0].classList.add('active');
-            slides[0].style.display = 'flex';
-            slides[0].style.animationName = ''; // No animation on initial display
-
-            currentSlideIndex = 0; // Ensure index is correctly set for the first slide
-            updateSlideCounter(); // Update counter for initial display
-            updateNavigationButtons(); // Update buttons for initial display
+            lastTap = n;
         });
 
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
-        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-        }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-    const quizData = [
-        {
-            q: "¿Qué es la Gestión de Proyectos de Software?",
-            options: ["Disciplina que organiza, planifica, ejecuta y controla recursos", "Solo programar código rápido", "Vender software a clientes", "Arreglar fallos de hardware"],
-            a: "Disciplina que organiza, planifica, ejecuta y controla recursos"
-        },
-        {
-            q: "¿Cuál de estos NO es un objetivo de la gestión de proyectos?",
-            options: ["Aumentar el presupuesto sin control", "Entrega a tiempo", "Productos de calidad", "Cumplimiento de objetivos"],
-            a: "Aumentar el presupuesto sin control"
-        },
-        {
-            q: "¿Cuál es la primera fase de la gestión de proyectos?",
-            options: ["Inicio", "Planificación", "Ejecución", "Cierre"],
-            a: "Inicio"
-        },
-        {
-            q: "El responsable principal del éxito del proyecto es:",
-            options: ["Gerente de Proyecto", "Analista Jr.", "Usuario final", "Stakeholder externo"],
-            a: "Gerente de Proyecto"
-        },
-        {
-            q: "¿Qué herramienta visualiza el cronograma y las dependencias de tareas?",
-            options: ["Diagramas de Gantt", "Hojas de cálculo simples", "Editores de texto", "Diagramas de flujo de datos"],
-            a: "Diagramas de Gantt"
-        },
-        {
-            q: "¿Qué es un hito (milestone)?",
-            options: ["Un logro clave sin duración", "Una tarea que dura 10 días", "Un error en el código", "Una reunión de equipo"],
-            a: "Un logro clave sin duración"
-        },
-        {
-            q: "¿Qué busca el Análisis Orientado a Objetos (AOO)?",
-            options: ["Comprender el problema y crear un modelo visual", "Programar directamente en C++", "Instalar bases de datos", "Diseñar logotipos"],
-            a: "Comprender el problema y crear un modelo visual"
-        },
-        {
-            q: "¿Cuál de estos es un artefacto clave del AOO?",
-            options: ["Tarjetas CRC", "Facturas de hardware", "Manual de usuario impreso", "Cables de red"],
-            a: "Tarjetas CRC"
-        },
-        {
-            q: "El modelo de datos que define entidades y relaciones de alto nivel es el:",
-            options: ["Conceptual", "Lógico", "Físico", "Virtual"],
-            a: "Conceptual"
-        },
-        {
-            q: "¿Para qué sirve la Gestión de Riesgos?",
-            options: ["Identificar y mitigar problemas potenciales", "Para gastar más dinero", "Para retrasar el proyecto", "No es necesaria en software"],
-            a: "Identificar y mitigar problemas potenciales"
-        }
-    ];
-
-</script>
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('ads_gestion_proyectos', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
+    </script>
 </body>
 </html>

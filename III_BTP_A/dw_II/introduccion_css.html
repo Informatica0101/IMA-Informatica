@@ -2,472 +2,300 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introducción a CSS</title>
-    <!-- CDN de Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Google Fonts - Inter & Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Introducción a CSS - IMA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Universal box-sizing */
-        * {
-            box-sizing: border-box;
-        }
-
-        /* Configuración base */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            color: #1f2937;
-        }
-
-        /* Contenedor principal */
-        main {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        #presentation-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-color: #ffffff;
-            overflow: hidden;
-        }
-
-        /* Estilo para cada diapositiva */
-        .slide {
-            width: 100%;
-            height: 100%;
-            padding: 4rem;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-        }
-
-        .slide.active {
-            display: flex;
-            opacity: 1;
-            animation: fadeIn 0.8s forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Tipografía proyectable (Estándar 2026) */
-        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3rem; color: #fd7e14; margin-bottom: 1.5rem; }
-        h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.25rem; line-height: 1.4; color: #1f2937; margin-bottom: 1.5rem; }
-        p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 900px; }
-
-        .concept-box {
-            background-color: #fef2f2;
-            border-left: 8px solid #fd7e14;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            text-align: left;
-            margin-top: 2rem;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        /* Botones de navegación */
-        .nav-button {
-            background-color: #fd7e14;
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: all 0.3s;
-            cursor: pointer;
-            border: none;
-        }
-
-        .nav-button:hover { background-color: #e67e22; transform: scale(1.05); }
-        .nav-button:disabled { background-color: #d1d5db; cursor: not-allowed; transform: scale(1); }
-
-        #slide-counter {
-            position: absolute;
-            bottom: 1.5rem;
-            right: 2rem;
-            font-weight: 600;
-            color: #9ca3af;
-            z-index: 10;
-        }
-
-        /* Quiz */
-        .quiz-option {
-            width: 100%;
-            padding: 1rem;
-            margin: 0.25rem 0;
-            border: 2px solid #e5e7eb;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            background: white;
-            font-size: 1.1rem;
-        }
-        .quiz-option:hover { background-color: #fff7ed; border-color: #fd7e14; }
-        .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
-        .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
-
-        pre {
-            background-color: #1e293b;
-            color: #f8fafc;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            text-align: left;
-            font-size: 1.25rem;
-            width: 100%;
-            max-width: 800px;
-            margin-top: 1rem;
-            font-family: monospace;
-        }
-
-        /* Adaptación Móvil */
-        @media (max-width: 768px) {
-            .slide { padding: 2rem 1.5rem; }
-            h2 { font-size: 1.75rem; }
-            h3 { font-size: 1.4rem; }
-            p, li { font-size: 1rem; line-height: 1.4; }
-            .concept-box { padding: 1rem; border-left-width: 4px; margin-top: 1rem; }
-            .nav-button { padding: 0.5rem 1rem; font-size: 0.875rem; }
-            #slide-counter { bottom: 1rem; right: 1rem; font-size: 0.75rem; }
-            .quiz-option { padding: 0.75rem; font-size: 0.9rem; }
-            pre { font-size: 0.9rem; padding: 1rem; }
-            #page-header h1 { font-size: 1rem; }
-            #page-header img { width: 100px !important; }
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; border-left: 4px solid #3b82f6; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="antialiased">
-
-    <header id="page-header" class="w-full bg-white p-4 shadow-sm flex justify-between items-center z-50">
-        <div class="flex items-center space-x-4">
-            <img src="../../imagenes/logo.png" alt="Logo IMA" style="width: 150px; height: auto;">
-            <h1 class="text-xl font-bold text-gray-800">Diseño Web II</h1>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <nav>
-            <a href="../../index.html" class="text-gray-600 hover:text-orange-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
-        </nav>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Diseñando estilos...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <main>
-        <div id="presentation-container">
-            <!-- Diapositiva 1: Portada -->
-            <div class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
-                <h2>Introducción a CSS</h2>
-                <div class="mt-8 text-lg text-gray-500">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 19 de abril de 2026</p>
-                    <p>Grado: III BTP Informática Sección "A"</p>
-                </div>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Introducción a CSS</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Diseño Web II</p>
+                <p>Duodécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
+        </div>
 
-            <!-- Diapositiva 2: ¿Qué es CSS? -->
-            <div class="slide">
-                <h3>¿Qué es CSS?</h3>
-                <p><strong>Cascading Style Sheets</strong> (Hojas de Estilo en Cascada).</p>
-                <div class="concept-box">
-                    <p>Es un lenguaje que se usa para describir la <strong>apariencia</strong> y el <strong>formato</strong> de tu HTML.</p>
-                </div>
-                <p class="mt-6">Una hoja de estilo es un archivo que describe cómo debe verse un archivo HTML.</p>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es CSS?</h2>
+            <div class="concept-box">
+                <p><strong>Cascading Style Sheets:</strong> Es el lenguaje que define cómo se deben mostrar los elementos HTML. Separa el contenido (HTML) de la presentación (Diseño).</p>
             </div>
+            <i class="fas fa-palette text-6xl text-pink-400 mt-4"></i>
+        </div>
 
-            <!-- Diapositiva 3: ¿Por qué en Cascada? -->
-            <div class="slide">
-                <h3>¿Por qué "en Cascada"?</h3>
-                <p>Se llaman así porque las reglas pueden usarse unas sobre otras para sumarse y aplicarse a un mismo documento.</p>
-                <div class="concept-box bg-orange-50 border-orange-400">
-                    <p>Si indicas que todos los párrafos deben tener la fuente azul, pero luego señalas que un párrafo específico debe ser rojo, ¡CSS lo puede hacer!</p>
-                </div>
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Cascada</h2>
+            <div class="concept-box border-yellow-400">
+                <p>El término "Cascada" significa que si un elemento tiene varias reglas aplicadas, el navegador seguirá un orden de prioridad para decidir cuál usar (normalmente la última regla escrita).</p>
             </div>
+            <i class="fas fa-water text-6xl text-blue-300 mt-4"></i>
+        </div>
 
-            <!-- Diapositiva 4: Separación de Forma y Función -->
-            <div class="slide">
-                <h3>¿Por qué separar la forma de la función?</h3>
-                <p>Existen dos razones principales para separar el CSS (Formato) del HTML (Estructura):</p>
-                <ul class="text-left mt-6 list-decimal list-inside space-y-4">
-                    <li><strong>Reutilización:</strong> Puedes aplicarle el mismo formato a diversos elementos sin tener que volver a escribir el código.</li>
-                    <li><strong>Apariencia global:</strong> Puedes aplicarle un formato parecido a varias páginas desde un solo archivo CSS.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 5: Tipos de Aplicación (Inline) -->
-            <div class="slide">
-                <h3>Estilos en Línea (Inline)</h3>
-                <p>Se aplican directamente en la etiqueta HTML usando el atributo <code>style</code>.</p>
-                <pre><code>&lt;p style="color:red"&gt;Red font!&lt;/p&gt;</code></pre>
-                <p class="mt-4 text-red-600 font-bold">¡No es la mejor forma!</p>
-                <p class="text-sm italic">Si quieres cambiar el estilo de varios elementos, tendrías que cambiar cada etiqueta una por una.</p>
-            </div>
-
-            <!-- Diapositiva 6: Estilos Internos -->
-            <div class="slide">
-                <h3>Estilos Internos</h3>
-                <p>Se colocan justo en el mismo archivo de código HTML, dentro de las etiquetas <code>&lt;style&gt;</code>.</p>
-                <pre><code>&lt;head&gt;
-  &lt;style&gt;
-    p { color: purple; }
-  &lt;/style&gt;
-&lt;/head&gt;</code></pre>
-            </div>
-
-            <!-- Diapositiva 7: Estilos Externos -->
-            <div class="slide">
-                <h3>Estilos Externos (Fuera de línea)</h3>
-                <p>Es la forma más eficiente. Se escribe el código en un archivo aparte (con extensión .css) y se conecta al HTML.</p>
-                <div class="concept-box border-green-500">
-                    <p>Permite que un único archivo controle el diseño de todo tu sitio web.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Cómo enlazar un CSS (La etiqueta link) -->
-            <div class="slide">
-                <h3>¿Cómo se enlaza?</h3>
-                <p>Se agrega la etiqueta <code>&lt;link&gt;</code> entre las etiquetas <code>&lt;head&gt;</code> de tu página HTML.</p>
-                <ul class="text-left mt-6 list-disc list-inside space-y-2">
-                    <li><strong>type:</strong> Siempre debe ser "text/css".</li>
-                    <li><strong>rel:</strong> Siempre debe ser "stylesheet".</li>
-                    <li><strong>href:</strong> La dirección de tu archivo CSS.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 9: Ejemplo de Enlace -->
-            <div class="slide">
-                <h3>Sintaxis de enlace</h3>
-                <pre><code>&lt;link type="text/css" rel="stylesheet"
-      href="stylesheet.css" /&gt;</code></pre>
-                <p class="mt-6 italic">Notarás que termina en <code>/&gt;</code> porque es una etiqueta autocerrable.</p>
-            </div>
-
-            <!-- Diapositiva 10: Etiquetas Autocerrables -->
-            <div class="slide">
-                <h3>Etiquetas Autocerrables</h3>
-                <p>No todas las etiquetas HTML tienen una etiqueta de cierre separada. Ejemplos comunes:</p>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><code>&lt;link /&gt;</code></li>
-                    <li><code>&lt;img /&gt;</code> (para insertar imágenes)</li>
-                    <li><code>&lt;br /&gt;</code> (para saltos de línea)</li>
-                    <li><code>&lt;hr /&gt;</code> (para líneas horizontales)</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 11: Sintaxis CSS -->
-            <div class="slide">
-                <h3>Sintaxis Básica</h3>
-                <div class="flex flex-col items-center">
-                    <pre><code>selector {
-  propiedad: valor;
-}</code></pre>
-                    <ul class="text-left mt-6 list-disc list-inside">
-                        <li><strong>Selector:</strong> Indica a qué elemento aplicamos el estilo (ej: p, h1, div).</li>
-                        <li><strong>Propiedad:</strong> La característica que queremos cambiar (ej: color).</li>
-                        <li><strong>Valor:</strong> El ajuste que le damos (ej: red).</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Ejemplo Práctico 1 -->
-            <div class="slide">
-                <h3>Ejemplo: Colorear Párrafos</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="text-left">
-                        <p class="font-bold">Código CSS:</p>
-                        <pre><code>p {
-  color: red;
-}</code></pre>
-                    </div>
-                    <div class="text-left">
-                        <p class="font-bold">Resultado:</p>
-                        <div class="p-4 bg-white border rounded">
-                            <p style="color: red; font-size: 1rem;">¡Soy un párrafo escrito en rojo!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Ejemplo Práctico 2 (Etiqueta span) -->
-            <div class="slide">
-                <h3>Uso de span para detalles</h3>
-                <p>Si queremos cambiar solo una parte de un texto:</p>
-                <pre><code>span { color: blue; }</code></pre>
-                <div class="concept-box">
-                    <p>Texto normal <span>¡Texto azul!</span> texto normal.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 14: Actividad en Clase 1 -->
-            <div class="slide">
-                <h3>Actividad: Análisis en Cuaderno</h3>
-                <p>Escribe en tu cuaderno la estructura básica de una regla CSS identificando sus 3 partes fundamentales.</p>
-                <div class="concept-box bg-blue-50 border-blue-400">
-                    <p><strong>Reto:</strong> Escribe una regla que cambie el color de todos los encabezados h1 a verde.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 15: Actividad en Clase 2 -->
-            <div class="slide">
-                <h3>Ejercicio: Enlace de Archivos</h3>
-                <p>Imagina que tienes un archivo CSS llamado "mis_estilos.css". Escribe la etiqueta HTML completa necesaria para conectarlo a tu página.</p>
-                <p class="mt-6 italic text-sm">Recuerda los 3 atributos necesarios vistos anteriormente.</p>
-            </div>
-
-            <!-- Diapositiva 16: Cuestionario Interactivo -->
-            <div class="slide">
-                <h3>¡Evalúa tu aprendizaje!</h3>
-                <div id="quiz-container" class="max-w-2xl w-full">
-                    <p id="quiz-question" class="mb-4 font-bold text-xl text-orange-800 text-left"></p>
-                    <div id="quiz-options" class="flex flex-col gap-2"></div>
-                    <p id="quiz-feedback" class="mt-4 font-bold text-lg"></p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 17: Fin -->
-            <div class="slide">
-                <h2>¡Muchas Gracias!</h2>
-                <p class="text-xl">Plan de clase del 19 de abril completado.</p>
-                <div class="mt-8">
-                    <p class="text-sm">Tarea: Crear HTML aplicando estilos en línea, internos y externos y comparar resultados.</p>
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Regla CSS: Estructura</h2>
+            <div class="concept-box">
+                <p class="text-center font-bold text-xl mb-4">Selector { propiedad: valor; }</p>
+                <div class="code-block">
+                    h1 {<br>
+                    &nbsp;&nbsp;color: blue;<br>
+                    &nbsp;&nbsp;font-size: 20px;<br>
+                    }
                 </div>
             </div>
         </div>
 
-        <!-- Controles -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-4 z-20">
-            <button id="prev-btn" class="nav-button">Anterior</button>
-            <button id="next-btn" class="nav-button">Siguiente</button>
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Formas de Aplicar CSS</h2>
+            <ul class="text-left space-y-4 max-w-xl">
+                <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i> <strong>Inline:</strong> Dentro del atributo style de la etiqueta.</li>
+                <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i> <strong>Interno:</strong> Dentro de etiquetas <code>&lt;style&gt;</code> en el head.</li>
+                <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i> <strong>Externo:</strong> En un archivo <code>.css</code> aparte (El mejor método).</li>
+            </ul>
         </div>
-        <div id="slide-counter">1 / 17</div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Selectores Básicos</h2>
+            <div class="grid grid-cols-3 gap-2 mt-4 text-[10px] font-bold">
+                <div class="p-2 border">Etiqueta (h1)</div>
+                <div class="p-2 border">Clase (.mi-clase)</div>
+                <div class="p-2 border">ID (#mi-id)</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio: Selector de Clase</h2>
+            <div class="concept-box">
+                <p>Si tienes un párrafo con <code>class="destacado"</code>, ¿cómo escribirías la regla CSS para ponerle el fondo amarillo?</p>
+                <div class="code-block mt-4">.destacado { background: yellow; }</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Colores en CSS</h2>
+            <p>Podemos usar:</p>
+            <ul class="grid grid-cols-3 gap-4 mt-6 text-sm">
+                <li class="p-4 border bg-gray-50">Nombres (red)</li>
+                <li class="p-4 border bg-gray-50">Hex (#FF0000)</li>
+                <li class="p-4 border bg-gray-50">RGB (255,0,0)</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Comentarios en CSS</h2>
+            <p>Sirven para documentar el código. El navegador los ignora.</p>
+            <div class="code-block mt-4">/* Este es un comentario */</div>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Unidades de Medida</h2>
+            <ul class="text-left space-y-2 max-w-lg">
+                <li><strong>px:</strong> Píxeles (Tamaño fijo).</li>
+                <li><strong>%:</strong> Porcentaje (Relativo al padre).</li>
+                <li><strong>rem / em:</strong> Relativo al tamaño de fuente.</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Importancia de la Herencia</h2>
+            <p>Muchas propiedades (como el color o la fuente) se heredan de los padres a los hijos automáticamente.</p>
+            <i class="fas fa-sitemap text-6xl text-gray-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Modelo de Caja</h2>
+            <p>Es el concepto más importante: cada elemento es una caja con contenido, padding, borde y margen.</p>
+            <i class="fas fa-box text-6xl text-amber-600 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reto de Código</h2>
+            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl">
+                <p>&lt;link rel="stylesheet" href="estilos.css"&gt;</p>
+                <p>/* En el archivo CSS */</p>
+                <p>body {</p>
+                <p>&nbsp;&nbsp;background-color: #f0f0f0;</p>
+                <p>&nbsp;&nbsp;font-family: Arial, sans-serif;</p>
+                <p>}</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">PRIMER ESTILO</h3>
+                <p>Crear un archivo llamado <code>estilos.css</code> y enlazarlo a su archivo de presentación anterior. Cambiar el color de todos los párrafos a gris y poner un borde rojo a todas las imágenes.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <footer id="page-footer" class="w-full bg-gray-900 text-white text-center p-2 text-sm">
-        <div class="flex items-center justify-center space-x-2">
-            <img src="../../imagenes/bandera-de-honduras.png" alt="Honduras" width="60">
-            <p>© 2026 Instituto María Auxiliadora - Área de Informática</p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
+        let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
-        const nextBtn = document.getElementById('next-btn');
         const prevBtn = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
-        let currentSlide = 0;
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
-        const quizData = [
-            { q: "¿Qué significan las siglas CSS?", options: ["Computer Style Sheets", "Cascading Style Sheets", "Color System Sheets", "Creative Syntax Sheet"], a: "Cascading Style Sheets" },
-            { q: "¿Qué describe una hoja de estilo?", options: ["La base de datos", "Cómo debe verse un archivo HTML", "La lógica de programación", "El nombre del servidor"], a: "Cómo debe verse un archivo HTML" },
-            { q: "¿Por qué se llaman 'en cascada'?", options: ["Porque caen del cielo", "Porque se pueden usar unas sobre otras", "Porque son transparentes", "Por su velocidad"], a: "Porque se pueden usar unas sobre otras" },
-            { q: "¿Cuál es una ventaja de separar forma de función?", options: ["Reutilización de código", "Ocupa más espacio", "Es más difícil de leer", "Solo funciona en Windows"], a: "Reutilización de código" },
-            { q: "¿Cómo se llama el atributo para estilos en línea?", options: ["format", "class", "style", "css"], a: "style" },
-            { q: "¿Dónde se ubican los estilos internos?", options: ["Dentro de <body>", "Dentro de <head>", "En un archivo .jpg", "Al final del servidor"], a: "Dentro de <head>" },
-            { q: "¿Qué etiqueta enlaza un CSS externo?", options: ["<a>", "<link>", "<style>", "<script>"], a: "<link>" },
-            { q: "¿Qué valor debe tener el atributo 'rel'?", options: ["stylesheet", "css-file", "link-style", "text/css"], a: "stylesheet" },
-            { q: "¿Qué es una etiqueta autocerrable?", options: ["Se cierra sola al abrirse", "No tiene una etiqueta de cierre separada", "Cierra el navegador", "Es obligatoria"], a: "No tiene una etiqueta de cierre separada" },
-            { q: "¿Qué parte de la regla CSS indica qué característica cambiar?", options: ["Selector", "Valor", "Propiedad", "Llave"], a: "Propiedad" }
+        const quizQuestions = [
+            { q: "¿Qué significa CSS?", a: "C", options: ["Color Style Sheets", "Code System Script", "Cascading Style Sheets", "Computer Side Site"] },
+            { q: "CSS se encarga de la:", a: "B", options: ["Estructura", "Presentación", "Lógica", "Conexión"] },
+            { q: "Símbolo para seleccionar ID:", a: "D", options: [".", "*", "@", "#"] },
+            { q: "Símbolo para seleccionar clase:", a: "A", options: [".", "#", "&", "!"] },
+            { q: "Mejor forma de aplicar CSS:", a: "C", options: ["Inline", "Interno", "Externo", "Oculto"] },
+            { q: "¿Qué propiedad cambia el color?", a: "B", options: ["font-color", "color", "text-paint", "fill"] },
+            { q: "Etiqueta para enlazar CSS:", a: "A", options: ["<link>", "<a>", "<script>", "<style>"] },
+            { q: "¿Cómo se comenta en CSS?", a: "D", options: ["//", "<!--", "#", "/* */"] },
+            { q: "Si hay 2 reglas iguales gana:", a: "B", options: ["La primera", "La última", "Ninguna", "La más corta"] },
+            { q: "Extensión de archivos CSS:", a: "C", options: [".html", ".js", ".css", ".txt"] }
         ];
-        let currentQuiz = 0;
 
-        function showSlide(n) {
-            slides[currentSlide].classList.remove('active');
-            slides[currentSlide].style.display = 'none';
-            currentSlide = (n + slides.length) % slides.length;
-            slides[currentSlide].style.display = 'flex';
-            setTimeout(() => slides[currentSlide].classList.add('active'), 10);
-
-            slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
-            prevBtn.disabled = currentSlide === 0;
-            nextBtn.disabled = currentSlide === slides.length - 1;
-
-            if (currentSlide === 15) loadQuiz();
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        function loadQuiz() {
-            const questionEl = document.getElementById('quiz-question');
-            const optionsEl = document.getElementById('quiz-options');
-            const feedbackEl = document.getElementById('quiz-feedback');
-
-            if (currentQuiz >= quizData.length) {
-                questionEl.textContent = "¡Cuestionario completado!";
-                optionsEl.innerHTML = "";
-                feedbackEl.textContent = "";
-                return;
-            }
-            const data = quizData[currentQuiz];
-            questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
-            optionsEl.innerHTML = "";
-            feedbackEl.textContent = "";
-
-            data.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.textContent = opt;
-                btn.className = "quiz-option";
-                btn.onclick = () => {
-                    const btns = optionsEl.querySelectorAll('button');
-                    btns.forEach(b => b.disabled = true);
-                    if (opt === data.a) {
-                        btn.classList.add('correct');
-                        feedbackEl.textContent = "¡Correcto!";
-                        feedbackEl.className = "mt-4 font-bold text-lg text-green-600";
-                    } else {
-                        btn.classList.add('incorrect');
-                        feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
-                        feedbackEl.className = "mt-4 font-bold text-lg text-red-600";
-                    }
-                    setTimeout(() => {
-                        currentQuiz++;
-                        loadQuiz();
-                    }, 1500);
-                };
-                optionsEl.appendChild(btn);
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
             });
         }
 
-        nextBtn.onclick = () => showSlide(currentSlide + 1);
-        prevBtn.onclick = () => showSlide(currentSlide - 1);
-
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') showSlide(currentSlide + 1);
-            if (e.key === 'ArrowLeft') showSlide(currentSlide - 1);
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
+        });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
         });
 
-        // Fullscreen Logic
-        function handleFullscreen() {
-            const isFull = window.innerHeight >= screen.height - 10 || document.fullscreenElement;
-            header.style.setProperty('display', isFull ? 'none' : 'flex', 'important');
-            footer.style.setProperty('display', isFull ? 'none' : 'block', 'important');
-        }
-
-        window.addEventListener('resize', handleFullscreen);
-        document.addEventListener('fullscreenchange', handleFullscreen);
-
-        showSlide(0);
-        handleFullscreen();
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('dw_introduccion_css', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
     </script>
 </body>
 </html>

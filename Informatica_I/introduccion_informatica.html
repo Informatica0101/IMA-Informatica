@@ -2,218 +2,452 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introducción a la Informática</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Introducción a la Informática - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .slide { display: none; padding: 2rem; text-align: center; min-height: 80vh; flex-direction: column; justify-content: center; align-items: center; }
-        .slide.active { display: flex; }
-        .concept-box { background: #f1f5f9; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem; border-left: 4px solid #3b82f6; }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            padding: 2rem;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.5s ease;
+        }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+
+        .concept-box {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            border-left: 5px solid var(--azul-ima);
+            text-align: left;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .code-block {
+            font-family: 'Courier New', Courier, monospace;
+            background: #1e293b;
+            color: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: left;
+            width: 100%;
+            max-width: 600px;
+            margin: 1rem 0;
+        }
+
+        .nav-btn {
+            position: fixed;
+            bottom: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--azul-ima);
+            color: white;
+            border-radius: 9999px;
+            font-weight: bold;
+            z-index: 100;
+            transition: transform 0.2s;
+        }
+        .nav-btn:hover { transform: scale(1.05); }
+        #prev-btn { left: 2rem; }
+        #next-btn { right: 2rem; }
+        #slide-counter {
+            position: fixed;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            color: var(--gris-ima);
+            z-index: 100;
+        }
+
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+
+        .quiz-option {
+            width: 100%;
+            max-width: 500px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="bg-slate-50">
-    <div id="presentation-container" class="max-w-4xl mx-auto my-10 bg-white shadow-lg rounded-xl overflow-hidden">
-        <div class="slide active">
-            <img src="../imagenes/logo.png" alt="Logo" class="w-48 mb-6">
-            <h1 class="text-3xl font-bold text-slate-800">Introducción a la Informática</h1>
-            <p class="text-slate-500 mt-2">Conceptos Básicos para Décimo Grado</p>
-        </div>
+<body class="bg-slate-50 antialiased">
 
-        <div class="slide">
-            <h2 class="text-2xl font-bold">¿Qué es la Informática?</h2>
-            <div class="concept-box">
-                Es la ciencia que estudia el tratamiento automático y racional de la información mediante el uso de computadoras.
-            </div>
+    <!-- Loader Global -->
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-
-        <div class="slide">
-            <h2 class="text-2xl font-bold">¿Qué es una Computadora?</h2>
-            <div class="concept-box">
-                Máquina electrónica capaz de recibir, procesar y devolver resultados en torno a determinados datos.
-            </div>
-        </div>
-
-        <div class="slide">
-            <h2 class="text-2xl font-bold">Hardware</h2>
-            <div class="concept-box">
-                Corresponde a todas las partes físicas y tangibles de una computadora: sus componentes eléctricos, electrónicos, electromecánicos y mecánicos.
-            </div>
-        </div>
-
-        <div class="slide">
-            <h2 class="text-2xl font-bold">Software</h2>
-            <div class="concept-box">
-                Es el conjunto de los programas de cómputo, procedimientos, reglas, documentación y datos asociados, que forman parte de las operaciones de un sistema de computación.
-            </div>
-        </div>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Preparando Actividad...</p>
     </div>
 
+    <!-- ENCABEZADO INSTITUCIONAL -->
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
+    </header>
+
+    <main id="presentation-container">
+        <!-- Diapositiva 1: Portada -->
+        <div class="slide active">
+            <img src="../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase">Introducción a la Informática</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Informática I</p>
+                <p>Décimo Grado - Sección A/B</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: Año Lectivo 2026</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 2: ¿Qué es la Informática? -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es la Informática?</h2>
+            <div class="concept-box">
+                <p class="text-lg">Es la ciencia que estudia el <strong>tratamiento automático y racional</strong> de la información mediante el uso de sistemas computacionales.</p>
+            </div>
+            <p class="text-slate-500 mt-4 italic">Proviene de las palabras: INFORMACIÓN + AUTOMÁTICA.</p>
+        </div>
+
+        <!-- Diapositiva 3: ¿Qué es una Computadora? -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Computadora</h2>
+            <div class="concept-box">
+                <p class="text-lg">Es una máquina electrónica capaz de:</p>
+                <ul class="list-disc ml-8 mt-4 space-y-2">
+                    <li>Recibir datos (Entrada).</li>
+                    <li>Procesar datos (Cálculos/Lógica).</li>
+                    <li>Devolver resultados (Salida).</li>
+                    <li>Almacenar información.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 4: El Sistema Informático -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Componentes del Sistema</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl">
+                <div class="p-6 bg-blue-50 rounded-2xl shadow-sm border border-blue-100">
+                    <i class="fas fa-microchip text-4xl text-blue-600 mb-4"></i>
+                    <h3 class="font-bold mb-2">Hardware</h3>
+                    <p class="text-sm">Parte física (lo que se puede tocar).</p>
+                </div>
+                <div class="p-6 bg-purple-50 rounded-2xl shadow-sm border border-purple-100">
+                    <i class="fas fa-code text-4xl text-purple-600 mb-4"></i>
+                    <h3 class="font-bold mb-2">Software</h3>
+                    <p class="text-sm">Parte lógica (programas e instrucciones).</p>
+                </div>
+                <div class="p-6 bg-green-50 rounded-2xl shadow-sm border border-green-100">
+                    <i class="fas fa-users text-4xl text-green-600 mb-4"></i>
+                    <h3 class="font-bold mb-2">Humanware</h3>
+                    <p class="text-sm">El factor humano (usuarios y especialistas).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 5: Hardware -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Hardware</h2>
+            <div class="concept-box">
+                <p class="text-lg">Corresponde a todas las partes físicas y tangibles de una computadora.</p>
+                <div class="grid grid-cols-2 gap-4 mt-6">
+                    <div class="p-4 bg-white rounded shadow-sm">CPU (Cerebro)</div>
+                    <div class="p-4 bg-white rounded shadow-sm">Memoria RAM</div>
+                    <div class="p-4 bg-white rounded shadow-sm">Disco Duro (HDD/SSD)</div>
+                    <div class="p-4 bg-white rounded shadow-sm">Placa Madre</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 6: Software -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Software</h2>
+            <div class="concept-box">
+                <p class="text-lg">Es el conjunto de programas y datos que permiten que el hardware funcione.</p>
+                <div class="grid grid-cols-2 gap-4 mt-6 text-left">
+                    <div class="p-4 bg-white rounded shadow-sm"><strong>De Sistema:</strong> Windows, Android, Linux.</div>
+                    <div class="p-4 bg-white rounded shadow-sm"><strong>De Aplicación:</strong> Word, Chrome, WhatsApp.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7: Ejercicio Práctico 1 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico</h2>
+            <p class="mb-8">Identifica si el elemento es <span class="font-bold text-blue-600">Hardware</span> o <span class="font-bold text-purple-600">Software</span>:</p>
+            <div class="grid grid-cols-2 gap-4 max-w-2xl w-full">
+                <div class="p-4 bg-gray-50 border rounded-xl">Monitor</div>
+                <div class="p-4 bg-gray-50 border rounded-xl">Videojuego</div>
+                <div class="p-4 bg-gray-50 border rounded-xl">Teclado</div>
+                <div class="p-4 bg-gray-50 border rounded-xl">Navegador Web</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8: Tipos de Computadoras -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tipos de Computadoras</h2>
+            <div class="grid grid-cols-2 gap-8 max-w-4xl">
+                <div class="text-left">
+                    <h3 class="font-bold text-xl mb-2">Escritorio (Desktop)</h3>
+                    <p class="text-sm text-slate-600">Diseñadas para permanecer fijas en un escritorio. Son potentes y modulares.</p>
+                </div>
+                <div class="text-left">
+                    <h3 class="font-bold text-xl mb-2">Portátiles (Laptops)</h3>
+                    <p class="text-sm text-slate-600">Compactas y con batería, permiten movilidad total para el usuario.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 9: Otros Dispositivos -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tabletas y Smartphones</h2>
+            <div class="concept-box">
+                <p>Estos dispositivos también son computadoras. Tienen procesador, memoria, almacenamiento y ejecutan software especializado.</p>
+            </div>
+            <i class="fas fa-mobile-alt text-6xl text-slate-300 mt-8"></i>
+        </div>
+
+        <!-- Diapositiva 10: Almacenamiento -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Unidades de Almacenamiento</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
+                <div class="p-6 bg-white border-2 border-dashed border-slate-200 rounded-2xl">
+                    <h3 class="font-bold mb-2">HDD (Disco Duro)</h3>
+                    <p class="text-xs">Usa discos magnéticos. Más capacidad, menos velocidad.</p>
+                </div>
+                <div class="p-6 bg-white border-2 border-dashed border-blue-200 rounded-2xl">
+                    <h3 class="font-bold mb-2 text-blue-600">SSD (Estado Sólido)</h3>
+                    <p class="text-xs">Usa chips de memoria. Mucho más rápido y resistente.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 11: Periféricos -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Periféricos</h2>
+            <div class="grid grid-cols-2 gap-8 text-left max-w-4xl">
+                <div>
+                    <h3 class="font-black text-blue-600 uppercase text-xs mb-4">Entrada</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-keyboard mr-2"></i> Teclado</li>
+                        <li><i class="fas fa-mouse mr-2"></i> Mouse</li>
+                        <li><i class="fas fa-microphone mr-2"></i> Micrófono</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-black text-green-600 uppercase text-xs mb-4">Salida</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-tv mr-2"></i> Monitor</li>
+                        <li><i class="fas fa-print mr-2"></i> Impresora</li>
+                        <li><i class="fas fa-volume-up mr-2"></i> Parlantes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 12: Importancia -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Importancia Actual</h2>
+            <div class="concept-box text-center">
+                <p class="text-xl italic font-serif">"La informática es el motor de la era digital, transformando la educación, el trabajo y la comunicación global."</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 13: Ejercicio Avanzado -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Proceso</h2>
+            <p class="mb-4">Estructura básica de funcionamiento:</p>
+            <div class="code-block">
+                <p>INICIO_SISTEMA</p>
+                <p>&nbsp;&nbsp;PEDIR_DATOS (Entrada)</p>
+                <p>&nbsp;&nbsp;PROCESAR_DATOS (Cálculo)</p>
+                <p>&nbsp;&nbsp;MOSTRAR_RESULTADO (Salida)</p>
+                <p>FIN_SISTEMA</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14: Cuestionario 1 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación - Parte 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center">
+                <!-- Inyectado por JS -->
+            </div>
+        </div>
+
+        <!-- Diapositiva 15: Cuestionario 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación - Parte 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center">
+                <!-- Inyectado por JS -->
+            </div>
+        </div>
+
+        <!-- Diapositiva 16: Asignación -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="text-2xl font-black mb-4">MAPA CONCEPTUAL</h3>
+                <p class="mb-4">Realizar un mapa conceptual sobre el Sistema Informático incluyendo Hardware, Software y ejemplos de cada uno.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400">
+                    <span>Puntaje: 10%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <!-- PIE DE PÁGINA -->
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
+        </div>
+    </footer>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/games-adapter.js"></script>
+
     <script>
-        const quizData = [
-            {
-                q: "¿Qué es la informática?",
-                options: ["Ciencia del tratamiento automático de la información", "El estudio de los cables", "La venta de computadoras", "Jugar videojuegos"],
-                a: "Ciencia del tratamiento automático de la información"
-            },
-            {
-                q: "¿Cuál es el componente principal de un sistema informático que se puede tocar?",
-                options: ["Hardware", "Software", "Humanware", "Firmware"],
-                a: "Hardware"
-            },
-            {
-                q: "¿Cómo se le llama al conjunto de programas e instrucciones?",
-                options: ["Software", "Hardware", "Periféricos", "CPU"],
-                a: "Software"
-            },
-            {
-                q: "¿Cuál es la función principal de una computadora?",
-                options: ["Procesar datos para convertirlos en información", "Servir de adorno", "Consumir energía", "Solo navegar en internet"],
-                a: "Procesar datos para convertirlos en información"
-            },
-            {
-                q: "¿Qué es un sistema informático?",
-                options: ["Conjunto de Hardware, Software y Personal informático", "Solo la computadora", "Un programa de juegos", "Un virus"],
-                a: "Conjunto de Hardware, Software y Personal informático"
-            },
-            {
-                q: "¿Cuál de estos es un ejemplo de Hardware?",
-                options: ["Monitor", "Windows", "Word", "Excel"],
-                a: "Monitor"
-            },
-            {
-                q: "¿Cuál de estos es un ejemplo de Software?",
-                options: ["Navegador Web", "Teclado", "Mouse", "Impresora"],
-                a: "Navegador Web"
-            },
-            {
-                q: "¿Qué dispositivo es el cerebro de la computadora?",
-                options: ["CPU", "Monitor", "RAM", "Disco Duro"],
-                a: "CPU"
-            },
-            {
-                q: "¿Qué significa la palabra Informática?",
-                options: ["Información Automática", "Informe Técnico", "Información Crítica", "Informática General"],
-                a: "Información Automática"
-            },
-            {
-                q: "¿Cuál de estos componentes NO es físico?",
-                options: ["Sistema Operativo", "Memoria RAM", "Tarjeta de Video", "Cable de Poder"],
-                a: "Sistema Operativo"
-            },
-            {
-                q: "¿A qué categoría pertenece el Mouse?",
-                options: ["Hardware", "Software", "Sistema", "Aplicación"],
-                a: "Hardware"
-            },
-            {
-                q: "¿Qué es el Humanware?",
-                options: ["El usuario que utiliza la computadora", "Un virus humano", "Un tipo de monitor", "La carcasa de la PC"],
-                a: "El usuario que utiliza la computadora"
-            },
-            {
-                q: "¿Cuál es un periférico de entrada?",
-                options: ["Teclado", "Monitor", "Impresora", "Parlantes"],
-                a: "Teclado"
-            },
-            {
-                q: "¿Cuál es un periférico de salida?",
-                options: ["Impresora", "Mouse", "Escáner", "Micrófono"],
-                a: "Impresora"
-            },
-            {
-                q: "¿Para qué sirve el Disco Duro?",
-                options: ["Para guardar información permanentemente", "Para procesar datos rápidamente", "Para mostrar imágenes", "Para enfriar la computadora"],
-                a: "Para guardar información permanentemente"
-            },
-            {
-                q: "¿Qué es un dato en informática?",
-                options: ["Una unidad mínima de información sin sentido en sí misma", "Un libro completo", "Una computadora", "El resultado final de un proceso"],
-                a: "Una unidad mínima de información sin sentido en sí misma"
-            },
-            {
-                q: "¿Qué es la información?",
-                options: ["Conjunto de datos procesados con significado", "Cables y chips", "Un ratón de computadora", "Electricidad"],
-                a: "Conjunto de datos procesados con significado"
-            },
-            {
-                q: "¿Qué dispositivo permite ver lo que procesa la computadora?",
-                options: ["Monitor", "CPU", "RAM", "Teclado"],
-                a: "Monitor"
-            },
-            {
-                q: "¿Cuál es la unidad básica de almacenamiento en informática?",
-                options: ["Bit", "Vatio", "Hertzio", "Amperio"],
-                a: "Bit"
-            },
-            {
-                q: "Un conjunto de 8 bits forma un:",
-                options: ["Byte", "Mega", "Giga", "Tera"],
-                a: "Byte"
-            }
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
+
+        const quizQuestions = [
+            { q: "¿Qué significa Informática?", a: "C", options: ["Información Crítica", "Informe Técnico", "Información Automática", "Informativo Básico"] },
+            { q: "¿Qué es el Hardware?", a: "A", options: ["Parte física", "Parte lógica", "El usuario", "La electricidad"] },
+            { q: "¿Cuál es el cerebro de la PC?", a: "B", options: ["RAM", "CPU", "Disco Duro", "Monitor"] },
+            { q: "Windows es un ejemplo de:", a: "D", options: ["Hardware", "Humanware", "Periférico", "Software"] },
+            { q: "¿Qué dispositivo es de entrada?", a: "C", options: ["Monitor", "Parlantes", "Teclado", "Impresora"] },
+            { q: "¿Para qué sirve la RAM?", a: "A", options: ["Memoria temporal", "Guardar fotos", "Imprimir", "Dar energía"] },
+            { q: "¿Qué significa SSD?", a: "B", options: ["Super Speed Drive", "Solid State Drive", "System Safe Data", "Smart Storage Device"] },
+            { q: "¿Cuál no es un componente físico?", a: "D", options: ["Teclado", "Mouse", "Monitor", "Sistema Operativo"] },
+            { q: "El factor humano se llama:", a: "C", options: ["Hardware", "Software", "Humanware", "Firmware"] },
+            { q: "Una laptop es una computadora:", a: "A", options: ["Portátil", "De escritorio", "Servidor", "Supercomputadora"] }
         ];
 
-        quizData.push(
-            { q: "¿Qué dispositivo de la imagen es el cerebro de la PC?", options: ["CPU", "RAM", "Monitor", "Teclado"], a: "CPU", image: "../imagenes/cpu.jpg" },
-            { q: "¿Cómo se llama este componente?", options: ["Placa Madre", "Disco Duro", "Fuente de Poder", "Tarjeta de Red"], a: "Placa Madre", image: "../imagenes/motherboard.jpg" },
-            { q: "Identifica este componente:", options: ["Memoria RAM", "Procesador", "Cámara Web", "Altavoces"], a: "Memoria RAM", image: "../imagenes/memoria_ram.png" },
-            { q: "¿Qué periférico es este?", options: ["Escáner", "Impresora", "Monitor", "Plotter"], a: "Escáner", image: "../imagenes/escaner.png" },
-            { q: "Este dispositivo de entrada es un:", options: ["Micrófono", "Mouse", "Escáner", "Mando"], a: "Micrófono", image: "../imagenes/microfono.png" },
-            { q: "¿Qué es este objeto?", options: ["Disco Duro Externo", "Memoria RAM", "CPU", "Router"], a: "Disco Duro Externo", image: "../imagenes/disco_duro_externo.png" },
-            { q: "¿Cómo se clasifica este software?", options: ["Sistema Operativo", "Navegador Web", "Videojuego", "Antivirus"], a: "Sistema Operativo", image: "../imagenes/windows_logo.png" },
-            { q: "Identifica el periférico:", options: ["Monitor", "Impresora", "Proyector", "Teclado"], a: "Monitor", image: "../imagenes/monitor.png" },
-            { q: "¿Qué dispositivo de red es este?", options: ["Router", "Módem", "Switch", "Antena"], a: "Router", image: "../imagenes/router.png" },
-            { q: "¿Qué tipo de periférico es?", options: ["Impresora", "Escáner", "Mouse", "Gamepad"], a: "Impresora", image: "../imagenes/impresora.png" },
-            { q: "¿Qué es el Software de Sistema?", options: ["Programas que gestionan el hardware", "Juegos de computadora", "Programas de oficina", "Virus informáticos"], a: "Programas que gestionan el hardware" },
-            { q: "¿Qué es el Software de Aplicación?", options: ["Programas para tareas específicas del usuario", "El sistema operativo", "Lenguajes de programación", "Drivers de hardware"], a: "Programas para tareas específicas del usuario" },
-            { q: "¿Qué es un Sistema Informático?", options: ["Hardware, Software y Humanware", "Solo la CPU", "Solo los programas", "Solo el monitor"], a: "Hardware, Software y Humanware" },
-            { q: "¿A qué categoría pertenece Google Chrome?", options: ["Software de Aplicación", "Software de Sistema", "Hardware", "Firmware"], a: "Software de Aplicación" },
-            { q: "¿A qué categoría pertenece Windows 11?", options: ["Software de Sistema", "Software de Aplicación", "Hardware", "Humanware"], a: "Software de Sistema" },
-            { q: "Identifica este componente de almacenamiento:", options: ["Unidad SSD", "Memoria RAM", "Procesador", "Fuente de Poder"], a: "Unidad SSD", image: "../imagenes/ssd.png" },
-            { q: "¿Qué periférico de entrada es este?", options: ["Ratón / Mouse", "Teclado", "Escáner", "Micrófono"], a: "Ratón / Mouse", image: "../imagenes/raton.png" },
-            { q: "¿Qué componente permite la salida de audio?", options: ["Altavoces / Parlantes", "Micrófono", "Monitor", "Impresora"], a: "Altavoces / Parlantes", image: "../imagenes/altavoces.png" },
-            { q: "Este componente es un:", options: ["Joystick / Gamepad", "Mouse", "Teclado", "Monitor"], a: "Joystick / Gamepad", image: "../imagenes/gamepad.png" },
-            { q: "Identifica el componente físico:", options: ["Teclado", "Monitor", "CPU", "Impresora"], a: "Teclado", image: "../imagenes/teclado.png" }
-        );
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
 
-        quizData.push({
-            type: "matching",
-            question: "Relaciona los componentes con su definición:",
-            pairs: [
-                { term: "Hardware", definition: "Partes físicas y tangibles de la computadora" },
-                { term: "Software", definition: "Programas e instrucciones intangibles" },
-                { term: "Humanware", definition: "Personal que opera el sistema informático" },
-                { term: "Informática", definition: "Tratamiento automático de la información" },
-                { term: "Dato", definition: "Unidad mínima de información" }
-            ]
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+
+            // Fullscreen check logic
+            if (document.fullscreenElement) {
+                document.body.classList.add('is-fullscreen');
+            } else {
+                document.body.classList.remove('is-fullscreen');
+            }
+        }
+
+        function initQuiz() {
+            const container1 = document.getElementById('quiz-1');
+            const container2 = document.getElementById('quiz-2');
+
+            quizQuestions.forEach((q, i) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = "mb-6 w-full max-w-xl text-left";
+                qDiv.innerHTML = `<p class="font-bold mb-2">${i+1}. ${q.q}</p>`;
+
+                q.options.forEach((opt, optIdx) => {
+                    const letter = String.fromCharCode(65 + optIdx);
+                    const btn = document.createElement('button');
+                    btn.className = "quiz-option";
+                    btn.innerHTML = `<span class="font-bold mr-2">${letter}.</span> ${opt}`;
+                    btn.onclick = () => {
+                        if (letter === q.a) {
+                            btn.classList.add('correct');
+                        } else {
+                            btn.classList.add('incorrect');
+                        }
+                        const parent = btn.parentElement;
+                        Array.from(parent.querySelectorAll('button')).forEach(b => b.disabled = true);
+                    };
+                    qDiv.appendChild(btn);
+                });
+
+                if (i < 5) container1.appendChild(qDiv);
+                else container2.appendChild(qDiv);
+            });
+        }
+
+        // Navegación
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
 
-        // REQ: Letter-based matching (Tabla A: Concepto, Tabla B: Letra)
-        quizData.push({
-            type: "matching",
-            question: "Identifica la letra que corresponde a cada concepto (Hardware/Software):",
-            pairs: [
-                { term: "CPU (Cerebro)", definition: "Hardware de Procesamiento" },
-                { term: "Sistema Operativo", definition: "Software de Sistema" },
-                { term: "Microsoft Word", definition: "Software de Aplicación" },
-                { term: "Monitor / Pantalla", definition: "Hardware de Salida" },
-                { term: "Teclado / Mouse", definition: "Hardware de Entrada" }
-            ]
+        // Doble toque para pantalla completa
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const now = Date.now();
+            if (now - lastTap < 300) {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+            lastTap = now;
         });
 
-        quizData.push(
-            { q: "¿Cuál es un ejemplo de dispositivo de entrada?", options: ["Escáner", "Impresora", "Monitor", "Parlantes"], a: "Escáner" },
-            { q: "¿Qué dispositivo se encarga de dar energía a la PC?", options: ["Fuente de Poder", "RAM", "CPU", "Disco Duro"], a: "Fuente de Poder" },
-            { q: "¿Qué componente almacena los programas que se están ejecutando?", options: ["Memoria RAM", "Disco Duro", "Procesador", "ROM"], a: "Memoria RAM" },
-            { q: "¿Qué tipo de software es un Antivirus?", options: ["Software de Sistema / Utilidades", "Software de Programación", "Hardware", "Navegador"], a: "Software de Sistema / Utilidades" },
-            { q: "¿A qué se refiere el término 'intangible'?", options: ["Que no se puede tocar (Software)", "Que es físico (Hardware)", "Que es un usuario", "Que es electricidad"], a: "Que no se puede tocar (Software)" },
-            { q: "¿Cuál es el hardware básico de salida?", options: ["Monitor", "Teclado", "Mouse", "Micrófono"], a: "Monitor" },
-            { q: "¿Para qué sirve el Software de Programación?", options: ["Para crear otros programas", "Para escribir cartas", "Para navegar en internet", "Para jugar"], a: "Para crear otros programas" },
-            { q: "Identifica este componente vital:", options: ["Placa Madre", "Memoria RAM", "Tarjeta de Video", "Fuente de Poder"], a: "Placa Madre", image: "../imagenes/motherboard.jpg" },
-            { q: "Un sistema operativo libre es:", options: ["Linux", "Windows", "iOS", "macOS"], a: "Linux" },
-            { q: "¿Cuál es la función del Escáner?", options: ["Convertir documentos físicos a digitales", "Imprimir archivos", "Mostrar imágenes", "Procesar datos"], a: "Convertir documentos físicos a digitales" }
-        );
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('introduccion_informatica', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loading-overlay').style.display = 'none';
+                    }, 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
     </script>
 </body>
 </html>

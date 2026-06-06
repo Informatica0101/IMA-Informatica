@@ -2,892 +2,324 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introducción a la Programación - Semana 1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Introducción a la Programación - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; }
-        html { font-size: 90%; }
-        html, body { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow-x: hidden; }
-        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #374151; justify-content: space-between; }
-        #presentation-container { width: 100%; height: calc(100vh - 7rem); position: relative; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); overflow: hidden; display: flex; justify-content: center; align-items: center; margin: 0 auto; max-width: 100vw; }
-        .slide { width: 100%; height: 100%; padding: 1.8rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: opacity 0.5s ease-in-out; position: absolute; top: 0; left: 0; opacity: 0; -ms-overflow-style: none; scrollbar-width: none; overflow-y: auto; }
-        .slide::-webkit-scrollbar { display: none; }
-        .slide.active { display: flex; opacity: 1; animation-name: fadeIn; animation-duration: 0.8s; animation-fill-mode: forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { .slide h2, .slide h3 { font-size: 1.4rem; } .slide p, .slide li { font-size: 0.9rem; } .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
-        .quiz-option-button { transition: background-color 0.3s, transform 0.2s; text-align: left; padding-left: 1.5rem; }
-        .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
-        .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
-        .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
-        .step-box { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.8rem; margin: 0.3rem 0; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .step-number { display: inline-block; background: #3b82f6; color: white; width: 26px; height: 26px; border-radius: 50%; text-align: center; line-height: 26px; margin-right: 10px; font-weight: bold; font-size: 0.9rem; }
-        .example-container { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; padding: 1.2rem; margin: 1rem auto; max-width: 700px; }
-        .feature-card { padding: 0.8rem; border-radius: 8px; margin: 0.5rem; text-align: center; }
-
-        .slide p { font-size: 1.5rem !important; line-height: 1.6 !important; }
-        .slide h3 { font-size: 2.25rem !important; line-height: 1.4 !important; }
-        @media (max-width: 768px) {
-            .slide p { font-size: 1.3rem !important; }
-            .slide h3 { font-size: 1.8rem !important; }
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="antialiased">
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
-            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Introducción a la Programación</h1>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-2 sm:space-x-3">
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
-            </ul>
-        </nav>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Compilando instrucciones...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <main class="flex-grow flex justify-center items-center p-3">
-        <div id="presentation-container" class="relative">
-            <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
-                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600">Introducción a la Programación</h2>
-                <p class="text-sm sm:text-base text-gray-600 mb-6">Semana 1: Fundamentos Básicos</p>
-                <div class="text-xs text-gray-500 space-y-1">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 08 de febrero de 2026</p>
-                    <p>Grado: Undécimo de Informática - Sección "A"</p>                    
-                </div>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Introducción a la Programación</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Programación I</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
+        </div>
 
-            <!-- Diapositiva 2: ¿Qué es Programación? -->
-            <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Qué es Programación?</h3>
-                <div class="concept-box">
-                    <p class="font-bold text-lg mb-3">📝 Definición:</p>
-                    <p class="mb-4">La programación es el proceso de crear <span class="font-bold text-blue-600">instrucciones precisas</span> que una computadora puede seguir para realizar tareas específicas.</p>
-                    
-                    <div class="bg-blue-50 p-3 rounded-lg mb-3">
-                        <p class="font-bold mb-1">Definicion de programa de software:</p>
-                        <p class="italic text-sm">"Es una sucesión de instrucciones. Puede ser simple o complicado."</p>
-                    </div>
-                    
-                    <div class="bg-green-50 p-3 rounded-lg">
-                        <p class="font-bold mb-1">💡 En palabras simples:</p>
-                        <p>Programar es como dar una receta de cocina a una computadora: pasos claros para obtener un resultado.</p>
-                    </div>
-                </div>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es Programar?</h2>
+            <div class="concept-box">
+                <p>Es el proceso de crear un conjunto de <strong>instrucciones precisas</strong> que una computadora puede seguir para realizar una tarea o resolver un problema.</p>
+                <p class="mt-4 italic">Es como darle una receta de cocina a una máquina muy rápida pero poco intuitiva.</p>
             </div>
+        </div>
 
-            <!-- Diapositiva 3: ¿Qué es un Algoritmo? -->
-            <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Qué es un Algoritmo?</h3>
-                
-                <div class="concept-box mb-4">
-                    <p class="font-bold text-lg mb-2">🔍 Definición:</p>
-                    <p>Un algoritmo es un <span class="font-bold">conjunto de instrucciones ordenadas</span> para resolver un problema.</p>
-                </div>
-                
-                <div class="bg-yellow-50 p-4 rounded-lg mb-4 max-w-2xl">
-                    <p class="font-bold mb-2">📚 Origen histórico:</p>
-                    <p>La palabra "algoritmo" viene de <span class="font-bold">Muhammad Musa Alkhawarizmi</span>, matemático árabe del siglo IX.</p>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl">
-                    <div class="bg-white p-4 border rounded-lg shadow-sm">
-                        <p class="font-bold mb-2">💻 Para la computadora:</p>
-                        <p>Transforma <span class="font-bold">entradas</span> en <span class="font-bold">salidas</span> mediante cálculos definidos.</p>
-                    </div>
-                    <div class="bg-white p-4 border rounded-lg shadow-sm">
-                        <p class="font-bold mb-2">👨‍🏫 Para nosotros:</p>
-                        <p>Es como seguir las instrucciones de un manual paso a paso.</p>
-                    </div>
-                </div>
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es un Algoritmo?</h2>
+            <div class="concept-box">
+                <p>Un algoritmo es una secuencia de <strong>pasos lógicos, finitos y ordenados</strong> para resolver un problema.</p>
+                <p class="mt-2 text-sm">Ejemplo diario: Cepillarse los dientes, cambiar una llanta, preparar café.</p>
             </div>
+        </div>
 
-            <!-- Diapositiva 4: Característica 1 - Finito -->
-            <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Características: Finito</h3>
-                
-                <div class="example-container">
-                    <div class="flex items-start mb-4">
-                        <div class="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3 flex-shrink-0">1</div>
-                        <div>
-                            <p class="font-bold text-lg mb-2">¿Qué significa "Finito"?</p>
-                            <p>Un algoritmo debe tener un <span class="font-bold">número limitado de pasos</span> y debe <span class="font-bold">terminar en algún momento</span>.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="font-bold mb-2">📝 Ejemplo:</p>
-                        <p>Un algoritmo para "preparar café" no puede tener pasos infinitos. Debe terminar cuando el café esté listo.</p>
-                        
-                        <div class="mt-3 p-3 bg-white border-l-4 border-blue-400 rounded">
-                            <p class="font-semibold">✅ Correcto:</p>
-                            <p class="text-sm">1. Hervir agua<br>2. Poner café<br>3. Verter agua<br>4. Servir</p>
-                        </div>
-                        
-                        <div class="mt-3 p-3 bg-white border-l-4 border-red-400 rounded">
-                            <p class="font-semibold">❌ Incorrecto:</p>
-                            <p class="text-sm">1. Hervir agua<br>2. Poner café<br>3. Verter agua<br>4. Revolver<br>5. Revolver más<br>6. Seguir revolviendo... (nunca termina)</p>
-                        </div>
-                    </div>
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Características</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
+                <div class="p-4 bg-blue-50 rounded">
+                    <h4 class="font-bold">Finito</h4>
+                    <p class="text-xs">Debe tener un fin, un número determinado de pasos.</p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 5: Característica 2 - Preciso -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Características: Preciso</h3>
-                
-                <div class="example-container">
-                    <div class="flex items-start mb-4">
-                        <div class="bg-green-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3 flex-shrink-0">2</div>
-                        <div>
-                            <p class="font-bold text-lg mb-2">¿Qué significa "Preciso"?</p>
-                            <p>Cada paso debe estar <span class="font-bold">claramente definido</span> sin ambigüedad.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="font-bold mb-2">📝 Comparación:</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div class="p-3 bg-white rounded border-2 border-green-200">
-                                <p class="font-bold text-green-600 mb-2">✅ Preciso:</p>
-                                <p class="text-sm">"Agregar 2 cucharadas de azúcar"</p>
-                            </div>
-                            <div class="p-3 bg-white rounded border-2 border-red-200">
-                                <p class="font-bold text-red-600 mb-2">❌ Impreciso:</p>
-                                <p class="text-sm">"Agregar un poco de azúcar"</p>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-4 p-3 bg-blue-50 rounded">
-                            <p class="font-bold mb-1">💡 ¿Por qué es importante?</p>
-                            <p class="text-sm">Una computadora no puede adivinar. Necesita instrucciones exactas.</p>
-                        </div>
-                    </div>
+                <div class="p-4 bg-green-50 rounded">
+                    <h4 class="font-bold">Preciso</h4>
+                    <p class="text-xs">Cada paso debe ser claro y sin ambigüedad.</p>
                 </div>
-            </div>
-
-            <!-- Diapositiva 6: Características 3 y 4 -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Más Características</h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl">
-                    <div class="bg-white p-4 rounded-lg border-2 border-purple-200 shadow">
-                        <div class="flex items-center mb-3">
-                            <div class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">3</div>
-                            <p class="font-bold text-lg">Definido</p>
-                        </div>
-                        <p class="mb-2">Mismas entradas = mismos resultados</p>
-                        <div class="bg-purple-50 p-3 rounded text-sm">
-                            <p class="font-semibold">Ejemplo:</p>
-                            <p>2 + 2 siempre es 4, nunca 5 o 3.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white p-4 rounded-lg border-2 border-orange-200 shadow">
-                        <div class="flex items-center mb-3">
-                            <div class="bg-orange-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">4</div>
-                            <p class="font-bold text-lg">General</p>
-                        </div>
-                        <p class="mb-2">Funciona para diferentes casos del mismo problema</p>
-                        <div class="bg-orange-50 p-3 rounded text-sm">
-                            <p class="font-semibold">Ejemplo:</p>
-                            <p>Un algoritmo para sumar debe servir para 1+1, 100+50, etc.</p>
-                        </div>
-                    </div>
+                <div class="p-4 bg-purple-50 rounded">
+                    <h4 class="font-bold">Definido</h4>
+                    <p class="text-xs">Mismas entradas deben producir mismos resultados.</p>
                 </div>
-                
-                <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg max-w-2xl">
-                    <p class="font-bold text-center mb-2">💎 Resumen de características</p>
-                    <p class="text-center text-sm">Todo algoritmo debe ser: <span class="font-bold">Finito, Preciso, Definido y General</span></p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Ejemplo 1 - Cambiar Llanta (Parte 1) -->
-            <div id="slide-7" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Cambiar Llanta</h3>
-                
-                <div class="example-container">
-                    <p class="font-bold mb-3">🚗 Situación: Tienes una llanta pinchada y necesitas cambiarla</p>
-                    
-                    <div class="space-y-2 mb-4">
-                        <div class="step-box">
-                            <span class="step-number">1</span> Aflojar tornillos con llave inglesa
-                        </div>
-                        <div class="step-box">
-                            <span class="step-number">2</span> Ubicar gato mecánico en posición correcta
-                        </div>
-                        <div class="step-box">
-                            <span class="step-number">3</span> Levantar gato hasta que rueda gire libre
-                        </div>
-                        <div class="step-box">
-                            <span class="step-number">4</span> Quitar tornillos y rueda pinchada
-                        </div>
-                    </div>
-                    
-                    <div class="bg-yellow-50 p-3 rounded-lg">
-                        <p class="font-bold mb-1">📌 Pausa para analizar:</p>
-                        <p class="text-sm">¿Estos pasos cumplen con las características de un algoritmo?</p>
-                    </div>
-                </div>
-                
-                <div class="mt-4 text-sm text-gray-600">
-                    <p>Próximo: Veremos los pasos finales</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Ejemplo 1 - Cambiar Llanta (Parte 2) -->
-            <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Cambiar Llanta (Cont.)</h3>
-                
-                <div class="example-container">
-                    <p class="font-semibold mb-3">Continuación del algoritmo:</p>
-                    
-                    <div class="space-y-2 mb-4">
-                        <div class="step-box">
-                            <span class="step-number">5</span> Colocar rueda de repuesto
-                        </div>
-                        <div class="step-box">
-                            <span class="step-number">6</span> Apretar tornillos inicialmente
-                        </div>
-                        <div class="step-box">
-                            <span class="step-number">7</span> Bajar gato y retirarlo
-                        </div>
-                        <div class="step-box">
-                            <span class="step-number">8</span> Apretar tornillos firmemente
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-                        <div class="p-3 bg-green-50 rounded">
-                            <p class="font-bold">✅ Cumple con:</p>
-                            <ul class="text-sm mt-1">
-                                <li>• Finito: 8 pasos</li>
-                                <li>• Preciso: Instrucciones claras</li>
-                                <li>• Definido: Mismo resultado</li>
-                                <li>• General: Sirve para cualquier auto</li>
-                            </ul>
-                        </div>
-                        <div class="p-3 bg-blue-50 rounded">
-                            <p class="font-bold">🎯 Tipo de algoritmo:</p>
-                            <p class="text-sm mt-1">No computacional (lo hace una persona)<br>Cualitativo (sin cálculos)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Ejemplo 2 - Ir al Colegio -->
-            <div id="slide-9" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Ir al Colegio</h3>
-                
-                <div class="example-container">
-                    <p class="font-bold mb-3">📚 Situación: Debes llegar al colegio para clase de programación</p>
-                    
-                    <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
-                        <div class="step-box">
-                            <span class="step-number">1</span> Dormir hasta que suene el despertador
-                        </div>
-                        <div class="step-box">
-                            <span class="step-number">2</span> Mirar la hora
-                        </div>
-                        <div class="step-box bg-blue-50">
-                            <span class="step-number">3</span> <span class="font-bold">DECISIÓN:</span> ¿Hay tiempo suficiente?
-                            <div class="ml-8 mt-1 text-sm">
-                                <p>• <span class="font-bold">SI:</span> Bañarse, Vestirse, Desayunar</p>
-                                <p>• <span class="font-bold">NO:</span> Vestirse rápido</p>
-                            </div>
-                        </div>
-                        <div class="step-box">
-                            <span class="step-number">4</span> Despedirse de los padres
-                        </div>
-                        <div class="step-box">
-                            <span class="step-number">5</span> Ir a la parada de buses
-                        </div>
-                        <div class="step-box bg-blue-50">
-                            <span class="step-number">6</span> <span class="font-bold">REPETIR:</span> Esperar mientras no pase el bus
-                        </div>
-                        <div class="step-box">
-                            <span class="step-number">7</span> Tomar el bus
-                        </div>
-                        <div class="step-box bg-blue-50">
-                            <span class="step-number">8</span> <span class="font-bold">REPETIR:</span> Seguir en bus mientras no llegue al colegio
-                        </div>
-                        <div class="step-box">
-                            <span class="step-number">9</span> Bajarse y entrar al colegio
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4 p-3 bg-purple-50 rounded">
-                        <p class="font-bold text-sm mb-1">💡 Observación importante:</p>
-                        <p class="text-sm">Este algoritmo incluye <span class="font-bold">decisiones</span> (preguntas SI/NO) y <span class="font-bold">repeticiones</span> (hacer algo mientras se cumpla una condición).</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 10: Ejemplo 3 - Área de Triángulo -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Área de Triángulo</h3>
-                
-                <div class="example-container">
-                    <div class="text-center mb-4">
-                        <p class="font-bold text-lg">Fórmula: <span class="text-blue-600">Área = (Base × Altura) ÷ 2</span></p>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <p class="font-bold mb-2">📝 Algoritmo en pasos:</p>
-                            <div class="space-y-2">
-                                <div class="step-box">1. INICIO</div>
-                                <div class="step-box">2. Pedir valor de Base (B)</div>
-                                <div class="step-box">3. Pedir valor de Altura (H)</div>
-                                <div class="step-box">4. Calcular: A = B × H ÷ 2</div>
-                                <div class="step-box">5. Mostrar resultado (A)</div>
-                                <div class="step-box">6. FIN</div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="font-bold mb-3">🧮 Practiquemos:</p>
-                            
-                            <div class="mb-3">
-                                <label class="block text-sm mb-1">Base: <span id="baseValue" class="font-bold text-blue-600">10</span></label>
-                                <input type="range" id="baseSlider" min="1" max="20" value="10" class="w-full h-2 bg-blue-100 rounded">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="block text-sm mb-1">Altura: <span id="heightValue" class="font-bold text-green-600">8</span></label>
-                                <input type="range" id="heightSlider" min="1" max="20" value="8" class="w-full h-2 bg-green-100 rounded">
-                            </div>
-                            
-                            <div class="p-3 bg-white rounded border-2 border-blue-200 mt-3">
-                                <p class="font-bold">Resultado:</p>
-                                <p id="areaResult" class="text-lg font-bold text-blue-700">Área = (10 × 8) ÷ 2 = 40</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div class="p-3 bg-green-50 rounded">
-                            <p class="font-bold">✅ Tipo:</p>
-                            <p>Computacional (para computadora)<br>Cuantitativo (usa cálculos)</p>
-                        </div>
-                        <div class="p-3 bg-yellow-50 rounded">
-                            <p class="font-bold">📝 Ejercicio:</p>
-                            <p>Escribe este algoritmo en tu cuaderno con tus palabras.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 11: Ejercicio Práctico -->
-            <div id="slide-11" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Tu Turno: Crear un Algoritmo</h3>
-                
-                <div class="example-container">
-                    <div class="text-center mb-4">
-                        <p class="font-bold text-lg">🍞 Problema: Preparar un sándwich de jamón y queso</p>
-                        <p class="text-sm text-gray-600">Materiales: Pan, jamón, queso, mayonesa, plato</p>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <p class="font-bold mb-2">Organiza los pasos en el orden correcto:</p>
-                        <div id="sandwichSteps" class="space-y-2">
-                            <div class="step-box draggable" data-order="1">Tomar dos rebanadas de pan</div>
-                            <div class="step-box draggable" data-order="4">Untar mayonesa en una rebanada</div>
-                            <div class="step-box draggable" data-order="2">Colocar jamón sobre una rebanada</div>
-                            <div class="step-box draggable" data-order="5">Colocar la otra rebanada encima</div>
-                            <div class="step-box draggable" data-order="3">Colocar queso sobre el jamón</div>
-                            <div class="step-box draggable" data-order="6">Servir en un plato</div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-center space-x-3">
-                        <button onclick="shuffleSandwichSteps()" class="bg-gray-500 text-white px-4 py-2 rounded text-sm hover:bg-gray-600">
-                            Mezclar Pasos
-                        </button>
-                        <button onclick="checkSandwichOrder()" class="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600">
-                            Verificar Orden
-                        </button>
-                    </div>
-                    
-                    <div id="sandwichFeedback" class="mt-3 text-center font-bold hidden"></div>
-                    
-                    <div class="mt-4 p-3 bg-blue-50 rounded">
-                        <p class="font-bold mb-1">💭 Preguntas para reflexionar:</p>
-                        <p class="text-sm">¿Tu algoritmo cumple con las 4 características? (Finito, Preciso, Definido, General)</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Cuestionario (Preguntas 1-5) -->
-            <div id="slide-12" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 1)</h3>
-                
-                <div id="quiz-container-1" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-1" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-1" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-1" class="mt-3 text-sm font-bold"></div>
-                </div>
-                
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter">1</span> de 5</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Cuestionario (Preguntas 6-10) -->
-            <div id="slide-13" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 2)</h3>
-                
-                <div id="quiz-container-2" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-2" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-2" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-2" class="mt-3 text-sm font-bold"></div>
-                </div>
-                
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter-2">6</span> de 10</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 14: Resumen y Tarea -->
-            <div id="slide-14" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen y Tarea</h3>
-                
-                <div class="max-w-2xl mx-auto">
-                    <div class="bg-white p-4 rounded-lg border-2 border-blue-200 mb-4">
-                        <p class="font-bold text-lg text-center mb-3">✅ Lo aprendido hoy:</p>
-                        
-                        <div class="grid grid-cols-2 gap-3 mb-4">
-                            <div class="p-2 bg-green-100 rounded text-center">
-                                <p class="font-bold">Programación</p>
-                                <p class="text-sm">Dar instrucciones a una computadora</p>
-                            </div>
-                            <div class="p-2 bg-blue-100 rounded text-center">
-                                <p class="font-bold">Algoritmo</p>
-                                <p class="text-sm">Pasos para resolver un problema</p>
-                            </div>
-                            <div class="p-2 bg-yellow-100 rounded text-center">
-                                <p class="font-bold">Características</p>
-                                <p class="text-sm">Finito, Preciso, Definido, General</p>
-                            </div>
-                            <div class="p-2 bg-purple-100 rounded text-center">
-                                <p class="font-bold">Ejemplos</p>
-                                <p class="text-sm">Llanta, Colegio, Triángulo</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gradient-to-r from-blue-50 to-green-50 p-4 rounded-lg mb-4">
-                        <p class="font-bold text-lg mb-2">📚 Tarea para la próxima clase:</p>
-                        <ol class="list-decimal pl-5 space-y-2">
-                            <li>Escribe 3 algoritmos de tu vida diaria</li>
-                            <li>Identifica sus características (Finito, Preciso, etc.)</li>
-                            <li>Resuelve el ejercicio del área de triángulo en tu cuaderno</li>
-                        </ol>
-                    </div>
-                    
-                    <div class="text-center mt-6">
-                        <p class="font-bold text-blue-600">¡Excelente trabajo hoy!</p>
-                        <p class="text-sm text-gray-500 mt-2">Lic. Pablo Antonio Peña Mancia<br>Instituto María Auxiliadora - Sistema ISEMED</p>
-                    </div>
+                <div class="p-4 bg-orange-50 rounded">
+                    <h4 class="font-bold">General</h4>
+                    <p class="text-xs">Debe servir para todos los casos del problema.</p>
                 </div>
             </div>
         </div>
 
-        <!-- Botones de navegación -->
-        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
-            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
-            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tipos de Algoritmos</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl">
+                <div class="p-6 border rounded-2xl">
+                    <h3 class="font-bold text-xl mb-2">Cualitativos</h3>
+                    <p class="text-sm">Pasos descritos con palabras (ej. receta).</p>
+                </div>
+                <div class="p-6 border rounded-2xl">
+                    <h3 class="font-bold text-xl mb-2">Cuantitativos</h3>
+                    <p class="text-sm">Involucran cálculos numéricos (ej. área de un círculo).</p>
+                </div>
+            </div>
         </div>
-        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 14</div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lenguajes de Programación</h2>
+            <div class="concept-box">
+                <p>Son los "idiomas" que usamos para hablar con la computadora.</p>
+                <div class="grid grid-cols-3 gap-4 mt-6 text-center">
+                    <div class="p-2 border rounded font-bold">C++</div>
+                    <div class="p-2 border rounded font-bold">Python</div>
+                    <div class="p-2 border rounded font-bold">Java</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
+            <div class="concept-box">
+                <p>Escribe en tu cuaderno los pasos necesarios (algoritmo cualitativo) para hacer una llamada telefónica desde un smartphone.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructura Secuencial</h2>
+            <p>Es la forma más simple de programación: los pasos se ejecutan uno tras otro, de arriba hacia abajo.</p>
+            <i class="fas fa-arrow-down text-6xl text-blue-200 mt-8"></i>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Variables y Constantes</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl">
+                <div class="p-4 bg-slate-50 border rounded text-left">
+                    <p class="font-bold">Variables</p>
+                    <p class="text-xs">Espacios de memoria que pueden cambiar de valor (ej. puntaje, edad).</p>
+                </div>
+                <div class="p-4 bg-slate-50 border rounded text-left">
+                    <p class="font-bold">Constantes</p>
+                    <p class="text-xs">Valores que no cambian durante el programa (ej. PI = 3.1416).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tipos de Datos Simples</h2>
+            <ul class="list-disc text-left space-y-2 max-w-xl mx-auto">
+                <li><strong>Entero:</strong> Números sin decimales (1, 2, -5).</li>
+                <li><strong>Real:</strong> Números con decimales (3.14, 0.5).</li>
+                <li><strong>Carácter:</strong> Una sola letra o símbolo ('A', '$').</li>
+                <li><strong>Cadena:</strong> Texto ("Hola Mundo").</li>
+                <li><strong>Lógico:</strong> Verdadero o Falso.</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Entrada, Proceso y Salida</h2>
+            <div class="flex space-x-4 mt-8">
+                <div class="p-4 border rounded shadow-sm">Entrada (Leer)</div>
+                <div class="p-4 bg-blue-600 text-white rounded shadow-md">Proceso (Calcular)</div>
+                <div class="p-4 border rounded shadow-sm">Salida (Escribir)</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Pensamiento Computacional</h2>
+            <p class="italic">"No se trata solo de escribir código, sino de descomponer problemas complejos en partes pequeñas y manejables."</p>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Avanzado</h2>
+            <div class="code-block">
+                <p>// Algoritmo Sumar Dos Números</p>
+                <p>ALGORITMO Suma</p>
+                <p>&nbsp;&nbsp;LEER num1, num2</p>
+                <p>&nbsp;&nbsp;resultado = num1 + num2</p>
+                <p>&nbsp;&nbsp;ESCRIBIR "El total es: ", resultado</p>
+                <p>FINALGORITMO</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none">
+                <h3 class="font-black text-xl mb-4 uppercase">ALGORITMOS DIARIOS</h3>
+                <p>Describir 3 algoritmos cualitativos de actividades que realizas en casa. Identificar el Inicio y el Fin de cada uno.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima semana</span>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
-            <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Programación I - Primer Parcial</p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
-        const slides = document.querySelectorAll('.slide');
-        const nextButton = document.getElementById('next-btn');
-        const prevButton = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
         let currentSlideIndex = 0;
-        let isTransitioning = false;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
-        // Preguntas del cuestionario divididas en dos partes
         const quizQuestions = [
-            {
-                question: "¿Qué es la programación?",
-                options: ["Creación de instrucciones precisas para la computadora", "Reparación de diversos componentes de hardware", "Instalación de software y sistemas operativos", "Navegación y búsqueda de información en la web"],
-                correctAnswer: "Creación de instrucciones precisas para la computadora"
-            },
-            {
-                question: "¿Qué es un algoritmo?",
-                options: ["Pasos ordenados para la solución de un problema", "Componente interno de un procesador moderno", "Programa malicioso que daña archivos del sistema", "Plataforma digital para la interacción social"],
-                correctAnswer: "Pasos ordenados para la solución de un problema"
-            },
-            {
-                question: "¿De dónde proviene la palabra 'algoritmo'?",
-                options: ["Del matemático árabe Al-Khwarizmi", "Del científico británico Alan Turing", "Del empresario tecnológico Bill Gates", "De un término latín que significa alegría"],
-                correctAnswer: "Del matemático árabe Al-Khwarizmi"
-            },
-            {
-                question: "¿Qué significa que un algoritmo sea 'Finito'?",
-                options: ["Que cuenta con un número determinado de pasos", "Que se ejecuta de forma rápida y eficiente", "Que no presenta ningún tipo de error lógico", "Que puede resolver cualquier tipo de problema"],
-                correctAnswer: "Que cuenta con un número determinado de pasos"
-            },
-            {
-                question: "¿Qué significa que un algoritmo sea 'Preciso'?",
-                options: ["Que cada paso está definido sin ambigúedades", "Que los resultados son exactos matemáticamente", "Que el código es breve y fácil de leer", "Que no requiere de mucha memoria RAM"],
-                correctAnswer: "Que cada paso está definido sin ambigúedades"
-            },
-            {
-                question: "¿Qué significa que un algoritmo sea 'Definido'?",
-                options: ["Que ante mismas entradas produce siempre lo mismo", "Que tiene un inicio y un final claramente marcados", "Que utiliza variables globales en todo su proceso", "Que está escrito en un lenguaje de alto nivel"],
-                correctAnswer: "Que ante mismas entradas produce siempre lo mismo"
-            },
-            {
-                question: "¿Qué significa que un algoritmo sea 'General'?",
-                options: ["Que resuelve todos los casos de un mismo problema", "Que puede ejecutarse en cualquier sistema operativo", "Que es comprendido por cualquier programador", "Que no utiliza funciones o librerías específicas"],
-                correctAnswer: "Que resuelve todos los casos de un mismo problema"
-            },
-            {
-                question: "¿Cuál es un ejemplo de algoritmo cualitativo?",
-                options: ["Instrucciones para seguir una receta de cocina", "Cálculo matemático de impuestos mensuales", "Suma secuencial de una serie de números", "Obtención del promedio final de calificaciones"],
-                correctAnswer: "Instrucciones para seguir una receta de cocina"
-            },
-            {
-                question: "¿Cuál es un ejemplo de algoritmo cuantitativo?",
-                options: ["Cálculo del área de una figura geométrica", "Pasos necesarios para cambiar una llanta", "Instrucciones para preparar un sándwich", "Ruta lógica para llegar desde casa al colegio"],
-                correctAnswer: "Cálculo del área de una figura geométrica"
-            },
-            {
-                question: "¿Qué requiere la computadora para ejecutar un algoritmo?",
-                options: ["Instrucciones lógicas exactas y sin ambigüedad", "Capacidad de intuición y pensamiento propio", "Sentido común para interpretar pasos vagos", "Habilidad para adivinar el proceso deseado"],
-                correctAnswer: "Instrucciones lógicas exactas y sin ambigüedad"
-            },
-            // Parte 2 (preguntas 6-10)
-            {
-                question: "6. Un algoritmo para 'cambiar llanta' es:",
-                options: [
-                    "Computacional y cuantitativo",
-                    "No computacional y cualitativo",
-                    "Computacional y cualitativo",
-                    "No computacional y cuantitativo"
-                ],
-                correctAnswer: "No computacional y cualitativo"
-            },
-            {
-                question: "7. ¿Qué fórmula se usa para el área de triángulo?",
-                options: [
-                    "Base + Altura",
-                    "Base × Altura",
-                    "(Base × Altura) ÷ 2",
-                    "Base² × Altura"
-                ],
-                correctAnswer: "(Base × Altura) ÷ 2"
-            },
-            {
-                question: "8. ¿Qué característica asegura mismo resultado con mismas entradas?",
-                options: [
-                    "Finito",
-                    "Preciso",
-                    "Definido",
-                    "General"
-                ],
-                correctAnswer: "Definido"
-            },
-            {
-                question: "9. En 'ir al colegio', ¿qué estructura tiene '¿Hay tiempo?'?",
-                options: [
-                    "Secuencia",
-                    "Decisión (SI/NO)",
-                    "Repetición",
-                    "Inicio"
-                ],
-                correctAnswer: "Decisión (SI/NO)"
-            },
-            {
-                question: "10. ¿Por qué es importante que un algoritmo sea 'general'?",
-                options: [
-                    "Para que sea más corto",
-                    "Para que funcione en diferentes casos del mismo problema",
-                    "Para que sea más rápido",
-                    "Para que use menos memoria"
-                ],
-                correctAnswer: "Para que funcione en diferentes casos del mismo problema"
-            }
+            { q: "¿Qué es un algoritmo?", a: "A", options: ["Pasos para resolver un problema", "Un tipo de computadora", "Un virus", "Un cable"] },
+            { q: "Característica de terminar:", a: "B", options: ["Infinito", "Finito", "Circular", "Rápido"] },
+            { q: "Mismas entradas = mismos resultados:", a: "C", options: ["Vago", "Aleatorio", "Definido", "Variable"] },
+            { q: "Un algoritmo de receta es:", a: "D", options: ["Cuantitativo", "Matemático", "Físico", "Cualitativo"] },
+            { q: "Dato que cambia de valor:", a: "A", options: ["Variable", "Constante", "Título", "Estatico"] },
+            { q: "¿Con qué se inicia un programa?", a: "C", options: ["Salida", "Cálculo", "Entrada de datos", "Cierre"] },
+            { q: "PI (3.1416) es una:", a: "B", options: ["Variable", "Constante", "Cadena", "Función"] },
+            { q: "Un número con decimales es:", a: "A", options: ["Real", "Entero", "Lógico", "Carácter"] },
+            { q: "Secuencia de pasos ordenados:", a: "C", options: ["Desorden", "Caos", "Algoritmo", "Hardware"] },
+            { q: "¿Qué es C++?", a: "D", options: ["Una marca de PC", "Un sistema", "Un juego", "Un lenguaje de programación"] }
         ];
 
-        let currentQuizPart1Index = 0;
-        let currentQuizPart2Index = 5;
-
-        // Funciones para interactividad
-        function initializeSliders() {
-            const baseSlider = document.getElementById('baseSlider');
-            const heightSlider = document.getElementById('heightSlider');
-            const baseValue = document.getElementById('baseValue');
-            const heightValue = document.getElementById('heightValue');
-            const areaResult = document.getElementById('areaResult');
-            
-            if (baseSlider && heightSlider) {
-                function updateTriangleArea() {
-                    const base = parseInt(baseSlider.value);
-                    const height = parseInt(heightSlider.value);
-                    const area = (base * height) / 2;
-                    
-                    baseValue.textContent = base;
-                    heightValue.textContent = height;
-                    areaResult.textContent = `Área = (${base} × ${height}) ÷ 2 = ${area}`;
-                }
-                
-                baseSlider.addEventListener('input', updateTriangleArea);
-                heightSlider.addEventListener('input', updateTriangleArea);
-                updateTriangleArea();
-            }
-        }
-        
-        function shuffleSandwichSteps() {
-            const container = document.getElementById('sandwichSteps');
-            if (!container) return;
-            
-            const steps = Array.from(container.children);
-            steps.sort(() => Math.random() - 0.5);
-            container.innerHTML = '';
-            steps.forEach(step => container.appendChild(step));
-            
-            const feedback = document.getElementById('sandwichFeedback');
-            if (feedback) {
-                feedback.classList.add('hidden');
-            }
-        }
-        
-        function checkSandwichOrder() {
-            const steps = document.querySelectorAll('#sandwichSteps .draggable');
-            let correct = 0;
-            const correctOrder = [1, 2, 3, 4, 5, 6];
-            
-            steps.forEach((step, index) => {
-                const order = parseInt(step.getAttribute('data-order'));
-                if (order === correctOrder[index]) {
-                    step.style.background = '#d1fae5';
-                    correct++;
-                } else {
-                    step.style.background = '#fee2e2';
-                }
-            });
-            
-            const feedback = document.getElementById('sandwichFeedback');
-            if (correct === 6) {
-                feedback.textContent = '¡Perfecto! Orden correcto del sándwich.';
-                feedback.style.color = '#065f46';
-            } else {
-                feedback.textContent = `Tienes ${correct} de 6 correctos. ¡Intenta de nuevo!`;
-                feedback.style.color = '#991b1b';
-            }
-            feedback.classList.remove('hidden');
-        }
-
-        // Funciones para el cuestionario dividido
-        function updateQuizPart1() {
-            if (currentQuizPart1Index >= 5) return;
-            
-            const questionElement = document.getElementById('quiz-question-1');
-            const optionsElement = document.getElementById('quiz-options-1');
-            const feedbackElement = document.getElementById('quiz-feedback-1');
-            const counterElement = document.getElementById('question-counter');
-            
-            const currentQuestion = quizQuestions[currentQuizPart1Index];
-            
-            questionElement.textContent = currentQuestion.question;
-            optionsElement.innerHTML = '';
-            feedbackElement.textContent = '';
-            counterElement.textContent = currentQuizPart1Index + 1;
-            
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
-                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 1);
-                optionsElement.appendChild(button);
-            });
-        }
-        
-        function updateQuizPart2() {
-            if (currentQuizPart2Index >= 10) return;
-            
-            const questionElement = document.getElementById('quiz-question-2');
-            const optionsElement = document.getElementById('quiz-options-2');
-            const feedbackElement = document.getElementById('quiz-feedback-2');
-            const counterElement = document.getElementById('question-counter-2');
-            
-            const currentQuestion = quizQuestions[currentQuizPart2Index];
-            
-            questionElement.textContent = currentQuestion.question;
-            optionsElement.innerHTML = '';
-            feedbackElement.textContent = '';
-            counterElement.textContent = currentQuizPart2Index + 1;
-            
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
-                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 2);
-                optionsElement.appendChild(button);
-            });
-        }
-        
-        function checkQuizAnswer(selected, correct, feedbackElement, buttons, part) {
-            const isCorrect = selected === correct;
-            
-            Array.from(buttons).forEach(button => {
-                button.disabled = true;
-                if (button.textContent === correct) {
-                    button.classList.add('correct');
-                } else if (button.textContent === selected) {
-                    button.classList.add('incorrect');
-                }
-            });
-            
-            if (isCorrect) {
-                feedbackElement.textContent = '¡Correcto!';
-                feedbackElement.style.color = '#065f46';
-            } else {
-                feedbackElement.textContent = `Incorrecto. La respuesta es: ${correct}`;
-                feedbackElement.style.color = '#991b1b';
-            }
-            
-            setTimeout(() => {
-                if (part === 1) {
-                    currentQuizPart1Index++;
-                    if (currentQuizPart1Index < 5) {
-                        updateQuizPart1();
-                    }
-                } else {
-                    currentQuizPart2Index++;
-                    if (currentQuizPart2Index < 10) {
-                        updateQuizPart2();
-                    }
-                }
-            }, 1500);
-        }
-
         function showSlide(index) {
-            if (isTransitioning || index < 0 || index >= slides.length) return;
-            isTransitioning = true;
-
-            slides.forEach(s => {
-                s.classList.remove('active');
-                s.style.display = 'none';
-            });
-
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
             currentSlideIndex = index;
-
-            const presentationContainer = document.getElementById('presentation-container');
-
-
-            // Inicializar contenido según la diapositiva
-            if (currentSlideIndex === 10) { // Ejercicio sándwich
-                setTimeout(shuffleSandwichSteps, 100);
-            } else if (currentSlideIndex === 9) { // Sliders triángulo
-                setTimeout(initializeSliders, 100);
-            } else if (currentSlideIndex === 11) { // Cuestionario parte 1
-                currentQuizPart1Index = 0;
-                setTimeout(updateQuizPart1, 100);
-            } else if (currentSlideIndex === 12) { // Cuestionario parte 2
-                currentQuizPart2Index = 5;
-                setTimeout(updateQuizPart2, 100);
-            }
-
-            const activeSlide = slides[currentSlideIndex];
-            activeSlide.style.display = 'flex';
-
-            setTimeout(() => {
-                activeSlide.classList.add('active');
-                slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-                prevButton.disabled = currentSlideIndex === 0;
-                nextButton.disabled = currentSlideIndex === slides.length - 1;
-                isTransitioning = false;
-            }, 10);
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        // Event listeners
-        nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
-        prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
-
-        document.getElementById('presentation-container').addEventListener('click', (e) => {
-            if (e.target.closest('button') || e.target.closest('a') || e.target.closest('input')) return;
-            const rect = e.currentTarget.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            if (clickX > rect.width / 2) {
-                showSlide(currentSlideIndex + 1);
-            } else {
-                showSlide(currentSlideIndex - 1);
-            }
-        });
-
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('current-year').textContent = new Date().getFullYear();
-            showSlide(0); handleFullscreenChange();
-            
-            // Preparar ejercicio sándwich
-            shuffleSandwichSteps();
-        });
-
-
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) || (window.innerHeight >= screen.height - 10);
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-            document.body.classList.add('is-fullscreen');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-            document.body.classList.remove('is-fullscreen');
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
+            });
         }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-    window.addEventListener('resize', handleFullscreenChange);
 
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
+        });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
+        });
 
-    // Navigation improvements (2026)
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
-    });
-
-    (function() {
-        const container = document.getElementById('presentation-container');
-        if (!container) return;
-        let tsX = 0;
-        container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-        container.addEventListener('touchend', e => {
-            let teX = e.changedTouches[0].screenX;
-            if (tsX - teX > 50) typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-            if (teX - tsX > 50) typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
-        }, {passive: true});
-    })();
-
-</script>
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('introduccion_programacion', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
+    </script>
 </body>
 </html>

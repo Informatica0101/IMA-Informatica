@@ -2,555 +2,310 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alineación y Formato de Texto - Diseño Web I</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Alineación y Formato de Texto - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; }
-        html { font-size: 90%; }
-        html, body { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow-x: hidden; }
-        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #374151; justify-content: space-between; }
-        #presentation-container { width: 100%; height: calc(100vh - 7rem); position: relative; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); overflow: hidden; display: flex; justify-content: center; align-items: center; margin: 0 auto; max-width: 100vw; }
-        .slide { width: 100%; height: 100%; padding: 1.8rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: opacity 0.5s ease-in-out; position: absolute; top: 0; left: 0; opacity: 0; -ms-overflow-style: none; scrollbar-width: none; overflow-y: auto; }
-        .slide::-webkit-scrollbar { display: none; }
-        .slide.active { display: flex; opacity: 1; animation-name: fadeIn; animation-duration: 0.8s; animation-fill-mode: forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { .slide h2, .slide h3 { font-size: 1.4rem; } .slide p, .slide li { font-size: 0.9rem; } .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
-        .quiz-option-button { transition: background-color 0.3s, transform 0.2s; text-align: left; padding-left: 1.5rem; }
-        .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
-        .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
-        .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
-        .code-box { background: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 8px; font-family: monospace; text-align: left; width: 100%; max-width: 500px; margin: 0.5rem 0; overflow-x: auto; }
-        .code-tag { color: #f472b6; }
-        .code-attr { color: #fbbf24; }
-        .code-val { color: #34d399; }
-
-        .slide p { font-size: 1.5rem !important; line-height: 1.6 !important; }
-        .slide h3 { font-size: 2.25rem !important; line-height: 1.4 !important; }
-        @media (max-width: 768px) {
-            .slide p { font-size: 1.3rem !important; }
-            .slide h3 { font-size: 1.8rem !important; }
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="antialiased">
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
-            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Diseño Web I</h1>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-2 sm:space-x-3">
-                <li><a href="../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
-            </ul>
-        </nav>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Alineando pixeles...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <main class="flex-grow flex justify-center items-center p-3">
-        <div id="presentation-container" class="relative">
-            <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <img src="../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
-                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Alineación y Formato de Texto</h2>
-                <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 6: Perfeccionando el Contenido</p>
-                <div class="text-xs text-gray-500 space-y-1">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 15 de marzo de 2026</p>
-                    <p>Grado: Duodécimo de Informática - Sección "A"</p>
-                </div>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Alineación y Formato de Texto</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Diseño Web I</p>
+                <p>Duodécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
-
-            <!-- Diapositiva 2: Alineación de Texto -->
-            <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Alineación de Texto</h3>
-                <div class="concept-box">
-                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed text-left">
-                        La propiedad CSS <span class="font-bold">text-align</span> se utiliza para establecer la alineación horizontal de un texto.
-                    </p>
-                    <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
-                        <div class="p-2 border bg-white text-left">left (Izquierda)</div>
-                        <div class="p-2 border bg-white text-center">center (Centro)</div>
-                        <div class="p-2 border bg-white text-right">right (Derecha)</div>
-                        <div class="p-2 border bg-white text-justify">justify (Justificado)</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 3: Ejemplo de Alineación -->
-            <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo: Atributo Style</h3>
-                <div class="code-box">
-                    &lt;<span class="code-tag">h1</span> <span class="code-attr">style</span>=<span class="code-val">"text-align: center;"</span>&gt;Título centrado&lt;/<span class="code-tag">h1</span>&gt;<br>
-                    &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"text-align: justify;"</span>&gt;Texto justificado...&lt;/<span class="code-tag">p</span>&gt;
-                </div>
-                <div class="mt-4 p-4 bg-gray-50 border rounded w-full max-w-md">
-                    <p style="text-align: center;" class="text-xs font-bold">ESTE ES UN TÍTULO CENTRADO</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 4: Formato de Texto (Negrita e Italica) -->
-            <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Formato: Negrita e Itálica</h3>
-                <p class="text-sm text-gray-600 mb-4">Podemos usar etiquetas HTML o propiedades CSS:</p>
-                <div class="grid grid-cols-2 gap-4 w-full max-w-2xl">
-                    <div class="p-3 bg-white border rounded">
-                        <p class="font-bold text-xs mb-2">Negrita</p>
-                        <p class="text-[10px]">&lt;b&gt; o &lt;strong&gt;</p>
-                        <p class="text-[10px]">CSS: font-weight: bold;</p>
-                    </div>
-                    <div class="p-3 bg-white border rounded">
-                        <p class="font-bold text-xs mb-2">Cursiva (Itálica)</p>
-                        <p class="text-[10px]">&lt;i&gt; o &lt;em&gt;</p>
-                        <p class="text-[10px]">CSS: font-style: italic;</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Subrayado y Tachado -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Decoración de Texto</h3>
-                <p class="text-sm text-gray-600 mb-4">Usamos la propiedad <span class="font-bold">text-decoration</span>.</p>
-                <div class="code-box">
-                    &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"text-decoration: underline;"</span>&gt;Subrayado&lt;/<span class="code-tag">p</span>&gt;<br>
-                    &lt;<span class="code-tag">p</span> <span class="code-attr">style</span>=<span class="code-val">"text-decoration: line-through;"</span>&gt;Tachado&lt;/<span class="code-tag">p</span>&gt;
-                </div>
-                <div class="mt-4 flex space-x-4">
-                    <span class="underline">Texto Subrayado</span>
-                    <span class="line-through">Texto Tachado</span>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: Transformación de Texto -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Mayúsculas y Minúsculas</h3>
-                <p class="text-sm text-gray-600 mb-4">La propiedad <span class="font-bold">text-transform</span>.</p>
-                <div class="space-y-2 text-left max-w-sm mx-auto">
-                    <div class="p-2 border bg-white text-xs uppercase">uppercase (TODO MAYÚSCULAS)</div>
-                    <div class="p-2 border bg-white text-xs lowercase">LOWERCASE (todo minúsculas)</div>
-                    <div class="p-2 border bg-white text-xs capitalize">capitalize (primeras letras mayúsculas)</div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Espaciado entre líneas -->
-            <div id="slide-7" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Interlineado (Line-height)</h3>
-                <div class="concept-box">
-                    <p class="text-sm text-gray-700 leading-relaxed text-left">
-                        La propiedad <span class="font-bold">line-height</span> establece la distancia entre las líneas de un párrafo, mejorando la legibilidad.
-                    </p>
-                    <div class="code-box mt-3">
-                        style="line-height: 1.5;"
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Etiquetas de Formato HTML5 -->
-            <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etiquetas Semánticas de Texto</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
-                    <div class="p-2 border text-left text-[10px]">
-                        <strong>&lt;mark&gt;</strong>: Texto resaltado (amarillo).
-                    </div>
-                    <div class="p-2 border text-left text-[10px]">
-                        <strong>&lt;small&gt;</strong>: Texto más pequeño.
-                    </div>
-                    <div class="p-2 border text-left text-[10px]">
-                        <strong>&lt;del&gt;</strong>: Texto eliminado (tachado).
-                    </div>
-                    <div class="p-2 border text-left text-[10px]">
-                        <strong>&lt;ins&gt;</strong>: Texto insertado (subrayado).
-                    </div>
-                    <div class="p-2 border text-left text-[10px]">
-                        <strong>&lt;sub&gt;</strong>: Subíndice (H<sub>2</sub>O).
-                    </div>
-                    <div class="p-2 border text-left text-[10px]">
-                        <strong>&lt;sup&gt;</strong>: Superíndice (x<sup>2</sup>).
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Ejercicio Práctico -->
-            <div id="slide-9" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio: Perfeccionando el Estilo</h3>
-                <div class="concept-box">
-                    <p class="font-bold mb-3 text-sm">Crea un archivo HTML y aplica:</p>
-                    <ul class="list-decimal ml-8 text-xs space-y-2">
-                        <li>Un título (h1) centrado y en mayúsculas.</li>
-                        <li>Un párrafo justificado con un interlineado de 1.6.</li>
-                        <li>Usa &lt;mark&gt; para resaltar una palabra importante.</li>
-                        <li>Aplica subrayado a un enlace o frase clave.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Diapositiva 10: Importancia de la Legibilidad -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Diseño para Leer</h3>
-                <div class="concept-box">
-                    <p class="text-sm text-gray-700 leading-relaxed text-center">
-                        El formato y la alineación no son solo estética; guían el ojo del usuario a través del contenido.
-                    </p>
-                    <div class="mt-4 p-4 bg-white border border-yellow-200 rounded shadow-inner text-center">
-                        <p class="font-bold text-sm text-yellow-700">"El buen diseño es invisible hasta que falta."</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 11: Cuestionario (1-5) -->
-            <div id="slide-11" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 1)</h3>
-                <div id="quiz-container-1" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-1" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-1" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-1" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter">1</span> de 5</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Cuestionario (6-10) -->
-            <div id="slide-12" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 2)</h3>
-                <div id="quiz-container-2" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-2" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-2" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-2" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter-2">6</span> de 10</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Resumen -->
-            <div id="slide-13" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen de la Clase</h3>
-                <div class="max-w-3xl mx-auto grid grid-cols-2 gap-4">
-                    <div class="p-4 bg-blue-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-blue-700">Alineación:</p>
-                        <ul class="text-[10px] space-y-1">
-                            <li>• text-align: left, center, right, justify.</li>
-                        </ul>
-                    </div>
-                    <div class="p-4 bg-green-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-green-700">Formato:</p>
-                        <ul class="text-[10px] space-y-1">
-                            <li>• text-decoration, text-transform.</li>
-                            <li>• line-height, mark, sub/sup.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 14: Tarea -->
-<div id="slide-14" class="slide">
-    <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">
-        Asignación (Tarea)
-    </h3>
-
-    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-indigo-200 max-w-3xl">
-
-        <h4 class="font-bold text-indigo-800 mb-3">
-            📋 Propiedades CSS de texto
-        </h4>
-
-        <div class="text-left space-y-4 text-sm">
-
-            <p>
-                <strong>Actividad:</strong> En tu CV personal y en tu archivo
-                <strong>index.html</strong> del repositorio de tus tareas,
-                aplica las siguientes propiedades CSS:
-            </p>
-
-            <ol class="list-disc pl-5 space-y-2 text-gray-700">
-
-                <li>
-                    Aplicar alineación de texto:
-                    <ul class="list-disc pl-5">
-                        <li>Un título h1 centrado.</li>
-                        <li>Un título h2 alineado a la derecha.</li>
-                        <li>Un párrafo p justificado.</li>
-                    </ul>
-                </li>
-
-                <li>
-                    Crear una lista no ordenada (ul) que tenga:
-                    <ul class="list-disc pl-5">
-                        <li>Un elemento en cursiva.</li>
-                        <li>Un elemento en negrita.</li>
-                        <li>Un elemento subrayado.</li>
-                        <li>Un elemento tachado.</li>
-                    </ul>
-                </li>
-
-                <li>
-                    Aplicar a la lista un interlineado
-                    (line-height) de 1.5.
-                </li>
-
-            </ol>
-
-            <div class="pt-4 border-t flex justify-between font-bold text-indigo-900">
-                <span>Fecha: 22/03/2026</span>
-                <span>Valor: 5%</span>
-            </div>
-
         </div>
 
-    </div>
-</div>
-        <!-- Botones de navegación -->
-        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
-            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
-            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Propiedad text-align</h2>
+            <div class="concept-box">
+                <p>Define la alineación horizontal del texto dentro de un contenedor. Los valores principales son:</p>
+                <ul class="list-disc ml-8 mt-2">
+                    <li><strong>left:</strong> Por defecto, a la izquierda.</li>
+                    <li><strong>right:</strong> A la derecha.</li>
+                    <li><strong>center:</strong> Centrado.</li>
+                    <li><strong>justify:</strong> Justificado (bordes rectos).</li>
+                </ul>
+            </div>
         </div>
-        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 14</div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Decoración: text-decoration</h2>
+            <div class="concept-box border-yellow-400">
+                <p>Se usa para agregar líneas al texto. Esencial para quitar el subrayado de los enlaces (valor <code>none</code>) o tachar precios.</p>
+                <ul class="mt-4 space-y-1 font-mono text-sm">
+                    <li class="underline">underline (subrayado)</li>
+                    <li class="line-through">line-through (tachado)</li>
+                    <li class="overline font-serif">overline (línea superior)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Transformación: text-transform</h2>
+            <p>Permite controlar las mayúsculas de forma automática, sin cambiar el HTML original.</p>
+            <div class="grid grid-cols-2 gap-4 mt-6 text-sm">
+                <div class="p-4 border bg-gray-50 uppercase">uppercase (MAYÚSCULAS)</div>
+                <div class="p-4 border bg-gray-50 capitalize">capitalize (Iniciales)</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Interlineado: line-height</h2>
+            <div class="concept-box border-green-500">
+                <p>Controla el espacio vertical entre las líneas de un párrafo. Un valor común es <strong>1.5</strong> o <strong>1.6</strong> para mejorar la legibilidad en pantallas.</p>
+            </div>
+            <i class="fas fa-arrows-alt-v text-6xl text-green-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Espaciado de Letras y Palabras</h2>
+            <ul class="text-left space-y-4 max-w-xl">
+                <li><strong>letter-spacing:</strong> Espacio entre caracteres (ej: 2px).</li>
+                <li><strong>word-spacing:</strong> Espacio entre palabras completas.</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio: Estilo de Párrafo</h2>
+            <div class="concept-box">
+                <p>Escribe el código CSS para un párrafo con:</p>
+                <ul class="list-disc ml-8 mt-2 text-sm">
+                    <li>Texto centrado</li>
+                    <li>Todo en mayúsculas</li>
+                    <li>Interlineado doble (2)</li>
+                    <li>Color azul</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Sombra de Texto: text-shadow</h2>
+            <p>Agrega efectos de profundidad al texto. Sintaxis: <code>horizontal vertical difuminado color</code>.</p>
+            <div class="mt-4 p-4 border rounded font-black text-4xl" style="text-shadow: 2px 2px 5px rgba(0,0,0,0.3)">
+                TEXTO CON SOMBRA
+            </div>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Sangrías: text-indent</h2>
+            <div class="concept-box border-blue-400">
+                <p>Define el espacio vacío al inicio de la primera línea de un párrafo. Muy usado en artículos académicos o literarios.</p>
+                <p class="font-mono mt-2">p { text-indent: 50px; }</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Propiedad vertical-align</h2>
+            <p>Define la alineación vertical de elementos en línea (inline) o celdas de tabla. Valores: <code>top, middle, bottom</code>.</p>
+            <i class="fas fa-align-center text-6xl text-gray-300 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Propiedad white-space</h2>
+            <p>Controla cómo se maneja el espacio en blanco y los saltos de línea. El valor <code>nowrap</code> evita que el texto pase a la siguiente línea.</p>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Dirección: direction</h2>
+            <p>Se usa para idiomas que se leen de derecha a izquierda (RTL) como el árabe. Valor por defecto: <code>ltr</code> (izquierda a derecha).</p>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reto de Código</h2>
+            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl">
+                <p>// Combinación de propiedades de formato</p>
+                <p>selector {</p>
+                <p>&nbsp;&nbsp;text-align: justify;</p>
+                <p>&nbsp;&nbsp;text-transform: lowercase;</p>
+                <p>&nbsp;&nbsp;text-decoration: underline;</p>
+                <p>&nbsp;&nbsp;line-height: 1.8;</p>
+                <p>}</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">FORMATO PROFESIONAL</h3>
+                <p>Tomar el CV creado anteriormente y aplicar:</p>
+                <ul class="list-disc ml-6 mt-2 text-sm">
+                    <li>Títulos centrados y en mayúsculas (text-transform).</li>
+                    <li>Párrafos de descripción justificados.</li>
+                    <li>Interlineado de 1.6 en todo el documento.</li>
+                    <li>Quitar el subrayado a todos los enlaces de contacto.</li>
+                </ul>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
-            <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Diseño Web I</p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/games-adapter.js"></script>
     <script>
-        const slides = document.querySelectorAll('.slide');
-        const nextButton = document.getElementById('next-btn');
-        const prevButton = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
         let currentSlideIndex = 0;
-        let isTransitioning = false;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
         const quizQuestions = [
-            {
-                question: "¿Cuál es la etiqueta recomendada para poner texto en negrita?",
-                options: ["<strong>", "<b>", "<bold>", "<n>"],
-                correctAnswer: "<strong>"
-            },
-            {
-                question: "¿Qué etiqueta se usa para poner texto en cursiva (itálica)?",
-                options: ["<em>", "<i>", "<italic>", "<cur>"],
-                correctAnswer: "<em>"
-            },
-            {
-                question: "¿Qué propiedad de CSS se usa para justificar el texto?",
-                options: ["text-align: justify", "align-text: fill", "justify: all", "format: justify"],
-                correctAnswer: "text-align: justify"
-            },
-            {
-                question: "¿Cuál es la diferencia entre <b> y <strong>?",
-                options: ["<strong> tiene importancia semántica, <b> solo visual", "<b> es más oscuro", "<strong> es más grande", "No hay ninguna diferencia"],
-                correctAnswer: "<strong> tiene importancia semántica, <b> solo visual"
-            },
-            {
-                question: "¿Qué etiqueta se usa para subrayar texto?",
-                options: ["<u>", "<s>", "<subraya>", "<line>"],
-                correctAnswer: "<u>"
-            },
-            {
-                question: "1. ¿Qué propiedad CSS alinea el texto horizontalmente?",
-                options: ["text-style", "text-align", "font-align", "text-position"],
-                correctAnswer: "text-align"
-            },
-            {
-                question: "2. ¿Qué valor de text-align centra el texto?",
-                options: ["middle", "center", "justify", "right"],
-                correctAnswer: "center"
-            },
-            {
-                question: "3. ¿Qué propiedad CSS se usa para el interlineado?",
-                options: ["line-space", "text-space", "line-height", "text-height"],
-                correctAnswer: "line-height"
-            },
-            {
-                question: "4. ¿Qué valor de text-decoration tacha el texto?",
-                options: ["underline", "overline", "line-through", "none"],
-                correctAnswer: "line-through"
-            },
-            {
-                question: "5. ¿Qué etiqueta HTML resalta texto con un fondo?",
-                options: ["<mark>", "<highlight>", "<bg>", "<color>"],
-                correctAnswer: "<mark>"
-            },
-            {
-                question: "6. ¿Qué propiedad convierte todo a mayúsculas?",
-                options: ["text-transform", "font-caps", "text-upper", "font-style"],
-                correctAnswer: "text-transform"
-            },
-            {
-                question: "7. ¿Qué etiqueta se usa para superíndices (ej: x²)?",
-                options: ["<sub>", "<sup2>", "<sup>", "<up>"],
-                correctAnswer: "<sup>"
-            },
-            {
-                question: "8. ¿Qué valor de text-align estira el texto en los bordes?",
-                options: ["right", "left", "center", "justify"],
-                correctAnswer: "justify"
-            },
-            {
-                question: "9. ¿Cómo se aplica cursiva en CSS?",
-                options: ["font-style: italic;", "text-style: italic;", "font-weight: italic;", "text-font: italic;"],
-                correctAnswer: "font-style: italic;"
-            },
-            {
-                question: "10. ¿Qué hace 'text-transform: capitalize'?",
-                options: ["Todo en mayúsculas", "Todo en minúsculas", "Primeras letras en mayúsculas", "Nada"],
-                correctAnswer: "Primeras letras en mayúsculas"
-            }
+            { q: "¿Qué propiedad alinea el texto?", a: "B", options: ["text-style", "text-align", "font-align", "align"] },
+            { q: "¿Valor para bordes rectos?", a: "C", options: ["center", "right", "justify", "full"] },
+            { q: "Quitar subrayado a links:", a: "D", options: ["text-style: none", "decoration: off", "line: none", "text-decoration: none"] },
+            { q: "¿Qué hace capitalize?", a: "A", options: ["Iniciales Mayúsculas", "Todo Mayúsculas", "Todo Minúsculas", "Negrita"] },
+            { q: "Propiedad para interlineado:", a: "B", options: ["line-space", "line-height", "text-height", "vertical-gap"] },
+            { q: "Espacio entre caracteres:", a: "C", options: ["char-space", "text-gap", "letter-spacing", "font-width"] },
+            { q: "Línea sobre el texto:", a: "A", options: ["overline", "underline", "top-line", "strike"] },
+            { q: "Sombra de texto:", a: "D", options: ["shadow", "font-shadow", "box-shadow", "text-shadow"] },
+            { q: "Sangría de primera línea:", a: "B", options: ["padding-left", "text-indent", "margin-start", "tab-size"] },
+            { q: "Evitar saltos de línea:", a: "C", options: ["wrap: none", "break: off", "white-space: nowrap", "line: single"] }
         ];
 
-        let currentQuizPart1Index = 0;
-        let currentQuizPart2Index = 5;
-
-        function updateQuizPart1() {
-            if (currentQuizPart1Index >= 5) return;
-            const questionElement = document.getElementById('quiz-question-1');
-            const optionsElement = document.getElementById('quiz-options-1');
-            const feedbackElement = document.getElementById('quiz-feedback-1');
-            const counterElement = document.getElementById('question-counter');
-            const currentQuestion = quizQuestions[currentQuizPart1Index];
-            questionElement.textContent = currentQuestion.question;
-            optionsElement.innerHTML = '';
-            feedbackElement.textContent = '';
-            counterElement.textContent = currentQuizPart1Index + 1;
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
-                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 1);
-                optionsElement.appendChild(button);
-            });
-        }
-
-        function updateQuizPart2() {
-            if (currentQuizPart2Index >= 10) return;
-            const questionElement = document.getElementById('quiz-question-2');
-            const optionsElement = document.getElementById('quiz-options-2');
-            const feedbackElement = document.getElementById('quiz-feedback-2');
-            const counterElement = document.getElementById('question-counter-2');
-            const currentQuestion = quizQuestions[currentQuizPart2Index];
-            questionElement.textContent = currentQuestion.question;
-            optionsElement.innerHTML = '';
-            feedbackElement.textContent = '';
-            counterElement.textContent = currentQuizPart2Index + 1;
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
-                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 2);
-                optionsElement.appendChild(button);
-            });
-        }
-
-        function checkQuizAnswer(selected, correct, feedbackElement, buttons, part) {
-            Array.from(buttons).forEach(button => {
-                button.disabled = true;
-                if (button.textContent === correct) button.classList.add('correct');
-                else if (button.textContent === selected) button.classList.add('incorrect');
-            });
-            if (selected === correct) {
-                feedbackElement.textContent = '¡Correcto!';
-                feedbackElement.style.color = '#065f46';
-            } else {
-                feedbackElement.textContent = `Incorrecto. La respuesta es: ${correct}`;
-                feedbackElement.style.color = '#991b1b';
-            }
-            setTimeout(() => {
-                if (part === 1) {
-                    currentQuizPart1Index++;
-                    if (currentQuizPart1Index < 5) updateQuizPart1();
-                } else {
-                    currentQuizPart2Index++;
-                    if (currentQuizPart2Index < 10) updateQuizPart2();
-                }
-            }, 1500);
-        }
-
         function showSlide(index) {
-            if (isTransitioning || index < 0 || index >= slides.length) return;
-            isTransitioning = true;
-            const presentationContainer = document.getElementById('presentation-container');
-
-            slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
             currentSlideIndex = index;
-            if (currentSlideIndex === 10) { currentQuizPart1Index = 0; setTimeout(updateQuizPart1, 100); }
-            else if (currentSlideIndex === 11) { currentQuizPart2Index = 5; setTimeout(updateQuizPart2, 100); }
-            const activeSlide = slides[currentSlideIndex];
-            activeSlide.style.display = 'flex';
-            setTimeout(() => {
-                activeSlide.classList.add('active');
-                slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-                prevButton.disabled = currentSlideIndex === 0;
-                nextButton.disabled = currentSlideIndex === slides.length - 1;
-                isTransitioning = false;
-            }, 10);
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
-        prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
-
-        const presentationContainer = document.getElementById('presentation-container');
-        presentationContainer.addEventListener('click', (e) => {
-            if (e.target.closest('button') || e.target.closest('a')) return;
-            const rect = presentationContainer.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            if (clickX > rect.width / 2) showSlide(currentSlideIndex + 1);
-            else showSlide(currentSlideIndex - 1);
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('current-year').textContent = new Date().getFullYear();
-            showSlide(0); handleFullscreenChange();
-        });
-
-
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) || (window.innerHeight >= screen.height - 10);
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-            document.body.classList.add('is-fullscreen');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-            document.body.classList.remove('is-fullscreen');
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
+            });
         }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-    window.addEventListener('resize', handleFullscreenChange);
 
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
+        });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
+        });
 
-    // Navigation improvements (2026)
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
-    });
-
-    (function() {
-        const container = document.getElementById('presentation-container');
-        if (!container) return;
-        let tsX = 0;
-        container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-        container.addEventListener('touchend', e => {
-            let teX = e.changedTouches[0].screenX;
-            if (tsX - teX > 50) typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-            if (teX - tsX > 50) typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
-        }, {passive: true});
-    })();
-
-</script>
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('dw_alineacion', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
+    </script>
 </body>
 </html>

@@ -2,618 +2,287 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presentación: Procesadores de Texto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Procesadores de Texto - IMA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Calibri', 'Segoe UI', Arial, Helvetica, sans-serif;
-            background: linear-gradient(135deg, #e3e9f7 0%, #f7fafc 100%);
-            margin: 0;
-            min-height: 100vh;
-        }
-        .window-bar {
-            background: #2d3748;
-            color: #fff;
-            padding: 0.7rem 1.5rem;
-            font-size: 1.2rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            box-shadow: 0 2px 8px rgba(44,62,80,0.10);
-        }
-        .window-bar .dot {
-            width: 13px;
-            height: 13px;
-            border-radius: 50%;
-            margin-right: 8px;
-            display: inline-block;
-        }
-        .dot.red { background: #e53e3e; }
-        .dot.yellow { background: #ecc94b; }
-        .dot.green { background: #38a169; }
-        .window-bar .dots {
-            margin-right: 18px;
-            display: flex;
-            gap: 4px;
-        }
-        .presentation-container {
-            max-width: 900px;
-            margin: 40px auto;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(44,62,80,0.13);
-            overflow: hidden;
-            border: 1.5px solid #cbd5e1;
-        }
-        .toolbar {
-            background: #f1f5f9;
-            border-bottom: 1px solid #cbd5e1;
-            padding: 0.5rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            font-size: 1.05rem;
-            overflow-x: auto;
-        }
-        .toolbar .tool {
-            color: #4f46e5;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 0.2rem 0.9rem;
-            border-radius: 5px;
-            transition: background 0.2s, color 0.2s;
-            background: none;
-            border: none;
-            outline: none;
-        }
-        .toolbar .tool.active, .toolbar .tool:focus {
-            background: #6366f1;
-            color: #fff;
-        }
-        .toolbar .tool:hover:not(.active) {
-            background: #e0e7ff;
-        }
-        .slide {
-            display: none;
-            padding: 2.5rem 2rem 2rem 2rem;
-            min-height: 420px;
-            box-sizing: border-box;
-            position: relative;
-        }
-        .slide.active {
-            display: block;
-            animation: fadeIn 0.7s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px);}
-            to { opacity: 1; transform: translateY(0);}
-        }
-        .slide-content {
-            max-width: 700px;
-            margin: 0 auto;
-            text-align: left;
-            display: flex;
-            align-items: flex-start;
-            gap: 1.5rem;
-            position: relative;
-            padding-right: 170px;
-            padding-left: 0;
-        }
-        .slide-logo.center {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 1.2rem;
-        }
-        .slide-logo.center img {
-            width: 350px;
-            height: auto;
-            border-radius: 12px;
-            background: #f8fafc;
-            box-shadow: 0 2px 8px rgba(44,62,80,0.10);
-        }
-        .slide-logo.corner {
-            position: absolute;
-            top: -20px;
-            right: 0;
-            padding: 0.2rem;
-            z-index: 2;
-            display: flex;
-            align-items: flex-start;
-            justify-content: flex-end;
-            height: 100%;
-        }
-        .slide-logo.corner img {
-            width: 250px;
-            height: auto;
-            max-width: 100%;
-            border-radius: 10px;
-            background: #f8fafc;
-            box-shadow: 0 2px 8px rgba(44,62,80,0.10);
-            object-fit: contain;
-        }
-
-        .slide-main {
-            flex: 1;
-            width: 100%;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .slide-main img:not(.slide-logo-img) {
-            display: block;
-            margin: 1.5rem auto 1rem auto;
-            width: 350px;
-            max-width: 90%;
-            border-radius: 8px;
-            box-shadow: 0 4px 18px rgba(44,62,80,0.13);
-            background: #f8fafc;
-            order: 2;
-        }
-        .nav-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 1.5rem 0 1rem 0;
-        }
-        .nav-button {
-            background: #2563eb;
-            color: #fff;
-            border: none;
-            padding: 0.7rem 2.2rem;
-            border-radius: 7px;
-            font-size: 1.08rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.2s;
-            box-shadow: 0 2px 8px rgba(44,62,80,0.10);
-        }
-        .nav-button:disabled {
-            background: #cbd5e1;
-            color: #64748b;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        .nav-button:hover:not(:disabled) {
-            background: #1e40af;
-            transform: translateY(-2px);
-        }
-        .ruler {
-            background: repeating-linear-gradient(
-                to right,
-                #cbd5e1 0 2px,
-                transparent 2px 32px
-            );
-            height: 18px;
-            margin: 0 0 0.5rem 0;
-            border-bottom: 1px solid #cbd5e1;
-            position: relative;
-        }
-        .status-bar {
-            background: #f1f5f9;
-            color: #64748b;
-            font-size: 0.98rem;
-            padding: 0.4rem 1.5rem;
-            border-top: 1px solid #cbd5e1;
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        @media (max-width: 700px) {
-            .presentation-container { max-width: 99vw; }
-            .slide-content { flex-direction: column; gap: 0.5rem; }
-            .slide-logo.center img { width: 60px; height: auto; }
-            .slide-logo.corner img { max-width: 38px; max-height: 38px; width: auto; height: auto; }
-            .slide img:not(.slide-logo-img) { width: 98%; }
-        }
-        @media (max-width: 900px) {
-            .slide-content {
-                padding-right: 0;
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            .slide-logo.corner {
-                position: static;
-                justify-content: center;
-                height: auto;
-                margin-bottom: 1rem;
-            }
-            .slide-logo.corner img {
-                height: 80px;
-                width: auto;
-            }
-        }
-        #insertar_objetos {
-         width: 650px;
-         height: auto;
-        }
-        #colaboracion {
-         width: 650px;
-         height: auto;
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body>
-    <div class="presentation-container">
-        <div class="window-bar">
-            <span class="dots">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-            </span>
-            Ofimática I - Procesadores de Texto
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <div class="toolbar" id="toolbar">
-        </div>
-        <div class="ruler"></div>
-        <div class="slide active" id="slide-1">
-            <div class="slide-content" style="flex-direction: column; align-items: center; justify-content: center; min-height: 400px; padding-right: 0;">
-                <div class="slide-logo center">
-                    <img src="../../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="slide-logo-img">
-                </div>
-                <div class="slide-main" style="width:100%; display: flex; flex-direction: column; align-items: center;">
-                    <h2 style="text-align:center; width:100%;">Procesadores de Texto</h2>
-                    <h3 style="text-align:center; width:100%;">Ofimática I - Undécimo Grado (II BTP) Sección "A"</h3>
-                    <p style="text-align:center; width:100%;"><strong>Docente:</strong> Pablo Antonio Peña</p>
-                    <p style="text-align:center; width:100%;"><strong>Fecha:</strong> 06 de Julio de 2025</p>
-                </div>
-            </div>
-        </div>
-        <div class="slide" id="slide-2">
-            <div class="slide-content">
-                <div class="slide-logo corner">
-                    <img src="../../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="slide-logo-img">
-                </div>
-                <div class="slide-main">
-                    <h2>¿Qué es un procesador de texto?</h2>
-                    <p>Un procesador de texto es un programa que permite crear, editar, dar formato y guardar documentos de texto digital.</p>
-                    <ul>
-                        <li>Herramienta esencial en la <strong>Ofimática</strong>.</li>
-                        <li>Permite producir documentos profesionales.</li>
-                    </ul>
-                    <img src="../../imagenes/procesador_texto_intro.jpg" alt="Procesador de texto">
-                </div>
-            </div>
-        </div>
-        <div class="slide" id="slide-3">
-            <div class="slide-content">
-                <div class="slide-logo corner">
-                    <img src="../../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="slide-logo-img">
-                </div>
-                <div class="slide-main">
-                    <h2>Formato de Carácter</h2>
-                    <ul>
-                        <li>Tipo y tamaño de fuente (ej. Arial, 12pt).</li>
-                        <li>Estilos: <strong>Negrita</strong>, <em>Cursiva</em>, <u>Subrayado</u>.</li>
-                        <li>Color y efectos de texto.</li>
-                    </ul>
-                    <img src="../../imagenes/formato_caracter.jpg" alt="Formato de carácter">
-                </div>
-            </div>
-        </div>
-        <div class="slide" id="slide-4">
-            <div class="slide-content">
-                <div class="slide-logo corner">
-                    <img src="../../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="slide-logo-img">
-                </div>
-                <div class="slide-main">
-                    <h2>Formato de Párrafo</h2>
-                    <ul>
-                        <li>Alineación: izquierda, derecha, centrado, justificado.</li>
-                        <li>Interlineado y sangría.</li>
-                        <li>Viñetas y numeración.</li>
-                    </ul>
-                    <img src="../../imagenes/formato_parrafo.jpg" alt="Formato de párrafo">
-                </div>
-            </div>
-        </div>
-        <div class="slide" id="slide-5">
-            <div class="slide-content">
-                <div class="slide-logo corner">
-                    <img src="../../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="slide-logo-img">
-                </div>
-                <div class="slide-main">
-                    <h2>Formato de Página</h2>
-                    <ul>
-                        <li>Márgenes y orientación.</li>
-                        <li>Tamaño de papel.</li>
-                        <li>Encabezados y pies de página.</li>
-                    </ul>
-                    <img src="../../imagenes/formato_pagina.jpg" alt="Formato de página">
-                </div>
-            </div>
-        </div>
-        <div class="slide" id="slide-6">
-            <div class="slide-content">
-                <div class="slide-logo corner">
-                    <img src="../../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="slide-logo-img">
-                </div>
-                <div class="slide-main">
-                    <h2>Edición de Texto</h2>
-                    <ul>
-                        <li>Copiar, cortar y pegar.</li>
-                        <li>Buscar y reemplazar.</li>
-                        <li>Revisión ortográfica y gramatical.</li>
-                    </ul>
-                    <img src="../../imagenes/edicion_texto.jpg" alt="Edición de texto">
-                </div>
-            </div>
-        </div>
-        <div class="slide" id="slide-7">
-            <div class="slide-content">
-                <div class="slide-logo corner">
-                    <img src="../../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="slide-logo-img">
-                </div>
-                <div class="slide-main">
-                    <h2>Inserción de Objetos</h2>
-                    <ul>
-                        <li>Imágenes y fotografías.</li>
-                        <li>Tablas y formas.</li>
-                        <li>Gráficos e hipervínculos.</li>
-                    </ul>
-                    <img src="../../imagenes/insertar_objetos.jpg" alt="Insertar objetos" id="insertar_objetos">
-                </div>
-            </div>
-        </div>
-        <div class="slide" id="slide-8">
-            <div class="slide-content">
-                <div class="slide-logo corner">
-                    <img src="../../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="slide-logo-img">
-                </div>
-                <div class="slide-main">
-                    <h2>Herramientas Colaborativas</h2>
-                    <ul>
-                        <li>Control de cambios.</li>
-                        <li>Comentarios.</li>
-                        <li>Coautoría en tiempo real.</li>
-                    </ul>
-                    <img src="../../imagenes/colaboracion.jpg" alt="Colaboración" id="colaboracion">
-                </div>
-            </div>
-        </div>
-        <div class="slide" id="slide-9">
-            <div class="slide-content">
-                <div class="slide-logo corner">
-                    <img src="../../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="slide-logo-img">
-                </div>
-                <div class="slide-main">
-                    <h2>Ejemplos Populares</h2>
-                    <ul>
-                        <li><strong>Microsoft Word</strong>: El más usado.</li>
-                        <li><strong>Google Docs</strong>: Colaboración en la nube.</li>
-                    </ul>
-                    <div style="display: flex; gap: 1.5rem; justify-content: center;">
-                        <img src="../../imagenes/microsoft_word.png" alt="Microsoft Word" style="width:220px;">
-                        <img src="../../imagenes/google_docs.png" alt="Google Docs" style="width:220px;">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="slide" id="slide-10">
-            <div class="slide-content">
-                <div class="slide-logo corner">
-                    <img src="../../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="slide-logo-img">
-                </div>
-                <div class="slide-main">
-                    <h2>Otras Alternativas</h2>
-                    <ul>
-                        <li><strong>LibreOffice Writer</strong>: Gratuito y de código abierto.</li>
-                        <li><strong>Pages (Apple)</strong>: Para usuarios de Apple.</li>
-                    </ul>
-                    <div style="display: flex; gap: 1.5rem; justify-content: center;">
-                        <img src="../../imagenes/libreoffice_writer.png" alt="LibreOffice Writer" style="width:220px;">
-                        <img src="../../imagenes/apple_pages.png" alt="Apple Pages" style="width:220px;">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="slide" id="slide-11">
-            <div class="slide-content">
-                <div class="slide-logo corner">
-                    <img src="../../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="slide-logo-img">
-                </div>
-                <div class="slide-main">
-                    <h2>Conclusión</h2>
-                    <p>Los procesadores de texto son herramientas <strong>indispensables</strong> en la era digital.</p>
-                    <p>Su dominio permite la creación de documentos claros, bien estructurados y profesionalmente presentados.</p>
-                    <p>Habilidad crucial en cualquier ámbito académico y laboral.</p>
-                </div>
-            </div>
-        </div>
-        <div class="slide" id="slide-12">
-            <div class="slide-content">
-                <div class="slide-logo corner">
-                    <img src="../../imagenes/logo.png" alt="Logo Instituto Maria Auxiliadora" class="slide-logo-img">
-                </div>
-                <div class="slide-main">
-                    <h2>Tarea: Currículum Vitae</h2>
-                    <p>
-                        Elabora un <strong>currículum vitae profesional</strong> siguiendo estas indicaciones:
-                    </p>
-                    <ul>
-                        <li>Incluye tu <strong>información personal</strong>.</li>
-                        <li>Utiliza <strong>negritas</strong> para los encabezados de cada sección.</li>
-                        <li>Emplea <em>cursivas</em> para fechas, teléfonos y direcciones.</li>
-                        <li>Configura el documento con fuente <strong>Times New Roman</strong>, tamaño <strong>12</strong>.</li>
-                        <li>La disposición debe ser <strong>vertical</strong>, con <strong>márgenes moderados</strong> y tamaño de papel <strong>Carta</strong>.</li>
-                        <li>Inserta una <strong>fotografía profesional</strong> tuya, enmarcada con un cuadro de texto de <strong>2 puntos</strong> de grosor.</li>
-                        <li>Utiliza <strong>líneas horizontales</strong> para separar las diferentes secciones del currículum.</li>
-                    </ul>
-                    <p><strong>Fecha de entrega:</strong> 20 de julio de 2025.</p>
-                    <p><strong>Ponderación:</strong> TC 5%</p>
-                </div>
-            </div>
-        </div>
-        <div class="nav-buttons">
-            <button id="prevBtn" class="nav-button" disabled>Anterior</button>
-            <button id="nextBtn" class="nav-button">Siguiente</button>
-        </div>
-        <div class="status-bar">
-            <span>Ofimática I - II BTP A</span>
-            <span id="status-slide">Diapositiva 1 de 13</span>
-        </div>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Cargando Procesador...</p>
     </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
+    </header>
+
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Procesadores de Texto Avanzado</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Ofimática I</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Herramientas Profesionales</h2>
+            <div class="concept-box">
+                <p>Los procesadores de texto modernos van más allá de solo escribir. Permiten la gestión de documentos largos, automatización y colaboración en tiempo real.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estilos de Título</h2>
+            <div class="concept-box">
+                <p>El uso de <strong>Título 1, Título 2, etc.</strong> no es solo visual. Permite generar tablas de contenido automáticas y esquemas de navegación estructurados.</p>
+            </div>
+            <i class="fas fa-list-ol text-6xl text-blue-200 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tablas de Contenido</h2>
+            <div class="concept-box border-green-400">
+                <p>Se generan automáticamente basándose en los estilos aplicados. Ahorran horas de trabajo manual al actualizar números de página con un solo clic.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Referencias y Citas</h2>
+            <div class="concept-box border-purple-400">
+                <p>Uso de normas (ej. <strong>APA</strong>). Herramientas para insertar bibliografía y gestionar fuentes de información de forma técnica y académica.</p>
+            </div>
+            <i class="fas fa-book text-6xl text-slate-300 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Combinación de Correspondencia</h2>
+            <div class="concept-box">
+                <p>Permite crear cientos de documentos personalizados (ej. diplomas o cartas) vinculando una plantilla con una base de datos o tabla de Excel.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
+            <div class="concept-box">
+                <p>Abre Word y crea un documento con 3 páginas. En cada una coloca un título con estilo "Título 1". Al inicio, inserta una "Tabla de Contenido".</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Secciones y Saltos</h2>
+            <p>Los saltos de sección permiten tener diferentes orientaciones de página (vertical y horizontal) o diferentes encabezados en un mismo archivo.</p>
+            <i class="fas fa-file-alt text-6xl text-blue-100 mt-8"></i>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Control de Cambios</h2>
+            <div class="concept-box bg-blue-50">
+                <p>Vital para el trabajo colaborativo. Permite ver quién editó qué, aceptar o rechazar sugerencias y dejar comentarios en el margen.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Macros en Word</h2>
+            <p>Automatización de tareas repetitivas mediante pequeños programas grabados o escritos en VBA.</p>
+            <i class="fas fa-cog text-6xl text-slate-800 mt-4 animate-spin-slow"></i>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Protección de Documentos</h2>
+            <ul class="list-disc text-left space-y-2 max-w-xl mx-auto mt-4">
+                <li>Cifrado con contraseña.</li>
+                <li>Restricción de edición (solo lectura).</li>
+                <li>Firma digital para autenticidad.</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Impacto Profesional</h2>
+            <p class="italic text-2xl">"Un documento mal formateado resta credibilidad a la mejor de las ideas. El dominio de Word es una carta de presentación."</p>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Avanzado</h2>
+            <div class="code-block">
+                <p>// Macro Simple VBA (Conceptual)</p>
+                <p>Sub FormatearInforme()</p>
+                <p>&nbsp;&nbsp;With Selection.Font</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;.Name = "Arial"</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;.Size = 12</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;.Bold = True</p>
+                <p>&nbsp;&nbsp;End With</p>
+                <p>End Sub</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none">
+                <h3 class="font-black text-xl mb-4 uppercase">INFORME TÉCNICO</h3>
+                <p>Crear un documento de 5 páginas sobre "Tendencias Tecnológicas 2026" que incluya: Índice Automático, Bibliografía con Normas APA y al menos un salto de sección.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 10%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
+        </div>
+    </footer>
+
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
-        const slideTitles = [
-            "Procesadores de Texto",
-            "¿Qué es un procesador de texto?",
-            "Formato",
-            "Edición de Texto",
-            "Inserción de Objetos",
-            "Otros"
-        ];
-        const slideGroups = [
-            [0],
-            [1],
-            [2,3,4],
-            [5],
-            [6],
-            [7,8,9,10,11,12]
-        ];
-        const toolbar = document.getElementById('toolbar');
-        toolbar.innerHTML = slideTitles.map((title, idx) =>
-            `<button class="tool" data-group="${idx}">${title}</button>`
-        ).join('');
+        let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const statusSlide = document.getElementById('status-slide');
-        const toolTabs = toolbar.querySelectorAll('.tool');
-        let currentSlide = 0;
-        function scrollActiveToolIntoView() {
-            const activeTab = toolbar.querySelector('.tool.active');
-            if (activeTab) {
-                activeTab.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-            }
-        }
-        function getGroupIndexBySlide(slideIdx) {
-            for (let i = 0; i < slideGroups.length; i++) {
-                if (slideGroups[i].includes(slideIdx)) return i;
-            }
-            return 0;
-        }
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
+
+        const quizQuestions = [
+            { q: "¿Para qué sirve el estilo 'Título 1'?", a: "A", options: ["Generar índices automáticos", "Poner color rojo", "Borrar el texto", "Cerrar Word"] },
+            { q: "Norma común para referencias:", a: "C", options: ["ISO 9001", "HTML5", "APA", "RGB"] },
+            { q: "¿Qué permite la combinación de correspondencia?", a: "B", options: ["Borrar correos", "Personalizar documentos masivos", "Sumar números", "Dibujar"] },
+            { q: "Para cambiar orientación de UNA sola página usamos:", a: "D", options: ["Enter", "Espacio", "Punto", "Salto de Sección"] },
+            { q: "El control de cambios es útil para:", a: "A", options: ["Trabajo colaborativo", "Ahorrar luz", "Cambiar el mouse", "Imprimir rápido"] },
+            { q: "Las macros se escriben en:", a: "C", options: ["Python", "Java", "VBA", "C++"] },
+            { q: "¿Dónde está la Tabla de Contenido?", a: "B", options: ["Inicio", "Referencias", "Insertar", "Ayuda"] },
+            { q: "Restringir edición sirve para:", a: "D", options: ["Hacerlo más grande", "Cambiar fuente", "Poner música", "Seguridad del archivo"] },
+            { q: "APA significa:", a: "A", options: ["American Psychological Association", "Asoc. de Programas Avanzados", "Auto-Paginación", "Análisis de Párrafos"] },
+            { q: "Un documento profesional debe tener:", a: "B", options: ["Muchos colores", "Estructura jerárquica", "Solo fotos", "Texto en una sola línea"] }
+        ];
+
         function showSlide(index) {
-            slides.forEach((slide, i) => {
-                slide.classList.toggle('active', i === index);
-            });
-            const groupIdx = getGroupIndexBySlide(index);
-            toolTabs.forEach((tab, i) => {
-                tab.classList.toggle('active', i === groupIdx);
-            });
-            prevBtn.disabled = index === 0;
-            nextBtn.disabled = index === slides.length - 1;
-            statusSlide.textContent = `Diapositiva ${index + 1} de ${slides.length}`;
-            currentSlide = index;
-            scrollActiveToolIntoView();
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
-        function nextSlide() {
-            if (currentSlide < slides.length - 1) {
-                showSlide(currentSlide + 1);
-            }
-        }
-        function prevSlide() {
-            if (currentSlide > 0) {
-                showSlide(currentSlide - 1);
-            }
-        }
-        nextBtn.addEventListener('click', nextSlide);
-        prevBtn.addEventListener('click', prevSlide);
-        toolTabs.forEach((tab, groupIdx) => {
-            tab.addEventListener('click', () => {
-                showSlide(slideGroups[groupIdx][0]);
+
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
             });
+        }
+
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        window.onload = function() {
-            showSlide(currentSlide);
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
+        });
+
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('ofimatica_procesadores', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
         };
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowRight') {
-                nextSlide();
-            } else if (event.key === 'ArrowLeft') {
-                prevSlide();
-            }
-        });
-
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
-        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-        }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-    const quizData = [
-        {
-            q: "¿Qué es un procesador de texto?",
-            options: ["Programa para crear y editar documentos digitales", "Software para editar video", "Un gestor de correos", "Una base de datos de libros"],
-            a: "Programa para crear y editar documentos digitales"
-        },
-        {
-            q: "¿Cuál de estos es un ejemplo de formato de carácter?",
-            options: ["Tipo y tamaño de fuente", "Sangría de primera línea", "Alineación justificada", "Márgenes de página"],
-            a: "Tipo y tamaño de fuente"
-        },
-        {
-            q: "Negrita, Cursiva y Subrayado son ejemplos de:",
-            options: ["Estilos de texto", "Tipos de párrafo", "Formatos de página", "Objetos insertados"],
-            a: "Estilos de texto"
-        },
-        {
-            q: "¿Qué opción define la posición del texto (izquierda, derecha, centrado)?",
-            options: ["Alineación", "Interlineado", "Orientación", "Margen"],
-            a: "Alineación"
-        },
-        {
-            q: "¿Qué formato de página permite elegir entre Vertical u Horizontal?",
-            options: ["Orientación", "Encabezado", "Interlineado", "Estilo de fuente"],
-            a: "Orientación"
-        },
-        {
-            q: "La función que permite corregir palabras mal escritas se llama:",
-            options: ["Revisión ortográfica", "Buscar y reemplazar", "Coautoría", "Insertar objeto"],
-            a: "Revisión ortográfica"
-        },
-        {
-            q: "¿Cuál de estos NO es un objeto que se pueda insertar en un procesador de texto?",
-            options: ["Imágenes", "Tablas", "Hipervínculos", "Un procesador físico"],
-            a: "Un procesador físico"
-        },
-        {
-            q: "¿Qué herramienta permite que varias personas editen un documento al mismo tiempo?",
-            options: ["Herramientas colaborativas", "Formato de carácter", "Configuración de página", "Ruler (Regla)"],
-            a: "Herramientas colaborativas"
-        },
-        {
-            q: "Es el procesador de texto más usado en el mundo:",
-            options: ["Microsoft Word", "LibreOffice Writer", "Google Docs", "Apple Pages"],
-            a: "Microsoft Word"
-        },
-        {
-            q: "LibreOffice Writer es conocido por ser:",
-            options: ["Gratuito y de código abierto", "Exclusivo para Mac", "Solo funciona sin internet", "Es un programa de diseño"],
-            a: "Gratuito y de código abierto"
-        }
-    ];
-
-</script>
+    </script>
 </body>
 </html>

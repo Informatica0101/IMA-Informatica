@@ -2,1002 +2,294 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel: Gráficos y Tablas Dinámicas</title>
-    <!-- CDN de Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Fórmulas y Funciones - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Universal box-sizing para un diseño consistente */
-        * {
-            box-sizing: border-box;
-        }
-
-        /* Configuración base para asegurar el layout de la página */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Inter', sans-serif;
-            background-color: #f9fafb;
-            color: #374151;
-        }
-
-        /* Contenedor principal para la presentación */
-        main {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-        }
-
-        #presentation-container {
-            width: 98vw;
-            height: 100%;
-            max-width: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            background-color: rgb(17, 102, 155);
-            overflow: hidden;
-            position: relative;
-            transition: height 0.3s ease-in-out;
-        }
-
-        /* Escalado de fuente base para responsividad y zoom */
-        html {
-            font-size: clamp(14px, 1.5vw, 20px);
-        }
-
-        /* Animaciones para transiciones de diapositivas */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeOutUp {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeOutDown {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(20px); }
-        }
-
-        /* Estilos de las diapositivas individuales */
-        .slide {
-            display: none;
-            animation-duration: 0.5s;
-            animation-fill-mode: forwards;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-            background-color: white;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .slide.active {
-            display: flex;
-            animation-name: fadeInUp;
-            z-index: 1;
-            overflow: hidden;
-        }
-
-        .slide.leaving {
-            animation-name: fadeOutDown;
-            z-index: 20;
-            display: flex;
-            overflow: hidden;
-        }
-
-        /* Estilos de los botones de navegación */
-        .nav-button {
-            background-color: #4F46E5;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-
-        .nav-button:hover {
-            background-color: #4338CA;
-            transform: translateY(-2px);
-        }
-
-        .nav-button:active {
-            transform: translateY(0);
-            box-shadow: 2px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Estilos del menú de navegación móvil */
-        .mobile-menu {
-            transition: transform 0.3s ease-out;
-            transform: translateX(100%);
-        }
-
-        .mobile-menu.open {
-            transform: translateX(0);
-        }
-
-        /* Área de contenido dentro de cada diapositiva para gestionar su layout */
-        .slide-content-area {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            padding: 1rem;
-            overflow: hidden;
-            flex-shrink: 1;
-            min-height: 0;
-        }
-
-        /* Ajustes de tamaño de texto para escalar con el font-size de html (REDUCIDO 20%) */
-        .slide h1 { font-size: 2em; }
-        .slide h2 { font-size: 1.6em; }
-        .slide h3 { font-size: 1.2em; }
-        .slide p, .slide ul, .slide ol {
-            font-size: 0.8em;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Estilos para imágenes */
-        .slide img {
-            max-width: 70%; /* Aumentado para imágenes de contenido de Excel */
-            height: auto;
-            object-fit: contain;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        /* Estilos específicos para imágenes de contenido (no el logo de la portada) */
-        .content-image-style {
-            border-radius: 0.75rem;
-            box-shadow: none;
-            margin-top: 1rem;
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* Estilo específico para el logo de la portada */
-        .cover-logo {
-            box-shadow: none !important;
-        }
-
-        /* Nuevo estilo para el diseño con imagen a un lado */
-        .slide-content-area.side-image-layout {
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            text-align: left;
-            flex-wrap: wrap;
-        }
-
-        .side-image-layout > div {
-            flex: 1;
-            padding: 1rem;
-            min-width: 280px;
-        }
-
-        .side-image-layout img {
-            max-width: 40%;
-            height: auto;
-            margin: 0 0 0 2rem;
-            order: 2;
-        }
-
-        /* Asegurar que las listas y párrafos dentro del layout lateral no se centren */
-        .side-image-layout div p, .side-image-layout div ul, .side-image-layout div ol {
-            text-align: left;
-            margin-left: 0;
-            margin-right: auto;
-        }
-
-        /* Código de ejemplo dentro de texto */
-        .code-term {
-            font-family: 'Roboto Mono', 'Consolas', 'Courier New', monospace;
-            background-color: #e2e8f0;
-            padding: 0.1em 0.4em;
-            border-radius: 4px;
-            font-size: 0.72em;
-            color: #334155;
-        }
-
-        /* Botones de navegación para móvil */
-        .mobile-nav-buttons {
-            position: fixed;
-            bottom: 1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 1rem;
-            z-index: 50;
-            width: 90%;
-            max-width: 400px;
-            justify-content: space-between;
-        }
-
-        /* Estilos para ocultar encabezado/pie de página */
-        header, footer {
-            transition: height 0.3s ease-in-out, padding 0.3s ease-in-out, opacity 0.3s ease-in-out;
-            overflow: hidden;
-        }
-
-        .header-hidden {
-            height: 0px !important;
-            padding-top: 0px !important;
-            padding-bottom: 0px !important;
-            opacity: 0;
-        }
-
-        .footer-hidden {
-            height: 0px !important;
-            padding-top: 0px !important;
-            padding-bottom: 0px !important;
-            opacity: 0;
-        }
-
-        #main-header, #mobile-header {
-            min-height: 0;
-        }
-
-        /* Media queries para ajustes finos en pantallas más pequeñas */
-        @media (max-width: 768px) {
-            .slide h1 { font-size: 1.76em; }
-            .slide h2 { font-size: 1.44em; }
-            .slide h3 { font-size: 1.04em; }
-            .slide p, .slide ul, .slide ol { font-size: 0.76em; }
-            .slide img { max-width: 90%; }
-
-            .slide-content-area.side-image-layout {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-            .side-image-layout > div {
-                padding: 0.5rem;
-                width: 100%;
-                min-width: unset;
-            }
-            .side-image-layout img {
-                max-width: 70%;
-                margin: 1rem 0;
-                order: unset;
-            }
-            .side-image-layout div p, .side-image-layout div ul, .side-image-layout div ol {
-                text-align: center;
-                margin-left: auto;
-                margin-right: auto;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .slide h1 { font-size: 1.44em; }
-            .slide h2 { font-size: 1.28em; }
-            .slide h3 { font-size: 0.88em; }
-            .slide p, .slide ul, .slide ol { font-size: 0.68em; }
-            .slide img { max-width: 95%; }
-            .slide-content-area { padding: 0.5rem; }
-
-            .slide-content-area.side-image-layout {
-                padding: 1rem;
-            }
-            .side-image-layout img {
-                max-width: 90%;
-            }
-            .desktop-nav-buttons {
-                display: none;
-            }
-            .mobile-nav-buttons {
-                display: flex;
-            }
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body>
-
-    <!-- Navegación de Escritorio -->
-    <header id="main-header" class="bg-white shadow-md py-1 px-6 sticky top-0 z-50 hidden md:block transition-all duration-300 ease-in-out">
-        <div class="container mx-auto flex items-center justify-between">
-            <!-- Sección Izquierda: Logo -->
-            <a href="../../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
-                <img src="../../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
-            </a>
-
-            <!-- Sección Central: Área de Informática -->
-            <span class="font-extrabold text-2xl text-center flex-grow">Excel: Gráficos y Tablas Dinámicas</span>
-
-            <!-- Sección Derecha: Enlaces de Navegación de Escritorio -->
-            <nav class="flex space-x-6">
-                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300"> Regresar a Inicio</a>
-                </nav>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-    </header>
-
-    <!-- Navegación Móvil (oculta por defecto, mostrada en pantallas pequeñas) -->
-    <header id="mobile-header" class="bg-white shadow-md py-1 px-4 flex justify-between items-center md:hidden transition-all duration-300 ease-in-out">
-        <!-- Logo y Área de Informática para móvil -->
-        <a href="../../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
-            <img src="../../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
-            <span class="font-extrabold text-xl">Excel: Gráficos y Tablas Dinámicas</span>
-        </a>
-        <!-- Icono de Hamburguesa -->
-        <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-        </button>
-        <!-- Superposición del Menú Móvil -->
-        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
-        <!-- Barra Lateral del Menú Móvil -->
-        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 p-6 flex flex-col">
-            <button id="close-mobile-menu" class="self-end text-gray-600 hover:text-indigo-600 focus:outline-none mb-4">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <nav class="flex flex-col space-y-4">
-                <a href="../../index.html" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Inicio</a>
-                <!-- Desplegable Móvil para Asignaturas -->
-                <div class="relative">
-                    <button id="mobile-asignaturas-button" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300 focus:outline-none flex items-center justify-between w-full">
-                        Asignaturas
-                        <svg class="ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div id="mobile-asignaturas-dropdown" class="hidden mt-2 pl-4 flex flex-col space-y-2">
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:text-indigo-600">Informática I</a>
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Ofimática I</a>
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
-                        <a href="../../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Diseño Web II</a>
-                    </div>
-                </div>
-                <a href="../../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
-            </nav>
-        </div>
-    </header>
-
-    <main>
-        <!-- Contenedor de Diapositivas de Presentación -->
-        <div id="presentation-container">
-
-            <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <div class="slide-content-area">
-                    <img src="../../imagenes/logo.png" alt="Logo de la Institución" style="width: 300px; height: auto;" class="mx-auto mb-8 cover-logo">
-                    <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Excel: Funcionalidades Avanzadas</h1>
-                    <h3 class="text-2xl text-gray-700 mb-2">Ofimática I</h3>
-                    <p class="text-xl text-gray-600 mb-2">Duodecimo A</p>
-                    <p class="text-xl text-gray-600 mb-2">Docente: Pablo Antonio Peña</p>
-                    <p class="text-xl text-gray-600 mb-2">San Pedro Sula</p>
-                    <p class="text-xl text-gray-600">11 de agosto del 2025</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 2: Introducción -->
-            <div id="slide-2" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Más Allá de las Fórmulas Básicas</h2>
-                    <p class="text-lg text-gray-700 mb-6">Excel no es solo para realizar cálculos simples. Ofrece herramientas poderosas para <strong>analizar, resumir y presentar</strong> grandes volúmenes de datos de manera efectiva.</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li>Exploraremos cómo las <strong>fórmulas lógicas</strong> nos ayudan a tomar decisiones dentro de las hojas de cálculo.</li>
-                        <li>Analizaremos cómo los <strong>gráficos</strong> nos permiten visualizar tendencias y patrones.</li>
-                        <li>Descubriremos la versatilidad de las <strong>tablas dinámicas</strong> para resumir y analizar información.</li>
-                    </ul>
-                    <img src="../../imagenes/hoja_calculo.png" width="250" height="auto" alt="Gráficos y Tablas Dinámicas" class="content-image-style">
-                </div>
-            </div>
-
-            <!-- Diapositiva 3: Fórmulas Lógicas (Función SI/IF) -->
-            <div id="slide-3" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Fórmulas Lógicas: La Función SI (IF)</h2>
-                    <p class="text-lg text-gray-700 mb-6">La <strong>Función SI (IF)</strong> es una de las fórmulas lógicas más utilizadas en Excel. Permite realizar <strong>evaluaciones condicionales</strong>: si una condición es verdadera, realiza una acción; si es falsa, realiza otra.</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li>Automatiza decisiones basadas en criterios específicos.</li>
-                        <li>Es fundamental para la creación de reportes dinámicos y análisis complejos.</li>
-                    </ul>
-                    <img src="../../imagenes/condicionalSI.PNG" width="350" height="auto" alt="Función SI Lógica" class="content-image-style">
-                </div>
-            </div>
-
-            <!-- Diapositiva 4: Estructura de la Función SI (IF) -->
-            <div id="slide-4" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Estructura de la Función SI (IF)</h2>
-                    <p class="text-lg text-gray-700 mb-6">La sintaxis básica de la función SI es simple y consta de tres argumentos:</p>
-                    <p class="text-xl font-bold text-gray-800 mb-4">=SI(prueba_lógica; valor_si_verdadero; valor_si_falso)</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li><strong>prueba_lógica:</strong> Es la condición que se evalúa. Debe ser una expresión que resulte en VERDADERO o FALSO (ej., A1>10, B2="Activo").</li>
-                        <li><strong>valor_si_verdadero:</strong> Es lo que la función devuelve si la prueba_lógica es VERDADERO. Puede ser un número, texto, otra fórmula o una referencia a celda.</li>
-                        <li><strong>valor_si_falso:</strong> Es lo que la función devuelve si la prueba_lógica es FALSO. Similar al argumento anterior.</li>
-                    </ul>
-                    <img src="../../imagenes/sintaxisSI.png" width="350" height="auto" alt="Sintaxis Función SI Excel" class="content-image-style">
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Ejemplos de Función SI (IF) -->
-            <div id="slide-5" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Ejemplos Prácticos de la Función SI (IF)</h2>
-                    <p class="text-lg text-gray-700 mb-6">La función SI permite diversas aplicaciones, desde simples verificaciones hasta lógica anidada.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl text-left mt-6">
-                        <div class="bg-blue-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold text-blue-700 mb-3"><strong>Ejemplo Simple: Aprobado/Reprobado</strong></h3>
-                            <p class="text-base text-gray-700">Si la calificación (celda B2) es mayor o igual a 70, mostrar "Aprobado", de lo contrario "Reprobado".</p>
-                            <p class="text-sm font-mono bg-gray-100 p-2 rounded mt-2">=SI(B2>=70; "Aprobado"; "Reprobado")</p>
-                        </div>
-                        <div class="bg-green-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold text-green-700 mb-3"><strong>Ejemplo con Valores Numéricos: Bonificación</strong></h3>
-                            <p class="text-base text-gray-700">Si las ventas (celda C2) superan 1000, dar una bonificación de 50; de lo contrario, 0.</p>
-                            <p class="text-sm font-mono bg-gray-100 p-2 rounded mt-2">=SI(C2>1000; 50; 0)</p>
-                        </div>
-                        <div class="bg-purple-50 p-6 rounded-lg shadow-md col-span-2">
-                            <h3 class="text-xl font-semibold text-purple-700 mb-3"><strong>Función SI Anidada: Sistema de Calificaciones (A, B, C)</strong></h3>
-                            <p class="text-base text-gray-700">Asignar una letra (A, B, C) según el puntaje (D2): A si >=90, B si >=80, C si >=70, "D" en otro caso.</p>
-                            <p class="text-sm font-mono bg-gray-100 p-2 rounded mt-2">=SI(D2>=90; "A"; SI(D2>=80; "B"; SI(D2>=70; "C"; "D")))</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6 (Original 3): Importancia de los Gráficos -->
-            <div id="slide-6" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Visualización de Datos con Gráficos</h2>
-                    <p class="text-lg text-gray-700 mb-6">Los gráficos transforman datos complejos en representaciones visuales <strong>fáciles de entender</strong>. Son esenciales para identificar <strong>tendencias, patrones y anomalías</strong> rápidamente, lo que facilita la toma de decisiones.</p>
-                    <img src="../../imagenes/graficos_excel.png" width="350" height="auto" alt="Importancia de los Gráficos" class="content-image-style">
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li>Simplifican la interpretación de grandes conjuntos de datos.</li>
-                        <li>Permiten comunicar información de forma más impactante.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7 (Original 4): Tipos de Gráficos Comunes -->
-<div id="slide-7" class="slide">
-  <div class="slide-content-area">
-    <h2 class="text-indigo-400 font-bold mb-2">Tipos de Gráficos en Excel</h2>
-    <p class="text-lg text-gray-700 mb-2">
-      La elección del tipo de gráfico depende del mensaje que se desea transmitir y del tipo de datos.
-    </p>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-5xl text-left mt-2">
-      <div class="bg-blue-50 p-2 rounded-lg shadow-md flex flex-col items-center">
-        <h3 class="text-xl font-semibold text-blue-700 mb-1 text-center">
-          <strong>Gráfico de Columnas/Barras</strong></h3>
-        <p class="text-base text-gray-700 mb-1 text-center">
-          Comparación de valores entre diferentes categorías.</p>
-        <img src="../../imagenes/grafico_columnas.png" alt="Gráfico de Columnas"
-          class="w-full max-w-[300px] h-auto" style="display: block;" />
-      </div>
-      <div class="bg-green-50 p-2 rounded-lg shadow-md flex flex-col items-center">
-        <h3 class="text-xl font-semibold text-green-700 mb-1 text-center">
-          <strong>Gráfico Circular (Pastel)</strong></h3>
-        <p class="text-base text-gray-700 mb-1 text-center">
-          Muestra proporciones de un total.</p>
-        <img src="../../imagenes/grafico_circular.png" alt="Gráfico Circular"
-          class="w-full max-w-[300px] h-auto" style="display: block;" />
-      </div>
-      <div class="bg-purple-50 p-2 rounded-lg shadow-md flex flex-col items-center">
-        <h3 class="text-xl font-semibold text-purple-700 mb-1 text-center">
-          <strong>Gráfico de Líneas</strong>
-        </h3>
-        <p class="text-base text-gray-700 mb-1 text-center">
-          Tendencias de datos a lo largo del tiempo.
-        </p>
-        <img src="../../imagenes/grafico_linea.png" alt="Gráfico de Líneas"
-          class="w-full max-w-[250px] h-auto" style="display: block;" />
-      </div>
-
-      <div class="bg-red-50 p-2 rounded-lg shadow-md flex flex-col items-center">
-        <h3 class="text-xl font-semibold text-red-700 mb-1 text-center">
-          <strong>Gráfico de Dispersión</strong>
-        </h3>
-        <p class="text-base text-gray-700 mb-1 text-center">
-          Relación entre dos conjuntos de valores numéricos.
-        </p>
-        <img src="../../imagenes/grafico_dispersion.png" alt="Gráfico de Dispersión"
-          class="w-full max-w-[250px] h-auto" style="display: block;" />
-      </div>
-
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Calculando resultados...</p>
     </div>
-  </div>
-</div>
 
-
-            <!-- Diapositiva 8 (Original 5): Insertar un Gráfico -->
-            <div id="slide-8" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Pasos para Insertar un Gráfico</h2>
-                    <p class="text-lg text-gray-700 mb-6">El proceso es intuitivo y se realiza a través de la cinta de opciones de Excel.</p>
-                    <ol class="list-decimal list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li><strong>Seleccionar datos:</strong> Resalte el rango de celdas que contiene la información para su gráfico (incluyendo encabezados si los hay).</li>
-                        <li><strong>Ir a la pestaña Insertar:</strong> En la cinta de opciones de Excel, haga clic en la pestaña "Insertar".</li>
-                        <li><strong>Elegir tipo de gráfico:</strong> En el grupo "Gráficos", seleccione el tipo de gráfico deseado (ej., Columnas, Líneas, Circular). Puede usar "Gráficos recomendados" para sugerencias.</li>
-                        <li><strong>Personalizar:</strong> Una vez insertado, puede cambiar el título, etiquetas, colores y diseño desde las herramientas de diseño de gráfico.</li>
-                    </ol>
-                    <img src="../../imagenes/insertar_graficos.png" alt="Insertar Gráfico Excel" class="content-image-style">
-                </div>
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
             </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
+    </header>
 
-            <!-- Diapositiva 9 (Original 6): Elementos de un Gráfico -->
-            <div id="slide-9" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Componentes Clave de un Gráfico</h2>
-                    <p class="text-lg text-gray-700 mb-6">Conocer las partes de un gráfico facilita su creación y edición.</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li><strong>Título del gráfico:</strong> Describe el propósito del gráfico.</li>
-                        <li><strong>Ejes:</strong> Eje horizontal (categorías) y eje vertical (valores).</li>
-                        <li><strong>Series de datos:</strong> Los datos representados visualmente (barras, líneas, etc.).</li>
-                        <li><strong>Leyenda:</strong> Identifica qué serie de datos representa cada color o patrón.</li>
-                        <li><strong>Etiquetas de datos:</strong> Muestran los valores exactos sobre o junto a los puntos de datos.</li>
-                        <li><strong>Tabla de datos:</strong> Muestra los datos de origen directamente debajo del gráfico.</li>
-                    </ul>
-                    <img src="../../imagenes/grafico_partes.png" width="350" height="auto" alt="Elementos de un Gráfico" class="content-image-style">
-                </div>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Fórmulas y Funciones en Excel</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Ofimática I</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
+        </div>
 
-            <!-- Diapositiva 10 (Original 7): Tablas Dinámicas - ¿Qué son? -->
-            <div id="slide-10" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Tablas Dinámicas: Resumen de Datos</h2>
-                    <p class="text-lg text-gray-700 mb-6">Una <strong>Tabla Dinámica (PivotTable)</strong> es una herramienta interactiva que permite <strong>resumir, analizar, explorar y presentar</strong> datos grandes y complejos de forma flexible.</p>
-                    <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li>Permiten ver patrones y tendencias en datos que de otra forma serían difíciles de analizar.</li>
-                        <li>Son "dinámicas" porque puedes reorganizar los datos rápidamente arrastrando campos.</li>
-                    </ul>
-                    <img src="../../imagenes/tabla_dinamica_intro.png" width="550" height="auto" alt="Tabla Dinámica Introducción" class="content-image-style">
-                </div>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica Matemática</h2>
+            <div class="concept-box">
+                <p>Excel permite automatizar cualquier cálculo matemático, financiero o lógico. La clave es entender cómo construir expresiones correctas.</p>
             </div>
+        </div>
 
-            <!-- Diapositiva 11 (Original 8): Componentes de una Tabla Dinámica -->
-            <div id="slide-11" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Campos de una Tabla Dinámica</h2>
-                    <p class="text-lg text-gray-700 mb-6">Una tabla dinámica se organiza en cuatro áreas principales, controladas por los campos que arrastras desde la lista de campos.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl text-left mt-6">
-                        <div class="bg-blue-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold text-blue-700 mb-3"><strong>Filtros de Informe</strong></h3>
-                            <p class="text-base text-gray-700">Permiten filtrar la vista general de la tabla.</p>
-                        </div>
-                        <div class="bg-green-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold text-green-700 mb-3"><strong>Etiquetas de Fila</strong></h3>
-                            <p class="text-base text-gray-700">Los campos que se muestran en las filas de la tabla.</p>
-                        </div>
-                        <div class="bg-purple-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold text-purple-700 mb-3"><strong>Etiquetas de Columna</strong></h3>
-                            <p class="text-base text-gray-700">Los campos que se muestran en las columnas de la tabla.</p>
-                        </div>
-                        <div class="bg-red-50 p-6 rounded-lg shadow-md">
-                            <h3 class="text-xl font-semibold text-red-700 mb-3"><strong>Valores</strong></h3>
-                            <p class="text-base text-gray-700">Contienen los datos numéricos que se agregan (suman, cuentan, promedian, etc.).</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Operadores Aritméticos</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
+                <div class="p-4 border rounded"><strong>^</strong> (Potencia)</div>
+                <div class="p-4 border rounded"><strong>* /</strong> (Mult / Div)</div>
+                <div class="p-4 border rounded"><strong>+ -</strong> (Suma / Resta)</div>
+                <div class="p-4 border rounded"><strong>%</strong> (Porcentaje)</div>
             </div>
+        </div>
 
-            <!-- Diapositiva 12 (Original 9): Crear una Tabla Dinámica -->
-            <div id="slide-12" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-600 font-bold mb-4">Pasos para Crear una Tabla Dinámica</h2>
-                    <p class="text-lg text-gray-700 mb-6">Un proceso sencillo que transforma un rango de datos en un resumen poderoso.</p>
-                    <ol class="list-decimal list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                        <li><strong>Seleccionar datos:</strong> Resalte el rango de celdas que desea analizar.</li>
-                        <li><strong>Ir a la pestaña Insertar:</strong> En la cinta de opciones de Excel, haga clic en "Insertar".</li>
-                        <li><strong>Seleccionar Tabla Dinámica:</strong> En el grupo "Tablas", haga clic en "Tabla Dinámica" o "Tabla Dinámica Recomendadas".</li>
-                        <li><strong>Configurar rango y ubicación:</strong> Verifique que el rango de datos sea correcto y elija si desea la tabla en una "Nueva hoja de cálculo" o en una "Hoja de cálculo existente".</li>
-                        <li><strong>Arrastrar campos:</strong> En el panel "Campos de tabla dinámica", arrastre los campos a las áreas de Filtros, Columnas, Filas y Valores según su análisis.</li>
-                    </ol>
-                    <img src="../../imagenes/tabla_dinamica_insertar.png" alt="Crear Tabla Dinámica Excel" class="content-image-style">
-                </div>
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Referencias de Celda</h2>
+            <div class="concept-box">
+                <p>En lugar de usar números fijos (2+2), usamos el nombre de la celda (A1+B1). Si el dato en A1 cambia, el resultado se actualiza automáticamente.</p>
             </div>
+            <i class="fas fa-sync-alt text-6xl text-blue-200 mt-4"></i>
+        </div>
 
-            <!-- Diapositiva 13 (Original 10): Ejercicio Práctico: Gráficos -->
-            <div id="slide-13" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-700 font-extrabold mb-4">Ejercicio Práctico: Gráficos 📊</h2>
-                    <div class="bg-blue-50 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
-                        <p class="text-xl font-semibold text-blue-800 mb-4">Escenario: Ventas de Productos Mensuales</p>
-                        <ol class="list-decimal list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-md">
-                            <li>Cree una tabla en Excel con dos columnas: "Mes" (Enero, Febrero, Marzo...) y "Ventas" (valores numéricos aleatorios para cada mes).</li>
-                            <li>Seleccione los datos y <strong>cree un gráfico de columnas</strong> que muestre las ventas por mes.</li>
-                            <li><strong>Personalice el gráfico:</strong> Añada un título significativo (ej., "Ventas Mensuales"), etiquetas de datos y cambie el color de las columnas a su preferencia.</li>
-                            <li>Cree un segundo gráfico, esta vez un <strong>gráfico de líneas</strong>, para mostrar la tendencia de las ventas a lo largo del tiempo.</li>
-                        </ol>
-                    </div>
-                </div>
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Función CONTAR.SI</h2>
+            <div class="concept-box border-green-400">
+                <p>Cuenta las celdas dentro de un rango que cumplen con un criterio específico.</p>
+                <p class="mt-2 font-mono text-sm">=CONTAR.SI(A1:A10, ">70")</p>
             </div>
+            <i class="fas fa-list-ol text-6xl text-green-300 mt-4"></i>
+        </div>
 
-            <!-- Diapositiva 14 (Original 11): Ejercicio Práctico: Tablas Dinámicas -->
-            <div id="slide-14" class="slide">
-                <div class="slide-content-area">
-                    <h2 class="text-indigo-700 font-extrabold mb-4">Ejercicio Práctico: Tablas Dinámicas 📈</h2>
-                    <div class="bg-green-50 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
-                        <p class="text-xl font-semibold text-green-800 mb-4">Escenario: Análisis de Pedidos de Clientes</p>
-                        <ol class="list-decimal list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-md">
-                            <li>Cree una tabla en Excel con las siguientes columnas y al menos 20 filas de datos de ejemplo: "Cliente" (Cliente A, B, C), "Producto" (Laptop, Teclado, Monitor, Mouse), "Región" (Norte, Sur, Este, Oeste), "Cantidad" (números aleatorios), "Precio Unitario" (números aleatorios).</li>
-                            <li>Inserte una <strong>Tabla Dinámica</strong> basada en estos datos en una nueva hoja.</li>
-                            <li>Configure la tabla dinámica para mostrar:
-                                <ul>
-                                    <li><strong>Filas:</strong> Cliente</li>
-                                    <li><strong>Columnas:</strong> Región</li>
-                                    <li><strong>Valores:</strong> Suma de Cantidad</li>
-                                </ul>
-                            </li>
-                            <li><strong>Experimente:</strong> Mueva "Producto" a los Filtros de Informe y filtre por un producto específico. Mueva "Producto" a las Filas para ver un desglose por cliente y producto.</li>
-                        </ol>
-                    </div>
-                </div>
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Función SI.ERROR</h2>
+            <div class="concept-box border-red-400">
+                <p>Evita que la hoja muestre errores feos como #DIV/0! o #N/A, permitiendo mostrar un mensaje personalizado en su lugar.</p>
             </div>
+        </div>
 
-            <!-- Botones de Navegación de Escritorio (ocultos en móvil) -->
-            <div class="flex justify-between w-full p-4 mt-auto desktop-nav-buttons">
-                <button id="prev-slide-desktop" class="nav-button flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    Anterior
-                </button>
-                <span id="slide-counter" class="text-gray-600 font-medium text-lg flex items-center">1 / 14</span>
-                <button id="next-slide-desktop" class="nav-button flex items-center">
-                    Siguiente
-                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </button>
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
+            <div class="concept-box">
+                <p>Escribe en tu cuaderno una fórmula que calcule el 15% de impuesto sobre un valor que se encuentra en la celda C4.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Funciones de Texto</h2>
+            <p>Excel también manipula palabras:</p>
+            <ul class="list-disc text-left space-y-2 max-w-xl mx-auto mt-4 text-sm">
+                <li><strong>=MAYUSC():</strong> Todo a mayúsculas.</li>
+                <li><strong>=CONCATENAR():</strong> Une varios textos en uno solo.</li>
+                <li><strong>=LARGO():</strong> Cuenta los caracteres.</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Funciones de Fecha</h2>
+            <div class="concept-box bg-blue-50">
+                <p><strong>=HOY():</strong> Muestra la fecha actual del sistema.</p>
+                <p><strong>=DIAS():</strong> Calcula cuántos días han pasado entre dos fechas.</p>
+            </div>
+            <i class="far fa-calendar-alt text-6xl text-blue-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Errores Comunes</h2>
+            <div class="grid grid-cols-3 gap-4 mt-8 text-xs font-bold">
+                <div class="p-2 border bg-red-50">#VALOR! (Tipo incorrecto)</div>
+                <div class="p-2 border bg-red-50">#REF! (Celda borrada)</div>
+                <div class="p-2 border bg-red-50">#NOMBRE? (Mal escrita)</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Seguridad Lógica</h2>
+            <p>Proteger las celdas que contienen fórmulas importantes para evitar que otros usuarios las borren por accidente.</p>
+            <i class="fas fa-lock text-6xl text-slate-300 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Potencia de Cálculo</h2>
+            <p class="italic text-2xl">"Las fórmulas son el alma de la hoja de cálculo. Sin ellas, Excel es solo una máquina de escribir cuadriculada."</p>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Avanzado</h2>
+            <div class="code-block">
+                <p>// Lógica de Concatenación</p>
+                <p>LET nombre = "Pablo"</p>
+                <p>LET apellido = "Peña"</p>
+                <p>LET completo = nombre & " " & apellido</p>
+                <p>PRINT completo // "Pablo Peña"</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none">
+                <h3 class="font-black text-xl mb-4 uppercase">PRÁCTICA DE FÓRMULAS</h3>
+                <p>Realizar una tabla de ventas que incluya: Producto, Precio, Cantidad, Subtotal, ISV (15%) y Total. Usar referencias de celda para todos los cálculos.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
             </div>
         </div>
     </main>
 
-    <!-- Botones de Navegación Fijos para Móvil -->
-    <div class="mobile-nav-buttons md:hidden">
-        <button id="prev-slide-mobile" class="nav-button flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-            Anterior
-        </button>
-        <button id="next-slide-mobile" class="nav-button flex items-center">
-            Siguiente
-            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-        </button>
-    </div>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
 
-
-    <!-- Pie de Página -->
-    <footer id="main-footer" class="bg-gray-900 text-gray-300 py-2 px-6 transition-all duration-300 ease-in-out">
-        <div class="container mx-auto text-center text-sm">
-            <p class="flex items-center justify-center">
-                &copy;&nbsp;<span id="current-year"></span>&nbsp;Instituto María Auxiliadora - Área de InformáticaSEMED. Todos los derechos reservados.
-                <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" style="width: 50px; height: auto; margin-left: 0.5rem;">
-            </p>
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
-        // --- Lógica del Menú Móvil ---
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-        const mobileAsignaturasButton = document.getElementById('mobile-asignaturas-button');
-        const mobileAsignaturasDropdown = document.getElementById('mobile-asignaturas-dropdown');
-
-        function toggleMobileMenu() {
-            mobileMenu.classList.toggle('open');
-            mobileMenuOverlay.classList.toggle('hidden');
-        }
-
-        mobileMenuButton.addEventListener('click', toggleMobileMenu);
-        closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
-        mobileMenuOverlay.addEventListener('click', toggleMobileMenu); // Cierra al hacer clic fuera
-
-        mobileAsignaturasButton.addEventListener('click', () => {
-            mobileAsignaturasDropdown.classList.toggle('hidden');
-            // Gira el icono de la flecha
-            mobileAsignaturasButton.querySelector('svg').classList.toggle('rotate-180');
-        });
-
-        // --- Lógica de la Presentación ---
-        const slides = document.querySelectorAll('.slide');
-        const prevButtonDesktop = document.getElementById('prev-slide-desktop'); // Botón de escritorio
-        const nextButtonDesktop = document.getElementById('next-slide-desktop'); // Botón de escritorio
-        const prevButtonMobile = document.getElementById('prev-slide-mobile');   // Nuevo botón móvil
-        const nextButtonMobile = document.getElementById('next-slide-mobile');   // Nuevo botón móvil
-        const slideCounter = document.getElementById('slide-counter');
         let currentSlideIndex = 0;
-        let isAnimating = false; // Flag para prevenir múltiples animaciones a la vez
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
-        function updateSlideCounter() {
-            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-        }
+        const quizQuestions = [
+            { q: "¿Símbolo para concatenar (unir)?", a: "C", options: ["+", "-", "&", "/"] },
+            { q: "Función para fecha de hoy:", a: "B", options: ["=FECHA", "=HOY", "=DATE", "=AHORA"] },
+            { q: "¿Qué significa #DIV/0!?", a: "A", options: ["División entre cero", "Valor borrado", "Falta nombre", "Error de red"] },
+            { q: "Función para contar con criterio:", a: "D", options: ["=CONTAR", "=SUMA", "=MAX", "=CONTAR.SI"] },
+            { q: "Símbolo para potencias:", a: "B", options: ["*", "^", "%", "$"] },
+            { q: "Para unir celdas de texto:", a: "C", options: ["SUMAR", "RESTAR", "CONCATENAR", "DIVIDIR"] },
+            { q: "¿Qué hace =MAYUSC()?", a: "A", options: ["Todo a mayúsculas", "Todo a minúsculas", "Borra el texto", "Pone negrita"] },
+            { q: "Error por celda inexistente:", a: "C", options: ["#VALOR!", "#NOMBRE?", "#REF!", "#N/A"] },
+            { q: "Símbolo para porcentaje:", a: "D", options: ["&", "#", "$", "%"] },
+            { q: "Función para ocultar errores:", a: "B", options: ["=SI", "=SI.ERROR", "=BUSCAR", "=MAX"] }
+        ];
 
-        function showSlide(index, direction = 'next') {
-            // Previene la navegación si una animación ya está en curso
-            if (isAnimating) {
-                return;
-            }
-
-            // Asegura que el índice esté dentro de los límites
-            if (index < 0 || index >= slides.length || index === currentSlideIndex) {
-                // No hace nada si el índice es inválido o es la diapositiva actual
-                return;
-            }
-
-            isAnimating = true; // Establece la bandera de animación
-
-            const currentActiveSlide = document.querySelector('.slide.active');
-            const newSlideElement = slides[index];
-
-            if (currentActiveSlide) {
-                currentActiveSlide.classList.add('leaving');
-                currentActiveSlide.style.animationName = (direction === 'next' ? 'fadeOutDown' : 'fadeOutUp');
-                currentActiveSlide.style.zIndex = '20'; // Asegura que la diapositiva saliente esté encima
-
-                currentActiveSlide.addEventListener('animationend', function handler() {
-                    currentActiveSlide.classList.remove('active', 'leaving');
-                    currentActiveSlide.style.display = 'none';
-                    currentActiveSlide.style.animationName = '';
-                    currentActiveSlide.style.zIndex = '0'; // Restablece el z-index
-                    currentActiveSlide.removeEventListener('animationend', handler);
-                    // IMPORTANTE: NO restablecer isAnimating aquí, se hace al final de la entrada
-                }, { once: true });
-            }
-
-            // Anima la nueva diapositiva para que entre
-            // Establece la visualización en flex inmediatamente, pero la animación se encargará de la opacidad/transformación
-            newSlideElement.style.display = 'flex';
-            newSlideElement.classList.add('active');
-            newSlideElement.style.animationName = (direction === 'next' ? 'fadeInUp' : 'fadeInDown');
-            newSlideElement.style.zIndex = '1';
-
-            // Escucha la animación de entrada para restablecer isAnimating
-            newSlideElement.addEventListener('animationend', function handler() {
-                isAnimating = false; // Restablece la bandera cuando la nueva diapositiva ha terminado de entrar
-                newSlideElement.removeEventListener('animationend', handler);
-            }, { once: true });
-
-
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
             currentSlideIndex = index;
-            updateSlideCounter();
-            updateNavigationButtons();
-            // Ya no es necesario renderCodeEditors aquí ya que no hay bloques de código dinámicos
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-
-        function updateNavigationButtons() {
-            // Actualiza los botones de escritorio
-            prevButtonDesktop.disabled = currentSlideIndex === 0;
-            nextButtonDesktop.disabled = currentSlideIndex === slides.length - 1;
-            // Actualiza los botones móviles
-            prevButtonMobile.disabled = currentSlideIndex === 0;
-            nextButtonMobile.disabled = currentSlideIndex === slides.length - 1;
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
+            });
         }
 
-        function nextSlide() {
-            if (currentSlideIndex < slides.length - 1) {
-                showSlide(currentSlideIndex + 1, 'next');
-            }
-        }
-
-        function prevSlide() {
-            if (currentSlideIndex > 0) {
-                showSlide(currentSlideIndex - 1, 'prev');
-            }
-        }
-
-        // Oyentes de Eventos para Botones de Navegación (ahora separados para desktop/mobile)
-        prevButtonDesktop.addEventListener('click', prevSlide);
-        nextButtonDesktop.addEventListener('click', nextSlide);
-
-        // Ocultar encabezado y pie de página al navegar con botones móviles
-        prevButtonMobile.addEventListener('click', () => {
-            prevSlide();
-            toggleHeaderFooter(false);
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        nextButtonMobile.addEventListener('click', () => {
-            nextSlide();
-            toggleHeaderFooter(false);
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
         });
 
-        // Navegación con Teclado
-        document.addEventListener('keydown', (event) => {
-            // Tecla F11
-            if (event.key === 'F11') {
-                event.preventDefault(); // Evita el comportamiento predeterminado de alternar pantalla completa
-                if (document.fullscreenElement) {
-                    document.exitFullscreen();
-                } else {
-                    document.documentElement.requestFullscreen();
-                }
-            } else if (event.key === 'ArrowRight') {
-                nextSlide();
-                // Si no está en pantalla completa, oculta el header/footer al navegar con flechas
-                if (!document.fullscreenElement) {
-                    toggleHeaderFooter(false);
-                }
-            } else if (event.key === 'ArrowLeft') {
-                prevSlide();
-                // Si no está en pantalla completa, oculta el header/footer al navegar con flechas
-                if (!document.fullscreenElement) {
-                    toggleHeaderFooter(false);
-                }
-            } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                if (!document.fullscreenElement) {
-                    toggleHeaderFooter(event.key === 'ArrowUp');
-                }
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('ofimatica_formulas_funciones', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
             }
-        });
-
-        // --- Lógica de Visibilidad del Encabezado/Pie de Página y Redimensionamiento ---
-        const mainHeader = document.getElementById('main-header');
-        const mobileHeader = document.getElementById('mobile-header');
-        const mainFooter = document.getElementById('main-footer');
-        let isHeaderFooterVisible = true;
-
-        function toggleHeaderFooter(show) {
-            if (show) {
-                // Mostrar encabezados y pie de página
-                mainHeader.classList.remove('header-hidden');
-                mobileHeader.classList.remove('header-hidden');
-                mainFooter.classList.remove('footer-hidden');
-                isHeaderFooterVisible = true;
-            } else {
-                // Ocultar encabezados y pie de página
-                mainHeader.classList.add('header-hidden');
-                mobileHeader.classList.add('header-hidden');
-                mainFooter.classList.add('footer-hidden');
-                isHeaderFooterVisible = false;
-            }
-        }
-
-        window.addEventListener('resize', () => {
-             // Esta función puede estar vacía o realizar otras acciones si es necesario,
-             // ya que el layout principal se maneja con flexbox y height: 100vh.
-             // Pero es buena práctica mantenerla si hay lógica de redimensionamiento futuro.
-        });
-
-        document.addEventListener('fullscreenchange', () => {
-            if (document.fullscreenElement) {
-                toggleHeaderFooter(false); // Oculta encabezado/pie de página
-            } else {
-                toggleHeaderFooter(true);  // Muestra encabezado/pie de página
-            }
-        });
-
-        let lastScrollY = window.scrollY;
-        window.addEventListener('scroll', () => {
-            if (!document.fullscreenElement) {
-                const currentScrollY = window.scrollY;
-                if (currentScrollY < lastScrollY) {
-                    toggleHeaderFooter(true);
-                }
-                lastScrollY = currentScrollY;
-            }
-        });
-
-        // --- Inicialización en DOMContentLoaded ---
-        document.addEventListener('DOMContentLoaded', () => { handleFullscreenChange();
-            // Establece el año actual en el pie de página
-            const currentYearSpan = document.getElementById('current-year');
-            if (currentYearSpan) {
-                currentYearSpan.textContent = new Date().getFullYear();
-            }
-
-            // Inicializa la primera diapositiva
-            slides[0].classList.add('active');
-            slides[0].style.display = 'flex';
-            slides[0].style.animationName = '';
-
-            currentSlideIndex = 0;
-            updateSlideCounter();
-            updateNavigationButtons();
-        });
-
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
-        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-        }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-    const quizData = [
-        {
-            q: "¿Qué permite realizar la Función SI (IF) en Excel?",
-            options: ["Evaluaciones condicionales", "Solo sumas automáticas", "Cambiar el color de la hoja", "Borrar datos duplicados"],
-            a: "Evaluaciones condicionales"
-        },
-        {
-            q: "¿Cuál es la estructura correcta de la función SI?",
-            options: ["=SI(prueba_lógica; valor_verdadero; valor_falso)", "=SI(valor; condición)", "=IF(prueba; error)", "=SI(condición)"],
-            a: "=SI(prueba_lógica; valor_verdadero; valor_falso)"
-        },
-        {
-            q: "Si queremos evaluar varias condiciones una dentro de otra, usamos una función SI __________.",
-            options: ["Anidada", "Simple", "Circular", "Inversa"],
-            a: "Anidada"
-        },
-        {
-            q: "¿Cuál es el principal beneficio de los gráficos en Excel?",
-            options: ["Visualizar tendencias y patrones rápidamente", "Hacer la hoja más pesada", "Ocultar errores de cálculo", "No tienen beneficio"],
-            a: "Visualizar tendencias y patrones rápidamente"
-        },
-        {
-            q: "¿Qué tipo de gráfico es ideal para mostrar proporciones de un total?",
-            options: ["Gráfico Circular (Pastel)", "Gráfico de Líneas", "Gráfico de Dispersión", "Gráfico de Barras"],
-            a: "Gráfico Circular (Pastel)"
-        },
-        {
-            q: "¿Qué gráfico usarías para mostrar tendencias a lo largo del tiempo?",
-            options: ["Gráfico de Líneas", "Gráfico Circular", "Gráfico de Áreas", "Gráfico de Radar"],
-            a: "Gráfico de Líneas"
-        },
-        {
-            q: "¿Qué es una Tabla Dinámica?",
-            options: ["Herramienta interactiva para resumir y analizar grandes datos", "Una tabla que se mueve sola por la pantalla", "Un tipo de gráfico animado", "Una fórmula para sumar celdas"],
-            a: "Herramienta interactiva para resumir y analizar grandes datos"
-        },
-        {
-            q: "¿En qué área de la tabla dinámica se colocan los datos numéricos que se quieren sumar o promediar?",
-            options: ["Valores", "Filtros", "Filas", "Columnas"],
-            a: "Valores"
-        },
-        {
-            q: "Para insertar un gráfico o tabla dinámica, debemos ir a la pestaña:",
-            options: ["Insertar", "Inicio", "Datos", "Revisar"],
-            a: "Insertar"
-        },
-        {
-            q: "El componente del gráfico que identifica qué representa cada color se llama:",
-            options: ["Leyenda", "Título", "Eje X", "Etiqueta"],
-            a: "Leyenda"
-        }
-    ];
-
-</script>
+            initQuiz();
+            showSlide(0);
+        };
+    </script>
 </body>
 </html>

@@ -2,718 +2,296 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminología Básica HTML y CSS - Diseño Web I</title>
-    <!-- CDN de Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Terminología HTML y CSS - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            font-size: 90%;
-        }
-
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            width: 100vw;
-            overflow-x: hidden;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Inter', sans-serif;
-            background-color: #f9fafb;
-            color: #374151;
-            justify-content: space-between;
-        }
-
-        #presentation-container {
-            width: 100%;
-            height: calc(100vh - 7rem);
-            position: relative;
-            background-color: #ffffff;
-            border-radius: 1rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto;
-            max-width: 100vw;
-        }
-
-        .slide {
-            width: 100%;
-            height: 100%;
-            padding: 1.8rem;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            overflow-y: auto;
-        }
-        .slide::-webkit-scrollbar {
-            display: none;
-        }
-
-        .slide.active {
-            display: flex;
-            opacity: 1;
-            animation-name: fadeIn;
-            animation-duration: 0.8s;
-            animation-fill-mode: forwards;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(18px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .slide h2, .slide h3 {
-                font-size: 1.4rem;
-            }
-            .slide p, .slide li {
-                font-size: 0.9rem;
-            }
-            .nav-button {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.8rem;
-            }
-        }
-
-        .example-box {
-            background-color: #f8fafc;
-            border-left: 4px solid #3b82f6;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            margin: 1rem 0;
-            text-align: left;
-            font-family: monospace;
-            font-size: 0.9rem;
-        }
-
-        .code-block {
-            background-color: #1e293b;
-            color: #e2e8f0;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            text-align: left;
-            overflow-x: auto;
-            margin: 1rem 0;
-        }
-
-        .quiz-option-button { transition: background-color 0.3s, transform 0.2s; text-align: left; padding-left: 1.5rem; }
-        .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
-        .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
-
-        .slide p { font-size: 1.5rem !important; line-height: 1.6 !important; }
-        .slide h3 { font-size: 2.25rem !important; line-height: 1.4 !important; }
-        @media (max-width: 768px) {
-            .slide p { font-size: 1.3rem !important; }
-            .slide h3 { font-size: 1.8rem !important; }
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="antialiased">
-
-    <!-- Header de la página -->
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
-            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Terminología Básica HTML y CSS</h1>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-2 sm:space-x-3">
-                <li><a href="../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
-            </ul>
-        </nav>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Compilando conceptos...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <!-- Contenido principal de la presentación -->
-    <main class="flex-grow flex justify-center items-center p-3">
-        <div id="presentation-container" class="relative">
-
-            <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <img src="../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-3 sm:mb-7">
-                <h2 class="text-lg sm:text-xl mb-1 sm:mb-3 text-blue-600">Diseño Web I</h2>
-                <p class="text-xs sm:text-sm text-gray-600 font-bold uppercase tracking-wider">HTML y CSS - Terminología Básica</p>
-                <div class="mt-3 sm:mt-7 text-xs text-gray-500">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 15 de febrero de 2026</p>
-                    <p>Grado: III Informática Sección "A"</p>
-                </div>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Terminología HTML y CSS</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Diseño Web I</p>
+                <p>Duodécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
+        </div>
 
-            <!-- Diapositiva 2: ¿Qué es HTML y CSS? -->
-            <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">¿Qué es HTML y CSS?</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
-                    <div class="bg-blue-50 p-6 rounded-xl shadow-sm border border-blue-100">
-                        <h4 class="font-bold text-blue-700 text-lg mb-2">HTML</h4>
-                        <p class="text-sm text-gray-700">Define la <strong>estructura</strong> y el contenido de la página web. Es como el esqueleto de un edificio.</p>
-                        <ul class="mt-3 text-xs text-left space-y-1">
-                            <li>• Títulos, párrafos, imágenes, enlaces.</li>
-                            <li>• Organización de la información.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-purple-50 p-6 rounded-xl shadow-sm border border-purple-100">
-                        <h4 class="font-bold text-purple-700 text-lg mb-2">CSS</h4>
-                        <p class="text-sm text-gray-700">Define la <strong>presentación</strong> y el estilo visual. Es como la pintura y decoración del edificio.</p>
-                        <ul class="mt-3 text-xs text-left space-y-1">
-                            <li>• Colores, fuentes, tamaños.</li>
-                            <li>• Disposición y diseño visual.</li>
-                        </ul>
-                    </div>
-                </div>
-                <p class="mt-6 text-sm italic text-gray-600">"Trabajan juntos para crear experiencias web completas."</p>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es HTML?</h2>
+            <div class="concept-box">
+                <p><strong>HyperText Markup Language:</strong> No es un lenguaje de programación, es un lenguaje de marcado que define la estructura y el contenido de una página web mediante etiquetas.</p>
             </div>
+            <i class="fas fa-code text-6xl text-blue-500 mt-4"></i>
+        </div>
 
-            <!-- Diapositiva 3: Terminología: Etiquetas (Tags) -->
-            <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Terminología: Etiquetas (Tags)</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-4">
-                    Todo en HTML se basa en etiquetas encerradas entre los símbolos <code>&lt;</code> y <code>&gt;</code>.
-                </p>
-                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 max-w-3xl">
-                    <div class="bg-white p-4 rounded-lg shadow border-2 border-green-200 flex-1">
-                        <p class="font-bold text-green-700">Etiqueta de Inicio</p>
-                        <code class="text-xl block my-2">&lt;p&gt;</code>
-                        <p class="text-xs">Indica dónde empieza un elemento.</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow border-2 border-red-200 flex-1">
-                        <p class="font-bold text-red-700">Etiqueta de Cierre</p>
-                        <code class="text-xl block my-2">&lt;/p&gt;</code>
-                        <p class="text-xs">Indica dónde termina (lleva una barra <code>/</code>).</p>
-                    </div>
-                </div>
-                <div class="example-box mt-6 max-w-3xl">
-                    <p><strong>Elemento completo:</strong></p>
-                    <code class="text-blue-600">&lt;p&gt;Hola, soy un párrafo&lt;/p&gt;</code>
-                </div>
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Etiqueta (Tag)</h2>
+            <div class="concept-box border-yellow-400">
+                <p>Son los ladrillos de HTML. Van entre paréntesis angulares. La mayoría tiene una etiqueta de apertura y otra de cierre.</p>
+                <p class="mt-4 text-center font-mono"><code>&lt;p&gt; Hola Mundo &lt;/p&gt;</code></p>
             </div>
+        </div>
 
-            <!-- Diapositiva 4: Estructura Básica: El Esqueleto -->
-            <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Estructura Básica: El Esqueleto</h3>
-                <p class="text-sm text-gray-700 mb-4">Todo documento HTML debe tener esta estructura fundamental:</p>
-                <div class="code-block max-w-2xl mx-auto">
-<pre>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-    &lt;head&gt;
-        &lt;!-- Información no visible --&gt;
-    &lt;/head&gt;
-    &lt;body&gt;
-        &lt;!-- Contenido visible --&gt;
-    &lt;/body&gt;
-&lt;/html&gt;</pre>
-                </div>
-                <ul class="mt-4 text-xs text-left grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-2xl mx-auto">
-                    <li class="p-2 bg-gray-50 rounded"><strong>DOCTYPE:</strong> Versión de HTML.</li>
-                    <li class="p-2 bg-gray-50 rounded"><strong>html:</strong> Contenedor raíz.</li>
-                    <li class="p-2 bg-gray-50 rounded"><strong>head:</strong> Metadatos y títulos.</li>
-                    <li class="p-2 bg-gray-50 rounded"><strong>body:</strong> Lo que el usuario ve.</li>
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Atributo</h2>
+            <p>Proporcionan información adicional sobre un elemento. Siempre van dentro de la etiqueta de apertura.</p>
+            <div class="code-block mt-4">&lt;img src="foto.jpg" alt="Descripción"&gt;</div>
+            <p class="mt-2 text-xs italic">Aquí 'src' y 'alt' son los atributos.</p>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es CSS?</h2>
+            <div class="concept-box border-purple-500">
+                <p><strong>Cascading Style Sheets:</strong> Es el lenguaje que usamos para definir el diseño visual (colores, fuentes, posiciones) de los elementos HTML.</p>
+            </div>
+            <i class="fas fa-paint-brush text-6xl text-purple-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Selector CSS</h2>
+            <p>Es el nombre que indica a qué elemento HTML queremos aplicarle el estilo.</p>
+            <div class="code-block mt-4">h1 { color: blue; }</div>
+            <p class="mt-2 text-xs">En este caso, 'h1' es el selector.</p>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio: Identificación</h2>
+            <div class="concept-box">
+                <p>En el siguiente código: <code>&lt;a href="ima.hn"&gt;IMA&lt;/a&gt;</code></p>
+                <ul class="list-disc ml-8 mt-2 text-sm">
+                    <li>¿Cuál es la etiqueta?</li>
+                    <li>¿Cuál es el atributo?</li>
+                    <li>¿Cuál es el valor del atributo?</li>
                 </ul>
             </div>
-
-            <!-- Diapositiva 5: El Encabezado (&lt;head&gt;) -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">El Encabezado (&lt;head&gt;)</h3>
-                <p class="text-sm text-gray-700 max-w-3xl mb-4 text-left">
-                    Contiene información sobre el documento que <strong>no se muestra directamente</strong> en la página.
-                </p>
-                <div class="example-box max-w-3xl">
-                    <p><strong>Elementos comunes:</strong></p>
-                    <ul class="mt-2 space-y-3 text-sm">
-                        <li>🔵 <code>&lt;title&gt;</code>: El nombre que aparece en la pestaña del navegador.</li>
-                        <li>🔵 <code>&lt;meta charset="UTF-8"&gt;</code>: Permite usar acentos y la letra 'ñ'.</li>
-                        <li>🔵 Enlaces a archivos CSS o JavaScript.</li>
-                    </ul>
-                </div>
-                <div class="bg-yellow-50 p-4 rounded-lg mt-4 max-w-3xl border border-yellow-200">
-                    <p class="text-xs text-yellow-800"><strong>Dato curioso:</strong> Aunque no se vea el contenido del <code>head</code> en la página, es vital para que los buscadores como Google entiendan de qué trata tu sitio.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: El Cuerpo (&lt;body&gt;) -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">El Cuerpo (&lt;body&gt;)</h3>
-                <p class="text-sm text-gray-700 max-w-3xl mb-4 text-left">
-                    Aquí es donde ocurre la magia. Todo lo que coloques dentro de las etiquetas <code>&lt;body&gt;</code> es lo que tus visitantes verán.
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl">
-                    <div class="p-4 bg-white border rounded shadow-sm">
-                        <span class="text-2xl">📝</span>
-                        <p class="font-bold text-sm mt-1">Texto</p>
-                        <p class="text-xs text-gray-500">Párrafos y encabezados</p>
-                    </div>
-                    <div class="p-4 bg-white border rounded shadow-sm">
-                        <span class="text-2xl">🖼️</span>
-                        <p class="font-bold text-sm mt-1">Multimedia</p>
-                        <p class="text-xs text-gray-500">Imágenes y videos</p>
-                    </div>
-                    <div class="p-4 bg-white border rounded shadow-sm">
-                        <span class="text-2xl">🔗</span>
-                        <p class="font-bold text-sm mt-1">Interactividad</p>
-                        <p class="text-xs text-gray-500">Enlaces y botones</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Etiquetas de Texto: Encabezados -->
-            <div id="slide-7" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Etiquetas de Texto: Encabezados</h3>
-                <p class="text-sm text-gray-700 mb-4">Se usan para títulos y subtítulos, organizados por jerarquía (h1 a h6).</p>
-                <div class="flex flex-col md:flex-row md:space-x-6 items-center max-w-4xl">
-                    <div class="code-block flex-1 w-full">
-<pre>&lt;h1&gt;Título Nivel 1&lt;/h1&gt;
-&lt;h2&gt;Título Nivel 2&lt;/h2&gt;
-&lt;h3&gt;Título Nivel 3&lt;/h3&gt;
-&lt;h4&gt;Título Nivel 4&lt;/h4&gt;
-&lt;h5&gt;Título Nivel 5&lt;/h5&gt;
-&lt;h6&gt;Título Nivel 6&lt;/h6&gt;</pre>
-                    </div>
-                    <div class="flex-1 text-left bg-gray-50 p-4 rounded border w-full mt-4 md:mt-0">
-                        <h1 class="text-2xl font-bold">Título Nivel 1</h1>
-                        <h2 class="text-xl font-semibold">Título Nivel 2</h2>
-                        <h3 class="text-lg font-medium">Título Nivel 3</h3>
-                        <h4 class="text-base">Título Nivel 4</h4>
-                        <h5 class="text-sm">Título Nivel 5</h5>
-                        <h6 class="text-xs">Título Nivel 6</h6>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Párrafos y Saltos de Línea -->
-            <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Párrafos y Saltos de Línea</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
-                    <div class="bg-blue-50 p-4 rounded-lg text-left">
-                        <h4 class="font-bold text-blue-700 mb-2">Párrafos (&lt;p&gt;)</h4>
-                        <p class="text-sm mb-2">Define un bloque de texto. Agrega automáticamente un espacio antes y después.</p>
-                        <div class="bg-white p-2 text-xs border rounded font-mono">
-                            &lt;p&gt;Este es un párrafo.&lt;/p&gt;<br>
-                            &lt;p&gt;Este es otro.&lt;/p&gt;
-                        </div>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-lg text-left">
-                        <h4 class="font-bold text-green-700 mb-2">Saltos (&lt;br/&gt;)</h4>
-                        <p class="text-sm mb-2">Fuerza un salto de línea dentro de un mismo bloque. No tiene etiqueta de cierre.</p>
-                        <div class="bg-white p-2 text-xs border rounded font-mono">
-                            Línea uno&lt;br/&gt;Línea dos
-                        </div>
-                    </div>
-                </div>
-                <div class="example-box mt-4 max-w-4xl">
-                    <p class="text-sm"><strong>Nota:</strong> No uses muchos <code>&lt;br&gt;</code> para crear espacios grandes; para eso es mejor usar CSS.</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Anidamiento de Etiquetas -->
-            <div id="slide-9" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Anidamiento de Etiquetas</h3>
-                <p class="text-sm text-gray-700 mb-4 max-w-3xl">Poner una etiqueta dentro de otra se llama <strong>anidamiento</strong>. Es fundamental seguir el orden correcto.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
-                    <div class="p-4 bg-green-50 border-2 border-green-200 rounded-lg">
-                        <p class="font-bold text-green-700 mb-2">✅ Correcto</p>
-                        <code class="text-sm">&lt;p&gt;Hola &lt;strong&gt;mundo&lt;/strong&gt;&lt;/p&gt;</code>
-                        <p class="text-xs mt-2 text-gray-600 italic">"Lo último en abrirse es lo primero en cerrarse."</p>
-                    </div>
-                    <div class="p-4 bg-red-50 border-2 border-red-200 rounded-lg">
-                        <p class="font-bold text-red-700 mb-2">❌ Incorrecto</p>
-                        <code class="text-sm">&lt;p&gt;Hola &lt;strong&gt;mundo&lt;/p&gt;&lt;/strong&gt;</code>
-                        <p class="text-xs mt-2 text-gray-600 italic">"Las etiquetas se cruzan, esto causa errores."</p>
-                    </div>
-                </div>
-                <div class="mt-6 p-4 bg-blue-50 rounded-full text-blue-700 font-bold text-sm px-8">
-                    Recuerda: Las etiquetas son como cajas una dentro de otra.
-                </div>
-            </div>
-
-            <!-- Diapositiva 10: Ejercicio Práctico -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Ejercicio Práctico: Tu Primera Página</h3>
-                <p class="text-sm text-gray-700 mb-4">Sigue estos pasos para crear un archivo <code>index.html</code>:</p>
-                <div class="text-left bg-gray-50 p-6 rounded-lg border max-w-3xl mx-auto">
-                    <ol class="space-y-3 text-sm">
-                        <li class="flex items-start">
-                            <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 text-xs">1</span>
-                            <span>Abre un editor de texto (Bloc de Notas o VS Code).</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 text-xs">2</span>
-                            <span>Escribe la estructura básica (DOCTYPE, html, head, body).</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 text-xs">3</span>
-                            <span>En el <code>&lt;body&gt;</code>, agrega un <code>&lt;h1&gt;</code> con tu nombre y un <code>&lt;p&gt;</code> que diga "Bienvenido a mi sitio".</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 text-xs">4</span>
-                            <span>Guarda el archivo como <code>index.html</code>.</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 text-xs">5</span>
-                            <span>Haz doble clic en el archivo para verlo en tu navegador.</span>
-                        </li>
-                    </ol>
-                </div>
-            </div>
-
-            <!-- Diapositiva 11: Cuestionario (1-5) -->
-            <div id="slide-11" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 1)</h3>
-                <div id="quiz-container-1" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-1" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-1" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-1" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter">1</span> de 5</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Cuestionario (6-10) -->
-            <div id="slide-12" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 2)</h3>
-                <div id="quiz-container-2" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-2" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-2" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-2" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter-2">6</span> de 10</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Resumen -->
-            <div id="slide-13" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Resumen de la Clase</h3>
-                <div class="bg-blue-50 p-6 rounded-lg max-w-3xl text-left border-l-4 border-blue-500">
-                    <ul class="space-y-2 text-sm sm:text-base">
-                        <li>✅ <strong>HTML:</strong> Estructura y contenido.</li>
-                        <li>✅ <strong>CSS:</strong> Presentación y estilo visual.</li>
-                        <li>✅ <strong>Etiquetas:</strong> Bloques básicos de construcción (inicio y cierre).</li>
-                        <li>✅ <strong>Estructura:</strong> Siempre incluye <code>DOCTYPE</code>, <code>html</code>, <code>head</code> y <code>body</code>.</li>
-                        <li>✅ <strong>Encabezados:</strong> <code>h1</code> (grande) a <code>h6</code> (pequeño).</li>
-                        <li>✅ <strong>Anidamiento:</strong> Seguir el orden de apertura y cierre.</li>
-                    </ul>
-                </div>
-                <p class="mt-6 font-bold text-blue-600 text-lg">¡Felicidades! Ya conoces los fundamentos de la web.</p>
-            </div>
-
-            <!-- Diapositiva 14: Tarea -->
-            <div id="slide-14" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500">Asignación (Tarea)</h3>
-                <div class="bg-yellow-50 p-8 rounded-xl max-w-3xl border-2 border-dashed border-yellow-400">
-                    <h4 class="text-xl font-bold text-yellow-800 mb-4">📋 Proyecto: Mi Primer Documento</h4>
-                    <div class="text-left space-y-4">
-                        <div>
-                            <p class="font-bold text-gray-800">Objetivo:</p>
-                            <p class="text-sm text-gray-700">Crear un documento HTML bien estructurado que use encabezados y párrafos.</p>
-                        </div>
-                        <div>
-                            <p class="font-bold text-gray-800">Instrucciones:</p>
-                            <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1">
-                                <li>Debe incluir la estructura básica completa.</li>
-                                <li>Un título de página en el <code>&lt;head&gt;</code>.</li>
-                                <li>Al menos un encabezado <code>&lt;h1&gt;</code>.</li>
-                                <li>Al menos tres párrafos <code>&lt;p&gt;</code> con información sobre tus hobbies.</li>
-                                <li>Usa al menos un encabezado secundario <code>&lt;h2&gt;</code>.</li>
-                            </ul>
-                        </div>
-                        <div class="flex justify-between items-end pt-4">
-                            <div class="text-xs text-gray-500">
-                                <p><strong>Formato:</strong> Archivo .html</p>
-                                <p><strong>Entrega:</strong> Plataforma / Correo</p>
-                            </div>
-                            <div class="bg-yellow-200 px-4 py-2 rounded font-bold text-yellow-900">
-                                Ponderación: 5%
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
-        <!-- Botones de navegación -->
-        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
-            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
-            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Declaración CSS</h2>
+            <p>Es el conjunto de <strong>Propiedad</strong> y <strong>Valor</strong>. Van dentro de llaves <code>{}</code>.</p>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <div class="p-4 border bg-blue-50">Propiedad: color</div>
+                <div class="p-4 border bg-green-50">Valor: red</div>
+            </div>
         </div>
-        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 14</div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">DOM (Document Object Model)</h2>
+            <div class="concept-box border-blue-400">
+                <p>Es la estructura de árbol que el navegador crea al leer el HTML. Permite que lenguajes como JavaScript interactúen con la página.</p>
+            </div>
+            <i class="fas fa-sitemap text-6xl text-gray-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Semántica</h2>
+            <p>Usar las etiquetas correctas para el contenido correcto (ej: <code>&lt;nav&gt;</code> para menús, <code>&lt;footer&gt;</code> para el pie). Ayuda al SEO y a la accesibilidad.</p>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Responsive Design</h2>
+            <p>Técnica de diseño que permite que una página web se adapte automáticamente al tamaño de pantalla del dispositivo (Móvil, Tablet, PC).</p>
+            <i class="fas fa-mobile-alt text-6xl text-green-500 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Hosting y Dominio</h2>
+            <ul class="text-left space-y-4 max-w-xl">
+                <li><strong>Dominio:</strong> El nombre de la web (ej: google.com).</li>
+                <li><strong>Hosting:</strong> El servidor donde viven los archivos.</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reto de Código</h2>
+            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl">
+                <p>&lt;!DOCTYPE html&gt;</p>
+                <p>&lt;html&gt;</p>
+                <p>&lt;head&gt; &lt;title&gt;Mi Web&lt;/title&gt; &lt;/head&gt;</p>
+                <p>&lt;body&gt;</p>
+                <p>&nbsp;&nbsp;&lt;h1&gt;Bienvenida&lt;/h1&gt;</p>
+                <p>&nbsp;&nbsp;&lt;p&gt;Contenido principal&lt;/p&gt;</p>
+                <p>&lt;/body&gt;</p>
+                <p>&lt;/html&gt;</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">GLOSARIO WEB</h3>
+                <p>Investigar y definir en el cuaderno los siguientes términos: <br>1. Metadata <br>2. Framework <br>3. CMS <br>4. Backend <br>5. Frontend.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <!-- Pie de página -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
-            <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Diseño Web I - I Parcial</p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
-    <!-- Scripts -->
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/games-adapter.js"></script>
     <script>
-        const slides = document.querySelectorAll('.slide');
-        const nextButton = document.getElementById('next-btn');
-        const prevButton = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
         let currentSlideIndex = 0;
-        let isTransitioning = false;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
         const quizQuestions = [
-            {
-                question: "¿Qué es CSS y para qué se utiliza?",
-                options: ["Lenguaje para definir el estilo visual y presentación", "Lenguaje para crear la estructura", "Un tipo de navegador", "Un servidor web"],
-                correctAnswer: "Lenguaje para definir el estilo visual y presentación"
-            },
-            {
-                question: "¿Cuál es la analogía de HTML en un edificio?",
-                options: ["El esqueleto o estructura", "La pintura de las paredes", "Los muebles", "El jardín"],
-                correctAnswer: "El esqueleto o estructura"
-            },
-            {
-                question: "¿Qué es una 'etiqueta de inicio'?",
-                options: ["La que indica dónde empieza un elemento", "La que cierra el programa", "La que borra el texto", "La que cambia el idioma"],
-                correctAnswer: "La que indica dónde empieza un elemento"
-            },
-            {
-                question: "¿Qué elemento del head permite usar acentos y la letra 'ñ'?",
-                options: ["<meta charset='UTF-8'>", "<title>", "<body>", "<html>"],
-                correctAnswer: "<meta charset='UTF-8'>"
-            },
-            {
-                question: "¿Qué sucede si anidamos etiquetas en el orden incorrecto?",
-                options: ["Puede causar errores en la visualización", "La computadora se apaga", "El texto se borra", "No pasa nada"],
-                correctAnswer: "Puede causar errores en la visualización"
-            },
-            {
-                question: "1. ¿Qué significa HTML?",
-                options: ["HyperText Markup Language", "High Tech Modern Language", "Hyperlink and Text Management", "Home Tool Markup Language"],
-                correctAnswer: "HyperText Markup Language"
-            },
-            {
-                question: "2. ¿Cuál es la etiqueta raíz de un documento HTML?",
-                options: ["<head>", "<body>", "<html>", "<root>"],
-                correctAnswer: "<html>"
-            },
-            {
-                question: "3. ¿Qué etiqueta se utiliza para el encabezado de mayor nivel?",
-                options: ["<h6>", "<h10>", "<h1>", "<head>"],
-                correctAnswer: "<h1>"
-            },
-            {
-                question: "4. ¿En qué sección se coloca el título de la página?",
-                options: ["<body>", "<footer>", "<head>", "<section>"],
-                correctAnswer: "<head>"
-            },
-            {
-                question: "5. ¿Qué etiqueta define un párrafo?",
-                options: ["<text>", "<p>", "<div>", "<span>"],
-                correctAnswer: "<p>"
-            },
-            {
-                question: "6. ¿Para qué sirve la etiqueta <body>?",
-                options: ["Para metadatos", "Para el contenido visible", "Para el título de pestaña", "Para scripts"],
-                correctAnswer: "Para el contenido visible"
-            },
-            {
-                question: "7. ¿Cuál es la extensión de archivo correcta para una página web?",
-                options: [".txt", ".web", ".html", ".js"],
-                correctAnswer: ".html"
-            },
-            {
-                question: "8. ¿Qué etiqueta se usa para crear un salto de línea?",
-                options: ["<jump>", "<break>", "<br/>", "<hr/>"],
-                correctAnswer: "<br/>"
-            },
-            {
-                question: "9. ¿Cómo se llama al hecho de poner una etiqueta dentro de otra?",
-                options: ["Anidamiento", "Mezcla", "Inyección", "Compresión"],
-                correctAnswer: "Anidamiento"
-            },
-            {
-                question: "10. ¿Cuál es el encabezado más pequeño?",
-                options: ["<h1>", "<h3>", "<h6>", "<h5>"],
-                correctAnswer: "<h6>"
-            }
+            { q: "¿Qué significa HTML?", a: "C", options: ["High Text Mark Link", "Home Tool Markup", "HyperText Markup Language", "Hard Text Main Logic"] },
+            { q: "HTML define la:", a: "B", options: ["Lógica", "Estructura", "Base de Datos", "Red"] },
+            { q: "CSS define el:", a: "A", options: ["Estilo Visual", "Servidor", "Nombre Web", "Precio"] },
+            { q: "Información extra en etiquetas:", a: "D", options: ["Código", "Link", "Llave", "Atributo"] },
+            { q: "Indica a qué aplicar estilo:", a: "B", options: ["Atributo", "Selector", "Variable", "Función"] },
+            { q: "Estructura de árbol de la web:", a: "C", options: ["SEO", "CPU", "DOM", "RAM"] },
+            { q: "Etiqueta para párrafos:", a: "A", options: ["<p>", "<a>", "<div>", "<h1>"] },
+            { q: "Web que se adapta a móviles:", a: "D", options: ["Static", "Old", "Hard", "Responsive"] },
+            { q: "Nombre de la web en URL:", a: "B", options: ["Hosting", "Dominio", "Carpeta", "Etiqueta"] },
+            { q: "HTML es un lenguaje de:", a: "C", options: ["Programación", "Habla", "Marcado", "Cálculo"] }
         ];
 
-        let currentQuizPart1Index = 0;
-        let currentQuizPart2Index = 5;
-
-        function updateQuizPart1() {
-            if (currentQuizPart1Index >= 5) return;
-            const questionElement = document.getElementById('quiz-question-1');
-            const optionsElement = document.getElementById('quiz-options-1');
-            const feedbackElement = document.getElementById('quiz-feedback-1');
-            const counterElement = document.getElementById('question-counter');
-            const currentQuestion = quizQuestions[currentQuizPart1Index];
-            questionElement.textContent = currentQuestion.question;
-            optionsElement.innerHTML = '';
-            feedbackElement.textContent = '';
-            counterElement.textContent = currentQuizPart1Index + 1;
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
-                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 1);
-                optionsElement.appendChild(button);
-            });
-        }
-
-        function updateQuizPart2() {
-            if (currentQuizPart2Index >= 10) return;
-            const questionElement = document.getElementById('quiz-question-2');
-            const optionsElement = document.getElementById('quiz-options-2');
-            const feedbackElement = document.getElementById('quiz-feedback-2');
-            const counterElement = document.getElementById('question-counter-2');
-            const currentQuestion = quizQuestions[currentQuizPart2Index];
-            questionElement.textContent = currentQuestion.question;
-            optionsElement.innerHTML = '';
-            feedbackElement.textContent = '';
-            counterElement.textContent = currentQuizPart2Index + 1;
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
-                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 2);
-                optionsElement.appendChild(button);
-            });
-        }
-
-        function checkQuizAnswer(selected, correct, feedbackElement, buttons, part) {
-            Array.from(buttons).forEach(button => {
-                button.disabled = true;
-                if (button.textContent === correct) button.classList.add('correct');
-                else if (button.textContent === selected) button.classList.add('incorrect');
-            });
-            if (selected === correct) {
-                feedbackElement.textContent = '¡Correcto!';
-                feedbackElement.style.color = '#065f46';
-            } else {
-                feedbackElement.textContent = `Incorrecto. La respuesta es: ${correct}`;
-                feedbackElement.style.color = '#991b1b';
-            }
-            setTimeout(() => {
-                if (part === 1) {
-                    currentQuizPart1Index++;
-                    if (currentQuizPart1Index < 5) updateQuizPart1();
-                } else {
-                    currentQuizPart2Index++;
-                    if (currentQuizPart2Index < 10) updateQuizPart2();
-                }
-            }, 1500);
-        }
-
         function showSlide(index) {
-            if (isTransitioning || index < 0 || index >= slides.length) return;
-            isTransitioning = true;
-            const presentationContainer = document.getElementById('presentation-container');
-
-            slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
             currentSlideIndex = index;
-            if (currentSlideIndex === 10) { currentQuizPart1Index = 0; setTimeout(updateQuizPart1, 100); }
-            else if (currentSlideIndex === 11) { currentQuizPart2Index = 5; setTimeout(updateQuizPart2, 100); }
-            const activeSlide = slides[currentSlideIndex];
-            activeSlide.style.display = 'flex';
-            setTimeout(() => {
-                activeSlide.classList.add('active');
-                slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-                prevButton.disabled = currentSlideIndex === 0;
-                nextButton.disabled = currentSlideIndex === slides.length - 1;
-                isTransitioning = false;
-            }, 10);
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
-        prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
-
-        const presentationContainer = document.getElementById('presentation-container');
-        presentationContainer.addEventListener('click', (e) => {
-            if (e.target.closest('button') || e.target.closest('a')) return;
-            const rect = presentationContainer.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            if (clickX > rect.width / 2) showSlide(currentSlideIndex + 1);
-            else showSlide(currentSlideIndex - 1);
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('current-year').textContent = new Date().getFullYear();
-            showSlide(0); handleFullscreenChange();
-        });
-
-
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) || (window.innerHeight >= screen.height - 10);
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-            document.body.classList.add('is-fullscreen');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-            document.body.classList.remove('is-fullscreen');
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
+            });
         }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-    window.addEventListener('resize', handleFullscreenChange);
 
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
+        });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
+        });
 
-    // Navigation improvements (2026)
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
-    });
-
-    (function() {
-        const container = document.getElementById('presentation-container');
-        if (!container) return;
-        let tsX = 0;
-        container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-        container.addEventListener('touchend', e => {
-            let teX = e.changedTouches[0].screenX;
-            if (tsX - teX > 50) typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-            if (teX - tsX > 50) typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
-        }, {passive: true});
-    })();
-
-</script>
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('dw_terminologia', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
+    </script>
 </body>
 </html>

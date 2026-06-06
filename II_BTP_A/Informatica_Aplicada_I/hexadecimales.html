@@ -2,623 +2,311 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numeración Hexadecimal</title>
-    <!-- CDN de Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Numeración Hexadecimal - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Estilos base para un diseño consistente */
-        * {
-            box-sizing: border-box;
-        }
-
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            width: 100vw;
-            overflow-x: hidden;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Inter', sans-serif;
-            background-color: #f9fafb;
-            color: #374151;
-            justify-content: space-between;
-        }
-
-        #presentation-container {
-            width: 100%;
-            height: calc(100vh - 8rem);
-            position: relative;
-            background-color: #ffffff;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto;
-            max-width: 100vw;
-        }
-
-        .slide {
-            width: 100%;
-            height: 100%;
-            padding: 2rem;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            overflow-y: auto;
-        }
-        .slide::-webkit-scrollbar {
-            display: none;
-        }
-
-        .slide.active {
-            display: flex;
-            opacity: 1;
-            animation-name: fadeIn;
-            animation-duration: 0.8s;
-            animation-fill-mode: forwards;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .slide h2, .slide h3 {
-                font-size: 1.5rem;
-            }
-            .slide p, .slide li {
-                font-size: 1rem;
-            }
-            .nav-button {
-                padding: 0.5rem 1rem;
-                font-size: 0.875rem;
-            }
-        }
-
-        .quiz-option-button {
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .quiz-option-button.correct {
-            background-color: #d1fae5;
-            color: #065f46;
-            border-color: #10b981;
-        }
-
-        .quiz-option-button.incorrect {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border-color: #ef4444;
-        }
-
-        /* Estilo para tablas de valores */
-        .value-table {
-            border-collapse: collapse;
-            font-size: 0.9em;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-            border-radius: 10px;
-            overflow: hidden;
-            width: 100%;
-            max-width: 500px;
-        }
-        .value-table th, .value-table td {
-            border: 1px solid #ddd;
-            padding: 12px 15px;
-            text-align: center;
-        }
-        .value-table thead tr {
-            background-color: #3b82f6; /* Azul de Tailwind */
-            color: #ffffff;
-        }
-        .value-table tbody tr:nth-of-type(even) {
-            background-color: #f3f4f6; /* Gris claro de Tailwind */
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
+        .hex-table { border-collapse: collapse; font-size: 0.7rem; width: 100%; max-width: 600px; }
+        .hex-table th, .hex-table td { border: 1px solid #e2e8f0; padding: 4px; text-align: center; }
+        .hex-table th { background: #f1f5f9; }
     </style>
 </head>
-<body class="antialiased">
-
-    <!-- Header de la página -->
-    <header id="page-header" class="w-full bg-white p-4 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
-        <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <img src="../../imagenes/logo.png" alt="Logo de la institución" class="w-24 sm:w-32 h-auto">
-            <h1 class="text-lg sm:text-xl font-bold text-gray-800 mt-2 sm:mt-0">Numeración Hexadecimal</h1>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <nav class="mt-4 sm:mt-0">
-            <ul class="flex space-x-2 sm:space-x-4">
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-sm sm:text-base">Inicio</a></li>
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-sm sm:text-base">Acerca de</a></li>
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-sm sm:text-base">Contacto</a></li>
-            </ul>
-        </nav>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Cargando base 16...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <!-- Contenido principal de la presentación -->
-    <main class="flex-grow flex justify-center items-center p-4">
-        <div id="presentation-container" class="relative">
-
-            <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-48 sm:w-64 md:w-80 h-auto mb-4 sm:mb-8">
-                <h2 class="text-xl sm:text-2xl mb-2 sm:mb-4 text-blue-600">Numeración Hexadecimal</h2>
-                <p class="text-sm sm:text-base text-gray-600">Informática Aplicada I</p>
-                <div class="mt-4 sm:mt-8 text-xs sm:text-sm text-gray-500">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: Domingo 28 de septiembre</p>
-                    <p>Grado: Undécimo de Informática</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 2: ¿Qué es el sistema Hexadecimal? -->
-            <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¿Qué es la Numeración Hexadecimal?</h3>
-                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    El sistema de numeración <strong>hexadecimal</strong> (o base 16) es un sistema numérico posicional que utiliza 16 símbolos diferentes. Es comúnmente usado en el campo de la informática para facilitar la lectura de números binarios largos.
-                </p>
-            </div>
-
-            <!-- Diapositiva 3: Historia de la Numeración Hexadecimal (NUEVA DIAPOSITIVA) -->
-            <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Historia de la Numeración Hexadecimal</h3>
-                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    El sistema hexadecimal no es nuevo; su uso se popularizó en la era de los primeros computadores. Los ingenieros y programadores se encontraron con la necesidad de una forma más compacta y legible de representar los datos binarios. Un solo dígito hexadecimal puede representar exactamente cuatro dígitos binarios (un "nibble"), lo que simplificó la representación de direcciones de memoria, instrucciones de máquinas y colores en la pantalla, que de otro modo serían largas cadenas de ceros y unos.
-                </p>
-
-            </div>
-
-            <!-- Diapositiva 4: Símbolos del sistema (Anteriormente diapositiva 3) -->
-            <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Los Símbolos Hexadecimales</h3>
-                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    El sistema hexadecimal utiliza los dígitos del 0 al 9 y las letras de la A a la F para representar los valores del 10 al 15.
-                </p>
-                <div class="mt-4 flex flex-wrap justify-center space-x-2 text-xl font-bold">
-                    <span class="bg-gray-200 rounded-full px-3 py-1">0-9</span>
-                    <span class="bg-gray-200 rounded-full px-3 py-1">A (10)</span>
-                    <span class="bg-gray-200 rounded-full px-3 py-1">B (11)</span>
-                    <span class="bg-gray-200 rounded-full px-3 py-1">C (12)</span>
-                    <span class="bg-gray-200 rounded-full px-3 py-1">D (13)</span>
-                    <span class="bg-gray-200 rounded-full px-3 py-1">E (14)</span>
-                    <span class="bg-gray-200 rounded-full px-3 py-1">F (15)</span>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Tabla de Equivalencia (Parte 1 - Anteriormente diapositiva 4) -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Tabla de Equivalencia (Parte 1)</h3>
-                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl mb-4">
-                    Equivalencias de los primeros seis dígitos.
-                </p>
-                <div class="w-full max-w-xl mx-auto">
-                    <table class="value-table">
-                        <thead>
-                            <tr>
-                                <th>Hexadecimal</th>
-                                <th>Decimal</th>
-                                <th>Binario</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>0</td><td>0</td><td>0000</td></tr>
-                            <tr><td>1</td><td>1</td><td>0001</td></tr>
-                            <tr><td>2</td><td>2</td><td>0010</td></tr>
-                            <tr><td>3</td><td>3</td><td>0011</td></tr>
-                            <tr><td>4</td><td>4</td><td>0100</td></tr>
-                            <tr><td>5</td><td>5</td><td>0101</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: Tabla de Equivalencia (Parte 2 - Anteriormente diapositiva 5) -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Tabla de Equivalencia (Parte 2)</h3>
-                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl mb-4">
-                    Equivalencias de los siguientes seis dígitos.
-                </p>
-                <div class="w-full max-w-xl mx-auto">
-                    <table class="value-table">
-                        <thead>
-                            <tr>
-                                <th>Hexadecimal</th>
-                                <th>Decimal</th>
-                                <th>Binario</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>6</td><td>6</td><td>0110</td></tr>
-                            <tr><td>7</td><td>7</td><td>0111</td></tr>
-                            <tr><td>8</td><td>8</td><td>1000</td></tr>
-                            <tr><td>9</td><td>9</td><td>1001</td></tr>
-                            <tr><td>A</td><td>10</td><td>1010</td></tr>
-                            <tr><td>B</td><td>11</td><td>1011</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Tabla de Equivalencia (Parte 3 - Anteriormente diapositiva 6) -->
-            <div id="slide-7" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Tabla de Equivalencia (Parte 3)</h3>
-                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl mb-4">
-                    Equivalencias de los últimos cuatro dígitos.
-                </p>
-                <div class="w-full max-w-xl mx-auto">
-                    <table class="value-table">
-                        <thead>
-                            <tr>
-                                <th>Hexadecimal</th>
-                                <th>Decimal</th>
-                                <th>Binario</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>C</td><td>12</td><td>1100</td></tr>
-                            <tr><td>D</td><td>13</td><td>1101</td></tr>
-                            <tr><td>E</td><td>14</td><td>1110</td></tr>
-                            <tr><td>F</td><td>15</td><td>1111</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Conversión de Hexadecimal a Decimal (Anteriormente diapositiva 7) -->
-            <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">De Hexadecimal a Decimal: Una Guía Paso a Paso</h3>
-                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    Convertir un número hexadecimal a decimal se basa en el valor posicional. Cada dígito hexadecimal se multiplica por una potencia de 16, y luego se suman todos los resultados.
-                </p>
-                <div class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow-inner max-w-3xl w-full text-left mt-4">
-                    <p class="font-bold mb-2">Paso 1: Asigna una posición a cada dígito</p>
-                    <p>Empezando de derecha a izquierda, asigna las posiciones 0, 1, 2, etc.</p>
-                    <p class="font-mono text-lg mt-2">A2F</p>
-                    <hr class="my-4">
-                    <p class="font-bold mb-2">Paso 2: Identifica el valor decimal de cada dígito</p>
-                    <p>Usa la tabla de equivalencia para encontrar el valor decimal de cada dígito hexadecimal.</p>
-                    <ul class="list-disc list-inside ml-4 mt-2">
-                        <li>A es igual a 10</li>
-                        <li>2 es igual a 2</li>
-                        <li>F es igual a 15</li>
-                    </ul>
-                    <hr class="my-4">
-                    <p class="font-bold mb-2">Paso 3: Multiplica y suma</p>
-                    <p>Multiplica cada valor decimal por 16 elevado a la potencia de su posición y suma los resultados para obtener el número final.</p>
-                    <p class="font-mono text-lg mt-2">(10 x 16<sup>2</sup>) + (2 x 16<sup>1</sup>) + (15 x 16<sup>0</sup>)</p>
-                    <p class="font-mono text-lg">(10 x 256) + (2 x 16) + (15 x 1)</p>
-                    <p class="font-mono text-lg">2560 + 32 + 15 = 2607</p>
-                    <p class="font-bold text-lg mt-4">El resultado es 2607 en base 10</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Conversión de Decimal a Hexadecimal (Anteriormente diapositiva 8) -->
-            <div id="slide-9" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">De Decimal a Hexadecimal</h3>
-                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    Se divide el número decimal por 16 de forma sucesiva y se toman los residuos en orden inverso.
-                </p>
-                <div class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow-inner max-w-3xl w-full text-left mt-4">
-                    <p class="font-bold">Ejemplo: 2607 en base 10 a Hexadecimal</p>
-                    <p>2607 ÷ 16 = 162 (residuo 15, que es F)</p>
-                    <p>162 ÷ 16 = 10 (residuo 2)</p>
-                    <p>10 ÷ 16 = 0 (residuo 10, que es A)</p>
-                    <p>El resultado es A2F en base 16 (leyendo los residuos de abajo hacia arriba)</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 10: Aplicaciones en la Informática (Anteriormente diapositiva 9) -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Aplicaciones Comunes</h3>
-                <ul class="mt-2 sm:mt-4 text-left text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-2 sm:space-y-4">
-                    <li><strong>Colores en HTML y CSS:</strong> Los colores se representan con 6 dígitos hexadecimales, como #FF5733 para un naranja rojizo.</li>
-                    <li><strong>Direcciones de Memoria:</strong> Los procesadores usan direcciones hexadecimales para acceder a la memoria RAM.</li>
-                    <li><strong>Direcciones MAC:</strong> Las direcciones únicas de hardware de red se escriben en formato hexadecimal (ej: `00-1B-44-11-3A-B7`).</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 11: Cuestionario (Anteriormente diapositiva 10) -->
-            <div id="slide-11" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¡Pon a prueba tus conocimientos!</h3>
-                <div id="quiz-container" class="bg-gray-100 p-4 sm:p-8 rounded-lg shadow-md max-w-3xl w-full text-center">
-                    <div id="quiz-question" class="text-base sm:text-2xl font-semibold mb-2 sm:mb-6 text-gray-800"></div>
-                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-4"></div>
-                    <div id="quiz-feedback" class="mt-4 sm:mt-6 text-sm sm:text-lg font-bold"></div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Resumen (Anteriormente diapositiva 11) -->
-            <div id="slide-12" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Resumen</h3>
-                <ul class="mt-2 sm:mt-4 text-left text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-2 sm:space-y-4">
-                    <li>El sistema hexadecimal usa una base de 16.</li>
-                    <li>Emplea los dígitos 0-9 y las letras A-F.</li>
-                    <li>Cada dígito hexadecimal equivale a cuatro dígitos binarios.</li>
-                    <li>Se utiliza en la informática para simplificar la representación de números largos y complejos.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 13: Tarea (Anteriormente diapositiva 12) -->
-            <div id="slide-13" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Asignación de Tareas</h3>
-                <div class="bg-gray-100 p-4 sm:p-8 rounded-lg shadow-inner max-w-3xl text-left">
-                    <p class="text-base sm:text-lg text-gray-700 mb-2 sm:mb-4 font-bold">Tarea:</p>
-                    <p class="text-sm sm:text-base text-gray-700 mb-2 sm:mb-4">
-                        Convertir los siguientes números:
-                        <ul class="list-disc list-inside ml-4 mt-2">
-                            <li><ul>
-                                <li><strong> Decimal a Hexadecimal</strong></li>
-                                <li>120</li>
-                                <li>255</li>
-                                <li>340</li>
-                                </ul>
-                            </li>
-                            <li><ul>
-                                <li><strong>Hexadecimal a Decimal</strong></li>
-                                <li>3F8</li>
-                                <li>4A2</li>
-                                <li>FF4</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 14: Fin de la Presentación (Anteriormente diapositiva 13) -->
-            <div id="slide-14" class="slide">
-                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¡Gracias!</h3>
-                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    ¿Tienen alguna pregunta?
-                </p>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Numeración Hexadecimal</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Informática Aplicada I</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
         </div>
 
-        <!-- Botones de navegación -->
-        <div class="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-4 z-20">
-            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 text-sm sm:text-base">Anterior</button>
-            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 text-sm sm:text-base">Siguiente</button>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es el Sistema Hexadecimal?</h2>
+            <div class="concept-box">
+                <p>Es un sistema de numeración posicional que tiene como <strong>base el número 16</strong>. Es el sistema preferido por programadores e ingenieros para representar grandes cadenas binarias de forma compacta.</p>
+            </div>
+            <i class="fas fa-microchip text-6xl text-blue-300 mt-4"></i>
         </div>
-        <div id="slide-counter" class="absolute bottom-4 sm:bottom-8 right-4 sm:right-8 font-semibold text-gray-400 z-10 text-xs sm:text-base">1 / 14</div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Los Símbolos (0-F)</h2>
+            <div class="concept-box">
+                <p>Utiliza 16 símbolos:</p>
+                <ul class="grid grid-cols-4 gap-2 mt-4 font-mono text-xl">
+                    <li class="bg-gray-100 p-2">0</li><li class="bg-gray-100 p-2">1</li><li class="bg-gray-100 p-2">2</li><li class="bg-gray-100 p-2">3</li>
+                    <li class="bg-gray-100 p-2">4</li><li class="bg-gray-100 p-2">5</li><li class="bg-gray-100 p-2">6</li><li class="bg-gray-100 p-2">7</li>
+                    <li class="bg-gray-100 p-2">8</li><li class="bg-gray-100 p-2">9</li><li class="bg-blue-100 p-2">A(10)</li><li class="bg-blue-100 p-2">B(11)</li>
+                    <li class="bg-blue-100 p-2">C(12)</li><li class="bg-blue-100 p-2">D(13)</li><li class="bg-blue-100 p-2">E(14)</li><li class="bg-blue-100 p-2">F(15)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Por qué usar Base 16?</h2>
+            <div class="concept-box border-yellow-400">
+                <p>La razón principal es la <strong>simetría con el binario</strong>. Un dígito hexadecimal representa exactamente 4 bits (un "nibble").</p>
+                <p class="mt-4 text-sm font-mono text-center">F = 1111</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tabla de Conversión Rápida</h2>
+            <table class="hex-table mx-auto">
+                <thead><tr><th>Hex</th><th>Decimal</th><th>Binario</th><th>Hex</th><th>Decimal</th><th>Binario</th></tr></thead>
+                <tbody>
+                    <tr><td>0</td><td>0</td><td>0000</td><td>8</td><td>8</td><td>1000</td></tr>
+                    <tr><td>1</td><td>1</td><td>0001</td><td>9</td><td>9</td><td>1001</td></tr>
+                    <tr><td>2</td><td>2</td><td>0010</td><td>A</td><td>10</td><td>1010</td></tr>
+                    <tr><td>3</td><td>3</td><td>0011</td><td>B</td><td>11</td><td>1011</td></tr>
+                    <tr><td>4</td><td>4</td><td>0100</td><td>C</td><td>12</td><td>1100</td></tr>
+                    <tr><td>5</td><td>5</td><td>0101</td><td>D</td><td>13</td><td>1101</td></tr>
+                    <tr><td>6</td><td>6</td><td>0110</td><td>E</td><td>14</td><td>1110</td></tr>
+                    <tr><td>7</td><td>7</td><td>0111</td><td>F</td><td>15</td><td>1111</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Hexadecimal a Decimal</h2>
+            <div class="concept-box">
+                <p>Se multiplica cada dígito por 16 elevado a la potencia de su posición.</p>
+                <div class="code-block mt-4">
+                    Ejemplo: 1A<br>
+                    (1 * 16^1) + (10 * 16^0)<br>
+                    16 + 10 = 26
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Decimal a Hexadecimal</h2>
+            <div class="concept-box">
+                <p>Se divide el número entre 16 sucesivamente, tomando los residuos.</p>
+                <div class="code-block mt-4">
+                    Ejemplo: 45 / 16 = 2 (Residuo 13 -> D)<br>
+                    Resultado: 2D
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Uso en Colores Web</h2>
+            <p>Los colores RGB se representan con 6 dígitos hexadecimales (2 para Rojo, 2 para Verde, 2 para Azul).</p>
+            <div class="mt-4 p-4 border rounded font-mono">
+                <span class="text-red-500">FF</span><span class="text-green-500">00</span><span class="text-blue-500">00</span> = Rojo Puro
+            </div>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Uso en Direcciones MAC</h2>
+            <p>La dirección física de tu tarjeta de red está escrita en hexadecimal para que sea legible por humanos.</p>
+            <p class="mt-4 font-mono text-gray-500">00:1B:44:11:3A:B7</p>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Prefijo "0x"</h2>
+            <p>En programación (C++, Python, Java), los números hexadecimales se identifican con el prefijo <strong>0x</strong> para no confundirlos con decimales.</p>
+            <p class="mt-4 font-mono bg-slate-100 p-2">color = 0xFFFFFF;</p>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ventaja de Legibilidad</h2>
+            <p>Es más fácil recordar "F4" que recordar "11110100". El cerebro humano procesa mejor grupos de 2 o 4 caracteres que largas filas de unos y ceros.</p>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Conversión Hex a Binario</h2>
+            <p>¡Es lo más fácil! Solo sustituye cada dígito hex por sus 4 bits correspondientes.</p>
+            <div class="mt-4 text-3xl font-mono">
+                A 3 -> 1010 0011
+            </div>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Capacidad de Representación</h2>
+            <p>Con solo 2 dígitos hexadecimales (FF) podemos representar hasta 256 valores diferentes (del 0 al 255), que es el tamaño estándar de un Byte.</p>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">CÁLCULOS BASE 16</h3>
+                <ol class="list-decimal ml-6 mt-2 text-sm text-left">
+                    <li>Convierte 0x3F a decimal.</li>
+                    <li>Convierte 250 a hexadecimal.</li>
+                    <li>Representa el color Blanco en formato hex.</li>
+                    <li>¿Qué valor decimal tiene la letra 'F'?</li>
+                </ol>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <!-- Pie de página -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs sm:text-sm p-2">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-2">
-            <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-16 sm:w-20 h-auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
-    <!-- Scripts para la navegación y la lógica del cuestionario -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
-        window.addEventListener('unhandledrejection', (event) => {
-            console.error('Unhandled promise rejection:', event.reason);
-            event.preventDefault();
-        });
-
-        const slides = document.querySelectorAll('.slide');
-        const nextButton = document.getElementById('next-btn');
-        const prevButton = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
         let currentSlideIndex = 0;
-        let isTransitioning = false;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
-        const quizData = [
-            {
-                q: "¿Cuál es el valor decimal de la letra 'A' en hexadecimal?",
-                options: ["9", "10", "11", "12"],
-                a: "10"
-            },
-            {
-                q: "¿Cuántos dígitos binarios (bits) se necesitan para representar un solo dígito hexadecimal?",
-                options: ["1", "4", "8", "16"],
-                a: "4"
-            },
-            {
-                q: "¿Qué número hexadecimal representa el color rojo puro en un código de 6 dígitos?",
-                options: ["#0000FF", "#FFFF00", "#FF0000", "#FFFFFF"],
-                a: "#FF0000"
-            },
-            {
-                q: "¿Cuál de los siguientes NO es un símbolo válido en el sistema hexadecimal?",
-                options: ["A", "G", "F", "D"],
-                a: "G"
-            },
-            {
-                q: "En informática, ¿dónde se utiliza comúnmente la numeración hexadecimal?",
-                options: ["En direcciones de memoria", "En nombres de archivos", "En el tamaño de las fuentes", "En la velocidad del procesador"],
-                a: "En direcciones de memoria"
-            },
-            {
-                q: "¿Cuál es la base del sistema de numeración hexadecimal?",
-                options: ["Base 2", "Base 8", "Base 10", "Base 16"],
-                a: "Base 16"
-            },
-            {
-                q: "¿Qué letra representa el valor decimal 15 en hexadecimal?",
-                options: ["E", "F", "D", "X"],
-                a: "F"
-            },
-            {
-                q: "Un conjunto de 4 bits se conoce como:",
-                options: ["Byte", "Nibble", "Word", "Packet"],
-                a: "Nibble"
-            },
-            {
-                q: "¿Qué valor decimal tiene el número hexadecimal '10'?",
-                options: ["10", "16", "1", "0"],
-                a: "16"
-            },
-            {
-                q: "Las direcciones MAC de hardware de red se escriben usualmente en formato:",
-                options: ["Decimal", "Binario", "Hexadecimal", "Octal"],
-                a: "Hexadecimal"
-            }
+        const quizQuestions = [
+            { q: "¿Cuál es la base del hex?", a: "C", options: ["2", "10", "16", "8"] },
+            { q: "¿Qué valor decimal tiene 'A'?", a: "B", options: ["9", "10", "11", "15"] },
+            { q: "¿Y la letra 'F'?", a: "D", options: ["10", "12", "14", "15"] },
+            { q: "Un dígito hex equivale a:", a: "A", options: ["4 bits", "8 bits", "1 bit", "1 byte"] },
+            { q: "Color #000000 es:", a: "B", options: ["Blanco", "Negro", "Rojo", "Azul"] },
+            { q: "Prefijo hex en código:", a: "C", options: ["hx", "$", "0x", "#"] },
+            { q: "Residuo 10 en división es:", a: "A", options: ["A", "B", "10", "0"] },
+            { q: "¿Qué es 0x10 en decimal?", a: "B", options: ["10", "16", "32", "1"] },
+            { q: "Símbolo que sigue al 9:", a: "D", options: ["10", "X", "F", "A"] },
+            { q: "Hex facilita leer:", a: "C", options: ["Word", "Excel", "Binario", "Audio"] }
         ];
-        let currentQuizQuestionIndex = 0;
-
-        function updateQuizDisplay() {
-            const quizQuestionElement = document.getElementById('quiz-question');
-            const quizOptionsElement = document.getElementById('quiz-options');
-            const quizFeedbackElement = document.getElementById('quiz-feedback');
-
-            if (currentQuizQuestionIndex >= quizData.length) {
-                quizQuestionElement.textContent = "¡Cuestionario completado!";
-                quizOptionsElement.innerHTML = '';
-                quizFeedbackElement.textContent = '';
-                return;
-            }
-
-            const currentQuestion = quizData[currentQuizQuestionIndex];
-            quizQuestionElement.textContent = currentQuestion.q;
-            quizOptionsElement.innerHTML = '';
-            quizFeedbackElement.textContent = '';
-
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-6 py-3 rounded-xl border border-blue-400 bg-blue-50 text-blue-700 font-semibold transition-colors duration-200 hover:bg-blue-100";
-                button.onclick = () => checkAnswer(option);
-                quizOptionsElement.appendChild(button);
-            });
-        }
-
-        function checkAnswer(selectedOption) {
-            const currentQuestion = quizData[currentQuizQuestionIndex];
-            const quizFeedback = document.getElementById('quiz-feedback');
-            const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
-            const isCorrect = selectedOption === currentQuestion.a;
-
-            buttons.forEach(button => {
-                button.disabled = true;
-                if (button.textContent === currentQuestion.a) {
-                    button.classList.add('correct');
-                } else if (button.textContent === selectedOption) {
-                    button.classList.add('incorrect');
-                }
-            });
-
-            if (isCorrect) {
-                quizFeedback.textContent = '¡Correcto!';
-                quizFeedback.classList.remove('text-red-500');
-                quizFeedback.classList.add('text-green-500');
-            } else {
-                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.a;
-                quizFeedback.classList.remove('text-green-500');
-                quizFeedback.classList.add('text-red-500');
-            }
-
-            setTimeout(() => {
-                currentQuizQuestionIndex++;
-                updateQuizDisplay();
-            }, 3000);
-        }
-
-        function updateSlideCounter() {
-            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-        }
-
-        function updateNavigationButtons() {
-            prevButton.disabled = currentSlideIndex === 0;
-            nextButton.disabled = currentSlideIndex === slides.length - 1;
-        }
 
         function showSlide(index) {
-            if (isTransitioning || index < 0 || index >= slides.length) {
-                return;
-            }
-
-            isTransitioning = true;
-            slides.forEach((slide) => {
-                slide.classList.remove('active');
-                slide.style.display = 'none';
-            });
-
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
             currentSlideIndex = index;
-
-            // Trigger quiz display when the quiz slide is shown (now slide 11)
-            if (currentSlideIndex === 10) {
-                currentQuizQuestionIndex = 0;
-                updateQuizDisplay();
-            }
-
-            const activeSlide = slides[currentSlideIndex];
-            activeSlide.style.display = 'flex';
-            setTimeout(() => {
-                activeSlide.classList.add('active');
-                updateSlideCounter();
-                updateNavigationButtons();
-                isTransitioning = false;
-            }, 10);
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        nextButton.addEventListener('click', () => {
-            showSlide(currentSlideIndex + 1);
-        });
-
-        prevButton.addEventListener('click', () => {
-            showSlide(currentSlideIndex - 1);
-        });
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowRight') {
-                showSlide(currentSlideIndex + 1);
-            } else if (event.key === 'ArrowLeft') {
-                showSlide(currentSlideIndex - 1);
-            }
-        });
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'F11') {
-                if (!document.fullscreenElement) {
-                    header.style.display = 'none';
-                    footer.style.display = 'none';
-                }
-            }
-        });
-
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-
-        function handleFullscreenChange() {
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                header.style.display = 'flex';
-                footer.style.display = 'flex';
-            }
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
+            });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentYearSpan = document.getElementById('current-year');
-            if (currentYearSpan) {
-                currentYearSpan.textContent = new Date().getFullYear();
-            }
-            showSlide(0); handleFullscreenChange();
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
+        });
+
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('inf_hexadecimales', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
     </script>
 </body>
 </html>

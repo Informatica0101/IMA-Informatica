@@ -2,523 +2,324 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagramas de Flujo - Programación I</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Diagramas de Flujo - IMA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; }
-        html { font-size: 90%; }
-        html, body { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow-x: hidden; }
-        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #374151; justify-content: space-between; }
-        #presentation-container { width: 100%; height: calc(100vh - 7rem); position: relative; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); overflow: hidden; display: flex; justify-content: center; align-items: center; margin: 0 auto; max-width: 100vw; }
-        .slide { width: 100%; height: 100%; padding: 1.8rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: opacity 0.5s ease-in-out; position: absolute; top: 0; left: 0; opacity: 0; -ms-overflow-style: none; scrollbar-width: none; overflow-y: auto; }
-        .slide::-webkit-scrollbar { display: none; }
-        .slide.active { display: flex; opacity: 1; animation-name: fadeIn; animation-duration: 0.8s; animation-fill-mode: forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { .slide h2, .slide h3 { font-size: 1.4rem; } .slide p, .slide li { font-size: 0.9rem; } .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
-        .quiz-option-button { transition: background-color 0.3s, transform 0.2s; text-align: left; padding-left: 1.5rem; }
-        .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
-        .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
-        .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
-        .code-box { background: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 8px; font-family: monospace; text-align: left; width: 100%; max-width: 500px; margin: 0.5rem 0; overflow-x: auto; }
-        .code-kw { color: #f472b6; font-weight: bold; }
-        .code-fn { color: #fbbf24; }
-        .step-box { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.8rem; margin: 0.3rem 0; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .step-number { display: inline-block; background: #3b82f6; color: white; width: 26px; height: 26px; border-radius: 50%; text-align: center; line-height: 26px; margin-right: 10px; font-weight: bold; font-size: 0.9rem; }
-
-        .slide p { font-size: 1.5rem !important; line-height: 1.6 !important; }
-        .slide h3 { font-size: 2.25rem !important; line-height: 1.4 !important; }
-        @media (max-width: 768px) {
-            .slide p { font-size: 1.3rem !important; }
-            .slide h3 { font-size: 1.8rem !important; }
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="antialiased">
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
-            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Programación I</h1>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-2 sm:space-x-3">
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
-            </ul>
-        </nav>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Dibujando el flujo...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <main class="flex-grow flex justify-center items-center p-3">
-        <div id="presentation-container" class="relative">
-            <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
-                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Diagramas de Flujo</h2>
-                <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 7: Representación Gráfica de Procesos</p>
-                <div class="text-xs text-gray-500 space-y-1">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 22 de marzo de 2026</p>
-                    <p>Grado: Undécimo de Informática - Sección "A"</p>
-                </div>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Diagramas de Flujo</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Programación I</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
+        </div>
 
-            <!-- Diapositiva 2: ¿Qué es un Diagrama de Flujo? -->
-            <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Qué es un Diagrama de Flujo?</h3>
-                <div class="concept-box">
-                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed text-left">
-                        Es la representación gráfica de un algoritmo o proceso. Utiliza símbolos estandarizados para mostrar los pasos y el flujo de ejecución.
-                    </p>
-                    <ul class="list-disc ml-8 mt-4 text-xs sm:text-sm space-y-2 text-left">
-                        <li>👁️ Visualiza la secuencia lógica rápidamente.</li>
-                        <li>🛣️ Muestra los caminos alternativos y decisiones.</li>
-                        <li>🌍 Es un lenguaje universal en programación.</li>
-                    </ul>
-                </div>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es un Diagrama de Flujo?</h2>
+            <div class="concept-box">
+                <p>Es una representación gráfica de un algoritmo. Muestra visualmente los pasos que sigue un programa y cómo fluye la información de un punto a otro.</p>
+                <p class="mt-4 font-bold">"Una imagen vale más que mil líneas de código".</p>
             </div>
+        </div>
 
-            <!-- Diapositiva 3: Importancia -->
-            <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Por qué usarlos?</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl">
-                    <div class="p-4 bg-white border rounded shadow-sm text-left">
-                        <p class="font-bold text-blue-600 text-xs">CLARIDAD</p>
-                        <p class="text-[10px] text-gray-500">Ayuda a entender procesos complejos de un vistazo.</p>
-                    </div>
-                    <div class="p-4 bg-white border rounded shadow-sm text-left">
-                        <p class="font-bold text-blue-600 text-xs">DOCUMENTACIÓN</p>
-                        <p class="text-[10px] text-gray-500">Sirve como manual para el código que se va a escribir.</p>
-                    </div>
-                    <div class="p-4 bg-white border rounded shadow-sm text-left">
-                        <p class="font-bold text-blue-600 text-xs">DEPURACIÓN</p>
-                        <p class="text-[10px] text-gray-500">Permite detectar errores lógicos antes de programar.</p>
-                    </div>
-                    <div class="p-4 bg-white border rounded shadow-sm text-left">
-                        <p class="font-bold text-blue-600 text-xs">COMUNICACIÓN</p>
-                        <p class="text-[10px] text-gray-500">Facilita explicar la lógica a otras personas.</p>
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Simbología Básica</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
+                <div class="p-4 bg-slate-50 border rounded flex items-center">
+                    <div class="w-12 h-6 border-2 border-black rounded-full mr-4 bg-white"></div>
+                    <div>
+                        <p class="font-bold">Terminal</p>
+                        <p class="text-xs">Inicio o Fin del algoritmo.</p>
                     </div>
                 </div>
-            </div>
-
-            <!-- Diapositiva 4: Simbología Básica (1) -->
-            <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Simbología Estándar</h3>
-                <div class="space-y-3 w-full max-w-2xl">
-                    <div class="flex items-center p-3 bg-gray-50 border rounded">
-                        <div class="w-16 h-8 border-2 border-blue-600 rounded-full mr-4 flex justify-center items-center font-bold text-[10px]">INICIO/FIN</div>
-                        <span class="text-xs">Óvalo: Marca el comienzo y el final del diagrama.</span>
-                    </div>
-                    <div class="flex items-center p-3 bg-gray-50 border rounded">
-                        <div class="w-16 h-8 border-2 border-blue-600 transform -skew-x-12 mr-4 flex justify-center items-center font-bold text-[10px]">E/S</div>
-                        <span class="text-xs">Paralelogramo: Lectura de datos o impresión de resultados.</span>
-                    </div>
-                    <div class="flex items-center p-3 bg-gray-50 border rounded">
-                        <div class="w-16 h-8 border-2 border-blue-600 mr-4 flex justify-center items-center font-bold text-[10px]">PROCESO</div>
-                        <span class="text-xs">Rectángulo: Cálculos, asignaciones o acciones.</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Simbología Básica (2) -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Decisión y Flujo</h3>
-                <div class="space-y-3 w-full max-w-2xl">
-                    <div class="flex items-center p-3 bg-gray-50 border rounded">
-                        <div class="w-10 h-10 border-2 border-blue-600 rotate-45 mr-4 flex justify-center items-center font-bold text-[8px]"><span class="-rotate-45">DECISIÓN</span></div>
-                        <span class="text-xs ml-4">Rombo: Representa una condición (Si/No).</span>
-                    </div>
-                    <div class="flex items-center p-3 bg-gray-50 border rounded">
-                        <div class="w-16 h-1 flex bg-blue-600 mr-4 relative"><div class="absolute right-0 -top-1 border-t-4 border-t-transparent border-b-4 border-b-transparent border-l-8 border-l-blue-600"></div></div>
-                        <span class="text-xs">Flechas: Indican la dirección del flujo.</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: Pasos para construir un Diagrama -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Cómo construirlo?</h3>
-                <div class="mt-4 space-y-2 max-w-lg">
-                    <div class="step-box"><span class="step-number">1</span> Definir el Inicio y el Fin.</div>
-                    <div class="step-box"><span class="step-number">2</span> Identificar las entradas (datos).</div>
-                    <div class="step-box"><span class="step-number">3</span> Establecer los procesos (acciones).</div>
-                    <div class="step-box"><span class="step-number">4</span> Aplicar decisiones si es necesario.</div>
-                    <div class="step-box"><span class="step-number">5</span> Unir todo con líneas de flujo.</div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Ejemplo: Hacer un café -->
-            <div id="slide-7" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejemplo Cotidiano</h3>
-                <p class="text-sm text-gray-600 mb-4">Diagrama para preparar café.</p>
-                <div class="flex flex-col items-center space-y-2 text-[10px] font-bold">
-                    <div class="border-2 border-gray-800 rounded-full px-4 py-1">INICIO</div>
-                    <div class="h-4 border-l-2 border-gray-800"></div>
-                    <div class="border-2 border-gray-800 px-4 py-1">Calentar agua</div>
-                    <div class="h-4 border-l-2 border-gray-800"></div>
-                    <div class="border-2 border-gray-800 px-4 py-1 rotate-45 w-16 h-16 flex items-center justify-center"><span class="-rotate-45">¿Hierve?</span></div>
-                    <div class="h-4 border-l-2 border-gray-800"></div>
-                    <div class="border-2 border-gray-800 px-4 py-1">Servir en taza</div>
-                    <div class="h-4 border-l-2 border-gray-800"></div>
-                    <div class="border-2 border-gray-800 rounded-full px-4 py-1">FIN</div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Reglas de Oro -->
-            <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Reglas Importantes</h3>
-                <ul class="list-disc text-left text-xs space-y-3 max-w-md">
-                    <li>Deben escribirse de arriba hacia abajo y de izquierda a derecha.</li>
-                    <li>Las líneas de flujo no deben cruzarse.</li>
-                    <li>Solo líneas horizontales y verticales.</li>
-                    <li>Todo símbolo (excepto Inicio/Fin) debe tener entrada y salida.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 9: Diagrama vs Pseudocódigo -->
-            <div id="slide-9" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Relación Directa</h3>
-                <div class="concept-box">
-                    <p class="text-sm text-gray-700 leading-relaxed text-center">
-                        Cada símbolo del diagrama tiene su equivalente en pseudocódigo. El diagrama es el "mapa" y el pseudocódigo es el "texto".
-                    </p>
-                </div>
-                <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded text-xs">
-                    💡 Un diagrama bien hecho facilita un 90% la escritura del código final.
-                </div>
-            </div>
-
-            <!-- Diapositiva 10: Ejercicio en Clase -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio Práctico</h3>
-                <div class="concept-box">
-                    <p class="font-bold mb-3 text-sm">Diseña un diagrama de flujo para:</p>
-                    <p class="text-xs text-gray-700 italic">"Un proceso cotidiano: Ir de tu casa al instituto."</p>
-                    <ul class="list-disc ml-8 mt-2 text-xs space-y-1">
-                        <li>Incluye al menos una decisión (Ej: ¿Hay transporte?).</li>
-                        <li>Usa correctamente los símbolos de inicio y fin.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Diapositiva 11: Cuestionario (1-5) -->
-            <div id="slide-11" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 1)</h3>
-                <div id="quiz-container-1" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-1" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-1" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-1" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter">1</span> de 5</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Cuestionario (6-10) -->
-            <div id="slide-12" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 2)</h3>
-                <div id="quiz-container-2" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-2" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-2" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-2" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter-2">6</span> de 10</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Resumen -->
-            <div id="slide-13" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen de la Clase</h3>
-                <div class="max-w-3xl mx-auto grid grid-cols-2 gap-4">
-                    <div class="p-4 bg-blue-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-blue-700">Conceptos:</p>
-                        <ul class="text-[10px] space-y-1">
-                            <li>• Representación gráfica.</li>
-                            <li>• Símbolos estandarizados.</li>
-                            <li>• Lógica visual.</li>
-                        </ul>
-                    </div>
-                    <div class="p-4 bg-green-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-green-700">Símbolos:</p>
-                        <ul class="text-[10px] space-y-1">
-                            <li>• Óvalo, Rombo, Rectángulo.</li>
-                            <li>• Líneas de flujo.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 14: Tarea -->
-            <div id="slide-14" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Asignación (Tarea)</h3>
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-indigo-200 max-w-3xl">
-                    <h4 class="font-bold text-indigo-800 mb-3">📋 Tarea #7: Diagramas de Flujo</h4>
-                    <div class="text-left space-y-4 text-sm">
-                        <p><strong>Actividad:</strong> Crear un diagrama de flujo para un proceso cotidiano a elección.</p>
-                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
-                            <li>Usa regla para los símbolos.</li>
-                            <li>Debe tener al menos una bifurcación (decisión).</li>
-                            <li>Presentar en el cuaderno de forma ordenada.</li>
-                        </ul>
-                        <div class="pt-4 border-t flex justify-between font-bold text-indigo-900">
-                            <span>Fecha: 29/03/2026</span>
-                            <span>Valor: 5%</span>
-                        </div>
+                <div class="p-4 bg-slate-50 border rounded flex items-center">
+                    <div class="w-12 h-8 border-2 border-black mr-4 bg-white"></div>
+                    <div>
+                        <p class="font-bold">Proceso</p>
+                        <p class="text-xs">Cálculos o acciones directas.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Botones de navegación -->
-        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
-            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
-            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Símbolos de Interacción</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
+                <div class="p-4 bg-slate-50 border rounded flex items-center">
+                    <div class="w-12 h-8 border-2 border-black skew-x-12 mr-4 bg-white"></div>
+                    <div>
+                        <p class="font-bold">Entrada / Salida</p>
+                        <p class="text-xs">Lectura de datos o impresión de resultados.</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 border rounded flex items-center">
+                    <div class="w-10 h-10 border-2 border-black rotate-45 mr-4 bg-white"></div>
+                    <div class="ml-2">
+                        <p class="font-bold">Decisión</p>
+                        <p class="text-xs">Condición SI/NO (Verdadero/Falso).</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 14</div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Líneas de Flujo</h2>
+            <div class="concept-box">
+                <p>Son flechas que indican la dirección en la que se ejecutan las instrucciones. El flujo SIEMPRE debe ir de arriba hacia abajo o de izquierda a derecha.</p>
+            </div>
+            <i class="fas fa-long-arrow-alt-down text-6xl text-blue-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reglas de Construcción</h2>
+            <ul class="list-disc text-left space-y-2 max-w-2xl mx-auto">
+                <li>Todo diagrama debe tener un Inicio y un Fin.</li>
+                <li>Las líneas de flujo deben ser rectas.</li>
+                <li>No pueden quedar líneas "sueltas" o sin conectar.</li>
+                <li>De un rombo de decisión SIEMPRE deben salir dos caminos (Sí/No).</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
+            <div class="concept-box">
+                <p>Dibuja el diagrama de flujo para un algoritmo que pida un número y muestre en pantalla si es positivo (Mayor a 0).</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructuras de Control</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl">
+                <div class="p-4 bg-blue-50 border rounded">Secuencial</div>
+                <div class="p-4 bg-blue-100 border rounded">Selectiva (SI-SINO)</div>
+                <div class="p-4 bg-blue-200 border rounded">Repetitiva (Ciclos)</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Conectores</h2>
+            <div class="concept-box">
+                <p>Se usan círculos pequeños para unir partes del diagrama cuando no caben en una sola página o para evitar que las líneas se crucen demasiado.</p>
+            </div>
+            <i class="fas fa-circle text-4xl text-slate-300 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ventajas Visuales</h2>
+            <ul class="list-disc text-left space-y-4 max-w-xl mx-auto">
+                <li>Facilita la comunicación con el cliente.</li>
+                <li>Permite detectar bucles infinitos visualmente.</li>
+                <li>Estandariza la lógica del equipo de desarrollo.</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Software de Diseño</h2>
+            <p>Herramientas para crear diagramas profesionales:</p>
+            <div class="grid grid-cols-3 gap-4 mt-8">
+                <div class="p-2 border rounded">PSeInt</div>
+                <div class="p-2 border rounded">Lucidchart</div>
+                <div class="p-2 border rounded">Draw.io</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Análisis de Errores</h2>
+            <p class="italic text-2xl">"Un diagrama con líneas que se cruzan o sin fin definido es un programa que fallará."</p>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Ciclo</h2>
+            <div class="code-block">
+                <p>// Simulación de Bucle en Diagrama</p>
+                <p>ETIQUETA_INICIO_CICLO:</p>
+                <p>&nbsp;&nbsp;REALIZAR_ACCION()</p>
+                <p>&nbsp;&nbsp;IF condicion == TRUE THEN</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;GOTO ETIQUETA_INICIO_CICLO</p>
+                <p>&nbsp;&nbsp;ELSE</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;TERMINAR()</p>
+                <p>&nbsp;&nbsp;ENDIF</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none">
+                <h3 class="font-black text-xl mb-4 uppercase">MI PRIMER DIAGRAMA</h3>
+                <p>Dibujar en el cuaderno el diagrama de flujo para un algoritmo que pida el año de nacimiento, calcule la edad y muestre si la persona puede votar (Edad >= 18).</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 10%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
-            <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Programación I</p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
-        const slides = document.querySelectorAll('.slide');
-        const nextButton = document.getElementById('next-btn');
-        const prevButton = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
         let currentSlideIndex = 0;
-        let isTransitioning = false;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
         const quizQuestions = [
-            {
-                question: "¿Qué es un diagrama de flujo?",
-                options: ["Una representación gráfica de un algoritmo", "Un tipo de cable de red", "Una marca de computadoras", "Un sistema de sonido"],
-                correctAnswer: "Una representación gráfica de un algoritmo"
-            },
-            {
-                question: "¿Qué representa el símbolo del óvalo en un diagrama de flujo?",
-                options: ["Inicio o Fin del algoritmo", "Proceso matemático", "Entrada de datos", "Decisión"],
-                correctAnswer: "Inicio o Fin del algoritmo"
-            },
-            {
-                question: "¿Para qué se usa el rombo en los diagramas de flujo?",
-                options: ["Tomar decisiones (SI/NO)", "Realizar una suma", "Mostrar el resultado", "Almacenar una variable"],
-                correctAnswer: "Tomar decisiones (SI/NO)"
-            },
-            {
-                question: "¿Qué representa el rectángulo en un diagrama de flujo?",
-                options: ["Un proceso o acción", "El fin del programa", "Una pregunta", "La entrada del teclado"],
-                correctAnswer: "Un proceso o acción"
-            },
-            {
-                question: "¿Qué indican las flechas en un diagrama de flujo?",
-                options: ["El flujo o dirección de la ejecución", "La velocidad del procesador", "El brillo de la pantalla", "No tienen significado"],
-                correctAnswer: "El flujo o dirección de la ejecución"
-            },
-            {
-                question: "1. ¿Qué es un diagrama de flujo?",
-                options: ["Rectángulo", "Óvalo", "Rombo", "Círculo"],
-                correctAnswer: "Óvalo"
-            },
-            {
-                question: "2. ¿Qué símbolo se usa para una decisión?",
-                options: ["Rectángulo", "Óvalo", "Rombo", "Triángulo"],
-                correctAnswer: "Rombo"
-            },
-            {
-                question: "3. ¿Qué representa el rectángulo?",
-                options: ["Entrada de datos", "Inicio", "Proceso o acción", "Fin"],
-                correctAnswer: "Proceso o acción"
-            },
-            {
-                question: "4. ¿En qué dirección debe fluir el diagrama?",
-                options: ["De abajo hacia arriba", "De derecha a izquierda", "De arriba hacia abajo", "Cualquier dirección"],
-                correctAnswer: "De arriba hacia abajo"
-            },
-            {
-                question: "5. ¿Qué símbolo se usa para Entrada y Salida?",
-                options: ["Rectángulo", "Paralelogramo", "Óvalo", "Círculo"],
-                correctAnswer: "Paralelogramo"
-            },
-            {
-                question: "6. ¿Pueden cruzarse las líneas de flujo?",
-                options: ["Sí, si es necesario", "No, nunca", "Solo en diagramas grandes", "A veces"],
-                correctAnswer: "No, nunca"
-            },
-            {
-                question: "7. ¿Qué indica una flecha?",
-                options: ["Un error", "El sentido del flujo", "Una pausa", "Un comentario"],
-                correctAnswer: "El sentido del flujo"
-            },
-            {
-                question: "8. ¿El rombo cuántas salidas suele tener?",
-                options: ["Una", "Dos (Sí y No)", "Tres", "Ninguna"],
-                correctAnswer: "Dos (Sí y No)"
-            },
-            {
-                question: "9. ¿Qué es un diagrama de flujo?",
-                options: ["Un tipo de música", "Una representación gráfica", "Un virus", "Un hardware"],
-                correctAnswer: "Una representación gráfica"
-            },
-            {
-                question: "10. ¿Para qué sirve documentar con diagramas?",
-                options: ["Para gastar papel", "Para guiar la programación", "Para que no se vea el código", "Para nada"],
-                correctAnswer: "Para guiar la programación"
-            }
+            { q: "¿Qué símbolo indica Inicio/Fin?", a: "A", options: ["Óvalo", "Rectángulo", "Rombo", "Círculo"] },
+            { q: "¿Qué símbolo es para procesos?", a: "B", options: ["Círculo", "Rectángulo", "Óvalo", "Flecha"] },
+            { q: "El Rombo sirve para:", a: "C", options: ["Calcular", "Escribir", "Tomar decisiones", "Cerrar"] },
+            { q: "¿Hacia dónde debe ir el flujo?", a: "D", options: ["Abajo a Arriba", "Cualquier lado", "Atrás", "Arriba hacia Abajo"] },
+            { q: "Entrada/Salida se representa con:", a: "A", options: ["Paralelogramo", "Triángulo", "Punto", "Cuadrado"] },
+            { q: "¿Qué une a los símbolos?", a: "B", options: ["Cadenas", "Líneas de flujo (Flechas)", "Cables", "Puntos"] },
+            { q: "Unir partes en otra página:", a: "C", options: ["Rombo", "Rectángulo", "Conector", "Terminal"] },
+            { q: "¿Cuántas salidas tiene un rombo?", a: "D", options: ["Una", "Tres", "Ninguna", "Dos (Sí/No)"] },
+            { q: "Representación gráfica de pasos:", a: "A", options: ["Diagrama de flujo", "Código", "Base de datos", "Hardware"] },
+            { q: "PSeInt sirve para crear:", a: "B", options: ["Juegos 3D", "Diagramas y Pseudocódigo", "Hojas de cálculo", "Virus"] }
         ];
 
-        let currentQuizPart1Index = 0;
-        let currentQuizPart2Index = 5;
-
-        function updateQuizPart1() {
-            if (currentQuizPart1Index >= 5) return;
-            const questionElement = document.getElementById('quiz-question-1');
-            const optionsElement = document.getElementById('quiz-options-1');
-            const feedbackElement = document.getElementById('quiz-feedback-1');
-            const counterElement = document.getElementById('question-counter');
-            const currentQuestion = quizQuestions[currentQuizPart1Index];
-            questionElement.textContent = currentQuestion.question;
-            optionsElement.innerHTML = '';
-            feedbackElement.textContent = '';
-            counterElement.textContent = currentQuizPart1Index + 1;
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
-                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 1);
-                optionsElement.appendChild(button);
-            });
-        }
-
-        function updateQuizPart2() {
-            if (currentQuizPart2Index >= 10) return;
-            const questionElement = document.getElementById('quiz-question-2');
-            const optionsElement = document.getElementById('quiz-options-2');
-            const feedbackElement = document.getElementById('quiz-feedback-2');
-            const counterElement = document.getElementById('question-counter-2');
-            const currentQuestion = quizQuestions[currentQuizPart2Index];
-            questionElement.textContent = currentQuestion.question;
-            optionsElement.innerHTML = '';
-            feedbackElement.textContent = '';
-            counterElement.textContent = currentQuizPart2Index + 1;
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
-                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 2);
-                optionsElement.appendChild(button);
-            });
-        }
-
-        function checkQuizAnswer(selected, correct, feedbackElement, buttons, part) {
-            Array.from(buttons).forEach(button => {
-                button.disabled = true;
-                if (button.textContent === correct) button.classList.add('correct');
-                else if (button.textContent === selected) button.classList.add('incorrect');
-            });
-            if (selected === correct) {
-                feedbackElement.textContent = '¡Correcto!';
-                feedbackElement.style.color = '#065f46';
-            } else {
-                feedbackElement.textContent = `Incorrecto. La respuesta es: ${correct}`;
-                feedbackElement.style.color = '#991b1b';
-            }
-            setTimeout(() => {
-                if (part === 1) {
-                    currentQuizPart1Index++;
-                    if (currentQuizPart1Index < 5) updateQuizPart1();
-                } else {
-                    currentQuizPart2Index++;
-                    if (currentQuizPart2Index < 10) updateQuizPart2();
-                }
-            }, 1500);
-        }
-
         function showSlide(index) {
-            if (isTransitioning || index < 0 || index >= slides.length) return;
-            isTransitioning = true;
-
-            slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
             currentSlideIndex = index;
-            if (currentSlideIndex === 10) { currentQuizPart1Index = 0; setTimeout(updateQuizPart1, 100); }
-            else if (currentSlideIndex === 11) { currentQuizPart2Index = 5; setTimeout(updateQuizPart2, 100); }
-            const activeSlide = slides[currentSlideIndex];
-            activeSlide.style.display = 'flex';
-            setTimeout(() => {
-                activeSlide.classList.add('active');
-                slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-                prevButton.disabled = currentSlideIndex === 0;
-                nextButton.disabled = currentSlideIndex === slides.length - 1;
-                isTransitioning = false;
-            }, 10);
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
-        prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
-
-        const presentationContainer = document.getElementById('presentation-container');
-        presentationContainer.addEventListener('click', (e) => {
-            if (e.target.closest('button') || e.target.closest('a')) return;
-            const rect = presentationContainer.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            if (clickX > rect.width / 2) showSlide(currentSlideIndex + 1);
-            else showSlide(currentSlideIndex - 1);
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('current-year').textContent = new Date().getFullYear();
-            showSlide(0); handleFullscreenChange();
-        });
-
-
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) || (window.innerHeight >= screen.height - 10);
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-            document.body.classList.add('is-fullscreen');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-            document.body.classList.remove('is-fullscreen');
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
+            });
         }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-    window.addEventListener('resize', handleFullscreenChange);
 
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
+        });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
+        });
 
-    // Navigation improvements (2026)
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
-    });
-
-    (function() {
-        const container = document.getElementById('presentation-container');
-        if (!container) return;
-        let tsX = 0;
-        container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-        container.addEventListener('touchend', e => {
-            let teX = e.changedTouches[0].screenX;
-            if (tsX - teX > 50) typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-            if (teX - tsX > 50) typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
-        }, {passive: true});
-    })();
-
-</script>
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('diagramas_flujo', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
+    </script>
 </body>
 </html>

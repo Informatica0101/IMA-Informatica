@@ -2,538 +2,301 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clasificación y Etapas de Algoritmos - Programación I</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Clasificación y Etapas de Algoritmos - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; }
-        html { font-size: 90%; }
-        html, body { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow-x: hidden; }
-        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #374151; justify-content: space-between; }
-        #presentation-container { width: 100%; height: calc(100vh - 7rem); position: relative; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); overflow: hidden; display: flex; justify-content: center; align-items: center; margin: 0 auto; max-width: 100vw; }
-        .slide { width: 100%; height: 100%; padding: 1.8rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: opacity 0.5s ease-in-out; position: absolute; top: 0; left: 0; opacity: 0; -ms-overflow-style: none; scrollbar-width: none; overflow-y: auto; }
-        .slide::-webkit-scrollbar { display: none; }
-        .slide.active { display: flex; opacity: 1; animation-name: fadeIn; animation-duration: 0.8s; animation-fill-mode: forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { .slide h2, .slide h3 { font-size: 1.4rem; } .slide p, .slide li { font-size: 0.9rem; } .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; } }
-        .quiz-option-button { transition: background-color 0.3s, transform 0.2s; text-align: left; padding-left: 1.5rem; }
-        .quiz-option-button.correct { background-color: #d1fae5; color: #065f46; border-color: #10b981; }
-        .quiz-option-button.incorrect { background-color: #fee2e2; color: #991b1b; border-color: #ef4444; }
-        .concept-box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1.2rem; margin: 0.8rem auto; text-align: left; border-radius: 8px; max-width: 600px; }
-        .step-box { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.8rem; margin: 0.3rem 0; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .step-number { display: inline-block; background: #3b82f6; color: white; width: 26px; height: 26px; border-radius: 50%; text-align: center; line-height: 26px; margin-right: 10px; font-weight: bold; font-size: 0.9rem; }
-
-        .slide p { font-size: 1.5rem !important; line-height: 1.6 !important; }
-        .slide h3 { font-size: 2.25rem !important; line-height: 1.4 !important; }
-        @media (max-width: 768px) {
-            .slide p { font-size: 1.3rem !important; }
-            .slide h3 { font-size: 1.8rem !important; }
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="antialiased">
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
-            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Programación I</h1>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-2 sm:space-x-3">
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
-            </ul>
-        </nav>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Analizando metodología...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <main class="flex-grow flex justify-center items-center p-3">
-        <div id="presentation-container" class="relative">
-            <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-40 sm:w-56 md:w-72 h-auto mb-4">
-                <h2 class="text-xl sm:text-2xl mb-2 text-blue-600 font-bold">Clasificación y Etapas de Algoritmos</h2>
-                <p class="text-sm sm:text-base text-gray-600 mb-6 uppercase tracking-widest">Semana 2: Metodología de Solución</p>
-                <div class="text-xs text-gray-500 space-y-1">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 15 de febrero de 2026</p>
-                    <p>Grado: Undécimo de Informática - Sección "A"</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 2: ¿Por qué clasificar los algoritmos? -->
-            <div id="slide-2" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">¿Por qué clasificar los algoritmos?</h3>
-                <div class="concept-box">
-                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
-                        Existen muchas formas de resolver un mismo problema. Clasificar los algoritmos nos ayuda a elegir la <strong>estrategia más eficiente</strong> según la situación.
-                    </p>
-                    <div class="mt-4 bg-white p-4 rounded-lg border shadow-sm">
-                        <p class="font-bold text-blue-600 mb-2">💡 Una estrategia adecuada permite:</p>
-                        <ul class="text-xs sm:text-sm space-y-2">
-                            <li>🚀 Ahorrar tiempo de ejecución.</li>
-                            <li>💾 Usar menos memoria de la computadora.</li>
-                            <li>🛠️ Facilitar el mantenimiento del código.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 3: Estrategias Simples -->
-            <div id="slide-3" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Estrategias Simples</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-100 text-left">
-                        <h4 class="font-bold text-red-700 mb-2">Fuerza Bruta</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Resuelve el problema de la forma más simple y directa, probando todas las opciones posibles.</p>
-                        <p class="text-[10px] mt-2 italic text-red-600">Ejemplo: Probar todas las llaves de un llavero hasta abrir la puerta.</p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-xl border border-green-100 text-left">
-                        <h4 class="font-bold text-green-700 mb-2">Algoritmos Codiciosos</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Toman la mejor decisión en cada paso local, esperando llegar a la solución global óptima.</p>
-                        <p class="text-[10px] mt-2 italic text-green-600">Ejemplo: Dar el cambio usando la moneda de mayor valor disponible.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 4: Estrategias Avanzadas -->
-            <div id="slide-4" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Estrategias Avanzadas</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
-                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 text-left">
-                        <h4 class="font-bold text-purple-700 mb-2">Divide y Vencerás</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Subdivide un problema en subproblemas más pequeños del mismo tipo, los resuelve y combina los resultados.</p>
-                        <p class="text-[10px] mt-2 italic text-purple-600">Ejemplo: Buscar una palabra en un diccionario abriendo por la mitad.</p>
-                    </div>
-                    <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100 text-left">
-                        <h4 class="font-bold text-yellow-700 mb-2">Vuelta Atrás (Backtracking)</h4>
-                        <p class="text-xs sm:text-sm text-gray-700">Explora caminos de solución y, si encuentra que no sirven, retrocede al paso anterior para probar otra opción.</p>
-                        <p class="text-[10px] mt-2 italic text-yellow-600">Ejemplo: Resolver un laberinto regresando cuando llegas a un callejón sin salida.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 5: Otros Tipos -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Programación Dinámica y Probabilísticos</h3>
-                <div class="concept-box">
-                    <div class="mb-4">
-                        <p class="font-bold text-blue-700 mb-1">📊 Programación Dinámica:</p>
-                        <p class="text-xs sm:text-sm">Similar a "Divide y Vencerás", pero guarda los resultados de subproblemas ya resueltos en una tabla para no repetirlos.</p>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg border">
-                        <p class="font-bold text-gray-700 mb-1">🎲 Algoritmos Probabilísticos:</p>
-                        <p class="text-xs sm:text-sm">Introducen el azar en su lógica. Se usan cuando el problema es tan grande que una búsqueda exacta tardaría demasiado.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 6: Etapa 1 - Análisis del Problema -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etapa 1: Análisis del Problema</h3>
-                <p class="text-sm text-gray-600 mb-4">Consiste en comprender qué es lo que el programa debe hacer.</p>
-                <div class="space-y-3 max-w-2xl mx-auto">
-                    <div class="step-box">
-                        <span class="step-number">1</span> <strong>Definir el problema:</strong> Entenderlo con total precisión.
-                    </div>
-                    <div class="step-box">
-                        <span class="step-number">2</span> <strong>Especificar Entradas:</strong> ¿Qué datos necesito para empezar?
-                    </div>
-                    <div class="step-box">
-                        <span class="step-number">3</span> <strong>Especificar Salidas:</strong> ¿Qué resultado debe mostrar el programa?
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Etapa 2 - Diseño del Algoritmo -->
-            <div id="slide-7" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etapa 2: Diseño del Algoritmo</h3>
-                <div class="concept-box">
-                    <p class="font-bold text-lg mb-2 text-blue-700">¿Cómo lo vamos a resolver?</p>
-                    <ul class="text-sm space-y-3">
-                        <li>📍 <strong>Diseño Descendente (Top-Down):</strong> Dividir el problema en módulos más simples.</li>
-                        <li>📍 <strong>Refinamiento por pasos:</strong> Describir primero los pasos generales y luego detallarlos poco a poco.</li>
-                    </ul>
-                    <div class="mt-4 p-3 bg-white border rounded italic text-xs text-center">
-                        "Un problema complejo se resuelve mejor si se divide en partes pequeñas."
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Etapa 3 - Programación (Codificación) -->
-            <div id="slide-8" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Etapa 3: Programación (Codificación)</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl">
-                    <div class="p-4 bg-white border rounded shadow-sm text-center">
-                        <div class="text-2xl mb-2">💻</div>
-                        <p class="font-bold text-xs uppercase">Codificación</p>
-                        <p class="text-[10px] text-gray-500">Traducir el algoritmo a un lenguaje (como PSeInt o C++).</p>
-                    </div>
-                    <div class="p-4 bg-white border rounded shadow-sm text-center">
-                        <div class="text-2xl mb-2">⚙️</div>
-                        <p class="font-bold text-xs uppercase">Ejecución</p>
-                        <p class="text-[10px] text-gray-500">Poner a funcionar el programa en la computadora.</p>
-                    </div>
-                    <div class="p-4 bg-white border rounded shadow-sm text-center">
-                        <div class="text-2xl mb-2">✅</div>
-                        <p class="font-bold text-xs uppercase">Comprobación</p>
-                        <p class="text-[10px] text-gray-500">Verificar que los resultados sean los esperados.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Técnicas de Representación -->
-            <div id="slide-9" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Técnicas de Representación</h3>
-                <p class="text-sm text-gray-700 mb-6">Antes de programar, usamos estas herramientas para planear:</p>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl">
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Lenguaje Natural</div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Pseudocódigo</div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Diagramas de Flujo</div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200 font-bold text-xs">Fórmulas</div>
-                </div>
-                <div class="mt-8 p-4 bg-gray-50 rounded-lg max-w-2xl text-left border-l-4 border-gray-400">
-                    <p class="text-xs"><strong>Ejemplo de Lenguaje Natural:</strong><br>"Inicio -> Ir al cine -> Comprar entrada -> Ver película -> Salir -> Regresar -> Fin"</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 10: Ejercicio Práctico -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Ejercicio: Identificar Etapas</h3>
-                <div class="concept-box">
-                    <p class="font-bold mb-3">🛠️ Situación: Necesitas un programa para calcular el promedio de 3 notas.</p>
-                    <div class="space-y-2">
-                        <p class="text-xs"><strong>A. Análisis:</strong> ¿Qué datos pido? (Nota 1, 2, 3) ¿Qué entrego? (Promedio)</p>
-                        <p class="text-xs"><strong>B. Diseño:</strong> Promedio = (N1 + N2 + N3) / 3</p>
-                        <p class="text-xs"><strong>C. Codificación:</strong> Escribir el código en PSeInt.</p>
-                    </div>
-                    <div class="mt-4 p-4 bg-blue-600 text-white rounded-lg text-center text-sm font-bold">
-                        ¡Ahora piensa tú en las etapas para un programa que calcule el área de un cuadrado!
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 11: Cuestionario (1-5) -->
-            <div id="slide-11" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 1)</h3>
-                <div id="quiz-container-1" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-1" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-1" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-1" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter">1</span> de 5</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 12: Cuestionario (6-10) -->
-            <div id="slide-12" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Cuestionario (Parte 2)</h3>
-                <div id="quiz-container-2" class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow max-w-2xl w-full">
-                    <div id="quiz-question-2" class="text-base sm:text-lg font-semibold mb-4 text-gray-800"></div>
-                    <div id="quiz-options-2" class="flex flex-col space-y-2"></div>
-                    <div id="quiz-feedback-2" class="mt-3 text-sm font-bold"></div>
-                </div>
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>Pregunta <span id="question-counter-2">6</span> de 10</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Resumen -->
-            <div id="slide-13" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Resumen de la Clase</h3>
-                <div class="max-w-3xl mx-auto grid grid-cols-2 gap-4">
-                    <div class="p-4 bg-blue-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-blue-700">Clasificación:</p>
-                        <ul class="text-[10px] space-y-1">
-                            <li>• Fuerza Bruta</li>
-                            <li>• Codiciosos</li>
-                            <li>• Divide y Vencerás</li>
-                            <li>• Dinámica</li>
-                        </ul>
-                    </div>
-                    <div class="p-4 bg-green-50 rounded border text-left">
-                        <p class="font-bold text-sm mb-2 text-green-700">Etapas:</p>
-                        <ul class="text-[10px] space-y-1">
-                            <li>• 1. Análisis</li>
-                            <li>• 2. Diseño</li>
-                            <li>• 3. Programación</li>
-                        </ul>
-                    </div>
-                </div>
-                <p class="mt-8 font-bold text-blue-600">¡Sigue el proceso y serás un gran programador!</p>
-            </div>
-
-            <!-- Diapositiva 14: Tarea -->
-            <div id="slide-14" class="slide">
-                <h3 class="text-xl sm:text-2xl mb-4 text-blue-500">Asignación (Tarea)</h3>
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-indigo-200 max-w-3xl">
-                    <h4 class="font-bold text-indigo-800 mb-3">📋 Tarea: Mapa Conceptual de Algoritmos</h4>
-                    <div class="text-left space-y-4 text-sm">
-                        <p><strong>Actividad:</strong> Elabora en tu cuaderno un cuadro conceptual o mapa mental que incluya:</p>
-                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
-                            <li>Los tipos de algoritmos vistos en clase (Fuerza Bruta, Codiciosos, etc.).</li>
-                            <li>Las 3 etapas de desarrollo (Análisis, Diseño, Programación) con una breve descripción de cada una.</li>
-                        </ul>
-                        <p class="mt-4 bg-white p-3 rounded border italic text-xs">"Debe ser claro, ordenado y usar colores para distinguir las secciones."</p>
-                        <div class="pt-4 border-t flex justify-between font-bold text-indigo-900">
-                            <span>Fecha: 22/02/2026</span>
-                            <span>Valor: 5%</span>
-                        </div>
-                    </div>
-                </div>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Clasificación y Etapas de Algoritmos</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Programación I</p>
+                <p>Undécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
         </div>
 
-        <!-- Botones de navegación -->
-        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
-            <button id="prev-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
-            <button id="next-btn" class="nav-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Por qué clasificar?</h2>
+            <div class="concept-box">
+                <p>Existen múltiples formas de resolver un problema. Clasificar algoritmos nos permite elegir la <strong>estrategia más eficiente</strong> (ahorro de tiempo y memoria).</p>
+            </div>
         </div>
-        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 14</div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Fuerza Bruta</h2>
+            <div class="concept-box">
+                <p>Prueba todas las opciones posibles de forma directa hasta encontrar la solución.</p>
+                <p class="mt-2 text-sm italic">Ejemplo: Probar todas las llaves de un llavero para abrir una puerta.</p>
+            </div>
+            <i class="fas fa-hammer text-6xl text-slate-300 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Algoritmos Codiciosos</h2>
+            <div class="concept-box">
+                <p>Toman la mejor decisión en cada paso local, esperando llegar a la mejor solución global.</p>
+                <p class="mt-2 text-sm italic">Ejemplo: Dar el cambio usando siempre la moneda de mayor valor disponible.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Divide y Vencerás</h2>
+            <div class="concept-box">
+                <p>Descompone un problema complejo en subproblemas más pequeños del mismo tipo, los resuelve y combina los resultados.</p>
+            </div>
+            <i class="fas fa-scissors text-6xl text-blue-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Backtracking (Vuelta Atrás)</h2>
+            <div class="concept-box">
+                <p>Explora un camino de solución y, si detecta que no es válido, retrocede al paso anterior para probar otra alternativa.</p>
+                <p class="mt-2 text-sm italic">Ejemplo: Resolver un laberinto.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
+            <div class="concept-box">
+                <p>Identifica qué tipo de algoritmo usarías para buscar un número telefónico en un directorio impreso abriendo el libro por la mitad sucesivamente.</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Etapas de Desarrollo</h2>
+            <p>Para crear un algoritmo efectivo, seguimos un proceso riguroso:</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 w-full max-w-4xl">
+                <div class="p-4 bg-blue-50 border rounded font-bold">1. Análisis</div>
+                <div class="p-4 bg-blue-100 border rounded font-bold">2. Diseño</div>
+                <div class="p-4 bg-blue-200 border rounded font-bold">3. Codificación</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Etapa 1: Análisis</h2>
+            <div class="concept-box">
+                <p>Consiste en comprender totalmente el problema. Debemos definir:</p>
+                <ul class="list-disc ml-8 mt-2 text-sm">
+                    <li><strong>Entradas:</strong> ¿Qué datos necesito?</li>
+                    <li><strong>Salidas:</strong> ¿Qué resultado espero?</li>
+                    <li><strong>Restricciones:</strong> ¿Qué reglas debo seguir?</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Etapa 2: Diseño</h2>
+            <div class="concept-box border-green-400">
+                <p>Se define el <strong>CÓMO</strong> se resolverá el problema. Se utiliza:</p>
+                <ul class="list-disc ml-8 mt-2 text-sm">
+                    <li>Diagramas de Flujo (Gráfico).</li>
+                    <li>Pseudocódigo (Palabras).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Etapa 3: Codificación</h2>
+            <div class="concept-box border-purple-400">
+                <p>Es la traducción del algoritmo diseñado a un lenguaje de programación específico que la computadora pueda ejecutar.</p>
+            </div>
+            <i class="fas fa-terminal text-6xl text-slate-800 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Importancia del Análisis</h2>
+            <p class="italic">"Si no entiendes el problema, cualquier código que escribas será incorrecto. Dedica el 80% al análisis y diseño, y el 20% a codificar."</p>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Diseño</h2>
+            <div class="code-block">
+                <p>// Diseño Top-Down</p>
+                <p>PROCEDIMIENTO ResolverProblema</p>
+                <p>&nbsp;&nbsp;Paso1_Analizar()</p>
+                <p>&nbsp;&nbsp;Paso2_DiseñarAlgoritmo()</p>
+                <p>&nbsp;&nbsp;Paso3_EscribirCodigo()</p>
+                <p>FINPROCEDIMIENTO</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none">
+                <h3 class="font-black text-xl mb-4 uppercase">MAPA CONCEPTUAL</h3>
+                <p>Realizar un mapa conceptual que incluya los tipos de algoritmos y las 3 etapas de desarrollo vistas en clase.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
-            <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Programación I</p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
-        const slides = document.querySelectorAll('.slide');
-        const nextButton = document.getElementById('next-btn');
-        const prevButton = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
         let currentSlideIndex = 0;
-        let isTransitioning = false;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
         const quizQuestions = [
-            {
-                question: "¿Cuál es el propósito de clasificar los algoritmos?",
-                options: ["Elegir la estrategia más eficiente", "Gastar más memoria", "Hacer el código más lento", "Que la computadora use más energía"],
-                correctAnswer: "Elegir la estrategia más eficiente"
-            },
-            {
-                question: "¿Qué técnica consiste en probar todas las opciones posibles?",
-                options: ["Fuerza Bruta", "Codiciosos", "Divide y Vencerás", "Probabilísticos"],
-                correctAnswer: "Fuerza Bruta"
-            },
-            {
-                question: "¿Qué estrategia toma la mejor decisión en cada paso local?",
-                options: ["Codiciosos", "Divide y Vencerás", "Fuerza Bruta", "Backtracking"],
-                correctAnswer: "Codiciosos"
-            },
-            {
-                question: "¿Qué significa 'Top-Down' en el diseño de algoritmos?",
-                options: ["Dividir el problema de lo general a lo más simple", "Empezar a programar sin analizar", "Comprar una computadora nueva", "Dibujar sin orden"],
-                correctAnswer: "Dividir el problema de lo general a lo más simple"
-            },
-            {
-                question: "¿Para qué sirve el 'Refinamiento por pasos'?",
-                options: ["Para detallar poco a poco los pasos generales", "Para borrar el algoritmo", "Para cambiar el idioma", "Para instalar programas"],
-                correctAnswer: "Para detallar poco a poco los pasos generales"
-            },
-            {
-                question: "1. ¿Cuál es la primera etapa para desarrollar un algoritmo?",
-                options: ["Codificación", "Diseño", "Análisis", "Prueba"],
-                correctAnswer: "Análisis"
-            },
-            {
-                question: "2. ¿Qué técnica divide un problema complejo en subproblemas?",
-                options: ["Fuerza Bruta", "Divide y Vencerás", "Probabilístico", "Codicioso"],
-                correctAnswer: "Divide y Vencerás"
-            },
-            {
-                question: "3. ¿Cómo se llaman los algoritmos que prueban todas las soluciones?",
-                options: ["Fuerza Bruta", "Divide y Vencerás", "Vuelta Atrás", "Dinámica"],
-                correctAnswer: "Fuerza Bruta"
-            },
-            {
-                question: "4. ¿Qué algoritmos toman la mejor decisión local en cada paso?",
-                options: ["Fuerza Bruta", "Divide y Vencerás", "Codiciosos", "Probabilísticos"],
-                correctAnswer: "Codiciosos"
-            },
-            {
-                question: "5. ¿Qué etapa consiste en traducir el algoritmo a un lenguaje?",
-                options: ["Análisis", "Diseño", "Codificación", "Refinamiento"],
-                correctAnswer: "Codificación"
-            },
-            {
-                question: "6. ¿Qué técnica de representación usa lenguaje natural?",
-                options: ["Pseudocódigo", "Diagrama de Flujo", "Lenguaje Natural", "Fórmulas"],
-                correctAnswer: "Lenguaje Natural"
-            },
-            {
-                question: "7. ¿Cuál es el objetivo de la etapa de Diseño?",
-                options: ["Comprar la computadora", "Planear cómo resolver el problema", "Instalar el sistema", "Definir las entradas"],
-                correctAnswer: "Planear cómo resolver el problema"
-            },
-            {
-                question: "8. ¿Qué algoritmos guardan resultados para evitar duplicados?",
-                options: ["Fuerza Bruta", "Vuelta Atrás", "Programación Dinámica", "Codiciosos"],
-                correctAnswer: "Programación Dinámica"
-            },
-            {
-                question: "9. ¿Cómo se llama al refinamiento progresivo de un algoritmo?",
-                options: ["Codificación", "Refinamiento por pasos", "Análisis", "Ejecución"],
-                correctAnswer: "Refinamiento por pasos"
-            },
-            {
-                question: "10. ¿En qué etapa se definen las entradas y salidas?",
-                options: ["Análisis", "Diseño", "Codificación", "Pruebas"],
-                correctAnswer: "Análisis"
-            }
+            { q: "¿Qué técnica prueba todas las opciones?", a: "B", options: ["Codicioso", "Fuerza Bruta", "Recursivo", "Lógico"] },
+            { q: "Etapa de entender el problema:", a: "A", options: ["Análisis", "Diseño", "Prueba", "Codificación"] },
+            { q: "¿Qué es el Backtracking?", a: "C", options: ["Ir siempre adelante", "Borrar todo", "Vuelta atrás si falla", "Saltar pasos"] },
+            { q: "Divide y vencerás busca:", a: "D", options: ["Hacerlo más difícil", "Usar más RAM", "Borrar datos", "Simplificar en subproblemas"] },
+            { q: "Traducción a código se llama:", a: "B", options: ["Análisis", "Codificación", "Dibujo", "Escritura"] },
+            { q: "¿Qué define las entradas y salidas?", a: "A", options: ["Análisis", "Hardware", "Teclado", "Monitor"] },
+            { q: "Dar el cambio de mayor valor es:", a: "C", options: ["Fuerza Bruta", "Lento", "Algoritmo Codicioso", "Inútil"] },
+            { q: "Etapa donde se hace el diagrama:", a: "B", options: ["Análisis", "Diseño", "Codificación", "Venta"] },
+            { q: "¿Para qué sirve clasificar?", a: "D", options: ["Gastar tiempo", "Para nada", "Comprar PC", "Elegir la mejor estrategia"] },
+            { q: "Resolver un laberinto es:", a: "A", options: ["Backtracking", "Lineal", "Secuencial", "Físico"] }
         ];
 
-        let currentQuizPart1Index = 0;
-        let currentQuizPart2Index = 5;
-
-        function updateQuizPart1() {
-            if (currentQuizPart1Index >= 5) return;
-            const questionElement = document.getElementById('quiz-question-1');
-            const optionsElement = document.getElementById('quiz-options-1');
-            const feedbackElement = document.getElementById('quiz-feedback-1');
-            const counterElement = document.getElementById('question-counter');
-            const currentQuestion = quizQuestions[currentQuizPart1Index];
-            questionElement.textContent = currentQuestion.question;
-            optionsElement.innerHTML = '';
-            feedbackElement.textContent = '';
-            counterElement.textContent = currentQuizPart1Index + 1;
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
-                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 1);
-                optionsElement.appendChild(button);
-            });
-        }
-
-        function updateQuizPart2() {
-            if (currentQuizPart2Index >= 10) return;
-            const questionElement = document.getElementById('quiz-question-2');
-            const optionsElement = document.getElementById('quiz-options-2');
-            const feedbackElement = document.getElementById('quiz-feedback-2');
-            const counterElement = document.getElementById('question-counter-2');
-            const currentQuestion = quizQuestions[currentQuizPart2Index];
-            questionElement.textContent = currentQuestion.question;
-            optionsElement.innerHTML = '';
-            feedbackElement.textContent = '';
-            counterElement.textContent = currentQuizPart2Index + 1;
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-4 py-3 rounded-lg border border-blue-300 bg-blue-50 text-blue-800 font-medium hover:bg-blue-100 text-sm";
-                button.onclick = () => checkQuizAnswer(option, currentQuestion.correctAnswer, feedbackElement, button.parentElement.children, 2);
-                optionsElement.appendChild(button);
-            });
-        }
-
-        function checkQuizAnswer(selected, correct, feedbackElement, buttons, part) {
-            Array.from(buttons).forEach(button => {
-                button.disabled = true;
-                if (button.textContent === correct) button.classList.add('correct');
-                else if (button.textContent === selected) button.classList.add('incorrect');
-            });
-            if (selected === correct) {
-                feedbackElement.textContent = '¡Correcto!';
-                feedbackElement.style.color = '#065f46';
-            } else {
-                feedbackElement.textContent = `Incorrecto. La respuesta es: ${correct}`;
-                feedbackElement.style.color = '#991b1b';
-            }
-            setTimeout(() => {
-                if (part === 1) {
-                    currentQuizPart1Index++;
-                    if (currentQuizPart1Index < 5) updateQuizPart1();
-                } else {
-                    currentQuizPart2Index++;
-                    if (currentQuizPart2Index < 10) updateQuizPart2();
-                }
-            }, 1500);
-        }
-
         function showSlide(index) {
-            if (isTransitioning || index < 0 || index >= slides.length) return;
-            isTransitioning = true;
-            const presentationContainer = document.getElementById('presentation-container');
-
-            slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
             currentSlideIndex = index;
-            if (currentSlideIndex === 10) { currentQuizPart1Index = 0; setTimeout(updateQuizPart1, 100); }
-            else if (currentSlideIndex === 11) { currentQuizPart2Index = 5; setTimeout(updateQuizPart2, 100); }
-            const activeSlide = slides[currentSlideIndex];
-            activeSlide.style.display = 'flex';
-            setTimeout(() => {
-                activeSlide.classList.add('active');
-                slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-                prevButton.disabled = currentSlideIndex === 0;
-                nextButton.disabled = currentSlideIndex === slides.length - 1;
-                isTransitioning = false;
-            }, 10);
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        nextButton.addEventListener('click', () => showSlide(currentSlideIndex + 1));
-        prevButton.addEventListener('click', () => showSlide(currentSlideIndex - 1));
-
-        const presentationContainer = document.getElementById('presentation-container');
-        presentationContainer.addEventListener('click', (e) => {
-            if (e.target.closest('button') || e.target.closest('a')) return;
-            const rect = presentationContainer.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            if (clickX > rect.width / 2) showSlide(currentSlideIndex + 1);
-            else showSlide(currentSlideIndex - 1);
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('current-year').textContent = new Date().getFullYear();
-            showSlide(0); handleFullscreenChange();
-        });
-
-
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) || (window.innerHeight >= screen.height - 10);
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-            document.body.classList.add('is-fullscreen');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-            document.body.classList.remove('is-fullscreen');
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
+            });
         }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-    window.addEventListener('resize', handleFullscreenChange);
 
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
+        });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
+        });
 
-    // Navigation improvements (2026)
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-        if (e.key === 'ArrowLeft') typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
-    });
-
-    (function() {
-        const container = document.getElementById('presentation-container');
-        if (!container) return;
-        let tsX = 0;
-        container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-        container.addEventListener('touchend', e => {
-            let teX = e.changedTouches[0].screenX;
-            if (tsX - teX > 50) typeof nextSlide === 'function' ? nextSlide() : showSlide(currentSlideIndex + 1);
-            if (teX - tsX > 50) typeof prevSlide === 'function' ? prevSlide() : showSlide(currentSlideIndex - 1);
-        }, {passive: true});
-    })();
-
-</script>
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('clasificacion_etapas_algoritmos', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
+    </script>
 </body>
 </html>

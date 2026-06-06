@@ -2,550 +2,308 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introducción a Tablas y Columnas Avanzadas</title>
-    <!-- CDN de Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Tablas y Columnas - IMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Universal box-sizing para un diseño consistente */
-        * {
-            box-sizing: border-box;
-        }
-
-        /* Configuración base para asegurar el layout de la página */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Inter', sans-serif;
-            background-color: #f9fafb;
-            color: #374151;
-        }
-
-        /* Contenedor principal para la presentación */
-        main {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        /* Estilo para el contenedor de diapositivas, ajustado para ser una presentación completa */
-        #presentation-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-color: #ffffff;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Estilo para cada diapositiva, ocultas por defecto */
-        .slide {
-            width: 100%;
-            height: 100%;
-            padding: 4rem;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            -ms-overflow-style: none; /* Oculta la barra de scroll en IE y Edge */
-            scrollbar-width: none; /* Oculta la barra de scroll en Firefox */
-        }
-        .slide::-webkit-scrollbar {
-            display: none; /* Oculta la barra de scroll en Chrome, Safari y Opera */
-        }
-
-        /* Diapositiva activa con animación de entrada */
-        .slide.active {
-            display: flex;
-            opacity: 1;
-            animation-name: fadeIn;
-            animation-duration: 0.8s;
-            animation-fill-mode: forwards;
-        }
-
-        /* Animación de entrada */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Estilos de encabezado y texto para las diapositivas */
-        .slide h2, .slide h3 {
-            font-weight: 800;
-            color: #1f2937;
-        }
-
-        .slide p, .slide li {
-            font-size: 1.125rem;
-            line-height: 1.75rem;
-        }
-
-        /* Estilo para los botones de navegación */
-        .nav-button {
-            background-color: #3b82f6;
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            transition: background-color 0.3s, transform 0.2s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-
-        .nav-button:hover {
-            background-color: #2563eb;
-            transform: scale(1.05);
-        }
-
-        .nav-button:disabled {
-            background-color: #d1d5db;
-            color: #9ca3af;
-            cursor: not-allowed;
-            transform: scale(1);
-        }
-
-        /* Estilos para el contador de diapositivas */
-        #slide-counter {
-            position: absolute;
-            bottom: 1.5rem;
-            right: 2rem;
-            font-weight: 600;
-            color: #9ca3af;
-            z-index: 10;
-        }
-
-        /* Estilos para los botones del cuestionario */
-        .quiz-option-button {
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .quiz-option-button.correct {
-            background-color: #d1fae5;
-            color: #065f46;
-            border-color: #10b981;
-        }
-
-        .quiz-option-button.incorrect {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border-color: #ef4444;
-        }
+        :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; z-index: 10; }
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; border-left: 4px solid #3b82f6; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
+        header, footer { transition: opacity 0.3s; }
+        .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
+        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
+        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
-<body class="antialiased">
-
-    <!-- Header de la página -->
-    <header id="page-header" class="w-full bg-white p-4 shadow-md flex justify-between items-center z-50">
-        <div class="flex items-center space-x-4">
-            <img src="../../imagenes/logo.png" alt="Logo de la institución" style="width: 180px; height: auto;">
-            <h1 class="text-xl font-bold text-gray-800">Introducción a Tablas y Columnas Avanzadas</h1>
+<body class="bg-slate-50 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
+        <div class="relative w-24 h-24 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <img src="../../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <nav>
-            <ul class="flex space-x-4">
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors">Inicio</a></li>
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors">Acerca de</a></li>
-                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors">Contacto</a></li>
-            </ul>
-        </nav>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Maquetando datos...</p>
+    </div>
+
+    <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
+        <div class="flex items-center space-x-3">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
+            <div>
+                <h1 class="text-sm font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
+                <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Área de Informática</p>
+            </div>
+        </div>
+        <a href="../../index.html" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest">Inicio</a>
     </header>
 
-    <!-- Contenido principal de la presentación -->
-    <main>
-        <!-- Contenedor de las diapositivas -->
-        <div id="presentation-container" class="relative">
-
-            <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <img src="../../imagenes/logo.png" alt="Logo del instituto" style="width: 300px; height: auto;" class="mb-8">
-                <h2 class="text-2xl mb-4 text-blue-600">Tablas y Columnas Avanzadas</h2>
-                <p class="text-base text-gray-600">Diseño Web II</p>
-                <div class="mt-8 text-sm text-gray-500">
-                    <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>Fecha: 12 de septiembre de 2025</p>
-                    <p>Grado: Duodécimo Sección "A"</p>
-                </div>
+    <main id="presentation-container">
+        <!-- Diapositiva 1 -->
+        <div class="slide active">
+            <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Tablas y Columnas</h1>
+            <br>&nbsp;<br><br>&nbsp;<br>
+            <div class="space-y-2 text-slate-600 font-medium">
+                <p class="text-xl">Diseño Web II</p>
+                <p>Duodécimo Grado - Sección A</p>
+                <p>Docente: Pablo Antonio Peña Mancia</p>
+                <p>Fecha: 2026</p>
             </div>
-
-            <!-- Diapositiva 2: ¿Qué son? -->
-            <div id="slide-2" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">¿Qué son las Tablas y Columnas Avanzadas?</h3>
-                <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    Las tablas y columnas avanzadas en el desarrollo web se refieren al uso de sistemas de maquetación modernos como CSS Grid y Flexbox para crear diseños complejos y responsivos que se adaptan a cualquier dispositivo.
-                </p>
-            </div>
-
-            <!-- Diapositiva 3: La Evolución del Maquetado Web -->
-            <div id="slide-3" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">La Evolución del Maquetado Web</h3>
-                <ul class="mt-4 text-left text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-4">
-                    <li><strong>Tablas HTML:</strong> El método tradicional, utilizado principalmente para organizar datos tabulares.</li>
-                    <li><strong>Flexbox (Cajas Flexibles):</strong> Un sistema unidimensional para alinear elementos en filas o columnas.</li>
-                    <li><strong>CSS Grid (Cuadrículas):</strong> Un sistema bidimensional para crear layouts complejos y de dos dimensiones.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 4: Flexbox vs. CSS Grid -->
-            <div id="slide-4" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">Flexbox vs. CSS Grid</h3>
-                <ul class="mt-4 text-left text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-4">
-                    <li><strong>Flexbox:</strong> Ideal para componentes que necesitan alineación en una sola dimensión (fila o columna), como una barra de navegación o una lista de tarjetas.</li>
-                    <li><strong>CSS Grid:</strong> Perfecto para la maquetación general de una página, permitiendo crear layouts bidimensionales complejos como "dashboards" con control total sobre filas y columnas.</li>
-                </ul>
-            </div>
-
-            <!-- Diapositiva 5: Introducción a CSS Grid -->
-            <div id="slide-5" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">Introducción a CSS Grid</h3>
-                <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    CSS Grid permite dividir el espacio de la página en filas y columnas, facilitando la creación de layouts complejos como "dashboards".
-
-                </p>
-            </div>
-
-            <!-- Diapositiva 6: Ejemplo de CSS Grid -->
-            <div id="slide-6" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">Ejemplo de CSS Grid</h3>
-                <div class="grid w-11/12 h-3/4 gap-4" style="grid-template-areas: 'header header' 'sidebar main'; grid-template-columns: 1fr 3fr; grid-template-rows: 80px 1fr;">
-                    <div class="bg-blue-200 rounded-lg p-4 flex items-center justify-center text-blue-800 font-bold text-2xl" style="grid-area: header;">Encabezado</div>
-                    <div class="bg-green-200 rounded-lg p-4 flex items-center justify-center text-green-800 font-bold text-2xl" style="grid-area: sidebar;">Barra lateral</div>
-                    <div class="bg-yellow-200 rounded-lg p-4 flex items-center justify-center text-yellow-800 font-bold text-2xl" style="grid-area: main;">Contenido Principal</div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 7: Introducción a Flexbox -->
-            <div id="slide-7" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">Introducción a Flexbox</h3>
-                <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    Flexbox es una herramienta poderosa para alinear y distribuir el espacio entre los elementos en un contenedor. Es perfecto para componentes como menús de navegación, galerías o formularios.
-
-                </p>
-                <div class="mt-8">
-                    <p class="font-mono text-lg bg-gray-100 p-4 rounded-lg">Ejemplo: `display: flex;`</p>
-                    <p class="font-mono text-lg bg-gray-100 p-4 rounded-lg mt-4">`justify-content: center;` `align-items: center;`</p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 8: Ejemplo de Flexbox -->
-            <div id="slide-8" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">Ejemplo de Flexbox</h3>
-                <div class="flex flex-col md:flex-row justify-center items-center w-full md:w-3/4 h-1/2 space-y-4 md:space-y-0 md:space-x-4">
-                    <div class="bg-purple-200 rounded-xl p-6 shadow-lg flex-1 text-purple-800 font-bold flex items-center justify-center text-lg w-full md:w-auto">
-                        Tarjeta 1
-                    </div>
-                    <div class="bg-pink-200 rounded-xl p-6 shadow-lg flex-1 text-pink-800 font-bold flex items-center justify-center text-lg w-full md:w-auto">
-                        Tarjeta 2
-                    </div>
-                    <div class="bg-teal-200 rounded-xl p-6 shadow-lg flex-1 text-teal-800 font-bold flex items-center justify-center text-lg w-full md:w-auto">
-                        Tarjeta 3
-                    </div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 9: Diseño Responsivo con Grid y Flexbox -->
-            <div id="slide-9" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">Diseño Responsivo con Grid y Flexbox</h3>
-                <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    La verdadera fortaleza de Grid y Flexbox es su capacidad para crear diseños <strong>responsivos</strong>. Combinados con las clases de Tailwind CSS, se adaptan perfectamente a pantallas de todos los tamaños.
-                </p>
-            </div>
-
-            <!-- Diapositiva 10: Cuestionario -->
-            <div id="slide-10" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">¡Pon a prueba tus conocimientos!</h3>
-                <div id="quiz-container" class="bg-gray-100 p-8 rounded-lg shadow-md max-w-3xl w-full text-center">
-                    <div id="quiz-question" class="text-2xl font-semibold mb-6 text-gray-800"></div>
-                    <div id="quiz-options" class="flex flex-col space-y-4"></div>
-                    <div id="quiz-feedback" class="mt-6 text-lg font-bold"></div>
-                </div>
-            </div>
-
-            <!-- Diapositiva 11: Síntesis del Tema -->
-            <div id="slide-11" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">Síntesis</h3>
-                <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    El dominio de sistemas de maquetación avanzados como CSS Grid y Flexbox es crucial para el desarrollo web moderno, permitiendo la creación de interfaces de usuario complejas, flexibles y profesionales.
-                </p>
-            </div>
-
-            <!-- Diapositiva 12: Tarea -->
-            <div id="slide-12" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">Asignación de Tareas</h3>
-                <div class="bg-gray-100 p-8 rounded-lg shadow-inner max-w-3xl text-left">
-                    <p class="text-lg text-gray-700 mb-4 font-bold">Tarea:</p>
-                    <p class="text-base text-gray-700 mb-4">
-                        Diseñen un dashboard responsivo utilizando HTML y CSS Grid o Flexbox, aplicando las técnicas avanzadas que hemos visto en clase.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Diapositiva 13: Fin de la Presentación -->
-            <div id="slide-13" class="slide">
-                <h3 class="text-3xl mb-6 text-blue-500">¡Gracias!</h3>
-                <p class="text-xl text-gray-700 leading-relaxed max-w-3xl">
-                    Si tienen alguna duda, no duden en preguntar.
-                </p>
-            </div>
-
         </div>
 
-        <!-- Botones de navegación -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-4 z-20">
-            <button id="prev-btn" class="nav-button">Anterior</button>
-            <button id="next-btn" class="nav-button">Siguiente</button>
+        <!-- Diapositiva 2 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Uso de Tablas en Web</h2>
+            <div class="concept-box">
+                <p>Las tablas (<code>&lt;table&gt;</code>) se utilizan exclusivamente para mostrar datos tabulares (filas y columnas). Antiguamente se usaban para diseño, pero hoy en día eso es una mala práctica.</p>
+            </div>
+            <i class="fas fa-table text-6xl text-blue-400 mt-4"></i>
         </div>
-        <div id="slide-counter">1 / 13</div>
+
+        <!-- Diapositiva 3 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Etiquetas Básicas</h2>
+            <ul class="grid grid-cols-2 gap-4 mt-6 text-sm">
+                <li class="p-4 border bg-gray-50"><strong>&lt;tr&gt;:</strong> Fila (Table Row).</li>
+                <li class="p-4 border bg-gray-50"><strong>&lt;th&gt;:</strong> Encabezado (Table Header).</li>
+                <li class="p-4 border bg-gray-50"><strong>&lt;td&gt;:</strong> Celda (Table Data).</li>
+                <li class="p-4 border bg-gray-50"><strong>&lt;caption&gt;:</strong> Título de tabla.</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Combinar Celdas</h2>
+            <div class="concept-box border-yellow-400">
+                <ul class="space-y-4">
+                    <li><strong>colspan:</strong> Une varias columnas horizontalmente.</li>
+                    <li><strong>rowspan:</strong> Une varias filas verticalmente.</li>
+                </ul>
+            </div>
+            <div class="code-block mt-4">&lt;td colspan="2"&gt;Celda doble&lt;/td&gt;</div>
+        </div>
+
+        <!-- Diapositiva 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estilo: border-collapse</h2>
+            <div class="concept-box">
+                <p>Por defecto, las celdas tienen un espacio entre ellas. El valor <code>collapse</code> las une en una sola línea delgada.</p>
+                <div class="code-block mt-4">table { border-collapse: collapse; }</div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Secciones de Tabla</h2>
+            <p>Para tablas largas, usamos etiquetas semánticas:</p>
+            <ul class="text-left space-y-2 max-w-lg mt-4">
+                <li><strong>&lt;thead&gt;:</strong> Parte superior (cabecera).</li>
+                <li><strong>&lt;tbody&gt;:</strong> Cuerpo de datos.</li>
+                <li><strong>&lt;tfoot&gt;:</strong> Parte inferior (totales).</li>
+            </ul>
+        </div>
+
+        <!-- Diapositiva 7 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio: Tabla de Notas</h2>
+            <div class="concept-box">
+                <p>Escribe el código para una tabla que tenga:</p>
+                <ul class="list-disc ml-8 mt-2 text-sm">
+                    <li>Una fila de encabezado (Materia, Nota).</li>
+                    <li>Tres filas de datos.</li>
+                    <li>Bordes colapsados de 1px negro.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Columnas de Texto (Multicolumn)</h2>
+            <div class="concept-box border-green-500">
+                <p>CSS permite dividir un bloque de texto en columnas tipo periódico sin usar tablas.</p>
+                <div class="code-block mt-4">
+                    .periodico {<br>
+                    &nbsp;&nbsp;column-count: 3;<br>
+                    &nbsp;&nbsp;column-gap: 20px;<br>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 9 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">column-rule</h2>
+            <p>Dibuja una línea divisoria entre las columnas de texto, similar a un borde.</p>
+            <div class="code-block mt-4">column-rule: 1px solid gray;</div>
+            <i class="fas fa-columns text-6xl text-gray-300 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Efecto Cebra (Zebra Stripes)</h2>
+            <p>Mejora la lectura alternando colores en las filas. Usamos el selector pseudo-clase <code>:nth-child</code>.</p>
+            <div class="code-block mt-4">tr:nth-child(even) { background: #f2f2f2; }</div>
+        </div>
+
+        <!-- Diapositiva 11 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tablas Responsivas</h2>
+            <div class="concept-box border-red-400">
+                <p>Las tablas suelen romperse en móviles. La solución más simple es envolver la tabla en un <code>div</code> con <code>overflow-x: auto</code>.</p>
+            </div>
+            <i class="fas fa-mobile-alt text-6xl text-red-400 mt-4"></i>
+        </div>
+
+        <!-- Diapositiva 12 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Alineación en Celdas</h2>
+            <p>Usamos <code>text-align</code> para horizontal y <code>vertical-align</code> para vertical (top, middle, bottom).</p>
+        </div>
+
+        <!-- Diapositiva 13 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reto de Código</h2>
+            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl text-xs">
+                <p>&lt;table&gt;</p>
+                <p>&nbsp;&nbsp;&lt;tr&gt;</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&lt;th&gt;ID&lt;/th&gt; &lt;th&gt;User&lt;/th&gt;</p>
+                <p>&nbsp;&nbsp;&lt;/tr&gt;</p>
+                <p>&nbsp;&nbsp;&lt;tr&gt;</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&lt;td&gt;1&lt;/td&gt; &lt;td&gt;Admin&lt;/td&gt;</p>
+                <p>&nbsp;&nbsp;&lt;/tr&gt;</p>
+                <p>&lt;/table&gt;</p>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
+            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 15 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
+            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+        </div>
+
+        <!-- Diapositiva 16 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">HORARIO DE CLASES</h3>
+                <p>Crear en HTML su horario de clases real. Usar <code>colspan</code> para recrear el tiempo de recreo y <code>:nth-child</code> para darle color a las filas. Aplicar bordes colapsados.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <!-- Pie de página -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-sm p-2">
-        <div class="flex items-center justify-center space-x-2">
-            <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="80" height="auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+    <div id="slide-counter">1 / 16</div>
+    <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+    <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+
+    <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
+        <div class="flex items-center justify-center space-x-4">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
+            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
         </div>
     </footer>
 
-    <!-- Scripts para la navegación y la lógica del cuestionario -->
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/games-adapter.js"></script>
     <script>
-        // Manejador de eventos global para capturar rechazos de promesas no manejados
-        window.addEventListener('unhandledrejection', (event) => {
-            console.error('Unhandled promise rejection:', event.reason);
-            event.preventDefault();
-        });
-
-        const slides = document.querySelectorAll('.slide');
-        const nextButton = document.getElementById('next-btn');
-        const prevButton = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const header = document.getElementById('page-header');
-        const footer = document.getElementById('page-footer');
         let currentSlideIndex = 0;
-        let isTransitioning = false;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
 
-        // Funcionalidad del cuestionario
         const quizQuestions = [
-            {
-                q: "¿Qué propiedad de CSS se utiliza para crear un layout de cuadrícula bidimensional?",
-                options: ["display: flex;", "display: grid;", "display: block;", "display: table;"],
-                a: "display: grid;"
-            },
-            {
-                q: "¿Qué sistema de maquetación es más adecuado para alinear elementos en una sola fila o columna?",
-                options: ["CSS Grid", "HTML Table", "Flexbox", "CSS Columns"],
-                a: "Flexbox"
-            },
-            {
-                q: "¿Cuál es el principal beneficio de usar Grid y Flexbox en lugar de tablas para el diseño?",
-                options: ["Son más lentos", "No permiten diseños complejos", "Son más flexibles y responsivos", "Solo funcionan en navegadores antiguos"],
-                a: "Son más flexibles y responsivos"
-            },
-            {
-                q: "¿Qué propiedad de Flexbox centra los elementos horizontalmente?",
-                options: ["align-items", "flex-direction", "justify-content", "flex-wrap"],
-                a: "justify-content"
-            },
-            {
-                q: "¿Qué sistema permite control total sobre filas y columnas al mismo tiempo?",
-                options: ["CSS Grid", "Flexbox", "Floats", "Inline-block"],
-                a: "CSS Grid"
-            },
-            {
-                q: "Flexbox se define como un sistema de maquetación de tipo:",
-                options: ["Unidimensional", "Bidimensional", "Tridimensional", "Estático"],
-                a: "Unidimensional"
-            },
-            {
-                q: "¿Cuál es el método tradicional y hoy desaconsejado para maquetar toda una web?",
-                options: ["Tablas HTML", "CSS Grid", "Flexbox", "Frameworks modernos"],
-                a: "Tablas HTML"
-            },
-            {
-                q: "La capacidad de un diseño para adaptarse a cualquier tamaño de pantalla se llama:",
-                options: ["Diseño Responsivo", "Diseño Adaptativo", "Diseño Estático", "Diseño Líquido"],
-                a: "Diseño Responsivo"
-            },
-            {
-                q: "Propiedad de Grid para definir áreas específicas con nombre:",
-                options: ["grid-template-areas", "grid-gap", "grid-column", "display-area"],
-                a: "grid-template-areas"
-            },
-            {
-                q: "¿Qué herramienta es ideal para crear un menú de navegación horizontal?",
-                options: ["Flexbox", "CSS Grid", "Z-index", "Position: absolute"],
-                a: "Flexbox"
-            }
+            { q: "Etiqueta para crear una fila:", a: "B", options: ["<td>", "<tr>", "<th>", "<table>"] },
+            { q: "Celda de encabezado:", a: "C", options: ["<td>", "<tr>", "<th>", "<head>"] },
+            { q: "Unir columnas horizontalmente:", a: "A", options: ["colspan", "rowspan", "combine", "group"] },
+            { q: "Unir filas verticalmente:", a: "B", options: ["colspan", "rowspan", "merge", "link"] },
+            { q: "Propiedad para unir bordes:", a: "D", options: ["border-join", "border-unite", "border-link", "border-collapse"] },
+            { q: "Etiqueta para el título de tabla:", a: "C", options: ["<title>", "<header>", "<caption>", "<summary>"] },
+            { q: "Sección para totales:", a: "A", options: ["<tfoot>", "<tbody>", "<thead>", "<bottom>"] },
+            { q: "Dividir texto en columnas:", a: "B", options: ["text-cols", "column-count", "divide", "split"] },
+            { q: "Espacio entre columnas de texto:", a: "D", options: ["padding", "margin", "spacing", "column-gap"] },
+            { q: " tr:nth-child(even) selecciona:", a: "C", options: ["Todas", "Impares", "Pares", "La última"] }
         ];
-        let currentQuizQuestionIndex = 0;
-
-        function updateQuizDisplay() {
-            const quizQuestionElement = document.getElementById('quiz-question');
-            const quizOptionsElement = document.getElementById('quiz-options');
-            const quizFeedbackElement = document.getElementById('quiz-feedback');
-
-            if (currentQuizQuestionIndex >= quizQuestions.length) {
-                quizQuestionElement.textContent = "¡Cuestionario completado!";
-                quizOptionsElement.innerHTML = '';
-                quizFeedbackElement.textContent = '';
-                return;
-            }
-
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            quizQuestionElement.textContent = currentQuestion.q;
-            quizOptionsElement.innerHTML = '';
-            quizFeedbackElement.textContent = '';
-
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-6 py-3 rounded-xl border border-blue-400 bg-blue-50 text-blue-700 font-semibold transition-colors duration-200 hover:bg-blue-100";
-                button.onclick = () => checkAnswer(option);
-                quizOptionsElement.appendChild(button);
-            });
-        }
-
-        function checkAnswer(selectedOption) {
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            const quizFeedback = document.getElementById('quiz-feedback');
-            const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
-            const isCorrect = selectedOption === currentQuestion.a;
-
-            buttons.forEach(button => {
-                button.disabled = true;
-                if (button.textContent === currentQuestion.a) {
-                    button.classList.add('correct');
-                } else if (button.textContent === selectedOption) {
-                    button.classList.add('incorrect');
-                }
-            });
-
-            if (isCorrect) {
-                quizFeedback.textContent = '¡Correcto!';
-                quizFeedback.classList.remove('text-red-500');
-                quizFeedback.classList.add('text-green-500');
-            } else {
-                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.a;
-                quizFeedback.classList.remove('text-green-500');
-                quizFeedback.classList.add('text-red-500');
-            }
-
-            setTimeout(() => {
-                currentQuizQuestionIndex++;
-                updateQuizDisplay();
-            }, 3000); // Avanza después de 3 segundos
-        }
-
-        // --- Funcionalidad de la Presentación ---
-        function updateSlideCounter() {
-            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-        }
-
-        function updateNavigationButtons() {
-            prevButton.disabled = currentSlideIndex === 0;
-            nextButton.disabled = currentSlideIndex === slides.length - 1;
-        }
 
         function showSlide(index) {
-            if (isTransitioning || index < 0 || index >= slides.length) {
-                return;
-            }
-
-            isTransitioning = true;
-            slides.forEach((slide) => {
-                slide.classList.remove('active');
-                slide.style.display = 'none';
-            });
-
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
             currentSlideIndex = index;
-
-            // Llama a la función del cuestionario si la diapositiva actual es la del cuestionario
-            if (currentSlideIndex === 9) {
-                currentQuizQuestionIndex = 0; // Reinicia el cuestionario al volver a entrar
-                updateQuizDisplay();
-            }
-
-            const activeSlide = slides[currentSlideIndex];
-            activeSlide.style.display = 'flex';
-            setTimeout(() => {
-                activeSlide.classList.add('active');
-                updateSlideCounter();
-                updateNavigationButtons();
-                isTransitioning = false;
-            }, 10);
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
+            else document.body.classList.remove('is-fullscreen');
         }
 
-        nextButton.addEventListener('click', () => {
-            showSlide(currentSlideIndex + 1);
-        });
-
-        prevButton.addEventListener('click', () => {
-            showSlide(currentSlideIndex - 1);
-        });
-
-        // Navegación con las teclas de flecha
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowRight') {
-                showSlide(currentSlideIndex + 1);
-            } else if (event.key === 'ArrowLeft') {
-                showSlide(currentSlideIndex - 1);
-            }
-        });
-
-        // Ocultar el encabezado y pie de página al presionar F11 (pantalla completa)
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'F11') {
-                if (!document.fullscreenElement) {
-                    header.style.display = 'none';
-                    footer.style.display = 'none';
-                }
-            }
-        });
-
-        // Mostrar el encabezado y pie de página al salir de pantalla completa
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-
-        function handleFullscreenChange() {
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                header.style.display = 'flex';
-                footer.style.display = 'flex';
-            }
+        function initQuiz() {
+            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
+            quizQuestions.forEach((q, i) => {
+                const d = document.createElement('div');
+                d.className = "mb-2 w-full max-w-xl text-left";
+                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
+                q.options.forEach((o, j) => {
+                    const l = String.fromCharCode(65+j);
+                    const b = document.createElement('button');
+                    b.className = "quiz-option";
+                    b.innerHTML = `<span>${l}.</span> ${o}`;
+                    b.onclick = () => {
+                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
+                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
+                    };
+                    d.appendChild(b);
+                });
+                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
+            });
         }
 
-        // --- Inicialización en DOMContentLoaded ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentYearSpan = document.getElementById('current-year');
-            if (currentYearSpan) {
-                currentYearSpan.textContent = new Date().getFullYear();
-            }
-            showSlide(0); handleFullscreenChange();
+        nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
+        prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
+            if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
+        let lastTap = 0;
+        document.addEventListener('touchstart', (e) => {
+            const n = Date.now();
+            if (n - lastTap < 300) {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            }
+            lastTap = n;
+        });
+
+        window.onload = async () => {
+            if (window.GamesAdapter) {
+                await window.GamesAdapter.init('dw_tablas_columnas', false);
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
+                }, 1000);
+            }
+            initQuiz();
+            showSlide(0);
+        };
     </script>
 </body>
 </html>
