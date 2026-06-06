@@ -20,15 +20,15 @@ Toda presentación debe seguir exactamente este orden:
 4.  **Diapositivas 14-15: Cuestionario Interactivo**
     - 5 preguntas por diapositiva.
     - Integración con QuizPro (deben ser detectables por regex).
-5.**Diapositiva 14: Asignación Práctica**
+5.**Diapositiva 16: Asignación Práctica**
     - Instrucciones de la tarea, puntaje y fecha de entrega.
 
 ---
 
 ## 2. Diseño y UX Institucional
 
-- **Encabezado (#page-header):** Logo, "ISEMED", "Área de Informática", link a Inicio.
-- **Pie de Página (#page-footer):** Bandera de HN, Copyright, Versión del diseño.
+- **Encabezado (#page-header):** Encabezado global, mismo encabezado que index.html tanto en escritorio como version movil o pwa.
+- **Pie de Página (#page-footer):** mismo pie de página global. 
 - **Tipografía:** Inter (Cuerpo), Poppins (Títulos).
 - **Consistencia:** Usar Tailwind CSS para espaciados y bordes redondeados (rounded-xl/2xl).
 
