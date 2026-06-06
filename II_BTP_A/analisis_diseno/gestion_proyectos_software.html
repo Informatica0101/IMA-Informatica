@@ -19,10 +19,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -86,12 +82,12 @@
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Fases del Proyecto</h2>
-            <div class="grid grid-cols-5 gap-2 mt-4 text-[10px] font-bold">
-                <div class="p-2 border bg-blue-50">1. Inicio</div>
-                <div class="p-2 border bg-blue-100">2. Planeación</div>
-                <div class="p-2 border bg-blue-200">3. Ejecución</div>
-                <div class="p-2 border bg-blue-300">4. Control</div>
-                <div class="p-2 border bg-blue-400 text-white">5. Cierre</div>
+            <div class="grid grid-cols-5 gap-2 mt-4 text-[10px] font-bold mx-auto max-w-xl">
+                <div class="p-2 border rounded bg-blue-50">1. Inicio</div>
+                <div class="p-2 border rounded bg-blue-100">2. Planeación</div>
+                <div class="p-2 border rounded bg-blue-200">3. Ejecución</div>
+                <div class="p-2 border rounded bg-blue-300">4. Control</div>
+                <div class="p-2 border rounded bg-blue-400 text-white">5. Cierre</div>
             </div>
         </div>
 
@@ -153,10 +149,10 @@
         <!-- Diapositiva 12 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Herramientas de Gestión</h2>
-            <ul class="flex space-x-12 mt-6">
-                <li class="text-center"><i class="fab fa-jira text-5xl"></i><br>Jira</li>
-                <li class="text-center"><i class="fab fa-trello text-5xl"></i><br>Trello</li>
-                <li class="text-center"><i class="fas fa-project-diagram text-5xl"></i><br>MS Project</li>
+            <ul class="flex justify-center space-x-12 mt-6">
+                <li class="text-center"><i class="fab fa-jira text-5xl"></i><br><span class="text-xs font-bold">Jira</span></li>
+                <li class="text-center"><i class="fab fa-trello text-5xl"></i><br><span class="text-xs font-bold">Trello</span></li>
+                <li class="text-center"><i class="fas fa-project-diagram text-5xl"></i><br><span class="text-xs font-bold">MS Project</span></li>
             </ul>
         </div>
 
@@ -166,16 +162,14 @@
             <p>Son puntos de control importantes que no tienen duración (ej. "Firma del contrato", "Versión Beta terminada"). Sirven para celebrar el progreso.</p>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -206,25 +200,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué NO es parte del triángulo de hierro?", a: "D", options: ["Alcance", "Tiempo", "Costo", "Color del Logo"] },
-            { q: "Fase donde se crea el código:", a: "B", options: ["Inicio", "Ejecución", "Cierre", "Control"] },
-            { q: "Líder del proyecto:", a: "C", options: ["Analista", "Programador", "Project Manager", "Cliente"] },
-            { q: "¿Qué fase es la 'EDT'?", a: "A", options: ["Planeación", "Cierre", "Inicio", "Control"] },
-            { q: "Metodología de entregas rápidas:", a: "D", options: ["Cascada", "Lenta", "Fija", "Ágil"] },
-            { q: "¿Qué es un hito?", a: "B", options: ["Una tarea larga", "Un logro clave sin duración", "Un error", "Una reunión"] },
-            { q: "Fase de 'Lecciones Aprendidas':", a: "C", options: ["Inicio", "Ejecución", "Cierre", "Análisis"] },
-            { q: "Acción ante un riesgo:", a: "A", options: ["Plan de mitigación", "Llorar", "Ignorarlo", "Borrar el disco"] },
-            { q: "Mide el avance vs el plan:", a: "B", options: ["Inicio", "Seguimiento y Control", "Diseño", "Marketing"] },
-            { q: "Entregas en Scrum se llaman:", a: "D", options: ["Pasos", "Meses", "Días", "Sprints"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -233,56 +215,41 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Qué factor NO forma parte del triángulo de hierro de un proyecto?", a: "D", options: ["Alcance", "Tiempo", "Costo", "Color del Logo"] },
+            { q: "¿En qué fase se realiza la programación real del software?", a: "B", options: ["Inicio", "Ejecución", "Cierre", "Control"] },
+            { q: "¿Quién es el responsable de liderar el equipo y el proyecto?", a: "C", options: ["Analista", "Programador", "Project Manager", "Cliente"] },
+            { q: "¿En qué fase se crea la EDT y el cronograma detallado?", a: "A", options: ["Planeación", "Cierre", "Inicio", "Control"] },
+            { q: "Metodología basada en entregas rápidas y funcionales:", a: "D", options: ["Cascada", "Lenta", "Fija", "Ágil"] },
+            { q: "¿Qué es un hito dentro de un proyecto?", a: "B", options: ["Una tarea muy larga", "Un logro clave sin duración", "Un error grave", "Una reunión diaria"] },
+            { q: "¿En qué fase se realiza el informe de 'Lecciones Aprendidas'?", a: "C", options: ["Inicio", "Ejecución", "Cierre", "Análisis"] },
+            { q: "La acción planificada para enfrentar un problema potencial es un:", a: "A", options: ["Plan de mitigación", "Error", "Gasto extra", "Hito"] },
+            { q: "Fase donde se mide el avance real versus lo planeado:", a: "B", options: ["Inicio", "Seguimiento y Control", "Diseño", "Marketing"] },
+            { q: "En la metodología Scrum, los ciclos de entrega se llaman:", a: "D", options: ["Pasos", "Meses", "Días", "Sprints"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
-        });
 
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('ads_gestion_proyectos', false);
+                await window.GamesAdapter.init('ads_gestion', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

@@ -19,10 +19,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -102,10 +98,10 @@
             <div class="concept-box">
                 <p>Usan una <strong>API (Application Programming Interface)</strong>. El frontend hace una petición (Request) y el backend envía una respuesta (Response), generalmente en formato <strong>JSON</strong>.</p>
             </div>
-            <div class="flex space-x-4 mt-4">
-                <div class="p-2 border">Frontend</div>
-                <div class="p-2 border">➔ API ➔</div>
-                <div class="p-2 border">Backend</div>
+            <div class="flex justify-center space-x-4 mt-4 font-bold text-xs">
+                <div class="p-2 border rounded">Frontend</div>
+                <div class="p-2 flex items-center">➔ API ➔</div>
+                <div class="p-2 border rounded">Backend</div>
             </div>
         </div>
 
@@ -134,10 +130,10 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Frameworks de Frontend</h2>
             <p>Herramientas que facilitan el trabajo de diseño y lógica en el navegador:</p>
-            <ul class="flex space-x-8 mt-6">
-                <li class="text-center"><i class="fab fa-react text-4xl text-blue-400"></i><br>React</li>
-                <li class="text-center"><i class="fab fa-vuejs text-4xl text-green-500"></i><br>Vue</li>
-                <li class="text-center"><i class="fab fa-angular text-4xl text-red-500"></i><br>Angular</li>
+            <ul class="flex justify-center space-x-8 mt-6">
+                <li class="text-center"><i class="fab fa-react text-4xl text-blue-400"></i><br><span class="text-xs">React</span></li>
+                <li class="text-center"><i class="fab fa-vuejs text-4xl text-green-500"></i><br><span class="text-xs">Vue</span></li>
+                <li class="text-center"><i class="fab fa-angular text-4xl text-red-500"></i><br><span class="text-xs">Angular</span></li>
             </ul>
         </div>
 
@@ -145,10 +141,10 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Frameworks de Backend</h2>
             <p>Ayudan a estructurar el código del servidor de forma segura:</p>
-            <ul class="flex space-x-8 mt-6">
-                <li class="text-center">Express</li>
-                <li class="text-center">Django</li>
-                <li class="text-center">Laravel</li>
+            <ul class="flex justify-center space-x-8 mt-6 text-xs font-bold">
+                <li class="bg-slate-100 p-2 rounded">Express</li>
+                <li class="bg-slate-100 p-2 rounded">Django</li>
+                <li class="bg-slate-100 p-2 rounded">Laravel</li>
             </ul>
         </div>
 
@@ -170,7 +166,7 @@
         <!-- Diapositiva 13 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Flujo de una App</h2>
-            <ol class="text-left space-y-2 max-w-xl text-sm">
+            <ol class="text-left space-y-2 max-w-xl text-sm mx-auto">
                 <li>1. Usuario hace clic en "Entrar" (Front).</li>
                 <li>2. Se envía usuario/clave por API al Back.</li>
                 <li>3. Backend verifica en la BD.</li>
@@ -181,14 +177,14 @@
 
         <!-- Diapositiva 14 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-4">Refuerzo de Conocimientos</h2>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 15 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-4">Refuerzo de Conocimientos</h2>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -219,25 +215,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué lado ve el usuario?", a: "A", options: ["Frontend", "Backend", "Servidor", "Base de Datos"] },
-            { q: "¿Qué lado maneja la lógica?", a: "B", options: ["Frontend", "Backend", "CSS", "Browser"] },
-            { q: "Tecnología de Frontend:", a: "C", options: ["SQL", "PHP", "JavaScript", "Python"] },
-            { q: "Tecnología de Backend:", a: "D", options: ["HTML", "CSS", "Photoshop", "Node.js"] },
-            { q: "¿Dónde se guardan los datos?", a: "C", options: ["En el Front", "En el Mouse", "En la BD", "En el Monitor"] },
-            { q: "Puente entre Front y Back:", a: "B", options: ["RAM", "API", "CPU", "BIOS"] },
-            { q: "Formato de intercambio de datos:", a: "A", options: ["JSON", "MP3", "PNG", "AVI"] },
-            { q: "Domina ambas áreas:", a: "D", options: ["Junior", "Senior", "Tester", "Fullstack"] },
-            { q: "¿Dónde reside el Backend?", a: "B", options: ["En el Celular", "En el Servidor", "En el Teclado", "En el WiFi"] },
-            { q: "La seguridad crítica es del:", a: "C", options: ["Usuario", "Frontend", "Backend", "Diseñador"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -246,45 +230,31 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const questions1 = [
+            { q: "¿Qué lado de la aplicación ve el usuario final?", a: "A", options: ["Frontend", "Backend", "Servidor", "Base de Datos"] },
+            { q: "¿Qué lado maneja la lógica de negocio y seguridad?", a: "B", options: ["Frontend", "Backend", "CSS", "Browser"] },
+            { q: "Tecnología fundamental de Frontend:", a: "C", options: ["SQL", "PHP", "JavaScript", "Python"] },
+            { q: "Tecnología común de Backend:", a: "D", options: ["HTML", "CSS", "Photoshop", "Node.js"] },
+            { q: "¿Dónde se almacena la información permanente?", a: "C", options: ["En el Front", "En el Mouse", "En la Base de Datos", "En el Monitor"] }
+        ];
+
+        const questions2 = [
+            { q: "Actúa como puente de comunicación entre Front y Back:", a: "B", options: ["RAM", "API", "CPU", "BIOS"] },
+            { q: "Formato de intercambio de datos más usado en APIs:", a: "A", options: ["JSON", "MP3", "PNG", "AVI"] },
+            { q: "Desarrollador que domina ambas áreas (Front y Back):", a: "D", options: ["Junior", "Senior", "Tester", "Fullstack"] },
+            { q: "La seguridad de procesos críticos debe estar en el:", a: "C", options: ["Usuario", "Frontend", "Backend", "Diseñador"] },
+            { q: "Identifica este rol de desarrollo:", a: "B", options: ["Hardware Eng.", "Full Stack Dev", "DB Admin", "QA Tester"], img: "../../imagenes/fullstack_dev.png" }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -295,7 +265,8 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
+            IMAQuiz.init('quiz-container-1', questions1);
+            IMAQuiz.init('quiz-container-2', questions2);
             showSlide(0);
         };
     </script>

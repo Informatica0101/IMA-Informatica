@@ -14,16 +14,11 @@
         .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
         .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
-        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; }
         .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
         #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -66,41 +61,42 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Medidas de Almacenamiento</h2>
             <div class="concept-box">
                 <p>La unidad mínima de información es el <strong>Bit</strong> (0 o 1). Un conjunto de 8 bits forma un <strong>Byte</strong>.</p>
-                <p class="mt-4">Los Bytes representan un carácter (letra, número o símbolo).</p>
+                <p class="mt-4 font-bold text-blue-600">Bit < Byte < Kilobyte < Megabyte < Gigabyte</p>
             </div>
+            <i class="fas fa-microchip text-6xl text-blue-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Jerarquía Digital</h2>
-            <ul class="list-none text-left space-y-2 max-w-2xl font-bold">
-                <li>1 Kilobyte (KB) = 1,024 Bytes</li>
-                <li>1 Megabyte (MB) = 1,024 KB</li>
-                <li>1 Gigabyte (GB) = 1,024 MB</li>
-                <li>1 Terabyte (TB) = 1,024 GB</li>
+            <ul class="text-left space-y-3 max-w-xl mx-auto text-lg font-medium">
+                <li class="flex justify-between border-b pb-1">1 Kilobyte (KB) <span>1,024 Bytes</span></li>
+                <li class="flex justify-between border-b pb-1">1 Megabyte (MB) <span>1,024 KB</span></li>
+                <li class="flex justify-between border-b pb-1">1 Gigabyte (GB) <span>1,024 MB</span></li>
+                <li class="flex justify-between border-b pb-1">1 Terabyte (TB) <span>1,024 GB</span></li>
             </ul>
         </div>
 
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Formatos de Archivo</h2>
-            <div class="concept-box">
-                <p>El formato define cómo se guardan los datos. Se identifica por la <strong>extensión</strong> al final del nombre del archivo.</p>
-                <p class="mt-2 text-sm italic">Ejemplo: documento.docx</p>
+            <div class="concept-box border-yellow-500">
+                <p>El formato define cómo se guardan los datos. Se identifica por la <strong>extensión</strong> al final del nombre.</p>
+                <p class="mt-4 text-2xl font-mono text-center">documento<strong>.docx</strong></p>
             </div>
         </div>
 
         <!-- Diapositiva 5 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tipos Comunes (.doc, .pdf)</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
-                <div class="p-4 bg-blue-50 rounded">
-                    <p class="font-bold">Documentos</p>
-                    <p class="text-xs">.docx (Word), .pdf (Universal), .txt (Texto plano).</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tipos Comunes</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl mx-auto text-left">
+                <div class="p-6 bg-blue-50 rounded-xl border-l-4 border-blue-500">
+                    <p class="font-bold text-blue-800">Documentos</p>
+                    <p class="text-sm">.docx (Word), .pdf (Universal), .xlsx (Excel).</p>
                 </div>
-                <div class="p-4 bg-green-50 rounded">
-                    <p class="font-bold">Imágenes</p>
-                    <p class="text-xs">.jpg (Fotos), .png (Transparencia), .gif (Animación).</p>
+                <div class="p-6 bg-green-50 rounded-xl border-l-4 border-green-500">
+                    <p class="font-bold text-green-800">Imágenes</p>
+                    <p class="text-sm">.jpg (Fotos), .png (Sin fondo), .gif (Animado).</p>
                 </div>
             </div>
         </div>
@@ -108,115 +104,103 @@
         <!-- Diapositiva 6 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Multimedia y Comprimidos</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
-                <div class="p-4 bg-purple-50 rounded">
-                    <p class="font-bold">Video y Audio</p>
-                    <p class="text-xs">.mp4, .avi, .mp3, .wav</p>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl mx-auto text-left">
+                <div class="p-6 bg-purple-50 rounded-xl border-l-4 border-purple-500">
+                    <p class="font-bold text-purple-800">Video y Audio</p>
+                    <p class="text-sm">.mp4, .avi, .mp3, .wav</p>
                 </div>
-                <div class="p-4 bg-orange-50 rounded">
-                    <p class="font-bold">Comprimidos</p>
-                    <p class="text-xs">.zip, .rar (Ahorran espacio y agrupan).</p>
+                <div class="p-6 bg-orange-50 rounded-xl border-l-4 border-orange-500">
+                    <p class="font-bold text-orange-800">Comprimidos</p>
+                    <p class="text-sm">.zip, .rar (Ahorran espacio).</p>
                 </div>
             </div>
         </div>
 
         <!-- Diapositiva 7 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
-            <div class="concept-box">
-                <p>Calcula: ¿Cuántos MB hay en un archivo de 2 GB? <br>(Recuerda: 1 GB = 1024 MB)</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Navegación de Archivos</h2>
+            <div class="concept-box border-slate-500">
+                <p>El <strong>Explorador de Archivos</strong> permite organizar la información en carpetas (directorios).</p>
+                <p class="mt-4 font-mono text-sm bg-gray-100 p-2 rounded">C:\Usuarios\Documentos\Tarea.docx</p>
             </div>
+            <i class="fas fa-folder-open text-6xl text-yellow-500 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 8 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Navegación de Archivos</h2>
-            <div class="concept-box">
-                <p>El <strong>Explorador de Archivos</strong> permite organizar la información en carpetas (directorios).</p>
-                <p class="mt-2 font-bold">Ruta:</p>
-                <p class="text-sm">C:\Usuarios\Documentos\Escuela\Tarea.docx</p>
-            </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Gestión Básica</h2>
+            <ul class="text-left space-y-4 max-w-xl mx-auto text-lg">
+                <li class="flex items-center space-x-3"><i class="fas fa-folder-plus text-yellow-600"></i><span>Crear carpetas para organizar por materia.</span></li>
+                <li class="flex items-center space-x-3"><i class="fas fa-edit text-blue-600"></i><span>Renombrar archivos con nombres descriptivos.</span></li>
+                <li class="flex items-center space-x-3"><i class="fas fa-trash-alt text-red-600"></i><span>Eliminar archivos innecesarios.</span></li>
+            </ul>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Gestión Básica</h2>
-            <ul class="list-disc text-left space-y-4 max-w-xl mx-auto">
-                <li><i class="fas fa-folder-plus mr-2"></i> Crear carpetas para organizar.</li>
-                <li><i class="fas fa-edit mr-2"></i> Renombrar archivos descriptivamente.</li>
-                <li><i class="fas fa-trash-alt mr-2"></i> Eliminar lo que no sirve.</li>
-            </ul>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Atajos de Teclado Vitales</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-xl mx-auto font-bold text-lg">
+                <div class="p-4 border bg-gray-50 rounded-lg">Ctrl + C (Copiar)</div>
+                <div class="p-4 border bg-gray-50 rounded-lg">Ctrl + V (Pegar)</div>
+                <div class="p-4 border bg-gray-50 rounded-lg">Ctrl + X (Cortar)</div>
+                <div class="p-4 border bg-gray-50 rounded-lg">F2 (Renombrar)</div>
+            </div>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Atajos de Teclado</h2>
-            <div class="grid grid-cols-2 gap-2 text-sm max-w-xl mx-auto">
-                <div class="p-2 border">Ctrl + C (Copiar)</div>
-                <div class="p-2 border">Ctrl + V (Pegar)</div>
-                <div class="p-2 border">Ctrl + X (Cortar)</div>
-                <div class="p-2 border">F2 (Renombrar)</div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Unidades Físicas</h2>
+            <div class="flex justify-center space-x-12 mt-8">
+                <div class="text-center"><i class="fas fa-hdd text-5xl text-slate-400"></i><p class="font-bold mt-2">Disco Duro</p></div>
+                <div class="text-center"><i class="fas fa-memory text-5xl text-blue-500"></i><p class="font-bold mt-2">Memoria RAM</p></div>
+                <div class="text-center"><i class="fas fa-cloud text-5xl text-cyan-400"></i><p class="font-bold mt-2">La Nube</p></div>
             </div>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Unidades de Almacenamiento</h2>
-            <div class="flex space-x-12 mt-8">
-                <div class="text-center">
-                    <i class="fas fa-hdd text-5xl text-slate-400"></i>
-                    <p class="mt-2">Disco Duro</p>
-                </div>
-                <div class="text-center">
-                    <i class="fas fa-sd-card text-5xl text-blue-500"></i>
-                    <p class="mt-2">Memoria SD</p>
-                </div>
-                <div class="text-center">
-                    <i class="fas fa-cloud text-5xl text-cyan-400"></i>
-                    <p class="mt-2">La Nube</p>
-                </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Conversión de Datos</h2>
+            <div class="bg-slate-900 text-green-400 p-8 rounded-lg font-mono text-left w-full max-w-xl mx-auto">
+                <p># Pasar de GB a MB</p>
+                <p>megabytes = gigabytes * 1024</p>
+                <p class="text-gray-500 mt-4">// Ejemplo:</p>
+                <p>2 GB * 1024 = 2048 MB</p>
             </div>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Importancia del Orden</h2>
-            <div class="concept-box border-yellow-400">
-                <p>Mantener una estructura jerárquica clara evita la pérdida de información y ahorra tiempo de búsqueda.</p>
-            </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Seguridad</h2>
+            <p class="text-xl max-w-2xl">Nunca borres archivos de la carpeta <strong>Windows</strong> o <strong>System32</strong>, ya que podrías dañar el sistema operativo.</p>
+            <i class="fas fa-exclamation-triangle text-6xl text-red-500 mt-8 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Tamaño</h2>
-            <div class="code-block">
-                <p>FUNCTION BytesAMegabytes(bytes)</p>
-                <p>&nbsp;&nbsp;LET kb = bytes / 1024</p>
-                <p>&nbsp;&nbsp;LET mb = kb / 1024</p>
-                <p>&nbsp;&nbsp;RETURN mb</p>
-                <p>ENDFUNCTION</p>
-            </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Orden Jerárquico</h2>
+            <p class="italic text-2xl text-slate-500 max-w-3xl">"Un sistema de archivos organizado es el reflejo de una mente eficiente."</p>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
-                <h3 class="font-black text-xl mb-4">TABLA DE CONVERSIÓN</h3>
-                <p>Realizar una tabla en el cuaderno convirtiendo: 5 GB a MB, 3 MB a KB y 1 TB a GB.</p>
-                <p class="mt-4 font-bold">Valor: 5%</p>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">PRÁCTICA DIGITAL</h3>
+                <p>Crear en su computadora la siguiente estructura de carpetas: <br>ISEMED > [Su Nombre] > Informatica > Tareas. <br>Luego, guardar un archivo de texto dentro de 'Tareas'.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-6">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
             </div>
         </div>
     </main>
@@ -235,12 +219,26 @@
     <script src="../js/config.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/games-adapter.js"></script>
+    <script src="../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
+
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
+        }
 
         const quizQuestions = [
             { q: "¿Unidad mínima de información?", a: "B", options: ["Byte", "Bit", "Herzio", "Watt"] },
@@ -255,52 +253,11 @@
             { q: "Carpeta principal de una unidad:", a: "C", options: ["Subcarpeta", "Rama", "Raíz", "Tronco"] }
         ];
 
-        function showSlide(index) {
-            if (index < 0 || index >= slides.length) return;
-            slides[currentSlideIndex].classList.remove('active');
-            currentSlideIndex = index;
-            slides[currentSlideIndex].classList.add('active');
-            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
-        }
-
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
-
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -311,7 +268,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

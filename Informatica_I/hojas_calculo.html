@@ -20,10 +20,9 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -33,7 +32,7 @@
             <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
             <img src="../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Calculando Celdas...</p>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Iniciando Hojas de Cálculo...</p>
     </div>
 
     <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
@@ -65,116 +64,101 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es una Hoja de Cálculo?</h2>
             <div class="concept-box">
-                <p>Es una aplicación diseñada para organizar, manipular y analizar datos numéricos mediante una cuadrícula de filas y columnas.</p>
-                <p class="mt-4 font-bold">Principal exponente: Microsoft Excel.</p>
+                <p>Es una aplicación diseñada para manipular datos numéricos y alfanuméricos dispuestos en forma de tablas compuestas por celdas.</p>
             </div>
+            <img src="../imagenes/hoja_calculo.png" alt="Excel" class="w-64 mt-4">
         </div>
 
         <!-- Diapositiva 3 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Celda</h2>
-            <div class="concept-box">
-                <p>Es la unidad básica de la hoja de cálculo. Se forma en la <strong>intersección de una fila y una columna</strong>.</p>
-                <p class="mt-2">Su nombre viene de la Columna (Letra) y la Fila (Número). Ej: <strong>A1</strong>.</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Filas y Columnas</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
+                <div class="p-6 bg-blue-50 rounded-xl">
+                    <h3 class="font-bold">Columnas</h3>
+                    <p class="text-xs">Identificadas por letras (A, B, C...). Son verticales.</p>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-xl">
+                    <h3 class="font-bold">Filas</h3>
+                    <p class="text-xs">Identificadas por números (1, 2, 3...). Son horizontales.</p>
+                </div>
             </div>
         </div>
 
         <!-- Diapositiva 4 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Filas y Columnas</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
-                <div class="p-4 bg-slate-50 rounded">
-                    <h3 class="font-bold">Columnas</h3>
-                    <p class="text-xs">Identificadas con Letras (A, B, C...). Son verticales.</p>
-                </div>
-                <div class="p-4 bg-slate-50 rounded">
-                    <h3 class="font-bold">Filas</h3>
-                    <p class="text-xs">Identificadas con Números (1, 2, 3...). Son horizontales.</p>
-                </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Celda</h2>
+            <div class="concept-box border-yellow-400">
+                <p>Es la intersección de una fila y una columna. Su nombre se compone de la letra y el número (ej: <strong>A1</strong>, <strong>C10</strong>).</p>
             </div>
         </div>
 
         <!-- Diapositiva 5 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tipos de Datos</h2>
-            <p>En una celda podemos ingresar:</p>
-            <ul class="mt-4 space-y-2 text-left max-w-xl mx-auto">
-                <li><i class="fas fa-font mr-2"></i> <strong>Texto:</strong> Nombres, etiquetas, descripciones.</li>
-                <li><i class="fas fa-sort-numeric-up mr-2"></i> <strong>Números:</strong> Valores para cálculos.</li>
-                <li><i class="fas fa-equals mr-2"></i> <strong>Fórmulas:</strong> Expresiones que realizan cálculos.</li>
-            </ul>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Rango de Celdas</h2>
+            <p>Es un conjunto de celdas contiguas. Se identifica por la celda superior izquierda y la inferior derecha separadas por dos puntos.</p>
+            <div class="code-block mt-4">A1:B10</div>
         </div>
 
         <!-- Diapositiva 6 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Las Fórmulas</h2>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Fórmulas Básicas</h2>
             <div class="concept-box">
-                <p>Toda fórmula en Excel <strong>DEBE</strong> comenzar con el signo igual (<strong>=</strong>).</p>
-                <p class="mt-2 text-sm italic">Ejemplo: =A1 + B1</p>
+                <p>Todas las fórmulas en una hoja de cálculo deben comenzar con el signo igual <strong>=</strong>.</p>
+                <ul class="list-disc ml-8 mt-4 text-sm">
+                    <li>Suma: =A1+A2</li>
+                    <li>Resta: =B5-B4</li>
+                    <li>Multiplicación: =C2*D2</li>
+                    <li>División: =E10/2</li>
+                </ul>
             </div>
-            <i class="fas fa-calculator text-6xl text-blue-500 mt-4"></i>
         </div>
 
         <!-- Diapositiva 7 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Operadores Básicos</h2>
-            <div class="grid grid-cols-4 gap-4 max-w-2xl mt-4">
-                <div class="p-4 border rounded font-bold">+ (Suma)</div>
-                <div class="p-4 border rounded font-bold">- (Resta)</div>
-                <div class="p-4 border rounded font-bold">* (Mult)</div>
-                <div class="p-4 border rounded font-bold">/ (Div)</div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
+            <div class="concept-box">
+                <p>Dibuja una pequeña cuadrícula de 3x3 en tu cuaderno e identifica las celdas A1, B2 y C3.</p>
             </div>
         </div>
 
         <!-- Diapositiva 8 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Las Funciones</h2>
-            <div class="concept-box border-green-400">
-                <p>Son fórmulas predefinidas que simplifican tareas.</p>
-                <ul class="list-disc ml-8 mt-2 text-sm">
-                    <li><strong>=SUMA(rango):</strong> Suma todos los valores.</li>
-                    <li><strong>=PROMEDIO(rango):</strong> Calcula la media aritmética.</li>
-                    <li><strong>=MAX(rango):</strong> Valor más alto.</li>
-                </ul>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Funciones</h2>
+            <p>Son fórmulas predefinidas que realizan cálculos complejos automáticamente.</p>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left mt-6">
+                <div class="p-4 border rounded"><strong>=SUMA(rango)</strong></div>
+                <div class="p-4 border rounded"><strong>=PROMEDIO(rango)</strong></div>
+                <div class="p-4 border rounded"><strong>=MAX(rango)</strong></div>
+                <div class="p-4 border rounded"><strong>=MIN(rango)</strong></div>
             </div>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Rangos</h2>
-            <div class="concept-box">
-                <p>Un rango es un conjunto de dos o más celdas. Se identifica por la celda inicial y final separadas por dos puntos (<strong>:</strong>).</p>
-                <p class="mt-2 font-bold">Ejemplo: A1:A10</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Gráficos</h2>
+            <div class="concept-box border-blue-400">
+                <p>Permiten representar los datos numéricos de forma visual para facilitar su interpretación (Barras, Circular, Líneas).</p>
             </div>
+            <img src="../imagenes/graficos_excel.png" alt="Gráficos" class="h-32 mt-4">
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Gráficos</h2>
-            <p>Permiten representar los datos de forma visual para facilitar su análisis e interpretación.</p>
-            <div class="flex space-x-8 mt-8">
-                <i class="fas fa-chart-bar text-5xl text-blue-600"></i>
-                <i class="fas fa-chart-pie text-5xl text-green-500"></i>
-                <i class="fas fa-chart-line text-5xl text-red-500"></i>
-            </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Formato de Celdas</h2>
+            <p>Puedes cambiar el color, borde, fuente y el tipo de dato (Moneda, Fecha, Porcentaje) de cada celda.</p>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Importancia en el Trabajo</h2>
-            <p class="italic">"La hoja de cálculo es la herramienta número 1 en finanzas, administración y ciencia de datos a nivel mundial."</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Autollenado</h2>
+            <p>Al arrastrar el cuadro pequeño de la esquina inferior derecha de una celda, Excel completa series o copia fórmulas automáticamente.</p>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Uso en la Vida Real</h2>
             <div class="concept-box">
-                <p>En tu cuaderno, escribe la fórmula necesaria para:</p>
-                <ol class="list-decimal ml-8 mt-2 text-sm">
-                    <li>Sumar las celdas C5 y D5.</li>
-                    <li>Dividir el valor de A1 entre 10.</li>
-                    <li>Calcular el promedio de las celdas de la B1 a la B5.</li>
-                </ol>
+                <p>Se usan para: Presupuestos, Inventarios, Facturas, Notas escolares y Análisis estadísticos.</p>
             </div>
         </div>
 
@@ -182,35 +166,36 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Cálculo</h2>
             <div class="code-block">
-                <p>FUNCTION CalcularTotal(celdas[])</p>
-                <p>&nbsp;&nbsp;LET suma = 0</p>
-                <p>&nbsp;&nbsp;FOR EACH valor IN celdas</p>
-                <p>&nbsp;&nbsp;&nbsp;&nbsp;suma = suma + valor</p>
+                <p>FUNCTION CalcularTotal(precios[])</p>
+                <p>&nbsp;&nbsp;SET suma = 0</p>
+                <p>&nbsp;&nbsp;FOR EACH p IN precios</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;suma = suma + p</p>
                 <p>&nbsp;&nbsp;ENDFOR</p>
                 <p>&nbsp;&nbsp;RETURN suma</p>
                 <p>ENDFUNCTION</p>
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
-                <h3 class="font-black text-xl mb-4">PRESUPUESTO PERSONAL</h3>
-                <p>Diseñar una tabla de presupuesto en el cuaderno que incluya 5 artículos, su cantidad, precio unitario y una columna para el Subtotal (Cantidad * Precio).</p>
-                <p class="mt-4 font-bold">Valor: 5%</p>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">PRESUPUESTO FAMILIAR</h3>
+                <p>Crear en Excel una tabla con los gastos mensuales de tu hogar. Usar la función SUMA para obtener el total y realizar un gráfico circular que muestre la distribución de los gastos.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 10%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
             </div>
         </div>
     </main>
@@ -229,6 +214,7 @@
     <script src="../js/config.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/games-adapter.js"></script>
+    <script src="../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
@@ -237,16 +223,16 @@
         const counter = document.getElementById('slide-counter');
 
         const quizQuestions = [
-            { q: "¿Con qué signo empieza una fórmula?", a: "B", options: ["+", "=", "#", "$"] },
-            { q: "La intersección Fila/Columna es:", a: "C", options: ["Rango", "Bloque", "Celda", "Cuadro"] },
-            { q: "Las columnas se identifican con:", a: "A", options: ["Letras", "Números", "Colores", "Símbolos"] },
-            { q: "Las filas se identifican con:", a: "B", options: ["Letras", "Números", "Iconos", "Puntos"] },
-            { q: "Función para sumar valores:", a: "D", options: ["=TOTAL", "=ADD", "=PLUS", "=SUMA"] },
-            { q: "Símbolo para multiplicación:", a: "C", options: ["X", ".", "*", "&"] },
-            { q: "¿Qué es A1:B10?", a: "A", options: ["Un Rango", "Una Celda", "Un Archivo", "Un Menú"] },
-            { q: "Función para el valor más alto:", a: "B", options: ["=MIN", "=MAX", "=TOP", "=HIGH"] },
-            { q: "Símbolo para división:", a: "D", options: ["%", "\\", "#", "/"] },
-            { q: "Excel es un software de:", a: "A", options: ["Hoja de Cálculo", "Dibujo", "Navegación", "Video"] }
+            { q: "¿Con qué signo inician las fórmulas?", a: "B", options: ["#", "=", "$", "&"] },
+            { q: "Identifica este componente:", img: "../imagenes/interfaz-hoja-de-calculo.png", a: "C", options: ["Puntero", "Icono", "Barra de Fórmulas", "Menu"] },
+            { q: "Las columnas se identifican por:", a: "A", options: ["Letras", "Números", "Colores", "Símbolos"] },
+            { q: "Las filas se identifican por:", a: "B", options: ["Letras", "Números", "Nombres", "Puntos"] },
+            { q: "Intersección de fila y columna:", a: "C", options: ["Bloque", "Grupo", "Celda", "Rango"] },
+            { q: "Función para obtener el mayor valor:", a: "D", options: ["=SUMA", "=PROMEDIO", "=MIN", "=MAX"] },
+            { q: "Identifica este tipo de gráfico:", img: "../imagenes/grafico_circular.png", a: "A", options: ["Circular", "Barras", "Líneas", "Dispersión"] },
+            { q: "Un rango de celdas usa el signo:", a: "C", options: [";", ",", ":", "."] },
+            { q: "A1:B10 es un ejemplo de:", a: "B", options: ["Celda única", "Rango", "Fórmula", "Error"] },
+            { q: "Identifica esta operación:", img: "../imagenes/formulas-basicas.png", a: "A", options: ["Operaciones básicas", "Funciones", "Gráficos", "Filtros"] }
         ];
 
         function showSlide(index) {
@@ -256,29 +242,9 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
-        }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
@@ -287,25 +253,15 @@
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
-        });
 
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('hojas_calculo', false);
+                await window.GamesAdapter.init('inf_hojas_calculo', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

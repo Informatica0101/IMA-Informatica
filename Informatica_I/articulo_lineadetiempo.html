@@ -14,16 +14,11 @@
         .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
         .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
-        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; }
         .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
         #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -67,7 +62,7 @@
             <div class="concept-box text-center">
                 <p>Considerado el primer dispositivo de cálculo manual. Permite realizar operaciones aritméticas básicas mediante cuentas deslizantes.</p>
             </div>
-            <img src="../imagenes/abaco.jpg" alt="Ábaco" class="h-48 mt-4 rounded-lg shadow-md">
+            <img src="../imagenes/abaco.jpg" alt="Ábaco" class="h-48 mt-4 rounded-lg shadow-md mx-auto">
         </div>
 
         <!-- Diapositiva 3 -->
@@ -76,7 +71,7 @@
             <div class="concept-box">
                 <p>Inventada por Blaise Pascal. Fue la primera calculadora mecánica que funcionaba a base de ruedas y engranajes.</p>
             </div>
-            <img src="../imagenes/pascalina.jpg" alt="Pascalina" class="h-48 mt-4 rounded-lg shadow-md">
+            <img src="../imagenes/pascalina.jpg" alt="Pascalina" class="h-48 mt-4 rounded-lg shadow-md mx-auto">
         </div>
 
         <!-- Diapositiva 4 -->
@@ -85,7 +80,7 @@
             <div class="concept-box">
                 <p>Charles Babbage diseñó el primer concepto de computadora programable, con unidad de control y memoria.</p>
             </div>
-            <img src="../imagenes/maquina_analitica.jpg" alt="Babbage" class="h-48 mt-4 rounded-lg shadow-md">
+            <img src="../imagenes/maquina_analitica.jpg" alt="Babbage" class="h-48 mt-4 rounded-lg shadow-md mx-auto">
         </div>
 
         <!-- Diapositiva 5 -->
@@ -94,7 +89,7 @@
             <div class="concept-box">
                 <p>Componente electrónico fundamental para las computadoras de Primera Generación. Eran grandes, lentas y generaban mucho calor.</p>
             </div>
-            <img src="../imagenes/valvulas_vacio.jpg" alt="Válvulas" class="h-48 mt-4 rounded-lg shadow-md">
+            <img src="../imagenes/valvulas_vacio.jpg" alt="Válvulas" class="h-48 mt-4 rounded-lg shadow-md mx-auto">
         </div>
 
         <!-- Diapositiva 6 -->
@@ -103,14 +98,21 @@
             <div class="concept-box text-center">
                 <p>La primera computadora digital electrónica de propósito general. Ocupaba una habitación completa y pesaba 27 toneladas.</p>
             </div>
-            <img src="../imagenes/eniac.jpg" alt="ENIAC" class="h-48 mt-4 rounded-lg shadow-md">
+            <img src="../imagenes/eniac.jpg" alt="ENIAC" class="h-48 mt-4 rounded-lg shadow-md mx-auto">
         </div>
 
         <!-- Diapositiva 7 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico</h2>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Hitos Históricos</h2>
             <div class="concept-box">
-                <p>Dibuja en tu cuaderno una línea de tiempo y ubica cronológicamente los 5 hitos mencionados anteriormente.</p>
+                <p>De las máquinas mecánicas a la electrónica moderna:</p>
+                <ul class="list-disc ml-8 mt-2 space-y-1">
+                    <li>1600 a.C.: Ábaco</li>
+                    <li>1642: Pascalina</li>
+                    <li>1837: Máquina Analítica</li>
+                    <li>1904: Válvulas de Vacío</li>
+                    <li>1946: ENIAC</li>
+                </ul>
             </div>
         </div>
 
@@ -120,7 +122,7 @@
             <div class="concept-box">
                 <p>Dio inicio a la Segunda Generación. Reemplazó a las válvulas de vacío, haciendo las computadoras más pequeñas, rápidas y confiables.</p>
             </div>
-            <img src="../imagenes/transistor.jpg" alt="Transistor" class="h-48 mt-4">
+            <img src="../imagenes/transistor.jpg" alt="Transistor" class="h-48 mt-4 mx-auto">
         </div>
 
         <!-- Diapositiva 9 -->
@@ -129,28 +131,28 @@
             <div class="concept-box">
                 <p>Jack Kilby integró múltiples transistores en un solo chip de silicio. Nace la Tercera Generación.</p>
             </div>
-            <img src="../imagenes/circuito_integrado.jpg" alt="Chip" class="h-48 mt-4">
+            <img src="../imagenes/circuito_integrado.jpg" alt="Chip" class="h-48 mt-4 mx-auto">
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Microprocesador (1971)</h2>
-            <div class="concept-box">
+            <div class="concept-box border-orange-500">
                 <p>Intel lanzó el 4004. Toda la CPU en un solo chip. Inicia la Cuarta Generación y la era de las PC personales.</p>
             </div>
-            <img src="../imagenes/intel4004.jpg" alt="Intel 4004" class="h-48 mt-4">
+            <img src="../imagenes/intel4004.jpg" alt="Intel 4004" class="h-48 mt-4 mx-auto">
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Apple I y IBM PC</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl">
-                <div>
-                    <img src="../imagenes/apple1.jpg" alt="Apple I" class="h-32 mx-auto mb-2">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">PC Personales</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl mx-auto">
+                <div class="text-center">
+                    <img src="../imagenes/apple1.jpg" alt="Apple I" class="h-32 mx-auto mb-2 rounded shadow">
                     <p class="font-bold">Apple I (1976)</p>
                 </div>
-                <div>
-                    <img src="../imagenes/ibm701.jpg" alt="IBM" class="h-32 mx-auto mb-2">
+                <div class="text-center">
+                    <img src="../imagenes/ibm701.jpg" alt="IBM" class="h-32 mx-auto mb-2 rounded shadow">
                     <p class="font-bold">IBM PC (1981)</p>
                 </div>
             </div>
@@ -158,47 +160,48 @@
 
         <!-- Diapositiva 12 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">WWW (1989)</h2>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Web (1989)</h2>
             <div class="concept-box">
-                <p>Tim Berners-Lee inventa la World Wide Web, conectando al mundo a través de la información hipertextual.</p>
+                <p>Tim Berners-Lee inventa la World Wide Web, conectando al mundo a través de Internet.</p>
             </div>
-            <img src="../imagenes/www.jpg" alt="WWW" class="h-48 mt-4">
+            <img src="../imagenes/www.jpg" alt="WWW" class="h-48 mt-4 mx-auto">
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Futuro</h2>
-            <div class="grid grid-cols-2 gap-4 text-left max-w-4xl">
-                <div class="p-4 bg-slate-50 rounded">
-                    <h4 class="font-bold">IA e IA Generativa</h4>
-                    <p class="text-xs">Sistemas que aprenden y crean.</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Computación Moderna</h2>
+            <div class="grid grid-cols-2 gap-4 text-left max-w-4xl mx-auto">
+                <div class="p-6 bg-blue-50 border-l-4 border-blue-500 rounded shadow-sm">
+                    <h4 class="font-bold text-blue-700">IA Generativa</h4>
+                    <p class="text-sm">Sistemas capaces de crear contenido original.</p>
                 </div>
-                <div class="p-4 bg-slate-50 rounded">
-                    <h4 class="font-bold">Computación Cuántica</h4>
-                    <p class="text-xs">Poder de procesamiento masivo.</p>
+                <div class="p-6 bg-blue-50 border-l-4 border-blue-500 rounded shadow-sm">
+                    <h4 class="font-bold text-blue-700">Computación Cuántica</h4>
+                    <p class="text-sm">Potencia extrema para cálculos complejos.</p>
                 </div>
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
-                <h3 class="font-black text-xl mb-4">MAPA MENTAL</h3>
-                <p>Realizar un mapa mental sobre las 5 generaciones de computadoras, indicando el componente principal de cada una.</p>
-                <p class="mt-4 font-bold">Valor: 10%</p>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase tracking-wider">MAPA MENTAL</h3>
+                <p class="text-lg">Realizar un mapa mental sobre las 5 generaciones de computadoras, indicando el componente principal de cada una y una característica clave.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-6">
+                    <span>Valor: 10%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
             </div>
         </div>
     </main>
@@ -217,12 +220,26 @@
     <script src="../js/config.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/games-adapter.js"></script>
+    <script src="../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
+
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
+        }
 
         const quizQuestions = [
             { q: "¿Primer dispositivo de cálculo?", a: "A", options: ["Ábaco", "Calculadora", "PC", "Pascalina"] },
@@ -237,52 +254,11 @@
             { q: "IA es parte de la generación:", a: "C", options: ["Primera", "Segunda", "Quinta / Actual", "Antigua"] }
         ];
 
-        function showSlide(index) {
-            if (index < 0 || index >= slides.length) return;
-            slides[currentSlideIndex].classList.remove('active');
-            currentSlideIndex = index;
-            slides[currentSlideIndex].classList.add('active');
-            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
-        }
-
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
-
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -293,7 +269,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

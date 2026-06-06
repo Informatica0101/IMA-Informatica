@@ -14,16 +14,11 @@
         .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
         .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
-        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
         .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
         #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -75,7 +70,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Encabezados de Tabla</h2>
             <div class="concept-box border-yellow-400">
                 <p>Usamos <code>&lt;th&gt;</code> en lugar de <code>&lt;td&gt;</code> para las celdas de encabezado. El navegador las pone automáticamente en negrita y centradas.</p>
-                <div class="code-block mt-4">&lt;tr&gt;&lt;th&gt;Nombre&lt;/th&gt;&lt;th&gt;Edad&lt;/th&gt;&lt;/tr&gt;</div>
+                <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">&lt;tr&gt;&lt;th&gt;Nombre&lt;/th&gt;&lt;th&gt;Edad&lt;/th&gt;&lt;/tr&gt;</div>
             </div>
         </div>
 
@@ -118,25 +113,25 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Combinar Celdas: colspan</h2>
             <p>Atributo para que una celda se extienda a lo largo de varias columnas.</p>
-            <div class="code-block mt-4">&lt;td colspan="2"&gt;Celda Larga&lt;/td&gt;</div>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">&lt;td colspan="2"&gt;Celda Larga&lt;/td&gt;</div>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Combinar Celdas: rowspan</h2>
             <p>Atributo para que una celda se extienda a lo largo de varias filas (hacia abajo).</p>
-            <div class="code-block mt-4">&lt;td rowspan="3"&gt;Celda Alta&lt;/td&gt;</div>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">&lt;td rowspan="3"&gt;Celda Alta&lt;/td&gt;</div>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Semántica moderna</h2>
             <p>Aunque <code>div</code> es muy útil, hoy preferimos etiquetas con significado:</p>
-            <ul class="flex space-x-6 mt-6 font-bold text-xs">
-                <li>&lt;header&gt;</li>
-                <li>&lt;main&gt;</li>
-                <li>&lt;footer&gt;</li>
-                <li>&lt;section&gt;</li>
+            <ul class="flex justify-center space-x-6 mt-6 font-bold text-xs">
+                <li class="bg-slate-100 p-2 rounded">&lt;header&gt;</li>
+                <li class="bg-slate-100 p-2 rounded">&lt;main&gt;</li>
+                <li class="bg-slate-100 p-2 rounded">&lt;footer&gt;</li>
+                <li class="bg-slate-100 p-2 rounded">&lt;section&gt;</li>
             </ul>
         </div>
 
@@ -144,7 +139,7 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Atributos ID y CLASS</h2>
             <p>Fundamentales para identificar contenedores.</p>
-            <ul class="text-left space-y-2 max-w-lg mt-4">
+            <ul class="text-left space-y-2 max-w-lg mt-4 mx-auto">
                 <li><strong>ID:</strong> Un solo elemento único (ej: #menu).</li>
                 <li><strong>Class:</strong> Varios elementos (ej: .tarjeta).</li>
             </ul>
@@ -170,14 +165,14 @@
 
         <!-- Diapositiva 14 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-4">Refuerzo de Conocimientos</h2>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 15 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-4">Refuerzo de Conocimientos</h2>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -208,25 +203,13 @@
     <script src="../js/config.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/games-adapter.js"></script>
+    <script src="../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "Contenedor de nivel de bloque:", a: "B", options: ["<span>", "<div>", "<a>", "<img>"] },
-            { q: "Contenedor de nivel de línea:", a: "A", options: ["<span>", "<div>", "<p>", "<section>"] },
-            { q: "Etiqueta para celda de datos:", a: "C", options: ["<tr>", "<th>", "<td>", "<table>"] },
-            { q: "Etiqueta para celda de encabezado:", a: "D", options: ["<td>", "<tr>", "<thead>", "<th>"] },
-            { q: "Une celdas horizontalmente:", a: "B", options: ["rowspan", "colspan", "merge", "join"] },
-            { q: "Une celdas verticalmente:", a: "A", options: ["rowspan", "colspan", "group", "stack"] },
-            { q: "Fila de una tabla:", a: "C", options: ["<td>", "<th>", "<tr>", "<table-row>"] },
-            { q: "Ocupa todo el ancho disponible:", a: "D", options: ["span", "img", "a", "div"] },
-            { q: "Etiqueta raíz de tabla:", a: "A", options: ["<table>", "<tr>", "<td>", "<body>"] },
-            { q: "Estilar palabra en un párrafo:", a: "B", options: ["div", "span", "section", "article"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -235,45 +218,31 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const questions1 = [
+            { q: "¿Cuál es el contenedor de nivel de bloque por excelencia?", a: "B", options: ["<span>", "<div>", "<a>", "<img>"] },
+            { q: "¿Cuál es el contenedor de nivel de línea?", a: "A", options: ["<span>", "<div>", "<p>", "<section>"] },
+            { q: "¿Etiqueta para una celda de datos común?", a: "C", options: ["<tr>", "<th>", "<td>", "<table>"] },
+            { q: "¿Etiqueta para una celda de encabezado de tabla?", a: "D", options: ["<td>", "<tr>", "<thead>", "<th>"] },
+            { q: "Atributo para unir celdas horizontalmente:", a: "B", options: ["rowspan", "colspan", "merge", "join"] }
+        ];
+
+        const questions2 = [
+            { q: "Atributo para unir celdas verticalmente:", a: "A", options: ["rowspan", "colspan", "group", "stack"] },
+            { q: "Etiqueta que define una fila de una tabla:", a: "C", options: ["<td>", "<th>", "<tr>", "<table-row>"] },
+            { q: "Un contenedor DIV ocupa por defecto:", a: "D", options: ["Solo su contenido", "La mitad del ancho", "El 10%", "Todo el ancho disponible"] },
+            { q: "Etiqueta raíz para crear una tabla:", a: "A", options: ["<table>", "<tr>", "<td>", "<body>"] },
+            { q: "Etiqueta ideal para estilar una sola palabra en un párrafo:", a: "B", options: ["div", "span", "section", "article"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -284,7 +253,8 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
+            IMAQuiz.init('quiz-container-1', questions1);
+            IMAQuiz.init('quiz-container-2', questions2);
             showSlide(0);
         };
     </script>

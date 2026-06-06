@@ -20,10 +20,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -74,7 +70,7 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">1. Lenguaje Natural</h2>
             <div class="concept-box">
-                <p>Es la descripción de los pasos en español. Es flexible pero puede ser ambiguo si no se tiene cuidado.</p>
+                <p>Es la descripción de los pasos en español cotidiano. Es flexible pero puede ser ambiguo si no se tiene cuidado.</p>
                 <p class="mt-2 text-sm italic">Ejemplo: "Si la lámpara no enciende, revisa si está enchufada".</p>
             </div>
         </div>
@@ -85,11 +81,11 @@
             <div class="concept-box">
                 <p>Representación gráfica de un algoritmo. Utiliza símbolos geométricos unidos por flechas para indicar el flujo de ejecución.</p>
             </div>
-            <div class="grid grid-cols-2 gap-4 mt-4 text-xs">
-                <div class="p-2 border border-blue-200">Óvalo: Inicio / Fin</div>
-                <div class="p-2 border border-blue-200">Rombo: Decisión (SI/NO)</div>
-                <div class="p-2 border border-blue-200">Rectángulo: Proceso</div>
-                <div class="p-2 border border-blue-200">Paralelogramo: Entrada/Salida</div>
+            <div class="grid grid-cols-2 gap-4 mt-4 text-xs mx-auto max-w-md">
+                <div class="p-2 border rounded bg-white font-bold">Óvalo: Inicio / Fin</div>
+                <div class="p-2 border rounded bg-white font-bold">Rombo: Decisión (SI/NO)</div>
+                <div class="p-2 border rounded bg-white font-bold">Rectángulo: Proceso</div>
+                <div class="p-2 border rounded bg-white font-bold">Paralelogramo: E/S</div>
             </div>
         </div>
 
@@ -98,26 +94,26 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">3. Pseudocódigo</h2>
             <div class="concept-box">
                 <p>Lenguaje de especificación de algoritmos que utiliza palabras similares a un lenguaje de programación real pero en español.</p>
-                <p class="mt-2 text-sm font-bold">Es el paso previo antes de escribir código real.</p>
+                <p class="mt-2 text-sm font-bold text-blue-600">Es el paso previo antes de escribir código real.</p>
             </div>
-            <i class="fas fa-file-code text-6xl text-slate-300 mt-4"></i>
+            <i class="fas fa-file-code text-6xl text-slate-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 6 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Comparativa</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl">
-                <div class="p-4 bg-slate-50 border rounded">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+                <div class="p-4 bg-slate-50 border rounded shadow-sm">
                     <h4 class="font-bold">Natural</h4>
-                    <p class="text-xs">Para principiantes.</p>
+                    <p class="text-xs">Para principiantes y explicaciones rápidas.</p>
                 </div>
-                <div class="p-4 bg-blue-50 border rounded">
+                <div class="p-4 bg-blue-50 border rounded shadow-sm">
                     <h4 class="font-bold">Diagramas</h4>
-                    <p class="text-xs">Para ver la lógica visual.</p>
+                    <p class="text-xs">Para visualizar la lógica de un vistazo.</p>
                 </div>
-                <div class="p-4 bg-purple-50 border rounded">
+                <div class="p-4 bg-purple-50 border rounded shadow-sm">
                     <h4 class="font-bold">Pseudocódigo</h4>
-                    <p class="text-xs">Casi como programar.</p>
+                    <p class="text-xs">Casi como programar, muy técnico.</p>
                 </div>
             </div>
         </div>
@@ -126,61 +122,60 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
             <div class="concept-box">
-                <p>Dibuja en tu cuaderno los 4 símbolos básicos de los diagramas de flujo y escribe el nombre de cada uno.</p>
+                <p>Dibuja en tu cuaderno los 4 símbolos básicos de los diagramas de flujo y escribe el nombre de cada uno junto a su función.</p>
             </div>
         </div>
 
         <!-- Diapositiva 8 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Simbología Estándar</h2>
-            <p>El estándar internacional para diagramas es el ANSI. <br>Seguir estas normas asegura que cualquier programador del mundo entienda tu diagrama.</p>
-            <i class="fas fa-globe text-6xl text-blue-100 mt-8"></i>
+            <p>El estándar internacional para diagramas es el ANSI. Seguir estas normas asegura que cualquier programador del mundo entienda tu lógica.</p>
+            <i class="fas fa-globe text-6xl text-blue-100 mt-8 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reglas de los Diagramas</h2>
-            <ul class="list-disc text-left space-y-2 max-w-xl mx-auto">
+            <ul class="list-disc text-left space-y-2 max-w-xl mx-auto text-sm">
                 <li>Deben tener un único Inicio y un único Fin.</li>
                 <li>El flujo debe ser de arriba hacia abajo o de izquierda a derecha.</li>
-                <li>Las líneas de flujo no deben cruzarse.</li>
-                <li>Todo texto dentro de los símbolos debe ser legible.</li>
+                <li>Las líneas de flujo no deben cruzarse nunca.</li>
+                <li>Todo texto dentro de los símbolos debe ser breve y legible.</li>
             </ul>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Palabras Clave en Pseudocódigo</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-2xl mt-4 font-mono text-sm">
-                <div class="p-4 border bg-gray-50">LEER (Input)</div>
-                <div class="p-4 border bg-gray-50">ESCRIBIR (Output)</div>
-                <div class="p-4 border bg-gray-50">SI... ENTONCES (IF)</div>
-                <div class="p-4 border bg-gray-50">MIENTRAS (WHILE)</div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Palabras Clave</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-2xl mt-4 font-mono text-sm mx-auto">
+                <div class="p-4 border bg-gray-50 rounded">LEER (Capturar dato)</div>
+                <div class="p-4 border bg-gray-50 rounded">ESCRIBIR (Mostrar dato)</div>
+                <div class="p-4 border bg-gray-50 rounded">SI... ENTONCES (Si)</div>
+                <div class="p-4 border bg-gray-50 rounded">MIENTRAS (Mientras)</div>
             </div>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructura del Pseudocódigo</h2>
-            <div class="code-block">
-                <p>ALGORITMO Nombre</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructura General</h2>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs mx-auto text-left max-w-md">
+                <p class="text-blue-300">ALGORITMO Nombre</p>
                 <p>&nbsp;&nbsp;// Declarar variables</p>
                 <p>&nbsp;&nbsp;// Cuerpo del programa</p>
-                <p>FINALGORITMO</p>
+                <p class="text-blue-300">FINALGORITMO</p>
             </div>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Consistencia</h2>
-            <p class="italic">"La representación que elijas debe ser consistente. Si empiezas con un diagrama, termina la lógica en ese diagrama antes de pasar al código."</p>
+            <p class="italic text-slate-500 text-2xl">"La representación es el mapa; el código es el territorio. No camines sin un mapa claro."</p>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Avanzado</h2>
-            <p class="mb-4">Representación de una decisión:</p>
-            <div class="code-block">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejemplo de Decisión</h2>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm mx-auto text-left max-w-md">
                 <p>LEER temperatura</p>
                 <p>SI temperatura > 30 ENTONCES</p>
                 <p>&nbsp;&nbsp;ESCRIBIR "Hace calor"</p>
@@ -190,22 +185,20 @@
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4 uppercase">DIAGRAMA Y PSEUDO</h3>
                 <p>Escribir el pseudocódigo y dibujar el diagrama de flujo para un algoritmo que pida dos números y muestre el mayor de ellos.</p>
                 <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
@@ -230,25 +223,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué forma tiene el Inicio/Fin?", a: "A", options: ["Óvalo", "Cuadrado", "Triángulo", "Círculo"] },
-            { q: "¿Para qué sirve el Rombo?", a: "B", options: ["Calcular", "Tomar decisiones", "Leer datos", "Borrar"] },
-            { q: "Representación con palabras:", a: "C", options: ["Pintura", "Música", "Pseudocódigo", "Hardware"] },
-            { q: "¿Qué indica una flecha?", a: "D", options: ["Color", "Precio", "Error", "Flujo / Dirección"] },
-            { q: "ANSI es un estándar para:", a: "A", options: ["Diagramas de flujo", "Cables", "Monitores", "Mouses"] },
-            { q: "Escribir un texto se usa:", a: "C", options: ["LEER", "CALCULAR", "ESCRIBIR", "FIN"] },
-            { q: "Un rectángulo en diagrama es:", a: "B", options: ["Entrada", "Proceso / Acción", "Salida", "Decisión"] },
-            { q: "Entrada/Salida se usa:", a: "D", options: ["Círculo", "Línea", "Punto", "Paralelogramo"] },
-            { q: "¿Qué idioma usa el pseudocódigo?", a: "A", options: ["Espacio cercano al código", "Binario", "Solo Inglés", "Dibujos"] },
-            { q: "Regla de flujo:", a: "B", options: ["Cualquier lado", "Arriba hacia abajo", "De abajo hacia arriba", "En diagonal"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -257,56 +238,41 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Qué forma geométrica indica el Inicio o el Fin en un diagrama de flujo?", a: "A", options: ["Óvalo", "Cuadrado", "Triángulo", "Círculo"] },
+            { q: "¿Para qué sirve el símbolo del Rombo en los diagramas?", a: "B", options: ["Calcular", "Tomar decisiones", "Leer datos", "Borrar"] },
+            { q: "¿Cuál es la representación que usa palabras similares al código real?", a: "C", options: ["Pintura", "Música", "Pseudocódigo", "Hardware"] },
+            { q: "¿Qué indica la dirección de las flechas en un diagrama?", a: "D", options: ["El color", "El precio", "El error", "El flujo de ejecución"] },
+            { q: "Identifica este símbolo de diagrama:", a: "B", options: ["Inicio", "Proceso / Acción", "Entrada", "Decisión"], img: "../../imagenes/fujo_datos.jpg" },
+            { q: "Para mostrar un resultado en pantalla en pseudocódigo usamos:", a: "C", options: ["LEER", "CALCULAR", "ESCRIBIR", "FIN"] },
+            { q: "¿Qué representa el rectángulo en un diagrama de flujo?", a: "B", options: ["Entrada", "Proceso", "Salida", "Decisión"] },
+            { q: "La Entrada y Salida manual de datos se representa con un:", a: "D", options: ["Círculo", "Línea", "Punto", "Paralelogramo"] },
+            { q: "¿En qué idioma se escribe preferentemente el pseudocódigo educativo?", a: "A", options: ["Español cercano al código", "Binario", "Solo Inglés", "Dibujos"] },
+            { q: "¿Cuál es la regla estándar de dirección del flujo?", a: "B", options: ["Abajo a Arriba", "Arriba a Abajo", "Derecha a Izquierda", "Circular"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
-        });
 
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('programacion_representacion', false);
+                await window.GamesAdapter.init('prog_representacion', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

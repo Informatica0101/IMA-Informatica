@@ -14,16 +14,11 @@
         .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
         .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
-        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
         .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
         #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -169,14 +164,14 @@
 
         <!-- Diapositiva 14 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-4">Refuerzo de Conocimientos</h2>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 15 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-4">Refuerzo de Conocimientos</h2>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -207,25 +202,13 @@
     <script src="../js/config.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/games-adapter.js"></script>
+    <script src="../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué lenguaje define la estructura?", a: "A", options: ["HTML", "CSS", "JS", "SQL"] },
-            { q: "¿Qué lenguaje define el diseño?", a: "B", options: ["HTML", "CSS", "JS", "Python"] },
-            { q: "¿Qué lenguaje define la interactividad?", a: "C", options: ["HTML", "CSS", "JS", "C++"] },
-            { q: "¿Qué significa WWW?", a: "D", options: ["Web Wide World", "West Wood Web", "Word Wide Web", "World Wide Web"] },
-            { q: "Software que lee el código web:", a: "B", options: ["Windows", "Navegador", "Office", "Antivirus"] },
-            { q: "La computadora que pide la web es:", a: "A", options: ["Cliente", "Servidor", "Host", "Router"] },
-            { q: "Web que se adapta a pantallas:", a: "C", options: ["Static", "Old", "Responsive", "Hard"] },
-            { q: "¿Qué significa la 'S' en HTTPS?", a: "D", options: ["Simple", "Speed", "Soft", "Secure"] },
-            { q: "Se enfoca en cómo se siente el usuario:", a: "B", options: ["UI", "UX", "IA", "API"] },
-            { q: "Editor de código recomendado:", a: "A", options: ["VS Code", "Word", "Paint", "Chrome"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -234,56 +217,43 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const questions1 = [
+            { q: "¿Qué lenguaje define la estructura de una web?", a: "A", options: ["HTML", "CSS", "JavaScript", "SQL"] },
+            { q: "¿Qué lenguaje se encarga del diseño visual?", a: "B", options: ["HTML", "CSS", "JavaScript", "Python"] },
+            { q: "¿Qué lenguaje añade interactividad?", a: "C", options: ["HTML", "CSS", "JavaScript", "C++"] },
+            { q: "¿Qué significan las siglas WWW?", a: "D", options: ["Web Wide World", "West Wood Web", "Word Wide Web", "World Wide Web"] },
+            { q: "Identifica este elemento clave:", a: "B", options: ["S.O.", "Navegador", "Office", "Antivirus"], img: "../imagenes/Internet Explorer 6.png" }
+        ];
+
+        const questions2 = [
+            { q: "La computadora que solicita la información es el:", a: "A", options: ["Cliente", "Servidor", "Host", "Router"] },
+            { q: "Diseño que se adapta a cualquier pantalla:", a: "C", options: ["Estático", "Legacy", "Responsive", "Hard"] },
+            { q: "¿Qué significa la 'S' en HTTPS?", a: "D", options: ["Simple", "Speed", "Soft", "Secure"] },
+            { q: "Se enfoca en cómo se siente el usuario:", a: "B", options: ["UI", "UX", "IA", "API"] },
+            { q: "Editor de código estándar actual:", a: "A", options: ["VS Code", "Wordpad", "Paint", "Excel"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
-        });
 
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('dw_introduccion', false);
+                await window.GamesAdapter.init('dw_intro', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
+            IMAQuiz.init('quiz-container-1', questions1);
+            IMAQuiz.init('quiz-container-2', questions2);
             showSlide(0);
         };
     </script>

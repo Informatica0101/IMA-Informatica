@@ -20,10 +20,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -75,9 +71,9 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Sistema Decimal (Base 10)</h2>
             <div class="concept-box">
                 <p>Es el sistema que usamos los humanos diariamente. Utiliza diez símbolos:</p>
-                <p class="mt-2 text-2xl text-center font-bold">0, 1, 2, 3, 4, 5, 6, 7, 8, 9</p>
+                <p class="mt-2 text-2xl text-center font-bold text-blue-700">0, 1, 2, 3, 4, 5, 6, 7, 8, 9</p>
             </div>
-            <i class="fas fa-hand-holding text-6xl text-blue-200 mt-4"></i>
+            <i class="fas fa-hand-holding text-6xl text-blue-200 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 4 -->
@@ -85,10 +81,10 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Sistema Binario (Base 2)</h2>
             <div class="concept-box">
                 <p>El lenguaje natural de las computadoras. Solo tiene dos estados (encendido/apagado) representados por:</p>
-                <p class="mt-2 text-2xl text-center font-bold">0 y 1</p>
+                <p class="mt-2 text-3xl text-center font-bold text-green-600">0 y 1</p>
                 <p class="mt-4 text-xs italic text-center">Un solo dígito binario se llama BIT.</p>
             </div>
-            <i class="fas fa-microchip text-6xl text-blue-500 mt-4"></i>
+            <i class="fas fa-microchip text-6xl text-blue-500 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 5 -->
@@ -96,7 +92,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Sistema Hexadecimal (Base 16)</h2>
             <div class="concept-box border-purple-400">
                 <p>Muy usado para representar colores y direcciones de memoria. Usa números y letras:</p>
-                <p class="mt-2 text-xl text-center font-bold">0-9 y A, B, C, D, E, F</p>
+                <p class="mt-2 text-xl text-center font-bold text-purple-700">0-9 y A, B, C, D, E, F</p>
                 <p class="mt-2 text-xs text-center">(Donde A=10, B=11... F=15)</p>
             </div>
         </div>
@@ -106,7 +102,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Conversión Binario a Decimal</h2>
             <div class="concept-box">
                 <p>Se utiliza la suma de potencias de base 2:</p>
-                <div class="code-block font-mono text-center">
+                <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs mx-auto text-left max-w-md">
                     1011 = (1 * 2³) + (0 * 2²) + (1 * 2¹) + (1 * 2⁰) <br>
                     1011 = 8 + 0 + 2 + 1 = 11
                 </div>
@@ -125,7 +121,7 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Conversión Decimal a Binario</h2>
             <p>Se realiza mediante divisiones sucesivas entre 2, tomando los residuos en orden inverso.</p>
-            <i class="fas fa-divide text-6xl text-blue-200 mt-8"></i>
+            <i class="fas fa-divide text-6xl text-blue-200 mt-8 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 9 -->
@@ -140,30 +136,30 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Sistema Octal (Base 8)</h2>
             <p>Utiliza ocho símbolos (0 al 7). Fue muy popular en las primeras computadoras de 12, 24 o 36 bits.</p>
-            <i class="fas fa-circle-notch text-6xl text-slate-300 mt-4"></i>
+            <i class="fas fa-circle-notch text-6xl text-slate-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Resumen de Bases</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-sm font-bold">
-                <div class="p-4 border">Decimal: Humano</div>
-                <div class="p-4 border bg-blue-50">Binario: Máquina</div>
-                <div class="p-4 border">Hexadecimal: Direcciones / Colores</div>
-                <div class="p-4 border">Octal: Histórico</div>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-sm font-bold mx-auto">
+                <div class="p-4 border rounded bg-white shadow-sm">Decimal: Humano</div>
+                <div class="p-4 border rounded bg-blue-50 shadow-sm text-blue-700">Binario: Máquina</div>
+                <div class="p-4 border rounded bg-purple-50 shadow-sm text-purple-700">Hexadecimal: Direcciones</div>
+                <div class="p-4 border rounded bg-slate-50 shadow-sm">Octal: Histórico</div>
             </div>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lenguaje de Transistores</h2>
-            <p class="italic text-2xl">"Todo lo que ves en pantalla: fotos, videos y juegos, son en realidad trillones de ceros y unos procesados a la velocidad de la luz."</p>
+            <p class="italic text-slate-500 text-2xl">"Todo lo que ves en pantalla son en realidad trillones de ceros y unos procesados a la velocidad de la luz."</p>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Conversión</h2>
-            <div class="code-block">
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs mx-auto text-left max-w-md">
                 <p>FUNCTION DecimalABinario(n)</p>
                 <p>&nbsp;&nbsp;WHILE n > 0</p>
                 <p>&nbsp;&nbsp;&nbsp;&nbsp;residuo = n % 2</p>
@@ -174,22 +170,20 @@
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4 uppercase">PRÁCTICA DE CONVERSIÓN</h3>
                 <p>Convertir los siguientes números decimales a binario: 15, 32 y 50. Luego, convertir de binario a decimal: 10101.</p>
                 <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
@@ -214,25 +208,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Cuál es la base del sistema binario?", a: "B", options: ["10", "2", "8", "16"] },
-            { q: "¿Qué símbolos usa el hexadecimal?", a: "C", options: ["Solo 0 y 1", "0 al 7", "0 al 9 y A-F", "Solo letras"] },
-            { q: "Un BIT es la unidad:", a: "A", options: ["Mínima", "Máxima", "Gigante", "Invisible"] },
-            { q: "¿A cuánto equivale la 'A' en hex?", a: "D", options: ["1", "5", "9", "10"] },
-            { q: "10 en binario equivale a:", a: "B", options: ["1", "2", "3", "4"] },
-            { q: "¿Base del sistema octal?", a: "C", options: ["2", "10", "8", "16"] },
-            { q: "El sistema decimal es base:", a: "A", options: ["10", "2", "100", "5"] },
-            { q: "Para pasar a binario se divide entre:", a: "B", options: ["10", "2", "5", "1"] },
-            { q: "¿Dígito más alto en octal?", a: "C", options: ["8", "10", "7", "9"] },
-            { q: "Un conjunto de 8 bits es un:", a: "D", options: ["Nibble", "Mega", "Giga", "Byte"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -241,45 +223,31 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Cuál es la base del sistema binario?", a: "B", options: ["Base 10", "Base 2", "Base 8", "Base 16"] },
+            { q: "¿Qué símbolos utiliza el sistema hexadecimal además del 0-9?", a: "C", options: ["Letras X-Z", "Símbolos # y @", "Letras A hasta la F", "Caracteres griegos"] },
+            { q: "Un BIT se define en informática como la unidad de medida:", a: "A", options: ["Mínima", "Máxima", "Invisible", "Relativa"] },
+            { q: "¿A qué valor decimal equivale la letra 'A' en el sistema hexadecimal?", a: "D", options: ["1", "5", "9", "10"] },
+            { q: "Identifica este elemento tecnológico:", a: "B", options: ["Monitor", "Chip (Ceros y Unos)", "Teclado", "Fuente"], img: "../../imagenes/bitas_bytes.png" },
+            { q: "¿Cuál es la base del sistema de numeración octal?", a: "C", options: ["Base 2", "Base 10", "Base 8", "Base 16"] },
+            { q: "El sistema de numeración decimal que usamos los humanos es:", a: "A", options: ["Base 10", "Base 2", "Base 100", "Base 5"] },
+            { q: "Para convertir un número decimal a binario, debemos realizar divisiones sucesivas entre:", a: "B", options: ["10", "2", "5", "1"] },
+            { q: "¿Cuál es el dígito más alto permitido en el sistema octal?", a: "C", options: ["8", "10", "7", "9"] },
+            { q: "Un conjunto de 8 bits agrupados se conoce como:", a: "D", options: ["Nibble", "Mega", "Giga", "Byte"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -290,7 +258,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

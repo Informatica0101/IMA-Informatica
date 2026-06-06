@@ -11,102 +11,29 @@
         :root { --azul-ima: #2563eb; --gris-ima: #64748b; }
         body { font-family: 'Inter', sans-serif; overflow: hidden; }
         .font-poppins { font-family: 'Poppins', sans-serif; }
-
-        .slide {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            padding: 2rem;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: white;
-            position: absolute;
-            top: 0;
-            left: 0;
-            transition: opacity 0.5s ease;
-        }
+        .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
-
-        .concept-box {
-            background: #f8fafc;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            margin: 1rem 0;
-            border-left: 5px solid var(--azul-ima);
-            text-align: left;
-            max-width: 800px;
-            width: 100%;
-        }
-
-        .code-block {
-            font-family: 'Courier New', Courier, monospace;
-            background: #1e293b;
-            color: #f8fafc;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            text-align: left;
-            width: 100%;
-            max-width: 600px;
-            margin: 1rem 0;
-        }
-
-        .nav-btn {
-            position: fixed;
-            bottom: 2rem;
-            padding: 0.75rem 1.5rem;
-            background: var(--azul-ima);
-            color: white;
-            border-radius: 9999px;
-            font-weight: bold;
-            z-index: 100;
-            transition: transform 0.2s;
-        }
-        .nav-btn:hover { transform: scale(1.05); }
-        #prev-btn { left: 2rem; }
-        #next-btn { right: 2rem; }
-        #slide-counter {
-            position: fixed;
-            bottom: 2.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-weight: bold;
-            color: var(--gris-ima);
-            z-index: 100;
-        }
-
+        .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
+        #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
+        #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
 
-        .quiz-option {
-            width: 100%;
-            max-width: 500px;
-            padding: 1rem;
-            margin: 0.5rem 0;
-            border: 2px solid #e2e8f0;
-            border-radius: 0.75rem;
-            text-align: left;
-            transition: all 0.2s;
-        }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
-
-    <!-- Loader Global -->
     <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999]">
         <div class="relative w-24 h-24 mb-8">
             <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
             <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
             <img src="../imagenes/logo.png" alt="Logo" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
         </div>
-        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Preparando Actividad...</p>
+        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Iniciando Introducción...</p>
     </div>
 
-    <!-- ENCABEZADO INSTITUCIONAL -->
     <header id="page-header" class="fixed top-0 w-full bg-white p-3 shadow-md flex justify-between items-center z-[50]">
         <div class="flex items-center space-x-3">
             <img src="../imagenes/logo.png" alt="Logo" class="w-12 h-auto">
@@ -119,7 +46,7 @@
     </header>
 
     <main id="presentation-container">
-        <!-- Diapositiva 1: Portada -->
+        <!-- Slide 1 -->
         <div class="slide active">
             <img src="../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
             <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase">Introducción a la Informática</h1>
@@ -128,200 +55,145 @@
                 <p class="text-xl">Informática I</p>
                 <p>Décimo Grado - Sección A/B</p>
                 <p>Docente: Pablo Antonio Peña Mancia</p>
-                <p>Fecha: Año Lectivo 2026</p>
+                <p>Fecha: 2026</p>
             </div>
         </div>
 
-        <!-- Diapositiva 2: ¿Qué es la Informática? -->
+        <!-- Slide 2 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es la Informática?</h2>
             <div class="concept-box">
-                <p class="text-lg">Es la ciencia que estudia el <strong>tratamiento automático y racional</strong> de la información mediante el uso de sistemas computacionales.</p>
+                <p>Es la ciencia que estudia el tratamiento <strong>automático</strong> y <strong>racional</strong> de la información mediante el uso de computadoras.</p>
             </div>
-            <p class="text-slate-500 mt-4 italic">Proviene de las palabras: INFORMACIÓN + AUTOMÁTICA.</p>
+            <i class="fas fa-microchip text-6xl text-blue-300 mt-4"></i>
         </div>
 
-        <!-- Diapositiva 3: ¿Qué es una Computadora? -->
+        <!-- Slide 3 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Computadora</h2>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Información vs Datos</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl">
+                <div class="p-6 bg-slate-50 rounded-xl">
+                    <h3 class="font-bold">Datos</h3>
+                    <p class="text-xs">Símbolos aislados sin contexto (ej: "25").</p>
+                </div>
+                <div class="p-6 bg-blue-50 rounded-xl">
+                    <h3 class="font-bold">Información</h3>
+                    <p class="text-xs">Datos procesados con significado (ej: "La temperatura es 25°C").</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Computador</h2>
+            <div class="concept-box border-yellow-400">
+                <p>Máquina electrónica capaz de recibir, procesar y devolver resultados a gran velocidad.</p>
+            </div>
+            <img src="../imagenes/My Computer.png" alt="Computadora" class="h-32 mt-4">
+        </div>
+
+        <!-- Slide 5 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Sistemas Informáticos</h2>
+            <p>Un sistema consta de 3 pilares:</p>
+            <ul class="flex space-x-8 mt-6">
+                <li class="text-center"><i class="fas fa-tools text-4xl"></i><br>Hardware</li>
+                <li class="text-center"><i class="fas fa-code text-4xl"></i><br>Software</li>
+                <li class="text-center"><i class="fas fa-user text-4xl"></i><br>Humanware</li>
+            </ul>
+        </div>
+
+        <!-- Slide 6 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tratamiento de la Info</h2>
             <div class="concept-box">
-                <p class="text-lg">Es una máquina electrónica capaz de:</p>
-                <ul class="list-disc ml-8 mt-4 space-y-2">
-                    <li>Recibir datos (Entrada).</li>
-                    <li>Procesar datos (Cálculos/Lógica).</li>
-                    <li>Devolver resultados (Salida).</li>
-                    <li>Almacenar información.</li>
-                </ul>
+                <p>1. Entrada (Captura)<br>2. Proceso (Cálculo)<br>3. Salida (Resultados)</p>
             </div>
         </div>
 
-        <!-- Diapositiva 4: El Sistema Informático -->
+        <!-- Slide 7 (Práctico) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Componentes del Sistema</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl">
-                <div class="p-6 bg-blue-50 rounded-2xl shadow-sm border border-blue-100">
-                    <i class="fas fa-microchip text-4xl text-blue-600 mb-4"></i>
-                    <h3 class="font-bold mb-2">Hardware</h3>
-                    <p class="text-sm">Parte física (lo que se puede tocar).</p>
-                </div>
-                <div class="p-6 bg-purple-50 rounded-2xl shadow-sm border border-purple-100">
-                    <i class="fas fa-code text-4xl text-purple-600 mb-4"></i>
-                    <h3 class="font-bold mb-2">Software</h3>
-                    <p class="text-sm">Parte lógica (programas e instrucciones).</p>
-                </div>
-                <div class="p-6 bg-green-50 rounded-2xl shadow-sm border border-green-100">
-                    <i class="fas fa-users text-4xl text-green-600 mb-4"></i>
-                    <h3 class="font-bold mb-2">Humanware</h3>
-                    <p class="text-sm">El factor humano (usuarios y especialistas).</p>
-                </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio: El Proceso</h2>
+            <p>Identifica los pasos en una calculadora:</p>
+            <div class="example-box bg-slate-50 p-4 border rounded mt-4">
+                <p>Presionar 2 + 2 ➔ <strong>Entrada</strong></p>
+                <p>La CPU suma ➔ <strong>Proceso</strong></p>
+                <p>Muestra 4 ➔ <strong>Salida</strong></p>
             </div>
         </div>
 
-        <!-- Diapositiva 5: Hardware -->
+        <!-- Slide 8 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Hardware</h2>
-            <div class="concept-box">
-                <p class="text-lg">Corresponde a todas las partes físicas y tangibles de una computadora.</p>
-                <div class="grid grid-cols-2 gap-4 mt-6">
-                    <div class="p-4 bg-white rounded shadow-sm">CPU (Cerebro)</div>
-                    <div class="p-4 bg-white rounded shadow-sm">Memoria RAM</div>
-                    <div class="p-4 bg-white rounded shadow-sm">Disco Duro (HDD/SSD)</div>
-                    <div class="p-4 bg-white rounded shadow-sm">Placa Madre</div>
-                </div>
-            </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Impacto Social</h2>
+            <p>La informática ha revolucionado:</p>
+            <ul class="list-disc ml-8 text-left mt-4">
+                <li>Educación (Clases virtuales)</li>
+                <li>Salud (Telemedicina)</li>
+                <li>Economía (Criptomonedas/Banca)</li>
+            </ul>
         </div>
 
-        <!-- Diapositiva 6: Software -->
+        <!-- Slide 9 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Software</h2>
-            <div class="concept-box">
-                <p class="text-lg">Es el conjunto de programas y datos que permiten que el hardware funcione.</p>
-                <div class="grid grid-cols-2 gap-4 mt-6 text-left">
-                    <div class="p-4 bg-white rounded shadow-sm"><strong>De Sistema:</strong> Windows, Android, Linux.</div>
-                    <div class="p-4 bg-white rounded shadow-sm"><strong>De Aplicación:</strong> Word, Chrome, WhatsApp.</div>
-                </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Telecomunicaciones</h2>
+            <div class="concept-box border-sky-400">
+                <p>La unión de computadoras y redes permite la comunicación global instantánea.</p>
             </div>
+            <i class="fas fa-globe text-6xl text-sky-400 mt-4"></i>
         </div>
 
-        <!-- Diapositiva 7: Ejercicio Práctico 1 -->
-        <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico</h2>
-            <p class="mb-8">Identifica si el elemento es <span class="font-bold text-blue-600">Hardware</span> o <span class="font-bold text-purple-600">Software</span>:</p>
-            <div class="grid grid-cols-2 gap-4 max-w-2xl w-full">
-                <div class="p-4 bg-gray-50 border rounded-xl">Monitor</div>
-                <div class="p-4 bg-gray-50 border rounded-xl">Videojuego</div>
-                <div class="p-4 bg-gray-50 border rounded-xl">Teclado</div>
-                <div class="p-4 bg-gray-50 border rounded-xl">Navegador Web</div>
-            </div>
-        </div>
-
-        <!-- Diapositiva 8: Tipos de Computadoras -->
-        <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tipos de Computadoras</h2>
-            <div class="grid grid-cols-2 gap-8 max-w-4xl">
-                <div class="text-left">
-                    <h3 class="font-bold text-xl mb-2">Escritorio (Desktop)</h3>
-                    <p class="text-sm text-slate-600">Diseñadas para permanecer fijas en un escritorio. Son potentes y modulares.</p>
-                </div>
-                <div class="text-left">
-                    <h3 class="font-bold text-xl mb-2">Portátiles (Laptops)</h3>
-                    <p class="text-sm text-slate-600">Compactas y con batería, permiten movilidad total para el usuario.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Diapositiva 9: Otros Dispositivos -->
-        <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tabletas y Smartphones</h2>
-            <div class="concept-box">
-                <p>Estos dispositivos también son computadoras. Tienen procesador, memoria, almacenamiento y ejecutan software especializado.</p>
-            </div>
-            <i class="fas fa-mobile-alt text-6xl text-slate-300 mt-8"></i>
-        </div>
-
-        <!-- Diapositiva 10: Almacenamiento -->
-        <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Unidades de Almacenamiento</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
-                <div class="p-6 bg-white border-2 border-dashed border-slate-200 rounded-2xl">
-                    <h3 class="font-bold mb-2">HDD (Disco Duro)</h3>
-                    <p class="text-xs">Usa discos magnéticos. Más capacidad, menos velocidad.</p>
-                </div>
-                <div class="p-6 bg-white border-2 border-dashed border-blue-200 rounded-2xl">
-                    <h3 class="font-bold mb-2 text-blue-600">SSD (Estado Sólido)</h3>
-                    <p class="text-xs">Usa chips de memoria. Mucho más rápido y resistente.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Diapositiva 11: Periféricos -->
-        <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Periféricos</h2>
-            <div class="grid grid-cols-2 gap-8 text-left max-w-4xl">
-                <div>
-                    <h3 class="font-black text-blue-600 uppercase text-xs mb-4">Entrada</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><i class="fas fa-keyboard mr-2"></i> Teclado</li>
-                        <li><i class="fas fa-mouse mr-2"></i> Mouse</li>
-                        <li><i class="fas fa-microphone mr-2"></i> Micrófono</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-black text-green-600 uppercase text-xs mb-4">Salida</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><i class="fas fa-tv mr-2"></i> Monitor</li>
-                        <li><i class="fas fa-print mr-2"></i> Impresora</li>
-                        <li><i class="fas fa-volume-up mr-2"></i> Parlantes</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Diapositiva 12: Importancia -->
+        <!-- Slide 10 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Importancia Actual</h2>
-            <div class="concept-box text-center">
-                <p class="text-xl italic font-serif">"La informática es el motor de la era digital, transformando la educación, el trabajo y la comunicación global."</p>
-            </div>
+            <p class="italic text-xl">"En el siglo XXI, la alfabetización digital es tan importante como saber leer y escribir."</p>
         </div>
 
-        <!-- Diapositiva 13: Ejercicio Avanzado -->
+        <!-- Slide 11 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Proceso</h2>
-            <p class="mb-4">Estructura básica de funcionamiento:</p>
-            <div class="code-block">
-                <p>INICIO_SISTEMA</p>
-                <p>&nbsp;&nbsp;PEDIR_DATOS (Entrada)</p>
-                <p>&nbsp;&nbsp;PROCESAR_DATOS (Cálculo)</p>
-                <p>&nbsp;&nbsp;MOSTRAR_RESULTADO (Salida)</p>
-                <p>FIN_SISTEMA</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Sistemas Embebidos</h2>
+            <div class="concept-box">
+                <p>Informática en objetos cotidianos: Microondas, Lavadoras, Autos.</p>
             </div>
         </div>
 
-        <!-- Diapositiva 14: Cuestionario 1 -->
+        <!-- Slide 12 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación - Parte 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center">
-                <!-- Inyectado por JS -->
-            </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Automatización</h2>
+            <p>Reduce errores humanos y acelera la producción industrial.</p>
+            <i class="fas fa-robot text-6xl text-slate-800 mt-4"></i>
         </div>
 
-        <!-- Diapositiva 15: Cuestionario 2 -->
+        <!-- Slide 13 (Lógica) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación - Parte 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center">
-                <!-- Inyectado por JS -->
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Programas</h2>
+            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl text-sm">
+                <p>INPUT dato</p>
+                <p>IF dato > 0 THEN</p>
+                <p>&nbsp;&nbsp;PRINT "Es positivo"</p>
+                <p>ELSE</p>
+                <p>&nbsp;&nbsp;PRINT "No es positivo"</p>
+                <p>ENDIF</p>
             </div>
         </div>
 
-        <!-- Diapositiva 16: Asignación -->
+        <!-- Slide 14 (Quiz) -->
+        <div class="slide">
+            <div id="quiz-container-1" class="w-full"></div>
+        </div>
+
+        <!-- Slide 15 (Quiz) -->
+        <div class="slide">
+            <div id="quiz-container-2" class="w-full"></div>
+        </div>
+
+        <!-- Slide 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
             <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
-                <h3 class="text-2xl font-black mb-4">MAPA CONCEPTUAL</h3>
-                <p class="mb-4">Realizar un mapa conceptual sobre el Sistema Informático incluyendo Hardware, Software y ejemplos de cada uno.</p>
-                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400">
-                    <span>Puntaje: 10%</span>
+                <h3 class="font-black text-xl mb-4">MAPA CONCEPTUAL</h3>
+                <p>Realizar un mapa conceptual que resuma los 3 pilares de la informática vistos en clase.</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 5%</span>
                     <span>Fecha: Próxima clase</span>
                 </div>
             </div>
@@ -332,7 +204,6 @@
     <button id="prev-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
     <button id="next-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
 
-    <!-- PIE DE PÁGINA -->
     <footer id="page-footer" class="fixed bottom-0 w-full bg-gray-800 text-white text-center text-[10px] p-2 z-[50]">
         <div class="flex items-center justify-center space-x-4">
             <img src="../imagenes/bandera-de-honduras.png" alt="HN" class="w-8 h-auto">
@@ -343,7 +214,7 @@
     <script src="../js/config.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/games-adapter.js"></script>
-
+    <script src="../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
@@ -352,16 +223,16 @@
         const counter = document.getElementById('slide-counter');
 
         const quizQuestions = [
-            { q: "¿Qué significa Informática?", a: "C", options: ["Información Crítica", "Informe Técnico", "Información Automática", "Informativo Básico"] },
-            { q: "¿Qué es el Hardware?", a: "A", options: ["Parte física", "Parte lógica", "El usuario", "La electricidad"] },
-            { q: "¿Cuál es el cerebro de la PC?", a: "B", options: ["RAM", "CPU", "Disco Duro", "Monitor"] },
-            { q: "Windows es un ejemplo de:", a: "D", options: ["Hardware", "Humanware", "Periférico", "Software"] },
-            { q: "¿Qué dispositivo es de entrada?", a: "C", options: ["Monitor", "Parlantes", "Teclado", "Impresora"] },
-            { q: "¿Para qué sirve la RAM?", a: "A", options: ["Memoria temporal", "Guardar fotos", "Imprimir", "Dar energía"] },
-            { q: "¿Qué significa SSD?", a: "B", options: ["Super Speed Drive", "Solid State Drive", "System Safe Data", "Smart Storage Device"] },
-            { q: "¿Cuál no es un componente físico?", a: "D", options: ["Teclado", "Mouse", "Monitor", "Sistema Operativo"] },
-            { q: "El factor humano se llama:", a: "C", options: ["Hardware", "Software", "Humanware", "Firmware"] },
-            { q: "Una laptop es una computadora:", a: "A", options: ["Portátil", "De escritorio", "Servidor", "Supercomputadora"] }
+            { q: "¿Qué estudia la informática?", a: "C", options: ["Solo juegos", "Solo hardware", "Tratamiento automático de info", "Solo internet"] },
+            { q: "Conjunto de símbolos sin contexto:", a: "A", options: ["Datos", "Información", "Programa", "Archivo"] },
+            { q: "Pilar de la informática (físico):", a: "B", options: ["Software", "Hardware", "Humanware", "Firmware"] },
+            { q: "¿Cuál es el primer paso del proceso?", a: "D", options: ["Salida", "Cálculo", "Borrado", "Entrada"] },
+            { q: "La informática es una ciencia:", a: "A", options: ["Verdadero", "Falso", "Solo un pasatiempo", "Solo para expertos"] },
+            { q: "Informática = Info + ...", a: "C", options: ["Lógica", "Técnica", "Automática", "Práctica"] },
+            { q: "Un sistema embebido está en:", a: "B", options: ["Nube", "Electrodomésticos", "Monitor", "Teclado"] },
+            { q: "Humanware se refiere a:", a: "D", options: ["Cables", "Virus", "Pantalla", "Personas"] },
+            { q: "El resultado final se llama:", a: "A", options: ["Salida", "Entrada", "Proceso", "Dato"] },
+            { q: "Software son los programas:", a: "A", options: ["Verdadero", "Falso", "Solo Windows", "Solo Word"] }
         ];
 
         function showSlide(index) {
@@ -369,83 +240,28 @@
             slides[currentSlideIndex].classList.remove('active');
             currentSlideIndex = index;
             slides[currentSlideIndex].classList.add('active');
-
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
 
-            // Fullscreen check logic
-            if (document.fullscreenElement) {
-                document.body.classList.add('is-fullscreen');
-            } else {
-                document.body.classList.remove('is-fullscreen');
-            }
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const container1 = document.getElementById('quiz-1');
-            const container2 = document.getElementById('quiz-2');
-
-            quizQuestions.forEach((q, i) => {
-                const qDiv = document.createElement('div');
-                qDiv.className = "mb-6 w-full max-w-xl text-left";
-                qDiv.innerHTML = `<p class="font-bold mb-2">${i+1}. ${q.q}</p>`;
-
-                q.options.forEach((opt, optIdx) => {
-                    const letter = String.fromCharCode(65 + optIdx);
-                    const btn = document.createElement('button');
-                    btn.className = "quiz-option";
-                    btn.innerHTML = `<span class="font-bold mr-2">${letter}.</span> ${opt}`;
-                    btn.onclick = () => {
-                        if (letter === q.a) {
-                            btn.classList.add('correct');
-                        } else {
-                            btn.classList.add('incorrect');
-                        }
-                        const parent = btn.parentElement;
-                        Array.from(parent.querySelectorAll('button')).forEach(b => b.disabled = true);
-                    };
-                    qDiv.appendChild(btn);
-                });
-
-                if (i < 5) container1.appendChild(qDiv);
-                else container2.appendChild(qDiv);
-            });
-        }
-
-        // Navegación
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
-
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
 
-        // Doble toque para pantalla completa
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const now = Date.now();
-            if (now - lastTap < 300) {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen();
-                } else {
-                    document.exitFullscreen();
-                }
-            }
-            lastTap = now;
-        });
-
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('introduccion_informatica', false);
+                await window.GamesAdapter.init('inf_introduccion', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
-                    setTimeout(() => {
-                        document.getElementById('loading-overlay').style.display = 'none';
-                    }, 500);
+                    setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

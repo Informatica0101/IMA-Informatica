@@ -20,10 +20,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -73,14 +69,14 @@
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Diferencia de Enfoque</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
-                <div class="p-4 bg-slate-50 border rounded">
-                    <p class="font-bold">Imperativo</p>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left mx-auto">
+                <div class="p-4 bg-slate-50 border rounded shadow-sm">
+                    <p class="font-bold text-blue-700">Imperativo</p>
                     <p class="text-xs">"Ve a la cocina, abre la nevera, saca el agua, tráela".</p>
                 </div>
-                <div class="p-4 bg-blue-50 border rounded">
-                    <p class="font-bold">Declarativo</p>
-                    <p class="text-xs">"Quiero un vaso de agua". (El sistema decide los pasos).</p>
+                <div class="p-4 bg-blue-50 border rounded shadow-sm">
+                    <p class="font-bold text-blue-700">Declarativo</p>
+                    <p class="text-xs">"Quiero un vaso de agua". (El sistema decide los pasos internos).</p>
                 </div>
             </div>
         </div>
@@ -92,13 +88,13 @@
                 <p>Es una estructura de control que repite un bloque de código <strong>mientras una condición sea VERDADERA</strong>.</p>
                 <p class="mt-2 text-sm italic">Se usa cuando NO sabemos exactamente cuántas veces se repetirá el ciclo.</p>
             </div>
-            <i class="fas fa-redo-alt text-6xl text-blue-200 mt-4 animate-spin-slow"></i>
+            <i class="fas fa-redo-alt text-6xl text-blue-200 mt-4 animate-spin"></i>
         </div>
 
         <!-- Diapositiva 5 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructura del WHILE</h2>
-            <div class="code-block">
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm mx-auto text-left max-w-md">
                 <p>MIENTRAS condicion == VERDADERA HACER</p>
                 <p>&nbsp;&nbsp;// Instrucciones</p>
                 <p>&nbsp;&nbsp;// Importante: Cambiar la condición dentro</p>
@@ -111,7 +107,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Condición de Salida</h2>
             <div class="concept-box">
                 <p>Para evitar un <strong>bucle infinito</strong>, dentro del MIENTRAS debe ocurrir algo que eventualmente haga que la condición sea falsa.</p>
-                <p class="mt-2 text-sm font-bold">Ejemplo: Incrementar un contador o leer un nuevo valor.</p>
+                <p class="mt-2 text-sm font-bold text-red-600">Ejemplo: Incrementar un contador o leer un nuevo valor.</p>
             </div>
         </div>
 
@@ -126,14 +122,14 @@
         <!-- Diapositiva 8 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Diferencia FOR vs WHILE</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl">
-                <div class="p-4 border rounded text-left">
-                    <h4 class="font-bold">PARA (FOR)</h4>
-                    <p class="text-xs">Número de vueltas fijo y conocido.</p>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl mx-auto">
+                <div class="p-4 border rounded text-left bg-white shadow-sm">
+                    <h4 class="font-bold text-blue-600">PARA (FOR)</h4>
+                    <p class="text-xs">Número de vueltas fijo y conocido antes de empezar.</p>
                 </div>
-                <div class="p-4 border rounded text-left">
-                    <h4 class="font-bold">MIENTRAS (WHILE)</h4>
-                    <p class="text-xs">Depende de un evento o condición externa.</p>
+                <div class="p-4 border rounded text-left bg-white shadow-sm">
+                    <h4 class="font-bold text-blue-600">MIENTRAS (WHILE)</h4>
+                    <p class="text-xs">Depende de un evento o validación externa.</p>
                 </div>
             </div>
         </div>
@@ -142,7 +138,7 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Validación de Datos</h2>
             <p>El bucle WHILE es ideal para validar que el usuario ingrese datos correctos:</p>
-            <div class="code-block mt-4">
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs mx-auto text-left max-w-md">
                 <p>LEER nota</p>
                 <p>MIENTRAS nota < 0 O nota > 100 HACER</p>
                 <p>&nbsp;&nbsp;ESCRIBIR "Error, ingrese nota válida"</p>
@@ -155,32 +151,31 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Sentinelas</h2>
             <div class="concept-box border-yellow-400">
-                <p>Un sentinela es un valor especial que se usa para terminar un bucle (ej. "Ingresa 0 para salir").</p>
+                <p>Un sentinela es un valor especial que se usa para terminar un bucle (ej. "Ingresa 0 para salir del programa").</p>
             </div>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejemplo en SQL</h2>
-            <p>SQL es declarativo. No decimos cómo buscar, solo qué queremos:</p>
-            <div class="code-block bg-slate-800">
-                <p>SELECT nombre, nota</p>
-                <p>FROM alumnos</p>
-                <p>WHERE nota >= 70;</p>
+            <p>SQL es declarativo. No decimos cómo buscar en el disco, solo qué queremos:</p>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm mx-auto text-left max-w-md">
+                <p class="text-blue-300">SELECT nombre, nota</p>
+                <p class="text-blue-300">FROM alumnos</p>
+                <p class="text-blue-300">WHERE nota >= 70;</p>
             </div>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Poder de Adaptación</h2>
-            <p class="italic text-2xl">"Los bucles condicionales permiten que los programas reaccionen al entorno y a la interacción impredecible del usuario."</p>
+            <p class="italic text-slate-500 text-2xl">"Los bucles condicionales permiten que los programas reaccionen a la interacción impredecible del usuario."</p>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Avanzado</h2>
-            <p class="mb-4">Cajero Automático (Simulación):</p>
-            <div class="code-block">
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs mx-auto text-left max-w-md">
                 <p>saldo <- 1000</p>
                 <p>MIENTRAS saldo > 0 HACER</p>
                 <p>&nbsp;&nbsp;LEER retiro</p>
@@ -193,22 +188,20 @@
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4 uppercase">CONTROL DE ACCESO</h3>
                 <p>Escribir el pseudocódigo que pida una clave. El programa debe repetirse infinitamente hasta que el usuario ingrese la palabra "SECRET-2026".</p>
                 <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
@@ -233,25 +226,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué lenguaje dice QUÉ quiere obtener?", a: "C", options: ["Imperativo", "Binario", "Declarativo", "Físico"] },
-            { q: "¿Bucle que depende de una condición?", a: "B", options: ["FOR", "WHILE (Mientras)", "Fijo", "Circular"] },
-            { q: "SQL es un lenguaje de tipo:", a: "C", options: ["Diseño", "Juegos", "Declarativo", "Bajo Nivel"] },
-            { q: "¿Para qué sirve un sentinela?", a: "D", options: ["Acelerar", "Borrar", "Error", "Terminar un bucle"] },
-            { q: "El bucle WHILE se repite si es:", a: "A", options: ["Verdadero", "Falso", "Nulo", "Grande"] },
-            { q: "Acción de asegurar datos válidos:", a: "B", options: ["Borrado", "Validación", "Suma", "Cierre"] },
-            { q: "¿Qué falta si hay bucle infinito?", a: "C", options: ["RAM", "Monitor", "Condición de salida", "Cable"] },
-            { q: "Lenguaje que dice CÓMO hacer pasos:", a: "D", options: ["Abstracto", "Musical", "SQL", "Imperativo"] },
-            { q: "Un contador dentro de WHILE debe:", a: "A", options: ["Actualizarse", "Borrarse", "Ser PI", "Ser cero siempre"] },
-            { q: "WHILE es útil si el total de vueltas es:", a: "B", options: ["Fijo", "Desconocido", "Infinito", "Cero"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -260,56 +241,41 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Qué tipo de lenguaje se centra en QUÉ resultado se desea obtener?", a: "C", options: ["Imperativo", "Binario", "Declarativo", "Físico"] },
+            { q: "¿Qué bucle se utiliza cuando NO se conoce el número exacto de repeticiones?", a: "B", options: ["Bucle PARA (FOR)", "Bucle MIENTRAS (WHILE)", "Bucle Fijo", "Bucle Circular"] },
+            { q: "El lenguaje SQL es un ejemplo claro de lenguaje:", a: "C", options: ["De Diseño", "De Juegos", "Declarativo", "De Bajo Nivel"] },
+            { q: "¿Para qué sirve un valor 'sentinela' en un ciclo?", a: "D", options: ["Para acelerar el programa", "Para borrar datos", "Para generar errores", "Para indicar el fin del bucle"] },
+            { q: "El bucle MIENTRAS se seguirá ejecutando siempre que la condición sea:", a: "A", options: ["Verdadera", "Falsa", "Nula", "Cero"] },
+            { q: "El proceso de forzar al usuario a ingresar datos válidos mediante un bucle es:", a: "B", options: ["Borrado", "Validación", "Suma masiva", "Cierre de sesión"] },
+            { q: "¿Qué elemento fundamental falta en un bucle infinito?", a: "C", options: ["Memoria RAM", "Monitor", "Condición de salida válida", "Cable de red"] },
+            { q: "¿Cómo se llama el paradigma que indica los pasos detallados (CÓMO)?", a: "D", options: ["Abstracto", "Musical", "SQL", "Imperativo"] },
+            { q: "Para evitar un bucle infinito, la variable de la condición debe:", a: "A", options: ["Actualizarse dentro del ciclo", "Borrarse", "Ser constante", "Ser siempre cero"] },
+            { q: "El bucle MIENTRAS evalúa la condición:", a: "B", options: ["Al final", "Al inicio", "Nunca", "Solo si hay error"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
-        });
 
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('lenguajes_declarativos_mientras', false);
+                await window.GamesAdapter.init('prog_mientras', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

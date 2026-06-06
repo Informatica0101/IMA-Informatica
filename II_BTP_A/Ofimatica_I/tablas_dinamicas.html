@@ -20,10 +20,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -65,7 +61,7 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es una Tabla Dinámica?</h2>
             <div class="concept-box">
-                <p>Es una herramienta de Excel que permite <strong>resumir y analizar</strong> grandes cantidades de datos con solo arrastrar y soltar campos. <br>Transforman miles de filas en un informe compacto.</p>
+                <p>Es una herramienta de Excel que permite <strong>resumir y analizar</strong> grandes cantidades de datos con solo arrastrar y soltar campos. Transforman miles de filas en un informe compacto.</p>
             </div>
         </div>
 
@@ -75,17 +71,17 @@
             <div class="concept-box">
                 <p>Para crear una tabla dinámica exitosa, los datos deben estar organizados en una <strong>tabla tabular</strong> (con encabezados claros y sin filas vacías).</p>
             </div>
-            <i class="fas fa-table text-6xl text-blue-200 mt-4"></i>
+            <i class="fas fa-table text-6xl text-blue-200 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Las 4 Áreas Clave</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
-                <div class="p-4 border rounded"><strong>Filtros:</strong> Limita los datos visibles.</div>
-                <div class="p-4 border rounded"><strong>Columnas:</strong> Los campos que van arriba.</div>
-                <div class="p-4 border rounded"><strong>Filas:</strong> Los campos que van al lado.</div>
-                <div class="p-4 border border-blue-500 bg-blue-50 rounded"><strong>Valores:</strong> Lo que se suma o cuenta.</div>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left mx-auto">
+                <div class="p-4 border rounded bg-white shadow-sm text-sm"><strong>Filtros:</strong> Limita los datos visibles.</div>
+                <div class="p-4 border rounded bg-white shadow-sm text-sm"><strong>Columnas:</strong> Campos que van arriba.</div>
+                <div class="p-4 border rounded bg-white shadow-sm text-sm"><strong>Filas:</strong> Campos que van al lado.</div>
+                <div class="p-4 border border-blue-500 bg-blue-50 rounded shadow-sm text-sm"><strong>Valores:</strong> Lo que se calcula (Sumas).</div>
             </div>
         </div>
 
@@ -93,9 +89,9 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Agrupar Datos</h2>
             <div class="concept-box border-green-400">
-                <p>Permiten agrupar fechas por Mes/Año o números por rangos automáticamente. <br>Ejemplo: Ver ventas totales por trimestre sin fórmulas manuales.</p>
+                <p>Permiten agrupar fechas por Mes/Año o números por rangos automáticamente. Ejemplo: Ver ventas totales por trimestre sin fórmulas manuales.</p>
             </div>
-            <i class="fas fa-object-group text-6xl text-green-300 mt-4"></i>
+            <i class="fas fa-object-group text-6xl text-green-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 6 -->
@@ -104,6 +100,7 @@
             <div class="concept-box border-purple-400">
                 <p>Son botones interactivos que permiten filtrar la tabla de forma visual y rápida. Son la base de los Dashboards profesionales.</p>
             </div>
+            <img src="../../imagenes/opciones-filtro.png" alt="Filtros" class="h-32 mt-4 mx-auto rounded shadow-sm">
         </div>
 
         <!-- Diapositiva 7 -->
@@ -118,7 +115,7 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Gráficos Dinámicos</h2>
             <p>Son gráficos vinculados a una Tabla Dinámica. Si cambias un filtro en la tabla, el gráfico se actualiza instantáneamente.</p>
-            <i class="fas fa-chart-pie text-6xl text-blue-100 mt-8"></i>
+            <i class="fas fa-chart-pie text-6xl text-blue-100 mt-8 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 9 -->
@@ -132,32 +129,26 @@
         <!-- Diapositiva 10 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Campos Calculados</h2>
-            <p>Permite crear nuevas métricas dentro de la tabla dinámica sin tocar los datos originales. <br>Ejemplo: Calcular la comisión del 10% sobre las ventas resumidas.</p>
-            <i class="fas fa-calculator text-6xl text-slate-300 mt-4"></i>
+            <p>Permite crear nuevas métricas dentro de la tabla dinámica sin tocar los datos originales. Ejemplo: Calcular comisiones sobre las ventas.</p>
+            <i class="fas fa-calculator text-6xl text-slate-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Diseño y Estilo</h2>
-            <p>Excel ofrece estilos predefinidos para que tus reportes se vean profesionales en segundos.</p>
-            <div class="flex space-x-4 mt-8">
-                <div class="w-12 h-12 bg-blue-600"></div>
-                <div class="w-12 h-12 bg-green-600"></div>
-                <div class="w-12 h-12 bg-slate-800"></div>
-            </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Insertar Tablas</h2>
+            <img src="../../imagenes/tabla_dinamica_insertar.png" alt="Insertar" class="h-48 mt-4 mx-auto rounded shadow-lg border border-slate-200">
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Magia del Análisis</h2>
-            <p class="italic text-2xl">"Las tablas dinámicas son la herramienta que separa a los usuarios básicos de Excel de los analistas de datos reales."</p>
+            <p class="italic text-slate-500 text-2xl">"Las tablas dinámicas son la herramienta que separa a los usuarios básicos de Excel de los analistas de datos reales."</p>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Resumen</h2>
-            <div class="code-block">
-                <p>// Algoritmo de Tabla Dinámica (Conceptual)</p>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm mx-auto text-left max-w-md">
                 <p>FOR EACH registro IN base_datos</p>
                 <p>&nbsp;&nbsp;LET categoria = registro.categoria</p>
                 <p>&nbsp;&nbsp;tabla_resumen[categoria] += registro.monto</p>
@@ -165,22 +156,20 @@
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4 uppercase">REPORTE DINÁMICO</h3>
                 <p>Crear una tabla dinámica basada en una lista de ventas de 20 filas que resuma: Total por Categoría de Producto y Total por Vendedor.</p>
                 <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
@@ -205,25 +194,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Para qué sirve una tabla dinámica?", a: "A", options: ["Resumir y analizar datos", "Dibujar figuras", "Escribir cartas", "Cerrar Windows"] },
-            { q: "Área para cálculos numéricos:", a: "D", options: ["Filtros", "Columnas", "Filas", "Valores"] },
-            { q: "¿Qué hacer si los datos cambian?", a: "B", options: ["Borrar la tabla", "Hacer clic en Actualizar", "Reiniciar la PC", "Comprar Excel"] },
-            { q: "La segmentación de datos es para:", a: "C", options: ["Sumar", "Multiplicar", "Filtrar visualmente", "Borrar filas"] },
-            { q: "¿Cuántas áreas tiene el panel?", a: "B", options: ["2", "4", "6", "1"] },
-            { q: "Los campos de texto van usualmente en:", a: "A", options: ["Filas", "Valores", "Cálculos", "Fórmulas"] },
-            { q: "Un gráfico dinámico está vinculado a:", a: "C", options: ["Una foto", "Un Word", "Una Tabla Dinámica", "Internet"] },
-            { q: "Los datos de origen deben tener:", a: "D", options: ["Colores", "Bordes rojos", "Fórmulas", "Encabezados"] },
-            { q: "Agrupar permite resumir por:", a: "A", options: ["Meses / Años", "Colores", "Fuentes", "Ancho de celda"] },
-            { q: "Excel es un programa de:", a: "B", options: ["Diseño", "Hojas de Cálculo", "Video", "Audio"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -232,56 +209,41 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Cuál es el objetivo principal de una Tabla Dinámica?", a: "A", options: ["Resumir y analizar datos", "Cambiar el color de fuente", "Escribir correos", "Navegar por internet"] },
+            { q: "¿En qué área del panel se colocan usualmente los campos numéricos para ser sumados?", a: "D", options: ["Filtros", "Columnas", "Filas", "Valores"] },
+            { q: "¿Qué acción se debe realizar si los datos de origen han cambiado?", a: "B", options: ["Borrar la tabla", "Hacer clic en Actualizar", "Reiniciar Windows", "Reinstalar Excel"] },
+            { q: "La segmentación de datos sirve para:", a: "C", options: ["Sumar celdas", "Hacer promedios", "Filtrar la tabla visualmente", "Borrar filas vacías"] },
+            { q: "Identifica esta herramienta de Excel:", a: "A", options: ["Tabla Dinámica", "Filtro Simple", "Macro", "Gráfico de Barras"], img: "../../imagenes/tabla_dinamica_intro.png" },
+            { q: "¿Qué área se utiliza para ver los nombres de categorías en el lateral izquierdo?", a: "C", options: ["Valores", "Columnas", "Filas", "Segmentación"] },
+            { q: "Un gráfico dinámico se diferencia de uno normal porque:", a: "C", options: ["Tiene más colores", "Es más grande", "Está vinculado a una tabla dinámica", "Usa internet"] },
+            { q: "Para que la tabla dinámica funcione, el origen de datos NO debe tener:", a: "D", options: ["Números", "Nombres", "Bordes", "Filas o columnas vacías"] },
+            { q: "La opción de 'Agrupar' es ideal para resumir datos por:", a: "A", options: ["Fechas (Meses/Años)", "Tipos de fuente", "Anchos de columna", "Nombres de hoja"] },
+            { q: "¿En qué pestaña de Excel se encuentra la opción de insertar Tabla Dinámica?", a: "B", options: ["Inicio", "Insertar", "Dibujar", "Datos"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
-        });
 
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('ofimatica_tablas_dinamicas', false);
+                await window.GamesAdapter.init('ofimatica_tablas', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

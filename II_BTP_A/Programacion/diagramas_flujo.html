@@ -20,10 +20,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -73,19 +69,19 @@
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Simbología Básica</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left mx-auto">
                 <div class="p-4 bg-slate-50 border rounded flex items-center">
                     <div class="w-12 h-6 border-2 border-black rounded-full mr-4 bg-white"></div>
                     <div>
-                        <p class="font-bold">Terminal</p>
-                        <p class="text-xs">Inicio o Fin del algoritmo.</p>
+                        <p class="font-bold text-sm">Terminal</p>
+                        <p class="text-[10px]">Inicio o Fin del algoritmo.</p>
                     </div>
                 </div>
                 <div class="p-4 bg-slate-50 border rounded flex items-center">
                     <div class="w-12 h-8 border-2 border-black mr-4 bg-white"></div>
                     <div>
-                        <p class="font-bold">Proceso</p>
-                        <p class="text-xs">Cálculos o acciones directas.</p>
+                        <p class="font-bold text-sm">Proceso</p>
+                        <p class="text-[10px]">Cálculos o acciones directas.</p>
                     </div>
                 </div>
             </div>
@@ -94,19 +90,19 @@
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Símbolos de Interacción</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left mx-auto">
                 <div class="p-4 bg-slate-50 border rounded flex items-center">
                     <div class="w-12 h-8 border-2 border-black skew-x-12 mr-4 bg-white"></div>
                     <div>
-                        <p class="font-bold">Entrada / Salida</p>
-                        <p class="text-xs">Lectura de datos o impresión de resultados.</p>
+                        <p class="font-bold text-sm">Entrada / Salida</p>
+                        <p class="text-[10px]">Lectura de datos o impresión.</p>
                     </div>
                 </div>
                 <div class="p-4 bg-slate-50 border rounded flex items-center">
                     <div class="w-10 h-10 border-2 border-black rotate-45 mr-4 bg-white"></div>
                     <div class="ml-2">
-                        <p class="font-bold">Decisión</p>
-                        <p class="text-xs">Condición SI/NO (Verdadero/Falso).</p>
+                        <p class="font-bold text-sm">Decisión</p>
+                        <p class="text-[10px]">Condición SI / NO.</p>
                     </div>
                 </div>
             </div>
@@ -124,7 +120,7 @@
         <!-- Diapositiva 6 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reglas de Construcción</h2>
-            <ul class="list-disc text-left space-y-2 max-w-2xl mx-auto">
+            <ul class="list-disc text-left space-y-2 max-w-2xl mx-auto text-sm">
                 <li>Todo diagrama debe tener un Inicio y un Fin.</li>
                 <li>Las líneas de flujo deben ser rectas.</li>
                 <li>No pueden quedar líneas "sueltas" o sin conectar.</li>
@@ -143,10 +139,10 @@
         <!-- Diapositiva 8 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructuras de Control</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl">
-                <div class="p-4 bg-blue-50 border rounded">Secuencial</div>
-                <div class="p-4 bg-blue-100 border rounded">Selectiva (SI-SINO)</div>
-                <div class="p-4 bg-blue-200 border rounded">Repetitiva (Ciclos)</div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+                <div class="p-4 bg-blue-50 border rounded font-bold text-sm">Secuencial</div>
+                <div class="p-4 bg-blue-100 border rounded font-bold text-sm">Selectiva (SI-SINO)</div>
+                <div class="p-4 bg-blue-200 border rounded font-bold text-sm">Repetitiva (Ciclos)</div>
             </div>
         </div>
 
@@ -162,7 +158,7 @@
         <!-- Diapositiva 10 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ventajas Visuales</h2>
-            <ul class="list-disc text-left space-y-4 max-w-xl mx-auto">
+            <ul class="list-disc text-left space-y-4 max-w-xl mx-auto text-sm">
                 <li>Facilita la comunicación con el cliente.</li>
                 <li>Permite detectar bucles infinitos visualmente.</li>
                 <li>Estandariza la lógica del equipo de desarrollo.</li>
@@ -173,23 +169,23 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Software de Diseño</h2>
             <p>Herramientas para crear diagramas profesionales:</p>
-            <div class="grid grid-cols-3 gap-4 mt-8">
-                <div class="p-2 border rounded">PSeInt</div>
-                <div class="p-2 border rounded">Lucidchart</div>
-                <div class="p-2 border rounded">Draw.io</div>
+            <div class="grid grid-cols-3 gap-4 mt-8 max-w-lg mx-auto">
+                <div class="p-2 border rounded font-bold text-xs">PSeInt</div>
+                <div class="p-2 border rounded font-bold text-xs">Lucidchart</div>
+                <div class="p-2 border rounded font-bold text-xs">Draw.io</div>
             </div>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Análisis de Errores</h2>
-            <p class="italic text-2xl">"Un diagrama con líneas que se cruzan o sin fin definido es un programa que fallará."</p>
+            <p class="italic text-2xl text-slate-500">"Un diagrama con líneas que se cruzan o sin fin definido es un programa que fallará."</p>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Ciclo</h2>
-            <div class="code-block">
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs mx-auto text-left">
                 <p>// Simulación de Bucle en Diagrama</p>
                 <p>ETIQUETA_INICIO_CICLO:</p>
                 <p>&nbsp;&nbsp;REALIZAR_ACCION()</p>
@@ -201,22 +197,20 @@
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4 uppercase">MI PRIMER DIAGRAMA</h3>
                 <p>Dibujar en el cuaderno el diagrama de flujo para un algoritmo que pida el año de nacimiento, calcule la edad y muestre si la persona puede votar (Edad >= 18).</p>
                 <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
@@ -241,25 +235,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué símbolo indica Inicio/Fin?", a: "A", options: ["Óvalo", "Rectángulo", "Rombo", "Círculo"] },
-            { q: "¿Qué símbolo es para procesos?", a: "B", options: ["Círculo", "Rectángulo", "Óvalo", "Flecha"] },
-            { q: "El Rombo sirve para:", a: "C", options: ["Calcular", "Escribir", "Tomar decisiones", "Cerrar"] },
-            { q: "¿Hacia dónde debe ir el flujo?", a: "D", options: ["Abajo a Arriba", "Cualquier lado", "Atrás", "Arriba hacia Abajo"] },
-            { q: "Entrada/Salida se representa con:", a: "A", options: ["Paralelogramo", "Triángulo", "Punto", "Cuadrado"] },
-            { q: "¿Qué une a los símbolos?", a: "B", options: ["Cadenas", "Líneas de flujo (Flechas)", "Cables", "Puntos"] },
-            { q: "Unir partes en otra página:", a: "C", options: ["Rombo", "Rectángulo", "Conector", "Terminal"] },
-            { q: "¿Cuántas salidas tiene un rombo?", a: "D", options: ["Una", "Tres", "Ninguna", "Dos (Sí/No)"] },
-            { q: "Representación gráfica de pasos:", a: "A", options: ["Diagrama de flujo", "Código", "Base de datos", "Hardware"] },
-            { q: "PSeInt sirve para crear:", a: "B", options: ["Juegos 3D", "Diagramas y Pseudocódigo", "Hojas de cálculo", "Virus"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -268,45 +250,31 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Qué símbolo geométrico indica el Inicio o el Fin de un algoritmo?", a: "A", options: ["Óvalo", "Rectángulo", "Rombo", "Círculo"] },
+            { q: "¿Qué símbolo se utiliza para representar un proceso o cálculo?", a: "B", options: ["Círculo", "Rectángulo", "Óvalo", "Flecha"] },
+            { q: "¿Para qué sirve el símbolo del Rombo en un diagrama de flujo?", a: "C", options: ["Calcular", "Escribir datos", "Tomar decisiones", "Cerrar el programa"] },
+            { q: "¿Cuál es la dirección correcta y estándar del flujo de información?", a: "D", options: ["Abajo hacia Arriba", "Cualquier dirección", "Hacia atrás", "Arriba hacia Abajo"] },
+            { q: "La Entrada y Salida de datos se representa mediante un:", a: "A", options: ["Paralelogramo", "Triángulo", "Punto", "Cuadrado"] },
+            { q: "¿Qué elemento une a los símbolos e indica la secuencia?", a: "B", options: ["Cadenas", "Líneas de flujo (Flechas)", "Cables", "Puntos"] },
+            { q: "¿Qué se usa para unir partes del diagrama que están en páginas diferentes?", a: "C", options: ["Rombo", "Rectángulo", "Conector", "Terminal"] },
+            { q: "¿Cuántas salidas de flujo debe tener obligatoriamente un rombo de decisión?", a: "D", options: ["Una", "Tres", "Ninguna", "Dos (Sí y No)"] },
+            { q: "¿Cómo se define la representación gráfica de un algoritmo?", a: "A", options: ["Diagrama de flujo", "Código fuente", "Base de datos", "Hardware"] },
+            { q: "Software educativo ideal para practicar diagramas y pseudocódigo:", a: "B", options: ["Excel", "PSeInt", "Photoshop", "Chrome"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -317,7 +285,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

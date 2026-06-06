@@ -19,10 +19,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -50,7 +46,7 @@
         <!-- Diapositiva 1 -->
         <div class="slide active">
             <img src="../../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
-            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Análisis y Diseño de Sistemas</h1>
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Introducción al Análisis y Diseño</h1>
             <br>&nbsp;<br><br>&nbsp;<br>
             <div class="space-y-2 text-slate-600 font-medium">
                 <p class="text-xl">Análisis y Diseño de Sistemas</p>
@@ -66,31 +62,31 @@
             <div class="concept-box">
                 <p>Es un conjunto de componentes que interactúan entre sí para lograr un objetivo común. En informática, nos enfocamos en los <strong>Sistemas de Información (SI)</strong>.</p>
             </div>
-            <i class="fas fa-network-wired text-6xl text-blue-300 mt-4"></i>
+            <i class="fas fa-network-wired text-6xl text-blue-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Componentes de un SI</h2>
-            <ul class="grid grid-cols-2 gap-4 text-left max-w-xl">
-                <li class="p-2 border rounded"><i class="fas fa-desktop mr-2"></i> Hardware</li>
-                <li class="p-2 border rounded"><i class="fas fa-code mr-2"></i> Software</li>
-                <li class="p-2 border rounded"><i class="fas fa-users mr-2"></i> Personas</li>
-                <li class="p-2 border rounded"><i class="fas fa-database mr-2"></i> Datos</li>
+            <ul class="grid grid-cols-2 gap-4 text-left max-w-xl mx-auto">
+                <li class="p-2 border rounded bg-white shadow-sm"><i class="fas fa-desktop mr-2 text-blue-500"></i> Hardware</li>
+                <li class="p-2 border rounded bg-white shadow-sm"><i class="fas fa-code mr-2 text-blue-500"></i> Software</li>
+                <li class="p-2 border rounded bg-white shadow-sm"><i class="fas fa-users mr-2 text-blue-500"></i> Personas</li>
+                <li class="p-2 border rounded bg-white shadow-sm"><i class="fas fa-database mr-2 text-blue-500"></i> Datos</li>
             </ul>
         </div>
 
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Análisis vs. Diseño</h2>
-            <div class="grid grid-cols-2 gap-6 max-w-3xl">
-                <div class="p-4 border-l-4 border-blue-500 bg-blue-50">
-                    <h3 class="font-bold">Análisis</h3>
-                    <p class="text-sm">¿QUÉ se necesita? Entender el problema y los requisitos del cliente.</p>
+            <div class="grid grid-cols-2 gap-6 max-w-3xl mx-auto">
+                <div class="p-4 border-l-4 border-blue-500 bg-blue-50 shadow-sm rounded-r-xl">
+                    <h3 class="font-bold text-blue-700 text-lg">Análisis</h3>
+                    <p class="text-xs">¿QUÉ se necesita? Entender el problema y los requerimientos del cliente.</p>
                 </div>
-                <div class="p-4 border-l-4 border-green-500 bg-green-50">
-                    <h3 class="font-bold">Diseño</h3>
-                    <p class="text-sm">¿CÓMO se va a hacer? Crear el plano técnico de la solución.</p>
+                <div class="p-4 border-l-4 border-green-500 bg-green-50 shadow-sm rounded-r-xl">
+                    <h3 class="font-bold text-green-700 text-lg">Diseño</h3>
+                    <p class="text-xs">¿CÓMO se va a hacer? Crear el plano técnico de la solución.</p>
                 </div>
             </div>
         </div>
@@ -99,85 +95,86 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Analista de Sistemas</h2>
             <div class="concept-box border-yellow-400">
-                <p>Es el puente entre los usuarios (que tienen el problema) y los programadores (que crean la solución). Debe ser un gran comunicador y solucionador de problemas.</p>
+                <p>Es el puente entre los usuarios (que tienen el problema) y los programadores (que crean la solución). Debe ser un gran comunicador y tener visión de negocio.</p>
             </div>
-            <i class="fas fa-user-tie text-6xl text-gray-400 mt-4"></i>
+            <i class="fas fa-user-tie text-6xl text-gray-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 6 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ciclo de Vida (SDLC)</h2>
             <p>Es el proceso que sigue un sistema desde que nace como idea hasta que se retira del uso. Consta de varias fases secuenciales.</p>
-            <i class="fas fa-redo-alt text-6xl text-blue-400 mt-4"></i>
+            <img src="../../imagenes/sdlc_diagrama_flujo.png" alt="SDLC" class="h-32 mt-4 mx-auto rounded shadow">
         </div>
 
         <!-- Diapositiva 7 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Importancia del Análisis</h2>
             <div class="concept-box bg-red-50 border-red-500">
-                <p>Detectar un error en la fase de análisis cuesta $1. Corregirlo cuando el sistema ya está programado puede costar $1,000.</p>
+                <p>Detectar un error en la fase de análisis cuesta $1. Corregirlo cuando el sistema ya está programado puede costar hasta $1,000.</p>
             </div>
-            <i class="fas fa-search text-6xl text-red-400 mt-4"></i>
+            <i class="fas fa-search text-6xl text-red-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 8 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Recolección de Datos</h2>
             <p>¿Cómo sabemos qué construir?</p>
-            <ul class="flex space-x-6 mt-4 text-xs font-bold">
-                <li><i class="fas fa-comments"></i> Entrevistas</li>
-                <li><i class="fas fa-list-alt"></i> Encuestas</li>
-                <li><i class="fas fa-eye"></i> Observación</li>
+            <ul class="flex justify-center space-x-6 mt-4 text-xs font-bold">
+                <li class="bg-slate-100 p-2 rounded"><i class="fas fa-comments mr-1"></i> Entrevistas</li>
+                <li class="bg-slate-100 p-2 rounded"><i class="fas fa-list-alt mr-1"></i> Encuestas</li>
+                <li class="bg-slate-100 p-2 rounded"><i class="fas fa-eye mr-1"></i> Observación</li>
             </ul>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Diagramas de Flujo</h2>
-            <p>Herramienta visual para representar la lógica de un proceso o el movimiento de los datos en el sistema.</p>
-            <i class="fas fa-project-diagram text-6xl text-gray-500 mt-4"></i>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Herramientas Visuales</h2>
+            <p>Los diagramas de flujo permiten representar visualmente la lógica de un proceso o el movimiento de los datos.</p>
+            <i class="fas fa-project-diagram text-6xl text-gray-500 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Requisitos Funcionales</h2>
-            <p>Son las acciones que el sistema DEBE realizar. <br>Ejemplo: "El sistema debe permitir imprimir un reporte de ventas."</p>
+            <div class="concept-box">
+                <p>Son las acciones que el sistema DEBE realizar. <br>Ejemplo: "El sistema debe permitir registrar nuevos clientes."</p>
+            </div>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Requisitos No Funcionales</h2>
-            <p>Son las características de calidad del sistema. <br>Ejemplo: "El sistema debe cargar en menos de 2 segundos."</p>
-            <i class="fas fa-tachometer-alt text-6xl text-green-400 mt-4"></i>
+            <p>Son las características de calidad y rendimiento del sistema. <br>Ejemplo: "El sistema debe tener copias de seguridad automáticas cada 24 horas."</p>
+            <i class="fas fa-shield-alt text-6xl text-green-500 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estudio de Factibilidad</h2>
             <p>Determina si el proyecto se puede hacer considerando:</p>
-            <ul class="mt-4 space-y-2 font-bold text-sm">
-                <li>Técnica (¿Tenemos la tecnología?)</li>
-                <li>Económica (¿Tenemos el dinero?)</li>
-                <li>Operativa (¿La gente lo usará?)</li>
+            <ul class="mt-4 space-y-2 font-bold text-sm mx-auto max-w-xs text-left">
+                <li class="p-1 bg-blue-50 border-l-4 border-blue-600">Técnica (Tecnología)</li>
+                <li class="p-1 bg-blue-50 border-l-4 border-blue-600">Económica (Dinero)</li>
+                <li class="p-1 bg-blue-50 border-l-4 border-blue-600">Operativa (Uso real)</li>
             </ul>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Prototipo</h2>
-            <p>Es una versión preliminar del sistema que sirve para que el usuario vea cómo quedará el diseño final sin necesidad de programarlo todo.</p>
+            <p>Es una versión preliminar del sistema que sirve para que el usuario valide el diseño sin necesidad de programar todo el código final.</p>
+            <img src="../../imagenes/prototipos_tecnica.png" alt="Prototipo" class="h-32 mt-4 mx-auto rounded shadow">
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -208,25 +205,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué es el Análisis?", a: "C", options: ["Programar", "Vender", "¿QUÉ se necesita?", "Reparar PC"] },
-            { q: "¿Qué es el Diseño?", a: "B", options: ["Dibujar", "¿CÓMO se hará?", "Pintar", "Hackear"] },
-            { q: "Puente entre usuario y coder:", a: "A", options: ["Analista", "Gerente", "Director", "Alumno"] },
-            { q: "¿Qué significa SDLC?", a: "D", options: ["Sist. de Luz", "Solo Datos", "Super Data Link", "Ciclo de Vida"] },
-            { q: "Componente humano del SI:", a: "C", options: ["Mouse", "Windows", "Personas", "Cables"] },
-            { q: "Factibilidad económica mira:", a: "B", options: ["Velocidad", "Dinero", "Gente", "Luz"] },
-            { q: "Requisito de velocidad es:", a: "A", options: ["No Funcional", "Funcional", "Básico", "Nulo"] },
-            { q: "Acción de ver al usuario:", a: "C", options: ["Encuesta", "Cine", "Observación", "Sueño"] },
-            { q: "Maqueta del sistema:", a: "D", options: ["Final", "Boceto", "DER", "Prototipo"] },
-            { q: "Un SI interactúa para un:", a: "B", options: ["Virus", "Objetivo", "Juego", "Chat"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -235,45 +220,31 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Qué fase del ciclo de vida responde a la pregunta '¿QUÉ se necesita?'", a: "C", options: ["Programación", "Hardware", "Análisis de Sistemas", "Mantenimiento"] },
+            { q: "¿Qué fase se encarga de definir '¿CÓMO se va a construir el sistema?'", a: "B", options: ["Ventas", "Diseño de Sistemas", "Redes", "Finanzas"] },
+            { q: "El profesional que sirve de puente entre usuarios y programadores es el:", a: "A", options: ["Analista de Sistemas", "Gerente General", "Secretario", "Conserje"] },
+            { q: "¿Qué significan las siglas SDLC en el desarrollo de software?", a: "D", options: ["Sistema de Luz", "Solo Datos Libres", "Super Data Link", "Ciclo de Vida del Desarrollo"] },
+            { q: "Identifica este componente vital de un Sistema de Información:", a: "C", options: ["Teclado", "Cables", "Personas", "Windows"], img: "../../imagenes/analista_intro.png" },
+            { q: "La factibilidad que evalúa si se cuenta con el dinero suficiente es la:", a: "B", options: ["Técnica", "Económica", "Operativa", "Lógica"] },
+            { q: "Un requisito que describe una acción que el sistema DEBE hacer es:", a: "A", options: ["Funcional", "No Funcional", "Estético", "Nulo"] },
+            { q: "La técnica de recolectar datos mediante observación directa se llama:", a: "C", options: ["Entrevista", "Encuesta", "Observación", "Lectura"] },
+            { q: "Una versión preliminar visual para validar con el usuario es un:", a: "D", options: ["Dato", "SRS", "Virus", "Prototipo"] },
+            { q: "Detectar un error en la fase de análisis versus programación es:", a: "A", options: ["Mucho más barato", "Mucho más caro", "Igual de costoso", "Imposible"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -284,7 +255,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

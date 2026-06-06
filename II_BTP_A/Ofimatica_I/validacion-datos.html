@@ -14,15 +14,12 @@
         .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
         .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
         .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
         #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -66,13 +63,13 @@
             <div class="concept-box">
                 <p>Es una herramienta de Excel que permite controlar qué valores pueden ingresar los usuarios en una celda. Sirve para evitar errores humanos y mantener la integridad de la información.</p>
             </div>
-            <i class="fas fa-filter text-6xl text-blue-300 mt-4"></i>
+            <i class="fas fa-filter text-6xl text-blue-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Importancia</h2>
-            <ul class="space-y-4 text-left max-w-2xl text-lg">
+            <ul class="space-y-4 text-left max-w-2xl text-lg mx-auto">
                 <li class="flex items-center space-x-3">
                     <i class="fas fa-check-circle text-green-500"></i>
                     <span>Evita datos incoherentes (ej. edades negativas).</span>
@@ -92,95 +89,95 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tipos de Validación: Listas</h2>
             <div class="concept-box">
-                <p>Muestra un menú desplegable con opciones predefinidas. <br>Es el tipo más común para campos como "Género", "Día" o "Sede".</p>
+                <p>Muestra un menú desplegable con opciones predefinidas. Es el tipo más común para campos como "Género" o "Carrera".</p>
             </div>
-            <div class="bg-gray-100 p-4 border rounded">Opción 1 ▼</div>
+            <div class="bg-gray-100 p-4 border rounded max-w-xs mx-auto text-sm font-bold">Opción Seleccionada ▼</div>
         </div>
 
         <!-- Diapositiva 5 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tipos de Validación: Números</h2>
             <div class="concept-box">
-                <p>Permite restringir la entrada a <strong>Números Enteros</strong> o <strong>Decimales</strong> dentro de un rango (ej. Notas del 0 al 100).</p>
+                <p>Permite restringir la entrada a <strong>Números Enteros</strong> o <strong>Decimales</strong> dentro de un rango específico.</p>
             </div>
-            <p class="text-2xl font-mono">0 < x < 100</p>
+            <p class="text-3xl font-mono text-blue-600 font-bold mt-4">0 < x < 100</p>
+            <p class="text-xs italic mt-2">Ejemplo: Notas académicas</p>
         </div>
 
         <!-- Diapositiva 6 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Tipos de Validación: Fechas</h2>
-            <p>Asegura que el dato ingresado sea una fecha válida y, opcionalmente, dentro de un periodo específico (ej. fechas de este año únicamente).</p>
-            <i class="fas fa-calendar-alt text-6xl text-blue-400 mt-4"></i>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Longitud de Texto</h2>
+            <div class="concept-box border-yellow-400">
+                <p>Controla cuántos caracteres puede tener una celda. Útil para números de Identidad o Teléfonos fijos.</p>
+            </div>
+            <p class="text-sm italic mt-4">Ejemplo: La identidad debe tener exactamente 13 dígitos.</p>
         </div>
 
         <!-- Diapositiva 7 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Longitud de Texto</h2>
-            <div class="concept-box">
-                <p>Controla cuántos caracteres puede tener una celda. Útil para Identidades, Números de Teléfono o Códigos Postales.</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Mensaje de Entrada</h2>
+            <p>Aparece cuando el usuario selecciona la celda, dándole instrucciones antes de que escriba nada.</p>
+            <div class="bg-yellow-50 p-4 border border-yellow-200 text-sm mt-4 rounded shadow-sm max-w-md mx-auto">
+                <strong class="text-yellow-700">Instrucción:</strong> Ingrese solo números del 1 al 10.
             </div>
-            <p class="text-sm italic">Ejemplo: Identidad debe tener exactamente 13 dígitos.</p>
         </div>
 
         <!-- Diapositiva 8 -->
-        <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Mensaje de Entrada</h2>
-            <p>Aparece cuando el usuario selecciona la celda, dándole instrucciones antes de que escriba nada.</p>
-            <div class="bg-yellow-50 p-4 border border-yellow-200 text-sm mt-4">
-                <strong>Instrucción:</strong> Ingrese solo números del 1 al 10.
-            </div>
-        </div>
-
-        <!-- Diapositiva 9 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Mensaje de Error</h2>
             <div class="concept-box border-red-500">
                 <p>Es la alerta que salta cuando el usuario intenta ingresar un dato que NO cumple las reglas. Existen 3 estilos:</p>
                 <ul class="list-disc ml-8 mt-2 text-sm">
-                    <li><strong>Detener:</strong> Bloquea la entrada (Obligatorio).</li>
+                    <li><strong>Detener:</strong> Bloquea la entrada totalmente.</li>
                     <li><strong>Advertencia:</strong> Avisa pero permite seguir.</li>
-                    <li><strong>Información:</strong> Solo comunica.</li>
+                    <li><strong>Información:</strong> Solo comunica el error.</li>
                 </ul>
             </div>
         </div>
 
-        <!-- Diapositiva 10 -->
+        <!-- Diapositiva 9 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ubicación en el Menú</h2>
-            <p class="text-xl">Pestaña <strong>Datos</strong> → Grupo <strong>Herramientas de Datos</strong> → <strong>Validación de Datos</strong>.</p>
-            <i class="fas fa-mouse-pointer text-4xl mt-6 text-gray-400"></i>
+            <p class="text-xl font-bold">Pestaña Datos → Herramientas de Datos → Validación de Datos</p>
+            <i class="fas fa-mouse-pointer text-4xl mt-6 text-gray-400 mx-auto"></i>
+        </div>
+
+        <!-- Diapositiva 10 -->
+        <div class="slide">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Círculos de Validación</h2>
+            <p>Excel puede marcar con un círculo rojo los datos que ya estaban en la hoja y que NO cumplen con la nueva regla aplicada.</p>
+            <div class="w-16 h-16 border-4 border-red-500 rounded-full mx-auto mt-4 flex items-center justify-center text-red-500 font-black text-2xl">!</div>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Círculos de Validación</h2>
-            <p>Excel puede marcar con un círculo rojo los datos que ya estaban en la hoja y que NO cumplen con la nueva regla de validación aplicada.</p>
-            <div class="w-12 h-12 border-2 border-red-500 rounded-full mx-auto mt-4 flex items-center justify-center text-red-500 font-bold">!</div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Listas Dependientes</h2>
+            <div class="concept-box border-blue-400">
+                <p>Es una técnica avanzada donde las opciones de una lista cambian según lo que se seleccionó en otra lista anterior.</p>
+            </div>
+            <i class="fas fa-sitemap text-5xl text-blue-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Listas Dependientes</h2>
-            <p class="text-sm">Es una técnica avanzada donde las opciones de una lista cambian según lo que se seleccionó en otra lista (ej. Seleccionas "País" y la segunda lista solo muestra "Ciudades" de ese país).</p>
-            <i class="fas fa-sitemap text-5xl text-blue-300 mt-4"></i>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Limpieza</h2>
+            <p>Para quitar todas las restricciones de una celda, debes entrar al menú de Validación y presionar el botón <strong>"Borrar todos"</strong>.</p>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Limpiando Validaciones</h2>
-            <p>Para quitar todas las restricciones de una celda, debes entrar al menú de Validación y presionar el botón <strong>"Borrar todos"</strong>.</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Integridad</h2>
+            <p class="italic text-slate-500 text-2xl">"La validación de datos es el primer escudo contra la información basura en una hoja de cálculo."</p>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -217,25 +214,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿En qué pestaña está Validación?", a: "B", options: ["Inicio", "Datos", "Insertar", "Fórmulas"] },
-            { q: "Tipo de validación para menús:", a: "C", options: ["Número", "Fecha", "Lista", "Hora"] },
-            { q: "¿Cuántos estilos de error hay?", a: "B", options: ["2", "3", "4", "5"] },
-            { q: "Estilo de error que bloquea el paso:", a: "A", options: ["Detener", "Aviso", "Info", "Borrar"] },
-            { q: "¿Para qué sirve el mensaje de entrada?", a: "D", options: ["Para borrar", "Para sumar", "Para reír", "Para dar instrucciones"] },
-            { q: "Validación para una identidad de 13:", a: "B", options: ["Lista", "Longitud de texto", "Decimal", "Fecha"] },
-            { q: "¿Puedo validar que sean solo decimales?", a: "A", options: ["Sí", "No", "Solo en Word", "Solo los domingos"] },
-            { q: "Botón para quitar validaciones:", a: "C", options: ["Suprimir", "Formato", "Borrar todos", "Esc"] },
-            { q: "¿Qué color son los círculos de error?", a: "B", options: ["Azules", "Rojos", "Verdes", "Amarillos"] },
-            { q: "La validación evita errores de:", a: "A", options: ["Ingreso de datos", "Hardware", "Internet", "Virus"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -244,45 +229,31 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿En qué pestaña de Excel se encuentra la herramienta de Validación de Datos?", a: "B", options: ["Inicio", "Datos", "Insertar", "Fórmulas"] },
+            { q: "¿Qué tipo de validación es ideal para crear un menú desplegable de opciones?", a: "C", options: ["Número entero", "Fecha", "Lista", "Hora"] },
+            { q: "¿Cuántos estilos de mensaje de error ofrece Excel por defecto?", a: "B", options: ["2 estilos", "3 estilos", "4 estilos", "5 estilos"] },
+            { q: "¿Cuál estilo de mensaje de error bloquea totalmente el ingreso del dato inválido?", a: "A", options: ["Detener", "Advertencia", "Información", "Borrar"] },
+            { q: "¿Para qué sirve configurar un 'Mensaje de entrada'?", a: "D", options: ["Para borrar la celda", "Para sumar valores", "Para cerrar Excel", "Para dar instrucciones antes de escribir"] },
+            { q: "Si quiero que un número de identidad tenga exactamente 13 dígitos, uso:", a: "B", options: ["Lista", "Longitud de texto", "Decimal", "Fecha"] },
+            { q: "Identifica esta herramienta de restricción:", a: "A", options: ["Validación", "Macro", "Filtro", "Suma"], img: "../../imagenes/mensaje-error.PNG" },
+            { q: "¿Qué botón permite eliminar todas las validaciones de las celdas seleccionadas?", a: "C", options: ["Suprimir", "Formato", "Borrar todos", "Escape"] },
+            { q: "¿Qué color utiliza Excel para los círculos que marcan datos inválidos?", a: "B", options: ["Azul", "Rojo", "Verde", "Amarillo"] },
+            { q: "La validación de datos busca principalmente evitar errores de:", a: "A", options: ["Ingreso manual de información", "Hardware", "Conexión a internet", "Virus"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -293,7 +264,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

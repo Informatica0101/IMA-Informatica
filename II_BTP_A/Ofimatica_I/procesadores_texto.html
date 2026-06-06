@@ -20,10 +20,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -75,7 +71,7 @@
             <div class="concept-box">
                 <p>El uso de <strong>Título 1, Título 2, etc.</strong> no es solo visual. Permite generar tablas de contenido automáticas y esquemas de navegación estructurados.</p>
             </div>
-            <i class="fas fa-list-ol text-6xl text-blue-200 mt-4"></i>
+            <i class="fas fa-list-ol text-6xl text-blue-200 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 4 -->
@@ -92,7 +88,7 @@
             <div class="concept-box border-purple-400">
                 <p>Uso de normas (ej. <strong>APA</strong>). Herramientas para insertar bibliografía y gestionar fuentes de información de forma técnica y académica.</p>
             </div>
-            <i class="fas fa-book text-6xl text-slate-300 mt-4"></i>
+            <i class="fas fa-book text-6xl text-slate-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 6 -->
@@ -130,13 +126,13 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Macros en Word</h2>
             <p>Automatización de tareas repetitivas mediante pequeños programas grabados o escritos en VBA.</p>
-            <i class="fas fa-cog text-6xl text-slate-800 mt-4 animate-spin-slow"></i>
+            <i class="fas fa-cog text-6xl text-slate-800 mt-4 animate-spin"></i>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Protección de Documentos</h2>
-            <ul class="list-disc text-left space-y-2 max-w-xl mx-auto mt-4">
+            <ul class="list-disc text-left space-y-2 max-w-xl mx-auto mt-4 text-sm">
                 <li>Cifrado con contraseña.</li>
                 <li>Restricción de edición (solo lectura).</li>
                 <li>Firma digital para autenticidad.</li>
@@ -146,13 +142,13 @@
         <!-- Diapositiva 12 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Impacto Profesional</h2>
-            <p class="italic text-2xl">"Un documento mal formateado resta credibilidad a la mejor de las ideas. El dominio de Word es una carta de presentación."</p>
+            <p class="italic text-slate-500 text-2xl">"Un documento mal formateado resta credibilidad a la mejor de las ideas."</p>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Avanzado</h2>
-            <div class="code-block">
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs mx-auto text-left max-w-md">
                 <p>// Macro Simple VBA (Conceptual)</p>
                 <p>Sub FormatearInforme()</p>
                 <p>&nbsp;&nbsp;With Selection.Font</p>
@@ -164,22 +160,20 @@
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4 uppercase">INFORME TÉCNICO</h3>
                 <p>Crear un documento de 5 páginas sobre "Tendencias Tecnológicas 2026" que incluya: Índice Automático, Bibliografía con Normas APA y al menos un salto de sección.</p>
                 <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
@@ -204,25 +198,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Para qué sirve el estilo 'Título 1'?", a: "A", options: ["Generar índices automáticos", "Poner color rojo", "Borrar el texto", "Cerrar Word"] },
-            { q: "Norma común para referencias:", a: "C", options: ["ISO 9001", "HTML5", "APA", "RGB"] },
-            { q: "¿Qué permite la combinación de correspondencia?", a: "B", options: ["Borrar correos", "Personalizar documentos masivos", "Sumar números", "Dibujar"] },
-            { q: "Para cambiar orientación de UNA sola página usamos:", a: "D", options: ["Enter", "Espacio", "Punto", "Salto de Sección"] },
-            { q: "El control de cambios es útil para:", a: "A", options: ["Trabajo colaborativo", "Ahorrar luz", "Cambiar el mouse", "Imprimir rápido"] },
-            { q: "Las macros se escriben en:", a: "C", options: ["Python", "Java", "VBA", "C++"] },
-            { q: "¿Dónde está la Tabla de Contenido?", a: "B", options: ["Inicio", "Referencias", "Insertar", "Ayuda"] },
-            { q: "Restringir edición sirve para:", a: "D", options: ["Hacerlo más grande", "Cambiar fuente", "Poner música", "Seguridad del archivo"] },
-            { q: "APA significa:", a: "A", options: ["American Psychological Association", "Asoc. de Programas Avanzados", "Auto-Paginación", "Análisis de Párrafos"] },
-            { q: "Un documento profesional debe tener:", a: "B", options: ["Muchos colores", "Estructura jerárquica", "Solo fotos", "Texto en una sola línea"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -231,56 +213,41 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Para qué sirve aplicar estilos de 'Título' en un documento?", a: "A", options: ["Generar índices automáticos", "Poner color rojo", "Borrar el texto", "Cerrar la aplicación"] },
+            { q: "¿Cuál es la norma internacional más común para referencias bibliográficas?", a: "C", options: ["ISO 9001", "HTML5", "APA", "RGB"] },
+            { q: "¿Qué herramienta permite personalizar documentos masivos como diplomas?", a: "B", options: ["Macros", "Combinación de correspondencia", "Saltos de página", "Dibujo"] },
+            { q: "Para cambiar la orientación de UNA sola página en un documento usamos:", a: "D", options: ["Tecla Enter", "Barra espaciadora", "Punto y aparte", "Salto de Sección"] },
+            { q: "El control de cambios es una herramienta vital para el:", a: "A", options: ["Trabajo colaborativo", "Ahorro de energía", "Manejo del mouse", "Impreso rápido"] },
+            { q: "Las Macros en Microsoft Word se programan utilizando el lenguaje:", a: "C", options: ["Python", "Java", "VBA", "C++"] },
+            { q: "¿En qué pestaña se encuentra la opción de Tabla de Contenido?", a: "B", options: ["Inicio", "Referencias", "Insertar", "Ayuda"] },
+            { q: "La opción de 'Restringir edición' sirve para mejorar la:", a: "D", options: ["Velocidad de escritura", "Calidad de imagen", "Resolución", "Seguridad del documento"] },
+            { q: "Identifica este procesador de texto clásico:", a: "A", options: ["Microsoft Word", "Excel", "PowerPoint", "Paint"], img: "../../imagenes/microsoft_word.png" },
+            { q: "Un documento técnico profesional debe poseer principalmente:", a: "B", options: ["Muchos colores", "Estructura jerárquica", "Solo fotografías", "Texto en una sola línea"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
-        });
 
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('ofimatica_procesadores', false);
+                await window.GamesAdapter.init('ofimatica_word', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

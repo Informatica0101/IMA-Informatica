@@ -20,10 +20,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -73,13 +69,13 @@
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Hechos y Reglas</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
-                <div class="p-4 bg-slate-50 border rounded">
-                    <p class="font-bold">Hecho</p>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left mx-auto">
+                <div class="p-4 bg-slate-50 border rounded shadow-sm">
+                    <p class="font-bold text-blue-700">Hecho</p>
                     <p class="text-xs">"Juan es padre de Pedro". (Afirmación siempre verdadera).</p>
                 </div>
-                <div class="p-4 bg-blue-50 border rounded">
-                    <p class="font-bold">Regla</p>
+                <div class="p-4 bg-blue-50 border rounded shadow-sm">
+                    <p class="font-bold text-blue-700">Regla</p>
                     <p class="text-xs">"X es abuelo de Y si X es padre de Z y Z es padre de Y".</p>
                 </div>
             </div>
@@ -91,13 +87,13 @@
             <div class="concept-box">
                 <p>Repite un bloque de código <strong>HASTA QUE</strong> una condición se cumpla (sea verdadera). A diferencia del Mientras, este se ejecuta <strong>al menos una vez</strong>.</p>
             </div>
-            <i class="fas fa-history text-6xl text-blue-200 mt-4"></i>
+            <i class="fas fa-history text-6xl text-blue-200 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 5 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructura del REPETIR</h2>
-            <div class="code-block">
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm mx-auto text-left max-w-md">
                 <p>REPETIR</p>
                 <p>&nbsp;&nbsp;// Instrucciones (Se ejecutan primero)</p>
                 <p>HASTA QUE condicion == VERDADERA</p>
@@ -107,13 +103,13 @@
         <!-- Diapositiva 6 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Diferencia con Mientras</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl">
-                <div class="p-4 border rounded text-left">
-                    <h4 class="font-bold">Mientras (While)</h4>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl mx-auto">
+                <div class="p-4 border rounded text-left bg-white shadow-sm">
+                    <h4 class="font-bold text-blue-600">Mientras (While)</h4>
                     <p class="text-xs">Evalúa ANTES de entrar. Puede no ejecutarse nunca.</p>
                 </div>
-                <div class="p-4 border rounded text-left">
-                    <h4 class="font-bold">Repetir (Do-Until)</h4>
+                <div class="p-4 border rounded text-left bg-white shadow-sm">
+                    <h4 class="font-bold text-blue-600">Repetir (Do-Until)</h4>
                     <p class="text-xs">Evalúa DESPUÉS. Se ejecuta 1 vez mínimo.</p>
                 </div>
             </div>
@@ -133,21 +129,21 @@
             <div class="concept-box">
                 <p>La programación lógica es la base de los Sistemas Expertos, programas que imitan el razonamiento de un especialista humano en un área específica (ej. Medicina).</p>
             </div>
-            <i class="fas fa-user-md text-6xl text-blue-400 mt-4"></i>
+            <i class="fas fa-user-md text-6xl text-blue-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Bases de Conocimiento</h2>
             <p>En lugar de bases de datos simples, la programación lógica usa Bases de Conocimiento donde la información está interrelacionada lógicamente.</p>
-            <i class="fas fa-brain text-6xl text-slate-300 mt-8"></i>
+            <i class="fas fa-brain text-6xl text-slate-300 mt-8 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Uso del Repetir en Menús</h2>
             <p>Es el bucle perfecto para crear menús de usuario que se muestran una vez y se repiten hasta elegir "Salir".</p>
-            <div class="code-block mt-4">
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm mx-auto text-left max-w-md">
                 <p>REPETIR</p>
                 <p>&nbsp;&nbsp;MOSTRAR_MENU()</p>
                 <p>&nbsp;&nbsp;LEER opcion</p>
@@ -164,14 +160,13 @@
         <!-- Diapositiva 12 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Pensamiento Deductivo</h2>
-            <p class="italic text-2xl">"Programar con lógica es enseñar a la computadora a conectar los puntos por sí misma basándose en la verdad de los datos."</p>
+            <p class="italic text-slate-500 text-2xl">"Programar con lógica es enseñar a la computadora a conectar los puntos por sí misma."</p>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Avanzado</h2>
-            <p class="mb-4">Validación con Repetir:</p>
-            <div class="code-block">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Validación con Repetir</h2>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs mx-auto text-left max-w-md">
                 <p>REPETIR</p>
                 <p>&nbsp;&nbsp;ESCRIBIR "Ingrese nota (0-100):"</p>
                 <p>&nbsp;&nbsp;LEER nota</p>
@@ -182,22 +177,20 @@
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4 uppercase">SISTEMA EXPERTO SIMPLE</h3>
                 <p>Define en tu cuaderno 5 Hechos y 2 Reglas sobre un tema de tu elección (ej. Deportes, Animales, Familia) usando el estilo de Prolog.</p>
                 <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
@@ -222,25 +215,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿En qué se basa la programación lógica?", a: "B", options: ["Órdenes", "Hechos y Reglas", "Cables", "Electricidad"] },
-            { q: "Lenguaje representativo de lógica:", a: "A", options: ["PROLOG", "Python", "Java", "C++"] },
-            { q: "¿Cuántas veces mínimo corre el REPETIR?", a: "C", options: ["0 veces", "2 veces", "1 vez", "10 veces"] },
-            { q: "REPETIR evalúa la condición:", a: "D", options: ["Nunca", "Al inicio", "En el medio", "Al final"] },
-            { q: "Un hecho es una afirmación:", a: "A", options: ["Verdadera", "Falsa", "Dudosa", "Invisible"] },
-            { q: "El bucle perfecto para menús es:", a: "B", options: ["Mientras", "Repetir", "Para", "Si-Entonces"] },
-            { q: "Deduce respuestas automáticamente:", a: "C", options: ["Mouse", "Teclado", "Motor de inferencia", "Monitor"] },
-            { q: "HASTA QUE busca una condición:", a: "A", options: ["Verdadera", "Falsa", "Nula", "Lenta"] },
-            { q: "Sistema que imita a un experto:", a: "D", options: ["Word", "Excel", "Virus", "Sistema Experto"] },
-            { q: "Prolog usa lógica de:", a: "B", options: ["Primer grado", "Predicados", "Segundo grado", "Física"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -249,56 +230,41 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿En qué elementos se basa principalmente la programación lógica?", a: "B", options: ["Órdenes directas", "Hechos y Reglas", "Cables eléctricos", "Píxeles"] },
+            { q: "¿Cuál es el lenguaje más representativo del paradigma lógico?", a: "A", options: ["PROLOG", "Python", "Java", "C++"] },
+            { q: "¿Cuántas veces como mínimo se ejecuta el bloque de un bucle REPETIR?", a: "C", options: ["0 veces", "2 veces", "1 vez", "Depende del usuario"] },
+            { q: "En el bucle REPETIR, la condición se evalúa:", a: "D", options: ["Nunca", "Al inicio", "En el medio", "Al final"] },
+            { q: "Una afirmación que siempre se considera verdadera en lógica es un:", a: "A", options: ["Hecho", "Variable", "Bucle", "Error"] },
+            { q: "¿Qué estructura es ideal para crear menús que se muestran al menos una vez?", a: "B", options: ["Mientras", "Repetir", "Para", "Si-Entonces"] },
+            { q: "¿Cómo se llama el componente que deduce respuestas automáticamente?", a: "C", options: ["Ratón", "Teclado", "Motor de inferencia", "Monitor"] },
+            { q: "El comando HASTA QUE busca que la condición sea:", a: "A", options: ["Verdadera", "Falsa", "Nula", "Lenta"] },
+            { q: "¿Cómo se llama el programa que imita el razonamiento humano experto?", a: "D", options: ["Hoja de cálculo", "Buscador", "Antivirus", "Sistema Experto"] },
+            { q: "El bucle REPETIR termina su ejecución cuando la condición es:", a: "A", options: ["Verdadera", "Falsa", "Cero", "Vacia"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
-        });
 
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('prog_logica_repetir', false);
+                await window.GamesAdapter.init('prog_logica', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

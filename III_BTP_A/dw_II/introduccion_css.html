@@ -14,16 +14,11 @@
         .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
         .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
-        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; border-left: 4px solid #3b82f6; }
         .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
         #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -84,7 +79,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Regla CSS: Estructura</h2>
             <div class="concept-box">
                 <p class="text-center font-bold text-xl mb-4">Selector { propiedad: valor; }</p>
-                <div class="code-block">
+                <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">
                     h1 {<br>
                     &nbsp;&nbsp;color: blue;<br>
                     &nbsp;&nbsp;font-size: 20px;<br>
@@ -96,7 +91,7 @@
         <!-- Diapositiva 5 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Formas de Aplicar CSS</h2>
-            <ul class="text-left space-y-4 max-w-xl">
+            <ul class="text-left space-y-4 max-w-xl mx-auto">
                 <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i> <strong>Inline:</strong> Dentro del atributo style de la etiqueta.</li>
                 <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i> <strong>Interno:</strong> Dentro de etiquetas <code>&lt;style&gt;</code> en el head.</li>
                 <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i> <strong>Externo:</strong> En un archivo <code>.css</code> aparte (El mejor método).</li>
@@ -107,9 +102,9 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Selectores Básicos</h2>
             <div class="grid grid-cols-3 gap-2 mt-4 text-[10px] font-bold">
-                <div class="p-2 border">Etiqueta (h1)</div>
-                <div class="p-2 border">Clase (.mi-clase)</div>
-                <div class="p-2 border">ID (#mi-id)</div>
+                <div class="p-2 border rounded bg-blue-50">Etiqueta (h1)</div>
+                <div class="p-2 border rounded bg-green-50">Clase (.mi-clase)</div>
+                <div class="p-2 border rounded bg-purple-50">ID (#mi-id)</div>
             </div>
         </div>
 
@@ -118,7 +113,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio: Selector de Clase</h2>
             <div class="concept-box">
                 <p>Si tienes un párrafo con <code>class="destacado"</code>, ¿cómo escribirías la regla CSS para ponerle el fondo amarillo?</p>
-                <div class="code-block mt-4">.destacado { background: yellow; }</div>
+                <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">.destacado { background: yellow; }</div>
             </div>
         </div>
 
@@ -126,10 +121,10 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Colores en CSS</h2>
             <p>Podemos usar:</p>
-            <ul class="grid grid-cols-3 gap-4 mt-6 text-sm">
-                <li class="p-4 border bg-gray-50">Nombres (red)</li>
-                <li class="p-4 border bg-gray-50">Hex (#FF0000)</li>
-                <li class="p-4 border bg-gray-50">RGB (255,0,0)</li>
+            <ul class="grid grid-cols-3 gap-4 mt-6 text-sm mx-auto">
+                <li class="p-4 border bg-gray-50 rounded">Nombres (red)</li>
+                <li class="p-4 border bg-gray-50 rounded">Hex (#FF0000)</li>
+                <li class="p-4 border bg-gray-50 rounded">RGB (255,0,0)</li>
             </ul>
         </div>
 
@@ -137,13 +132,13 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Comentarios en CSS</h2>
             <p>Sirven para documentar el código. El navegador los ignora.</p>
-            <div class="code-block mt-4">/* Este es un comentario */</div>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">/* Este es un comentario */</div>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Unidades de Medida</h2>
-            <ul class="text-left space-y-2 max-w-lg">
+            <ul class="text-left space-y-2 max-w-lg mx-auto">
                 <li><strong>px:</strong> Píxeles (Tamaño fijo).</li>
                 <li><strong>%:</strong> Porcentaje (Relativo al padre).</li>
                 <li><strong>rem / em:</strong> Relativo al tamaño de fuente.</li>
@@ -167,7 +162,7 @@
         <!-- Diapositiva 13 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reto de Código</h2>
-            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl">
+            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl text-xs mx-auto">
                 <p>&lt;link rel="stylesheet" href="estilos.css"&gt;</p>
                 <p>/* En el archivo CSS */</p>
                 <p>body {</p>
@@ -179,14 +174,14 @@
 
         <!-- Diapositiva 14 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-4">Refuerzo de Conocimientos</h2>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 15 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-4">Refuerzo de Conocimientos</h2>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -217,25 +212,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué significa CSS?", a: "C", options: ["Color Style Sheets", "Code System Script", "Cascading Style Sheets", "Computer Side Site"] },
-            { q: "CSS se encarga de la:", a: "B", options: ["Estructura", "Presentación", "Lógica", "Conexión"] },
-            { q: "Símbolo para seleccionar ID:", a: "D", options: [".", "*", "@", "#"] },
-            { q: "Símbolo para seleccionar clase:", a: "A", options: [".", "#", "&", "!"] },
-            { q: "Mejor forma de aplicar CSS:", a: "C", options: ["Inline", "Interno", "Externo", "Oculto"] },
-            { q: "¿Qué propiedad cambia el color?", a: "B", options: ["font-color", "color", "text-paint", "fill"] },
-            { q: "Etiqueta para enlazar CSS:", a: "A", options: ["<link>", "<a>", "<script>", "<style>"] },
-            { q: "¿Cómo se comenta en CSS?", a: "D", options: ["//", "<!--", "#", "/* */"] },
-            { q: "Si hay 2 reglas iguales gana:", a: "B", options: ["La primera", "La última", "Ninguna", "La más corta"] },
-            { q: "Extensión de archivos CSS:", a: "C", options: [".html", ".js", ".css", ".txt"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -244,45 +227,31 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const questions1 = [
+            { q: "¿Qué significa CSS?", a: "C", options: ["Color Style Sheets", "Code System Script", "Cascading Style Sheets", "Computer Side Site"] },
+            { q: "CSS se encarga de definir la:", a: "B", options: ["Estructura", "Presentación Visual", "Lógica", "Seguridad"] },
+            { q: "Símbolo para seleccionar por ID único:", a: "D", options: [".", "*", "@", "#"] },
+            { q: "Símbolo para seleccionar por clase:", a: "A", options: [".", "#", "&", "!"] },
+            { q: "Mejor forma de aplicar CSS a una web real:", a: "C", options: ["Inline", "Interno", "Externo", "Oculto"] }
+        ];
+
+        const questions2 = [
+            { q: "¿Qué propiedad cambia el color del texto?", a: "B", options: ["font-color", "color", "text-paint", "fill"] },
+            { q: "Etiqueta para enlazar un archivo CSS externo:", a: "A", options: ["<link>", "<a>", "<script>", "<style>"] },
+            { q: "¿Cómo se escribe un comentario en CSS?", a: "D", options: ["//", "<!--", "#", "/* */"] },
+            { q: "Si hay 2 reglas iguales para un mismo elemento, gana:", a: "B", options: ["La primera", "La última escrita", "Ninguna", "La más corta"] },
+            { q: "Identifica este logotipo tecnológico:", a: "C", options: ["HTML5", "JS", "CSS3", "React"], img: "../../imagenes/css_logo.svg" }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -293,7 +262,8 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
+            IMAQuiz.init('quiz-container-1', questions1);
+            IMAQuiz.init('quiz-container-2', questions2);
             showSlide(0);
         };
     </script>

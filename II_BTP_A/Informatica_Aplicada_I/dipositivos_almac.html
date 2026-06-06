@@ -14,15 +14,12 @@
         .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
         .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
         .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
         #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -66,14 +63,14 @@
             <div class="concept-box">
                 <p>Son componentes de hardware que permiten guardar datos de forma permanente o temporal. A diferencia de la RAM, estos dispositivos mantienen la información aunque se apague la computadora.</p>
             </div>
-            <i class="fas fa-hdd text-6xl text-blue-300 mt-4"></i>
+            <i class="fas fa-hdd text-6xl text-blue-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Unidades de Medida</h2>
             <div class="concept-box border-yellow-400">
-                <ul class="space-y-2 text-lg">
+                <ul class="space-y-2 text-lg text-left max-w-sm mx-auto">
                     <li><strong>Bit:</strong> Unidad mínima (0 o 1).</li>
                     <li><strong>Byte:</strong> 8 bits.</li>
                     <li><strong>Kilobyte (KB):</strong> 1024 bytes.</li>
@@ -91,7 +88,7 @@
             <div class="concept-box">
                 <p><strong>Ejemplo: Disco Duro (HDD).</strong> Son económicos y tienen mucha capacidad, pero son lentos y sensibles a los golpes.</p>
             </div>
-            <i class="fas fa-compact-disc text-6xl text-gray-400 mt-4"></i>
+            <i class="fas fa-compact-disc text-6xl text-gray-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 5 -->
@@ -100,17 +97,17 @@
             <div class="concept-box border-blue-500">
                 <p>No tienen piezas móviles. Son mucho más rápidos que los HDD, resistentes a caídas y consumen menos energía. Son el estándar actual para instalar el Sistema Operativo.</p>
             </div>
-            <i class="fas fa-bolt text-6xl text-yellow-400 mt-4"></i>
+            <i class="fas fa-bolt text-6xl text-yellow-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 6 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Almacenamiento Óptico</h2>
             <p>Utilizan láser para leer y escribir datos en surcos microscópicos.</p>
-            <ul class="mt-4 space-y-2">
-                <li><strong>CD:</strong> 700 MB.</li>
-                <li><strong>DVD:</strong> 4.7 GB.</li>
-                <li><strong>Blu-ray:</strong> 25-50 GB.</li>
+            <ul class="mt-4 space-y-2 text-left max-w-sm mx-auto font-bold">
+                <li class="bg-slate-50 p-2 rounded">CD: 700 MB.</li>
+                <li class="bg-slate-50 p-2 rounded">DVD: 4.7 GB.</li>
+                <li class="bg-slate-50 p-2 rounded">Blu-ray: 25-50 GB.</li>
             </ul>
         </div>
 
@@ -118,9 +115,9 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Memoria Flash</h2>
             <p>Dispositivos portátiles que usan chips de memoria no volátil.</p>
-            <div class="flex space-x-12 mt-6">
-                <div class="text-center"><i class="fas fa-usb text-5xl"></i><br>Pendrive</div>
-                <div class="text-center"><i class="fas fa-sd-card text-5xl"></i><br>Tarjeta SD</div>
+            <div class="flex justify-center space-x-12 mt-6">
+                <div class="text-center"><i class="fas fa-usb text-5xl text-blue-500"></i><br><span class="text-xs font-bold">Pendrive</span></div>
+                <div class="text-center"><i class="fas fa-sd-card text-5xl text-blue-500"></i><br><span class="text-xs font-bold">Tarjeta SD</span></div>
             </div>
         </div>
 
@@ -130,58 +127,56 @@
             <div class="concept-box">
                 <p>Los datos se guardan en servidores remotos vía Internet. <br>Ventaja: Acceso desde cualquier dispositivo.<br>Desventaja: Requiere conexión estable.</p>
             </div>
-            <i class="fas fa-cloud-upload-alt text-6xl text-sky-400 mt-4"></i>
+            <i class="fas fa-cloud-upload-alt text-6xl text-sky-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Internos vs. Externos</h2>
-            <ul class="text-left max-w-xl space-y-4">
-                <li><strong>Internos:</strong> Conectados a la placa base (SATA, M.2). Son fijos.</li>
-                <li><strong>Externos:</strong> Conectados por USB o Thunderbolt. Son portátiles.</li>
+            <ul class="text-left max-w-xl space-y-4 mx-auto">
+                <li><i class="fas fa-microchip mr-2 text-blue-500"></i> <strong>Internos:</strong> Conectados a la placa base (SATA, M.2). Son fijos.</li>
+                <li><i class="fas fa-external-link-alt mr-2 text-green-500"></i> <strong>Externos:</strong> Conectados por USB o Thunderbolt. Son portátiles.</li>
             </ul>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Velocidad de Transferencia</h2>
-            <p>Se mide en MB/s o GB/s. Un SSD moderno puede ser 10 veces más rápido que un HDD tradicional, lo que reduce el tiempo de arranque de Windows de minutos a segundos.</p>
+            <p>Se mide en MB/s o GB/s. Un SSD moderno puede ser 10 veces más rápido que un HDD tradicional, lo que reduce el tiempo de arranque notablemente.</p>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Vida Útil</h2>
-            <p>Todos los dispositivos fallan tarde o temprano. Los HDD por desgaste mecánico y los SSD por límite de ciclos de escritura. Siempre se recomienda tener <strong>Backups</strong>.</p>
-            <i class="fas fa-shield-alt text-6xl text-green-400 mt-4"></i>
+            <p>Todos los dispositivos fallan. Los HDD por desgaste mecánico y los SSD por ciclos de escritura. Siempre se recomienda tener <strong>Backups</strong>.</p>
+            <i class="fas fa-shield-alt text-6xl text-green-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Capacidad de Referencia</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-xl text-sm">
-                <div class="p-4 border">Película HD: ~2 GB</div>
-                <div class="p-4 border">Foto de celular: ~5 MB</div>
-                <div class="p-4 border">Canción: ~4 MB</div>
-                <div class="p-4 border">Juego Moderno: ~100 GB</div>
+            <div class="grid grid-cols-2 gap-4 max-w-xl text-sm mx-auto">
+                <div class="p-4 border rounded bg-white">Película HD: ~2 GB</div>
+                <div class="p-4 border rounded bg-white">Foto móvil: ~5 MB</div>
+                <div class="p-4 border rounded bg-white">Canción MP3: ~4 MB</div>
+                <div class="p-4 border rounded bg-white">Juego: ~100 GB</div>
             </div>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Futuro: Almacenamiento Cuántico</h2>
-            <p>Investigaciones actuales buscan guardar datos a nivel atómico, lo que permitiría guardar toda la información del mundo en un dispositivo del tamaño de una moneda.</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Futuro</h2>
+            <p class="italic text-slate-500 text-2xl">"El almacenamiento evoluciona hacia lo invisible: más capacidad en espacios microscópicos y total dependencia de la red."</p>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -212,25 +207,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Cuál es la unidad mínima de info?", a: "A", options: ["Bit", "Byte", "KB", "Pixel"] },
-            { q: "¿Cuántos bits tiene un Byte?", a: "B", options: ["4", "8", "16", "1024"] },
-            { q: "Tipo de disco con piezas móviles:", a: "C", options: ["SSD", "USB", "HDD", "M.2"] },
-            { q: "¿Qué significa SSD?", a: "D", options: ["Super Speed Disk", "System Storage Device", "Slow Sata Drive", "Solid State Drive"] },
-            { q: "Capacidad de un DVD estándar:", a: "B", options: ["700 MB", "4.7 GB", "25 GB", "1 TB"] },
-            { q: "Dispositivo más rápido hoy:", a: "A", options: ["SSD NVMe", "HDD Sata", "DVD-RW", "Disquete"] },
-            { q: "1024 GB equivalen a:", a: "C", options: ["1 MB", "1 KB", "1 TB", "1 PB"] },
-            { q: "La memoria RAM es:", a: "B", options: ["Permanente", "Volátil", "Óptica", "Externa"] },
-            { q: "Pendrive usa tecnología:", a: "D", options: ["Magnética", "Láser", "Mecánica", "Flash"] },
-            { q: "Almacenar en Internet es:", a: "A", options: ["Nube", "HDD", "RAM", "BIOS"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -239,45 +222,31 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Cuál es la unidad mínima de información en informática?", a: "A", options: ["Bit", "Byte", "Kilobyte", "Pixel"] },
+            { q: "¿Cuántos bits conforman exactamente un Byte?", a: "B", options: ["4", "8", "16", "1024"] },
+            { q: "Tipo de disco que utiliza piezas móviles y platos magnéticos:", a: "C", options: ["SSD", "USB", "HDD (Hard Disk)", "M.2"] },
+            { q: "¿Qué significan las siglas SSD?", a: "D", options: ["Super Speed Disk", "System Storage Device", "Slow Sata Drive", "Solid State Drive"] },
+            { q: "Identifica este componente:", a: "B", options: ["RAM", "Disco Duro", "Fuente", "CPU"], img: "../../imagenes/hdd.jpg" },
+            { q: "¿Cuál de estos dispositivos es el más rápido actualmente?", a: "A", options: ["SSD NVMe", "HDD Sata", "DVD-RW", "Disquete"] },
+            { q: "1024 Gigabytes (GB) equivalen exactamente a:", a: "C", options: ["1 Megabyte", "1 Kilobyte", "1 Terabyte", "1 Petabyte"] },
+            { q: "¿Qué tecnología utiliza una memoria USB o Pendrive?", a: "D", options: ["Magnética", "Láser", "Mecánica", "Flash"] },
+            { q: "Almacenar archivos en servidores remotos vía Internet es:", a: "A", options: ["Nube", "HDD", "RAM", "BIOS"] },
+            { q: "Identifica este formato de almacenamiento:", a: "C", options: ["CPU", "RAM", "Memoria RAM", "SSD"], img: "../../imagenes/ssd.jpg" }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -288,7 +257,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

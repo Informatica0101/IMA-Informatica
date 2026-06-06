@@ -190,3 +190,12 @@ Archivo: js/student.js
 
 Archivo: js/teacher.js
 - [HALLAZGO] Múltiples llamadas secuenciales a fetchApi detectadas en el flujo de administración académica (loadAcademicAdminData -> renderAsignaturasCheckboxes), violando la arquitectura de latencia mínima de Ticket 4.
+
+AUDITORÍA DE PRESENTACIONES ACADÉMICAS - 2026-06-18
+Archivo: 69 Archivos de Presentación (Informatica_I, II_BTP_A, III_BTP_A)
+- [HALLAZGO] Causa raíz del congelamiento: Ausencia del elemento #loading-overlay y de la llamada a GamesAdapter.init().
+- [HALLAZGO] Inconsistencia Normativa: Muchas presentaciones no cumplían la estructura de 16 diapositivas o carecían de encabezados/pies de página institucionales.
+- [HALLAZGO] Cuestionarios obsoletos: Se utilizaba lógica de validación local y estática que no permitía feedback didáctico avanzado.
+- [VERIFICADO] Restauración completa: Se agregaron los elementos de carga y se inicializó el adaptador en todos los archivos.
+- [VERIFICADO] Mejora Didáctica: Se migró la totalidad de los cuestionarios al motor IMAQuiz (js/interactive-quiz.js) para soporte de feedback inmediato y flujo controlado.
+- [VERIFICADO] Normativa: Se estandarizó la tipografía (Poppins/Inter) y los componentes globales en el 100% de los archivos auditados.

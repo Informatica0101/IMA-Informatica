@@ -20,10 +20,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -65,7 +61,7 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es una Referencia?</h2>
             <div class="concept-box">
-                <p>Es la forma en que le decimos a Excel qué celda debe usar en un cálculo. <br>Por defecto, Excel usa referencias <strong>Relativas</strong>.</p>
+                <p>Es la forma en que le decimos a Excel qué celda debe usar en un cálculo o fórmula. Por defecto, Excel siempre usa referencias <strong>Relativas</strong>.</p>
             </div>
         </div>
 
@@ -73,18 +69,19 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">1. Referencia Relativa</h2>
             <div class="concept-box">
-                <p>Son aquellas que cambian automáticamente cuando arrastras la fórmula a otras celdas. Excel ajusta la posición basándose en la distancia a la celda original.</p>
+                <p>Son aquellas que cambian automáticamente cuando arrastras la fórmula. Excel ajusta la posición basándose en la distancia a la celda original.</p>
                 <p class="mt-2 text-sm italic">Ejemplo: Si en B1 pones =A1 y arrastras hacia abajo, en B2 será =A2.</p>
             </div>
+            <img src="../../imagenes/referencias_relativas.gif" alt="Relativas" class="h-32 mt-4 mx-auto rounded shadow">
         </div>
 
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">2. Referencia Absoluta</h2>
             <div class="concept-box border-red-400">
-                <p>Es una referencia que permanece <strong>fija</strong> sin importar a dónde se mueva o arrastre la fórmula. Se usa para celdas con valores constantes (ej. Tasa de Impuesto, Tipo de Cambio).</p>
+                <p>Es una referencia que permanece <strong>fija</strong> sin importar a dónde se mueva la fórmula. Se usa para celdas con valores constantes (ej. Tasa de ISV).</p>
             </div>
-            <i class="fas fa-thumbtack text-6xl text-red-300 mt-4"></i>
+            <i class="fas fa-thumbtack text-6xl text-red-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 5 -->
@@ -92,8 +89,8 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Símbolo de Dólar ($)</h2>
             <div class="concept-box">
                 <p>Para fijar una celda usamos el signo <strong>$</strong> antes de la letra y antes del número.</p>
-                <p class="mt-2 text-2xl text-center font-mono"><strong>$A$1</strong></p>
-                <p class="mt-4 text-xs text-center">Atajo de teclado: Presiona <strong>F4</strong> mientras escribes la fórmula.</p>
+                <p class="mt-2 text-3xl text-center font-mono text-blue-600 font-bold">$A$1</p>
+                <p class="mt-4 text-xs text-center">Atajo: Presiona <strong>F4</strong> mientras escribes la fórmula.</p>
             </div>
         </div>
 
@@ -103,8 +100,8 @@
             <div class="concept-box border-purple-400">
                 <p>Fija solo la fila o solo la columna, dejando la otra libre.</p>
                 <ul class="list-disc ml-8 mt-2 text-sm">
-                    <li><strong>$A1:</strong> Fija la columna A, la fila cambia.</li>
-                    <li><strong>A$1:</strong> Fija la fila 1, la columna cambia.</li>
+                    <li><strong>$A1:</strong> Fija la columna A.</li>
+                    <li><strong>A$1:</strong> Fija la fila 1.</li>
                 </ul>
             </div>
         </div>
@@ -113,7 +110,7 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
             <div class="concept-box">
-                <p>Tienes una lista de precios en la columna A y el valor del ISV (15%) en la celda H1. ¿Cómo escribirías la fórmula en B1 para calcular el impuesto de modo que puedas arrastrarla hacia abajo sin que se mueva la referencia de H1?</p>
+                <p>Tienes una lista de precios en A y el ISV (15%) en H1. ¿Cómo escribirías la fórmula en B1 para calcular el impuesto de modo que puedas arrastrarla sin que se mueva H1?</p>
             </div>
         </div>
 
@@ -121,66 +118,59 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Errores por no Fijar</h2>
             <div class="concept-box bg-red-50 border-red-200">
-                <p>Si olvidas poner el $, al arrastrar la fórmula hacia abajo, Excel buscará el valor en celdas vacías debajo de tu constante, produciendo resultados en cero o errores de #VALOR!</p>
+                <p>Si olvidas el $, al arrastrar la fórmula hacia abajo, Excel buscará el valor en celdas vacías, produciendo resultados erróneos o en cero.</p>
             </div>
-            <i class="fas fa-exclamation-circle text-6xl text-red-400 mt-4"></i>
+            <i class="fas fa-exclamation-circle text-6xl text-red-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Visualización de Fórmulas</h2>
-            <p>Puedes presionar <strong>CTRL + `</strong> (acento grave) para ver todas las fórmulas de tu hoja al mismo tiempo y verificar cuáles tienen el signo $.</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Visualización</h2>
+            <p>Puedes presionar <strong>CTRL + `</strong> para ver todas las fórmulas y verificar cuáles tienen el signo $.</p>
+            <img src="../../imagenes/referencias_absolutas.gif" alt="Absolutas" class="h-32 mt-4 mx-auto rounded shadow">
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Uso en Modelos Financieros</h2>
-            <p>Las referencias absolutas permiten crear simuladores donde cambias un solo dato (ej. Tasa de Interés) y todo el modelo se actualiza correctamente.</p>
-            <i class="fas fa-calculator text-6xl text-blue-300 mt-4"></i>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Simuladores</h2>
+            <p>Las referencias absolutas permiten crear simuladores financieros donde cambias un dato (ej. Tasa de Interés) y todo se recalcula.</p>
+            <i class="fas fa-calculator text-6xl text-blue-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Diferencia Visual</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-sm">
-                <div class="p-4 border bg-gray-50">=A1 (Relativa)</div>
-                <div class="p-4 border bg-blue-50">=$A$1 (Absoluta)</div>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-sm mx-auto">
+                <div class="p-4 border rounded bg-white">=A1 (Relativa)</div>
+                <div class="p-4 border rounded bg-blue-50 text-blue-800">=$A$1 (Absoluta)</div>
             </div>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Dominio de la Herramienta</h2>
-            <p class="italic text-2xl">"Entender el uso de los símbolos de dólar en Excel es el primer gran paso para dejar de ser un usuario básico y convertirse en un experto en automatización."</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Importancia</h2>
+            <p class="italic text-slate-500 text-2xl">"Entender el símbolo de dólar en Excel es lo que diferencia a un usuario promedio de un profesional de la automatización."</p>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Arrastre</h2>
-            <div class="code-block bg-slate-800">
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs mx-auto text-left max-w-md">
                 <p>// Simulación de Arrastre (Relativo)</p>
                 <p>FOR i = 1 TO 10</p>
-                <p>&nbsp;&nbsp;LET B[i] = A[i] * 0.15 // El índice [i] cambia</p>
-                <p>ENDFOR</p>
-                <p>&nbsp;</p>
-                <p>// Simulación de Arrastre (Absoluto)</p>
-                <p>LET constante = H[1]</p>
-                <p>FOR i = 1 TO 10</p>
-                <p>&nbsp;&nbsp;LET B[i] = A[i] * constante // constante NO cambia</p>
+                <p>&nbsp;&nbsp;LET B[i] = A[i] * 0.15 // El índice cambia</p>
                 <p>ENDFOR</p>
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -211,25 +201,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué símbolo fija una celda?", a: "C", options: ["%", "&", "$", "#"] },
-            { q: "Atajo para poner $ rápido:", a: "B", options: ["F2", "F4", "F12", "CTRL+S"] },
-            { q: "Referencia que cambia al arrastrar:", a: "A", options: ["Relativa", "Absoluta", "Mixta", "Fija"] },
-            { q: "¿Qué es $C$5?", a: "D", options: ["Error", "Relativa", "Mixta", "Absoluta"] },
-            { q: "Para fijar solo la fila 2:", a: "C", options: ["$A$2", "A2", "A$2", "$A2"] },
-            { q: "Referencia ideal para Impuestos:", a: "B", options: ["Relativa", "Absoluta", "Circular", "Texto"] },
-            { q: "¿Qué pasa si olvidas el $?", a: "A", options: ["La referencia se mueve", "No pasa nada", "Se apaga la PC", "Se borra el disco"] },
-            { q: "Referencia $B10 es:", a: "C", options: ["Absoluta", "Relativa", "Mixta", "Nula"] },
-            { q: "Si arrastro =A1 a la derecha es:", a: "B", options: ["=A1", "=B1", "=$A$1", "=A2"] },
-            { q: "F4 alterna entre referencias:", a: "A", options: ["Verdadero", "Falso", "Solo en Word", "Solo en Mac"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -238,45 +216,31 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Qué símbolo se utiliza en Excel para fijar una celda?", a: "C", options: ["%", "&", "$ (Dólar)", "#"] },
+            { q: "¿Cuál es el atajo de teclado para insertar los signos de dólar rápidamente?", a: "B", options: ["F2", "F4", "F12", "CTRL+S"] },
+            { q: "¿Cómo se llama la referencia que cambia su dirección al arrastrar la fórmula?", a: "A", options: ["Relativa", "Absoluta", "Mixta", "Nula"] },
+            { q: "¿Qué tipo de referencia representa la expresión $C$5?", a: "D", options: ["Error de sintaxis", "Referencia Relativa", "Referencia Mixta", "Referencia Absoluta"] },
+            { q: "Para fijar únicamente la fila 2 de la columna A, la expresión es:", a: "C", options: ["$A$2", "A2", "A$2", "$A2"] },
+            { q: "Identifica el tipo de referencia que se está usando en este ejemplo:", a: "B", options: ["Relativa", "Absoluta", "Circular", "Error"], img: "../../imagenes/referencias_absolutas.gif" },
+            { q: "¿Qué sucede si arrastro una referencia relativa una fila hacia abajo?", a: "A", options: ["El número de fila aumenta en 1", "La referencia queda fija", "Se borra la fórmula", "Excel muestra un error"] },
+            { q: "La referencia $B10 se considera una referencia:", a: "C", options: ["Absoluta", "Relativa", "Mixta", "Digital"] },
+            { q: "Si arrastro la fórmula =A1 una columna hacia la derecha, el resultado será:", a: "B", options: ["=A1", "=B1", "=$A$1", "=A2"] },
+            { q: "Identifica el tipo de referencia en este movimiento:", a: "A", options: ["Relativa", "Absoluta", "Mixta", "Nula"], img: "../../imagenes/referencias_relativas.gif" }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -287,7 +251,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

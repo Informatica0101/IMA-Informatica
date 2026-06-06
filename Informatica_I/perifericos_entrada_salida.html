@@ -14,15 +14,15 @@
         .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
         .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
+        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; }
         .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
         #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.75rem; margin: 0.25rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.85rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -241,16 +241,14 @@
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -259,7 +257,10 @@
             <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4">ÁLBUM ILUSTRADO</h3>
                 <p>Crear un álbum con recortes o dibujos de 5 periféricos de entrada, 5 de salida y 3 mixtos, indicando el nombre de cada uno.</p>
-                <p class="mt-4 font-bold">Puntaje: 10%</p>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
+                    <span>Valor: 10%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
             </div>
         </div>
     </main>
@@ -278,6 +279,7 @@
     <script src="../js/config.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/games-adapter.js"></script>
+    <script src="../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
@@ -286,14 +288,14 @@
         const counter = document.getElementById('slide-counter');
 
         const quizQuestions = [
-            { q: "¿Qué hace un periférico de entrada?", a: "A", options: ["Envía datos a la CPU", "Muestra resultados", "Guarda energía", "Limpia el disco"] },
+            { q: "¿Identifica este periférico?", img: "../imagenes/teclado.png", a: "C", options: ["Mouse", "Monitor", "Teclado", "Escáner"] },
             { q: "El monitor es un periférico de:", a: "B", options: ["Entrada", "Salida", "Mixto", "Procesamiento"] },
             { q: "¿Cuál es un periférico de entrada?", a: "C", options: ["Impresora", "Parlantes", "Teclado", "Monitor"] },
+            { q: "Identifica este dispositivo:", img: "../imagenes/escaner.png", a: "A", options: ["Escáner", "Impresora", "CPU", "Router"] },
+            { q: "¿Para qué sirve el micrófono?", img: "../imagenes/microfono.png", a: "B", options: ["Escuchar", "Ingresar audio", "Procesar", "Imprimir"] },
+            { q: "El mouse se conecta comúnmente por:", img: "../imagenes/raton.png", a: "C", options: ["Cable de luz", "HDMI", "USB", "VGA"] },
+            { q: "Un periférico para audio de salida es:", img: "../imagenes/altavoces.png", a: "B", options: ["Micrófono", "Parlantes", "Cámara", "Teclado"] },
             { q: "La memoria USB es un periférico:", a: "D", options: ["Solo de salida", "Solo de entrada", "De audio", "Mixto / Almacenamiento"] },
-            { q: "¿Para qué sirve el escáner?", a: "A", options: ["Digitalizar documentos", "Imprimir fotos", "Escuchar música", "Mover el puntero"] },
-            { q: "El mouse se conecta comúnmente por:", a: "C", options: ["Cable de luz", "HDMI", "USB", "VGA"] },
-            { q: "Un periférico para audio de salida es:", a: "B", options: ["Micrófono", "Auriculares", "Cámara", "Teclado"] },
-            { q: "Multifuncional (impresora+escáner) es:", a: "D", options: ["Solo entrada", "Solo salida", "Procesador", "Mixto"] },
             { q: "¿Qué significa USB?", a: "A", options: ["Universal Serial Bus", "Unit System Base", "Ultra Speed Boot", "User Save Bin"] },
             { q: "El proyector es un periférico de:", a: "B", options: ["Entrada", "Salida", "Almacenamiento", "Energía"] }
         ];
@@ -305,30 +307,9 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
-        }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[12px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct');
-                        else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
@@ -336,15 +317,6 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -355,7 +327,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

@@ -20,10 +20,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -77,19 +73,19 @@
                 <p><strong>DBMS (Database Management System):</strong> Es el software que permite a los usuarios interactuar con la base de datos (crear, leer, actualizar, borrar).</p>
                 <p class="mt-2 text-sm italic">Ejemplos: MySQL, Oracle, SQL Server, MongoDB.</p>
             </div>
-            <i class="fas fa-database text-6xl text-blue-400 mt-4"></i>
+            <i class="fas fa-database text-6xl text-blue-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Modelos de Datos</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
-                <div class="p-4 bg-slate-50 border rounded">
-                    <p class="font-bold">Relacional (SQL)</p>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left mx-auto">
+                <div class="p-4 bg-slate-50 border rounded shadow-sm">
+                    <p class="font-bold text-blue-700">Relacional (SQL)</p>
                     <p class="text-xs">Usa tablas con filas y columnas vinculadas por llaves.</p>
                 </div>
-                <div class="p-4 bg-blue-50 border rounded">
-                    <p class="font-bold">No Relacional (NoSQL)</p>
+                <div class="p-4 bg-blue-50 border rounded shadow-sm">
+                    <p class="font-bold text-blue-700">No Relacional (NoSQL)</p>
                     <p class="text-xs">Usa documentos (JSON) o grafos. Muy flexible.</p>
                 </div>
             </div>
@@ -99,12 +95,13 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructura Relacional</h2>
             <div class="concept-box">
-                <ul class="list-disc ml-8 space-y-2">
-                    <li><strong>Tabla:</strong> Colección de registros.</li>
-                    <li><strong>Fila (Registro/Tupla):</strong> Una unidad completa de información.</li>
-                    <li><strong>Columna (Campo/Atributo):</strong> Un tipo de dato específico (ej. Nombre).</li>
+                <ul class="list-disc ml-8 space-y-2 text-sm">
+                    <li><strong>Tabla:</strong> Colección de registros de un mismo tipo.</li>
+                    <li><strong>Fila (Registro):</strong> Una unidad completa de información.</li>
+                    <li><strong>Columna (Campo):</strong> Un tipo de dato específico (ej. Edad).</li>
                 </ul>
             </div>
+            <img src="../../imagenes/modelo_datos_vision.png" alt="Modelado" class="h-32 mt-4 mx-auto rounded shadow">
         </div>
 
         <!-- Diapositiva 6 -->
@@ -112,7 +109,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Llaves Primarias (PK)</h2>
             <div class="concept-box border-yellow-400">
                 <p>Es un campo único que identifica de forma irrepetible a cada registro en una tabla.</p>
-                <p class="mt-2 text-sm font-bold">Ejemplo: El número de identidad o la matrícula de un auto.</p>
+                <p class="mt-2 text-sm font-bold text-blue-600">Ejemplo: El número de identidad o un código de barra.</p>
             </div>
         </div>
 
@@ -127,15 +124,15 @@
         <!-- Diapositiva 8 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Integridad de Datos</h2>
-            <p>Asegura que la información sea exacta y consistente. Las reglas de integridad evitan, por ejemplo, que un alumno tenga una nota negativa.</p>
-            <i class="fas fa-check-double text-6xl text-green-400 mt-8"></i>
+            <p>Asegura que la información sea exacta y consistente. Las reglas de integridad evitan, por ejemplo, datos corruptos o registros duplicados.</p>
+            <i class="fas fa-check-double text-6xl text-green-400 mt-8 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Normalización</h2>
             <div class="concept-box border-blue-400">
-                <p>Es el proceso de organizar los datos para evitar la <strong>redundancia</strong> (repetición innecesaria) y asegurar que las relaciones tengan sentido lógico.</p>
+                <p>Es el proceso de organizar los datos para evitar la <strong>redundancia</strong> (repetición innecesaria) y asegurar la consistencia lógica.</p>
             </div>
         </div>
 
@@ -143,61 +140,51 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Relaciones</h2>
             <p>¿Cómo se conectan las tablas?</p>
-            <div class="grid grid-cols-1 gap-2 mt-4 text-xs font-bold max-w-md mx-auto">
-                <div class="p-2 border">1 a 1 (Persona -> Pasaporte)</div>
-                <div class="p-2 border bg-blue-50">1 a Muchos (Cliente -> Facturas)</div>
-                <div class="p-2 border">Muchos a Muchos (Estudiantes -> Clases)</div>
+            <div class="grid grid-cols-1 gap-2 mt-4 text-xs font-bold max-w-sm mx-auto">
+                <div class="p-2 border rounded bg-white shadow-sm">1 a 1 (Persona -> Pasaporte)</div>
+                <div class="p-2 border rounded bg-blue-50 shadow-sm">1 a Muchos (Cliente -> Facturas)</div>
+                <div class="p-2 border rounded bg-white shadow-sm">Muchos a Muchos (Alumnos -> Clases)</div>
             </div>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Lenguaje SQL</h2>
-            <p>Es el estándar para interactuar con BD relacionales:</p>
-            <div class="code-block">
-                <p>INSERT INTO alumnos (id, nombre, nota)</p>
-                <p>VALUES (101, 'Pablo', 95);</p>
-                <p>&nbsp;</p>
-                <p>SELECT * FROM alumnos WHERE nota > 70;</p>
+            <p>Es el estándar para interactuar con bases de datos relacionales:</p>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs mx-auto text-left max-w-md">
+                <p class="text-blue-300">INSERT INTO alumnos (id, nombre, nota)</p>
+                <p class="text-blue-300">VALUES (101, 'Pablo', 95);</p>
+                <br>
+                <p class="text-green-300">SELECT * FROM alumnos WHERE nota > 70;</p>
             </div>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Importancia</h2>
-            <p class="italic text-2xl">"En la era de la información, quien domina las bases de datos, domina el corazón de cualquier aplicación moderna."</p>
+            <p class="italic text-slate-500 text-2xl">"En la era digital, quien domina las bases de datos domina el corazón de cualquier aplicación moderna."</p>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Avanzado</h2>
-            <p class="mb-4">Estructura de una Tupla (Registro):</p>
-            <div class="code-block bg-slate-800">
-                <p>RECORD Estudiante {</p>
-                <p>&nbsp;&nbsp;INTEGER id_estudiante; // PK</p>
-                <p>&nbsp;&nbsp;STRING nombre;</p>
-                <p>&nbsp;&nbsp;FLOAT promedio;</p>
-                <p>&nbsp;&nbsp;BOOLEAN esta_activo;</p>
-                <p>}</p>
-            </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Modelo Entidad Relación</h2>
+            <img src="../../imagenes/one-to-many.png" alt="ERD" class="h-48 mt-4 mx-auto rounded shadow-lg">
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4 uppercase">DISEÑO DE TABLAS</h3>
                 <p>Diseñar en el cuaderno las tablas para un "Sistema de Videojuegos": Tabla 'Jugadores' y Tabla 'Partidas'. Identificar PK en cada una y cómo se relacionarían.</p>
                 <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
@@ -222,25 +209,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué es una BD?", a: "A", options: ["Conjunto organizado de datos", "Un tipo de monitor", "Un cable de red", "Una sola foto"] },
-            { q: "El software para BD se llama:", a: "C", options: ["CPU", "RAM", "DBMS", "BIOS"] },
-            { q: "¿Qué es una Llave Primaria?", a: "B", options: ["La llave de la PC", "Identificador único", "Una tecla especial", "El mouse"] },
-            { q: "Evitar datos repetidos se llama:", a: "D", options: ["Borrado", "Copia", "Suma", "Normalización"] },
-            { q: "Modelo SQL usa:", a: "A", options: ["Tablas", "Círculos", "Sólo texto plano", "Nubes"] },
-            { q: "Una fila en una tabla es un:", a: "C", options: ["Color", "Número", "Registro", "Menú"] },
-            { q: "Una columna en una tabla es un:", a: "B", options: ["Precio", "Campo / Atributo", "Error", "Cierre"] },
-            { q: "SQL significa:", a: "D", options: ["System Quick Line", "Simple Query Log", "Safe Queue List", "Structured Query Language"] },
-            { q: "Relación de Persona a Pasaporte:", a: "A", options: ["1 a 1", "Muchos a Muchos", "1 a Muchos", "Ninguna"] },
-            { q: "MySQL es un ejemplo de:", a: "B", options: ["Hardware", "DBMS", "Navegador", "Virus"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -249,56 +224,41 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Qué es una Base de Datos?", a: "A", options: ["Conjunto organizado de datos", "Un tipo de monitor", "Un cable de red", "Una sola fotografía"] },
+            { q: "¿Cómo se llama el software encargado de gestionar las bases de datos?", a: "C", options: ["CPU", "RAM", "DBMS", "BIOS"] },
+            { q: "¿Qué es una Llave Primaria (PK)?", a: "B", options: ["La llave física del PC", "Un identificador único para cada registro", "Una tecla especial del teclado", "El botón de encendido"] },
+            { q: "El proceso de organizar datos para evitar la repetición innecesaria es:", a: "D", options: ["Borrado", "Copiado", "Suma", "Normalización"] },
+            { q: "El modelo que utiliza tablas vinculadas por llaves es el:", a: "A", options: ["Relacional", "Documental", "Jerárquico", "Red"] },
+            { q: "Una fila en una tabla de base de datos representa un:", a: "C", options: ["Color", "Número", "Registro completo", "Menú de opciones"] },
+            { q: "Una columna en una tabla se conoce técnicamente como:", a: "B", options: ["Precio", "Campo o Atributo", "Error lógico", "Cierre de sesión"] },
+            { q: "¿Qué significan las siglas SQL?", a: "D", options: ["System Quick Line", "Simple Query Log", "Safe Queue List", "Structured Query Language"] },
+            { q: "Identifica este tipo de relación:", a: "A", options: ["1 a Muchos", "1 a 1", "Muchos a Muchos", "Ninguna"], img: "../../imagenes/one-to-many.png" },
+            { q: "¿Cuál de estos es un ejemplo de un DBMS relacional popular?", a: "B", options: ["Windows", "MySQL", "Photoshop", "Chrome"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
-        });
 
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('prog_bd_modelos', false);
+                await window.GamesAdapter.init('prog_bd', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

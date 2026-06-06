@@ -19,10 +19,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -66,29 +62,29 @@
             <div class="concept-box">
                 <p>Todo comenzó en Mesopotamia (~3500 a.C.) con la escritura <strong>cuneiforme</strong> en tablillas de arcilla. El objetivo siempre fue el mismo: registrar información de forma permanente.</p>
             </div>
-            <i class="fas fa-scroll text-6xl text-amber-600 mt-4"></i>
+            <i class="fas fa-scroll text-6xl text-amber-600 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Revolución de la Imprenta</h2>
-            <p>En 1440, Johannes Gutenberg inventa la imprenta de tipos móviles, permitiendo por primera vez la producción masiva de conocimiento. Es el ancestro directo de la impresora láser moderna.</p>
-            <i class="fas fa-print text-6xl text-gray-400 mt-4"></i>
+            <p class="text-lg max-w-2xl">En 1440, Johannes Gutenberg inventa la imprenta de tipos móviles, permitiendo por primera vez la producción masiva de conocimiento. Es el ancestro directo de la impresora láser moderna.</p>
+            <i class="fas fa-print text-6xl text-gray-400 mt-8 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Máquina de Escribir</h2>
-            <div class="concept-box">
+            <div class="concept-box border-yellow-500">
                 <p>A finales del siglo XIX, la máquina de escribir introduce el teclado <strong>QWERTY</strong>, que seguimos usando hoy en nuestros teclados de computadora y celulares.</p>
             </div>
-            <i class="fas fa-keyboard text-6xl text-slate-800 mt-4"></i>
+            <i class="fas fa-keyboard text-6xl text-slate-800 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 5 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Primeros Procesadores de Texto</h2>
-            <p>En los años 60 y 70 surgieron programas básicos en grandes computadoras. Permitían borrar y corregir en pantalla antes de imprimir, algo revolucionario en su época.</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Primeros Procesadores</h2>
+            <p class="text-lg max-w-2xl">En los años 60 y 70 surgieron programas básicos en grandes computadoras. Permitían borrar y corregir en pantalla antes de imprimir, algo revolucionario.</p>
         </div>
 
         <!-- Diapositiva 6 -->
@@ -96,7 +92,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Era de las PC (Años 80)</h2>
             <div class="concept-box border-blue-400">
                 <p>Aparecen programas icónicos:</p>
-                <ul class="list-disc ml-8 mt-2">
+                <ul class="list-disc ml-8 mt-2 space-y-1">
                     <li><strong>WordStar:</strong> El primero con éxito masivo.</li>
                     <li><strong>WordPerfect:</strong> El estándar de los años 80.</li>
                     <li><strong>VisiCalc:</strong> La primera hoja de cálculo.</li>
@@ -107,72 +103,75 @@
         <!-- Diapositiva 7 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio: Línea del Tiempo</h2>
-            <div class="concept-box">
-                <p>Ordenar cronológicamente: <br>1. Imprenta <br>2. Word para Windows <br>3. Escritura Cuneiforme <br>4. Máquina de escribir.</p>
+            <div class="concept-box bg-slate-50">
+                <p>Ordenar cronológicamente mentalmente:</p>
+                <ol class="list-decimal ml-8 mt-2 font-bold">
+                    <li>Escritura Cuneiforme</li>
+                    <li>Imprenta de Gutenberg</li>
+                    <li>Máquina de escribir</li>
+                    <li>Nacimiento de Microsoft Office</li>
+                </ol>
             </div>
         </div>
 
         <!-- Diapositiva 8 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Nace Microsoft Office (1989)</h2>
-            <p>Microsoft agrupa Word, Excel y PowerPoint en un solo paquete. Por primera vez, los programas "hablan" el mismo idioma y comparten datos fácilmente.</p>
-            <i class="fab fa-microsoft text-6xl text-blue-600 mt-4"></i>
+            <p class="text-lg max-w-2xl">Microsoft agrupa Word, Excel y PowerPoint en un solo paquete. Por primera vez, los programas comparten datos fácilmente.</p>
+            <i class="fab fa-microsoft text-6xl text-blue-600 mt-8 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Revolución de la Nube</h2>
             <div class="concept-box border-sky-400">
-                <p>Con <strong>Google Docs (2006)</strong> y Office 365, los documentos dejan de vivir en el disco duro para vivir en Internet, permitiendo el trabajo colaborativo en tiempo real.</p>
+                <p>Con <strong>Google Docs (2006)</strong> y Office 365, los documentos viven en Internet, permitiendo el trabajo colaborativo en tiempo real.</p>
             </div>
-            <i class="fas fa-cloud text-6xl text-sky-400 mt-4"></i>
+            <i class="fas fa-cloud text-6xl text-sky-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">OCR: Digitalización de Papel</h2>
-            <p>La tecnología de Reconocimiento Óptico de Caracteres (OCR) permite que un escáner o una foto conviertan un papel físico en un texto editable en Word.</p>
-            <i class="fas fa-scanner text-6xl text-gray-500 mt-4"></i>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">OCR: Digitalización</h2>
+            <p class="text-lg max-w-2xl">La tecnología de Reconocimiento Óptico de Caracteres (OCR) permite convertir un papel físico en un texto editable digital.</p>
+            <i class="fas fa-scanner text-6xl text-gray-500 mt-8 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Formatos Estándar</h2>
-            <p>A lo largo de la historia hemos pasado de archivos propietarios (.doc) a estándares abiertos (.docx, .pdf) que garantizan que el documento se vea igual en cualquier equipo.</p>
+            <p class="text-lg max-w-2xl">Hemos pasado de archivos cerrados (.doc) a estándares abiertos (.docx, .pdf) que garantizan compatibilidad total.</p>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Futuro: IA en la Suite</h2>
             <div class="concept-box border-purple-500">
-                <p>Asistentes como Copilot o Gemini ya no solo corrigen ortografía, sino que pueden redactar borradores enteros, resumir documentos y crear gráficos con solo pedirlos.</p>
+                <p>Asistentes como Copilot o Gemini ya no solo corrigen ortografía, sino que pueden redactar borradores enteros y crear presentaciones completas.</p>
             </div>
-            <i class="fas fa-robot text-6xl text-purple-600 mt-4"></i>
+            <i class="fas fa-robot text-6xl text-purple-600 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reto de Código: Formato</h2>
-            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl">
-                <p>// Algoritmo para verificar tipo de archivo</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Identificación de Tipos</h2>
+            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl mx-auto">
                 <p>IF extension == ".docx" THEN</p>
-                <p>&nbsp;&nbsp;PRINT "Documento de Microsoft Word"</p>
+                <p>&nbsp;&nbsp;PRINT "Documento de Word"</p>
                 <p>ELSE IF extension == ".xlsx" THEN</p>
-                <p>&nbsp;&nbsp;PRINT "Hoja de Cálculo de Excel"</p>
+                <p>&nbsp;&nbsp;PRINT "Hoja de Excel"</p>
                 <p>ENDIF</p>
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -180,7 +179,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
             <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4 uppercase">HISTORIA DIGITAL</h3>
-                <p>Realizar una investigación sobre el programa <strong>WordStar</strong>. ¿En qué año salió? ¿Por qué dejó de usarse? Entregar un resumen de una página en Word (usando el formato .docx).</p>
+                <p>Realizar una investigación sobre el programa <strong>WordStar</strong>. ¿En qué año salió? ¿Por qué dejó de usarse? Entregar en formato PDF.</p>
                 <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
                     <span>Valor: 5%</span>
                     <span>Fecha: Próxima clase</span>
@@ -203,12 +202,26 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
+
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
+        }
 
         const quizQuestions = [
             { q: "¿Dónde nació la escritura?", a: "B", options: ["Egipto", "Mesopotamia", "Grecia", "Roma"] },
@@ -223,52 +236,11 @@
             { q: "IA de Microsoft en Office:", a: "C", options: ["Siri", "Alexa", "Copilot", "Cortana"] }
         ];
 
-        function showSlide(index) {
-            if (index < 0 || index >= slides.length) return;
-            slides[currentSlideIndex].classList.remove('active');
-            currentSlideIndex = index;
-            slides[currentSlideIndex].classList.add('active');
-            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
-        }
-
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
-
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -279,7 +251,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

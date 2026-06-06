@@ -14,16 +14,11 @@
         .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
         .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
-        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; border-left: 4px solid #3b82f6; }
         .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
         #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -75,7 +70,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Medidas Absolutas</h2>
             <div class="concept-box border-yellow-400">
                 <p>Tienen un tamaño fijo y no cambian. El ejemplo principal es el <strong>Píxel (px)</strong>. <br>Ideales para bordes o elementos que no deben estirarse.</p>
-                <div class="code-block mt-4">border: 2px solid black;</div>
+                <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">border: 2px solid black;</div>
             </div>
         </div>
 
@@ -83,10 +78,10 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Medidas Relativas</h2>
             <p>Se adaptan según el tamaño de otro elemento (el padre, la fuente o la pantalla).</p>
-            <ul class="grid grid-cols-2 gap-4 mt-6 text-sm">
-                <li class="p-4 border bg-gray-50"><strong>%:</strong> Porcentaje.</li>
-                <li class="p-4 border bg-gray-50"><strong>em / rem:</strong> Relativos al texto.</li>
-                <li class="p-4 border bg-gray-50"><strong>vh / vw:</strong> Relativos a la ventana.</li>
+            <ul class="grid grid-cols-2 gap-4 mt-6 text-sm mx-auto max-w-xl">
+                <li class="p-4 border bg-gray-50 rounded"><strong>%:</strong> Porcentaje.</li>
+                <li class="p-4 border bg-gray-50 rounded"><strong>em / rem:</strong> Relativos al texto.</li>
+                <li class="p-4 border bg-gray-50 rounded"><strong>vh / vw:</strong> Relativos a la ventana.</li>
             </ul>
         </div>
 
@@ -96,7 +91,7 @@
             <div class="concept-box">
                 <p>Define el tamaño relativo al contenedor padre. Si el padre mide 1000px y el hijo 50%, el hijo medirá 500px.</p>
             </div>
-            <div class="w-full h-10 border border-dashed mt-4"><div class="w-1/2 h-full bg-blue-500">50%</div></div>
+            <div class="w-full max-w-md h-10 border border-dashed mt-4 mx-auto"><div class="w-1/2 h-full bg-blue-500 flex items-center justify-center text-white text-xs">50%</div></div>
         </div>
 
         <!-- Diapositiva 6 -->
@@ -104,7 +99,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La unidad rem</h2>
             <div class="concept-box border-green-500">
                 <p>Es la unidad más recomendada para fuentes. Se basa en el tamaño de la raíz (html). Por defecto, 1rem = 16px.</p>
-                <div class="code-block mt-4">font-size: 1.5rem; /* Sería 24px */</div>
+                <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">font-size: 1.5rem; /* Sería 24px */</div>
             </div>
         </div>
 
@@ -113,7 +108,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio: Cálculo rem</h2>
             <div class="concept-box">
                 <p>Si cambias el tamaño base del HTML a 20px, ¿cuánto medirá un título con 3rem?</p>
-                <p class="mt-4 font-bold text-center">Respuesta: 60 píxeles.</p>
+                <p class="mt-4 font-bold text-center text-2xl text-blue-600">Respuesta: 60 píxeles.</p>
             </div>
         </div>
 
@@ -121,7 +116,7 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Viewport Units (vh / vw)</h2>
             <p>Se basan en el tamaño de la ventana del navegador (lo que el usuario ve).</p>
-            <ul class="text-left space-y-4 max-w-xl">
+            <ul class="text-left space-y-4 max-w-xl mx-auto">
                 <li><strong>100vw:</strong> Todo el ancho de la pantalla.</li>
                 <li><strong>100vh:</strong> Todo el alto de la pantalla.</li>
             </ul>
@@ -131,9 +126,9 @@
         <!-- Diapositiva 9 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Diferencia em vs rem</h2>
-            <div class="grid grid-cols-2 gap-4 mt-4 text-xs">
-                <div class="p-4 border bg-blue-50"><strong>em:</strong> Relativo al padre inmediato (puede causar efectos en cadena).</div>
-                <div class="p-4 border bg-green-50"><strong>rem:</strong> Relativo al HTML (siempre es el mismo valor en toda la web).</div>
+            <div class="grid grid-cols-2 gap-4 mt-4 text-xs mx-auto max-w-xl">
+                <div class="p-4 border bg-blue-50 rounded"><strong>em:</strong> Relativo al padre inmediato (puede causar efectos en cadena).</div>
+                <div class="p-4 border bg-green-50 rounded"><strong>rem:</strong> Relativo al HTML (siempre es el mismo valor en toda la web).</div>
             </div>
         </div>
 
@@ -141,16 +136,16 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Uso de fr (Fraction)</h2>
             <p>Unidad exclusiva de <strong>CSS Grid</strong>. Representa una fracción del espacio libre en el grid.</p>
-            <div class="code-block mt-4">grid-template-columns: 1fr 2fr;</div>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">grid-template-columns: 1fr 2fr;</div>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Medidas de Tiempo</h2>
             <p>Usadas en animaciones y transiciones.</p>
-            <ul class="flex space-x-12 mt-6 font-mono">
-                <li>s (Segundos)</li>
-                <li>ms (Milisegundos)</li>
+            <ul class="flex justify-center space-x-12 mt-6 font-mono font-bold">
+                <li class="bg-slate-100 p-2 rounded">s (Segundos)</li>
+                <li class="bg-slate-100 p-2 rounded">ms (Milisegundos)</li>
             </ul>
             <p class="mt-2 text-xs italic">1000ms = 1s</p>
         </div>
@@ -159,14 +154,14 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Medidas de Ángulo</h2>
             <p>Usadas para rotar elementos (transform: rotate).</p>
-            <div class="code-block mt-4">transform: rotate(45deg);</div>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">transform: rotate(45deg);</div>
             <i class="fas fa-sync text-6xl text-yellow-500 mt-4"></i>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reto de Código</h2>
-            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl text-xs">
+            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl text-xs mx-auto">
                 <p>section {</p>
                 <p>&nbsp;&nbsp;min-height: 100vh; /* Ocupa toda la pantalla */</p>
                 <p>&nbsp;&nbsp;width: 100%;</p>
@@ -176,16 +171,14 @@
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -216,25 +209,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "Unidad absoluta principal:", a: "B", options: ["%", "px", "rem", "vh"] },
-            { q: "¿Cuánto es 1rem por defecto?", a: "A", options: ["16px", "10px", "20px", "1px"] },
-            { q: "Unidad relativa a la ventana:", a: "C", options: ["em", "px", "vh", "%"] },
-            { q: "Medida recomendada para fuentes:", a: "D", options: ["cm", "in", "pt", "rem"] },
-            { q: "Relativo al padre inmediato:", a: "B", options: ["rem", "em", "vw", "px"] },
-            { q: "1000ms equivalen a:", a: "A", options: ["1s", "10s", "0.1s", "100s"] },
-            { q: "Medida de rotación (grados):", a: "C", options: ["rad", "grad", "deg", "turn"] },
-            { q: "Unidad de CSS Grid:", a: "D", options: ["px", "%", "rem", "fr"] },
-            { q: "Viewport Width es:", a: "B", options: ["vh", "vw", "window", "width"] },
-            { q: "Si el padre mide 400px, 25% es:", a: "C", options: ["50px", "200px", "100px", "400px"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -243,45 +224,31 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Cuál es la unidad de medida absoluta principal en web?", a: "B", options: ["%", "px (Píxel)", "rem", "vh"] },
+            { q: "¿Cuál es el valor por defecto de 1rem en la mayoría de navegadores?", a: "A", options: ["16px", "10px", "20px", "1px"] },
+            { q: "Unidad relativa al alto total de la ventana visible:", a: "C", options: ["em", "px", "vh", "%"] },
+            { q: "Unidad recomendada actualmente para el tamaño de fuentes:", a: "D", options: ["cm", "in", "pt", "rem"] },
+            { q: "La unidad 'em' es relativa al tamaño de fuente de:", a: "B", options: ["El HTML raíz", "Su elemento padre", "La pantalla", "El monitor"] },
+            { q: "¿A cuántos segundos equivalen 1000ms?", a: "A", options: ["1s", "10s", "0.1s", "100s"] },
+            { q: "Unidad utilizada para definir ángulos de rotación:", a: "C", options: ["rad", "grad", "deg (Grados)", "turn"] },
+            { q: "Unidad fraccionaria utilizada exclusivamente en CSS Grid:", a: "D", options: ["px", "%", "rem", "fr"] },
+            { q: "¿Qué significan las siglas 'vw'?", a: "B", options: ["Video Width", "Viewport Width", "Virtual Web", "Value Width"] },
+            { q: "Si el padre mide 400px, ¿cuánto es el 25%?", a: "C", options: ["50px", "200px", "100px", "400px"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -292,7 +259,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

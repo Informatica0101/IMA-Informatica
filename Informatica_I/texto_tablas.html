@@ -14,19 +14,14 @@
         .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
         .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
-        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; }
         .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
         #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
-        .styled-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.8rem; }
-        .styled-table th { background: var(--azul-ima); color: white; padding: 8px; }
-        .styled-table td { border: 1px solid #e2e8f0; padding: 8px; text-align: center; }
+        .styled-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .styled-table th { background: var(--azul-ima); color: white; padding: 12px; }
+        .styled-table td { border: 1px solid #e2e8f0; padding: 12px; text-align: center; font-weight: 500; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -54,7 +49,7 @@
         <!-- Diapositiva 1 -->
         <div class="slide active">
             <img src="../imagenes/logo.png" alt="Logo" class="w-48 mb-8">
-            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase">Formato de Texto y Tablas</h1>
+            <h1 class="text-5xl font-black text-slate-800 font-poppins mb-4 uppercase text-center">Formato de Texto y Tablas</h1>
             <br>&nbsp;<br><br>&nbsp;<br>
             <div class="space-y-2 text-slate-600 font-medium">
                 <p class="text-xl">Informática I</p>
@@ -68,144 +63,151 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es el Formato de Texto?</h2>
             <div class="concept-box">
-                <p>Se refiere a los cambios que aplicamos a la apariencia de los caracteres y párrafos para mejorar la legibilidad y resaltar información.</p>
+                <p>Se refiere a los cambios que aplicamos a la apariencia de los caracteres y párrafos para mejorar la legibilidad y resaltar información clave.</p>
             </div>
+            <i class="fas fa-font text-6xl text-blue-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Herramientas de Fuente</h2>
-            <ul class="list-disc text-left space-y-2 max-w-2xl">
-                <li><strong>Tipo de Letra:</strong> Arial, Calibri, Times New Roman.</li>
-                <li><strong>Tamaño:</strong> Medido en puntos (pt).</li>
-                <li><strong>Estilos:</strong> Negrita, Cursiva, Subrayado.</li>
-                <li><strong>Color:</strong> Resalte visual de palabras clave.</li>
+            <ul class="text-left space-y-3 max-w-xl mx-auto text-lg">
+                <li class="flex items-center space-x-3"><i class="fas fa-check-circle text-blue-500"></i><span><strong>Tipo de Letra:</strong> Arial, Calibri, Poppins.</span></li>
+                <li class="flex items-center space-x-3"><i class="fas fa-check-circle text-blue-500"></i><span><strong>Tamaño:</strong> Medido en puntos (pt).</span></li>
+                <li class="flex items-center space-x-3"><i class="fas fa-check-circle text-blue-500"></i><span><strong>Estilos:</strong> Negrita, Cursiva, Subrayado.</span></li>
             </ul>
         </div>
 
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Alineación de Párrafo</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-2xl">
-                <div class="p-4 border rounded">Izquierda</div>
-                <div class="p-4 border rounded">Derecha</div>
-                <div class="p-4 border rounded">Centrado</div>
-                <div class="p-4 border border-blue-500 bg-blue-50 rounded">Justificado</div>
+            <div class="grid grid-cols-2 gap-4 max-w-2xl mx-auto font-bold">
+                <div class="p-4 border rounded bg-slate-50">Izquierda</div>
+                <div class="p-4 border rounded bg-slate-50">Centrado</div>
+                <div class="p-4 border rounded bg-slate-50">Derecha</div>
+                <div class="p-4 border-2 border-blue-500 bg-blue-50 rounded">Justificado</div>
             </div>
+            <p class="mt-4 text-xs italic">Justificado: Alinea el texto en ambos bordes.</p>
         </div>
 
         <!-- Diapositiva 5 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es una Tabla?</h2>
-            <div class="concept-box">
+            <div class="concept-box border-yellow-500">
                 <p>Es una cuadrícula diseñada para organizar datos en <strong>Filas</strong> (horizontales) y <strong>Columnas</strong> (verticales).</p>
-                <p class="mt-4">La intersección de una fila y una columna se llama <strong>Celda</strong>.</p>
+                <p class="mt-4 text-xl">La intersección de una fila y una columna se llama <strong>Celda</strong>.</p>
             </div>
         </div>
 
         <!-- Diapositiva 6 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Partes de la Tabla</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
-                <div class="p-4 bg-slate-50 rounded">
-                    <p class="font-bold">Columnas</p>
-                    <p class="text-xs">Se identifican verticalmente.</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructura de la Tabla</h2>
+            <div class="grid grid-cols-2 gap-6 max-w-3xl mx-auto text-left">
+                <div class="p-6 bg-blue-50 rounded-xl border-l-4 border-blue-500">
+                    <p class="font-bold text-blue-800">Columnas</p>
+                    <p class="text-sm">Se identifican verticalmente y definen categorías.</p>
                 </div>
-                <div class="p-4 bg-slate-50 rounded">
-                    <p class="font-bold">Filas</p>
-                    <p class="text-xs">Se identifican horizontalmente.</p>
+                <div class="p-6 bg-slate-50 rounded-xl border-l-4 border-slate-500">
+                    <p class="font-bold text-slate-800">Filas</p>
+                    <p class="text-sm">Se identifican horizontalmente y contienen registros.</p>
                 </div>
             </div>
         </div>
 
         <!-- Diapositiva 7 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejemplo de Tabla</h2>
-            <table class="styled-table max-w-xl mx-auto">
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Visualización</h2>
+            <table class="styled-table max-w-xl mx-auto shadow-lg">
                 <thead>
                     <tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr>
                 </thead>
                 <tbody>
                     <tr><td>Mouse</td><td>10</td><td>L. 250</td></tr>
                     <tr><td>Teclado</td><td>5</td><td>L. 450</td></tr>
+                    <tr><td>Monitor</td><td>2</td><td>L. 3500</td></tr>
                 </tbody>
             </table>
         </div>
 
         <!-- Diapositiva 8 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
-            <div class="concept-box">
-                <p>En tu cuaderno, diseña una tabla de 4 filas y 3 columnas para organizar un horario de clases simplificado (Hora, Lunes, Martes).</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Combinar y Dividir</h2>
+            <div class="concept-box border-purple-400">
+                <p><strong>Combinar:</strong> Unir dos o más celdas para formar una sola (ideal para títulos centrales).</p>
+                <p class="mt-4"><strong>Dividir:</strong> Partir una celda en varias secciones para mayor detalle.</p>
             </div>
+            <i class="fas fa-th-large text-5xl text-purple-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Combinar y Dividir</h2>
-            <div class="concept-box border-purple-400">
-                <p><strong>Combinar:</strong> Unir dos o más celdas para formar una sola (ideal para títulos).</p>
-                <p class="mt-2"><strong>Dividir:</strong> Partir una celda en varias secciones.</p>
-            </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estilos de Tabla</h2>
+            <p class="text-lg">Podemos personalizar visualmente mediante:</p>
+            <ul class="mt-6 space-y-3 font-bold text-slate-700">
+                <li class="p-3 bg-gray-50 rounded-lg flex items-center space-x-3"><i class="fas fa-border-all text-blue-500"></i><span>Bordes: Grosores y colores.</span></li>
+                <li class="p-3 bg-gray-50 rounded-lg flex items-center space-x-3"><i class="fas fa-fill-drip text-blue-500"></i><span>Sombreado: Color de fondo de celdas.</span></li>
+            </ul>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Bordes y Sombreado</h2>
-            <p>Personalización visual de la tabla:</p>
-            <ul class="mt-4 space-y-2">
-                <li><i class="fas fa-border-all mr-2"></i> Estilo de línea del borde.</li>
-                <li><i class="fas fa-fill-drip mr-2"></i> Color de fondo de las celdas.</li>
-            </ul>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Autoajuste</h2>
+            <div class="concept-box bg-green-50 border-green-500">
+                <p>Permite que el ancho de las columnas se adapte automáticamente al contenido que escribimos o al ancho total de la página.</p>
+            </div>
+            <i class="fas fa-compress-arrows-alt text-5xl text-green-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Autoajuste</h2>
-            <div class="concept-box bg-green-50">
-                <p>Permite que el ancho de las columnas se adapte automáticamente al contenido o al ancho de la ventana.</p>
-            </div>
-        </div>
-
-        <!-- Diapositiva 12 -->
-        <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Importancia</h2>
-            <p class="italic">"Un documento bien formateado y con tablas ordenadas proyecta profesionalismo y facilita la toma de decisiones basada en datos."</p>
-        </div>
-
-        <!-- Diapositiva 13 -->
-        <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Tabulación</h2>
-            <div class="code-block">
+            <div class="bg-slate-900 text-green-400 p-8 rounded-lg font-mono text-left w-full max-w-xl mx-auto">
                 <p>FOR EACH fila IN tabla</p>
                 <p>&nbsp;&nbsp;FOR EACH celda IN fila</p>
-                <p>&nbsp;&nbsp;&nbsp;&nbsp;IF celda.valor < 0 THEN</p>
-                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SET celda.color = RED</p>
-                <p>&nbsp;&nbsp;&nbsp;&nbsp;ENDIF</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;PRINT celda.valor</p>
                 <p>&nbsp;&nbsp;ENDFOR</p>
                 <p>ENDFOR</p>
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 12 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Orden y Claridad</h2>
+            <p class="italic text-2xl text-slate-500 max-w-3xl">"Un documento bien formateado y con tablas ordenadas proyecta profesionalismo y facilita la comprensión inmediata de la información."</p>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Jerarquía Visual</h2>
+            <p class="text-lg">Recuerda siempre usar un tipo de letra legible y un tamaño adecuado (mínimo 11pt) para el cuerpo del texto.</p>
+            <i class="fas fa-eye text-5xl text-blue-300 mt-8 mx-auto"></i>
+        </div>
+
+        <!-- Diapositiva 14 (Quiz) -->
+        <div class="slide">
+            <div id="quiz-container-1" class="w-full"></div>
+        </div>
+
+        <!-- Diapositiva 15 (Quiz) -->
+        <div class="slide">
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
-                <h3 class="font-black text-xl mb-4">TABLA DE DATOS</h3>
-                <p>Crear un documento en Word que contenga una tabla con la lista de 10 periféricos, indicando: Nombre, Tipo (E/S) y Función. Aplicar sombreado al encabezado.</p>
-                <p class="mt-4 font-bold">Valor: 5%</p>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase tracking-wider">HORARIO DIGITAL</h3>
+                <p class="text-lg">Crear un documento en Word con una tabla de su horario de clases. Debe incluir:</p>
+                <ul class="list-disc ml-8 mt-4 space-y-1 text-sm">
+                    <li>Encabezado combinado para el título.</li>
+                    <li>Sombreado en la primera fila.</li>
+                    <li>Alineación Centrada en todas las celdas.</li>
+                </ul>
+                <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-6">
+                    <span>Valor: 5%</span>
+                    <span>Fecha: Próxima clase</span>
+                </div>
             </div>
         </div>
     </main>
@@ -224,12 +226,26 @@
     <script src="../js/config.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/games-adapter.js"></script>
+    <script src="../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
+
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
+        }
 
         const quizQuestions = [
             { q: "¿Qué es una celda?", a: "C", options: ["Una fila", "Una columna", "Intersección Fila/Columna", "Un tipo de letra"] },
@@ -244,52 +260,11 @@
             { q: "Para crear una tabla vamos a:", a: "C", options: ["Formato", "Diseño", "Insertar", "Vista"] }
         ];
 
-        function showSlide(index) {
-            if (index < 0 || index >= slides.length) return;
-            slides[currentSlideIndex].classList.remove('active');
-            currentSlideIndex = index;
-            slides[currentSlideIndex].classList.add('active');
-            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
-        }
-
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
-
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -300,7 +275,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

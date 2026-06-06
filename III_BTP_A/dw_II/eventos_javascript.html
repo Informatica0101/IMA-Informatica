@@ -14,16 +14,11 @@
         .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
         .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
-        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; border-left: 4px solid #ef4444; }
         .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
         #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -74,10 +69,10 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Eventos de Ratón (Mouse)</h2>
             <ul class="grid grid-cols-2 gap-4 mt-6 text-sm">
-                <li class="p-4 border bg-gray-50"><strong>onclick:</strong> Al hacer clic.</li>
-                <li class="p-4 border bg-gray-50"><strong>ondblclick:</strong> Doble clic.</li>
-                <li class="p-4 border bg-gray-50"><strong>onmouseover:</strong> Puntero encima.</li>
-                <li class="p-4 border bg-gray-50"><strong>onmouseout:</strong> Puntero sale.</li>
+                <li class="p-4 border bg-gray-50 rounded"><strong>onclick:</strong> Al hacer clic.</li>
+                <li class="p-4 border bg-gray-50 rounded"><strong>ondblclick:</strong> Doble clic.</li>
+                <li class="p-4 border bg-gray-50 rounded"><strong>onmouseover:</strong> Puntero encima.</li>
+                <li class="p-4 border bg-gray-50 rounded"><strong>onmouseout:</strong> Puntero sale.</li>
             </ul>
         </div>
 
@@ -99,10 +94,10 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Eventos de Formulario</h2>
             <ul class="grid grid-cols-2 gap-4 mt-6 text-sm">
-                <li class="p-4 border bg-gray-50"><strong>onfocus:</strong> El campo recibe el foco.</li>
-                <li class="p-4 border bg-gray-50"><strong>onblur:</strong> El campo pierde el foco.</li>
-                <li class="p-4 border bg-gray-50"><strong>onchange:</strong> El valor cambia.</li>
-                <li class="p-4 border bg-gray-50"><strong>onsubmit:</strong> Al enviar el formulario.</li>
+                <li class="p-4 border bg-gray-50 rounded"><strong>onfocus:</strong> El campo recibe el foco.</li>
+                <li class="p-4 border bg-gray-50 rounded"><strong>onblur:</strong> El campo pierde el foco.</li>
+                <li class="p-4 border bg-gray-50 rounded"><strong>onchange:</strong> El valor cambia.</li>
+                <li class="p-4 border bg-gray-50 rounded"><strong>onsubmit:</strong> Al enviar el formulario.</li>
             </ul>
         </div>
 
@@ -123,7 +118,7 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Manejadores de Eventos</h2>
             <p>Hay 3 formas de asignar un evento:</p>
-            <ol class="text-left space-y-2 mt-4 text-xs">
+            <ol class="text-left space-y-2 mt-4 text-xs mx-auto max-w-xl">
                 <li>1. Atributo HTML: <code>&lt;button onclick="..."&gt;</code></li>
                 <li>2. Propiedad JS: <code>elemento.onclick = ...</code></li>
                 <li>3. Escuchador (Recomendado): <code>addEventListener()</code></li>
@@ -135,7 +130,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">addEventListener</h2>
             <div class="concept-box border-green-500">
                 <p>Es la forma moderna y profesional. Permite asignar múltiples funciones al mismo evento sin sobrescribirlas.</p>
-                <div class="code-block mt-4">
+                <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">
                     btn.addEventListener("click", () => {<br>
                     &nbsp;&nbsp;console.log("Clic detectado");<br>
                     });
@@ -147,7 +142,7 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El objeto 'event'</h2>
             <p>Cuando ocurre un evento, JS crea un objeto con información extra (ej: qué tecla se presionó, coordenadas del mouse).</p>
-            <div class="code-block mt-4">
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">
                 window.onkeydown = (e) => {<br>
                 &nbsp;&nbsp;console.log("Presionaste: " + e.key);<br>
                 }
@@ -173,7 +168,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio: Cambio de Color</h2>
             <div class="concept-box">
                 <p>Escribe el código para que al presionar un botón, el fondo de la página cambie a color rojo.</p>
-                <div class="code-block mt-4">
+                <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs">
                     btn.onclick = () => {<br>
                     &nbsp;&nbsp;document.body.style.background = "red";<br>
                     }
@@ -184,7 +179,7 @@
         <!-- Diapositiva 13 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reto de Código</h2>
-            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl text-xs">
+            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl text-xs mx-auto">
                 <p>// Detectar movimiento del mouse</p>
                 <p>window.addEventListener("mousemove", (e) => {</p>
                 <p>&nbsp;&nbsp;const x = e.clientX;</p>
@@ -194,16 +189,14 @@
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -239,25 +232,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "Evento al hacer clic:", a: "A", options: ["onclick", "onpress", "onhit", "onselect"] },
-            { q: "Evento al soltar una tecla:", a: "B", options: ["onkeydown", "onkeyup", "onkeypress", "onkeyexit"] },
-            { q: "Método moderno para eventos:", a: "C", options: ["setEvent", "pushEvent", "addEventListener", "listenTo"] },
-            { q: "Evitar envío de formulario:", a: "D", options: ["stop()", "cancel()", "kill()", "preventDefault()"] },
-            { q: "Evento cuando carga la web:", a: "B", options: ["onready", "onload", "onstart", "onopen"] },
-            { q: "Evento al mover el scroll:", a: "A", options: ["onscroll", "onmove", "onwheel", "onslide"] },
-            { q: "Cuando un campo pierde el foco:", a: "C", options: ["onfocus", "onleave", "onblur", "onout"] },
-            { q: "Evento de doble clic:", a: "D", options: ["on2click", "onmulti", "onagain", "ondblclick"] },
-            { q: "Propagación de eventos:", a: "B", options: ["Floating", "Bubbling", "Rising", "Flying"] },
-            { q: "Información extra del evento:", a: "A", options: ["Objeto event", "Objeto data", "Variable info", "Array data"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -266,45 +247,37 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Cuál es el evento que se activa al hacer clic con el mouse?", a: "A", options: ["onclick", "onpress", "onhit", "onselect"] },
+            { q: "¿Qué evento detecta cuando una tecla es soltada?", a: "B", options: ["onkeydown", "onkeyup", "onkeypress", "onkeyexit"] },
+            { q: "Método moderno y recomendado para manejar eventos:", a: "C", options: ["setEvent", "pushEvent", "addEventListener", "listenTo"] },
+            { q: "Método para cancelar el envío de un formulario por defecto:", a: "D", options: ["stop()", "cancel()", "kill()", "preventDefault()"] },
+            { q: "¿Qué evento ocurre cuando la página termina de cargar?", a: "B", options: ["onready", "onload", "onstart", "onopen"] }
+        ];
+
+        const questions2 = [
+            { q: "Evento que se activa al desplazar la página:", a: "A", options: ["onscroll", "onmove", "onwheel", "onslide"] },
+            { q: "Cuando un campo de texto pierde el foco (clic fuera):", a: "C", options: ["onfocus", "onleave", "onblur", "onout"] },
+            { q: "Evento específico para el doble clic del ratón:", a: "D", options: ["on2click", "onmulti", "onagain", "ondblclick"] },
+            { q: "¿Cómo se llama la propagación de eventos hacia los padres?", a: "B", options: ["Floating", "Bubbling (Burbujeo)", "Rising", "Flying"] },
+            { q: "Identifica este concepto de interacción:", a: "A", options: ["Captura de Eventos", "Base de Datos", "Hardware", "BIOS"], img: "../../imagenes/dom_events_intro.png" }
+        ];
+
+        // Concatenate for the engine logic
+        const allQuestions = [...quizQuestions, ...questions2];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -315,7 +288,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

@@ -14,16 +14,11 @@
         .slide { display: none; width: 100%; height: 100vh; padding: 2rem; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease; }
         .slide.active { display: flex; opacity: 1; z-index: 10; }
         .concept-box { background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin: 1rem 0; border-left: 5px solid var(--azul-ima); text-align: left; max-width: 800px; width: 100%; }
-        .code-block { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; text-align: left; width: 100%; max-width: 600px; margin: 1rem 0; font-size: 0.8rem; }
         .nav-btn { position: fixed; bottom: 2rem; padding: 0.75rem 1.5rem; background: var(--azul-ima); color: white; border-radius: 9999px; font-weight: bold; z-index: 100; transition: transform 0.2s; }
         #prev-btn { left: 2rem; } #next-btn { right: 2rem; }
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -67,26 +62,27 @@
             <div class="concept-box">
                 <p>Excel permite automatizar cualquier cálculo matemático, financiero o lógico. La clave es entender cómo construir expresiones correctas.</p>
             </div>
+            <i class="fas fa-calculator text-6xl text-blue-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Operadores Aritméticos</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
-                <div class="p-4 border rounded"><strong>^</strong> (Potencia)</div>
-                <div class="p-4 border rounded"><strong>* /</strong> (Mult / Div)</div>
-                <div class="p-4 border rounded"><strong>+ -</strong> (Suma / Resta)</div>
-                <div class="p-4 border rounded"><strong>%</strong> (Porcentaje)</div>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left mx-auto">
+                <div class="p-4 border rounded bg-slate-50"><strong>^</strong> (Potencia)</div>
+                <div class="p-4 border rounded bg-slate-50"><strong>* /</strong> (Mult / Div)</div>
+                <div class="p-4 border rounded bg-slate-50"><strong>+ -</strong> (Suma / Resta)</div>
+                <div class="p-4 border rounded bg-slate-50"><strong>%</strong> (Porcentaje)</div>
             </div>
         </div>
 
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Referencias de Celda</h2>
-            <div class="concept-box">
+            <div class="concept-box border-blue-500">
                 <p>En lugar de usar números fijos (2+2), usamos el nombre de la celda (A1+B1). Si el dato en A1 cambia, el resultado se actualiza automáticamente.</p>
             </div>
-            <i class="fas fa-sync-alt text-6xl text-blue-200 mt-4"></i>
+            <i class="fas fa-sync-alt text-6xl text-blue-200 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 5 -->
@@ -94,34 +90,36 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">La Función CONTAR.SI</h2>
             <div class="concept-box border-green-400">
                 <p>Cuenta las celdas dentro de un rango que cumplen con un criterio específico.</p>
-                <p class="mt-2 font-mono text-sm">=CONTAR.SI(A1:A10, ">70")</p>
+                <p class="mt-4 font-mono text-xl text-green-700">=CONTAR.SI(A1:A10, ">70")</p>
             </div>
-            <i class="fas fa-list-ol text-6xl text-green-300 mt-4"></i>
+            <i class="fas fa-list-ol text-6xl text-green-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 6 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Función SI.ERROR</h2>
             <div class="concept-box border-red-400">
-                <p>Evita que la hoja muestre errores feos como #DIV/0! o #N/A, permitiendo mostrar un mensaje personalizado en su lugar.</p>
+                <p>Evita que la hoja muestre errores feos como #DIV/0! o #N/A, permitiendo mostrar un mensaje personalizado o un cero en su lugar.</p>
             </div>
+            <p class="mt-4 font-mono text-xl text-red-700">=SI.ERROR(Operación, "Error")</p>
         </div>
 
         <!-- Diapositiva 7 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
-            <div class="concept-box">
-                <p>Escribe en tu cuaderno una fórmula que calcule el 15% de impuesto sobre un valor que se encuentra en la celda C4.</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Referencias Absolutas</h2>
+            <div class="concept-box border-yellow-500">
+                <p>Usar el signo <strong>$</strong> (ej. $A$1) para "congelar" una celda y que no cambie al arrastrar la fórmula hacia abajo.</p>
             </div>
+            <i class="fas fa-thumbtack text-6xl text-yellow-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 8 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Funciones de Texto</h2>
-            <p>Excel también manipula palabras:</p>
-            <ul class="list-disc text-left space-y-2 max-w-xl mx-auto mt-4 text-sm">
+            <p class="text-lg">Excel también manipula palabras:</p>
+            <ul class="list-disc text-left space-y-2 max-w-xl mx-auto mt-4">
                 <li><strong>=MAYUSC():</strong> Todo a mayúsculas.</li>
-                <li><strong>=CONCATENAR():</strong> Une varios textos en uno solo.</li>
+                <li><strong>=CONCATENAR():</strong> Une varios textos.</li>
                 <li><strong>=LARGO():</strong> Cuenta los caracteres.</li>
             </ul>
         </div>
@@ -129,64 +127,60 @@
         <!-- Diapositiva 9 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Funciones de Fecha</h2>
-            <div class="concept-box bg-blue-50">
-                <p><strong>=HOY():</strong> Muestra la fecha actual del sistema.</p>
-                <p><strong>=DIAS():</strong> Calcula cuántos días han pasado entre dos fechas.</p>
+            <div class="concept-box bg-blue-50 border-blue-300">
+                <p><strong>=HOY():</strong> Muestra la fecha actual.</p>
+                <p><strong>=DIAS():</strong> Calcula los días entre dos fechas.</p>
             </div>
-            <i class="far fa-calendar-alt text-6xl text-blue-400 mt-4"></i>
+            <i class="far fa-calendar-alt text-6xl text-blue-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Errores Comunes</h2>
-            <div class="grid grid-cols-3 gap-4 mt-8 text-xs font-bold">
-                <div class="p-2 border bg-red-50">#VALOR! (Tipo incorrecto)</div>
-                <div class="p-2 border bg-red-50">#REF! (Celda borrada)</div>
-                <div class="p-2 border bg-red-50">#NOMBRE? (Mal escrita)</div>
+            <div class="grid grid-cols-3 gap-4 mt-8 font-bold text-sm mx-auto max-w-2xl">
+                <div class="p-4 border bg-red-50 rounded">#VALOR!<br><span class="text-[10px] font-normal">Tipo incorrecto</span></div>
+                <div class="p-4 border bg-red-50 rounded">#REF!<br><span class="text-[10px] font-normal">Celda borrada</span></div>
+                <div class="p-4 border bg-red-50 rounded">#NOMBRE?<br><span class="text-[10px] font-normal">Mal escrita</span></div>
             </div>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Seguridad Lógica</h2>
-            <p>Proteger las celdas que contienen fórmulas importantes para evitar que otros usuarios las borren por accidente.</p>
-            <i class="fas fa-lock text-6xl text-slate-300 mt-4"></i>
+            <p class="text-lg max-w-2xl">Es vital proteger las celdas que contienen fórmulas importantes para evitar que otros usuarios las borren por accidente.</p>
+            <i class="fas fa-lock text-6xl text-slate-300 mt-8 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Potencia de Cálculo</h2>
-            <p class="italic text-2xl">"Las fórmulas son el alma de la hoja de cálculo. Sin ellas, Excel es solo una máquina de escribir cuadriculada."</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Eficiencia</h2>
+            <p class="italic text-2xl text-slate-500">"Las fórmulas son el alma de la hoja de cálculo. Sin ellas, Excel es solo una máquina de escribir cuadriculada."</p>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Avanzado</h2>
-            <div class="code-block">
-                <p>// Lógica de Concatenación</p>
-                <p>LET nombre = "Pablo"</p>
-                <p>LET apellido = "Peña"</p>
-                <p>LET completo = nombre & " " & apellido</p>
-                <p>PRINT completo // "Pablo Peña"</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Concatenación</h2>
+            <div class="bg-slate-900 text-green-400 p-8 rounded-lg font-mono text-left w-full max-w-xl mx-auto text-xl">
+                <p>= "Pablo" & " " & "Peña"</p>
+                <p class="text-gray-500 text-sm mt-4">// Resultado:</p>
+                <p>"Pablo Peña"</p>
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4 uppercase">PRÁCTICA DE FÓRMULAS</h3>
                 <p>Realizar una tabla de ventas que incluya: Producto, Precio, Cantidad, Subtotal, ISV (15%) y Total. Usar referencias de celda para todos los cálculos.</p>
                 <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
@@ -211,12 +205,26 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
+
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
+        }
 
         const quizQuestions = [
             { q: "¿Símbolo para concatenar (unir)?", a: "C", options: ["+", "-", "&", "/"] },
@@ -231,52 +239,11 @@
             { q: "Función para ocultar errores:", a: "B", options: ["=SI", "=SI.ERROR", "=BUSCAR", "=MAX"] }
         ];
 
-        function showSlide(index) {
-            if (index < 0 || index >= slides.length) return;
-            slides[currentSlideIndex].classList.remove('active');
-            currentSlideIndex = index;
-            slides[currentSlideIndex].classList.add('active');
-            counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-            prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
-        }
-
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
-
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -287,7 +254,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

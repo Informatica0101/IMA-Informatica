@@ -20,10 +20,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -67,24 +63,24 @@
             <div class="concept-box">
                 <p><strong>CLI (Command Line Interface)</strong> es un método para interactuar con la computadora escribiendo comandos de texto, en lugar de usar iconos y el mouse (GUI).</p>
             </div>
-            <i class="fas fa-terminal text-6xl text-slate-800 mt-4"></i>
+            <i class="fas fa-terminal text-6xl text-slate-800 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Por qué usarla?</h2>
-            <ul class="space-y-4 text-left max-w-2xl">
-                <li><i class="fas fa-bolt text-yellow-500 mr-2"></i> <strong>Velocidad:</strong> Ejecuta tareas complejas en segundos.</li>
-                <li><i class="fas fa-cogs text-blue-500 mr-2"></i> <strong>Potencia:</strong> Acceso a funciones que no están en los menús.</li>
-                <li><i class="fas fa-robot text-green-500 mr-2"></i> <strong>Automatización:</strong> Creación de scripts para tareas repetitivas.</li>
+            <ul class="space-y-4 text-left max-w-2xl mx-auto text-sm">
+                <li><i class="fas fa-bolt text-yellow-500 mr-2"></i> <strong>Velocidad:</strong> Ejecuta tareas complejas en milisegundos.</li>
+                <li><i class="fas fa-cogs text-blue-500 mr-2"></i> <strong>Potencia:</strong> Acceso a funciones ocultas del Sistema Operativo.</li>
+                <li><i class="fas fa-robot text-green-500 mr-2"></i> <strong>Automatización:</strong> Creación de scripts para procesos repetitivos.</li>
             </ul>
         </div>
 
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">El Prompt</h2>
-            <p>Es el indicador que nos dice que la terminal está lista para recibir un comando.</p>
-            <div class="code-block text-xl">
+            <p>Es el indicador visual que nos dice que la terminal está lista para recibir una instrucción.</p>
+            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-2xl mt-4 mx-auto max-w-md">
                 C:\Users\Admin> _
             </div>
         </div>
@@ -93,16 +89,16 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Comando: DIR / LS</h2>
             <div class="concept-box">
-                <p>Muestra una lista de todos los archivos y carpetas en la ubicación actual.</p>
-                <div class="code-block mt-4">dir (Windows) / ls (Linux/Mac)</div>
+                <p>Muestra una lista detallada de todos los archivos y carpetas en la ubicación actual.</p>
+                <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">dir (Windows) / ls (Linux)</div>
             </div>
         </div>
 
         <!-- Diapositiva 6 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Comando: CD</h2>
-            <p><strong>Change Directory:</strong> Sirve para entrar o salir de las carpetas.</p>
-            <div class="code-block mt-4">
+            <p><strong>Change Directory:</strong> Sirve para entrar o salir de las carpetas del sistema.</p>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm mx-auto text-left max-w-md">
                 cd Documentos (Entrar)<br>
                 cd .. (Regresar una carpeta)
             </div>
@@ -112,86 +108,84 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Comando: MKDIR / MD</h2>
             <div class="concept-box border-green-400">
-                <p>Crea una carpeta nueva instantáneamente.</p>
-                <div class="code-block mt-4">mkdir Tarea_Nueva</div>
+                <p>Crea una carpeta nueva instantáneamente sin usar el mouse.</p>
+                <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">mkdir Nueva_Carpeta</div>
             </div>
         </div>
 
         <!-- Diapositiva 8 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Comando: CLS / CLEAR</h2>
-            <p>Limpia toda la pantalla de la terminal cuando está muy llena de texto.</p>
-            <i class="fas fa-broom text-6xl text-gray-400 mt-4"></i>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Limpieza: CLS / CLEAR</h2>
+            <p>Limpia toda la pantalla de la terminal cuando está saturada de texto anterior.</p>
+            <i class="fas fa-broom text-6xl text-gray-400 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Comandos de Red: IPCONFIG</h2>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Red: IPCONFIG / IFCONFIG</h2>
             <div class="concept-box border-red-400">
-                <p>Muestra tu dirección IP y otros datos de tu conexión a Internet.</p>
-                <div class="code-block mt-4">ipconfig</div>
+                <p>Muestra tu dirección IP, máscara de subred y puerta de enlace predeterminada.</p>
+                <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm text-left mx-auto max-w-md">ipconfig</div>
             </div>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Comandos de Red: PING</h2>
-            <p>Verifica si tienes conexión con otro servidor (ej. Google).</p>
-            <div class="code-block mt-4">ping www.google.com</div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Comando: PING</h2>
+            <p>Verifica la latencia y conexión con otro servidor (ej. Google).</p>
+            <img src="../../imagenes/ping_command.png" alt="Ping" class="h-32 mt-4 mx-auto rounded shadow">
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructura de un Comando</h2>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructura</h2>
             <div class="concept-box bg-slate-100">
-                <p class="text-center font-mono text-xl">comando [opciones] [argumento]</p>
-                <p class="mt-4 text-xs italic">Ejemplo: ping -t 8.8.8.8</p>
+                <p class="text-center font-mono text-xl text-blue-700">comando [opciones] [argumento]</p>
+                <p class="mt-4 text-xs italic text-center">Ejemplo: ping -t 8.8.8.8</p>
             </div>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Atajos de Teclado</h2>
-            <ul class="text-left space-y-2">
-                <li><strong>Flecha Arriba:</strong> Repetir comando anterior.</li>
-                <li><strong>TAB:</strong> Autocompletar nombres de archivos.</li>
-                <li><strong>CTRL + C:</strong> Detener un comando en ejecución.</li>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Atajos</h2>
+            <ul class="text-left space-y-2 max-w-md mx-auto font-bold text-sm">
+                <li class="bg-slate-50 p-1 rounded">Flecha Arriba: Repetir comando.</li>
+                <li class="bg-slate-50 p-1 rounded">TAB: Autocompletar nombres.</li>
+                <li class="bg-slate-50 p-1 rounded">CTRL + C: Cancelar ejecución.</li>
             </ul>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Peligros de la Terminal</h2>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Precaución</h2>
             <div class="concept-box bg-red-50 border-red-600">
-                <p>La terminal no suele pedir confirmación ("¿Está seguro?"). Un comando mal escrito puede borrar todo el disco duro en segundos. <strong>¡Usar con precaución!</strong></p>
+                <p>La terminal es poderosa: un comando mal escrito puede borrar archivos vitales sin preguntar.</p>
             </div>
-            <i class="fas fa-skull-crossbones text-6xl text-red-600 mt-4"></i>
+            <i class="fas fa-skull-crossbones text-6xl text-red-600 mt-4 mx-auto"></i>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-slate-800 text-white border-none shadow-xl">
-                <h3 class="font-black text-xl mb-4 uppercase text-green-400">DESAFÍO CLI</h3>
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
+                <h3 class="font-black text-xl mb-4 uppercase">DESAFÍO CLI</h3>
                 <ol class="list-decimal ml-6 mt-2 text-sm text-left">
                     <li>Abre el Símbolo del Sistema (CMD).</li>
                     <li>Navega hasta tu Escritorio con "cd Desktop".</li>
                     <li>Crea una carpeta llamada "PruebaCLI".</li>
                     <li>Entra a la carpeta y escribe "ipconfig".</li>
                 </ol>
-                <div class="flex justify-between text-[10px] font-bold pt-4 border-t border-slate-600 mt-4">
+                <div class="flex justify-between text-[10px] font-bold pt-4 border-t border-blue-400 mt-4">
                     <span>Valor: 5%</span>
                     <span>Captura de pantalla obligatoria</span>
                 </div>
@@ -213,25 +207,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué significa CLI?", a: "B", options: ["Central Logic Input", "Command Line Interface", "Code Link Interconnect", "Call Line Info"] },
-            { q: "Comando para listar archivos:", a: "A", options: ["dir", "cd", "md", "cls"] },
-            { q: "Entrar a una carpeta:", a: "C", options: ["exit", "go", "cd", "open"] },
-            { q: "Crear una carpeta nueva:", a: "D", options: ["new", "create", "fold", "mkdir"] },
-            { q: "Limpiar la pantalla:", a: "B", options: ["clean", "cls", "del", "wipe"] },
-            { q: "Ver mi dirección IP:", a: "A", options: ["ipconfig", "netstat", "ping", "tracert"] },
-            { q: "Ver conexión con un servidor:", a: "C", options: ["hello", "link", "ping", "call"] },
-            { q: "Regresar una carpeta atrás:", a: "D", options: ["cd back", "cd /", "cd ..", "cd .."] },
-            { q: "Detener proceso (CTRL+?):", a: "B", options: ["CTRL+X", "CTRL+C", "CTRL+Z", "CTRL+V"] },
-            { q: "CLI de Windows se llama:", a: "C", options: ["Bash", "Finder", "CMD", "Root"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -240,56 +222,41 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Qué significan las siglas CLI?", a: "B", options: ["Central Logic Input", "Command Line Interface", "Code Link Interconnect", "Call Line Info"] },
+            { q: "¿Cuál es el comando en Windows para listar archivos y carpetas?", a: "A", options: ["dir", "cd", "md", "cls"] },
+            { q: "¿Qué comando permite entrar a una carpeta específica?", a: "C", options: ["exit", "go", "cd", "open"] },
+            { q: "¿Qué comando se usa para crear una carpeta nueva?", a: "D", options: ["new", "create", "fold", "mkdir"] },
+            { q: "Identifica este entorno de trabajo:", a: "C", options: ["Paint", "Chrome", "Terminal / CMD", "Word"], img: "../../imagenes/terminal_cli.png" },
+            { q: "¿Qué comando muestra la dirección IP del equipo?", a: "A", options: ["ipconfig", "netstat", "ping", "tracert"] },
+            { q: "¿Qué comando verifica la conexión con un servidor remoto?", a: "C", options: ["hello", "link", "ping", "call"] },
+            { q: "Para regresar exactamente una carpeta atrás en la jerarquía usamos:", a: "D", options: ["cd back", "cd /", "cd ..", "cd .."] },
+            { q: "¿Qué atajo de teclado cancela un proceso en ejecución en la terminal?", a: "B", options: ["CTRL+X", "CTRL+C", "CTRL+Z", "CTRL+V"] },
+            { q: "¿Cómo se llama el comando para limpiar la pantalla de la terminal en Windows?", a: "B", options: ["clean", "cls", "del", "wipe"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
-        });
 
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('inf_terminal', false);
+                await window.GamesAdapter.init('ia_terminal', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

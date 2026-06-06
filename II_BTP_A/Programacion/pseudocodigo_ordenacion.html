@@ -20,10 +20,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -65,33 +61,33 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es el Pseudocódigo?</h2>
             <div class="concept-box">
-                <p>Es una herramienta de programación que utiliza una mezcla de lenguaje natural con algunas convenciones sintácticas propias de los lenguajes de programación.</p>
-                <p class="mt-4 font-bold">Su objetivo: que el programador se centre en la lógica y no en la sintaxis compleja.</p>
+                <p>Es una herramienta de programación que utiliza una mezcla de lenguaje natural con algunas convenciones sintácticas propias de los lenguajes de programación reales.</p>
+                <p class="mt-4 font-bold">Su objetivo: que el programador se centre en la lógica y no en la sintaxis compleja de un lenguaje específico.</p>
             </div>
         </div>
 
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ventajas</h2>
-            <ul class="list-disc text-left space-y-4 max-w-2xl mx-auto">
-                <li>Ocupa menos espacio que un diagrama de flujo.</li>
-                <li>Es fácil de modificar.</li>
-                <li>Se asemeja mucho al código final.</li>
-                <li>Fácil de entender para humanos.</li>
+            <ul class="list-disc text-left space-y-4 max-w-2xl mx-auto text-sm">
+                <li>Ocupa mucho menos espacio que un diagrama de flujo.</li>
+                <li>Es extremadamente fácil de modificar y corregir.</li>
+                <li>Se asemeja mucho al código final (C++, Java, Python).</li>
+                <li>Es fácil de entender para cualquier ser humano.</li>
             </ul>
         </div>
 
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Componentes Clave</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
-                <div class="p-4 bg-slate-50 border rounded">
-                    <p class="font-bold">Palabras Reservadas</p>
-                    <p class="text-xs">Inicio, Fin, Leer, Escribir, Si, Entonces.</p>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left mx-auto">
+                <div class="p-4 bg-slate-50 border rounded shadow-sm">
+                    <p class="font-bold text-blue-700">Palabras Reservadas</p>
+                    <p class="text-xs">Inicio, Fin, Leer, Escribir, Si, Entonces, Mientras.</p>
                 </div>
-                <div class="p-4 bg-slate-50 border rounded">
-                    <p class="font-bold">Indentación</p>
-                    <p class="text-xs">Espacios a la izquierda para mostrar jerarquía y bloques.</p>
+                <div class="p-4 bg-slate-50 border rounded shadow-sm">
+                    <p class="font-bold text-blue-700">Indentación</p>
+                    <p class="text-xs">Espacios a la izquierda para mostrar la jerarquía de bloques.</p>
                 </div>
             </div>
         </div>
@@ -102,111 +98,107 @@
             <div class="concept-box">
                 <p>Consiste en organizar los elementos o instrucciones basándose en símbolos y prioridades lógicas para asegurar la ejecución correcta del algoritmo.</p>
             </div>
-            <i class="fas fa-sort-amount-down text-6xl text-blue-200 mt-4"></i>
+            <i class="fas fa-sort-amount-down text-6xl text-blue-200 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 6 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Prioridad de Operadores</h2>
-            <p>El orden en que se resuelven los cálculos es vital:</p>
-            <div class="grid grid-cols-1 gap-2 mt-4 text-sm font-bold max-w-md mx-auto">
-                <div class="p-2 border bg-blue-50">1. Paréntesis ( )</div>
-                <div class="p-2 border bg-blue-100">2. Potencia y Raíz</div>
-                <div class="p-2 border bg-blue-200">3. Mult y Div</div>
-                <div class="p-2 border bg-blue-300">4. Suma y Resta</div>
+            <p>El orden en que se resuelven los cálculos es vital para el resultado:</p>
+            <div class="grid grid-cols-1 gap-2 mt-4 text-sm font-bold max-w-xs mx-auto text-left">
+                <div class="p-2 border rounded bg-blue-50">1. Paréntesis ( )</div>
+                <div class="p-2 border rounded bg-blue-100">2. Potencia y Raíz</div>
+                <div class="p-2 border rounded bg-blue-200">3. Mult y Div</div>
+                <div class="p-2 border rounded bg-blue-300">4. Suma y Resta</div>
             </div>
         </div>
 
         <!-- Diapositiva 7 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Práctico 1</h2>
-            <div class="concept-box">
-                <p>Escribe el pseudocódigo para un algoritmo que pida tu nombre y te salude diciendo: "Hola [Nombre], bienvenido a la clase".</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
+            <div class="concept-box border-orange-400">
+                <p>Es la acción de guardar un valor en una variable. <br>Se usa el símbolo <strong>&lt;-</strong> o el signo <strong>=</strong>.</p>
+                <p class="mt-2 text-sm italic text-blue-600">Ejemplo: total &lt;- precio + impuesto</p>
             </div>
         </div>
 
         <!-- Diapositiva 8 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box border-orange-400">
-                <p>Es la acción de guardar un valor en una variable. <br>Se usa el símbolo <strong><-</strong> o <strong>=</strong>.</p>
-                <p class="mt-2 text-sm italic">Ejemplo: total <- precio + impuesto</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lectura y Escritura</h2>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl mx-auto">
+                <div class="p-4 bg-slate-50 border rounded text-left shadow-sm">
+                    <p class="font-bold text-blue-600">Leer</p>
+                    <p class="text-xs">Obtiene datos desde el teclado e ingresa al sistema.</p>
+                </div>
+                <div class="p-4 bg-slate-50 border rounded text-left shadow-sm">
+                    <p class="font-bold text-blue-600">Escribir</p>
+                    <p class="text-xs">Muestra resultados en pantalla o impresora.</p>
+                </div>
             </div>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lectura y Escritura</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl">
-                <div class="p-4 bg-slate-50 border rounded text-left">
-                    <p class="font-bold">Leer (Leer)</p>
-                    <p class="text-xs">Obtiene datos desde el teclado.</p>
-                </div>
-                <div class="p-4 bg-slate-50 border rounded text-left">
-                    <p class="font-bold">Escribir (Imprimir)</p>
-                    <p class="text-xs">Muestra resultados en pantalla.</p>
-                </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Comentarios</h2>
+            <p>Son notas que explican partes del programa. No se ejecutan. Se identifican con <strong>//</strong>.</p>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs mx-auto text-left max-w-md">
+                <p class="text-gray-400">// Este es un comentario</p>
+                <p>Leer n <span class="text-gray-400">// Captura el número</span></p>
             </div>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Comentarios</h2>
-            <p>Son notas dentro del pseudocódigo que explican partes del programa. No se ejecutan. <br>Se usan con <strong>//</strong>.</p>
-            <div class="code-block mt-4">
-                <p>// Este es un comentario</p>
-                <p>Leer n // Captura el número</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructura General</h2>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-xs mx-auto text-left max-w-md">
+                <p class="text-blue-300">ALGORITMO Descuento</p>
+                <p>&nbsp;&nbsp;LEER subtotal</p>
+                <p>&nbsp;&nbsp;total &lt;- subtotal * 0.90 // 10% desc</p>
+                <p>&nbsp;&nbsp;ESCRIBIR "Total final: ", total</p>
+                <p class="text-blue-300">FINALGORITMO</p>
             </div>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Estructura de Bloque</h2>
-            <div class="code-block">
-                <p>ALGORITMO Descuento</p>
-                <p>&nbsp;&nbsp;LEER subtotal</p>
-                <p>&nbsp;&nbsp;total <- subtotal * 0.90 // 10% desc</p>
-                <p>&nbsp;&nbsp;ESCRIBIR "Total con descuento: ", total</p>
-                <p>FINALGORITMO</p>
-            </div>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Claridad ante todo</h2>
+            <p class="italic text-slate-500 text-2xl">"Un pseudocódigo debe ser tan claro que cualquier persona con lógica básica pueda seguirlo sin ayuda externa."</p>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Claridad ante todo</h2>
-            <p class="italic text-2xl">"Un pseudocódigo debe ser tan claro que cualquier persona con conocimientos básicos de lógica pueda seguirlo sin ayuda."</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ordenación</h2>
+            <img src="../../imagenes/ordenamiento-y-filtrado.PNG" alt="Ordenación" class="h-48 mt-4 mx-auto rounded shadow-lg">
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Ordenación</h2>
-            <div class="code-block">
-                <p>// Ordenar Prioridad</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Prioridad</h2>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm mx-auto text-left max-w-md">
+                <p>// ¿Cuánto vale operacion?</p>
                 <p>LET operacion = 2 + 3 * 4</p>
                 <p>IF operacion == 14 THEN</p>
-                <p>&nbsp;&nbsp;PRINT "Correcto: 3*4 primero"</p>
+                <p>&nbsp;&nbsp;PRINT "Correcto: Mult primero"</p>
                 <p>ELSE</p>
-                <p>&nbsp;&nbsp;PRINT "Error: No sumes 2+3 antes"</p>
+                <p>&nbsp;&nbsp;PRINT "Error: No sumes antes"</p>
                 <p>ENDIF</p>
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4 uppercase">MI PRIMER PSEUDO</h3>
                 <p>Realizar en el cuaderno el pseudocódigo para un algoritmo que calcule el salario semanal de un obrero (Horas trabajadas * Pago por hora).</p>
                 <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
@@ -231,25 +223,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué significa pseudocódigo?", a: "A", options: ["Falso código", "Código secreto", "Código binario", "Instrucción real"] },
-            { q: "Símbolo para comentarios:", a: "B", options: ["**", "//", "##", "$$"] },
-            { q: "Se resuelve primero:", a: "C", options: ["Suma", "Resta", "Paréntesis", "Multiplicación"] },
-            { q: "Acción de mostrar resultados:", a: "D", options: ["LEER", "CALCULAR", "FIN", "ESCRIBIR"] },
-            { q: "La indentación sirve para:", a: "A", options: ["Ver jerarquía / bloques", "Borrar datos", "Ahorrar RAM", "Hacerlo más rápido"] },
-            { q: "Símbolo de asignación común:", a: "C", options: ["==", "+=", "<-", "<>"] },
-            { q: "Capturar datos del teclado:", a: "B", options: ["ESCRIBIR", "LEER", "VER", "CERRAR"] },
-            { q: "Prioridad 4 en operadores:", a: "D", options: ["Raíz", "Potencia", "División", "Suma y Resta"] },
-            { q: "¿Para qué sirve el pseudocódigo?", a: "A", options: ["Centrarse en la lógica", "Instalar virus", "Reparar mouse", "Navegar la web"] },
-            { q: "El pseudocódigo usa el idioma:", a: "C", options: ["Inglés puro", "Binario", "Español (o nativo)", "Símbolos chinos"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -258,56 +238,41 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Qué significa el término 'pseudocódigo'?", a: "A", options: ["Falso código", "Código secreto", "Código binario", "Instrucción de hardware"] },
+            { q: "¿Cuál es el símbolo estándar para escribir comentarios en una línea?", a: "B", options: ["**", "//", "##", "$$"] },
+            { q: "En la jerarquía de operadores, ¿qué se resuelve primero?", a: "C", options: ["Suma", "Resta", "Paréntesis", "Multiplicación"] },
+            { q: "¿Qué palabra reservada se usa para mostrar resultados al usuario?", a: "D", options: ["LEER", "CALCULAR", "FIN", "ESCRIBIR"] },
+            { q: "El uso de espacios a la izquierda para mostrar jerarquía se llama:", a: "A", options: ["Indentación", "Borrado", "Compilación", "Navegación"] },
+            { q: "Identifica este elemento visual de Excel:", a: "B", options: ["CPU", "Filtro/Ordenación", "RAM", "Mouse"], img: "../../imagenes/ordenamiento-y-filtrado.PNG" },
+            { q: "Símbolo más común para representar la asignación de un valor a una variable:", a: "C", options: ["==", "+=", "<-", "<>"] },
+            { q: "¿Qué instrucción se usa para capturar datos desde el teclado?", a: "B", options: ["ESCRIBIR", "LEER", "VER", "CERRAR"] },
+            { q: "En la prioridad de operadores, ¿cuál ocupa el último nivel?", a: "D", options: ["Potencia", "Raíz", "División", "Suma y Resta"] },
+            { q: "¿Para qué sirve principalmente el pseudocódigo?", a: "A", options: ["Centrarse en la lógica del algoritmo", "Instalar virus", "Reparar el mouse", "Navegar la web"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
-        });
 
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('pseudocodigo_ordenacion', false);
+                await window.GamesAdapter.init('prog_pseudocodigo', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

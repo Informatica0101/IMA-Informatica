@@ -20,10 +20,6 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -63,9 +59,9 @@
 
         <!-- Diapositiva 2 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es?</h2>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">¿Qué es el Formato Condicional?</h2>
             <div class="concept-box">
-                <p>Es una herramienta de Excel que cambia automáticamente la apariencia de las celdas (color, fuente, bordes) basándose en el <strong>valor</strong> que contienen o en una fórmula.</p>
+                <p>Es una herramienta de Excel que cambia automáticamente la apariencia de las celdas (color, fuente, bordes) basándose en el <strong>valor</strong> que contienen o en una condición lógica.</p>
             </div>
         </div>
 
@@ -74,24 +70,24 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Utilidad Visual</h2>
             <div class="concept-box">
                 <p>Ayuda a identificar rápidamente:</p>
-                <ul class="list-disc ml-8 mt-2">
+                <ul class="list-disc ml-8 mt-2 text-sm">
                     <li>Tendencias (Escalas de color).</li>
-                    <li>Excepciones o errores.</li>
+                    <li>Excepciones o errores de captura.</li>
                     <li>Valores críticos (ej. Notas reprobadas en rojo).</li>
-                    <li>Duplicados en una lista.</li>
+                    <li>Duplicados en una lista larga.</li>
                 </ul>
             </div>
-            <i class="fas fa-eye text-6xl text-blue-200 mt-4"></i>
+            <i class="fas fa-eye text-6xl text-blue-200 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reglas de Resaltado</h2>
-            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left">
-                <div class="p-4 border rounded">Es mayor que...</div>
-                <div class="p-4 border rounded">Es menor que...</div>
-                <div class="p-4 border rounded">Entre (rango de valores)...</div>
-                <div class="p-4 border rounded">Texto que contiene...</div>
+            <div class="grid grid-cols-2 gap-4 max-w-4xl text-left mx-auto">
+                <div class="p-4 border rounded bg-white shadow-sm font-bold text-xs">Es mayor que...</div>
+                <div class="p-4 border rounded bg-white shadow-sm font-bold text-xs">Es menor que...</div>
+                <div class="p-4 border rounded bg-white shadow-sm font-bold text-xs">Entre (rango)...</div>
+                <div class="p-4 border rounded bg-white shadow-sm font-bold text-xs">Texto que contiene...</div>
             </div>
         </div>
 
@@ -101,15 +97,16 @@
             <div class="concept-box border-green-400">
                 <p>Inserta una barra de color dentro de la celda cuya longitud representa el valor. Facilita comparar cantidades visualmente sin leer los números.</p>
             </div>
-            <i class="fas fa-chart-bar text-6xl text-green-300 mt-4"></i>
+            <i class="fas fa-chart-bar text-6xl text-green-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 6 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Conjuntos de Iconos</h2>
             <div class="concept-box border-purple-400">
-                <p>Agrega iconos (semáforos, flechas, banderas) según el rango del valor. <br>Ejemplo: Flecha verde arriba para ventas altas, roja abajo para bajas.</p>
+                <p>Agrega iconos (semáforos, flechas, banderas) según el rango del valor. Ejemplo: Flecha verde arriba para ventas altas.</p>
             </div>
+            <img src="../../imagenes/filtro.PNG" alt="Filtros" class="h-16 mt-4 mx-auto">
         </div>
 
         <!-- Diapositiva 7 -->
@@ -123,42 +120,41 @@
         <!-- Diapositiva 8 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Administrar Reglas</h2>
-            <p>Excel permite tener múltiples reglas en una misma celda. El <strong>Administrador de Reglas</strong> permite cambiar el orden de prioridad o eliminar reglas existentes.</p>
-            <i class="fas fa-tasks text-6xl text-blue-100 mt-8"></i>
+            <p>Excel permite tener múltiples reglas en una misma celda. El <strong>Administrador de Reglas</strong> permite cambiar la prioridad.</p>
+            <i class="fas fa-tasks text-6xl text-blue-100 mt-8 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 9 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Uso de Fórmulas</h2>
             <div class="concept-box bg-blue-50">
-                <p>Es el nivel avanzado. Podemos decir: "Pinta toda la fila de verde SI la celda de la columna Estado dice 'Pagado'".</p>
+                <p>Nivel avanzado: "Pinta toda la fila de verde SI la celda de la columna Estado dice 'Pagado'". Se usa la opción 'Nueva regla -> Usar fórmula'.</p>
             </div>
         </div>
 
         <!-- Diapositiva 10 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Valores Duplicados</h2>
-            <p>Herramienta vital para la limpieza de datos. Resalta instantáneamente nombres o códigos que se repiten por error en una columna.</p>
-            <i class="fas fa-clone text-6xl text-slate-300 mt-4"></i>
+            <p>Herramienta vital para la limpieza de datos. Resalta instantáneamente códigos o nombres que se repiten por error.</p>
+            <i class="fas fa-clone text-6xl text-slate-300 mt-4 mx-auto"></i>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Escalas de Color</h2>
-            <p>Crea un degradado (ej. Verde a Rojo) donde los valores más altos son verdes, los medios amarillos y los bajos rojos (Mapa de Calor).</p>
+            <p>Crea un degradado (ej. Verde a Rojo) donde los valores más altos son verdes y los bajos rojos. Útil para mapas de calor.</p>
         </div>
 
         <!-- Diapositiva 12 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Impacto en Dashboards</h2>
-            <p class="italic text-2xl">"El formato condicional permite crear tableros de control (Dashboards) que hablan por sí solos, permitiendo una lectura inmediata de la salud del negocio."</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Dashboards</h2>
+            <p class="italic text-slate-500 text-2xl">"El formato condicional permite crear tableros que hablan por sí solos, permitiendo una lectura inmediata del estado de los datos."</p>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Ejercicio Avanzado</h2>
-            <div class="code-block">
-                <p>// Lógica del Formato Condicional</p>
+            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Lógica de Formato</h2>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm mx-auto text-left max-w-md">
                 <p>IF celda.valor < 70 THEN</p>
                 <p>&nbsp;&nbsp;celda.estilo.fondo = RED</p>
                 <p>&nbsp;&nbsp;celda.estilo.fuente = WHITE</p>
@@ -166,24 +162,22 @@
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Asignación</h2>
-            <div class="concept-box bg-blue-600 text-white border-none">
+            <div class="concept-box bg-blue-600 text-white border-none shadow-xl">
                 <h3 class="font-black text-xl mb-4 uppercase">MAPA DE CALOR</h3>
-                <p>Crear una tabla con las temperaturas máximas de la semana en San Pedro Sula y aplicar una Escala de Color de 3 colores (Verde-Amarillo-Rojo).</p>
+                <p>Crear una tabla con las temperaturas máximas de la semana en su ciudad y aplicar una Escala de Color de 3 colores (Verde-Amarillo-Rojo).</p>
                 <div class="flex justify-between text-sm font-bold pt-4 border-t border-blue-400 mt-4">
                     <span>Valor: 5%</span>
                     <span>Fecha: Próxima clase</span>
@@ -206,25 +200,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "¿Qué cambia el Formato Condicional?", a: "A", options: ["Apariencia de la celda", "El valor del número", "El nombre del archivo", "La marca de la PC"] },
-            { q: "¿Cuándo cambia el formato?", a: "C", options: ["Al imprimir", "Al cerrar", "Cuando se cumple una condición", "Nunca"] },
-            { q: "Icono de semáforo es un:", a: "B", options: ["Filtro", "Conjunto de iconos", "Gráfico 3D", "Error"] },
-            { q: "Sirve para ver tendencias:", a: "D", options: ["Borrar", "Suma", "Copia", "Escalas de color"] },
-            { q: "Para ver si un ID se repite:", a: "A", options: ["Regla de Duplicados", "Suma", "Resta", "Promedio"] },
-            { q: "Las barras de datos muestran:", a: "C", options: ["Texto", "Fotos", "Magnitud visual del valor", "Errores"] },
-            { q: "¿Dónde se manejan las reglas?", a: "B", options: ["En el teclado", "Administrador de Reglas", "En el monitor", "En Google"] },
-            { q: "Regla 'Es menor que' es de:", a: "D", options: ["Formato", "Cierre", "Apertura", "Resaltado"] },
-            { q: "El formato condicional es:", a: "A", options: ["Automático", "Manual", "Lento", "Invisible"] },
-            { q: "Pestaña para encontrarlo:", a: "B", options: ["Insertar", "Inicio", "Vista", "Ayuda"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -233,56 +215,41 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Qué propiedad cambia principalmente el Formato Condicional?", a: "A", options: ["Apariencia visual de la celda", "El valor numérico", "El nombre de la hoja", "El idioma de Excel"] },
+            { q: "¿En qué momento se aplica el cambio de formato?", a: "C", options: ["Al imprimir", "Al cerrar Excel", "Cuando se cumple una condición definida", "Cada 5 minutos"] },
+            { q: "El uso de semáforos o flechas dentro de la celda se llama:", a: "B", options: ["Filtro de iconos", "Conjunto de iconos", "Gráfico de barras", "Imagen fija"] },
+            { q: "¿Qué herramienta es ideal para visualizar tendencias y variaciones de datos?", a: "D", options: ["Borrar celdas", "Suma rápida", "Copiar formato", "Escalas de color"] },
+            { q: "Para detectar si un código de cliente se repite en una lista usamos:", a: "A", options: ["Regla de Valores Duplicados", "Filtro de texto", "Función Promedio", "AutoSuma"] },
+            { q: "Las barras de datos en una celda muestran visualmente:", a: "C", options: ["Texto oculto", "Fotografías", "La magnitud del valor", "Errores de fórmula"] },
+            { q: "¿Dónde se gestionan y modifican todas las reglas creadas?", a: "B", options: ["En el teclado", "Administrador de Reglas", "En el monitor", "En Google Drive"] },
+            { q: "Una regla como 'Es menor que 70' se clasifica como regla de:", a: "D", options: ["Diseño de página", "Cierre de archivo", "Validación simple", "Resaltado de celdas"] },
+            { q: "El formato condicional de Excel se caracteriza por ser:", a: "A", options: ["Automático y dinámico", "Manual y estático", "Lento y pesado", "Solo para textos"] },
+            { q: "¿En qué pestaña de la cinta de opciones se encuentra el Formato Condicional?", a: "B", options: ["Insertar", "Inicio", "Vista", "Programador"] }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
         });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
-        });
 
         window.onload = async () => {
             if (window.GamesAdapter) {
-                await window.GamesAdapter.init('ofimatica_formato_condicional', false);
+                await window.GamesAdapter.init('ofimatica_formato', false);
                 setTimeout(() => {
                     document.getElementById('loading-overlay').style.opacity = '0';
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>

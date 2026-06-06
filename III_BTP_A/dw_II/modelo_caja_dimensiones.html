@@ -20,11 +20,7 @@
         #slide-counter { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--gris-ima); z-index: 100; }
         header, footer { transition: opacity 0.3s; }
         .is-fullscreen header, .is-fullscreen footer { opacity: 0; pointer-events: none; }
-        .quiz-option { width: 100%; max-width: 500px; padding: 0.5rem; margin: 0.2rem 0; border: 2px solid #e2e8f0; border-radius: 0.75rem; text-align: left; transition: all 0.2s; font-size: 0.8rem; }
-        .quiz-option:hover { border-color: var(--azul-ima); background: #eff6ff; }
-        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
-        .quiz-option.incorrect { background: #fee2e2; border-color: #ef4444; }
-        .box-demo { width: 200px; height: 100px; background: #3b82f6; border: 10px solid #1e3a8a; padding: 20px; margin: 20px; color: white; font-weight: bold; display: flex; items-center; justify-content: center; }
+        .box-demo { width: 200px; height: 100px; background: #3b82f6; border: 10px solid #1e3a8a; padding: 20px; margin: 20px; color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body class="bg-slate-50 antialiased">
@@ -74,7 +70,7 @@
         <!-- Diapositiva 3 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Partes de la Caja</h2>
-            <ul class="text-left space-y-4 max-w-xl text-sm">
+            <ul class="text-left space-y-4 max-w-xl text-sm mx-auto">
                 <li><strong>Content:</strong> El contenido real (texto/imagen).</li>
                 <li><strong>Padding:</strong> Espacio <u>interno</u> (entre contenido y borde).</li>
                 <li><strong>Border:</strong> La línea que rodea al padding.</li>
@@ -85,7 +81,7 @@
         <!-- Diapositiva 4 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Demostración Visual</h2>
-            <div class="box-demo">CAJA</div>
+            <div class="box-demo mx-auto">CAJA</div>
             <p class="mt-4 text-xs italic">Azul: Contenido | Azul Oscuro: Borde | Espacio interno: Padding</p>
         </div>
 
@@ -95,7 +91,7 @@
             <div class="concept-box border-yellow-400">
                 <p>Por defecto, estas propiedades definen SOLO el tamaño del área de <strong>contenido</strong>. El padding y el borde se suman al tamaño final.</p>
             </div>
-            <div class="code-block mt-4">width: 300px; height: 150px;</div>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">width: 300px; height: 150px;</div>
         </div>
 
         <!-- Diapositiva 6 -->
@@ -103,7 +99,7 @@
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Cálculo del Ancho Total</h2>
             <div class="concept-box">
                 <p>Si una caja tiene <code>width: 100px</code>, <code>padding: 10px</code> y <code>border: 5px</code>...</p>
-                <p class="mt-2 font-bold text-center">Ancho Total = 5+10+100+10+5 = 130px</p>
+                <p class="mt-2 font-bold text-center text-xl text-blue-600">Ancho Total = 5+10+100+10+5 = 130px</p>
             </div>
         </div>
 
@@ -120,7 +116,7 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Márgenes Automáticos</h2>
             <p>Usamos <code>margin: auto</code> junto con un ancho definido para <strong>centrar</strong> un bloque horizontalmente.</p>
-            <div class="code-block mt-4">
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">
                 div {<br>
                 &nbsp;&nbsp;width: 50%;<br>
                 &nbsp;&nbsp;margin: 0 auto;<br>
@@ -131,7 +127,7 @@
         <!-- Diapositiva 9 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Dimensiones Máximas y Mínimas</h2>
-            <ul class="text-left space-y-4 max-w-xl">
+            <ul class="text-left space-y-4 max-w-xl mx-auto">
                 <li><strong>min-width / min-height:</strong> Evita que la caja sea demasiado pequeña.</li>
                 <li><strong>max-width / max-height:</strong> Evita que la caja desborde en pantallas grandes.</li>
             </ul>
@@ -141,19 +137,19 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Desbordamiento: overflow</h2>
             <p>Define qué pasa si el contenido es más grande que la caja.</p>
-            <ul class="grid grid-cols-3 gap-2 mt-4 text-[10px] font-bold">
-                <li class="p-2 border">visible</li>
-                <li class="p-2 border">hidden (Corta)</li>
-                <li class="p-2 border">scroll (Barras)</li>
+            <ul class="grid grid-cols-3 gap-2 mt-4 text-[10px] font-bold mx-auto max-w-sm">
+                <li class="p-2 border rounded bg-slate-50">visible</li>
+                <li class="p-2 border rounded bg-slate-50">hidden (Corta)</li>
+                <li class="p-2 border rounded bg-slate-50">scroll (Barras)</li>
             </ul>
         </div>
 
         <!-- Diapositiva 11 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Padding vs Margin</h2>
-            <div class="grid grid-cols-2 gap-4 mt-4 text-xs">
-                <div class="p-4 border bg-blue-50"><strong>Padding:</strong> Afecta al fondo del elemento.</div>
-                <div class="p-4 border bg-green-50"><strong>Margin:</strong> No tiene fondo (es transparente).</div>
+            <div class="grid grid-cols-2 gap-4 mt-4 text-xs mx-auto max-w-xl">
+                <div class="p-4 border bg-blue-50 rounded"><strong>Padding:</strong> Afecta al fondo del elemento.</div>
+                <div class="p-4 border bg-green-50 rounded"><strong>Margin:</strong> No tiene fondo (es transparente).</div>
             </div>
         </div>
 
@@ -161,13 +157,13 @@
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Sintaxis Corta (Shorthand)</h2>
             <p>Puedes definir los 4 lados en una sola línea (Arriba, Derecha, Abajo, Izquierda).</p>
-            <div class="code-block mt-4">padding: 10px 20px 5px 30px;</div>
+            <div class="bg-slate-800 text-white p-4 rounded-lg mt-4 font-mono text-sm">padding: 10px 20px 5px 30px;</div>
         </div>
 
         <!-- Diapositiva 13 -->
         <div class="slide">
             <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Reto de Código</h2>
-            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl text-xs">
+            <div class="bg-slate-900 text-green-400 p-6 rounded-lg font-mono text-left w-full max-w-xl text-xs mx-auto">
                 <p>* { box-sizing: border-box; }</p>
                 <p>.contenedor {</p>
                 <p>&nbsp;&nbsp;max-width: 1200px;</p>
@@ -177,16 +173,14 @@
             </div>
         </div>
 
-        <!-- Diapositiva 14 -->
+        <!-- Diapositiva 14 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 1</h2>
-            <div id="quiz-1" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-1" class="w-full"></div>
         </div>
 
-        <!-- Diapositiva 15 -->
+        <!-- Diapositiva 15 (Quiz) -->
         <div class="slide">
-            <h2 class="text-3xl font-bold font-poppins text-blue-600 mb-6">Evaluación 2</h2>
-            <div id="quiz-2" class="w-full flex flex-col items-center"></div>
+            <div id="quiz-container-2" class="w-full"></div>
         </div>
 
         <!-- Diapositiva 16 -->
@@ -217,25 +211,13 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/api.js"></script>
     <script src="../../js/games-adapter.js"></script>
+    <script src="../../js/interactive-quiz.js"></script>
     <script>
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const counter = document.getElementById('slide-counter');
-
-        const quizQuestions = [
-            { q: "Espacio entre contenido y borde:", a: "B", options: ["margin", "padding", "border", "outline"] },
-            { q: "Espacio entre cajas vecinas:", a: "A", options: ["margin", "padding", "gap", "distance"] },
-            { q: "Propiedad para el ancho:", a: "C", options: ["height", "size", "width", "fat"] },
-            { q: "box-sizing recomendado:", a: "D", options: ["content-box", "no-box", "auto-box", "border-box"] },
-            { q: "¿Qué hace 'margin: auto'?", a: "B", options: ["Borra bordes", "Centra horizontalmente", "Pone color", "Oculta caja"] },
-            { q: "Propiedad para contenido que desborda:", a: "C", options: ["expand", "fill", "overflow", "break"] },
-            { q: "¿El margen tiene color de fondo?", a: "B", options: ["Sí", "No", "Solo en Chrome", "Solo si es rojo"] },
-            { q: "Valor shorthand '10px 5px' define:", a: "A", options: ["V: 10px, H: 5px", "V: 5px, H: 10px", "Solo arriba", "Solo abajo"] },
-            { q: "min-width sirve para:", a: "D", options: ["Cerrar caja", "Borrar caja", "Ancho máximo", "Ancho mínimo"] },
-            { q: "Un elemento sin padding mide:", a: "C", options: ["10px más", "20px menos", "Igual al contenido", "Cero"] }
-        ];
 
         function showSlide(index) {
             if (index < 0 || index >= slides.length) return;
@@ -244,45 +226,31 @@
             slides[currentSlideIndex].classList.add('active');
             counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
             prevBtn.style.display = currentSlideIndex === 0 ? 'none' : 'block';
-            if (document.fullscreenElement) document.body.classList.add('is-fullscreen');
-            else document.body.classList.remove('is-fullscreen');
+            nextBtn.style.display = currentSlideIndex === slides.length - 1 ? 'none' : 'block';
+
+            if (currentSlideIndex === 13) window.IMAQuiz.init('quiz-container-1', quizQuestions.slice(0, 5));
+            if (currentSlideIndex === 14) window.IMAQuiz.init('quiz-container-2', quizQuestions.slice(5, 10));
         }
 
-        function initQuiz() {
-            const c1 = document.getElementById('quiz-1'), c2 = document.getElementById('quiz-2');
-            quizQuestions.forEach((q, i) => {
-                const d = document.createElement('div');
-                d.className = "mb-2 w-full max-w-xl text-left";
-                d.innerHTML = `<p class="font-bold text-[11px]">${i+1}. ${q.q}</p>`;
-                q.options.forEach((o, j) => {
-                    const l = String.fromCharCode(65+j);
-                    const b = document.createElement('button');
-                    b.className = "quiz-option";
-                    b.innerHTML = `<span>${l}.</span> ${o}`;
-                    b.onclick = () => {
-                        if (l === q.a) b.classList.add('correct'); else b.classList.add('incorrect');
-                        Array.from(b.parentElement.querySelectorAll('button')).forEach(x => x.disabled = true);
-                    };
-                    d.appendChild(b);
-                });
-                if (i < 5) c1.appendChild(d); else c2.appendChild(d);
-            });
-        }
+        const quizQuestions = [
+            { q: "¿Qué propiedad define el espacio entre el contenido y el borde?", a: "B", options: ["margin", "padding", "border", "outline"] },
+            { q: "¿Qué propiedad define el espacio entre una caja y sus vecinas?", a: "A", options: ["margin", "padding", "gap", "distance"] },
+            { q: "¿Qué propiedad CSS se usa para definir el ancho de un elemento?", a: "C", options: ["height", "size", "width", "fat"] },
+            { q: "¿Cuál es el valor de box-sizing recomendado para un diseño más fácil?", a: "D", options: ["content-box", "no-box", "auto-box", "border-box"] },
+            { q: "¿Para qué sirve el valor 'margin: auto'?", a: "B", options: ["Borrar bordes", "Centrar horizontalmente", "Poner color", "Ocultar la caja"] },
+            { q: "Propiedad para manejar el contenido que sobresale de su caja:", a: "C", options: ["expand", "fill", "overflow", "break"] },
+            { q: "¿El margen (margin) de una caja tiene color de fondo?", a: "B", options: ["Sí", "No", "Solo en Chrome", "Solo si es rojo"] },
+            { q: "En el valor shorthand '10px 5px', el primer número define:", a: "A", options: ["Arriba y Abajo", "Derecha e Izquierda", "Solo arriba", "Solo abajo"] },
+            { q: "¿Para qué sirve min-width?", a: "D", options: ["Cerrar caja", "Borrar caja", "Ancho máximo", "Asegurar un ancho mínimo"] },
+            { q: "Identifica este concepto visual:", a: "B", options: ["Base de Datos", "Modelo de Caja", "Hardware", "BIOS"], img: "../../imagenes/dom_tree.png" }
+        ];
 
         nextBtn.onclick = () => showSlide(currentSlideIndex + 1);
         prevBtn.onclick = () => showSlide(currentSlideIndex - 1);
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.onclick();
             if (e.key === 'ArrowLeft') prevBtn.onclick();
-        });
-        let lastTap = 0;
-        document.addEventListener('touchstart', (e) => {
-            const n = Date.now();
-            if (n - lastTap < 300) {
-                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            }
-            lastTap = n;
         });
 
         window.onload = async () => {
@@ -293,7 +261,6 @@
                     setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 500);
                 }, 1000);
             }
-            initQuiz();
             showSlide(0);
         };
     </script>
