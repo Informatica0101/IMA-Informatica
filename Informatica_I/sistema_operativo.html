@@ -292,41 +292,69 @@
 </head>
 <body>
 
-    <!-- ENCABEZADO INSTITUCIONAL -->
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../imagenes/logo.png" id="header-logo" alt="Logo" class="w-16 sm:w-20 h-auto">
-            <div class="leading-none">
-                <h1 class="text-sm sm:text-base font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
-                <p class="text-[8px] sm:text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
-            </div>
+    <!-- Navegación de Escritorio -->
+    <header id="main-header" class="bg-white shadow-md py-4 px-6 sticky top-0 z-50 hidden md:block transition-all duration-300 ease-in-out transform">
+        <div class="container mx-auto flex items-center justify-between">
+            <!-- Sección Izquierda: Logo -->
+            <a href="../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
+                <img src="../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
+            </a>
+
+            <!-- Sección Central: Área de Informática -->
+            <span class="font-extrabold text-2xl text-center flex-grow">Sistema Operativo</span>
+
+            <!-- Sección Derecha: Enlaces de Navegación de Escritorio -->
+            <nav class="flex space-x-6">
+                <a href="../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300"> Regresar a Inicio</a>
+                </nav>
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-4">
-                <li><a href="../index.html" id="nav-home-link" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest transition-colors">Inicio</a></li>
-            </ul>
-        </nav>
     </header>
 
-
-
-
-
-
-
-
-    <!-- Navegación de Escritorio -->
-
-
     <!-- Navegación Móvil (oculta por defecto, mostrada en pantallas pequeñas) -->
-
+    <header id="mobile-header" class="bg-white shadow-md py-4 px-4 flex justify-between items-center md:hidden transition-all duration-300 ease-in-out transform">
+        <!-- Logo y Área de Informática para móvil -->
+        <a href="../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
+            <img src="../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
+            <span class="font-extrabold text-xl">Sistema Operativo</span>
+        </a>
+        <!-- Icono de Hamburguesa -->
+        <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+        <!-- Superposición del Menú Móvil -->
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+        <!-- Barra Lateral del Menú Móvil -->
+        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 p-6 flex flex-col">
+            <button id="close-mobile-menu" class="self-end text-gray-600 hover:text-indigo-600 focus:outline-none mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <nav class="flex flex-col space-y-4">
+                <a href="../index.html" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Inicio</a>
+                <!-- Desplegable Móvil para Asignaturas -->
+                <div class="relative">
+                    <button id="mobile-asignaturas-button" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300 focus:outline-none flex items-center justify-between w-full">
+                        Asignaturas
+                        <svg class="ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="mobile-asignaturas-dropdown" class="hidden mt-2 pl-4 flex flex-col space-y-2">
+                        <a href="../index.html" class="block text-base text-gray-700 hover:text-indigo-600">Informática I</a>
+                        <a href="../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Ofimática I</a>
+                        <a href="../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
+                        <a href="../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
+                        <a href="../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Diseño Web II</a>
+                    </div>
+                </div>
+                <a href="../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
+            </nav>
+        </div>
+    </header>
 
     <main>
         <!-- Contenedor de Diapositivas de Presentación -->
         <div id="presentation-container">
 
             <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
+            <div id="slide-1" class="slide active">
                 <div class="slide-content-area">
                     <img src="../imagenes/logo.png" alt="Logo de la Institución" style="width: 300px; height: auto;" class="mx-auto mb-8 cover-logo">
                     <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Sistema Operativo</h1>
@@ -336,23 +364,10 @@
                     <p class="text-xl text-gray-600 mb-2">San Pedro Sula</p>
                     <p class="text-xl text-gray-600">03 de agosto del 2025</p>
                 </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
-                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
-                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
-                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
-                        </li>
-                    </ul>
-                </div>
             </div>
-<div id="slide-2" class="slide">
+
+            <!-- Diapositiva 2: ¿Qué es un Sistema Operativo? -->
+            <div id="slide-2" class="slide">
                 <div class="slide-content-area side-image-layout">
                     <div>
                         <h2 class="text-indigo-600 font-bold mb-4">¿Qué es un Sistema Operativo?</h2>
@@ -362,7 +377,42 @@
                             <li>Crea un entorno de trabajo eficiente.</li>
                         </ul>
                     </div>
-<div id="slide-4" class="slide">
+                    <img src="../imagenes/sistema_operativo_concepto.png" width="300px" height="auto" alt="Concepto de Sistema Operativo" class="content-image-style">
+                </div>
+            </div>
+
+            <!-- Diapositiva 3: Funciones Principales: Gestión de Procesos y Memoria -->
+            <div id="slide-3" class="slide">
+                <div class="slide-content-area side-image-layout">
+                    <div>
+                        <h2 class="text-indigo-600 font-bold mb-4">Funciones Principales</h2>
+                        <p class="text-lg text-gray-700 mb-6">El SO es el cerebro que coordina todo.</p>
+                        <!-- Contenedor de las dos columnas: usa grid para el diseño -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl text-left">
+                            <div class="bg-blue-50 p-6 rounded-lg shadow-md">
+                                <h3 class="text-2xl font-semibold text-blue-700 mb-3">Gestión de Procesos</h3>
+                                <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
+                                    <li>Administra la ejecución de programas.</li>
+                                    <li>Asigna tiempo de CPU (planificación).</li>
+                                    <li>Permite la multitarea.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-green-50 p-6 rounded-lg shadow-md">
+                                <h3 class="text-2xl font-semibold text-green-700 mb-3">Gestión de Memoria</h3>
+                                <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
+                                    <li>Asigna y libera RAM a programas.</li>
+                                    <li>Controla el uso de la memoria.</li>
+                                    <li>Optimiza el rendimiento.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <img src="../imagenes/funciones_so.png" width="800px" height="auto" alt="Funciones del Sistema Operativo" class="content-image-style">
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: Funciones Principales: Gestión de Archivos y E/S -->
+            <div id="slide-4" class="slide">
                 <div class="slide-content-area side-image-layout">
                     <div>
                         <h2 class="text-indigo-600 font-bold mb-4">Funciones Principales (Cont.)</h2>
@@ -376,7 +426,21 @@
                                     <li>Gestiona permisos de acceso.</li>
                                 </ul>
                             </div>
-<div id="slide-5" class="slide">
+                            <div class="bg-red-50 p-6 rounded-lg shadow-md">
+                                <h3 class="text-2xl font-semibold text-red-700 mb-3">Gestión de Dispositivos (I/O)</h3>
+                                <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
+                                    <li>Controla comunicación con periféricos.</li>
+                                    <li>Interfaz uniforme para programas.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <img src="../imagenes/gestion_io_devices.png" alt="Gestión de Archivos y E/S" class="content-image-style">
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Funciones Principales: Interfaz de Usuario y Redes/Seguridad -->
+            <div id="slide-5" class="slide">
                 <div class="slide-content-area side-image-layout">
                     <div>
                         <h2 class="text-indigo-600 font-bold mb-4">Funciones Principales (Cont.)</h2>
@@ -390,7 +454,22 @@
                                     <li>GUI: ventanas, iconos, menús.</li>
                                 </ul>
                             </div>
-<div id="slide-6" class="slide">
+                            <div class="bg-teal-50 p-6 rounded-lg shadow-md">
+                                <h3 class="text-2xl font-semibold text-teal-700 mb-3">Redes y Seguridad</h3>
+                                <ul class="list-disc list-inside text-base text-teal-700 space-y-1">
+                                    <li>Comunicación entre computadoras.</li>
+                                    <li>Protege contra accesos no autorizados.</li>
+                                    <li>Gestiona permisos y cifrado.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <img src="../imagenes/seguridad_so.png" alt="Interfaz de Usuario y Seguridad" class="content-image-style">
+                </div>
+            </div>
+
+            <!-- Diapositiva 6: Tipos de Sistemas Operativos: Usuarios y Tareas -->
+            <div id="slide-6" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Tipos de Sistemas Operativos</h2>
                     <p class="text-lg text-gray-700 mb-6">Clasificaciones según su capacidad y propósito.</p>
@@ -402,7 +481,20 @@
                                 <li><strong>Multiusuario:</strong> Varios usuarios simultáneamente (ej. Linux, Windows Server).</li>
                             </ul>
                         </div>
-<div id="slide-7" class="slide">
+                        <div class="bg-green-50 p-6 rounded-lg shadow-md">
+                            <h3 class="text-2xl font-semibold text-green-700 mb-3">Por Tareas</h3>
+                            <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
+                                <li><strong>Monotarea:</strong> Una tarea a la vez (ej. MS-DOS).</li>
+                                <li><strong>Multitarea:</strong> Múltiples programas concurrentes (ej. Windows, macOS).</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="../imagenes/tipos_so.png" width="350px" height="auto" alt="Tipos de Sistemas Operativos">
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Tipos de Sistemas Operativos: Estructura y Propósito -->
+            <div id="slide-7" class="slide">
                 <div class="slide-content-area side-image-layout">
                     <div>
                         <h2 class="text-indigo-600 font-bold mb-4">Tipos de Sistemas Operativos (Cont.)</h2>
@@ -414,7 +506,20 @@
                                     <li>Centralizados, de Red, Distribuidos.</li>
                                 </ul>
                             </div>
-<div id="slide-8" class="slide">
+                            <div class="bg-red-50 p-6 rounded-lg shadow-md">
+                                <h3 class="text-2xl font-semibold text-red-700 mb-3">Por Propósito</h3>
+                                <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
+                                    <li>Escritorio, Servidor, Móviles, Embebidos, Tiempo Real.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <img src="../imagenes/estructura_proposito_so.png" width="250px" height="auto" alt="Estructura y Propósito de SO">
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Componentes Clave: Kernel y Shell/GUI -->
+            <div id="slide-8" class="slide">
                 <div class="slide-content-area side-image-layout">
                     <div>
                         <h2 class="text-indigo-600 font-bold mb-4">Componentes Clave</h2>
@@ -428,7 +533,21 @@
                                     <li>Reside permanentemente en memoria.</li>
                                 </ul>
                             </div>
-<div id="slide-9" class="slide">
+                            <div class="bg-teal-50 p-6 rounded-lg shadow-md">
+                                <h3 class="text-2xl font-semibold text-teal-700 mb-3">Shell / Interfaz de Usuario</h3>
+                                <ul class="list-disc list-inside text-base text-teal-700 space-y-1">
+                                    <li>Permite interacción con el kernel.</li>
+                                    <li>CLI (comandos) o GUI (visual).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <img src="../imagenes/kernel_shell.png" alt="Kernel y Shell/GUI" class="content-image-style">
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Componentes Clave: Sistema de Archivos, Gestión de Procesos/Memoria/Dispositivos -->
+            <div id="slide-9" class="slide">
                 <div class="slide-content-area">
                     <h2 class="text-indigo-600 font-bold mb-4">Componentes Clave (Cont.)</h2>
                     <p class="text-lg text-gray-700 mb-6">Más elementos fundamentales del SO.</p>
@@ -440,7 +559,10 @@
                         <li><strong>Gestor de Dispositivos:</strong> Comunicación con hardware (drivers).</li>
                     </ul>
                 </div>
-<div id="slide-10" class="slide">
+            </div>
+
+            <!-- Diapositiva 10: Ejemplos de Sistemas Operativos Populares (Introducción) -->
+            <div id="slide-10" class="slide">
                 <div class="slide-content-area side-image-layout">
                     <div>
                         <h2 class="text-indigo-600 font-bold mb-4">Ejemplos de SO Populares</h2>
@@ -453,110 +575,125 @@
                             <li>iOS</li>
                         </ul>
                     </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
-            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
-                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
-            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
-                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
-                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
-                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
-                </div>
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
-                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+                    <img src="../imagenes/so_populares.png" alt="Sistemas Operativos Populares" class="content-image-style">
                 </div>
             </div>
-        </div>
 
-        <div class="slide">
-            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
-            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
-            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
-                © 2026 Instituto María Auxiliadora • ISEMED
+            <!-- NUEVA Diapositiva 11: Microsoft Windows -->
+            <div id="slide-11" class="slide bg-blue-50">
+                <div class="slide-content-area">
+                    <h2 class="text-blue-800 font-bold text-3xl mb-4">Microsoft Windows</h2>
+                    <p class="text-lg text-blue-700 mb-6">El sistema operativo de escritorio más extendido globalmente.</p>
+                    <img src="../imagenes/windows_logo.png" width="200px" height="auto" alt="Logo de Windows">
+                    <ul class="list-disc list-inside text-left text-base text-blue-800 mt-6 space-y-2">
+                        <li>Interfaz gráfica de usuario (GUI) amigable.</li>
+                        <li>Amplia compatibilidad con software y hardware.</li>
+                        <li>Versiones populares: Windows 10, Windows 11.</li>
+                    </ul>
+                </div>
             </div>
-        </div>
+
+            <!-- NUEVA Diapositiva 12: macOS -->
+            <div id="slide-12" class="slide bg-gray-100">
+                <div class="slide-content-area">
+                    <h2 class="text-gray-800 font-bold text-3xl mb-4">macOS</h2>
+                    <p class="text-lg text-gray-700 mb-6">El sistema operativo de Apple para sus computadoras Mac.</p>
+                    <img src="../imagenes/macos_logo.png" width="200px" height="auto" alt="Logo de macOS">
+                    <ul class="list-disc list-inside text-left text-base text-gray-800 mt-6 space-y-2">
+                        <li>Diseño elegante e intuitivo.</li>
+                        <li>Alta estabilidad y seguridad.</li>
+                        <li>Integración profunda con el ecosistema de Apple.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- NUEVA Diapositiva 13: Linux -->
+            <div id="slide-13" class="slide bg-green-50">
+                <div class="slide-content-area">
+                    <h2 class="text-green-800 font-bold text-3xl mb-4">Linux</h2>
+                    <p class="text-lg text-green-700 mb-6">Un sistema operativo de código abierto y gratuito.</p>
+                    <img src="../imagenes/linux_logo.png"  width="300px" height="auto" alt="Logo de Linux (Tux)">
+                    <ul class="list-disc list-inside text-left text-base text-green-800 mt-6 space-y-2">
+                        <li>Gran flexibilidad y personalización.</li>
+                        <li>Popular en servidores, supercomputadoras y desarrollo.</li>
+                        <li>Múltiples "distribuciones" (ej. Ubuntu, Fedora, Debian).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- NUEVA Diapositiva 14: Android -->
+            <div id="slide-14" class="slide bg-green-500">
+                <div class="slide-content-area">
+                    <h2 class="text-white font-bold text-3xl mb-4">Android</h2>
+                    <p class="text-lg text-white mb-6">El sistema operativo móvil más utilizado, desarrollado por Google.</p>
+                    <img src="../imagenes/android_logo.png" width="250px" height="auto" alt="Logo de Android">
+                    <ul class="list-disc list-inside text-left text-base text-white mt-6 space-y-2">
+                        <li>Basado en el kernel de Linux.</li>
+                        <li>Amplia variedad de dispositivos y fabricantes.</li>
+                        <li>Gran ecosistema de aplicaciones (Google Play Store).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- NUEVA Diapositiva 15: iOS -->
+            <div id="slide-15" class="slide bg-gray-50">
+                <div class="slide-content-area">
+                    <h2 class="text-blue-700 font-bold text-3xl mb-4">iOS</h2>
+                    <p class="text-lg text-gray-700 mb-6">El sistema operativo móvil de Apple para iPhone y iPad.</p>
+                    <img src="../imagenes/ios_logo.png" width="300px" height="auto" alt="Logo de iOS">
+                    <ul class="list-disc list-inside text-left text-base text-gray-800 mt-6 space-y-2">
+                        <li>Interfaz de usuario simple y fluida.</li>
+                        <li>Foco en la seguridad y la privacidad.</li>
+                        <li>Optimizado para el hardware de Apple.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 16: ¿Sabías que...? -->
+            <div id="slide-16" class="slide">
+                <div class="slide-content-area">
+                    <h2 class="text-indigo-600 font-bold mb-4">¿Sabías que...?</h2>
+                    <ul class="list-disc list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-xl">
+                        <li>El primer SO de uso general fue de General Motors en 1956.</li>
+                        <li>"Linux" viene de Linus Torvalds y "Unix".</li>
+                        <li>Android tiene más del 70% de cuota de mercado móvil.</li>
+                        <li>Los SO modernos usan "paginación" y "memoria virtual".</li>
+                        <li>Los "BSOD" (pantalla azul de la muerte) en Windows son de seguridad.</li>
+                        <li>Chrome OS de Google está basado en Linux y usa el navegador Chrome como su interfaz principal.</li>
+                        <li>Los sistemas operativos embebidos son cruciales en IoT (Internet de las Cosas).</li>
+                    </ul>
+                    <img src="../imagenes/curiosidades_so.png" alt="Curiosidades sobre Sistemas Operativos" class="max-w-[300px] h-auto mx-auto content-image-style mt-6">
+                </div>
+            </div>
+
+            <!-- Diapositiva 17: Ejercicio Interactivo: ¿Qué función del SO es? -->
+            <div id="slide-17" class="slide">
+                <div class="slide-content-area">
+                    <h2 class="text-indigo-600 font-bold mb-4">Ejercicio Interactivo: ¿Qué función del SO es?</h2>
+
+                    <div id="os-function-quiz" class="bg-gray-100 p-6 rounded-lg shadow-md w-full max-w-lg flex flex-col items-center">
+                        <p id="question-text" class="text-2xl font-bold text-indigo-800 mb-6 min-h-[4rem] flex items-center justify-center text-center">Cargando pregunta...</p>
+                        <div id="quiz-options-container" class="flex flex-wrap justify-center gap-4 mb-6">
+                            <!-- Botones de opciones se generarán aquí dinámicamente -->
+                        </div>
+                        <p id="quiz-feedback" class="text-2xl font-bold mt-4 mb-4 min-h-[2rem] flex items-center justify-center"></p>
+                        <p class="text-lg text-gray-700">Aciertos: <span id="quiz-score" class="font-bold text-indigo-700">0</span> / <span id="quiz-total-questions" class="font-bold text-indigo-700">0</span></p>
+                        <button id="next-question-button" class="mt-6 bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-5 rounded-lg transition duration-200">Siguiente Pregunta</button>
+                        <button id="restart-quiz-button" class="mt-3 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-lg transition duration-200">Reiniciar Quiz</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 18: Asignación de Tarea -->
+            <div id="slide-18" class="slide">
+                <div class="slide-content-area">
+                    <h2 class="text-indigo-700 font-extrabold mb-4">Asignación de Tarea</h2>
+                    <div class="bg-yellow-50 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
+                        <p class="text-xl font-semibold text-yellow-800 mb-4">Para entregar el 10 de agosto de 2025:</p>
+                        <ol class="list-decimal list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-md">
+                            <li>Investiga y describe brevemente un tipo de Sistema Operativo nombre del SO, versión, funciones destacadas del sistema operativo que usa.</li>
+                        </ol>
+                    </div>
                 </div>
             </div>
 
@@ -576,7 +713,14 @@
     </main>
 
     <!-- Pie de Página -->
-
+    <footer id="main-footer" class="bg-gray-900 text-gray-300 py-6 px-6 mt-8 transition-all duration-300 ease-in-out transform">
+        <div class="container mx-auto text-center text-sm">
+            <p class="flex items-center justify-center">
+                &copy;&nbsp;<span id="current-year"></span>&nbsp;Instituto María Auxiliadora - Área de InformáticaSEMED. Todos los derechos reservados.
+                <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" style="width: 50px; height: auto; margin-left: 0.5rem;">
+            </p>
+        </div>
+    </footer>
 
     <script>
         // --- Lógica del Menú Móvil ---
@@ -985,87 +1129,5 @@
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- PIE DE PÁGINA INSTITUCIONAL -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-[10px] p-4 transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <img src="../imagenes/bandera-de-honduras.png" id="footer-flag" alt="HN" class="w-10 h-auto">
-            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
-        </div>
-    </footer>
-
-
-    <!-- LOGICA DE NAVEGACIÓN ESTÁNDAR (Fase 6) -->
-    <script>
-        (function() {
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') nextSlide();
-                   else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') prevSlide();
-                   else if (typeof prevSlide === 'function') prevSlide();
-                }
-            });
-
-            const container = document.getElementById('presentation-container') || document.body;
-            let tsX = 0;
-            container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-            container.addEventListener('touchend', e => {
-                let teX = e.changedTouches[0].screenX;
-                if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') nextSlide();
-                    else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') prevSlide();
-                    else if (typeof prevSlide === 'function') prevSlide();
-                }
-            }, {passive: true});
-
-            // Double tap for fullscreen
-            let lastTap = 0;
-            container.addEventListener('touchstart', (e) => {
-                const now = Date.now();
-                if (now - lastTap < 300) {
-                    if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(err => console.error(err));
-                    } else {
-                        document.exitFullscreen();
-                    }
-                }
-                lastTap = now;
-            }, {passive: true});
-
-            function handleFS() {
-                const isFS = document.fullscreenElement;
-                const h = document.getElementById('page-header');
-                const f = document.getElementById('page-footer');
-                if (h) h.style.display = isFS ? 'none' : 'flex';
-                if (f) f.style.display = isFS ? 'none' : 'block';
-            }
-            document.addEventListener('fullscreenchange', handleFS);
-            document.addEventListener('webkitfullscreenchange', handleFS);
-            document.addEventListener('mozfullscreenchange', handleFS);
-            document.addEventListener('MSFullscreenChange', handleFS);
-        })();
-    </script>
-
 </body>
 </html>

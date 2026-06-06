@@ -417,38 +417,99 @@
 </head>
 <body class="font-inter antialiased text-gray-900 flex flex-col min-h-screen">
 
-    <!-- ENCABEZADO INSTITUCIONAL -->
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../imagenes/logo.png" id="header-logo" alt="Logo" class="w-16 sm:w-20 h-auto">
-            <div class="leading-none">
-                <h1 class="text-sm sm:text-base font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
-                <p class="text-[8px] sm:text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
+    <!-- Header -->
+    <header id="main-header" class="bg-white shadow-md fixed w-full z-50" style="z-index: 1000;">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="../index.html" class="flex items-center space-x-4">
+                <img src="../imagenes/logo.png" alt="Logo" width="120" height="auto">
+                <span class="text-2xl font-bold text-blue-800">Area de Informatica</span>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-6">
+                <a href="../index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Inicio</a>
+                <!-- Nested Dropdown for Grados (Cursos) -->
+                <div class="relative group">
+                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
+                        Cursos <span class="ml-1 text-xs">&#9662;</span>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
+                        <div id="desktop-grades-menu"></div>
+                    </div>
+                </div>
+                <!-- Nested Dropdown for Recursos Adicionales -->
+                <div class="relative group">
+                    <button class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 focus:outline-none">
+                        Recursos Adicionales <span class="ml-1 text-xs">&#9662;</span>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform scale-95 group-hover:scale-100 origin-top">
+                        <div id="desktop-additional-resources-menu"></div>
+                    </div>
+                </div>
+                <a href="../pseudocode.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Pseudocódigo</a>
+                <a href="https://wa.me/50488422786" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Contacto</a>
+            </nav>
+
+            <!-- Flag Image for Desktop -->
+            <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" width="120" height="auto" class="hidden md:block">
+
+            <!-- Mobile Hamburger Menu -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path id="mobile-menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-4">
-                <li><a href="../index.html" id="nav-home-link" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest transition-colors">Inicio</a></li>
-            </ul>
-        </nav>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" class="hidden">
+            <button id="mobile-menu-close-button" class="absolute top-4 right-6 text-gray-700 focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <nav class="flex flex-col space-y-5 mt-12 w-full px-5">
+                <a href="../index.html" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Inicio</a>
+                <!-- Mobile Grados Menu (Cursos) -->
+                <div class="w-full">
+                    <button id="mobile-courses-toggle" class="w-full text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 flex justify-between items-center transition-colors duration-200 border-b border-gray-200">
+                        Cursos
+                        <span id="mobile-courses-arrow" class="transform transition-transform duration-300">&#9656;</span>
+                    </button>
+                    <div id="mobile-grades-container" class="mobile-menu-item-container hidden-height">
+                        <div class="pl-3 pt-1 flex flex-col space-y-2" id="mobile-grades-menu">
+                            <!-- Grades will be injected here by JS -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Mobile Recursos Adicionales Menu -->
+                <div class="w-full">
+                    <button id="mobile-additional-resources-toggle" class="w-full text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 flex justify-between items-center transition-colors duration-200">
+                        Recursos Adicionales
+                        <span id="mobile-additional-resources-arrow" class="transform transition-transform duration-300">&#9656;</span>
+                    </button>
+                    <div id="mobile-additional-resources-container" class="mobile-menu-item-container hidden-height">
+                        <div class="pl-3 pt-1 flex flex-col space-y-2" id="mobile-additional-resources-menu">
+                            <!-- Additional Resources will be injected here by JS -->
+                        </div>
+                    </div>
+                </div>
+                <a href="../pseudocode.html" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Pseudocódigo</a>
+                <a href="https://wa.me/50488422786" class="text-gray-800 hover:text-blue-600 font-semibold text-xl text-center py-2 transition-colors duration-200" onclick="closeMobileMenu()">Contacto</a>
+            </nav>
+        </div>
     </header>
-
-
-
-
-
-
-
-
-    <!-- Header -->
-
 
     <main class="flex-grow container mx-auto px-4 py-8 flex flex-col items-center justify-center relative flex-grow" style="padding-top: 6rem;">
         <!-- Presentation Slides Container -->
         <div id="presentation-container" class="relative w-full max-w-6xl bg-white rounded-lg shadow-xl overflow-hidden flex flex-col justify-between h-[calc(100vh-10rem)]">
 
             <!-- Slide 1: Portada -->
-             <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
+            <div id="slide-1" class="slide active">
+                <img src="../imagenes/logo.png" alt="Logo de la Institución" style="width: 400px; height: auto;" class="mx-auto mb-8 cover-logo">
                 <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Periféricos de Entrada y Salida</h1>
                 <h3 class="text-2xl text-gray-700 mb-2">Informática I</h3>
                 <p class="text-xl text-gray-600 mb-2">Décimo A</p>
@@ -457,22 +518,8 @@
                 <p class="text-xl text-gray-600">27 de julio del 2025</p>
             </div>
 
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
-                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
-                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
-                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-<div id="slide-2" class="slide">
+            <!-- Slide 2: ¿Qué son los Periféricos? -->
+            <div id="slide-2" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">1. ¿Qué son los Periféricos?</h2>
                 <p class="text-lg text-gray-700 mb-6">Dispositivos de hardware que permiten la comunicación entre la computadora y el mundo exterior.</p>
                 <img src="../imagenes/perifericos-general.png" alt="Image of various computer peripherals" width="400" height="auto" class="max-w-md mx-auto content-image-style">
@@ -481,7 +528,9 @@
                     <li>Son esenciales para la <strong>interacción</strong> con la computadora.</li>
                 </ul>
             </div>
-<div id="slide-3" class="slide">
+
+            <!-- Slide 3: Clasificación de los Periféricos -->
+            <div id="slide-3" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">2. Clasificación de Periféricos</h2>
                 <p class="text-lg text-gray-700 mb-6">Se clasifican según la dirección del flujo de datos.</p>
                 <div class="flex flex-col md:flex-row justify-center items-center gap-8 mt-6">
@@ -490,7 +539,21 @@
                         <strong class="text-xl text-indigo-700">Entrada</strong>
                         <p class="text-base text-gray-600">Introducen datos.</p>
                     </div>
-<div id="slide-4" class="slide">
+                    <div class="flex flex-col items-center text-center">
+                        <img src="../imagenes/flecha-salida.png" alt="Flecha de salida" class="w-20 h-20 mb-2 object-contain">
+                        <strong class="text-xl text-indigo-700">Salida</strong>
+                        <p class="text-base text-gray-600">Muestran resultados.</p>
+                    </div>
+                    <div class="flex flex-col items-center text-center">
+                        <img src="../imagenes/flecha-mixta.png" alt="Flecha de doble sentido" class="w-20 h-20 mb-2 object-contain">
+                        <strong class="text-xl text-indigo-700">Mixtos (Entrada/Salida)</strong>
+                        <p class="text-base text-gray-600">Ambas funciones.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Periféricos de Entrada -->
+            <div id="slide-4" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">2.1. Periféricos de Entrada</h2>
                 <p class="text-lg text-gray-700 mb-6">Dispositivos que permiten introducir datos e instrucciones a la computadora.</p>
                 <div class="icon-grid">
@@ -498,7 +561,24 @@
                         <img src="../imagenes/teclado.png" alt="Teclado" class="object-contain">
                         Teclado
                     </div>
-<div id="slide-5" class="slide">
+                    <div class="icon-item">
+                        <img src="../imagenes/raton.png" alt="Ratón" class="object-contain">
+                        Ratón
+                    </div>
+                    <div class="icon-item">
+                        <img src="../imagenes/microfono.png" alt="Micrófono" class="object-contain">
+                        Micrófono
+                    </div>
+                    <div class="icon-item">
+                        <img src="../imagenes/scanner.png" alt="Escáner" class="object-contain">
+                        Escáner
+                    </div>
+                </div>
+                <p class="text-base text-gray-600 mt-6">Convierten información física o análoga en digital.</p>
+            </div>
+
+            <!-- Slide 5: Más Ejemplos de Periféricos de Entrada -->
+            <div id="slide-5" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">2.2. Más Periféricos de Entrada</h2>
                 <ul class="list-disc list-inside text-left text-base text-gray-700 mb-6 space-y-2">
                     <li><strong>Cámara Web:</strong> Captura video e imágenes en tiempo real.</li>
@@ -510,7 +590,9 @@
                 </ul>
                 <img src="../imagenes/ejemplos-entrada-adicional.png" alt="Image of additional input peripherals" class="max-w-md mx-auto content-image-style">
             </div>
-<div id="slide-6" class="slide">
+
+            <!-- Slide 6: Periféricos de Salida -->
+            <div id="slide-6" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">3. Periféricos de Salida</h2>
                 <p class="text-lg text-gray-700 mb-6">Dispositivos que muestran o envían los resultados del procesamiento de la computadora.</p>
                 <div class="icon-grid">
@@ -518,7 +600,24 @@
                         <img src="../imagenes/monitor.png" alt="Monitor" class="object-contain">
                         Monitor
                     </div>
-<div id="slide-7" class="slide">
+                    <div class="icon-item">
+                        <img src="../imagenes/impresora.png" alt="Impresora" class="object-contain">
+                        Impresora
+                    </div>
+                    <div class="icon-item">
+                        <img src="../imagenes/altavoces.png" alt="Altavoces" class="object-contain">
+                        Altavoces
+                    </div>
+                    <div class="icon-item">
+                        <img src="../imagenes/proyector.png" alt="Proyector" class="object-contain">
+                        Proyector
+                    </div>
+                </div>
+                <p class="text-base text-gray-600 mt-6">Convierten información digital en formatos legibles por humanos.</p>
+            </div>
+
+            <!-- Slide 7: Más Ejemplos de Periféricos de Salida -->
+            <div id="slide-7" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">3.2. Más Periféricos de Salida</h2>
                 <ul class="list-disc list-inside text-left text-base text-gray-700 mb-6 space-y-2">
                     <li><strong>Auriculares:</strong> Audio personal, sin molestar a otros.</li>
@@ -529,7 +628,9 @@
                 </ul>
                 <img src="../imagenes/ejemplos-salida-adicional.png" alt="Image of additional output peripherals" class="max-w-md mx-auto content-image-style">
             </div>
-<div id="slide-8" class="slide">
+
+            <!-- Slide 8: Periféricos de Entrada/Salida (Mixtos) -->
+            <div id="slide-8" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">4. Periféricos Mixtos (Entrada/Salida)</h2>
                 <p class="text-lg text-gray-700 mb-6">Dispositivos que pueden introducir y mostrar/enviar datos simultáneamente.</p>
                 <div class="icon-grid">
@@ -537,7 +638,24 @@
                         <img src="../imagenes/pantalla_tactil.png" alt="Pantalla Táctil" class="object-contain">
                         Pantalla Táctil
                     </div>
-<div id="slide-9" class="slide">
+                    <div class="icon-item">
+                        <img src="../imagenes/impresora-multifuncion.png" alt="Impresora Multifunción" class="object-contain">
+                        Impresora Multifunción
+                    </div>
+                    <div class="icon-item">
+                        <img src="../imagenes/pendrive.png" alt="Memoria USB" class="object-contain">
+                        Memoria USB
+                    </div>
+                </div>
+                <p class="text-base text-gray-600 mt-6">Permiten el flujo de información en ambas direcciones.</p>
+                <div class="icon-item">
+                        <img src="../imagenes/tarjeta-red.png" alt="Tarjeta de Red" class="object-contain">
+                        Tarjeta de Red
+                    </div>
+            </div>
+
+            <!-- Slide 9: Criterios de Selección -->
+            <div id="slide-9" class="slide">
                 <h2 class="text-indigo-600 font-bold mb-4">5. Criterios de Selección</h2>
                 <p class="text-lg text-gray-700 mb-6">Factores clave al elegir un periférico:</p>
                 <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
@@ -550,109 +668,29 @@
                 </ul>
             </div>
 
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
-            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
-                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
-            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
-                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
-                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
-                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
-                </div>
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
-                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+            <!-- Slide 10: Ejercicio Práctico: Identifica el Periférico -->
+            <div id="slide-10" class="slide">
+                <h2 class="text-indigo-600 font-bold mb-4">Ejercicio Práctico: ¿Qué tipo de periférico es?</h2>
+                <div class="exercise-container">
+                    <div id="question-box" class="question-box"></div>
+                    <div id="options-grid" class="options-grid">
+                        <button class="option-button" data-answer="entrada">Entrada</button>
+                        <button class="option-button" data-answer="salida">Salida</button>
+                        <button class="option-button" data-answer="mixto">Mixto</button>
+                    </div>
+                    <div id="feedback-message" class="feedback-message"></div>
+                    <button id="next-question-button" class="nav-button mt-4 hidden">Siguiente Pregunta</button>
                 </div>
             </div>
-        </div>
 
-        <div class="slide">
-            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
-            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
-            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
-                © 2026 Instituto María Auxiliadora • ISEMED
+            <!-- Slide 11: Asignación de Tareas -->
+            <div id="slide-11" class="slide">
+                <h2 class="text-indigo-700 font-extrabold mb-4">Asignación de Tareas</h2>
+                <p class="text-xl text-gray-600 mb-6">1. <strong>Elaborar un cuadro comparativo</strong> de periféricos de entrada, salida y mixtos. Incluir al menos 3 ejemplos de cada tipo, su función principal y un ejemplo de uso práctico.</p>
+                <p class="text-xl text-gray-600 mb-6">2. <strong>Investigar y explicar</strong> la importancia de elegir el periférico adecuado para diferentes actividades (ej. gaming, diseño gráfico, trabajo de oficina).</p>
+                <p class="text-lg text-gray-500">Fecha de entrega: 03 de agosto del 2025</p>
+                <p class="text-lg text-gray-500">Ponderación: 5%</p>
             </div>
-        </div>
 
             <!-- Navigation Buttons -->
             <div class="flex justify-between w-full p-4 mt-auto">
@@ -670,7 +708,18 @@
     </main>
 
     <!-- Footer -->
-
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-5 text-center">
+            <p class="text-base mb-3">
+                &copy; <span id="current-year"></span> Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
+            </p>
+            <div class="flex justify-center space-x-5">
+                <a href="../index.html" class="text-gray-400 hover:text-white transition-colors duration-200">Privacidad</a>
+                <a href="../index.html" class="text-gray-400 hover:text-white transition-colors duration-200">Términos</a>
+                <a href="../index.html" class="text-gray-400 hover:text-white transition-colors duration-200">Soporte</a>
+            </div>
+        </div>
+    </footer>
 
     <script>
         // Data for presentations (HTML files for menus)
@@ -1156,7 +1205,7 @@
                 newSlideElement.style.animationName = (direction === 'next' ? 'fadeInUp' : 'fadeInDown');
 
             } else if (!currentActiveSlide && index === 0) {
-                // This block specifically handles the very first load if currentSlideIndex = 0; showSlide(currentSlideIndex) is called
+                // This block specifically handles the very first load if showSlide(0) is called
                 // and no slide is active yet. It ensures the first slide is shown without animation.
                 newSlideElement.classList.add('active');
                 newSlideElement.style.display = 'flex';
@@ -1450,87 +1499,5 @@
             }
         });
     </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- PIE DE PÁGINA INSTITUCIONAL -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-[10px] p-4 transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <img src="../imagenes/bandera-de-honduras.png" id="footer-flag" alt="HN" class="w-10 h-auto">
-            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
-        </div>
-    </footer>
-
-
-    <!-- LOGICA DE NAVEGACIÓN ESTÁNDAR (Fase 6) -->
-    <script>
-        (function() {
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') nextSlide();
-                   else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') prevSlide();
-                   else if (typeof prevSlide === 'function') prevSlide();
-                }
-            });
-
-            const container = document.getElementById('presentation-container') || document.body;
-            let tsX = 0;
-            container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-            container.addEventListener('touchend', e => {
-                let teX = e.changedTouches[0].screenX;
-                if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') nextSlide();
-                    else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') prevSlide();
-                    else if (typeof prevSlide === 'function') prevSlide();
-                }
-            }, {passive: true});
-
-            // Double tap for fullscreen
-            let lastTap = 0;
-            container.addEventListener('touchstart', (e) => {
-                const now = Date.now();
-                if (now - lastTap < 300) {
-                    if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(err => console.error(err));
-                    } else {
-                        document.exitFullscreen();
-                    }
-                }
-                lastTap = now;
-            }, {passive: true});
-
-            function handleFS() {
-                const isFS = document.fullscreenElement;
-                const h = document.getElementById('page-header');
-                const f = document.getElementById('page-footer');
-                if (h) h.style.display = isFS ? 'none' : 'flex';
-                if (f) f.style.display = isFS ? 'none' : 'block';
-            }
-            document.addEventListener('fullscreenchange', handleFS);
-            document.addEventListener('webkitfullscreenchange', handleFS);
-            document.addEventListener('mozfullscreenchange', handleFS);
-            document.addEventListener('MSFullscreenChange', handleFS);
-        })();
-    </script>
-
 </body>
 </html>
