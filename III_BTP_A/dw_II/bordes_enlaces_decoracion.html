@@ -140,35 +140,20 @@
 </head>
 <body class="antialiased">
 
-    <!-- ENCABEZADO INSTITUCIONAL -->
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../../imagenes/logo.png" id="header-logo" alt="Logo" class="w-16 sm:w-20 h-auto">
-            <div class="leading-none">
-                <h1 class="text-sm sm:text-base font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
-                <p class="text-[8px] sm:text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
-            </div>
+    <header id="page-header" class="w-full bg-white p-4 shadow-sm flex justify-between items-center z-50">
+        <div class="flex items-center space-x-4">
+            <img src="../../imagenes/logo.png" alt="Logo IMA" style="width: 150px; height: auto;">
+            <h1 class="text-xl font-bold text-gray-800">Diseño Web</h1>
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-4">
-                <li><a href="../../index.html" id="nav-home-link" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest transition-colors">Inicio</a></li>
-            </ul>
+        <nav>
+            <a href="../../index.html" class="text-gray-600 hover:text-orange-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
         </nav>
     </header>
-
-
-
-
-
-
-
-
-
 
     <main>
         <div id="presentation-container">
             <!-- Diapositiva 1: Portada -->
-            <div class="slide active" id="slide-1" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
+            <div class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
                 <h2>Bordes / Enlaces y text-decoration en CSS</h2>
                 <div class="mt-8 text-lg text-gray-500">
@@ -176,40 +161,45 @@
                     <p>Fecha: 24 de mayo de 2026</p>
                     <p>Grado: III BTP Informática Sección "A"</p>
                 </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
-                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
-                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
-                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
-                        </li>
-                    </ul>
-                </div>
             </div>
-<div class="slide">
+
+            <!-- Diapositiva 2: Propiedad Border -->
+            <div class="slide">
                 <h3>Propiedad Border</h3>
                 <p>Muchos elementos HTML admiten la propiedad borde (border). Es especialmente útil para definir límites y organizar tablas.</p>
                 <div class="concept-box">
                     <p>La propiedad <strong>border</strong> requiere tres valores fundamentales: ancho, estilo y color.</p>
                 </div>
-<div class="slide">
+            </div>
+
+            <!-- Diapositiva 3: Sintaxis y Valores -->
+            <div class="slide">
                 <h3>Sintaxis del Borde</h3>
                 <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-orange-500">
                     selector { <br>
                     &nbsp;&nbsp;border: 2px solid red;<br>
                     }
                 </div>
-<div class="slide">
+                <ul class="text-left mt-6 list-disc list-inside space-y-2">
+                    <li><strong>2px:</strong> El grosor de la línea.</li>
+                    <li><strong>solid:</strong> El estilo (liso, punteado, etc.).</li>
+                    <li><strong>red:</strong> El color del borde.</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 4: Estilos de Borde -->
+            <div class="slide">
                 <h3>Tipos de Estilos Comunes</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                     <div class="p-4 border-2 border-dashed border-gray-400">dashed (punteado)</div>
-<div class="slide">
+                    <div class="p-4 border-2 border-dotted border-gray-400">dotted (puntos)</div>
+                    <div class="p-4 border-2 border-solid border-gray-400">solid (liso)</div>
+                    <div class="p-4 border-2 border-double border-gray-400">double (doble)</div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Border-Radius -->
+            <div class="slide">
                 <h3>Esquinas Redondeadas</h3>
                 <p>Puedes conseguir bordes más redondos o rectos al modificar el valor de <strong>border-radius</strong>.</p>
                 <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-orange-400">
@@ -218,13 +208,19 @@
                     &nbsp;&nbsp;border-radius: 10px;<br>
                     }
                 </div>
-<div class="slide">
+            </div>
+
+            <!-- Diapositiva 6: Uso en Tablas -->
+            <div class="slide">
                 <h3>Bordes en Tablas</h3>
                 <p>Para visualizar mejor una tabla, es común aplicar bordes a las celdas (td) y a la tabla misma.</p>
                 <div class="concept-box bg-orange-50">
                     <p>Ejemplo: `td { border: 1px dashed blue; }` crea celdas con bordes azules punteados.</p>
                 </div>
-<div class="slide">
+            </div>
+
+            <!-- Diapositiva 7: Ejercicio 1 -->
+            <div class="slide">
                 <h3>Ejercicio 1: Bordes</h3>
                 <p>Crea un archivo HTML con una tabla de 3x3 y aplica estilos diferentes:</p>
                 <ul class="text-left mt-4 list-disc list-inside">
@@ -233,13 +229,18 @@
                     <li>Un encabezado (th) con texto en color rojo.</li>
                 </ul>
             </div>
-<div class="slide">
+
+            <!-- Diapositiva 8: Enlaces y Decoración -->
+            <div class="slide">
                 <h3>Personalización de Enlaces</h3>
                 <p>Los enlaces (etiqueta &lt;a&gt;) tienen propiedades de texto normal, pero incluyen la propiedad especial <strong>text-decoration</strong>.</p>
                 <div class="concept-box">
                     <p>Por defecto, los enlaces son azules y están subrayados, pero esto se puede cambiar para personalizar el diseño.</p>
                 </div>
-<div class="slide">
+            </div>
+
+            <!-- Diapositiva 9: Valores de text-decoration -->
+            <div class="slide">
                 <h3>Valores de Decoración</h3>
                 <ul class="text-left mt-6 list-none space-y-4">
                     <li><span class="underline">underline</span>: Subrayado normal (por defecto).</li>
@@ -249,109 +250,82 @@
                 </ul>
             </div>
 
+            <!-- Diapositiva 10: Pseudoclases de Enlace -->
             <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+                <h3>Estados de un Enlace</h3>
+                <p>Las pseudoclases permiten cambiar el estilo según la interacción del usuario:</p>
+                <ul class="text-left mt-6 list-disc list-inside space-y-2">
+                    <li><strong>a:link</strong>: Un enlace que aún no ha sido visitado.</li>
+                    <li><strong>a:visited</strong>: Un enlace que el usuario ya visitó.</li>
+                    <li><strong>a:hover</strong>: Cuando el usuario pasa el cursor por encima.</li>
+                </ul>
             </div>
 
+            <!-- Diapositiva 11: Ejemplo de Enlace Personalizado -->
             <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
-            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
-                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
-            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
-                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
-                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
-                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
-                </div>
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
-                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+                <h3>Botón con Enlace</h3>
+                <p>Podemos quitar el subrayado y cambiar el color para que parezca un botón real:</p>
+                <div class="bg-gray-800 text-white p-6 rounded text-left mt-4 font-mono">
+                    a { <br>
+                    &nbsp;&nbsp;color: #cc0000;<br>
+                    &nbsp;&nbsp;text-decoration: none;<br>
+                    }<br>
+                    a:hover {<br>
+                    &nbsp;&nbsp;font-weight: bold;<br>
+                    }
                 </div>
             </div>
-        </div>
 
-        <div class="slide">
-            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
-            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
-            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
-                © 2026 Instituto María Auxiliadora • ISEMED
+            <!-- Diapositiva 12: Selectores Múltiples -->
+            <div class="slide">
+                <h3>Foco en Elementos Específicos</h3>
+                <p>¿Y si quieres enfocarte en las &lt;p&gt; que están dentro de varios &lt;div&gt;?</p>
+                <div class="bg-gray-100 p-6 rounded text-left mt-4 font-mono text-xl border-l-8 border-green-500">
+                    div div p { <br>
+                    &nbsp;&nbsp;color: red;<br>
+                    }
+                </div>
+                <p class="mt-4 text-sm">Esto solo afectará a los párrafos anidados en dos capas de divs.</p>
             </div>
-        </div>
+
+            <!-- Diapositiva 13: Ejercicio 2 -->
+            <div class="slide">
+                <h3>Ejercicio 2: Navegación</h3>
+                <p>Diseña tres botones de navegación que cumplan lo siguiente:</p>
+                <ul class="text-left mt-4 list-decimal list-inside">
+                    <li>Sin subrayado predeterminado.</li>
+                    <li>Con bordes sólidos de 2px y esquinas redondeadas.</li>
+                    <li>Que cambien de color al pasar el cursor (hover).</li>
+                </ul>
+            </div>
+
+            <!-- Diapositiva 14: Cuestionario (Parte 1) -->
+            <div class="slide">
+                <h3>Cuestionario: Evaluación</h3>
+                <div class="quiz-container max-w-2xl w-full">
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <div class="quiz-options flex flex-col gap-2"></div>
+                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 15: Cuestionario (Parte 2) -->
+            <div class="slide">
+                <h3>Cuestionario: Continuación</h3>
+                <div class="quiz-container max-w-2xl w-full">
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <div class="quiz-options flex flex-col gap-2"></div>
+                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 16: Fin y Asignación -->
+            <div class="slide">
+                <h2>¡Muchas Gracias!</h2>
+                <div class="concept-box border-orange-600">
+                    <p><strong>Asignación:</strong> Diseñar botones con enlaces personalizados (sin subrayado, con bordes y efectos básicos).</p>
+                    <p class="mt-4 text-sm">Fecha de entrega: Próxima semana.</p>
+                </div>
             </div>
         </div>
 
@@ -363,7 +337,12 @@
         <div id="slide-counter">1 / 16</div>
     </main>
 
-
+    <footer id="page-footer" class="w-full bg-gray-900 text-white text-center p-2 text-sm">
+        <div class="flex items-center justify-center space-x-2">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="Honduras" width="60">
+            <p>© 2026 Instituto María Auxiliadora - Área de Informática</p>
+        </div>
+    </footer>
 
     <script>
         const slides = document.querySelectorAll('.slide');
@@ -372,7 +351,7 @@
         const slideCounter = document.getElementById('slide-counter');
         const header = document.getElementById('page-header');
         const footer = document.getElementById('page-footer');
-        var currentSlideIndex = 0;
+        let currentSlide = 0;
 
         const quizData = [
             { q: "¿Qué propiedad controla el borde de un elemento?", options: ["margin", "border", "padding", "outline"], a: "border" },
@@ -391,15 +370,15 @@
         function showSlide(n) {
             slides[currentSlide].classList.remove('active');
             slides[currentSlide].style.display = 'none';
-            currentSlideIndex = (n + slides.length) % slides.length;
+            currentSlide = (n + slides.length) % slides.length;
             slides[currentSlide].style.display = 'flex';
             setTimeout(() => slides[currentSlide].classList.add('active'), 10);
 
             slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
-            prevBtn.disabled = currentSlideIndex === 0;
-            nextBtn.disabled = currentSlideIndex === slides.length - 1;
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === slides.length - 1;
 
-            if (currentSlideIndex === 13 || currentSlideIndex === 14) loadQuiz();
+            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
         }
 
         function loadQuiz() {
@@ -417,8 +396,8 @@
                 return;
             }
 
-            if (currentQuiz < 5 && currentSlideIndex === 14) { showSlide(13); return; }
-            if (currentQuiz >= 5 && currentSlideIndex === 13) { showSlide(14); return; }
+            if (currentQuiz < 5 && currentSlide === 14) { showSlide(13); return; }
+            if (currentQuiz >= 5 && currentSlide === 13) { showSlide(14); return; }
 
             const data = quizData[currentQuiz];
             questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
@@ -443,7 +422,7 @@
                     }
                     setTimeout(() => {
                         currentQuiz++;
-                        if (currentQuiz === 5 && currentSlideIndex === 13) {
+                        if (currentQuiz === 5 && currentSlide === 13) {
                             showSlide(14);
                         } else {
                             loadQuiz();
@@ -472,90 +451,8 @@
         window.addEventListener('resize', handleFullscreen);
         document.addEventListener('fullscreenchange', handleFullscreen);
 
-        currentSlideIndex = 0; showSlide(currentSlideIndex);
+        showSlide(0);
         handleFullscreen();
     </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- PIE DE PÁGINA INSTITUCIONAL -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-[10px] p-4 transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <img src="../../imagenes/bandera-de-honduras.png" id="footer-flag" alt="HN" class="w-10 h-auto">
-            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
-        </div>
-    </footer>
-
-
-    <!-- LOGICA DE NAVEGACIÓN ESTÁNDAR (Fase 6) -->
-    <script>
-        (function() {
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') nextSlide();
-                   else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') prevSlide();
-                   else if (typeof prevSlide === 'function') prevSlide();
-                }
-            });
-
-            const container = document.getElementById('presentation-container') || document.body;
-            let tsX = 0;
-            container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-            container.addEventListener('touchend', e => {
-                let teX = e.changedTouches[0].screenX;
-                if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') nextSlide();
-                    else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') prevSlide();
-                    else if (typeof prevSlide === 'function') prevSlide();
-                }
-            }, {passive: true});
-
-            // Double tap for fullscreen
-            let lastTap = 0;
-            container.addEventListener('touchstart', (e) => {
-                const now = Date.now();
-                if (now - lastTap < 300) {
-                    if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(err => console.error(err));
-                    } else {
-                        document.exitFullscreen();
-                    }
-                }
-                lastTap = now;
-            }, {passive: true});
-
-            function handleFS() {
-                const isFS = document.fullscreenElement;
-                const h = document.getElementById('page-header');
-                const f = document.getElementById('page-footer');
-                if (h) h.style.display = isFS ? 'none' : 'flex';
-                if (f) f.style.display = isFS ? 'none' : 'block';
-            }
-            document.addEventListener('fullscreenchange', handleFS);
-            document.addEventListener('webkitfullscreenchange', handleFS);
-            document.addEventListener('mozfullscreenchange', handleFS);
-            document.addEventListener('MSFullscreenChange', handleFS);
-        })();
-    </script>
-
 </body>
 </html>

@@ -125,31 +125,21 @@
 </head>
 <body class="antialiased">
 
-    <!-- ENCABEZADO INSTITUCIONAL -->
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../../imagenes/logo.png" id="header-logo" alt="Logo" class="w-16 sm:w-20 h-auto">
-            <div class="leading-none">
-                <h1 class="text-sm sm:text-base font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
-                <p class="text-[8px] sm:text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
-            </div>
+    <!-- Header de la página -->
+    <header id="page-header" class="w-full bg-white p-4 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <!-- Reducción del tamaño del logo usando clases responsivas de Tailwind -->
+            <img src="../../imagenes/logo.png" alt="Logo de la institución" class="w-24 sm:w-32 h-auto">
+            <h1 class="text-lg sm:text-xl font-bold text-gray-800 mt-2 sm:mt-0">Eventos de JavaScript</h1>
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-4">
-                <li><a href="../../index.html" id="nav-home-link" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest transition-colors">Inicio</a></li>
+        <nav class="mt-4 sm:mt-0">
+            <ul class="flex space-x-2 sm:space-x-4">
+                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-sm sm:text-base">Inicio</a></li>
+                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-sm sm:text-base">Acerca de</a></li>
+                <li><a href="../../index.html" class="text-gray-600 hover:text-blue-500 transition-colors text-sm sm:text-base">Contacto</a></li>
             </ul>
         </nav>
     </header>
-
-
-
-
-
-
-
-
-    <!-- Header de la página -->
-
 
     <!-- Contenido principal de la presentación -->
     <main class="flex-grow flex justify-center items-center p-4">
@@ -157,7 +147,7 @@
         <div id="presentation-container" class="relative">
 
             <!-- Diapositiva 1: Portada -->
-            <div id="slide-1" class="slide active" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
+            <div id="slide-1" class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo del instituto" class="w-48 sm:w-64 md:w-80 h-auto mb-4 sm:mb-8">
                 <h2 class="text-xl sm:text-2xl mb-2 sm:mb-4 text-blue-600">Eventos de JavaScript</h2>
                 <p class="text-sm sm:text-base text-gray-600">Diseño Web II</p>
@@ -166,29 +156,18 @@
                     <p>Fecha: Domingo 28 de septiembre</p>
                     <p>Grado: Duodécimo Sección "A"</p>
                 </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
-                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
-                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
-                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
-                        </li>
-                    </ul>
-                </div>
             </div>
-<div id="slide-2" class="slide">
+
+            <!-- Diapositiva 2: ¿Qué son los Eventos? -->
+            <div id="slide-2" class="slide">
                 <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¿Qué son los Eventos de JavaScript?</h3>
                 <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
                     En JavaScript, un evento es una acción o suceso que ocurre en el sistema y que el navegador detecta. Estos eventos pueden ser provocados por el usuario o por el propio navegador, como un clic de ratón, la carga de una página o el envío de un formulario.
                 </p>
             </div>
-<div id="slide-3" class="slide">
+
+            <!-- Diapositiva 3: Manejadores de Eventos -->
+            <div id="slide-3" class="slide">
                 <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Manejadores de Eventos (Event Handlers)</h3>
                 <ul class="mt-2 sm:mt-4 text-left text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-2 sm:space-y-4">
                     <li><strong>Atributos HTML:</strong> Anticuado. `onclick="myFunction()"`. Mezcla la lógica con la estructura.</li>
@@ -196,7 +175,9 @@
                     <li><strong>Método `addEventListener()`:</strong> La forma moderna y recomendada. Permite asignar múltiples funciones a un mismo evento. `element.addEventListener('click', myFunction);`.</li>
                 </ul>
             </div>
-<div id="slide-4" class="slide">
+
+            <!-- Diapositiva 4: Tipos de Eventos Comunes -->
+            <div id="slide-4" class="slide">
                 <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Tipos de Eventos Comunes</h3>
                 <ul class="mt-2 sm:mt-4 text-left text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-2 sm:space-y-4">
                     <li><strong>Eventos de Ratón:</strong> `click`, `mouseover`, `mouseout`, `mousedown`, `mouseup`.</li>
@@ -205,33 +186,49 @@
                     <li><strong>Eventos de Carga:</strong> `load`, `unload`.</li>
                 </ul>
             </div>
-<div id="slide-5" class="slide">
+
+            <!-- Diapositiva 5: El Objeto Evento -->
+            <div id="slide-5" class="slide">
                 <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">El Objeto Evento</h3>
                 <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
                     Cuando un evento ocurre, el navegador crea un objeto `Event` que contiene información detallada sobre el evento, como el tipo de evento, el elemento que lo disparó, las coordenadas del ratón, etc. Este objeto se pasa como argumento a la función manejadora.
                 </p>
             </div>
-<div id="slide-6" class="slide">
+
+            <!-- Diapositiva 6: Bubbling y Capturing -->
+            <div id="slide-6" class="slide">
                 <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Bubbling y Capturing (Propagación de Eventos)</h3>
                 <div class="flex flex-col sm:flex-row justify-center items-center w-full h-1/2 space-y-4 sm:space-y-0 sm:space-x-8">
                     <div class="flex-1">
                         <h4 class="font-bold text-lg sm:text-2xl mb-2 text-blue-700">Bubbling (Burbujeo)</h4>
                         <p class="text-sm sm:text-base">El evento se propaga desde el elemento más interno hasta el más externo. Es el comportamiento por defecto.</p>
                     </div>
-<div id="slide-7" class="slide">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-lg sm:text-2xl mb-2 text-blue-700">Capturing (Captura)</h4>
+                        <p class="text-sm sm:text-base">El evento se propaga desde el elemento más externo hasta el más interno. Menos común, se habilita con `true` en `addEventListener()`.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Detener la Propagación -->
+            <div id="slide-7" class="slide">
                 <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Detener la Propagación y el Comportamiento por Defecto</h3>
                 <ul class="mt-2 sm:mt-4 text-left text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl list-disc list-inside space-y-2 sm:space-y-4">
                     <li><strong>`event.stopPropagation()`:</strong> Detiene la propagación del evento, impidiendo que el evento `bubbling` o `capturing` afecte a otros elementos.</li>
                     <li><strong>`event.preventDefault()`:</strong> Evita el comportamiento predeterminado del navegador, como el envío de un formulario o la navegación de un enlace.</li>
                 </ul>
             </div>
-<div id="slide-8" class="slide">
+
+            <!-- Diapositiva 8: Delegación de Eventos -->
+            <div id="slide-8" class="slide">
                 <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Delegación de Eventos</h3>
                 <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
                     La delegación de eventos es una técnica para manejar eventos en un contenedor padre en lugar de en cada elemento hijo individual. Es muy eficiente, especialmente para listas grandes o elementos creados dinámicamente.
                 </p>
             </div>
-<div id="slide-9" class="slide text-left justify-center p-8 md:p-12 overflow-y-auto">
+
+            <!-- Diapositiva 9: Ejemplo: Evento 'click' -->
+            <div id="slide-9" class="slide text-left justify-center p-8 md:p-12 overflow-y-auto">
                 <h3 class="text-2xl sm:text-3xl font-bold mb-6 text-blue-600 w-full text-center">Ejemplo: Evento `click`</h3>
                 <div class="w-full max-w-3xl space-y-8">
                     <div class="bg-gray-100 p-4 rounded-lg shadow-inner">
@@ -248,110 +245,87 @@
   });
 &lt;/script&gt;</code></pre>
                     </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
-            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
-                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
-            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
-                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
-                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
-                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
-                </div>
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
-                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
                 </div>
             </div>
-        </div>
 
-        <div class="slide">
-            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
-            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
-            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
-                © 2026 Instituto María Auxiliadora • ISEMED
+            <!-- Diapositiva 10: Ejemplo: Eventos de Ratón -->
+            <div id="slide-10" class="slide text-left justify-center p-8 md:p-12 overflow-y-auto">
+                <h3 class="text-2xl sm:text-3xl font-bold mb-6 text-blue-600 w-full text-center">Ejemplo: Eventos de Ratón (`mouseover` y `mouseout`)</h3>
+                <div class="w-full max-w-3xl space-y-8">
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-inner">
+                        <p class="text-gray-600 mb-2 text-sm">Cambia el color de un elemento cuando el cursor entra y sale de él.</p>
+                        <pre class="bg-gray-800 text-white p-3 rounded-lg text-xs md:text-sm overflow-x-auto"><code>&lt;div id="hoverDiv" class="w-48 h-24 bg-blue-200 rounded-lg flex items-center justify-center transition-colors duration-200"&gt;
+  Pasa el mouse aquí
+&lt;/div&gt;
+
+&lt;script&gt;
+  const hoverDiv = document.getElementById('hoverDiv');
+
+  hoverDiv.addEventListener('mouseover', function() {
+    hoverDiv.style.backgroundColor = '#3b82f6'; // Cambia a un azul más oscuro
+  });
+
+  hoverDiv.addEventListener('mouseout', function() {
+    hoverDiv.style.backgroundColor = '#93c5fd'; // Vuelve al color original
+  });
+&lt;/script&gt;</code></pre>
+                    </div>
+                </div>
             </div>
-        </div>
+
+            <!-- Diapositiva 11: Ejemplo: Evento de Formulario ('submit') -->
+            <div id="slide-11" class="slide text-left justify-center p-8 md:p-12 overflow-y-auto">
+                <h3 class="text-2xl sm:text-3xl font-bold mb-6 text-blue-600 w-full text-center">Ejemplo: Evento de Formulario (`submit`)</h3>
+                <div class="w-full max-w-3xl space-y-8">
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-inner">
+                        <p class="text-gray-600 mb-2 text-sm">Maneja el envío de un formulario sin recargar la página.</p>
+                        <pre class="bg-gray-800 text-white p-3 rounded-lg text-xs md:text-sm overflow-x-auto"><code>&lt;form id="myForm" class="flex flex-col space-y-2"&gt;
+  &lt;input type="text" placeholder="Escribe algo" class="border p-2 rounded"&gt;
+  &lt;button type="submit" class="bg-green-500 text-white px-4 py-2 rounded"&gt;Enviar&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+  const myForm = document.getElementById('myForm');
+
+  myForm.addEventListener('submit', function(event) {
+    // Evita que el formulario se envíe y la página se recargue
+    event.preventDefault();
+
+    alert('El formulario ha sido enviado (sin recargar la página)');
+  });
+&lt;/script&gt;</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Cuestionario -->
+            <div id="slide-12" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¡Pon a prueba tus conocimientos!</h3>
+                <div id="quiz-container" class="bg-gray-100 p-4 sm:p-8 rounded-lg shadow-md max-w-3xl w-full text-center">
+                    <div id="quiz-question" class="text-base sm:text-2xl font-semibold mb-2 sm:mb-6 text-gray-800"></div>
+                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-4"></div>
+                    <div id="quiz-feedback" class="mt-4 sm:mt-6 text-sm sm:text-lg font-bold"></div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 13: Tarea -->
+            <div id="slide-13" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">Asignación de Tareas</h3>
+                <div class="bg-gray-100 p-4 sm:p-8 rounded-lg shadow-inner max-w-3xl text-left">
+                    <p class="text-base sm:text-lg text-gray-700 mb-2 sm:mb-4 font-bold">Tarea:</p>
+                    <p class="text-sm sm:text-base text-gray-700 mb-2 sm:mb-4">
+                        Crear un archivo HTML con una tabla comparativa de los diferentes eventos en JavaScript, incluyendo al menos 5 eventos con su descripción y un ejemplo de uso en código.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 14: Fin de la Presentación -->
+            <div id="slide-14" class="slide">
+                <h3 class="text-xl sm:text-3xl mb-4 sm:mb-6 text-blue-500">¡Gracias!</h3>
+                <p class="text-base sm:text-xl text-gray-700 leading-relaxed max-w-3xl">
+                    Si tienen alguna duda, no duden en preguntar.
+                </p>
+            </div>
 
         </div>
 
@@ -364,7 +338,12 @@
     </main>
 
     <!-- Pie de página -->
-
+    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs sm:text-sm p-2">
+        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-2">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-16 sm:w-20 h-auto">
+            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 
     <!-- Scripts para la navegación y la lógica del cuestionario -->
     <script>
@@ -535,19 +514,19 @@
         }
 
         nextButton.addEventListener('click', () => {
-            nextSlide();
+            showSlide(currentSlideIndex + 1);
         });
 
         prevButton.addEventListener('click', () => {
-            prevSlide();
+            showSlide(currentSlideIndex - 1);
         });
 
         // Navegación con las teclas de flecha
         document.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowRight') {
-                nextSlide();
+                showSlide(currentSlideIndex + 1);
             } else if (event.key === 'ArrowLeft') {
-                prevSlide();
+                showSlide(currentSlideIndex - 1);
             }
         });
 
@@ -578,90 +557,8 @@
             if (currentYearSpan) {
                 currentYearSpan.textContent = new Date().getFullYear();
             }
-            currentSlideIndex = 0; showSlide(currentSlideIndex); handleFullscreenChange();
+            showSlide(0); handleFullscreenChange();
         });
     </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- PIE DE PÁGINA INSTITUCIONAL -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-[10px] p-4 transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <img src="../../imagenes/bandera-de-honduras.png" id="footer-flag" alt="HN" class="w-10 h-auto">
-            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
-        </div>
-    </footer>
-
-
-    <!-- LOGICA DE NAVEGACIÓN ESTÁNDAR (Fase 6) -->
-    <script>
-        (function() {
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') nextSlide();
-                   else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') prevSlide();
-                   else if (typeof prevSlide === 'function') prevSlide();
-                }
-            });
-
-            const container = document.getElementById('presentation-container') || document.body;
-            let tsX = 0;
-            container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-            container.addEventListener('touchend', e => {
-                let teX = e.changedTouches[0].screenX;
-                if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') nextSlide();
-                    else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') prevSlide();
-                    else if (typeof prevSlide === 'function') prevSlide();
-                }
-            }, {passive: true});
-
-            // Double tap for fullscreen
-            let lastTap = 0;
-            container.addEventListener('touchstart', (e) => {
-                const now = Date.now();
-                if (now - lastTap < 300) {
-                    if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(err => console.error(err));
-                    } else {
-                        document.exitFullscreen();
-                    }
-                }
-                lastTap = now;
-            }, {passive: true});
-
-            function handleFS() {
-                const isFS = document.fullscreenElement;
-                const h = document.getElementById('page-header');
-                const f = document.getElementById('page-footer');
-                if (h) h.style.display = isFS ? 'none' : 'flex';
-                if (f) f.style.display = isFS ? 'none' : 'block';
-            }
-            document.addEventListener('fullscreenchange', handleFS);
-            document.addEventListener('webkitfullscreenchange', handleFS);
-            document.addEventListener('mozfullscreenchange', handleFS);
-            document.addEventListener('MSFullscreenChange', handleFS);
-        })();
-    </script>
-
 </body>
 </html>

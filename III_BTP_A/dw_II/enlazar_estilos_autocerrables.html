@@ -163,35 +163,20 @@
 </head>
 <body class="antialiased">
 
-    <!-- ENCABEZADO INSTITUCIONAL -->
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../../imagenes/logo.png" id="header-logo" alt="Logo" class="w-16 sm:w-20 h-auto">
-            <div class="leading-none">
-                <h1 class="text-sm sm:text-base font-black text-gray-900 uppercase tracking-tighter">ISEMED</h1>
-                <p class="text-[8px] sm:text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
-            </div>
+    <header id="page-header" class="w-full bg-white p-4 shadow-sm flex justify-between items-center z-50">
+        <div class="flex items-center space-x-4">
+            <img src="../../imagenes/logo.png" alt="Logo IMA" style="width: 150px; height: auto;">
+            <h1 class="text-xl font-bold text-gray-800">Diseño Web II</h1>
         </div>
-        <nav class="mt-3 sm:mt-0">
-            <ul class="flex space-x-4">
-                <li><a href="../../index.html" id="nav-home-link" class="text-gray-600 hover:text-blue-500 font-bold uppercase text-[10px] tracking-widest transition-colors">Inicio</a></li>
-            </ul>
+        <nav>
+            <a href="../../index.html" class="text-gray-600 hover:text-orange-600 font-semibold text-sm md:text-base">Volver al Inicio</a>
         </nav>
     </header>
-
-
-
-
-
-
-
-
-
 
     <main>
         <div id="presentation-container">
             <!-- Diapositiva 1: Portada -->
-            <div class="slide active" id="slide-1" style="display: flex; flex-direction: column; align-items: center; justify-content: center;"><img src="../imagenes/logo.png" alt="Logo" class="w-32 mb-4">&nbsp;&nbsp;
+            <div class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
                 <h2>Enlazar estilos CSS / Etiquetas autocerrables</h2>
                 <div class="mt-8 text-lg text-gray-500">
@@ -199,29 +184,19 @@
                     <p>Fecha: 26 de abril de 2026</p>
                     <p>Grado: III BTP Informática Sección "A"</p>
                 </div>
-
-            <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Objetivos de la Clase</h3>
-                <div class="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm text-left max-w-2xl mx-auto">
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">1</span>
-                            <p class="text-gray-700 font-medium">Comprender los conceptos fundamentales del tema.</p>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-1">2</span>
-                            <p class="text-gray-700 font-medium">Aplicar los conocimientos en casos prácticos.</p>
-                        </li>
-                    </ul>
-                </div>
             </div>
-<div class="slide">
+
+            <!-- Diapositiva 2: Importancia del Enlace Externo -->
+            <div class="slide">
                 <h3>El Método de Enlace Externo</h3>
                 <p>En lugar de escribir estilos dentro de cada etiqueta, los centralizamos en un archivo <strong>.css</strong>.</p>
                 <div class="concept-box">
                     <p><strong>¿Por qué es superior?</strong> Permite que un solo cambio en el archivo CSS actualice instantáneamente cientos de páginas HTML vinculadas.</p>
                 </div>
-<div class="slide">
+            </div>
+
+            <!-- Diapositiva 3: Atributos de la Etiqueta Link -->
+            <div class="slide">
                 <h3>Atributos del Elemento &lt;link&gt;</h3>
                 <p>Esta etiqueta se ubica siempre dentro de la sección <code>&lt;head&gt;</code> y requiere tres parámetros:</p>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
@@ -230,14 +205,23 @@
                     <li><strong>href:</strong> La ruta de ubicación del archivo CSS.</li>
                 </ul>
             </div>
-<div class="slide">
+
+            <!-- Diapositiva 4: Rutas Relativas vs Absolutas -->
+            <div class="slide">
                 <h3>Entendiendo el atributo 'href'</h3>
                 <p>El valor de <code>href</code> depende de dónde esté guardado el archivo:</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div class="bg-orange-50 p-4 rounded text-left">
                         <strong>Ruta Relativa:</strong> <code>href="estilos.css"</code> (Si están en la misma carpeta).
                     </div>
-<div class="slide">
+                    <div class="bg-gray-100 p-4 rounded text-left">
+                        <strong>Ruta Absoluta:</strong> <code>href="https://sitio.com/estilos.css"</code> (Carga desde internet).
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Ejemplo Completo de Enlace -->
+            <div class="slide">
                 <h3>Sintaxis Correcta</h3>
                 <pre><code>&lt;head&gt;
   &lt;title&gt;Mi Proyecto&lt;/title&gt;
@@ -247,7 +231,9 @@
 &lt;/head&gt;</code></pre>
                 <p class="mt-4 italic text-sm">Nota: En este ejemplo, el archivo CSS está dentro de una carpeta llamada 'css'.</p>
             </div>
-<div class="slide">
+
+            <!-- Diapositiva 6: Mantenimiento y Organización -->
+            <div class="slide">
                 <h3>Ventaja: Código Limpio</h3>
                 <p>Al separar la <strong>estructura</strong> (HTML) del <strong>diseño</strong> (CSS):</p>
                 <ul class="text-left mt-6 list-decimal list-inside space-y-4">
@@ -256,13 +242,27 @@
                     <li>Se reduce el peso de carga total del sitio web.</li>
                 </ul>
             </div>
-<div class="slide">
+
+            <!-- Diapositiva 7: Ejercicio 1 -->
+            <div class="slide">
                 <h3>Ejercicio 1: Estructura de Proyecto</h3>
                 <p>Dibuja un diagrama de carpetas para un proyecto que tenga un archivo 'index.html' en la raíz y un archivo 'main.css' dentro de una subcarpeta 'activos'.</p>
                 <div class="concept-box bg-orange-50 border-orange-400">
                     <p><strong>Reto:</strong> Escribe la etiqueta &lt;link&gt; correcta para conectar esos dos archivos.</p>
                 </div>
-<div class="slide">
+            </div>
+
+            <!-- Diapositiva 8: ¿Qué son las Etiquetas Autocerrables? -->
+            <div class="slide">
+                <h3>Etiquetas Autocerrables (Void Elements)</h3>
+                <p>En HTML, la mayoría de las etiquetas vienen en pares (apertura y cierre). Sin embargo, hay excepciones.</p>
+                <div class="concept-box">
+                    <p>Son etiquetas que no contienen texto u otros elementos dentro, por lo que no necesitan una etiqueta de cierre separada como <code>&lt;/tag&gt;</code>.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Sintaxis de Autocierre -->
+            <div class="slide">
                 <h3>La Barra Diagonal (/)</h3>
                 <p>Aunque en HTML5 moderno la barra al final es opcional, se recomienda usarla por compatibilidad y claridad:</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
@@ -270,7 +270,15 @@
                         &lt;img src="foto.jpg"&gt;
                         <p class="text-xs mt-2 italic">(Válido en HTML5)</p>
                     </div>
-<div class="slide">
+                    <div class="bg-green-50 p-4 rounded font-mono">
+                        &lt;img src="foto.jpg" /&gt;
+                        <p class="text-xs mt-2 italic">(Recomendado/Estándar)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Lista de Etiquetas Comunes (I) -->
+            <div class="slide">
                 <h3>Ejemplos Esenciales I</h3>
                 <ul class="text-left mt-6 list-disc list-inside space-y-4">
                     <li><code>&lt;br /&gt;</code>: Inserta un salto de línea forzado.</li>
@@ -279,109 +287,64 @@
                 </ul>
             </div>
 
+            <!-- Diapositiva 11: Lista de Etiquetas Comunes (II) -->
             <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo I</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
+                <h3>Ejemplos Esenciales II</h3>
+                <ul class="text-left mt-6 list-disc list-inside space-y-4">
+                    <li><code>&lt;meta /&gt;</code>: Define metadatos (como el conjunto de caracteres).</li>
+                    <li><code>&lt;input /&gt;</code>: Crea campos de entrada en formularios.</li>
+                    <li><code>&lt;link /&gt;</code>: Vincula recursos externos como hojas de estilo.</li>
+                </ul>
             </div>
 
+            <!-- Diapositiva 12: Errores Comunes -->
             <div class="slide">
-                <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Cuestionario Interactivo II</h3>
-                <div class="grid grid-cols-1 gap-3 max-w-2xl mx-auto w-full text-left">
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">1</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 1 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">2</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 2 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">3</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 3 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">4</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 4 vinculada a QuizPro.</p>
-                        </div>
-
-                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs font-bold">5</div>
-                            <p class="text-xs font-semibold text-gray-600">Pregunta interactiva 5 vinculada a QuizPro.</p>
-                        </div>
-
-                </div>
-                <p class="text-[9px] text-gray-400 mt-6 uppercase font-bold">Responde estas preguntas en el módulo de actividades</p>
-            </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Resumen Ejecutivo</h3>
-            <div class="bg-slate-900 text-white p-8 rounded-[2rem] text-left max-w-2xl mx-auto shadow-2xl">
-                <p class="text-sm leading-relaxed mb-4">Puntos clave para el estudio:<br>• Conceptos base dominados.<br>• Metodologías identificadas.<br>• Aplicaciones prácticas comprendidas.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Asignación Práctica</h3>
-            <div class="bg-yellow-50 p-8 rounded-[2rem] border-2 border-dashed border-yellow-200 text-left max-w-2xl mx-auto">
-                <h4 class="font-black text-yellow-800 uppercase text-xs mb-4">Instrucciones de Tarea</h4>
-                <p class="text-sm text-yellow-900 font-medium">Realiza un mapa conceptual sobre el tema visto hoy. Valor: 5%. Fecha: Próxima clase.</p>
-            </div>
-        </div>
-
-        <div class="slide">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-blue-500 font-bold uppercase">Glosario de Términos</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto A</p>
-                    <p class="text-[10px] text-gray-500">Definición clave para el examen parcial.</p>
-                </div>
-                <div class="p-4 bg-gray-50 rounded-2xl">
-                    <p class="font-bold text-blue-600 text-xs uppercase mb-1">Concepto B</p>
-                    <p class="text-[10px] text-gray-500">Término técnico fundamental del área.</p>
+                <h3>¿Qué NO hacer?</h3>
+                <p>Intentar cerrar una etiqueta autocerrable con una etiqueta de cierre separada es un error de sintaxis:</p>
+                <div class="concept-box border-red-500 bg-red-50">
+                    <p class="text-red-700 font-bold">Incorrecto:</p>
+                    <code>&lt;br&gt; Contenido &lt;/br&gt;</code>
+                    <p class="mt-4 text-gray-700">El navegador ignorará el cierre o podría renderizar mal la página.</p>
                 </div>
             </div>
-        </div>
 
-        <div class="slide">
-            <img src="../imagenes/logo.png" alt="Logo Final" class="w-24 mb-6 opacity-50">
-            <h3 class="text-xl sm:text-2xl mb-3 sm:mb-5 text-gray-400 font-bold uppercase">Cierre y Créditos</h3>
-            <p class="text-sm text-gray-500 uppercase tracking-[0.3em] font-black">¡Gracias por tu atención! Sistema ISEMED - Área de Informática.</p>
-            <div class="mt-12 text-[8px] font-bold text-gray-300 uppercase tracking-widest">
-                © 2026 Instituto María Auxiliadora • ISEMED
+            <!-- Diapositiva 13: Ejercicio 2 -->
+            <div class="slide">
+                <h3>Ejercicio 2: Identificación Técnica</h3>
+                <p>De la siguiente lista, identifica cuáles etiquetas son autocerrables y cuáles requieren cierre manual:</p>
+                <p class="mt-4 font-mono">div, img, p, br, section, hr, meta, h1</p>
+                <div class="concept-box bg-green-50 border-green-400">
+                    <p><strong>Práctica:</strong> Escribe en tu cuaderno la forma correcta de usar las 4 etiquetas autocerrables de la lista.</p>
+                </div>
             </div>
-        </div>
+
+            <!-- Diapositiva 14: Cuestionario Interactivo (Parte 1) -->
+            <div class="slide">
+                <h3>¡Evaluación de conceptos!</h3>
+                <div class="quiz-container max-w-2xl w-full">
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <div class="quiz-options flex flex-col gap-2"></div>
+                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 15: Cuestionario Interactivo (Parte 2) -->
+            <div class="slide">
+                <h3>Cuestionario: Continuación</h3>
+                <div class="quiz-container max-w-2xl w-full">
+                    <p class="quiz-question mb-4 font-bold text-xl text-orange-800 text-left"></p>
+                    <div class="quiz-options flex flex-col gap-2"></div>
+                    <p class="quiz-feedback mt-4 font-bold text-lg"></p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 16: Fin y Asignación -->
+            <div class="slide">
+                <h2>¡Muchas Gracias!</h2>
+                <div class="concept-box border-orange-600">
+                    <p><strong>Asignación:</strong> Ejercicios enlazando una página HTML con imágenes y etiquetas autocerrables. Deben crear una estructura de carpetas correcta.</p>
+                    <p class="mt-4 text-sm">Fecha de entrega: Próxima clase.</p>
+                </div>
             </div>
         </div>
 
@@ -393,7 +356,12 @@
         <div id="slide-counter">1 / 16</div>
     </main>
 
-
+    <footer id="page-footer" class="w-full bg-gray-900 text-white text-center p-2 text-sm">
+        <div class="flex items-center justify-center space-x-2">
+            <img src="../../imagenes/bandera-de-honduras.png" alt="Honduras" width="60">
+            <p>© 2026 Instituto María Auxiliadora - Área de Informática</p>
+        </div>
+    </footer>
 
     <script>
         const slides = document.querySelectorAll('.slide');
@@ -402,7 +370,7 @@
         const slideCounter = document.getElementById('slide-counter');
         const header = document.getElementById('page-header');
         const footer = document.getElementById('page-footer');
-        var currentSlideIndex = 0;
+        let currentSlide = 0;
 
         const quizData = [
             { q: "¿En qué sección del HTML se coloca la etiqueta <link>?", options: ["Dentro del <body>", "Dentro del <head>", "Al final del footer", "En el título"], a: "Dentro del <head>" },
@@ -421,15 +389,15 @@
         function showSlide(n) {
             slides[currentSlide].classList.remove('active');
             slides[currentSlide].style.display = 'none';
-            currentSlideIndex = (n + slides.length) % slides.length;
+            currentSlide = (n + slides.length) % slides.length;
             slides[currentSlide].style.display = 'flex';
             setTimeout(() => slides[currentSlide].classList.add('active'), 10);
 
             slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
-            prevBtn.disabled = currentSlideIndex === 0;
-            nextBtn.disabled = currentSlideIndex === slides.length - 1;
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === slides.length - 1;
 
-            if (currentSlideIndex === 13 || currentSlideIndex === 14) loadQuiz();
+            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
         }
 
         function loadQuiz() {
@@ -447,8 +415,8 @@
                 return;
             }
 
-            if (currentSlideIndex === 13 && currentQuiz >= 5) { showSlide(14); return; }
-            if (currentSlideIndex === 14 && currentQuiz < 5) { showSlide(13); return; }
+            if (currentSlide === 13 && currentQuiz >= 5) { showSlide(14); return; }
+            if (currentSlide === 14 && currentQuiz < 5) { showSlide(13); return; }
 
             const data = quizData[currentQuiz];
             questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
@@ -473,7 +441,7 @@
                     }
                     setTimeout(() => {
                         currentQuiz++;
-                        if (currentQuiz === 5 && currentSlideIndex === 13) {
+                        if (currentQuiz === 5 && currentSlide === 13) {
                             showSlide(14);
                         } else {
                             loadQuiz();
@@ -502,90 +470,8 @@
         window.addEventListener('resize', handleFullscreen);
         document.addEventListener('fullscreenchange', handleFullscreen);
 
-        currentSlideIndex = 0; showSlide(currentSlideIndex);
+        showSlide(0);
         handleFullscreen();
     </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- PIE DE PÁGINA INSTITUCIONAL -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-[10px] p-4 transition-all duration-300">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <img src="../../imagenes/bandera-de-honduras.png" id="footer-flag" alt="HN" class="w-10 h-auto">
-            <p class="uppercase tracking-widest font-medium">© 2026 Instituto María Auxiliadora • Sistema ISEMED</p>
-        </div>
-    </footer>
-
-
-    <!-- LOGICA DE NAVEGACIÓN ESTÁNDAR (Fase 6) -->
-    <script>
-        (function() {
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowRight' || e.key === ' ') {
-                   if (typeof showSlide === 'function') nextSlide();
-                   else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (e.key === 'ArrowLeft') {
-                   if (typeof showSlide === 'function') prevSlide();
-                   else if (typeof prevSlide === 'function') prevSlide();
-                }
-            });
-
-            const container = document.getElementById('presentation-container') || document.body;
-            let tsX = 0;
-            container.addEventListener('touchstart', e => { tsX = e.changedTouches[0].screenX; }, {passive: true});
-            container.addEventListener('touchend', e => {
-                let teX = e.changedTouches[0].screenX;
-                if (tsX - teX > 50) {
-                    if (typeof showSlide === 'function') nextSlide();
-                    else if (typeof nextSlide === 'function') nextSlide();
-                }
-                if (teX - tsX > 50) {
-                    if (typeof showSlide === 'function') prevSlide();
-                    else if (typeof prevSlide === 'function') prevSlide();
-                }
-            }, {passive: true});
-
-            // Double tap for fullscreen
-            let lastTap = 0;
-            container.addEventListener('touchstart', (e) => {
-                const now = Date.now();
-                if (now - lastTap < 300) {
-                    if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(err => console.error(err));
-                    } else {
-                        document.exitFullscreen();
-                    }
-                }
-                lastTap = now;
-            }, {passive: true});
-
-            function handleFS() {
-                const isFS = document.fullscreenElement;
-                const h = document.getElementById('page-header');
-                const f = document.getElementById('page-footer');
-                if (h) h.style.display = isFS ? 'none' : 'flex';
-                if (f) f.style.display = isFS ? 'none' : 'block';
-            }
-            document.addEventListener('fullscreenchange', handleFS);
-            document.addEventListener('webkitfullscreenchange', handleFS);
-            document.addEventListener('mozfullscreenchange', handleFS);
-            document.addEventListener('MSFullscreenChange', handleFS);
-        })();
-    </script>
-
 </body>
 </html>
