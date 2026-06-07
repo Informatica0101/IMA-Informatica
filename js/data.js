@@ -121,7 +121,8 @@ window.presentationData = [
                     { title: "Medidas en CSS (px, em, %)", file: "III_BTP_A/dw_II/medidas_css.html" },
                     { title: "Modelo de Caja y Dimensiones", file: "III_BTP_A/dw_II/modelo_caja_dimensiones.html" },
                     { title: "Bordes, Enlaces y Decoración", file: "III_BTP_A/dw_II/bordes_enlaces_decoracion.html" },
-                    { title: "Selectores (Simples, Múltiples y Globales)", file: "III_BTP_A/dw_II/selectores_css.html" }
+                    { title: "Selectores (Simples, Múltiples y Globales)", file: "III_BTP_A/dw_II/selectores_css.html" },
+                    { title: "Clases, IDs y Pseudoclases", file: "III_BTP_A/dw_II/Clases_Ids_Pseudoclases.html" }
                 ]
             }
         ]
