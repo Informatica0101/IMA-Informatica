@@ -319,6 +319,7 @@ function uploadFile(payload) {
     data: {
       fileId: file.getId(),
       folderId: taskDeliveryFolder.getId(),
+      folderUrl: taskDeliveryFolder.getUrl(),
       mimeType: mimeType
     }
   };

@@ -20,6 +20,10 @@ async function fetchApi(service, action, payload, retryCount = 0) {
 
     const url = urls[service];
 
+    // REQ: Implementación de Timeout para evitar bloqueos por Gateway Timeout (Tarea 1)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 segundos de límite
+
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -27,7 +31,9 @@ async function fetchApi(service, action, payload, retryCount = 0) {
                 'Content-Type': 'text/plain;charset=utf-8',
             },
             body: JSON.stringify({ action, payload }),
+            signal: controller.signal
         });
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
