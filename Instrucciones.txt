@@ -181,6 +181,7 @@ INVALIDA el proceso completo.
 
 ================================================================================================
 TAREAS PENDIENTES DE REVISIÓN
-- Tarea 1: Dashboard del Profesor (Módulo de Calificaciones) - Bug de persistencia en botón "Guardar".
-- Tarea 2: Optimización y Reestructuración del Minijuego "QuizPro" - Arquitectura Distribuida y Lógica de Evaluación Literal.
-- Tarea 3: Subsistema de Gamificación (Módulo "Top Global") - Fallback en renderizado de ranking.
+- Tarea 1: Reingeniería del Módulo de Entrega de Tareas (Dashboard del Estudiante) - Multipart Reengineering & Autonomous Slicing.
+- Tarea 2: Dashboard del Profesor (Módulo de Calificaciones) - Bug de persistencia en botón "Guardar".
+- Tarea 3: Optimización y Reestructuración del Minijuego "QuizPro" - Arquitectura Distribuida y Lógica de Evaluación Literal.
+- Tarea 4: Subsistema de Gamificación (Módulo "Top Global") - Fallback en renderizado de ranking.

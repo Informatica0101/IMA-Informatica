@@ -319,12 +319,14 @@ function uploadFile(payload) {
     data: {
       fileId: file.getId(),
       folderId: taskDeliveryFolder.getId(),
+      folderUrl: taskDeliveryFolder.getUrl(),
       mimeType: mimeType
     }
   };
 }
 
 /**
+ * DEPRECATED: Se utiliza uploadFile con segmentación lógica en cliente.
  * Recibe un trozo de archivo y lo guarda temporalmente.
  */
 function uploadChunk(payload) {
@@ -351,6 +353,7 @@ function uploadChunk(payload) {
 }
 
 /**
+ * DEPRECATED: Se utiliza uploadFile con segmentación lógica en cliente.
  * Une todos los chunks y crea el archivo final.
  */
 function finishChunkedUpload(payload) {

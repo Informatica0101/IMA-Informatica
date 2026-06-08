@@ -203,3 +203,14 @@ DESCRIPCIÓN: Implementado sistema de Ponderación Adaptativa en el Perfil de Do
 ARCHIVO: js/quizpro.js
 LINEAS: 235-250, 1285-1310
 DESCRIPCIÓN: Restauración de la regla de Progresión Dual (Nota + Dominio). Se implementó un flujo de sincronización determinista en endQuiz que espera la resolución de todas las analíticas asíncronas antes de proceder al guardado final. Se utiliza el retorno actualizado del servidor para refrescar el estado local sin peticiones extra.
+
+[2026-06-18 22:15]
+REINGENIERÍA CARGA MULTIPART (TAREA 1)
+- Archivo: backend/task-service/Code.gs
+  - Línea 322: Se agregó la propiedad folderUrl (taskDeliveryFolder.getUrl()) al objeto de retorno en la función uploadFile.
+- Archivo: js/student.js
+  - Líneas 729-730: Se actualizó el umbral de fragmentación (CHUNK_THRESHOLD) a 9.5MB y el tamaño de segmento (CHUNK_SIZE) a 5MB.
+  - Líneas 810-856: Se sustituyó el motor de chunking síncrono por un Esquema de Segmentación Binaria Autónoma. Se implementó renombrado estructurado: [Nombre] - Parte X de Y.
+  - Líneas 877-882: Se ajustó el mapeo de uploadedFiles para priorizar la carpeta contenedora en entregas segmentadas.
+- Archivo: js/api.js
+  - Líneas 23-35: Se integró AbortController con un timeout de 60 segundos en fetchApi.

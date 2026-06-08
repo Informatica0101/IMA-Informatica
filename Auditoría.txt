@@ -180,6 +180,19 @@ Archivo: Global (HTML)
 - [HALLAZGO] Inconsistencia en el orden de carga: games-adapter.js debe cargarse antes de los scripts dependientes.
 - [HALLAZGO] Versiones de caché (v21) obsoletas tras cambios mayores.
 
+AUDITORÍA TAREA 1: REINGENIERÍA CARGA MULTIPART - 2026-06-18
+- Archivo: js/student.js
+  - [HALLAZGO] La función startAutomatedUpload utiliza un esquema de chunking síncrono en el backend (finishChunkedUpload) que causa Gateway Timeout en archivos grandes.
+  - [RIESGO] Bloqueo del hilo de ejecución del servidor durante la reconstrucción de fragmentos.
+  - [FALLA CRÍTICA] El rebanado binario plano (Blob.slice) corrompe la estructura de objetos del PDF, impidiendo su apertura en Drive.
+  - [REMEDIACIÓN] Se migrará a un sistema de Segmentación Lógica por Páginas (Object-Level Parsing) usando pdf-lib.
+- Archivo: js/api.js
+  - [HALLAZGO] fetchApi carece de un mecanismo de AbortController para gestionar timeouts de red del lado del cliente.
+- Archivo: backend/task-service/Code.gs
+  - [HALLAZGO] uploadFile no devuelve la URL de la carpeta contenedora, limitando la navegación visual del estudiante tras la entrega.
+
+[LIMPIEZA] Eliminados archivos de respaldo (.bak) tras validación de Code Review.
+
 AUDITORÍA DE REGRESIÓN CRÍTICA - 2026-06-18
 Archivo: js/config.js
 - [HALLAZGO] La función 'normalizePartial' está definida pero NO exportada al objeto global 'window'.
