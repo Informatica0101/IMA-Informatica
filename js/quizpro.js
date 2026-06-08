@@ -202,24 +202,28 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
 
     // REQ 3.B: Progresión Interna por Niveles (Fase 13: Mastery-Based)
     // Reducción Extrema: Asegurar evaluación del mejor intento histórico (A-149)
-    const stats = Object.values(window.userGameStats || {}).filter(s =>
-        window.normalizeSubject(s.subject) === window.normalizeSubject(subjectName) &&
-        window.parseGrade(s.grade) === window.parseGrade(gradeLabel)
-    );
+    const statsArray = Object.values(window.userGameStats || {});
 
-    const getBestStat = (lvl) => stats
-        .filter(s => window.getStandardLevelName(s.level) === lvl)
-        .reduce((best, curr) => {
-            const currScore = parseFloat(curr.maxScore || 0);
-            const bestScore = parseFloat(best.maxScore || 0);
-            return currScore > bestScore ? curr : best;
-        }, { maxScore: 0, dominio: 0, dominioPromedio: 0 });
+    // Normalizar criterios de búsqueda para asegurar coincidencia robusta (Tarea 1: Fix)
+    const targetGradeNum = window.parseGrade(gradeLabel);
+    const targetSubjectNorm = window.normalizeSubject(subjectName);
 
-    const bestBasic = getBestStat('Básico');
-    const bestInter = getBestStat('Intermedio');
+    // Filtrar estadísticas pertinentes con normalización cruzada
+    const relevantStats = statsArray.filter(s => {
+        if (!s.subject || s.grade === undefined) return false;
+        return window.normalizeSubject(s.subject) === targetSubjectNorm &&
+               window.parseGrade(s.grade) === targetGradeNum;
+    });
 
-    const basicScore = parseFloat(bestBasic.maxScore);
-    const interScore = parseFloat(bestInter.maxScore);
+    // Obtener el puntaje máximo absoluto para cada nivel (Ignorando otros factores)
+    const getScoreForLevel = (lvlName) => {
+        const matches = relevantStats.filter(s => window.getStandardLevelName(s.level) === lvlName);
+        if (matches.length === 0) return 0;
+        return Math.max(...matches.map(m => parseFloat(m.maxScore || 0)));
+    };
+
+    const basicScore = getScoreForLevel('Básico');
+    const interScore = getScoreForLevel('Intermedio');
 
     const btnInter = document.getElementById('btn-intermedio');
     const cardInter = document.getElementById('level-intermedio');
@@ -1266,7 +1270,21 @@ async function endQuiz() {
 
     if (typeof fetchApi === 'function') {
         await fetchApi('USER', 'saveGameResult', payload);
-        // REQ 5: Actualizar stats y refrescar UI de niveles para reflejar el desbloqueo
+
+        // Sincronización Local Inmediata (Tarea 1: Fix Progresión Reactiva)
+        const lvl = window.getStandardLevelName(selectedDifficulty);
+        const key = `QuizPro_${selectedAsignatura}_${selectedGrado}_${lvl}`;
+        if (!window.userGameStats[key] || finalPercent > (window.userGameStats[key].maxScore || 0)) {
+            window.userGameStats[key] = {
+                subject: selectedAsignatura,
+                level: lvl,
+                grade: selectedGrado,
+                maxScore: finalPercent,
+                date: new Date().toISOString()
+            };
+        }
+
+        // Refrescar tabla y UI
         await loadPerformanceTable();
     }
 }

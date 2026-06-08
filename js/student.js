@@ -726,12 +726,14 @@ document.addEventListener('DOMContentLoaded', () => {
     async function startAutomatedUpload(files) {
         if (files.length === 0 || activeUploads > 0) return;
 
+        // Configuración de Límites y Fragmentación (Tarea 3: Fix)
+        const CHUNK_THRESHOLD = 10 * 1024 * 1024; // 10MB (Umbral de seguridad para Apps Script atomic POST)
+        const CHUNK_SIZE = 2 * 1024 * 1024; // 2MB por fragmento para maximizar estabilidad en redes móviles
+
         filePreviewContainer.classList.remove('hidden');
         uploadedFilesContainer.classList.remove('hidden');
 
-        // Procesar Cola Secuencialmente (Req 3.3)
         for (const currentFile of files) {
-            // Filtro Anti-Duplicados
             if (uploadedFiles.some(u => u.fileName === currentFile.name && u.size === currentFile.size)) continue;
 
             const currentFileName = currentFile.name;
@@ -740,7 +742,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const li = document.createElement('li');
             li.className = 'flex flex-col text-sm text-gray-700 bg-white p-3 rounded-xl border border-gray-100 shadow-sm animate-fade-in-up gap-3';
 
-            // Generar vista previa inicial (thumbnail placeholder o real si es imagen)
             let thumbnailHtml = `<div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><i class="fas fa-file"></i></div>`;
             const ext = currentFileName.split('.').pop().toLowerCase();
 
@@ -788,12 +789,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 let fileData;
                 let mimeType = currentFile.type;
 
-                // Forzar Mime-Type PDF si falla la detección del navegador (Tarea 3)
                 if (currentFile.name.toLowerCase().endsWith('.pdf')) {
                     mimeType = 'application/pdf';
                 }
 
-                // Optimización Móvil: Compresión de imágenes (Req 3.3)
                 if (currentFile.type.startsWith('image/') && !currentFile.name.toLowerCase().endsWith('.heic')) {
                     progressSpan.textContent = "Optimizando...";
                     if (progressBar) progressBar.style.width = '10%';
@@ -806,45 +805,40 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
 
-                // Calcular tamaño real del blob base64 (Tarea 3: Corrección de cálculo)
                 const base64Data = fileData.split(',')[1] || fileData;
                 const blobSize = Math.ceil((base64Data.length * 3) / 4) - (base64Data.endsWith('==') ? 2 : (base64Data.endsWith('=') ? 1 : 0));
 
-                if (blobSize > CHUNK_SIZE) {
+                // REQ: Chunk only if > CHUNK_THRESHOLD (Tarea 3)
+                if (blobSize > CHUNK_THRESHOLD) {
                     const totalChunks = Math.ceil(blobSize / CHUNK_SIZE);
                     const uploadId = "UP-" + Date.now();
-                    const rawBase64 = fileData.split(',')[1];
 
-                    // Implementación de Cola Síncrona y Reintento Unitario (Tarea 3)
                     for (let i = 0; i < totalChunks; i++) {
                         const percent = Math.round((i / totalChunks) * 100);
-                        progressSpan.textContent = `Subiendo ${percent}%`;
+                        progressSpan.textContent = `Fragmento ${i+1}/${totalChunks} (${percent}%)`;
                         if (progressBar) progressBar.style.width = `${percent}%`;
 
-                        const start = i * (CHUNK_SIZE * 1.33);
-                        const chunk = rawBase64.substring(start, start + (CHUNK_SIZE * 1.33));
+                        const start = i * (CHUNK_SIZE * 1.334);
+                        const chunk = base64Data.substring(start, start + (CHUNK_SIZE * 1.334));
 
                         let success = false;
                         let attempts = 0;
-                        while (!success && attempts < 3) {
+                        while (!success && attempts < 5) {
                             try {
                                 const chunkRes = await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData: chunk });
                                 if (chunkRes.status === 'success') {
                                     success = true;
-                                } else {
-                                    throw new Error(chunkRes.message || "Fallo en servidor");
-                                }
+                                } else throw new Error(chunkRes.message || "Error en fragmento");
                             } catch (e) {
                                 attempts++;
-                                console.warn(`[IMA-UPLOAD] Reintento ${attempts}/3 para fragmento ${i}:`, e.message);
-                                if (attempts >= 3) throw new Error(`No se pudo subir el fragmento ${i} tras 3 intentos.`);
-                                // Pequeña espera antes de reintentar
-                                await new Promise(r => setTimeout(r, 1000));
+                                console.warn(`[IMA-UPLOAD] Intento ${attempts}/5 fallido para fragmento ${i}`);
+                                if (attempts >= 5) throw e;
+                                await new Promise(r => setTimeout(r, 2000 * attempts)); // Backoff exponencial simple
                             }
                         }
                     }
 
-                    progressSpan.textContent = "Finalizando...";
+                    progressSpan.textContent = "Ensamblando...";
                     if (progressBar) progressBar.style.width = '100%';
                     uploadResult = await fetchApi('TASK', 'finishChunkedUpload', {
                         uploadId, userId: currentUser.userId, tareaId: currentTaskId,
