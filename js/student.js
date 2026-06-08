@@ -898,7 +898,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const files = Array.from(e.target.files);
             if (files.length === 0) return;
 
-            const MAX_SIZE_MB = 10;
+            const MAX_SIZE_MB = 50;
             const ALLOWED_EXT = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'pdf', 'html', 'css', 'js', 'psc'];
 
             const validFiles = [];
