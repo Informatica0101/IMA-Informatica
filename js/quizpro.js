@@ -201,28 +201,38 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     }
 
     // REQ 3.B: Progresión Interna por Niveles (Fase 13: Mastery-Based)
-    const stats = Object.values(window.userGameStats).filter(s =>
+    // Reducción Extrema: Asegurar evaluación del mejor intento histórico (A-149)
+    const stats = Object.values(window.userGameStats || {}).filter(s =>
         window.normalizeSubject(s.subject) === window.normalizeSubject(subjectName) &&
         window.parseGrade(s.grade) === window.parseGrade(gradeLabel)
     );
 
-    const basicStat = stats.find(s => window.getStandardLevelName(s.level) === 'Básico');
-    const interStat = stats.find(s => window.getStandardLevelName(s.level) === 'Intermedio');
+    const getBestStat = (lvl) => stats
+        .filter(s => window.getStandardLevelName(s.level) === lvl)
+        .reduce((best, curr) => {
+            const currScore = parseFloat(curr.maxScore || 0);
+            const bestScore = parseFloat(best.maxScore || 0);
+            return currScore > bestScore ? curr : best;
+        }, { maxScore: 0, dominio: 0, dominioPromedio: 0 });
 
-    const basicScore = parseFloat(basicStat?.maxScore || 0);
-    const basicDominio = parseFloat(basicStat?.dominioPromedio || basicStat?.dominio || 0);
+    const bestBasic = getBestStat('Básico');
+    const bestInter = getBestStat('Intermedio');
 
-    const interScore = parseFloat(interStat?.maxScore || 0);
-    const interDominio = parseFloat(interStat?.dominioPromedio || interStat?.dominio || 0);
+    const basicScore = parseFloat(bestBasic.maxScore);
+    const basicDominio = parseFloat(bestBasic.dominioPromedio || bestBasic.dominio || 0);
+
+    const interScore = parseFloat(bestInter.maxScore);
+    const interDominio = parseFloat(bestInter.dominioPromedio || bestInter.dominio || 0);
 
     const btnInter = document.getElementById('btn-intermedio');
     const cardInter = document.getElementById('level-intermedio');
     const btnAvan = document.getElementById('btn-avanzado');
     const cardAvan = document.getElementById('level-avanzado');
 
-    // FASE 13: Los niveles se desbloquean si Nota >= 70 Y Dominio >= 60/70
+    // FASE 13: Desacoplamiento Lineal (A-149)
+    // Intermedio depende de Básico; Avanzado depende UNICAMENTE de Intermedio.
     const canUnlockInter = isTeacher || (basicScore >= 70 && basicDominio >= 60);
-    const canUnlockAvan = isTeacher || (basicScore >= 70 && interScore >= 70 && basicDominio >= 60 && interDominio >= 70);
+    const canUnlockAvan = isTeacher || (interScore >= 70 && interDominio >= 70);
 
     // UI Intermedio
     if (canUnlockInter) {
