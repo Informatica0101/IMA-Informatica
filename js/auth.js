@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
 
-    // Si el usuario ya está logueado, redirigir al dashboard correspondiente
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    // Si el usuario ya está logueado, redirigir al dashboard correspondiente (buscando en ambos storages)
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     if (currentUser) {
         if (currentUser.rol === 'Profesor') {
             window.location.href = 'teacher-dashboard.html';
@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const submitBtn = loginForm.querySelector('button[type="submit"]');
             const identifier = e.target.email.value;
             const password = e.target.password.value;
+            const rememberMe = document.getElementById('remember-me')?.checked;
 
             submitBtn.classList.add('btn-loading');
             submitBtn.disabled = true;
@@ -26,18 +27,60 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await fetchApi('USER', 'loginUser', { identifier, password });
 
                 if (result.status === 'success' && result.data) {
-                    localStorage.setItem('currentUser', JSON.stringify(result.data));
+                    // REQ: Implementar lógica de "Recordarme" (v4.0)
+                    // Si el usuario marcó "Recordarme", usamos localStorage (persiste tras cerrar navegador)
+                    // Si no, usamos sessionStorage (se borra al cerrar la pestaña)
+                    // Además, para evitar conflictos, limpiamos el otro storage.
+                    const storage = rememberMe ? localStorage : sessionStorage;
+                    const otherStorage = rememberMe ? sessionStorage : localStorage;
+
+                    otherStorage.removeItem('currentUser');
+
+                    // REQ: Persistencia de datos académicos reales (v3.3)
+                    const userData = {
+                        userId: result.data.userId || result.data.id,
+                        nombre: result.data.nombre,
+                        email: result.data.email,
+                        rol: result.data.rol || 'Estudiante',
+                        grado: result.data.grado,
+                        seccion: result.data.seccion,
+                        numeroLista: result.data.numeroLista,
+                        telefono: result.data.telefono,
+                        loginTimestamp: Date.now(),
+                        remembered: rememberMe
+                    };
+
+                    storage.setItem('currentUser', JSON.stringify(userData));
+                    console.log(`[IMA-AUTH] Sesión iniciada para ${userData.nombre} (${userData.rol}). Recordar: ${rememberMe}`);
+
                     if (result.data.rol === 'Profesor') {
                         window.location.href = 'teacher-dashboard.html';
                     } else {
                         window.location.href = 'student-dashboard.html';
                     }
                 } else {
-                    alert(result.message || 'Error al iniciar sesión.');
+                    // Feedback detallado según respuesta del servidor
+                    let msg = "Error al iniciar sesión.";
+                    const serverMsg = (result.message || "").toLowerCase();
+
+                    if (serverMsg.includes("password") || serverMsg.includes("contraseña")) {
+                        msg = "La contraseña ingresada es incorrecta. Por favor, verifica e intenta de nuevo.";
+                    } else if (serverMsg.includes("not found") || serverMsg.includes("no encontrado") || serverMsg.includes("exist")) {
+                        msg = "El usuario o correo no existe en nuestro sistema. Verifica que esté bien escrito o regístrate.";
+                    } else {
+                        msg = result.message || msg;
+                    }
+
+                    alert(msg);
                 }
             } catch (error) {
                 console.error('Error en el fetch:', error);
-                alert('Hubo un problema de conexión. Revisa la consola.');
+                // Manejo de errores de conexión/CORS
+                if (navigator.onLine === false) {
+                    alert('No tienes conexión a internet. Por favor verifica tu red.');
+                } else {
+                    alert('Error de conexión con el servidor. Es posible que el servicio esté saturado o bloqueado por red (CORS). Inténtalo de nuevo en unos momentos.');
+                }
             } finally {
                 submitBtn.classList.remove('btn-loading');
                 submitBtn.disabled = false;

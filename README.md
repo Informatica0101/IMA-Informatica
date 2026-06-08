@@ -1,294 +1,120 @@
-# Plataforma de Gestión Educativa (PWA)
+# Plataforma de Gestión Educativa (PWA) - ISEMED Área de Informática
 
 ## 1. Arquitectura General
+La plataforma es una **Aplicación Web Progresiva (PWA)** diseñada bajo una arquitectura de **Microservicios desacoplados** que interactúan mediante una capa de transporte de datos en formato JSON.
 
-Esta plataforma es una **Aplicación Web Progresiva (PWA)** diseñada para la gestión de tareas y exámenes en un entorno educativo. Su arquitectura sigue un modelo de **microservicios**, donde el frontend (una aplicación de una sola página - SPA) se comunica con servicios de backend independientes desplegados en **Google Apps Script**.
-
-- **Frontend**: Construido con HTML, CSS (Tailwind CSS) y JavaScript puro. Se encarga de toda la lógica de la interfaz de usuario, la gestión de sesiones de usuario (a través de `localStorage`) y las llamadas a los microservicios del backend.
-- **Backend**: Compuesto por tres microservicios independientes, cada uno desplegado como un proyecto de Google Apps Script. Esta separación permite un desarrollo, despliegue y mantenimiento desacoplado.
-  - **Servicio de Usuarios**: Gestiona la autenticación y el registro.
-  - **Servicio de Tareas**: Gestiona la creación, asignación, entrega y calificación de tareas.
-  - **Servicio de Exámenes**: Gestiona la creación, realización y calificación de exámenes.
-- **Persistencia de Datos**:
-  - **Google Sheets**: Actúa como la base de datos principal, almacenando toda la información estructurada (usuarios, tareas, entregas, etc.).
-  - **Google Drive**: Se utiliza para el almacenamiento de archivos no estructurados, como las entregas de tareas de los estudiantes.
-
-El flujo de comunicación es siempre iniciado por el cliente. El frontend envía solicitudes `POST` a la URL del microservicio correspondiente, que procesa la solicitud, interactúa con Google Sheets o Drive, y devuelve una respuesta en formato JSON.
+### Componentes de la Arquitectura:
+- **Frontend (SPA)**: Desarrollado en HTML5, CSS3 (Tailwind CSS) y JavaScript Vanilla (ES6+). Alojado en GitHub Pages.
+- **Backend (Microservicios)**: Servicios independientes ejecutados en **Google Apps Script (GAS)** que actúan como API RESTful.
+- **Base de Datos (Persistencia)**:
+  - **Google Sheets**: Almacenamiento relacional para usuarios, tareas, entregas y analíticas avanzadas.
+  - **Google Drive**: Almacenamiento de archivos binarios (evidencias, imágenes).
 
 ---
 
-## 2. Estructura del Repositorio
+## 2. Diagrama de la Plataforma (Ecosistema Integral)
 
-El repositorio está organizado de la siguiente manera para separar claramente las responsabilidades del frontend y el backend.
+```mermaid
+graph TD
+    User((Estudiante / Profesor)) -->|HTTPS| Frontend[Frontend - GitHub Pages]
 
-```
-/
-├── backend/
-│   ├── user-service/
-│   │   └── Code.gs         # Microservicio de Usuarios
-│   ├── task-service/
-│   │   └── Code.gs         # Microservicio de Tareas
-│   └── exam-service/
-│       └── Code.gs         # Microservicio de Exámenes
-│
-├── css/
-│   └── styles.css          # Estilos CSS personalizados (si los hubiera)
-│
-├── js/
-│   ├── config.js           # Configuración de URLs de microservicios
-│   ├── auth.js             # Lógica de login y registro
-│   ├── student.js          # Lógica para el dashboard del estudiante
-│   ├── teacher.js          # Lógica para el dashboard del profesor
-│   └── exam.js             # Lógica para la toma de exámenes
-│
-├── *.html                  # Archivos HTML para las diferentes vistas (index, login, etc.)
-│
-└── README.md               # Este documento
+    subgraph "Adaptador de Juegos & Analítica"
+        Frontend -->|init / recordAction| GA[GamesAdapter.js]
+        GA -->|recordAnalytics| US[User Service]
+    end
+
+    subgraph "Backend - Google Apps Script"
+        Frontend -->|auth / profile| US
+        Frontend -->|tasks / uploads| TS[Task Service]
+        Frontend -->|exams / grading| ES[Exam Service]
+    end
+
+    subgraph "Persistencia Analítica (Google Sheets)"
+        US -->|Mastery| LP[(LearningProfile)]
+        US -->|Raw Data| QA[(QuizProAnalytics)]
+        US -->|Stats| GS[(GameStatistics)]
+        US -->|Ranking| GL[(GameLeaderboards)]
+    end
+
+    subgraph "Contenido Educativo"
+        Frontend -->|Fetch| HTML[Presentaciones HTML]
+        Frontend -->|Fetch| BANK[(BancoPreguntas)]
+    end
 ```
 
-- **`backend/`**: Contiene los microservicios. Cada subcarpeta es un proyecto de Google Apps Script independiente y autocontenido.
-- **`css/`**: Almacena hojas de estilo.
-- **`js/`**: Contiene la lógica del frontend.
-  - `config.js` es crítico, ya que define los puntos de entrada para cada microservicio.
-- **Archivos `.html`**: Definen la estructura de la interfaz de usuario.
+---
+
+## 3. Estructura de Archivos y Responsabilidades
+
+### 3.1. Frontend (Directorio Raíz y `/js`)
+- **`index.html`**: Punto de entrada. Gestión de noticias y portal de contenidos.
+- **`js/games-adapter.js`**: **(Nuevo)** Adaptador unificado para minijuegos. Gestiona pantallas de carga, pre-carga de rankings y captura de comportamiento.
+- **`js/quizpro.js`**: Motor de evaluación inteligente. Soporta múltiples modalidades (Matching, Ordering, Memory, Transcription).
+- **`js/config.js`**: Configuración central y Guardianes de Alcance (`isContentAuthorized`).
+- **`js/api.js`**: Helper `fetchApi` unificado.
+
+### 3.2. Juegos y Actividades (`/juegos`)
+- **`quizpro.html`**: Interfaz de evaluación dinámica.
+- **`perifericos.html`**: Minijuego de hardware (Rediseño Tailwind v4).
+- **`webmaster_quiz.html`**: Cuestionario de diseño web (Rediseño Tailwind v4).
 
 ---
 
-## 3. Backend (Microservicios)
+## 4. Estructura de la Base de Datos (Evolución Analítica)
 
-Cada servicio es un proyecto de Google Apps Script autocontenido.
+### Hoja: `QuizProAnalytics`
+Registra cada interacción individual para análisis de patrones.
+| Columna | Descripción |
+| :--- | :--- |
+| `analyticsId` | ID único del evento. |
+| `esCorrecta` | Booleano de acierto. |
+| `tiempoRespuesta` | Tiempo en ms. |
+| `indiceConfianza` | Cálculo basado en rapidez y precisión. |
+| `indiceAdivinacion` | Detección de respuestas aleatorias (tiempo extrem. rápido). |
 
-### 3.1. Servicio de Usuarios (`user-service`)
+### Hoja: `LearningProfile`
+Corazón del sistema de dominio por concepto.
+| Columna | Descripción |
+| :--- | :--- |
+| `userId` | ID del estudiante. |
+| `tema` | Concepto específico (ej. "Algoritmos", "Selectores CSS"). |
+| `intentos / aciertos` | Contadores acumulados. |
+| `indiceDominio` | Promedio ponderado (70% histórico / 30% actual). |
 
-- **Propósito**: Gestionar la identidad y autenticación de los usuarios.
-- **Dependencias**: Google Sheets (`Usuarios`).
-
-#### Endpoints
-
-El servicio expone un único `doPost` que actúa como enrutador para las siguientes acciones:
-
-| Acción | `action` | Payload | Flujo de Proceso | Respuesta Exitosa |
-| :--- | :--- | :--- | :--- | :--- |
-| **Registrar Usuario** | `registerUser` | `{nombre, grado, seccion, email, password}` | 1. Valida que los campos no estén vacíos.<br>2. Genera un `userId` único.<br>3. Hashea la contraseña con SHA-256.<br>4. Añade una nueva fila a la hoja `Usuarios`. | `{status: "success", message: "Usuario registrado."}` |
-| **Iniciar Sesión** | `loginUser` | `{email, password}` | 1. Valida que los campos no estén vacíos.<br>2. Hashea la contraseña proporcionada.<br>3. Itera sobre la hoja `Usuarios` buscando una coincidencia de email y contraseña hasheada.<br>4. Si encuentra coincidencia, devuelve los datos del usuario. | `{status: "success", data: {userId, nombre, grado, seccion, rol}}` |
-
-### 3.2. Servicio de Tareas (`task-service`)
-
-- **Propósito**: Gestionar el ciclo de vida completo de las tareas, desde su creación hasta su calificación.
-- **Dependencias**: Google Sheets (`Tareas`, `Entregas`, `Usuarios`), Google Drive.
-
-#### Endpoints
-
-| Acción | `action` | Payload | Flujo de Proceso | Respuesta Exitosa |
-| :--- | :--- | :--- | :--- | :--- |
-| **Crear Tarea** | `createTask` | `{titulo, tipo, ...}` | 1. Genera un `tareaId` único.<br>2. Añade una nueva fila a la hoja `Tareas` con los detalles proporcionados. | `{status: "success", message: "Tarea creada."}` |
-| **Obtener Tareas de Estudiante** | `getStudentTasks` | `{userId, grado, seccion}` | 1. Lee todas las `Tareas` y `Entregas`.<br>2. Filtra las tareas que corresponden al grado/sección del estudiante.<br>3. Para cada tarea, busca si existe una entrega asociada a ese `userId`.<br>4. Devuelve una lista combinada de tareas con su estado de entrega. | `{status: "success", data: [...]}` |
-| **Entregar Tarea** | `submitAssignment`| `{userId, tareaId, fileData, ...}` | 1. Busca los datos del usuario y la tarea.<br>2. Crea una jerarquía de carpetas en Google Drive: `Grado/Sección/Nombre Alumno/Parcial/Asignatura`.<br>3. Decodifica el archivo (`base64`) y lo guarda en la carpeta correspondiente.<br>4. Añade una nueva fila a la hoja `Entregas` con la URL del archivo y estado "Pendiente". | `{status: "success", message: "Tarea entregada."}` |
-| **Calificar Tarea** | `gradeSubmission`| `{entregaId, calificacion, estado, comentario}` | 1. Busca la fila correspondiente en la hoja `Entregas` por `entregaId`.<br>2. Actualiza las columnas de calificación, estado y comentario. | `{status: "success", message: "Calificación actualizada."}` |
-| **Obtener Actividad (Profesor)** | `getTeacherActivity`| `{}` | 1. Lee `Usuarios`, `Tareas` y `Entregas`.<br>2. Realiza un "join" en el script para combinar los datos y obtener nombres de alumnos y títulos de tareas.<br>3. Devuelve una lista de todas las entregas de tareas con información enriquecida. | `{status: "success", data: [...]}` |
-
-### 3.3. Servicio de Exámenes (`exam-service`)
-
-- **Propósito**: Gestionar el ciclo de vida de los exámenes.
-- **Dependencias**: Google Sheets (`Examenes`, `PreguntasExamen`, `EntregasExamen`, `Usuarios`).
-
-#### Endpoints
-
-| Acción | `action` | Payload | Flujo de Proceso | Respuesta Exitosa |
-| :--- | :--- | :--- | :--- | :--- |
-| **Crear Examen** | `createExam` | `{titulo, preguntas, ...}` | 1. Genera un `examenId` único y lo guarda en la hoja `Examenes`.<br>2. Itera sobre la lista de preguntas, generando un `preguntaId` para cada una y guardándolas en la hoja `PreguntasExamen`. | `{status: "success", message: "Examen creado."}` |
-| **Obtener Preguntas** | `getExamQuestions`| `{examenId}` | 1. Busca los detalles del examen en la hoja `Examenes`.<br>2. Filtra la hoja `PreguntasExamen` para obtener todas las preguntas asociadas a ese `examenId`.<br>3. Devuelve los detalles del examen y su lista de preguntas. | `{status: "success", data: {titulo, tiempoLimite, preguntas: [...]}}` |
-| **Entregar Examen**| `submitExam` | `{examenId, userId, respuestas, estado}` | 1. Obtiene las respuestas correctas de la hoja `PreguntasExamen`.<br>2. Compara las respuestas del estudiante con las correctas y calcula una calificación.<br>3. Guarda el resultado, la calificación y el estado en la hoja `EntregasExamen`. | `{status: "success", data: {calificacionTotal, resultados: [...]}}` |
-| **Reactivar Examen**| `reactivateExam`| `{entregaExamenId}` | 1. Busca la entrega en `EntregasExamen` por su ID.<br>2. Cambia el estado de la entrega a "Reactivado". | `{status: "success", message: "Examen reactivado."}` |
-| **Obtener Actividad de Exámenes** | `getTeacherExamActivity`| `{}` | 1. Similar a su contraparte de tareas, lee `Usuarios`, `Examenes` y `EntregasExamen`.<br>2. Combina los datos para devolver una lista enriquecida de todas las entregas de exámenes. | `{status: "success", data: [...]}` |
+### Hoja: `BancoPreguntas`
+Repositorio centralizado de reactivos para todos los minijuegos.
+| Columna | Descripción |
+| :--- | :--- |
+| `TipoActividad` | multiple_choice, ordering, matching, memory, transcription. |
+| `Asignatura / Nivel` | Metadatos para filtrado y progresión. |
 
 ---
 
-## 4. Persistencia de Datos
+## 5. Fórmulas y Métricas Educativas
 
-### 4.1. Google Sheets
+### 5.1. Índice de Confianza (90-100: Muy Alto)
+Calculado mediante la relación entre el **Tiempo de Respuesta** y el **Tiempo Promedio Histórico**, penalizando cambios de respuesta y recompensando la precisión.
 
-La hoja de cálculo con ID `1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww` es la base de datos de la aplicación.
+### 5.2. Índice de Dominio (Mastery)
+Utiliza un **Promedio Ponderado de Movimiento**:
+`NuevoDominio = (DominioHistorico * 0.7) + (DominioActual * 0.3)`
+Esto permite que el perfil del estudiante refleje su progreso real, dando más peso a sus ejecuciones más recientes sin ignorar su consistencia previa.
 
-<details>
-<summary><strong>Estructura Detallada de Hojas</strong></summary>
-
-**Hoja: `Usuarios`** (Orden de columnas obligatorio)
-| Columna | Nombre | Tipo | Descripción |
-| :--- | :--- | :--- | :--- |
-| A | `userId` | `String` | ID único del usuario (ej. `USR-167...`). |
-| B | `nombre` | `String` | Nombre completo. |
-| C | `grado` | `String` | Grado del estudiante. |
-| D | `seccion` | `String` | Sección del estudiante. |
-| E | `email` | `String` | Correo para login / Notificaciones. |
-| F | `hashedPassword` | `String` | Contraseña hasheada (SHA-256). |
-| G | `rol` | `String` | "Estudiante" o "Profesor". |
-| H | `telefono` | `String` | WhatsApp / Teléfono. |
-| I | `No. de lista` | `String` | Número de lista asignado al alumno. |
-
-**Hoja: `Tareas`**
-| Columna | Nombre | Tipo | Descripción |
-| :--- | :--- | :--- | :--- |
-| A | `tareaId` | `String` | ID único de la tarea (ej. `TSK-167...`). |
-| B | `tipo` | `String` | "Tarea" o "Credito Extra". |
-| C | `titulo` | `String` | Título. |
-| D | `descripcion` | `String` | Descripción. |
-| E | `parcial` | `String` | Parcial al que corresponde. |
-| F | `asignatura` | `String` | Asignatura. |
-| G | `gradoAsignado`| `String` | Grado objetivo. |
-| H | `seccionAsignada`| `String` | Sección objetivo (vacío para todas). |
-| I | `fechaLimite` | `Date` | Fecha límite. |
-| J | `tareaOriginalId`| `String` | Para "Credito Extra", ID de la tarea rechazada. |
-
-**Hoja: `Entregas`**
-| Columna | Nombre | Tipo | Descripción |
-| :--- | :--- | :--- | :--- |
-| A | `entregaId` | `String` | ID único de la entrega (ej. `ENT-167...`). |
-| B | `tareaId` | `String` | Clave foránea a `Tareas`. |
-| C | `userId` | `String` | Clave foránea a `Usuarios`. |
-| D | `fechaEntrega`| `Date` | Timestamp de la entrega. |
-| E | `fileUrl` | `String` | URL del archivo en Google Drive. |
-| F | `calificacion`| `Number` | Nota asignada. |
-| G | `estado` | `String` | "Pendiente", "Revisada", "Rechazada". |
-| H | `comentario` | `String` | Feedback del profesor. |
-| I | `mimeType` | `String` | Tipo MIME del archivo entregado (ej. "image/png"). |
-
-**Hoja: `Examenes`**
-| Columna | Nombre | Tipo | Descripción |
-| :--- | :--- | :--- | :--- |
-| A | `examenId` | `String` | ID único del examen (ej. `EXM-167...`). |
-| B-G | ... | ... | Campos análogos a la hoja `Tareas`. |
-
-**Hoja: `PreguntasExamen`**
-| Columna | Nombre | Tipo | Descripción |
-| :--- | :--- | :--- | :--- |
-| A | `preguntaId` | `String` | ID único de la pregunta. |
-| B | `examenId` | `String` | Clave foránea a `Examenes`. |
-| C | `preguntaTipo` | `String` | "opcion_multiple", "completacion", etc. |
-| D | `textoPregunta` | `String` | Enunciado. |
-| E | `opciones` | `String` | JSON con las opciones. |
-| F | `respuestaCorrecta`| `String` | Respuesta correcta. |
-
-**Hoja: `EntregasExamen`**
-| Columna | Nombre | Tipo | Descripción |
-| :--- | :--- | :--- | :--- |
-| A | `entregaExamenId`| `String` | ID único de la entrega. |
-| B | `examenId` | `String` | Clave foránea a `Examenes`. |
-| C | `userId` | `String` | Clave foránea a `Usuarios`. |
-| D | `fechaEntrega`| `Date` | Timestamp de finalización. |
-| E | `resultados` | `String` | JSON con las respuestas del estudiante. |
-| F | `calificacionTotal`| `Number` | Nota final (0-100). |
-| G | `estado` | `String` | "Entregado", "Bloqueado", "Reactivado". |
-
-</details>
-
-### 4.2. Google Drive
-
-- **ID de la Carpeta Raíz**: `1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB`
-- **Estructura Jerárquica**: Los archivos de las entregas de tareas se organizan automáticamente en la siguiente estructura para facilitar su localización:
-  ```
-  [Carpeta Raíz]
-  └── [Grado]
-      └── [Sección]
-          └── [Nombre del Alumno]
-              └── [Parcial]
-                  └── [Asignatura]
-                      └── [Archivo de la tarea]
-  ```
-- **Convención de Nombres**: El archivo subido se renombra con el título de la tarea a la que corresponde.
+### 5.3. Reglas de Desbloqueo (Fase 13)
+- **Nivel Intermedio**: Nota >= 70% AND Índice de Dominio >= 60.
+- **Nivel Avanzado**: Nota >= 70% AND Índice de Dominio >= 70.
+- **Grado Superior**: Requiere aprobación de TODAS las materias del grado anterior con los criterios anteriores.
 
 ---
 
-## 5. Frontend
-
-El frontend es una aplicación cliente que consume los microservicios.
-
-- **`config.js`**: Punto central de configuración. Define el objeto `SERVICE_URLS` que mapea cada servicio (`USER`, `TASK`, `EXAM`) a su URL de despliegue en Google Apps Script. **Es el único lugar que se debe modificar al desplegar los servicios**.
-- **`auth.js`**: Maneja los formularios de `login.html` y `register.html`. Se comunica exclusivamente con el **microservicio de usuarios**. Tras un login exitoso, guarda los datos del usuario en `localStorage` y redirige al dashboard correspondiente.
-- **`teacher.js`**: Controla el `teacher-dashboard.html`.
-  - **Creación**: Llama al servicio de `TASK` para crear tareas y al de `EXAM` para crear exámenes.
-  - **Visualización**: Para mostrar la lista de actividades, llama en paralelo a `getTeacherActivity` del servicio de tareas y a `getTeacherExamActivity` del servicio de exámenes. Luego, **combina y ordena los resultados en el lado del cliente** antes de renderizarlos.
-  - **Calificación**: Llama a `gradeSubmission` (servicio de tareas) o `reactivateExam` (servicio de exámenes) según la acción.
-- **`student.js`**: Controla el `student-dashboard.html`. Gestiona el expediente académico, la visualización de tareas por parcial y un avanzado sistema de subida múltiple con soporte para archivos >50MB mediante fragmentación (chunking) y previsualización de miniaturas.
-- **`exam.js`**: Gestiona la página `exam.html`. Se comunica exclusivamente con el **microservicio de exámenes** para obtener las preguntas (`getExamQuestions`) y para enviar las respuestas (`submitExam`).
-- **`index-ui.js`**: Controla la lógica de la página principal, incluyendo la carga dinámica de noticias con sistema de detalles en modal y la navegación jerárquica de recursos.
-- **`quizpro.js`**: Motor del sistema de quices dinámicos que extrae preguntas de las presentaciones académicas y gestiona la lógica de evaluación.
+## 6. Servicios de Backend (User Service)
+- `recordAnalytics`: Procesa métricas de comportamiento y las persiste.
+- `updateLearningProfile`: Actualiza el dominio por concepto atómicamente.
+- `getGlobalTop`: Calcula rankings basados en el promedio de niveles.
+- `getQuestionBank`: Entrega reactivos filtrados por asignatura y nivel.
 
 ---
 
-## 6. Despliegue
-
-El despliegue de la plataforma se realiza en dos partes:
-
-### 6.1. Frontend
-
-El frontend es estático y está alojado en GitHub Pages. Cualquier cambio en la rama principal se despliega automáticamente.
-
-### 6.2. Backend (Microservicios)
-
-Cada microservicio debe ser desplegado **de forma independiente**.
-
-1. **Crear Proyecto**: Por cada carpeta en `backend/`, crea un nuevo proyecto en Google Apps Script.
-2. **Copiar Código**: Copia el contenido del archivo `Code.gs` de la carpeta local al proyecto en la nube.
-3. **Desplegar**:
-   - Haz clic en **"Implementar" > "Nueva implementación"**.
-   - Elige el tipo **"Aplicación web"**.
-   - Asegúrate de que **"Quién tiene acceso"** esté configurado como **"Cualquiera"**.
-4. **Configurar URL**:
-   - Copia la URL de la aplicación web que te proporciona Google.
-   - Pégala en el objeto `SERVICE_URLS` dentro de `js/config.js` en la propiedad correspondiente.
-5. **Repetir**: Repite este proceso para los tres microservicios.
-
----
-
-## 7. Portal Público de Contenidos
-
-Además del portal de gestión PWA, el sitio cuenta con una sección pública de contenidos estáticos accesibles para cualquier visitante.
-
-### 7.1. Arquitectura del Contenido
-
-- **Punto de Entrada**: `index.html` es la página principal. Contiene la navegación y la estructura para cargar dinámicamente el contenido y las actividades.
-- **Generación de Contenido**: El contenido no está hardcodeado en el HTML. Se define en tres objetos JavaScript dentro de `index.html`:
-  - `presentationData`: Define la estructura del menú "Cursos", enlazando a presentaciones (`.html`).
-  - `additionalResourcesData`: Define el menú "Recursos Adicionales", incluyendo artículos (`.html`) y actividades interactivas.
-  - `downloadContentData`: Define el contenido de la sección "Contenido de Clases", enlazando a archivos descargables (`.pdf`).
-- **Organización de Carpetas**: El contenido educativo está organizado jerárquicamente por grado y asignatura para facilitar su mantenimiento. Ejemplo:
-  - `Decimo_Info_Apli/`: Contiene los materiales para la clase de Informática Aplicada de Décimo Grado.
-  - `II_BTP_A/analisis_diseno/`: Materiales para Análisis y Diseño de II de BTP.
-
-### 7.2. Tipos de Contenido
-
-- **Temas de Clases y Presentaciones**:
-  - **Formato**: Son archivos `.html` que actúan como presentaciones interactivas o páginas de contenido.
-  - **Ubicación**: Se encuentran dentro de las carpetas de cada asignatura, como `Informatica_I/historia_computacion.htm`.
-  - **Acceso**: Se acceden a través del menú de navegación "Cursos". La estructura de este menú se genera a partir del objeto `presentationData` en `index.html`.
-
-- **Zona de Descargas**:
-  - **Formato**: Son principalmente archivos `.pdf` y `.docx` que sirven como guías de estudio, hojas de trabajo o versiones descargables de las presentaciones.
-  - **Ubicación**: Al igual que las presentaciones, están en las carpetas de las asignaturas.
-  - **Acceso**: Se acceden a través de la sección "Contenido de Clases" en `index.html`. El menú se genera a partir del objeto `downloadContentData`.
-
-- **Artículos**:
-  - **Formato**: Son archivos `.html` diseñados para ser leídos como artículos informativos.
-  - **Ubicación**: Típicamente dentro de las carpetas de asignaturas.
-  - **Acceso**: Se enlazan desde el menú "Recursos Adicionales", definido por el objeto `additionalResourcesData`.
-
-- **Zona de Actividades (Juegos)**:
-  - **Propósito**: Ofrecer herramientas interactivas para reforzar el aprendizaje de una manera lúdica.
-  - **Ubicación**: Centralizados en la carpeta `juegos/`.
-  - **Actividades Disponibles**:
-    - **`perifericos.html`**: Un juego para clasificar periféricos de computadora como dispositivos de entrada, salida o mixtos.
-    - **`webmaster_quiz.html`**: Un cuestionario sobre conceptos de desarrollo y cultura web.
-    - **`destreza_teclado.html`**: Una actividad para practicar y medir la velocidad y precisión al teclear.
-    - **`quizpro.html`**: Sistema de evaluación dinámico basado en el contenido real de las clases del repositorio.
-  - **Acceso**: Se cargan dinámicamente en la página principal a través de los menús "Recursos Adicionales" o "Actividades Prácticas".
-
----
-
-## 8. Sistema de Navegación y Estado
-
-La plataforma implementa un sistema unificado de navegación basado en la **API de Historial (History API)**:
-
-- **Sincronización de Navegador**: Los cambios de pestaña en los dashboards y la navegación jerárquica del docente se registran en el historial del navegador, permitiendo el uso de los botones "Atrás" y "Adelante" (o gestos móviles) sin perder el contexto de la aplicación.
-- **Gestión de Modales**: La apertura y cierre de modales de navegación (Menú Académico, Perfil) se integra en la pila de historial para una experiencia nativa en dispositivos móviles.
-- **Persistencia de Código**: El editor de Pseudocódigo permite la gestión completa (crear, abrir, guardar y eliminar) de archivos en la nube, con sincronización automática entre Google Drive y Google Sheets.
+## 7. Proceso de Limpieza y Mantenimiento
+- Los archivos `.txt` huérfanos y scripts `.py` de agentes previos deben ser eliminados periódicamente.
+- Las imágenes en `NoticiasPortal` deben ser URLs directas (`lh3.googleusercontent.com/d/ID`) para optimizar carga.

@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="IMA-Logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=21">
+    <link rel="stylesheet" href="css/style.css?v=22">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
@@ -328,11 +328,26 @@
         <div id="phase1-2" class="task-section">
             <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Fase 1.2: Acentos y Combinaciones ALT</h2>
             <p class="text-gray-600 mb-2">Escribe la siguiente palabra exactamente como aparece (incluyendo acentos y mayúsculas si las hay):</p>
+
+            <!-- REQ: Alternativa para Laptops sin NumPad (v4.0) -->
+            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 mb-4">
+                <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-3 text-center">Panel de Acceso Rápido (Laptops)</p>
+                <div class="flex flex-wrap justify-center gap-2">
+                    <button type="button" onclick="insertAccent('á')" class="px-4 py-2 bg-white border border-indigo-200 rounded-lg font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all">á</button>
+                    <button type="button" onclick="insertAccent('é')" class="px-4 py-2 bg-white border border-indigo-200 rounded-lg font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all">é</button>
+                    <button type="button" onclick="insertAccent('í')" class="px-4 py-2 bg-white border border-indigo-200 rounded-lg font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all">í</button>
+                    <button type="button" onclick="insertAccent('ó')" class="px-4 py-2 bg-white border border-indigo-200 rounded-lg font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all">ó</button>
+                    <button type="button" onclick="insertAccent('ú')" class="px-4 py-2 bg-white border border-indigo-200 rounded-lg font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all">ú</button>
+                    <button type="button" onclick="insertAccent('ñ')" class="px-4 py-2 bg-white border border-indigo-200 rounded-lg font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all">ñ</button>
+                    <button type="button" onclick="insertAccent('Ñ')" class="px-4 py-2 bg-white border border-indigo-200 rounded-lg font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all">Ñ</button>
+                    <button type="button" onclick="insertAccent('ü')" class="px-4 py-2 bg-white border border-indigo-200 rounded-lg font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all">ü</button>
+                </div>
+            </div>
+
             <div class="shortcut-tip mt-2 mb-4">
                 <strong>Tips para Acentos (NumPad):</strong>
                 <p><kbd>Alt</kbd> + <kbd>160</kbd> = á | <kbd>Alt</kbd> + <kbd>130</kbd> = é | <kbd>Alt</kbd> + <kbd>161</kbd> = í | <kbd>Alt</kbd> + <kbd>162</kbd> = ó | <kbd>Alt</kbd> + <kbd>163</kbd> = ú</p>
                 <p><kbd>Alt</kbd> + <kbd>165</kbd> = Ñ | <kbd>Alt</kbd> + <kbd>164</kbd> = ñ</p>
-                <p>Asegúrate de usar el teclado numérico (NumPad) si tu teclado lo tiene, con Num Lock activado.</p>
             </div>
             <div class="text-center mb-4">
                 <span id="wordToTypeAccented" class="text-4xl font-medium text-indigo-700"></span>
@@ -1892,6 +1907,23 @@ function handleSuperscriptPrevention(e) {
             }
         }
 
+
+        // Helper para insertar caracteres acentuados (Laptop Alternative)
+        function insertAccent(char) {
+            const input = document.getElementById('wordInputAccented');
+            if (input) {
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+                const text = input.value;
+                input.value = text.substring(0, start) + char + text.substring(end);
+                input.focus();
+                input.setSelectionRange(start + 1, start + 1);
+
+                // Disparar evento de input manualmente
+                const event = new Event('input', { bubbles: true });
+                input.dispatchEvent(event);
+            }
+        }
 
         // Inicializar al cargar la página
         showPhase(0);

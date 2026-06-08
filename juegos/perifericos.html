@@ -1,22 +1,99 @@
 <!-- Este archivo contiene solo la estructura HTML del juego de periféricos. -->
 <!-- No incluye el encabezado, pie de página, ni estilos globales. -->
 
-<h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-6">
+    <!-- REQ: Pantalla de Carga Profesional (Fase 3) -->
+    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999] opacity-0 pointer-events-none">
+        <div class="relative w-32 h-32 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-50 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <img src="../imagenes/logo.png" alt="Logo Institucional ISEMED" class="w-16 animate-pulse">
+            </div>
+        </div>
+        <div class="text-center space-y-3">
+            <h3 id="loading-msg" class="text-sm font-black text-gray-900 uppercase tracking-[0.3em]">Inicializando...</h3>
+            <p id="loading-submsg" class="text-[10px] font-bold text-blue-500 uppercase tracking-widest animate-pulse">Preparando entorno académico</p>
+        </div>
+        <div class="mt-12 w-48 h-1 bg-gray-100 rounded-full overflow-hidden">
+            <div id="loading-bar" class="h-full bg-blue-600 rounded-2xl transition-all duration-1000" style="width: 0%"></div>
+        </div>
+    </div>
+<h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-8 uppercase tracking-tighter">
     Periféricos
 </h3>
 <!-- Start Menu -->
-<div id="start-menu" class="flex flex-col items-center justify-center min-h-[300px] animate-fade-in-down">
-    <p class="text-xl text-gray-700 mb-2">Demuestra tus conocimientos sobre los tipos de periféricos.</p>
-    <div id="personal-record-init" class="mb-6 bg-yellow-50 p-3 rounded-xl border border-yellow-200 hidden">
-        <p class="text-sm font-bold text-yellow-800">Récord Personal: <span id="init-max-score">0</span> pts</p>
+<div id="start-menu" class="max-w-4xl mx-auto w-full flex flex-col items-center justify-center min-h-[500px] animate-fade-in-down p-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+        <!-- Columna Izquierda: Identidad del Juego -->
+        <div class="text-center lg:text-left space-y-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
+                <i class="fas fa-microchip"></i> Arquitectura de Computadoras
+            </div>
+            <h4 class="text-4xl lg:text-6xl font-black text-gray-900 leading-none tracking-tighter uppercase">Mundo<br><span class="text-indigo-500">Periférico</span></h4>
+            <p class="text-gray-500 text-sm font-medium leading-relaxed max-w-sm mx-auto lg:mx-0">
+                Clasifica los componentes de hardware en tiempo récord. ¿Entrada, Salida o Almacenamiento? Pon a prueba tus reflejos técnicos.
+            </p>
+
+            <div class="flex flex-wrap justify-center lg:justify-start gap-4">
+                <div class="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    <i class="fas fa-keyboard text-indigo-400"></i> Entrada
+                </div>
+                <div class="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    <i class="fas fa-print text-indigo-400"></i> Salida
+                </div>
+                <div class="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    <i class="fas fa-hdd text-indigo-400"></i> Almacenamiento
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button id="start-game-button" class="group relative px-10 py-5 bg-indigo-600 text-white font-black text-sm uppercase tracking-widest rounded-2xl shadow-2xl shadow-indigo-100 hover:bg-indigo-700 transition-all transform hover:-translate-y-1 overflow-hidden w-full lg:w-max">
+                    <span class="relative z-10 flex items-center justify-center gap-3">
+                        Iniciar Laboratorio <i class="fas fa-bolt text-yellow-300 group-hover:scale-125 transition-transform"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Datos -->
+        <div class="space-y-6 w-full max-w-sm mx-auto">
+            <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-2xl relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
+
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Puntaje Máximo</p>
+                            <p class="text-3xl font-black text-gray-900 tracking-tighter"><span id="init-max-score">0</span> <span class="text-xs text-indigo-500 uppercase">Pts</span></p>
+                        </div>
+                        <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                    </div>
+
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">Mejores Técnicos</p>
+                    <div id="mini-leaderboard" class="space-y-3">
+                        <div class="h-20 flex items-center justify-center text-[10px] text-gray-400 italic">
+                            Sincronizando rankings...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning Invitado -->
+            <div id="guest-mode-warning" class="hidden p-4 bg-yellow-50/50 border border-yellow-100 rounded-2xl">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-exclamation-triangle text-yellow-600 mt-1"></i>
+                    <div>
+                        <p class="text-[9px] font-black text-yellow-700 uppercase tracking-widest">Sesión no iniciada</p>
+                        <p class="text-[10px] text-yellow-600 font-medium leading-tight">Tus récords se perderán al cerrar el navegador.</p>
+                    </div>
+                </div>
+            </div>
+
+            <button id="continue-guest-btn" class="w-full text-[9px] font-black text-gray-400 uppercase tracking-widest hover:text-gray-600 transition-colors hidden text-center">Modo Práctica</button>
+        </div>
     </div>
-    <button id="start-game-button" class="px-8 py-4 rounded-xl font-bold text-xl
-                bg-blue-600 text-white hover:bg-blue-700
-                transition-all duration-300 ease-in-out
-                shadow-lg hover:shadow-xl transform hover:-translate-y-1
-                focus:outline-none focus:ring-4 focus:ring-blue-300">
-        Comenzar Juego
-    </button>
 </div>
 
 <!-- Game Play Area -->
@@ -26,17 +103,17 @@
         <span class="text-lg font-semibold text-gray-700">Puntaje: <span id="score-display" class="text-green-600">0</span></span>
     </div>
 
-    <div id="peripheral-card" class="bg-gray-100 p-6 rounded-lg shadow-md mb-8 w-full max-w-sm border-2 border-transparent transition-all duration-300">
-        <img id="peripheral-image" src="" alt="Peripheral Image" class="w-48 h-48 object-contain mx-auto mb-4 hidden">
+    <div id="peripheral-card" class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-xl shadow-md mb-8 w-full max-w-sm border-2 border-transparent transition-all duration-300">
+        <img id="peripheral-image" src="" alt="Imagen del componente de hardware" class="w-48 h-48 object-contain mx-auto mb-4 hidden">
         <h3 id="peripheral-name" class="text-2xl font-bold text-gray-800 mb-4"></h3>
         <p id="peripheral-description" class="text-gray-600 text-sm"></p>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 w-full md:grid-cols-4 max-w-xl mb-6">
-        <button class="answer-button px-5 py-3 rounded-lg font-semibold text-base bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200" data-type="entrada">Entrada</button>
-        <button class="answer-button px-5 py-3 rounded-lg font-semibold text-base bg-red-500 text-white hover:bg-red-600 transition-colors duration-200" data-type="salida">Salida</button>
-        <button class="answer-button px-5 py-3 rounded-lg font-semibold text-base bg-purple-500 text-white hover:bg-purple-600 transition-colors duration-200" data-type="ambos">Ambos</button>
-        <button class="answer-button px-5 py-3 rounded-lg font-semibold text-base bg-green-500 text-white hover:bg-green-600 transition-colors duration-200" data-type="almacenamiento">Almacenamiento</button>
+    <div class="grid grid-cols-2 gap-4 md:grid-cols-2 w-full md:grid-cols-4 max-w-xl mb-6">
+        <button class="answer-button transform hover:-translate-y-0.5 active:scale-95 transition-all shadow-lg shadow-gray-200 px-6 py-4 rounded-lg font-semibold text-base bg-blue-500 text-white hover:bg-blue-600 rounded-2xl transition-colors duration-200" data-type="entrada">Entrada</button>
+        <button class="answer-button transform hover:-translate-y-0.5 active:scale-95 transition-all shadow-lg shadow-gray-200 px-6 py-4 rounded-lg font-semibold text-base bg-red-500 text-white hover:bg-red-600 transition-colors duration-200" data-type="salida">Salida</button>
+        <button class="answer-button transform hover:-translate-y-0.5 active:scale-95 transition-all shadow-lg shadow-gray-200 px-6 py-4 rounded-lg font-semibold text-base bg-purple-500 text-white hover:bg-purple-600 transition-colors duration-200" data-type="ambos">Ambos</button>
+        <button class="answer-button transform hover:-translate-y-0.5 active:scale-95 transition-all shadow-lg shadow-gray-200 px-6 py-4 rounded-lg font-semibold text-base bg-green-500 text-white hover:bg-green-600 transition-colors duration-200" data-type="almacenamiento">Almacenamiento</button>
     </div>
 
     <button id="end-game-button" class="px-6 py-3 rounded-xl font-semibold text-base
@@ -49,13 +126,13 @@
 
 <!-- Result Screen -->
 <div id="result-screen" class="hidden flex-col items-center justify-center min-h-[300px] animate-fade-in-down">
-    <h2 class="text-3xl font-bold text-gray-800 mb-6">Resultados del Juego</h2>
+    <h2 class="text-3xl font-bold text-gray-900 mb-8 uppercase tracking-tighter">Resultados del Juego</h2>
     <p class="text-xl text-green-600 mb-2">Aciertos: <span id="correct-answers">0</span></p>
     <p class="text-xl text-red-600 mb-4">Errores: <span id="incorrect-answers">0</span></p>
     <p class="text-lg text-gray-700 mb-6">Tiempo Total: <span id="final-time">00:00</span></p>
     <div class="flex space-x-4 mt-6">
         <button id="retry-game-button" class="px-8 py-4 rounded-xl font-bold text-xl
-                    bg-blue-600 text-white hover:bg-blue-700
+                    bg-blue-600 rounded-2xl text-white hover:bg-blue-700
                     transition-all duration-300 ease-in-out
                     shadow-lg hover:shadow-xl transform hover:-translate-y-1
                     focus:outline-none focus:ring-4 focus:ring-blue-300">

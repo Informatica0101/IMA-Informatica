@@ -9,12 +9,12 @@
 // 8. Repite este proceso para CADA microservicio.
 // ----------------------------------------------------------
 
-const SERVICE_URLS = {
+window.SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios.
   USER: 'https://script.google.com/macros/s/AKfycbzChAgiijmvKABxJuNSi5M8nKUdoB_UJni5bbBQsAJiQygZPrqPWaR2KIo89UjyoBTn/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
-  TASK: 'https://script.google.com/macros/s/AKfycby2mX2UHrGe0KyhBMomwmgYNvHge2Yw0HON6_jm4-mCmYrkpiZHoerwxMUm0M4Nbtg/exec',
+  TASK: 'https://script.google.com/macros/s/AKfycbxXZTbiDZcqzEsdSQRY8LsdAN4Ra5N0ZK6XDKKM_sk49ZasIasUafYLeK5EJC6MAZM/exec',
 
   // Pega aquí la URL del despliegue del microservicio de exámenes.
   EXAM: 'https://script.google.com/macros/s/AKfycbwyLYiXI3KHmBm8tr7-Gr8QXP-k5jPe8wlX622C8nvwRD2EV0Uu5ViwT6RVyLb4wz4/exec'
@@ -91,6 +91,7 @@ function normalizePartial(p) {
     if (n.includes("cuarto") || n === "iv parcial") return "Cuarto Parcial";
     return p;
 }
+window.normalizePartial = normalizePartial;
 
 window.isContentAuthorized = function(contentPartial) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -115,4 +116,119 @@ window.isContentAuthorized = function(contentPartial) {
     }
 
     return false;
+};
+
+/**
+ * Validador de estructura de preguntas para el Banco Central.
+ * Asegura que los datos cumplen con el esquema requerido antes de persistir.
+ */
+window.validateQuestion = function(q) {
+    // Normalizar antes de validar para ser flexible con nombres de campos (v3.2)
+    const normalized = window.normalizeQuestion(q);
+
+    const required = ['Asignatura', 'Nivel', 'Pregunta', 'RespuestaCorrecta'];
+
+    // Saltamos validación de RespuestaCorrecta para tipos que manejan datos complejos como pares o items
+    if (normalized.TipoActividad === 'ordering' || normalized.TipoActividad === 'matching') {
+        const index = required.indexOf('RespuestaCorrecta');
+        if (index > -1) required.splice(index, 1);
+    }
+
+    for (const field of required) {
+        if (!normalized[field] || normalized[field].toString().trim() === "") {
+            return { valid: false, error: `Campo requerido faltante: ${field}` };
+        }
+    }
+
+    // Validar que al menos haya 2 opciones si es V/F o 3-4 si es Opción Múltiple
+    if (normalized.TipoActividad === 'verdadero_falso') {
+        if (!normalized.OpcionA || !normalized.OpcionB) return { valid: false, error: "Verdadero/Falso requiere OpcionA y OpcionB" };
+    } else if (normalized.TipoActividad === 'opcion_multiple' || normalized.TipoActividad === 'Selección múltiple') {
+        if (!normalized.OpcionA || !normalized.OpcionB || !normalized.OpcionC) return { valid: false, error: "Opción Múltiple requiere al menos 3 opciones (A, B, C)" };
+    }
+
+    return { valid: true };
+};
+
+/**
+ * REQ: Fallback de seguridad para GamesAdapter (Incidencia 1)
+ * Previene errores de referencia si el script no carga a tiempo o falla.
+ */
+window.GamesAdapter = window.GamesAdapter || {
+    isFallback: true,
+    init: () => Promise.resolve({ lb: { global: [], subjectTops: {} }, record: {} }),
+    showLoading: (active) => {
+        console.warn("[IMA-SYSTEM] GamesAdapter (Fallback) showLoading:", active);
+        return Promise.resolve();
+    },
+    saveResult: () => Promise.resolve({ status: 'success' }),
+    recordAction: () => {},
+    finishSession: () => Promise.resolve({ status: 'success' }),
+    endSession: () => {},
+    getLeaderboard: () => Promise.resolve({ status: 'success', global: [], subjectTops: {} }),
+    getPersonalRecord: () => Promise.resolve({})
+};
+
+/**
+ * REQ: Normalización Universal de Preguntas (Incidencia 3)
+ * Estandariza el campo de respuesta correcta para eliminar el error "undefined".
+ */
+window.normalizeQuestion = function(q) {
+    if (!q) return null;
+
+    // Mapeo crítico para resolver errores de integridad (v3.2)
+    const id = q.id || q.ID || q.PreguntaID || `bank_${Math.random().toString(36).substr(2, 9)}`;
+    const Asignatura = q.Asignatura || q.subject || q.asignatura || "Informática I";
+    const Pregunta = q.Pregunta || q.question || q.pregunta || "";
+    const TipoActividad = q.TipoActividad || q.type || q.tipoActividad || "opcion_multiple";
+    const Nivel = q.Nivel || q.nivel || "Básico";
+    const Tema = q.Tema || q.tema || (q.tags && q.tags[0]) || "General";
+    const Grado = q.Grado || q.grado || 10;
+
+    const OpcionA = q.OpcionA || q.opcionA || (q.options && q.options[0]) || "";
+    const OpcionB = q.OpcionB || q.opcionB || (q.options && q.options[1]) || "";
+    const OpcionC = q.OpcionC || q.opcionC || (q.options && q.options[2]) || "";
+    const OpcionD = q.OpcionD || q.opcionD || (q.options && q.options[3]) || "";
+
+    const respuestaCorrecta = q.RespuestaCorrecta ??
+                             q.respuestaCorrecta ??
+                             q.answer ??
+                             q.correctAnswer ??
+                             q.correct_answer ??
+                             q.correctType ??
+                             q.solution ??
+                             q.a ??
+                             null;
+
+    if (respuestaCorrecta === null && TipoActividad !== 'ordering' && TipoActividad !== 'matching') {
+        console.warn("[IMA-NORMALIZER] No se detectó respuesta correcta para la pregunta:", q);
+    }
+
+    return {
+        ...q,
+        id,
+        Asignatura,
+        Pregunta,
+        TipoActividad,
+        Nivel,
+        Tema,
+        Grado,
+        OpcionA,
+        OpcionB,
+        OpcionC,
+        OpcionD,
+        RespuestaCorrecta: (respuestaCorrecta !== null) ? String(respuestaCorrecta).trim() : null,
+        // Mantener campos para compatibilidad con código existente que use camelCase
+        asignatura: Asignatura,
+        pregunta: Pregunta,
+        tipoActividad: TipoActividad,
+        nivel: Nivel,
+        tema: Tema,
+        grado: Grado,
+        opcionA: OpcionA,
+        opcionB: OpcionB,
+        opcionC: OpcionC,
+        opcionD: OpcionD,
+        respuestaCorrecta: (respuestaCorrecta !== null) ? String(respuestaCorrecta).trim() : null
+    };
 };

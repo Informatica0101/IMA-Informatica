@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Estudiante - Area de Informatica</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Registro de Estudiante - Área de Informática ISEMED</title>
     <link rel="icon" type="image/png" href="IMA-Logo.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="IMA-Logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=21">
+    <link rel="stylesheet" href="css/style.css?v=22">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
@@ -66,19 +66,20 @@
     <main class="mt-[4rem] flex-grow flex items-center justify-center py-12 px-4">
         <div class="card-ima p-8 md:p-10 w-full max-w-lg">
             <h2 class="text-xl font-semibold mb-8 text-center text-gray-900 uppercase tracking-tighter">Registro de Estudiante</h2>
-            <form id="register-form">
+            <form id="register-form" aria-labelledby="register-title">
+                <h2 id="register-title" class="sr-only">Formulario de Registro de Estudiante</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                         <label for="nombre" class="block text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Nombre Completo</label>
-                        <input type="text" id="nombre" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" placeholder="Juan Pérez" required>
+                        <input type="text" id="nombre" name="nombre" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" placeholder="Juan Pérez" required aria-required="true">
                     </div>
                     <div>
                         <label for="email" class="block text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Email</label>
-                        <input type="email" id="email" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" placeholder="juan@email.com" required>
+                        <input type="email" id="email" name="email" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" placeholder="juan@email.com" required aria-required="true">
                     </div>
                     <div>
                         <label for="grado" class="block text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Grado</label>
-                        <select id="grado" name="grado" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" required>
+                        <select id="grado" name="grado" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" required aria-required="true">
                             <option value="Décimo">Décimo</option>
                             <option value="Undécimo">Undécimo</option>
                             <option value="Duodécimo">Duodécimo</option>
@@ -86,8 +87,8 @@
                     </div>
                     <div>
                         <label for="seccion" class="block text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Sección</label>
-                        <select id="seccion" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" required>
-                            <option value=""></option>
+                        <select id="seccion" name="seccion" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" required aria-required="true">
+                            <option value="" disabled selected>Seleccionar...</option>
                             <option value="A">A</option>
                             <option value="B">B</option>
                             <option value="C">C</option>
@@ -95,18 +96,18 @@
                     </div>
                     <div>
                         <label for="telefono" class="block text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Teléfono</label>
-                        <input type="tel" id="telefono" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" placeholder="9999-9999" required>
+                        <input type="tel" id="telefono" name="telefono" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" placeholder="9999-9999" required aria-required="true">
                     </div>
                     <div>
                         <label for="numeroLista" class="block text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Número de Lista</label>
-                        <input type="number" id="numeroLista" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" placeholder="01" min="1" max="60" required>
+                        <input type="number" id="numeroLista" name="numeroLista" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" placeholder="01" min="1" max="60" required aria-required="true">
                     </div>
                     <div class="md:col-span-2">
                         <label for="password" class="block text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Contraseña</label>
-                        <input type="password" id="password" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" placeholder="••••••••" required>
+                        <input type="password" id="password" name="password" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-sm font-medium" placeholder="••••••••" required aria-required="true">
                     </div>
                 </div>
-                <button type="submit" id="register-submit-btn" class="btn-ima-primary w-full mt-8 py-3">
+                <button type="submit" id="register-submit-btn" class="btn-ima-primary w-full mt-8 py-3" aria-label="Crear cuenta de estudiante">
                     Registrarse
                 </button>
             </form>
@@ -176,11 +177,11 @@
         </div>
     </div>
 
-    <script src="js/ui-common.js?v=21"></script>
-    <script src="js/data.js?v=21"></script>
-    <script src="js/config.js?v=21"></script>
-    <script src="js/api.js?v=21"></script>
-    <script src="js/auth.js?v=21"></script>
+    <script src="js/ui-common.js?v=22"></script>
+    <script src="js/data.js?v=22"></script>
+    <script src="js/config.js?v=22"></script>
+    <script src="js/api.js?v=22"></script>
+    <script src="js/auth.js?v=22"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (window.setupCommonUI) window.setupCommonUI();

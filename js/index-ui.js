@@ -3,6 +3,12 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // REQ: Priorización de Carga (Ticket 4)
+    loadNews();
+
+    // REQ: Garantizar inicialización segura del DOM (v3.3)
+    console.log("[IMA-INDEX] Iniciando construcción de interfaz...");
+
     // Setup Common UI (Header, Scroll, Logout)
     if (window.setupCommonUI) window.setupCommonUI();
     if (window.renderCommonNav) window.renderCommonNav();
@@ -57,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Content Section Logic ---
     function renderInitialContentButton() {
+        if (!contentDisplayArea || !contentBackButtonContainer) return;
         contentBackButtonContainer.classList.add('hidden');
         contentDisplayArea.innerHTML = '';
         contentDisplayArea.appendChild(createCustomButton('Ver Recursos Académicos', renderDownloadGrades));
@@ -64,12 +71,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderDownloadGrades() {
+        if (!contentDisplayArea || !contentBackButtonContainer) return;
         contentBackButtonContainer.classList.add('hidden');
         contentDisplayArea.innerHTML = '';
         const gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg';
 
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
 
         window.downloadContentData.forEach(gradeData => {
             // Filtrado por Grado
@@ -85,13 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderDownloadSubjects() {
+        if (!contentDisplayArea || !contentBackButtonContainer) return;
         if (!selectedGradeData) return renderDownloadGrades();
         contentBackButtonContainer.classList.remove('hidden');
         contentDisplayArea.innerHTML = '';
         const gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg';
 
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         const role = currentUser?.rol || 'Invitado';
 
         selectedGradeData.subjects.forEach(subjectData => {
@@ -113,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderDownloadTopics() {
+        if (!contentDisplayArea || !contentBackButtonContainer) return;
         if (!selectedSubjectData) return renderDownloadSubjects();
         contentBackButtonContainer.classList.remove('hidden');
         contentDisplayArea.innerHTML = '';
@@ -208,10 +218,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.showMainContentSections = showMainContentSections;
-    window.loadPeripheralsGame = () => loadGame('peripherals', 'juegos/perifericos.html', 'js/perifericos_juego.js', 'initializePeripheralsGame', 'Juego de Periféricos');
-    window.loadWebMasterQuiz = () => loadGame('webmaster', 'juegos/webmaster_quiz.html', 'js/webmaster_quiz_juego.js', 'initQuizGame', 'WebMaster Quiz');
-    window.loadQuizPro = () => loadGame('quizpro', 'juegos/quizpro.html', 'js/quizpro.js', 'initQuizPro', 'QuizPro');
-    window.loadDexterityGame = () => loadGame('dexterity', 'juegos/destreza_teclado.html', 'js/destreza_teclado.js', 'initDexterityGame', 'Destreza en el Teclado');
+
+    // REQ: Garantía de orden de carga para Incidencia 1
+    async function safeLoadGame(gameId, html, js, initFn, title) {
+        if (!window.GamesAdapter) {
+            console.error("[IMA-LOADER] GamesAdapter no encontrado. Reintentando carga de script...");
+            const script = document.createElement('script');
+            script.src = 'js/games-adapter.js';
+            await new Promise(r => script.onload = r);
+        }
+        return loadGame(gameId, html, js, initFn, title);
+    }
+
+    window.loadPeripheralsGame = () => safeLoadGame('peripherals', 'juegos/perifericos.html', 'js/perifericos_juego.js', 'initializePeripheralsGame', 'Juego de Periféricos');
+    window.loadWebMasterQuiz = () => safeLoadGame('webmaster', 'juegos/webmaster_quiz.html', 'js/webmaster_quiz_juego.js', 'initQuizGame', 'WebMaster Quiz');
+    window.loadQuizPro = () => safeLoadGame('quizpro', 'juegos/quizpro.html', 'js/quizpro.js', 'initQuizPro', 'QuizPro');
+    window.loadDexterityGame = () => safeLoadGame('dexterity', 'juegos/destreza_teclado.html', 'js/destreza_teclado.js', 'initDexterityGame', 'Destreza en el Teclado');
 
     window.returnToMainContent = function() {
         const wrapper = document.getElementById('main-content-wrapper');
@@ -243,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderActivityList() {
+        if (!initialActivityMenu || !gameListMenu || !mainContentTitle) return;
         initialActivityMenu.classList.add('hidden');
         initialActivityMenu.classList.remove('flex');
         gameListMenu.classList.remove('hidden');
@@ -279,15 +302,26 @@ document.addEventListener('DOMContentLoaded', () => {
     renderInitialContentButton();
     renderInitialActivityButton();
     setupGlobalAuth();
-    loadNews();
     renderWelcomeMessage();
 
     // --- Handle Action from URL (A-28) ---
     function processUrlAction() {
         const urlParams = new URLSearchParams(window.location.search);
         const action = urlParams.get('action');
+        const game = urlParams.get('loadGame');
+
         if (action) {
             window.handleHeaderAction(action);
+        }
+
+        if (game) {
+            console.log(`[IMA-INDEX] Auto-loading game: ${game}`);
+            switch(game) {
+                case 'peripherals': window.loadPeripheralsGame(); break;
+                case 'webmaster': window.loadWebMasterQuiz(); break;
+                case 'quizpro': window.loadQuizPro(); break;
+                case 'dexterity': window.loadDexterityGame(); break;
+            }
         }
     }
 
@@ -296,9 +330,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Welcome Message Logic ---
     function renderWelcomeMessage() {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         const welcomeBadge = document.getElementById('user-welcome-badge');
-        if (currentUser && welcomeBadge) {
+        if (currentUser && welcomeBadge && currentUser.nombre) {
             const firstName = currentUser.nombre.split(' ')[0];
             welcomeBadge.innerHTML = `
                 <span class="relative flex h-2 w-2">
@@ -332,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (openProfileBtn) {
         openProfileBtn.onclick = () => {
-            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
             if (!user) return;
             document.getElementById('profile-nombre').value = user.nombre;
             document.getElementById('profile-email').value = user.email || '';
@@ -390,21 +424,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderAccessButton() {
         if (!accessButtonContainer) return;
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         accessButtonContainer.innerHTML = '';
 
         if (currentUser) {
             const portalBtn = document.createElement('a');
             portalBtn.href = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
-            portalBtn.className = 'px-10 py-5 rounded-2xl font-medium text-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
+            portalBtn.className = 'px-10 py-5 rounded-2xl font-bold text-xl bg-blue-700 text-white hover:bg-blue-800 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
             portalBtn.textContent = 'Ir al Portal';
-            accessButtonContainer.appendChild(portalBtn);
+            portalBtn.setAttribute('aria-label', 'Ir a mi portal académico');
+            if (accessButtonContainer) accessButtonContainer.appendChild(portalBtn);
         } else {
             const loginBtn = document.createElement('button');
-            loginBtn.className = 'px-10 py-5 rounded-2xl font-medium text-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
+            loginBtn.className = 'px-10 py-5 rounded-2xl font-bold text-xl bg-blue-700 text-white hover:bg-blue-800 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1';
             loginBtn.textContent = 'Iniciar Sesión';
+            loginBtn.setAttribute('aria-label', 'Abrir panel de inicio de sesión');
             loginBtn.addEventListener("click", openModal);
-            accessButtonContainer.appendChild(loginBtn);
+            if (accessButtonContainer) accessButtonContainer.appendChild(loginBtn);
         }
     }
 
@@ -415,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * Global Authentication Helper
  */
 function setupGlobalAuth() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     const desktopPortalLink = document.getElementById('desktop-portal-link');
     const desktopCoursesNav = document.getElementById('desktop-courses-nav');
     const desktopResourcesNav = document.getElementById('desktop-resources-nav');
@@ -431,6 +467,7 @@ function setupGlobalAuth() {
         if (desktopLogoutBtn) {
             desktopLogoutBtn.onclick = () => {
                 localStorage.removeItem('currentUser');
+                sessionStorage.removeItem('currentUser');
                 window.location.reload();
             };
         }
@@ -450,32 +487,71 @@ async function loadNews() {
     const newsContainer = document.getElementById('news-container');
     if (!newsSection || !newsContainer) return;
 
+    // REQ: Spinner Contextual para Noticias (Ticket 3)
+    newsSection.classList.remove('hidden');
+    newsContainer.innerHTML = `
+        <div class="col-span-full flex flex-col items-center justify-center p-12 animate-fade-in">
+            <div class="w-10 h-10 border-4 border-blue-50 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] animate-pulse">Sincronizando Novedades...</p>
+        </div>
+    `;
+
     try {
-        const res = await fetchApi('USER', 'getNews', {});
-        if (res.status === 'success' && res.data.length > 0) {
+        let res = await fetchApi('USER', 'getNews', {});
+
+        // REQ: Noticia fallback si el servidor falla (v3.3)
+        if (!res || res.status !== 'success' || !res.data || res.data.length === 0) {
+            console.log("[IMA-NEWS] Utilizando noticia de fallback local.");
+            res = {
+                status: 'success',
+                data: [{
+                    id: 'fallback_01',
+                    titulo: 'Nuevo diseño de la Plataforma (31 may 2026)',
+                    categoria: 'Académico',
+                    fecha: '2026-05-31',
+                    imagenUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800&auto=format&fit=crop',
+                    contenido: '<p>Hemos actualizado la plataforma con una interfaz más rápida, moderna y adaptada a dispositivos móviles. ¡Explora los nuevos minijuegos y el dashboard de analítica integral!</p>'
+                }]
+            };
+        }
+
+        if (res.status === 'success' && res.data && res.data.length > 0) {
+            console.log("[IMA-INDEX] Renderizando noticias:", res.data.length);
             newsSection.classList.remove('hidden');
 
             // Mostrar las 3 noticias más recientes (o todas si hay menos de 3)
             const newsToShow = res.data.slice(0, 3);
 
-            newsContainer.innerHTML = newsToShow.map((n, idx) => {
+            const newsHtml = newsToShow.map((n, idx) => {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = n.contenido;
 
-                // Extraer un fragmento representativo del contenido (primer párrafo o 180 caracteres)
+                // Extraer un fragmento representativo del contenido (Fase 13: Extracto Inteligente)
                 let excerpt = "";
                 const paragraphs = tempDiv.querySelectorAll('p');
+
                 if (paragraphs.length > 0) {
-                    excerpt = paragraphs[0].innerText.trim();
-                } else {
+                    // Buscar primer párrafo con contenido real
+                    for(const p of paragraphs) {
+                        const text = p.innerText.trim();
+                        if (text.length > 20) {
+                            excerpt = text;
+                            break;
+                        }
+                    }
+                }
+
+                if (!excerpt) {
                     excerpt = tempDiv.innerText.trim();
                 }
 
-                if (excerpt.length > 180) {
-                    excerpt = excerpt.substring(0, 177) + "...";
+                // Limitar longitud para vista previa
+                const limit = idx === 0 ? 250 : 120;
+                if (excerpt.length > limit) {
+                    excerpt = excerpt.substring(0, limit) + "...";
                 }
 
-                const imgUrl = window.convertDriveLink(n.imagenUrl);
+                const imgUrl = (typeof window.convertDriveLink === 'function') ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl;
 
                 return `
                 <div class="${idx === 0 ? 'md:col-span-2 lg:col-span-2' : ''} bg-white rounded-[2rem] border border-gray-100 overflow-hidden group hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50 transition-all duration-500">
@@ -507,6 +583,8 @@ async function loadNews() {
                 </div>
                 `;
             }).join('');
+
+            newsContainer.innerHTML = newsHtml;
         }
     } catch (e) {
         console.error("Error loading news:", e);

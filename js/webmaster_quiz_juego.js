@@ -1756,6 +1756,8 @@ let selectedDifficulty = '';
 let currentQuestions = [];
 let answeredCorrectly = 0;
 let answeredIncorrectly = 0;
+let questionStartTime = 0;
+let responseChanges = 0;
 
 const INACTIVITY_TIMEOUT = 60; // seconds of inactivity before warning
 const INACTIVITY_WARNING_DURATION = 10; // seconds for warning countdown
@@ -1935,7 +1937,10 @@ function selectTopic(topic) {
 function selectDifficulty(difficulty) {
     selectedDifficulty = difficulty;
     // Shuffle and take only the first 10 questions for the session
-    const allQuestionsForLevel = [...quizData[selectedTopic][selectedDifficulty]];
+    // REQ: Filtro Estricto de Niveles (Incidencia 4)
+    const allQuestionsForLevel = [...quizData[selectedTopic][selectedDifficulty]]
+        .map(q => window.normalizeQuestion(q));
+
     shuffleArray(allQuestionsForLevel);
     currentQuestions = allQuestionsForLevel.slice(0, 10);
 
@@ -1961,6 +1966,8 @@ function startQuestion() {
 
     const question = currentQuestions[currentQuestionIndex];
     if (quizQuestion) quizQuestion.textContent = question.question;
+    questionStartTime = Date.now();
+    responseChanges = 0;
     if (quizHelpText) {
         quizHelpText.textContent = question.help || ''; // Set help text, now always visible
         quizHelpText.classList.remove('hidden'); // Ensure help text is visible
@@ -2063,6 +2070,7 @@ function renderSyntaxOptions() {
             fragmentSpan.textContent = fragment;
             fragmentSpan.dataset.index = index;
             fragmentSpan.onclick = () => addSyntaxFragment(fragment, index);
+            responseChanges++;
             syntaxOptionsArea.appendChild(fragmentSpan);
         });
     }
@@ -2218,6 +2226,7 @@ function setupDragMatchQuestion(question) {
 
             dropTarget.addEventListener('dragover', handleDragOver);
             dropTarget.addEventListener('drop', handleDrop);
+            dropTarget.addEventListener('drop', () => responseChanges++);
             dropTarget.addEventListener('dragleave', handleDragLeave);
             if (dropTargetsArea) dropTargetsArea.appendChild(dropTarget);
         });
@@ -2448,6 +2457,7 @@ function updateScoreDisplay() {
 }
 
 function checkAnswer(selectedIndex, correctAnswer) {
+    const responseTime = Date.now() - questionStartTime;
     pauseTimer();
     if (quizHelpText) quizHelpText.classList.remove('hidden'); // Show help text after answer
 
@@ -2467,7 +2477,25 @@ function checkAnswer(selectedIndex, correctAnswer) {
     }
 
 
-    if (selectedIndex === correctAnswer) {
+    const question = currentQuestions[currentQuestionIndex];
+    const finalCorrect = correctAnswer ?? question.respuestaCorrecta;
+
+    // Captura de Analítica Unificada (Fase 5)
+    if (window.GamesAdapter) {
+        GamesAdapter.recordAction({
+            asignatura: 'Diseño Web',
+            nivel: selectedDifficulty,
+            preguntaId: 'wm_' + currentQuestionIndex,
+            tema: selectedTopic,
+            respuestaSeleccionada: selectedIndex,
+            respuestaCorrecta: finalCorrect,
+            esCorrecta: selectedIndex == finalCorrect,
+            tiempoRespuesta: responseTime,
+            cambiosRespuesta: responseChanges
+        });
+    }
+
+    if (selectedIndex == finalCorrect) {
         handleCorrectAnswer();
     } else {
         handleIncorrectAnswer();
@@ -2514,8 +2542,20 @@ function endQuiz() {
         quizFinalTime.textContent = finalTimeFormatted;
     }
 
-    // Guardar en el portal
-    GamesAdapter.saveResult("WebMaster Quiz", `${selectedTopic.toUpperCase()} - ${selectedDifficulty} (${currentScore} pts)`, currentScore);
+    // Guardar en el portal vía Adaptador Unificado
+    if (window.GamesAdapter) {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (user) {
+            GamesAdapter.finishSession('Diseño Web', selectedDifficulty, currentScore);
+        } else {
+            // Guest mode persistence
+            const recordKey = 'guest_record_webmaster';
+            const existing = JSON.parse(localStorage.getItem(recordKey) || '{"maxScore": 0}');
+            if (currentScore > existing.maxScore) {
+                localStorage.setItem(recordKey, JSON.stringify({ maxScore: currentScore, date: new Date().toISOString() }));
+            }
+        }
+    }
 
     // Check if there's a next level
     const difficultyOrder = ['basico', 'intermedio', 'avanzado'];
@@ -2547,20 +2587,43 @@ function shuffleArray(array) {
 // --- Global Initialization Function for the Quiz Game ---
 // This function will be called by index.html after the quiz HTML content is loaded.
 window.initQuizGame = async function() {
-    // Cargar récord personal
-    try {
-        const records = await GamesAdapter.getPersonalRecord();
-        const myRecord = records["WebMaster Quiz"];
-        if (myRecord) {
-            const recordDiv = document.getElementById('personal-record-init');
-            const scoreSpan = document.getElementById('init-max-score');
-            if (recordDiv && scoreSpan) {
-                recordDiv.classList.remove('hidden');
-                scoreSpan.textContent = myRecord.maxScore;
-            }
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const isGuest = !user;
+
+    if (window.GamesAdapter) {
+        const { lb, record } = await GamesAdapter.init('webmaster');
+
+        // Renderizar Mini-Leaderboard
+        const miniLb = document.getElementById('mini-leaderboard');
+        if (miniLb && lb && lb.global) {
+            miniLb.innerHTML = lb.global.slice(0, 3).map((u, i) => `
+                <div class="flex items-center justify-between text-[10px] font-bold">
+                    <span class="text-blue-700">${i+1}. ${u.nombre.split(' ')[0]}</span>
+                    <span class="text-blue-500">${u.promedio}%</span>
+                </div>
+            `).join('');
+        } else if (miniLb) {
+            miniLb.innerHTML = '<p class="text-[10px] text-gray-400 text-center italic">Sin datos globales</p>';
         }
-    } catch(e) {
-        console.error("Error loading record:", e);
+
+        // Cargar récord personal
+        const myRecord = record?.["WebMaster Quiz"] || JSON.parse(localStorage.getItem('guest_record_webmaster') || 'null');
+        if (myRecord) {
+            const scoreSpan = document.getElementById('init-max-score');
+            if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || 0;
+        }
+    }
+
+    if (isGuest) {
+        document.getElementById('guest-mode-warning')?.classList.remove('hidden');
+        const guestBtn = document.getElementById('continue-guest-btn');
+        if (guestBtn) {
+            guestBtn.classList.remove('hidden');
+            guestBtn.onclick = () => {
+                document.getElementById('guest-mode-warning')?.classList.add('hidden');
+                guestBtn.classList.add('hidden');
+            };
+        }
     }
 
     // Assign DOM elements now that they are guaranteed to be in the document
@@ -2604,7 +2667,13 @@ window.initQuizGame = async function() {
 
     // --- Event Listeners ---
     if (startQuizButton) {
-        startQuizButton.addEventListener('click', startQuiz);
+        startQuizButton.addEventListener('click', () => {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
+            }
+            if (window.requestWakeLock) window.requestWakeLock();
+            startQuiz();
+        });
     }
 
     topicButtons.forEach(button => {
@@ -2661,6 +2730,17 @@ window.initQuizGame = async function() {
         document.addEventListener(event, resetInactivityTimer);
     });
 
+    // Control de Abandono (Fase 11)
+    const handleAbandonment = () => {
+        if (quizPlayArea && !quizPlayArea.classList.contains('hidden')) {
+            alert('Evaluación cancelada por cambio de pestaña o ventana.');
+            location.reload();
+        }
+    };
+    window.addEventListener('blur', handleAbandonment);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') handleAbandonment(); });
+
+    if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
     // Initial screen setup - moved inside initQuizGame
     showScreen('quiz-start-menu');
 }; // End of initQuizGame function

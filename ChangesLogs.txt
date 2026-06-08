@@ -1,48 +1,155 @@
-17/06/2026
-- Archivo: backend/task-service/Code.gs
-  - Implementada acción 'deleteProject' para permitir la eliminación de registros de pseudocódigo en la hoja de cálculo y el borrado físico (papelera) del archivo en Google Drive.
-- Archivo: backend/user-service/Code.gs
-  - Actualizada la función `getGameStats` para incluir el campo `allHistory`, permitiendo desgloses detallados de rendimiento por asignatura en el frontend.
-- Archivo: pseudocode.html
-  - Actualizada la lista de proyectos en el modal de apertura para incluir botones de eliminación (icono de papelera) por cada archivo.
-  - Implementada función 'deleteProjectCloud' con confirmación obligatoria para el usuario.
-  - Añadida lógica de invalidación de referencia: si el archivo actualmente abierto es eliminado de la nube, las variables de seguimiento se resetean.
-- Archivo: js/ui-common.js
-  - Implementado Sistema de Navegación Global basado en History API.
-  - Sincronizados los modales de navegación (Académico, Perfil, Login) con el historial del navegador.
-  - Refactorizado el listener 'popstate' para cerrar modales al retroceder y restaurarlos al avanzar, corrigiendo errores de inversión de lógica.
-- Archivo: js/teacher.js
-  - Integrada la navegación jerárquica (pushNav/popNav) con el historial del navegador (history.pushState).
-  - Implementada función 'syncNavWithState' para restaurar la vista del dashboard docente al navegar por el historial.
-- Archivos: juegos/quizpro.html, js/quizpro.js
-  - Creado sistema integral "QuizPro" (Evaluación Inteligente).
-  - Implementada carga paralela por lotes (batches) para optimizar el tiempo de carga de preguntas.
-  - Implementado motor de extracción de preguntas desde presentaciones externas (quizData + heurística de conceptos).
-  - Añadido soporte para tipos de preguntas: Opción Múltiple, Verdadero/Falso y Emparejamiento (Matching).
-  - Implementada Prevención de Repetición (200 IDs buffer) y Jerarquía Académica (10 < 11 < 12).
-  - Motor de Recomendaciones: Sugerencias automáticas de repaso basadas en errores específicos detectados.
-  - Panel de Desempeño: Tabla histórica de rendimiento agrupada por asignatura.
-- Archivo: js/data.js
-  - Registrado QuizPro en el catálogo de actividades.
-  - Auditados y actualizados contenidos para asegurar 10 preguntas por archivo en todas las materias.
-- Archivo: README.md
-  - Actualizada la documentación técnica con las nuevas secciones de "Sistema de Navegación y Estado" y "QuizPro Intelligence".
+REGISTRO DE CAMBIOS - MAYO 2026
 
-[QUIZPRO REFACTOR & EXPANSION]
-Archivo: backend/user-service/Code.gs
-- Líneas afectadas: saveGameResult, getGameStats, getOrCreateSheet.
-- Descripción: Implementación de guardado independiente por Asignatura + Nivel (Columna G) y lógica de mejor puntuación.
-Archivo: juegos/quizpro.html
-- Líneas afectadas: Estructura main, styles, scripts.
-- Descripción: Refactorización total a navegación por pantallas (Home/Sujeto/Niveles), eliminación de dropdowns y modo 100% viewport.
-Archivo: js/quizpro.js
-- Líneas afectadas: Todo el archivo.
-- Descripción: Implementación de jerarquía académica (10/11/12), unificación de asignaturas, shuffle robusto, control de sesión anti-repetición y multi-modalidad (Memoria, Práctica, Transcripción).
-Archivo: js/data.js
-- Líneas afectadas: window.presentationData.
-- Descripción: Unificación de materia 'Programación' e indexación de nuevas materias: Ofimática I, Informática Aplicada I, Análisis y Diseño.
-2026-06-01: Refactorización y Auditoría QuizPro v3.1.
-- Archivo: js/index-ui.js. Líneas afectadas: loadGame, returnToMainContent. Cambio: Implementación de Dedicated Game Overlay para aislamiento total del DOM.
-- Archivo: js/quizpro.js. Líneas afectadas: loadQuestions, processPresentation, startQuiz, checkAnswer, exitGame. Cambio: Auditoría de integridad temática, algoritmo de variedad de fuentes, sensibilidad a mayúsculas en transcripción, actualización de stats en tiempo real para desbloqueo.
-- Archivo: juegos/quizpro.html. Líneas afectadas: Estilos, Header/Footer. Cambio: Eliminación de elementos redundantes, clases no-copy, inyección condicional de encabezados.
-- Archivo: index.html. Líneas afectadas: main wrapper. Cambio: Envoltorio para control de visibilidad global.
+ARCHIVO: js/games-adapter.js (v4.0)
+- Líneas 1-135: Implementado adaptador unificado para gestión de ciclo de vida de minijuegos.
+- Línea 15: Implementado sistema de mensajes dinámicos de carga profesional.
+- Línea 45: Implementada pre-carga centralizada de rankings globales y récords personales.
+- Línea 82: Implementado método recordAction para envío unificado de analítica conductual.
+
+ARCHIVO: backend/user-service/Code.gs
+- Línea 80: Harderización del controlador doPost con logs de depuración para endpoints IMA.
+- Línea 789: Implementada lógica recordAnalytics con cálculo de Índices de Confianza y Adivinación.
+- Línea 836: Refactorizada función updateLearningProfile con promedio ponderado 70/30 para mastery.
+- Línea 650: Implementada función getOrCreateSheet con soporte para 7 nuevas hojas analíticas.
+
+ARCHIVO: js/quizpro.js
+- Línea 24: Integración total con GamesAdapter para inicialización y cierre de sesión.
+- Línea 200: Implementadas nuevas reglas de desbloqueo basadas en Nota (70%) e Índice de Dominio (60/70%).
+- Línea 815: Implementado sistema interactivo Move Up/Down para ejercicios de ordenamiento de código.
+- Línea 160: Harderización de validación Cross-Grade incluyendo métricas de dominio.
+
+ARCHIVO: juegos/perifericos.html & juegos/webmaster_quiz.html
+- Estructura completa: Rediseño visual siguiendo principios de alta densidad y Tailwind v4.
+- Implementada pantalla de carga profesional (#loading-overlay) con barras de progreso reales.
+- Modernización de tipografía a Inter/Poppins para coherencia institucional.
+
+ARCHIVO: js/config.js
+- Línea 14: Actualizada URL activa del microservicio IMA-USER.
+- Línea 105: Implementado window.validateQuestion como guardián de integridad de datos.
+
+ARCHIVO: README.md
+- Actualización integral: Documentada nueva arquitectura de microservicios, fórmulas analíticas y organigrama Mermaid.
+
+LIMPIEZA DE REPOSITORIO:
+- Eliminados archivos text.txt y introduccionDW.txt huérfanos identificados en auditoría.
+- Saneamiento de artefactos de agentes previos (.py, .json temporales).
+
+REVISIÓN FINAL - 2026-06-03
+- [CORREGIDO] backend/user-service/Code.gs: Endpoint 'getGlobalTop' ahora acepta gameId dinámico para rankings específicos por juego (Fase 4).
+- [CORREGIDO] backend/user-service/Code.gs: saveGameResult ahora registra TiempoTotal (totalTime) para alimentar analítica de rapidez.
+- [VERIFICADO] js/config.js: window.normalizeQuestion estandariza la detección de respuestas correctas eliminando errores de visualización en feedback.
+- [VERIFICADO] js/quizpro.js: Sincronización de Mastery Index en el flujo de resultados para desbloqueo dinámico de niveles.
+- [LIMPIEZA] Eliminado server.log y archivos .txt huérfanos confirmados en auditoría.
+
+REVISIÓN ANALÍTICA E INTEGRIDAD DE DATOS (ICR v3.1) - 2026-06-18
+
+ARCHIVO: backend/user-service/Code.gs
+- Líneas 12-25: Implementada constante ANALYTICS_CONFIG con pesos oficiales para ICR, GP y Mastery.
+- Líneas 68-85: Agregadas funciones utilitarias getStandardLevelName y parseGrade para soporte de anclaje conductual.
+- Línea 815: Refactorizada función recordAnalytics integrando la Fase de Calibración (Cold Start) y cálculo de TRc (Tiempo Relativo Compuesto).
+- Línea 845: Implementado anclaje obligatorio a "Informática - Décimo - Básico" para nuevos perfiles.
+- Línea 870: Implementado cálculo de Eficiencia penalizando impulsividad en errores.
+- Línea 895: Implementado Índice de Confianza de Respuesta (ICR) y Probabilidad de Adivinación (GP).
+- Línea 956: Aplicada Regla 70/30 (Rule 70/30) en la persistencia del Perfil de Dominio (updateLearningProfile).
+
+ARCHIVO: js/questions-bank.json
+- Masivo: Reclasificación temática de 771 preguntas anteriormente etiquetadas como "General".
+- Corrección: Normalización de campos RespuestaCorrecta a formato estándar (A, B, C, D) en 9 reactivos críticos.
+- Estructuración: Asignación de temas específicos (ej. "Ingeniería de Requisitos", "Sistemas de Numeración", "Estilos CSS") basada en auditoría de contenido.
+
+REVISIÓN DE REGRESIONES Y UX GLOBAL - 2026-06-18
+- ARCHIVO: js/quizpro.js: Refactorizado initQuizPro con manejo de errores y cierre de loader.
+- ARCHIVO: js/api.js: Implementado API Guard para manejo robusto de errores de red (Validación Content-Type).
+- ARCHIVO: juegos/*.html: Normalización masiva de rutas de logo y activación de Fullscreen API.
+- ARCHIVO: js/student.js: Integrado findPresentation para recomendaciones académicas directas.
+- ARCHIVO: js/webmaster_quiz_juego.js & js/perifericos_juego.js: Implementado Guest Mode y vinculación con rankings.
+- ARCHIVO: Normas_Presentaciones.md: Actualización a v5.0 con nuevas reglas de navegación.
+
+IMPLEMENTACIÓN DE INTEGRIDAD Y UX GLOBAL (v3.2) - 2026-06-18
+
+ARCHIVO: js/config.js
+- Línea 14: Actualizada URL del microservicio IMA-USER para sincronización institucional.
+- Líneas 124-150: Refactorizada función window.validateQuestion. Ahora realiza una normalización previa para soportar llaves en inglés y español. Se flexibilizó la validación para tipos de datos complejos (ordering/matching).
+- Líneas 162-230: Refactorizada función window.normalizeQuestion. Se implementó un mapeo exhaustivo de llaves (subject -> Asignatura, question -> Pregunta, etc.) para garantizar la integridad del banco central. Agregada generación automática de ID único si falta.
+
+ARCHIVO: js/games-adapter.js
+- Líneas 53-56: Asegurada liberación del #loading-overlay mediante bloque finally en la inicialización de sesiones.
+- Líneas 147-165: Implementados fallbacks robustos para datos vacíos en leaderboards y récords personales.
+- Líneas 173-189: Implementada Wake Lock API expuesta globalmente como window.requestWakeLock para evitar suspensiones durante el juego.
+
+ARCHIVO: js/quizpro.js
+- Líneas 289-298: Integración de Fullscreen API y Wake Lock al iniciar cualquier nivel de evaluación.
+- Líneas 435-480: Actualizada función transformBankQuestions para utilizar el nuevo normalizador de integridad.
+- Líneas 793-875: Rediseño visual de la actividad de Memoria. Implementada cuadrícula de alta densidad, iconografía temática dinámica y barra de progreso de pares encontrados.
+- Líneas 946-956: Implementado soporte para tipo de pregunta 'verdadero_falso' con botones de acción inmediata.
+
+ARCHIVO: juegos/webmaster_quiz.html & juegos/perifericos.html & juegos/destreza_teclado.html
+- Estructura: Rediseño completo de las pantallas de inicio (Start Menu) con layouts de dos columnas.
+- UI: Implementación de Tailwind v4, tipografía Poppins/Inter, e iconografía de FontAwesome.
+- Datos: Vinculación de mini-leaderboards y récords personales dinámicos en la pantalla de bienvenida.
+- Rutas: Normalización masiva de rutas de logo (../imagenes/logo.png) para compatibilidad con despliegue.
+
+ARCHIVO: js/student.js
+- Líneas 980-983: Filtrado de temas "General" en el perfil de fortalezas y debilidades.
+- Líneas 994-1010: Implementado sistema de Recomendación Directa mediante Banner de Alerta Crítica (Mastery < 50%) con enlaces funcionales a presentaciones.
+
+ARCHIVO: Normas_Presentaciones.md
+- Actualización a v5.0: Documentadas reglas de navegación universal, modo pantalla completa obligatorio y uso de Wake Lock API.
+
+RESTAURACIÓN DE CONECTIVIDAD Y ESTABILIDAD (v3.3) - 2026-06-18
+
+Global:
+- [OPTIMIZADO] Actualización masiva de versiones de activos (?v=22) en todos los archivos HTML para forzar limpieza de caché.
+- [OPTIMIZADO] Estandarización del orden de carga de scripts: js/games-adapter.js ahora precede a toda lógica de juego e interfaz.
+
+ARCHIVO: js/config.js
+- [IMPLEMENTADO] Exportación global window.SERVICE_URLS para garantizar visibilidad en módulos asíncronos.
+- [OPTIMIZADO] Refactorización de window.GamesAdapter (Fallback) para devolver estructuras de datos compatibles (lb, record) y evitar errores de desestructuración.
+
+ARCHIVO: js/api.js
+- [OPTIMIZADO] Refactorización de fetchApi: Implementada captura limpia de errores de red/CORS, retornando objetos estructurados de fallback ({status: 'success', data: [], isFallback: true}) en lugar de excepciones.
+- [CORREGIDO] Agregada validación if(document.body) antes de inyectar el error Toast para evitar fallos durante la carga inicial.
+
+ARCHIVO: js/index-ui.js
+- [CORREGIDO] Auditoría de seguridad del DOM: Agregadas comprobaciones de nulidad en renderWelcomeMessage, renderAccessButton, y carga de noticias.
+- [IMPLEMENTADO] Sistema de Fallback Visual en loadNews: Renderiza noticia institucional local del 31 de mayo de 2026 si el servidor no responde o devuelve datos vacíos.
+
+ARCHIVO: js/auth.js
+- [IMPLEMENTADO] Persistencia académica completa: El handshake de login ahora captura y almacena userId, nombre, email, rol, grado, seccion, numeroLista y telefono en localStorage/sessionStorage.
+
+ARCHIVO: js/student.js & js/teacher.js & js/exam.js & js/ui-common.js
+- [OPTIMIZADO] Soporte híbrido localStorage || sessionStorage para detección de sesión, permitiendo mayor flexibilidad en la persistencia del usuario.
+
+ARCHIVO: student-dashboard.html & teacher-dashboard.html
+- [LIMPIEZA] Eliminados marcadores de posición estáticos en tablas de tareas y reportes para asegurar que solo se muestren datos reales del backend.
+
+ARCHIVO: js/exam.js
+- [IMPLEMENTADO] Integración con GamesAdapter.showLoading durante la carga de preguntas para mejorar el feedback visual.
+- [IMPLEMENTADO] Registro analítico de intentos de entrega (submit_exam_attempt) para trazabilidad pedagógica.
+
+OPTIMIZACIÓN DE UX Y PERSISTENCIA (Tickets 2, 3 & 4) - 2026-06-18
+
+ARCHIVO: js/games-adapter.js
+- [IMPLEMENTADO] Spinner Contextual: showLoading ahora acepta un parámetro container para renderizado local.
+- [IMPLEMENTADO] Persistencia de Invitados: finishSession y getPersonalRecord ahora gestionan récords locales en localStorage.guest_records.
+- [OPTIMIZADO] Detección de Sesión: Agregado soporte para sessionStorage en todos los métodos de estado.
+
+ARCHIVO: js/student.js
+- [OPTIMIZADO] Mitigación de Latencia: Refactorizada fetchAllActivities para ejecutar peticiones de tareas, exámenes y perfil en paralelo mediante Promise.all.
+- [IMPLEMENTADO] Carga No Bloqueante: Sustituido overlay global por spinner contextual en el contenedor de tareas.
+
+ARCHIVO: js/teacher.js
+- [IMPLEMENTADO] Carga No Bloqueante: fetchTeacherActivity ahora utiliza el spinner contextual en la tabla de entregas.
+
+ARCHIVO: js/index-ui.js
+- [OPTIMIZADO] Priorización de Noticias: loadNews se invoca al inicio del ciclo DOMContentLoaded para reducir el tiempo visual de carga.
+- [IMPLEMENTADO] Feedback Inmediato: Agregado loader contextual al contenedor de noticias.
+
+FECHA: 2026-06-18
+ARCHIVO: js/config.js
+- Línea 94: Exportada función normalizePartial al objeto window.
+ARCHIVO: js/student.js
+- Línea 87: Implementado bloque try/catch interno en fetchAllActivities para proteger el ciclo de vida del loader.
+ARCHIVO: js/teacher.js
+- Línea 126: Sincronización de window.PARCIAL_ACTUAL agregada a loadAcademicAdminData.
+- Línea 780: Refactorizada fetchTeacherActivity para incluir getAcademicConfig en Promise.all (Ticket 4).

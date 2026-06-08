@@ -1,0 +1,6937 @@
+[
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la etiqueta recomendada para poner texto en negrita?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué etiqueta se usa para poner texto en cursiva (itálica)?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué propiedad de CSS se usa para justificar el texto?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la diferencia entre <b> y <strong>?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué etiqueta se usa para subrayar texto?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Qué propiedad CSS alinea el texto horizontalmente?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Qué valor de text-align centra el texto?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Qué propiedad CSS se usa para el interlineado?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿Qué valor de text-decoration tacha el texto?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Qué etiqueta HTML resalta texto con un fondo?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. ¿Qué propiedad convierte todo a mayúsculas?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Qué etiqueta se usa para superíndices (ej: x²)?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Qué valor de text-align estira el texto en los bordes?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. ¿Cómo se aplica cursiva en CSS?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Qué hace 'text-transform: capitalize'?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa la sigla DOM?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "¿El DOM representa un documento HTML como una estructura de árbol de nodos?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué método usarías para seleccionar un elemento por su atributo `id`?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "¿La propiedad `textContent` se usa para cambiar el contenido HTML de un elemento, incluyendo etiquetas?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Para añadir una nueva clase CSS a un elemento, ¿qué método de `classList` usarías?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "¿El método `appendChild()` se utiliza para eliminar un nodo hijo de un elemento padre?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué evento se dispara cuando el usuario hace clic en un elemento?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué objeto global representa toda la página web y es la raíz del DOM?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El método que selecciona todos los elementos que coinciden con un selector CSS es:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Para cambiar el color de fondo de un elemento directamente en JS, se usa:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el objetivo principal de Diseño Web II?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El proceso integral que incluye planificación, conceptualización y mantenimiento se llama:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué parte de la aplicación web es la que el usuario ve y con la que interactúa?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estas tecnologías NO es una tecnología Front-end clave?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El rol del desarrollador Front-end se enfoca principalmente en:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La parte 'invisible' que se ejecuta en el servidor se conoce como:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué componente del Back-end se encarga de almacenar y organizar los datos?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se comunican el Front-end y el Back-end?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Un desarrollador que maneja tanto Front-end como Back-end se llama:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La seguridad de los datos y la escalabilidad son enfoques principales del:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué propiedad controla el borde de un elemento?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué valor hace que un borde sea una línea lisa?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se redondean las esquinas de una caja?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué propiedad quita el subrayado de un enlace?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué pseudoclase aplica al pasar el cursor?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es un valor válido de estilo de borde?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué hace 'text-decoration: line-through'?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se define un borde rojo sólido de 1px?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué pseudoclase es para un enlace visitado?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿En qué etiqueta se aplican mayormente bordes?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿En qué sección del HTML se coloca la etiqueta <link>?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué atributo de <link> define la ruta del archivo?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué valor debe tener 'rel' para enlazar un CSS?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es una ventaja de los archivos CSS externos?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una etiqueta autocerrable?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se cierra formalmente una etiqueta void?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estas etiquetas es autocerrable?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué hace la etiqueta <br />?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué etiqueta define metadatos?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué sucede si cierras mal una etiqueta void?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un evento en JavaScript?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el método recomendado para manejar eventos en JavaScript?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El evento `click` pertenece a la categoría de eventos de:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de evento se dispara cuando el usuario presiona una tecla?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué método se utiliza para evitar el comportamiento predeterminado del navegador?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es la propagación de eventos 'bubbling'?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Para que un evento se propague en fase de 'capturing', el tercer argumento en `addEventListener()` debe ser:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué propiedad del objeto evento te permite saber qué elemento lo disparó?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es la delegación de eventos?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué evento de formulario se dispara cuando un usuario selecciona una opción en un `<select>` o cambia el valor de un `<input>`?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué característica define a JavaScript como lenguaje?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿En qué lado se ejecuta principalmente JavaScript en el desarrollo web?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estas palabras clave permite declarar una variable con alcance de bloque y que puede ser reasignada?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué sucede si intentas reasignar un valor a una variable declarada con 'const'?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el tipo de dato para valores lógicos (true/false)?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué operador se utiliza para la igualdad estricta (valor y tipo)?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El operador '%' (módulo) se utiliza para:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué estructura de control usarías para repetir código un número conocido de veces?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se define una función flecha (Arrow Function)?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué etiqueta HTML se utiliza para insertar código JavaScript interno o enlazar uno externo?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significan las siglas CSS?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué describe una hoja de estilo?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Por qué se llaman 'en cascada'?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es una ventaja de separar forma de función?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se llama el atributo para estilos en línea?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Dónde se ubican los estilos internos?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué etiqueta enlaza un CSS externo?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué valor debe tener el atributo 'rel'?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una etiqueta autocerrable?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué parte de la regla CSS indica qué característica cambiar?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un píxel (px) en diseño web?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Por qué los px son una unidad absoluta?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿A qué es igual un 1em?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué unidad es mejor para smartphones?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se escribe un comentario en CSS?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué fuente tiene adornos decorativos?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué fuente es limpia y sin adornos?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué sirve el punto y coma en CSS?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué unidad mide porcentajes del padre?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué sucede si una fuente no está instalada?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el Modelo de Caja?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué propiedad controla el espacio interior?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se llama el espacio exterior de la caja?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué hace 'box-sizing: border-box'?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos NO es parte del modelo de caja?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué valor de margin centra un bloque?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué unidad es relativa al ancho de ventana?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué propiedad evita que una caja sea gigante?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué pasa con overflow: hidden?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿El margen tiene color de fondo?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué símbolo representa al selector global?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se separa una lista de selectores múltiples?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué prefijo se usa para los selectores de clase?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál selector es más específico en el DOM?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué hace exactamente el selector universal?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué sirve agrupar selectores en CSS?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se define un selector de ID en CSS?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué etiqueta se usa para agrupar en línea?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué propiedad CSS define el color del texto?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Los selectores de clase pueden repetirse?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué propiedad de CSS se utiliza para crear un layout de cuadrícula bidimensional?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué sistema de maquetación es más adecuado para alinear elementos en una sola fila o columna?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el principal beneficio de usar Grid y Flexbox en lugar de tablas para el diseño?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué propiedad de Flexbox centra los elementos horizontalmente?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué sistema permite control total sobre filas y columnas al mismo tiempo?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Flexbox se define como un sistema de maquetación de tipo:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el método tradicional y hoy desaconsejado para maquetar toda una web?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La capacidad de un diseño para adaptarse a cualquier tamaño de pantalla se llama:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Propiedad de Grid para definir áreas específicas con nombre:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué herramienta es ideal para crear un menú de navegación horizontal?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función del atributo 'style' en una etiqueta HTML?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué propiedad de estilo cambia el color del texto?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué propiedad de estilo cambia el tamaño de la fuente?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué propiedad se usa para alinear el texto al centro?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se representa el color negro en código hexadecimal?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Qué significan las siglas CSS?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Qué atributo se usa para aplicar estilos directamente en una etiqueta?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Qué propiedad cambia el color de la letra?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿Qué propiedad cambia el color de fondo?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Qué propiedad define el tipo de letra?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. ¿Qué unidad se usa comúnmente para el tamaño de fuente (font-size)?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Cómo se separan múltiples estilos dentro del atributo style?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Cuál es la forma correcta de escribir un estilo?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. Si HTML es el esqueleto, ¿qué es CSS?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿A qué etiquetas se les puede aplicar el atributo style?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa que el WWW sea hipertexto?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el atributo principal de la etiqueta <a> para indicar el destino?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué etiqueta se utiliza para insertar una imagen?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué sirve el atributo 'alt' en una imagen?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se abre un enlace en una pestaña nueva?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Qué etiqueta se usa para crear un enlace?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Qué atributo define la dirección de un enlace?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Para qué sirve target='_blank'?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿Qué etiqueta inserta una imagen?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Qué atributo indica la ruta de la imagen?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. ¿Qué atributo describe la imagen para accesibilidad?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿La etiqueta <img> requiere etiqueta de cierre?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Qué es una ruta absoluta?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. ¿Cómo se convierte una imagen en enlace?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Qué significa HTML?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significan las siglas WWW?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el hipertexto?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Característica de HTML que lo hace compatible con diferentes computadoras y sistemas:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El proceso de cambiar y actualizar información de forma ágil es una característica:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función principal de HTML en una página web?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa la sigla HTML?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Característica de HTML que permite que la información esté repartida en páginas enlazadas entre sí:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de software es suficiente para escribir código HTML?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la extensión correcta para guardar un archivo HTML?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La etiqueta que define el título que se ve en la pestaña del navegador es:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la regla de oro al cerrar etiquetas anidadas?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿En qué sección del documento se coloca el contenido visible para el usuario?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de los siguientes encabezados es el más grande en tamaño?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué etiqueta se utiliza para definir un párrafo de texto?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "HTML fue diseñado para ser compatible con:",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la etiqueta para una lista no ordenada (viñetas)?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la etiqueta para cada elemento dentro de una lista?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se escribe un comentario en HTML?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué sirven los comentarios en el código?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué etiqueta se usa para una lista ordenada (numerada)?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Qué etiqueta define una lista desordenada?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Qué etiqueta define una lista ordenada?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Qué etiqueta se usa para cada elemento dentro de una lista?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿Cómo se escribe un comentario en HTML?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿El navegador muestra los comentarios al usuario?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. ¿Qué significa 'anidamiento'?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Qué símbolo precede al texto en una lista <ul> por defecto?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Para qué sirven los comentarios?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. ¿Cómo se comenta una línea en JavaScript?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Cuál es el orden correcto de anidación?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la etiqueta para crear una fila en una tabla?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la etiqueta para crear una celda de datos estándar?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la diferencia entre <div> y <span>?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué etiqueta se usa para los encabezados de una tabla (celdas en negrita y centradas)?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el propósito principal de una etiqueta <div>?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Qué etiqueta define una fila en una tabla?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Para qué se usa <th>?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Qué tipo de elemento es <div>?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿Qué etiqueta es mejor para resaltar una palabra en un párrafo?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Qué etiqueta define una celda de datos?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. ¿Los <div> ocupan todo el ancho disponible?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Se pueden anidar tablas?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Qué etiqueta inicia la definición de una tabla?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. ¿<span> rompe la línea de texto?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Cuál es el propósito principal de div y span?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es CSS y para qué se utiliza?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la analogía de HTML en un edificio?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una 'etiqueta de inicio'?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué elemento del head permite usar acentos y la letra 'ñ'?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué sucede si anidamos etiquetas en el orden incorrecto?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Qué significa HTML?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Cuál es la etiqueta raíz de un documento HTML?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Qué etiqueta se utiliza para el encabezado de mayor nivel?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿En qué sección se coloca el título de la página?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Qué etiqueta define un párrafo?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. ¿Para qué sirve la etiqueta <body>?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Cuál es la extensión de archivo correcta para una página web?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Qué etiqueta se usa para crear un salto de línea?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. ¿Cómo se llama al hecho de poner una etiqueta dentro de otra?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Diseño Web",
+    "Nivel": "Avanzado",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Cuál es el encabezado más pequeño?",
+--
+    "Grado": 12
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función principal de los dispositivos de almacenamiento?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué característica define a la memoria RAM?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de memoria contiene las instrucciones de arranque (BIOS/UEFI)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la principal diferencia entre HDD y SSD?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué dispositivo utiliza platos giratorios magnéticos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un ejemplo de unidad flash?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo almacenan datos los discos ópticos (CD, DVD)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el almacenamiento en la nube?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "En la jerarquía de memoria, los dispositivos más rápidos suelen ser:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Ejemplo popular de almacenamiento en la nube:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el valor decimal de la letra 'A' en hexadecimal?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuántos dígitos binarios (bits) se necesitan para representar un solo dígito hexadecimal?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué número hexadecimal representa el color rojo puro en un código de 6 dígitos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de los siguientes NO es un símbolo válido en el sistema hexadecimal?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "En informática, ¿dónde se utiliza comúnmente la numeración hexadecimal?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la base del sistema de numeración hexadecimal?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué letra representa el valor decimal 15 en hexadecimal?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Un conjunto de 4 bits se conoce como:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué valor decimal tiene el número hexadecimal '10'?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Las direcciones MAC de hardware de red se escriben usualmente en formato:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es la instalación de software?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un tipo de instalador común en Windows?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué ventaja ofrece la instalación por línea de comandos (CLI)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es la virtualización?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El software que gestiona las máquinas virtuales se llama:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Ejemplo de Hypervisor Tipo 2 (Hosted):",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es una ventaja de la virtualización?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Un Hypervisor Tipo 1 se instala:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué gestor de paquetes se usa comúnmente en Debian/Ubuntu?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Dónde se originó la virtualización en la década de 1960?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Cuál es el principal propósito de la compresión de archivos 'Lossless' (sin pérdida)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. Si un archivo tiene el atributo de 'Solo lectura', ¿qué acción no puede realizar directamente el Explorador de Archivos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Qué acción realiza un software como Daemon Tools al 'montar' un archivo .ISO?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. Según la Estrategia de Respaldo 3-2-1, ¿cuántas copias totales de tus datos (incluyendo el original) deberías tener?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Cuál es la principal ventaja de un respaldo <b>automático</b> sobre uno <b>manual</b>?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. Deducción: Si guardas tus archivos en el disco C: y en una unidad USB, ¿qué parte de la regla 3-2-1 *no* estás cumpliendo?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Qué switch de XCOPY o ROBOCOPY se utiliza para replicar subdirectorios incluso si están vacíos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Qué tipo de información se considera un 'metadato' de un archivo?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. Deducción: Si al hacer doble clic en una carpeta esta no abre, ¿qué elemento del Explorador de Archivos podrías usar para asegurarte de que la ruta existe y es correcta?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Cuál de los siguientes no es un formato de archivo comúnmente asociado con la compresión?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de red cubre un área geográfica limitada como una casa u oficina?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la topología de red más común donde todos los dispositivos se conectan a un punto central?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué protocolo es la base de Internet y gestiona la comunicación en la mayoría de las redes modernas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué componente de la configuración IP traduce nombres de dominio a direcciones IP numéricas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Si tu dirección IP es asignada automáticamente por el router, ¿qué método de configuración se está utilizando?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué versión de IP fue creada para reemplazar a IPv4 debido al agotamiento de direcciones?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una Red de Computadoras?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué topología conecta los dispositivos en un círculo cerrado?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la red más grande, que conecta países y regiones?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La dirección IP única asignada manualmente a un servidor es una IP:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la base del sistema de numeración binario?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Al convertir el número binario 1001 a decimal, ¿qué resultado obtienes?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué número binario representa el decimal 5?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se llama el sistema de numeración que utiliza diez símbolos (0-9)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Al convertir el número decimal 10 a binario, ¿qué resultado obtienes?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el valor posicional del dígito '1' en el número binario 1000?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué sistema de numeración es fundamental para las computadoras y por qué?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Al convertir 1101<sub>2</sub> a decimal, el resultado es:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué número decimal es equivalente a 1111<sub>2</sub>?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué número binario representa el decimal 21?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un Sistema Operativo (SO)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué función permite al SO ejecutar varios programas a la vez?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La memoria RAM es administrada por la función de:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se llama el uso del disco duro como RAM adicional?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El medio por el cual el usuario interactúa con la computadora se llama:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa CLI?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué componentes permiten la comunicación entre CPU y periféricos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un ejemplo de sistema operativo móvil?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Linux es conocido por ser un sistema operativo de:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La gestión de archivos organiza los datos en:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa CLI?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es una ventaja de usar la terminal frente a la interfaz gráfica?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué comando se usa para cambiar de directorio en Windows y Linux?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El comando 'mkdir' sirve para:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué comando lista el contenido de una carpeta en Windows?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se sube un nivel en la jerarquía de carpetas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Para mostrar el contenido de un archivo de texto en la terminal de Windows se usa:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué comando limpia la pantalla de la terminal en Windows?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué extensión suelen tener los archivos de script (lote) en Windows?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Para mover o renombrar un archivo en Windows se usa el comando:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el Formato Condicional?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué sirve el Formato Condicional?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Una regla que usa una fórmula personalizada siempre comienza con:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Si tienes dos reglas que se aplican a la misma celda, ¿cuál tiene prioridad?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La fórmula `=C2 > 1000` resaltará las celdas en la columna C que:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estas visualizaciones usa una barra horizontal proporcional al valor?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué visualización usa un degradado de color según el valor?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Para agregar flechas o semáforos a una celda se usa:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La opción 'Detener si es verdad' sirve para:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿En qué pestaña de Excel se encuentra usualmente el Formato Condicional?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "En la instrucción Range(\"A1\").Value = \"Hola\", ¿qué representa '.Value'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué sirve el comando 'MsgBox' en VBA?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Todo el código de una macro (procedimiento) se escribe entre:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa la sigla VBA?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué combinación de teclas abre el Editor de VBA (VBE)?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué palabra clave se usa para crear o declarar una variable en VBA?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el tipo de dato correcto para almacenar texto?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué extensión debe tener un libro de Excel para conservar el código VBA?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "En VBA, una acción que un objeto puede realizar (como borrar) se llama:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Para referirse a la celda B5 en VBA, se utiliza:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una hoja de cálculo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Las unidades básicas de una hoja de cálculo son:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función de la barra de fórmulas?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué atajo de teclado abre el cuadro de formato de celdas?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Todas las fórmulas en una hoja de cálculo deben comenzar con:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué función se utiliza para sumar un rango de celdas?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La función que calcula el promedio de un conjunto de valores es:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué herramienta permite mostrar solo los datos que cumplen ciertos criterios?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Reorganizar los datos de mayor a menor se conoce como:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un tipo de dato válido en una celda?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué permite realizar la Función SI (IF) en Excel?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la estructura correcta de la función SI?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Si queremos evaluar varias condiciones una dentro de otra, usamos una función SI __________.",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el principal beneficio de los gráficos en Excel?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de gráfico es ideal para mostrar proporciones de un total?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué gráfico usarías para mostrar tendencias a lo largo del tiempo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una Tabla Dinámica?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿En qué área de la tabla dinámica se colocan los datos numéricos que se quieren sumar o promediar?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Para insertar un gráfico o tabla dinámica, debemos ir a la pestaña:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El componente del gráfico que identifica qué representa cada color se llama:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un procesador de texto?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un ejemplo de formato de carácter?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Negrita, Cursiva y Subrayado son ejemplos de:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué opción define la posición del texto (izquierda, derecha, centrado)?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué formato de página permite elegir entre Vertical u Horizontal?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La función que permite corregir palabras mal escritas se llama:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos NO es un objeto que se pueda insertar en un procesador de texto?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué herramienta permite que varias personas editen un documento al mismo tiempo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Es el procesador de texto más usado en el mundo:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "LibreOffice Writer es conocido por ser:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de referencia de celda cambia automáticamente cuando se copia a otra celda?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué carácter se utiliza para indicar una referencia absoluta?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La fórmula `=A1+B1` en la celda C1 se copia a la celda C2. ¿Qué fórmula aparecerá en C2?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "En la fórmula `=$A1`, la referencia a la columna está:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de las siguientes es una referencia mixta?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Si quieres calcular una serie de precios con IVA, ¿qué tipo de referencia usarías para la celda que contiene el porcentaje de IVA?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Al copiar la fórmula `=B$2` de la celda C3 a C4, ¿cómo cambia la fórmula?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué ocurre con una referencia relativa como `A5` si la fórmula se copia una fila hacia abajo y una columna a la derecha?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Si quieres fijar la fila pero permitir que la columna cambie, ¿cuál es la sintaxis correcta?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "En una fórmula que utiliza `SUMA`, ¿qué tipo de referencia se usa normalmente para el rango de celdas?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un modelo de datos en Excel?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué herramienta de Excel se usa para crear relaciones en un modelo de datos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una 'medida' en el modelo de datos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el beneficio principal de usar un modelo de datos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de relación es la más común en un modelo de datos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Las relaciones entre tablas se establecen a través de:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué lenguaje se usa para crear fórmulas avanzadas en Power Pivot?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Una relación de Muchos a Muchos (M:M) requiere de:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se llama la vista donde se arrastran columnas para crear relaciones?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Power Pivot es un __________ integrado en Excel para modelos avanzados.",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Cuál es el principal objetivo de usar la herramienta de <strong>Validación de Datos</strong>?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Qué criterio de validación usaría si desea que el usuario solo elija entre 'Licenciado', 'Ingeniero' o 'Técnico'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Qué herramienta nos permite ocultar filas temporalmente para enfocarnos solo en registros que cumplen un criterio (ej. solo ver ventas mayores a L. 5,000)?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. Un <strong>Mensaje de Entrada</strong> en la Validación de Datos sirve como:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Qué sucede con las filas que no cumplen el criterio cuando se aplica un <strong>Filtro</strong>?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. Si necesitas asegurarte de que un campo de ID solo contenga números entre 1000 y 9999, ¿qué criterio de validación sería más adecuado?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿En qué pestaña de la cinta de opciones se encuentran generalmente las herramientas de <strong>Validación y Filtrado</strong>?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. Deducción: Si la columna 'Salario' está validada para ser 'Mayor que 5000' y alguien ingresa '4999', ¿qué aparecerá?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. ¿Cuál es un beneficio directo de la <strong>consistencia</strong> de datos, lograda mediante la validación?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Ofimática",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. Deducción: Un <strong>Filtro Avanzado</strong> es útil cuando...",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el primer paso en el análisis de un problema?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué representa la 'Entrada' en el análisis?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué representa la 'Salida' en el análisis?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué pregunta debemos hacernos para definir el Proceso?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se llama la fase que sigue inmediatamente después del Análisis?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Cuál es el objetivo principal del análisis del problema?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Qué se define como 'Entrada' en un análisis?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Qué etapa define el CÓMO se resolverá el problema?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿Qué es el Lenguaje Natural en programación?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Cuál es una característica de un buen algoritmo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. ¿Qué pregunta NO pertenece al análisis del problema?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Por qué es útil el Lenguaje Natural?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Qué significa que un algoritmo sea 'preciso'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. En el análisis del área de un círculo, ¿qué es el Radio?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Qué sigue después del Diseño del Algoritmo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el propósito de clasificar los algoritmos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué técnica consiste en probar todas las opciones posibles?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué estrategia toma la mejor decisión en cada paso local?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa 'Top-Down' en el diseño de algoritmos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué sirve el 'Refinamiento por pasos'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Cuál es la primera etapa para desarrollar un algoritmo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Qué técnica divide un problema complejo en subproblemas?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Cómo se llaman los algoritmos que prueban todas las soluciones?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿Qué algoritmos toman la mejor decisión local en cada paso?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Qué etapa consiste en traducir el algoritmo a un lenguaje?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. ¿Qué técnica de representación usa lenguaje natural?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Cuál es el objetivo de la etapa de Diseño?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Qué algoritmos guardan resultados para evitar duplicados?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. ¿Cómo se llama al refinamiento progresivo de un algoritmo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿En qué etapa se definen las entradas y salidas?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un diagrama de flujo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué representa el símbolo del óvalo en un diagrama de flujo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué se usa el rombo en los diagramas de flujo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué representa el rectángulo en un diagrama de flujo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué indican las flechas en un diagrama de flujo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Qué es un diagrama de flujo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Qué símbolo se usa para una decisión?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Qué representa el rectángulo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿En qué dirección debe fluir el diagrama?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Qué símbolo se usa para Entrada y Salida?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. ¿Pueden cruzarse las líneas de flujo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Qué indica una flecha?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿El rombo cuántas salidas suele tener?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. ¿Qué es un diagrama de flujo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Para qué sirve documentar con diagramas?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el primer paso para resolver un problema mediante programación?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué técnica consiste en descomponer un problema en otros más sencillos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una 'alternativa de solución'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué debemos evaluar al elegir una alternativa de solución?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa 'validar' un algoritmo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Cuál es el primer paso para solucionar un problema?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Cómo se llama al diseño que va de lo general a lo particular?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Qué pregunta define el propósito de un módulo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿Cuál es una ventaja de dividir problemas?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Qué sigue después de dividir y resolver los subproblemas?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. ¿Qué técnica se enfoca en el refinamiento sucesivo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Qué representa la 'Entrada' en un módulo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Por qué es útil la programación modular?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. ¿Qué se define en el Nivel Superior del diseño Top-Down?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Qué significa 'Depuración'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿En qué década se formalizó el concepto de algoritmo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Quién demostró la insolubilidad del 'problema del paro'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué dos factores mide la complejidad computacional?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un algoritmo según la definición informal?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué problema determinó Turing que no puede ser resuelto por computadora?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es una medida de complejidad mencionada?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué permiten los lenguajes de alto nivel al programador?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la principal ventaja de los lenguajes de alto nivel?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Por qué el ajedrez se considera complejo en la práctica?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa que un algoritmo sea finito?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es la programación?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un algoritmo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿De dónde proviene la palabra 'algoritmo'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa que un algoritmo sea 'Finito'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa que un algoritmo sea 'Preciso'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa que un algoritmo sea 'Definido'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa que un algoritmo sea 'General'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es un ejemplo de algoritmo cualitativo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es un ejemplo de algoritmo cuantitativo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué requiere la computadora para ejecutar un algoritmo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. Un algoritmo para 'cambiar llanta' es:",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Qué fórmula se usa para el área de triángulo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Qué característica asegura mismo resultado con mismas entradas?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. En 'ir al colegio', ¿qué estructura tiene '¿Hay tiempo?'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Por qué es importante que un algoritmo sea 'general'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué hace un compilador con el código fuente?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es una ventaja de los lenguajes interpretados?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué sucede con las instrucciones de un ciclo en un intérprete?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál lenguaje es un ejemplo de lenguaje compilado?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un bucle en programación?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuándo se usa preferentemente el bucle 'Para'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué componente define el inicio y el fin del bucle?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué lenguaje usa 'let i = 0' en su bucle for?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el resultado de un bucle de 1 a 5?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué lenguajes comparten sintaxis de bucle for?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué describe un lenguaje declarativo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es un ejemplo de lenguaje declarativo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué pasa con el orden de ejecución en declarativos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es una ventaja de este paradigma?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué estructura es fundamental en lenguajes lógicos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuándo se evalúa la condición en el bucle 'Mientras'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué sucede si la condición es falsa desde el inicio?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué evitamos al cambiar la variable dentro del bucle?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es un uso común del bucle Mientras?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿En qué lenguaje declarativo se basa Prolog?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué define a una base de datos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de lenguaje utiliza una BD?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se llama el nodo superior?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Quién postuló el modelo relacional?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál BD se usa para datos históricos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué permite el modelo de red?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué almacena una BD de texto?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se ve el modelo relacional?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa el acrónimo SGBD?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es una desventaja de las BD?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué caracteriza a la programación lógica?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué especifica el programador en este paradigma?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la idea esencial de la prog. lógica?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿En qué lenguaje se basa la prog. lógica?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una 'entidad' en este contexto?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuántas veces corre mínimo el bucle 'Repetir'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuándo se evalúa la condición en 'Repetir'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué lenguaje es clásico de la IA?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuándo sale el flujo del bucle 'Repetir'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se describen los algoritmos según el PDF?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es la codificación en programación?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué herramienta se usa para planear la lógica antes de programar?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el pseudocódigo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué técnica utiliza símbolos gráficos para representar algoritmos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función del 'Inicio' y 'Fin' en un algoritmo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿En qué consiste la codificación?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Qué se hace en la fase de ejecución?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Cuál es el objetivo de la comprobación?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿Cuál de estas NO es una técnica de representación?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Qué técnica usa símbolos gráficos estandarizados?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. ¿Qué es el pseudocódigo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Cuál es la ventaja de la representación paso a paso?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Qué técnica usa el idioma cotidiano (español)?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. ¿Qué fase sigue inmediatamente al Diseño del Algoritmo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Por qué es importante la comprobación?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la principal ventaja del pseudocódigo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa 'ordenación simbólica'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es una palabra clave común en el pseudocódigo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué se usa el símbolo '=' en muchos lenguajes o pseudocódigos?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una variable?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Qué es el pseudocódigo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. ¿Para qué sirve la palabra clave 'Leer'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Qué símbolo se usa comúnmente para la asignación?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿Cuál es una ventaja del pseudocódigo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Qué palabra clave se usa para mostrar resultados?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. ¿Cómo termina un bloque de decisión Si-Entonces?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Qué representa la 'Selección' en un algoritmo?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿El pseudocódigo es ejecutado directamente por la PC?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. ¿Qué palabra marca el fin de todo el proceso?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "Programación",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Qué es la 'Iteración'?",
+--
+    "Grado": 11
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el objetivo principal de Análisis y Diseño de Sistemas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Un conjunto de componentes interrelacionados con un objetivo común se define como:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué fase investiga qué debe hacer el nuevo sistema?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué fase especifica cómo se construirá el sistema?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un beneficio de un buen Análisis y Diseño?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa SDLC?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El profesional que es el puente entre usuarios y desarrolladores es el:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Habilidades fundamentales del analista:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El Análisis y Diseño son los __________ del software.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué incluye la fase de diseño?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el objetivo principal de Análisis y Diseño de Sistemas I?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un sistema en el contexto de esta clase?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El proceso de investigar 'qué debe hacer' un nuevo sistema se llama:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El proceso de especificar 'cómo se construirá' el sistema se llama:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos NO es un beneficio de un buen análisis y diseño?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa la sigla SDLC?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el 'puente' esencial entre usuarios y desarrolladores?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Una fase del SDLC que ocurre después del Diseño es:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué habilidades son fundamentales para un analista de sistemas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El análisis y diseño se consideran los __________ del proyecto de software.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el Ciclo de Vida de Desarrollo de Software (SDLC)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es una ventaja del Modelo Cascada?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El Modelo Cascada se caracteriza por ser:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿En qué se basa principalmente el Modelo Espiral?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un principio de los Modelos Ágiles?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué son los 'Sprints' en Scrum?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "En Scrum, la lista priorizada de funcionalidades se llama:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué modelo es más adecuado para proyectos con requisitos muy inestables?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué característica define la flexibilidad en la comparación de modelos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El modelo que combina elementos de Cascada y Prototipado es el:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es la Gestión de Proyectos de Software?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos NO es un objetivo de la gestión de proyectos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la primera fase de la gestión de proyectos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El responsable principal del éxito del proyecto es:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué herramienta visualiza el cronograma y las dependencias de tareas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un hito (milestone)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué busca el Análisis Orientado a Objetos (AOO)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un artefacto clave del AOO?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El modelo de datos que define entidades y relaciones de alto nivel es el:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué sirve la Gestión de Riesgos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se define al analista de sistemas en relación con el negocio y la tecnología?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estas es una habilidad técnica requerida para un analista?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La capacidad de proponer soluciones innovadoras 'fuera de la caja' se refiere a:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué habilidad blanda permite ser el enlace efectivo entre usuarios y técnicos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Identificar obstáculos y desarrollar estrategias efectivas se asocia con:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Por qué es importante para un analista entender de Estructuras de Datos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Un desafío común del analista es enfrentarse a:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es una tarea clave del analista durante el inicio del proyecto?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Las habilidades interpersonales del analista se conocen como:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el objetivo de tener conocimientos de redes y conectividad?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué son los requerimientos en un sistema?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Los requerimientos que describen 'lo que el sistema debe hacer' se llaman:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Ejemplo de requerimiento No Funcional:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la primera etapa del proceso de recolección?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Técnica que consiste en conversaciones directas para obtener detalles:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es una desventaja de los cuestionarios?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La técnica de observar a los usuarios en su entorno real se llama:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué técnica utiliza una versión simplificada del sistema para obtener feedback?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La técnica de 'Lluvia de Ideas' busca principalmente:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Intermedio",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué técnica describe las interacciones entre usuario y sistema para un objetivo?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué componente se encarga de realizar todos los cálculos y procesos lógicos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función de la memoria RAM?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué componente almacena el sistema operativo y todos los archivos permanentemente?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿A qué componente se conectan todos los demás elementos internos de la PC?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué componente suministra energía eléctrica a todas las partes de la computadora?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué componente se considera el 'cerebro' de la computadora?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El hardware se define como:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La memoria RAM tiene como característica ser:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué unidad de la CPU realiza las operaciones matemáticas y lógicas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La tarjeta principal que conecta todos los componentes se llama:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estas unidades de almacenamiento es más rápida y duradera?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué componente convierte la corriente eléctrica para el resto de piezas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de computadora está diseñada para la movilidad y es 'todo en uno'?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Las computadoras extremadamente potentes para investigación avanzada son:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Un sistema computacional especializado dentro de otro aparato es un sistema:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es considerado el primer dispositivo de cálculo, originado en Mesopotamia?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Quién inventó la Pascalina, la primera calculadora mecánica?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué máquina es considerada el primer concepto de computadora programable?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tecnología permitió el paso a las computadoras electrónicas a principios del siglo XX?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál fue la primera máquina programable y completamente automática (1941)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué invento de 1947 permitió crear dispositivos más pequeños y eficientes que los tubos de vacío?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Quién inventó el circuito integrado en 1958?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué red militar precursora de Internet nació en 1969?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál fue el primer microprocesador comercial lanzado en 1971?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Quién inventó la World Wide Web (WWW) en el CERN en 1989?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el propósito principal de una hoja de cálculo?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una celda en Excel?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se identifican las columnas en una hoja de cálculo?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se identifican las filas en una hoja de cálculo?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Con qué símbolo debe comenzar siempre una fórmula en Excel?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una hoja de cálculo?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se llama la barra donde se escriben fórmulas en Excel?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el símbolo que debe iniciar toda fórmula en una hoja de cálculo?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué función se usa para sumar un rango de celdas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de los siguientes es un tipo de dato que puedes ingresar en una celda?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué atajo abre el cuadro de formato de celdas en la mayoría de hojas de cálculo?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué hace la función =PROMEDIO(A1:A10)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué sirve el filtrado de datos?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué operador se usa para multiplicar en una fórmula?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función para encontrar el valor máximo en un rango?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿En qué pestaña del procesador de texto se encuentra la opción para insertar una tabla?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el propósito de los márgenes en una página?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué nos permite configurar la opción 'Orientación' en el diseño de página?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el encabezado de una página?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué sirve la numeración de páginas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "1. ¿Qué componente del Formato de Página define el espacio en blanco alrededor de los bordes del documento?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "2. Si inserta una imagen y esta actúa como un carácter más que no se puede mover libremente, ¿cuál es su ajuste de texto (Text Wrapping) por defecto?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "3. ¿Qué herramienta debe aplicar a los encabezados (Capítulos, Secciones) para que se incluyan automáticamente en la Tabla de Contenido (Índice)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "4. ¿Cuál es el tamaño de papel estándar utilizado en Honduras, conocido internacionalmente como Carta?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "5. ¿Cómo se llama el símbolo de un ancla que aparece en la imagen y que indica el párrafo al que está ligada?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "6. Si necesita incluir un gráfico muy ancho en su informe, ¿qué orientación de página es más conveniente usar?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "7. ¿Qué opción de Ajuste de Texto permite que el texto rodee la imagen de manera ajustada, ocupando el espacio a su alrededor?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "8. ¿Qué acción debe realizar sobre la Tabla de Contenido automática si añade un nuevo título o mueve una sección a otra página?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "9. ¿En qué pestaña de la cinta de opciones se encuentra generalmente la configuración de Márgenes y Orientación?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "10. ¿Cuál es la configuración de margen requerida por las Normas APA (Séptima Edición) en los cuatro lados de la página?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es la informática?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el componente principal de un sistema informático que se puede tocar?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se le llama al conjunto de programas e instrucciones?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función principal de una computadora?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un sistema informático?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un ejemplo de Hardware?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un ejemplo de Software?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué dispositivo es el cerebro de la computadora?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué significa la palabra Informática?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos componentes NO es físico?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿A qué categoría pertenece el Mouse?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el Humanware?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es un periférico de entrada?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es un periférico de salida?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué sirve el Disco Duro?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un dato en informática?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es la información?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué dispositivo permite ver lo que procesa la computadora?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la unidad básica de almacenamiento en informática?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Un conjunto de 8 bits forma un:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la unidad más pequeña de información en una computadora?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "¿Un Terabyte (TB) es más pequeño que un Gigabyte (GB)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué formato de archivo se utiliza comúnmente para documentos de texto plano sin formato?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "¿Una ruta absoluta de archivo empieza desde la ubicación actual del usuario?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de los siguientes es un formato de archivo de video?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "Un Byte está compuesto por 8 Bits.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué herramienta gráfica te permite organizar y gestionar archivos y carpetas en Windows?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "El formato .pdf es ideal para mantener el diseño original de un documento en cualquier dispositivo.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué acción realizas para crear una copia de un archivo y colocarla en otro lugar sin eliminar el original?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "La 'Carpeta Raíz' es la carpeta principal de una unidad de almacenamiento.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué función cumplen los periféricos de entrada en un sistema informático?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos dispositivos es un periférico de salida?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué caracteriza a un periférico mixto o de entrada/salida?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función principal de un escáner?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué dispositivo se utiliza principalmente para la comunicación por voz en una computadora?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué son los periféricos en una computadora?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Un dispositivo que introduce datos a la computadora se clasifica como:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es el periférico de entrada más común?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Los periféricos de salida sirven para:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de periférico es una Impresora Multifunción?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El Monitor es un ejemplo clásico de periférico de:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Dispositivo que permite digitalizar documentos físicos:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un criterio de selección para un periférico?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Un proyector se clasifica como un periférico de:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La memoria USB (Pendrive) se considera un periférico:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el propósito principal de un procesador de texto?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un procesador de texto popular?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué nos permite hacer la función 'Alineación' en un documento?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el interlineado?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la ventaja de usar un procesador de texto frente a una máquina de escribir?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función principal de un procesador de palabras?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de formato de archivo es comúnmente utilizado por Microsoft Word?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "Verdadero o Falso: Un procesador de palabras solo puede manejar texto, no imágenes ni gráficos.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué función te permite cambiar el color y el tamaño de la fuente?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de los siguientes no es un ejemplo de un procesador de palabras?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "Verdadero o Falso: El formato PDF asegura que un documento se vea igual en cualquier dispositivo.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un sinónimo de procesador de palabras?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué elemento de un documento es ideal para destacar títulos o secciones importantes?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "Verdadero o Falso: Un procesador de palabras no se puede usar para crear tablas.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el propósito principal de un procesador de palabras?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el objetivo principal de la seguridad informática?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es un virus informático?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función de un antivirus?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el phishing?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Por qué es importante usar contraseñas seguras?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de malware se disfraza de software legítimo y abre puertas traseras?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "¿Un gusano informático necesita adjuntarse a un programa para propagarse?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de malware cifra tus archivos y exige un rescate?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "¿La detección por firmas de un antivirus es efectiva contra malware 'zero-day' (nuevo)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de las siguientes NO es una buena práctica de seguridad informática?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "El término 'Malware' es una abreviatura de 'Malicious Software'.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos métodos de detección de antivirus busca patrones de comportamiento sospechosos en tiempo real, incluso para amenazas desconocidas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "El Phishing es una técnica que a menudo utiliza correos electrónicos engañosos para obtener información sensible.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de malware se dedica a recopilar información del usuario sin su consentimiento, como hábitos de navegación o contraseñas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "verdadero_falso",
+    "Pregunta": "Los antivirus solo son útiles si tu computadora ya está infectada.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Se encarga de asignar tiempo de CPU a cada programa y controlar su ejecución.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Controla la comunicación entre la CPU y periféricos como la impresora o el teclado.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Organiza y controla el almacenamiento de datos en discos, permitiendo crear y eliminar archivos.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Asigna y desasigna espacio en la memoria principal (RAM) a los programas.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Permite al usuario interactuar con la computadora a través de ventanas, iconos y menús.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Protege el sistema contra accesos no autorizados y gestiona permisos de usuario.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Permite la comunicación entre computadoras conectadas y gestiona protocolos.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Es el corazón del sistema operativo, gestiona la CPU y reside permanentemente en la memoria.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Tipo de SO que permite a varios usuarios utilizar el sistema al mismo tiempo.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Tipo de SO capaz de ejecutar múltiples programas de forma concurrente.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Sistema operativo de código abierto muy popular en servidores.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Sistema operativo móvil desarrollado por Google.",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se llama el conjunto de componentes lógicos de una computadora?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función principal de un Sistema Operativo?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el software de aplicación?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estos es un ejemplo de Sistema Operativo?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el software de sistema?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es el software?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El hardware se diferencia del software porque el hardware es:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál de estas es una categoría principal de clasificación del software?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Windows, macOS y Linux son ejemplos de:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué software permite a los programadores crear otros programas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Microsoft Word y Google Chrome son ejemplos de:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "La función del Sistema Operativo que administra la RAM se llama:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué componente permite la comunicación entre el hardware y el SO?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Un Sistema Operativo móvil muy popular es:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué tipo de software es un compilador?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué opción se utiliza para cambiar el tipo de letra en un procesador de texto?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es la función del comando 'Copiar Formato'?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué comando se usa para combinar dos o más celdas en una sola en una tabla?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se llama la intersección de una fila y una columna en una tabla?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué herramienta permite organizar datos en filas y columnas de manera estructurada?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es una fila en una tabla?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Para qué sirve el estilo de fuente 'negrita'?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el componente de una tabla que define el título de una columna?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué es la alineación de texto?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el componente que se usa para encabezar filas y columnas?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cómo se llama la intersección de una fila y una columna?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "El formato de texto se refiere a:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué opción permite cambiar el tipo de letra (ej. Arial)?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Alinear el texto de forma que quede recto por ambos lados se llama:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "Informática I",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "Un conjunto vertical de celdas en una tabla se llama:",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el atajo de teclado para abrir la ventana de <strong>Fuente</strong> en Microsoft Word?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el atajo para aplicar <strong>Cursiva</strong> en Word?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué atajo usas para <strong>Guardar</strong> un documento en Word?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el atajo para <strong>Copiar</strong> texto en Word?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué atajo se usa para <strong>Pegar</strong> texto en Word?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el atajo para <strong>Cortar</strong> texto en Word?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el atajo para <strong>Deshacer</strong> la última acción en Word?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Qué atajo se usa para <strong>Rehacer</strong> la última acción deshecha?",
+--
+    "Grado": 10
+  },
+  {
+    "Asignatura": "General",
+    "Nivel": "Básico",
+    "Tema": "General",
+    "TipoActividad": "opcion_multiple",
+    "Pregunta": "¿Cuál es el atajo para <strong>Seleccionar todo</strong> el contenido del documento?",

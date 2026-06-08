@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programación orientada a bases de datos / Tipos y Modelos</title>
+    <title>Lenguajes de Programación Imperativos y Procedurales</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;600&family=Poppins:wght=700;800&display=swap" rel="stylesheet">
     <style>
         /* Universal box-sizing */
         * { box-sizing: border-box; }
@@ -25,7 +25,7 @@
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
             color: #1f2937;
-            user-select: none; /* Evita que se seleccione texto accidentalmente al hacer clics rápidos */
+            user-select: none;
         }
 
         /* Contenedor principal */
@@ -44,7 +44,7 @@
             position: relative;
             background-color: #ffffff;
             overflow: hidden;
-            cursor: pointer; /* Indica que se puede hacer clic para avanzar */
+            cursor: pointer;
         }
 
         /* Estilo para cada diapositiva */
@@ -81,7 +81,7 @@
             padding: 2rem;
             border-radius: 0.5rem;
             text-align: left;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             width: 100%;
             max-width: 900px;
             cursor: default;
@@ -179,135 +179,123 @@
         <div id="presentation-container">
             <div class="slide active">
                 <img src="../../imagenes/logo.png" alt="Logo" style="width: 250px;" class="mb-8">
-                <h2>Programación orientada a bases de datos</h2>
+                <h2>Lenguajes Imperativos y Procedurales</h2>
                 <div class="mt-8 text-lg text-gray-500">
-                    <p>Programación I</p>
+                    <p>Programación I - Unidad 2</p>
                     <p>II BTP Informática Sección "A"</p>
                     <p>Lic. Pablo Antonio Peña Mancia</p>
-                    <p>31 de mayo de 2026</p>
+                    <p>7 de junio de 2026</p>
                 </div>
             </div>
 
             <div class="slide">
-                <h3>¿Qué es una Base de Datos?</h3>
-                <p>Es un banco de datos o conjunto de datos que pertenecen al mismo contexto, almacenados sistemáticamente para su posterior uso.</p>
+                <h3>8. Lenguajes de programación imperativos</h3>
+                <p>Son aquellos en los cuales se le ordena a la computadora <strong>cómo realizar una tarea</strong> siguiendo una serie de pasos o instrucciones.</p>
                 <div class="concept-box">
-                    <p>Son programas que administran información, la ordenan y la hacen fácil de buscar y encontrar.</p>
+                    <p>Se fundamentan en comandos u órdenes que modifican o cambian los valores en ciertas partes de la memoria de la máquina.</p>
                 </div>
             </div>
 
             <div class="slide">
-                <h3>Usos y Funciones</h3>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><strong>Almacenamiento:</strong> Guardar grandes volúmenes de datos.</li>
-                    <li><strong>Recuperación:</strong> Acceder a la información de forma rápida y flexible.</li>
-                    <li><strong>Organización:</strong> Reordenar datos según la necesidad.</li>
-                    <li><strong>Distribución:</strong> Imprimir o compartir información en diversos formatos.</li>
-                </ul>
-            </div>
-
-            <div class="slide">
-                <h3>Enfoque Declarativo</h3>
-                <p>Los lenguajes orientados a bases de datos son <strong>declarativos</strong> y no imperativos.</p>
+                <h3>La Ejecución Secuencial</h3>
+                <p>En la mayor parte de los lenguajes imperativos, la ejecución de los comandos se realiza de forma <strong>secuencial</strong>.</p>
                 <div class="concept-box border-blue-400">
-                    <p>El problema es "qué" se quiere buscar o hacer en la base de datos, y no se enfatiza el "cómo" realizar el proceso paso a paso.</p>
+                    <p>Esto significa que las instrucciones se procesan una tras otra: hasta que un comando no ha sido completamente ejecutado, no se lee el siguiente.</p>
                 </div>
             </div>
 
             <div class="slide">
-                <h3>Balance de Uso</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <div class="text-left">
-                        <p class="font-bold text-green-600">Ventajas:</p>
-                        <ul class="list-disc list-inside text-sm">
-                            <li>Orden y estructura de datos.</li>
-                            <li>Búsquedas instantáneas.</li>
-                            <li>Comunicación eficiente.</li>
-                        </ul>
-                    </div>
-                    <div class="text-left">
-                        <p class="font-bold text-red-600">Desventajas:</p>
-                        <ul class="list-disc list-inside text-sm">
-                            <li>Enormes cantidades de datos sin control.</li>
-                            <li>Riesgos de seguridad en el acceso.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="slide">
-                <h3>Sistemas Gestores (SGBD)</h3>
-                <p>Permiten almacenar y posteriormente acceder a los datos de forma rápida y estructurada mediante software especializado.</p>
-                <div class="concept-box bg-blue-50">
-                    <p>Ejemplo: SQL Server, MySQL o Access sirven como intermediarios entre el usuario y los datos físicos.</p>
-                </div>
-            </div>
-
-            <div class="slide">
-                <h3>Ejercicio 1: Aplicaciones</h3>
-                <p>Investiga y anota en tu cuaderno 3 ejemplos de bases de datos que utilices en tu vida diaria (ej: redes sociales, bancos, etc.) y qué datos crees que almacenan.</p>
-            </div>
-
-            <div class="slide">
-                <h3>Bases de Datos por su Variabilidad</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div class="bg-gray-50 p-6 rounded-lg border-t-4 border-gray-400 text-left">
-                        <h4 class="font-bold text-xl mb-2">Estáticas</h4>
-                        <p class="text-base">De sólo lectura. Usadas para datos históricos y estudio de comportamiento en el tiempo.</p>
-                    </div>
-                    <div class="bg-blue-50 p-6 rounded-lg border-t-4 border-blue-500 text-left">
-                        <h4 class="font-bold text-xl mb-2">Dinámicas</h4>
-                        <p class="text-base">La información se modifica con el tiempo. Permite actualizar, añadir y borrar datos.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="slide">
-                <h3>Según su Contenido</h3>
-                <ul class="text-left mt-6 list-disc list-inside space-y-4">
-                    <li><strong>Bibliográficas:</strong> Contienen un "representante" (autor, título) pero no el texto completo.</li>
-                    <li><strong>De texto completo:</strong> Almacenan las fuentes primarias íntegras.</li>
-                    <li><strong>Directorios:</strong> Guías telefónicas o empresariales en formato electrónico.</li>
-                    <li><strong>Bancos de imágenes:</strong> Colecciones de fotos, audio o multimedia.</li>
-                </ul>
-            </div>
-
-            <div class="slide">
-                <h3>Modelo Jerárquico</h3>
-                <p>Los datos se organizan en forma similar a un árbol invertido.</p>
-                <div class="concept-box border-gray-300">
-                    <p>Un nodo padre puede tener varios hijos. El nodo superior se llama <strong>raíz</strong> y los que no tienen hijos se llaman <strong>hojas</strong>.</p>
-                </div>
-                <p class="mt-4 text-sm italic">Limitación: Incapacidad de representar eficientemente la redundancia.</p>
-            </div>
-
-            <div class="slide">
-                <h3>Modelo de Red</h3>
-                <p>Es una mejora del jerárquico que permite que un mismo nodo tenga <strong>varios padres</strong>.</p>
-                <div class="concept-box">
-                    <p>Ofrece una solución al problema de redundancia, pero su administración es compleja y suele ser usado principalmente por programadores.</p>
-                </div>
-            </div>
-
-            <div class="slide">
-                <h3>Modelo Relacional</h3>
-                <p>El más utilizado actualmente. Postulado en 1970 por <strong>Edgar Frank Codd</strong> de IBM.</p>
-                <div class="concept-box border-green-500">
-                    <ul class="list-disc list-inside space-y-2">
-                        <li>Usa "relaciones" (conjuntos de datos llamados tuplas).</li>
-                        <li>Se visualiza como <strong>tablas</strong> compuestas por filas y columnas.</li>
-                        <li>Fácil de entender y utilizar para usuarios comunes.</li>
+                <h3>Ejemplo de Serie de Pasos Imperativos</h3>
+                <p>Un programa imperativo sigue un flujo estructurado como el siguiente:</p>
+                <div class="concept-box bg-blue-50 border-blue-600">
+                    <ul class="text-left list-none space-y-2 font-mono text-xl">
+                        <li><strong>Paso 1:</strong> Solicitar número.</li>
+                        <li><strong>Paso 2:</strong> Multiplicar número por dos.</li>
+                        <li><strong>Paso 3:</strong> Imprimir resultado de la operación.</li>
                     </ul>
                 </div>
+                <p class="mt-4 text-base text-gray-500">Ejemplos de lenguajes que hacen esto: BASIC, C, C++, Java, Clipper, Dbase, C#, PHP, Perl, entre otros.</p>
             </div>
 
             <div class="slide">
-                <h3>Ejercicio 2: Clasificación</h3>
-                <p>Dibuja en tu cuaderno un esquema simple que represente la diferencia visual entre un Modelo Jerárquico (Árbol) y un Modelo Relacional (Tabla).</p>
+                <h3>Diferencia con el Enfoque Declarativo</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="text-left bg-red-50 p-6 rounded-lg border-l-4 border-red-500">
+                        <p class="font-bold text-red-700">Lenguajes Imperativos:</p>
+                        <p class="text-base mt-2">Describen paso a paso un conjunto de instrucciones que deben ejecutarse para variar el estado de un programa y hallar la solución (un algoritmo).</p>
+                    </div>
+                    <div class="text-left bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+                        <p class="font-bold text-green-700">Lenguajes Declarativos:</p>
+                        <p class="text-base mt-2">Las sentencias describen el problema que se quiere solucionar (qué se busca), pero no las instrucciones necesarias para resolverlo directamente.</p>
+                    </div>
+                </div>
             </div>
 
             <div class="slide">
-                <h3>Cuestionario: Evaluación</h3>
+                <h3>8.1 Lenguajes imperativos procedurales</h3>
+                <p>En los lenguajes tradicionales o procedurales, es la propia aplicación la que controla <strong>qué porciones de código se ejecutan</strong> y la secuencia exacta en que lo hacen.</p>
+                <div class="concept-box border-yellow-500 bg-yellow-50/50">
+                    <p>La ejecución se inicia siempre en la primera línea de código y sigue una ruta predefinida a través de la aplicación, llamando a procedimientos según sea necesario.</p>
+                </div>
+            </div>
+
+            <div class="slide">
+                <h3>Variables y Memoria</h3>
+                <p>Los lenguajes procedurales están fundamentados en la utilización de variables para almacenar valores y en la realización de operaciones con los datos.</p>
+                <div class="concept-box text-left">
+                    <p><strong>Arquitectura base:</strong> Consta de una secuencia de celdas llamadas <em>memoria</em> (donde se guardan datos e instrucciones de forma codificada) y de un <em>procesador</em> capaz de ejecutar comandos aritméticos y booleanos en secuencia.</p>
+                </div>
+                <p class="mt-2 text-sm italic text-gray-500">Ejemplos clásicos: FORTRAN, PASCAL, C, ADA, ALGOL.</p>
+            </div>
+
+            <div class="slide">
+                <h3>Cercanía al Modelo de la Máquina</h3>
+                <p>Un lenguaje procedural ofrece al programador conceptos que se traducen de forma natural al modelo físico de la máquina.</p>
+                <div class="concept-box border-gray-400">
+                    <p>El programador tiene la tarea de traducir la solución abstracta de un problema a términos muy primitivos y cercanos al hardware, especificando detalladamente qué datos se necesitan y cómo obtenerlos.</p>
+                </div>
+            </div>
+
+            <div class="slide">
+                <h3>Acceso Individual a Registros</h3>
+                <p>Las aplicaciones procedurales funcionan bajo una lógica de registro individual:</p>
+                <div class="concept-box bg-gray-50 text-base">
+                    <ul class="list-disc list-inside space-y-2">
+                        <li>Acceden a un registro de datos específico.</li>
+                        <li>Lo procesan de manera aislada.</li>
+                        <li>Basándose en los resultados obtenidos, acceden a otro registro y lo procesan.</li>
+                        <li>Repiten el ciclo hasta obtener la información requerida.</li>
+                    </ul>
+                </div>
+                <p class="mt-4 text-base text-gray-600">Por ello, sus sentencias deben estar embebidas en estructuras de lenguajes de alto nivel (como bucles y condicionales).</p>
+            </div>
+
+            <div class="slide">
+                <h3>Ejercicio Guiado: Lógica de Pasos</h3>
+                <p>A partir del contenido estudiado, identifiquemos de forma ordenada los pasos secuenciales de este problema cotidiano:</p>
+                <div class="concept-box border-green-500 bg-green-50 text-left">
+                    <p class="font-bold text-green-800">Problema: Calcular el promedio de dos notas.</p>
+                    <ol class="list-decimal list-inside mt-2 space-y-1 font-mono text-base">
+                        <li>Paso 1: Solicitar y almacenar Nota 1 en memoria.</li>
+                        <li>Paso 2: Solicitar y almacenar Nota 2 en memoria.</li>
+                        <li>Paso 3: Sumar Nota 1 + Nota 2 y dividir el resultado entre 2.</li>
+                        <li>Paso 4: Imprimir el promedio final en pantalla.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="slide">
+                <h3>Actividad en el Cuaderno</h3>
+                <p>Aplica el enfoque secuencial imperativo aprendido en la lectura del texto:</p>
+                <div class="concept-box border-blue-500 text-left text-lg">
+                    <p class="font-bold">Instrucciones:</p>
+                    <p class="mt-2">Escribe en tu cuaderno una lista ordenada de pasos secuenciales (Paso 1, Paso 2, Paso 3...) para resolver un programa que solicite el precio de un producto, le calcule el impuesto del 15% y muestre el total a pagar.</p>
+                    <p class="mt-4 text-sm text-gray-500 italic">Recuerda la estructura de la arquitectura estudiada: debes interactuar con la memoria y procesar operaciones aritméticas.</p>
+                </div>
+            </div>
+
+            <div class="slide">
+                <h3>Cuestionario: Evaluación (1-5)</h3>
                 <div class="quiz-container max-w-2xl w-full">
                     <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
                     <div class="quiz-options flex flex-col gap-2"></div>
@@ -316,7 +304,7 @@
             </div>
 
             <div class="slide">
-                <h3>Cuestionario: Continuación</h3>
+                <h3>Cuestionario: Evaluación (6-10)</h3>
                 <div class="quiz-container max-w-2xl w-full">
                     <p class="quiz-question mb-4 font-bold text-xl text-blue-800 text-left"></p>
                     <div class="quiz-options flex flex-col gap-2"></div>
@@ -325,10 +313,10 @@
             </div>
 
             <div class="slide">
-                <h2>¡Muchas Gracias!</h2>
-                <div class="concept-box border-blue-600">
-                    <p><strong>Asignación:</strong> Realizar en PSeInt ejercicios que utilicen arreglos unidimensionales (Dimensión) para guardar una lista de nombres.</p>
-                    <p class="mt-4 text-sm">Fecha de entrega: Próxima clase presencial.</p>
+                <h2>¡Fin del Tema!</h2>
+                <div class="concept-box border-blue-600 text-center">
+                    <p class="font-bold text-xl">¿Preguntas sobre el enfoque imperativo?</p>
+                    <p class="mt-4 text-base text-gray-600">Preparen sus apuntes y los ejercicios en el cuaderno para la revisión de la clase práctica.</p>
                 </div>
             </div>
         </div>
@@ -337,7 +325,7 @@
             <button id="prev-btn" class="nav-button">Anterior</button>
             <button id="next-btn" class="nav-button">Siguiente</button>
         </div>
-        <div id="slide-counter">1 / 16</div>
+        <div id="slide-counter">1 / 14</div>
     </main>
 
     <footer id="page-footer" class="w-full bg-gray-900 text-white text-center p-2 text-sm">
@@ -360,18 +348,18 @@
         let currentSlide = 0;
         let lastClickTime = 0;
 
-        // Estructura de Cuestionarios
+        // Cuestionario con preguntas 100% basadas en el texto del PDF entregado
         const quizData = [
-            { q: "¿Qué define a una base de datos?", options: ["Banco de datos", "Sectores de red", "Memoria de RAM", "Espacio de disco"], a: "Banco de datos" },
-            { q: "¿Qué tipo de lenguaje utiliza una BD?", options: ["De programación", "Tipo declarativo", "Instrucciones", "Estructuración"], a: "Tipo declarativo" },
-            { q: "¿Cómo se llama el nodo superior?", options: ["Tronco central", "Sujeto de datos", "Vínculo de red", "Raíz del árbol"], a: "Raíz del árbol" },
-            { q: "¿Quién postuló el modelo relacional?", options: ["Bill Gates", "Edgar F. Codd", "Steve Jobs", "Ada Lovelace"], a: "Edgar F. Codd" },
-            { q: "¿Cuál BD se usa para datos históricos?", options: ["Base estática", "Base dinámica", "Base de red", "Base de tabla"], a: "Base estática" },
-            { q: "¿Qué permite el modelo de red?", options: ["Un solo padre", "Varios padres", "Ningún padre", "Solo un hijo"], a: "Varios padres" },
-            { q: "¿Qué almacena una BD de texto?", options: ["Solo títulos", "Metadatos web", "Fuentes puras", "Índices web"], a: "Fuentes puras" },
-            { q: "¿Cómo se ve el modelo relacional?", options: ["Formato tabla", "Formato árbol", "Nube de puntos", "Lista de datos"], a: "Formato tabla" },
-            { q: "¿Qué significa el acrónimo SGBD?", options: ["Sistema de red", "Soporte lógico", "Salida gráfica", "Sistema gestor"], a: "Sistema gestor" },
-            { q: "¿Cuál es una desventaja de las BD?", options: ["Poca capacidad", "Riesgos acceso", "Uso de papeles", "Formatos slow"], a: "Riesgos acceso" }
+            { q: "¿Cómo le indica un lenguaje imperativo a la computadora realizar una tarea?", options: ["Describiendo únicamente el problema", "Siguiendo una serie de pasos o instrucciones", "Mediante la inferencia de reglas lógicas", "Ocultando los datos del sistema"], a: "Siguiendo una serie de pasos o instrucciones" },
+            { q: "¿En qué se basan los lenguajes de programación imperativos?", options: ["En árboles lógicos invertidos", "En tablas, filas y columnas", "En comandos u órdenes", "En objetos autónomos y encapsulados"], a: "En comandos u órdenes" },
+            { q: "¿De qué forma se realiza la ejecución de comandos en la mayoría de estos lenguajes?", options: ["De forma desordenada", "De forma secuencial", "De forma simultánea e imprevista", "De forma puramente aleatoria"], a: "De forma secuencial" },
+            { q: "Si un comando de un lenguaje imperativo no ha sido ejecutado...", options: ["Se cancela todo el programa", "Se lee el siguiente comando de inmediato", "No se lee el siguiente comando", "El procesador se destruye de la memoria"], a: "No se lee el siguiente comando" },
+            { q: "¿Cuál de los siguientes lenguajes es mencionado en el texto como imperativo?", options: ["PROLOG", "SQL", "C++", "HTML"], a: "C++" },
+            { q: "En los lenguajes tradicionales o procedurales, ¿quién controla qué porciones de código se ejecutan?", options: ["El usuario final de forma manual", "El sistema operativo del disco", "La aplicación misma", "Un intérprete declarativo"], a: "La aplicación misma" },
+            { q: "¿En qué están fundamentados principalmente los lenguajes procedurales?", options: ["En el uso de variables para almacenar valores", "En bases de datos de solo lectura", "En la eliminación de celdas de memoria", "En la construcción exclusiva de páginas web"], a: "En el uso de variables para almacenar valores" },
+            { q: "¿De qué celdas consta la arquitectura de un lenguaje procedural?", options: ["Llamadas registros bibliográficos", "Llamadas memoria", "Llamadas tuplas de datos", "Llamadas nodos hijos"], a: "Llamadas memoria" },
+            { q: "El programador de lenguajes procedurales debe traducir la solución a términos...", options: ["Muy complejos para el usuario común", "Muy abstractos y lejanos al sistema", "Muy primitivos, cercanos a la máquina", "Totalmente independientes de la memoria"], a: "Muy primitivos, cercanos a la máquina" },
+            { q: "¿Cómo acceden y procesan la información los lenguajes procedurales?", options: ["Acceden a un registro, lo procesan y pasan a otro", "Procesan toda la base de datos de un solo golpe", "Ignoran los registros individuales", "Mediante consultas declarativas estándar SQL"], a: "Acceden a un registro, lo procesan y pasan a otro" }
         ];
         let currentQuiz = 0;
 
@@ -388,7 +376,8 @@
             prevBtn.disabled = currentSlide === 0;
             nextBtn.disabled = currentSlide === slides.length - 1;
 
-            if (currentSlide === 13 || currentSlide === 14) loadQuiz();
+            // Diapositivas de Quiz de acuerdo al nuevo índice (11 y 12)
+            if (currentSlide === 11 || currentSlide === 12) loadQuiz();
         }
 
         function loadQuiz() {
@@ -402,12 +391,12 @@
             if (currentQuiz >= quizData.length) {
                 questionEl.textContent = "¡Cuestionario completado!";
                 optionsEl.innerHTML = "";
-                feedbackEl.textContent = "Has respondido todas las preguntas.";
+                feedbackEl.textContent = "Has respondido todas las preguntas basadas en la lectura.";
                 return;
             }
 
-            if (currentQuiz < 5 && currentSlide === 14) { showSlide(13); return; }
-            if (currentQuiz >= 5 && currentSlide === 13) { showSlide(14); return; }
+            if (currentQuiz < 5 && currentSlide === 12) { showSlide(11); return; }
+            if (currentQuiz >= 5 && currentSlide === 11) { showSlide(12); return; }
 
             const data = quizData[currentQuiz];
             questionEl.textContent = `${currentQuiz + 1}. ${data.q}`;
@@ -419,7 +408,7 @@
                 btn.textContent = opt;
                 btn.className = "quiz-option";
                 btn.onclick = (e) => {
-                    e.stopPropagation(); // Evita pasar el clic a la diapositiva
+                    e.stopPropagation(); 
                     const btns = optionsEl.querySelectorAll('button');
                     btns.forEach(b => b.disabled = true);
                     if (opt === data.a) {
@@ -428,13 +417,13 @@
                         feedbackEl.style.color = "#16a34a";
                     } else {
                         btn.classList.add('incorrect');
-                        feedbackEl.textContent = `Incorrecto. La respuesta es: ${data.a}`;
+                        feedbackEl.textContent = `Incorrecto. Según el PDF: ${data.a}`;
                         feedbackEl.style.color = "#dc2626";
                     }
                     setTimeout(() => {
                         currentQuiz++;
-                        if (currentQuiz === 5 && currentSlide === 13) {
-                            showSlide(14);
+                        if (currentQuiz === 5 && currentSlide === 11) {
+                            showSlide(12);
                         } else {
                             loadQuiz();
                         }
@@ -444,7 +433,6 @@
             });
         }
 
-        // Acciones básicas de botones
         nextBtn.onclick = (e) => { e.stopPropagation(); if (currentSlide < slides.length - 1) showSlide(currentSlide + 1); };
         prevBtn.onclick = (e) => { e.stopPropagation(); if (currentSlide > 0) showSlide(currentSlide - 1); };
 
@@ -464,13 +452,11 @@
 
         // 2. Gestión unificada de clics de ratón / Toques simples móviles por zonas
         container.addEventListener('click', (e) => {
-            // Ignorar eventos que provengan de interacciones con el cuestionario o enlaces
             if (e.target.closest('.quiz-option') || e.target.closest('a') || e.target.closest('.concept-box')) {
                 return;
             }
 
             const currentTime = new Date().getTime();
-            // Evitar que un click que forma parte de un 'dblclick' ejecute avance estándar
             if (currentTime - lastClickTime < 300) {
                 return;
             }
@@ -479,17 +465,15 @@
             const width = container.clientWidth;
             const clickX = e.clientX || (e.touches && e.touches[0].clientX);
 
-            // Si es un dispositivo móvil o táctil (pantalla menor a 768px)
             if (window.innerWidth <= 768) {
-                // Toque en el lado izquierdo (0% a 30% del ancho) -> Retrocede
+                // Toque lado izquierdo (retroceder)
                 if (clickX < (width * 0.30)) {
                     if (currentSlide > 0) showSlide(currentSlide - 1);
                 } else {
-                    // Toque en el resto del espacio -> Avanza
+                    // Toque lado derecho (avanzar)
                     if (currentSlide < slides.length - 1) showSlide(currentSlide + 1);
                 }
             } else {
-                // En computadoras de escritorio, un clic simple normal en el lienzo avanza
                 if (currentSlide < slides.length - 1) showSlide(currentSlide + 1);
             }
         });
@@ -510,18 +494,14 @@
             const diffX = touchStartX - touchEndX;
             const diffY = touchStartY - touchEndY;
 
-            // Verificar que el desplazamiento sea predominantemente horizontal y tenga suficiente fuerza (umbral de 50px)
             if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
                 if (diffX > 0) {
-                    // Desplazamiento de derecha a izquierda -> Siguiente Diapositiva
                     if (currentSlide < slides.length - 1) showSlide(currentSlide + 1);
                 } else {
-                    // Desplazamiento de izquierda a derecha -> Diapositiva Anterior
                     if (currentSlide > 0) showSlide(currentSlide - 1);
                 }
             }
         }, { passive: true });
-
 
         /* =======================================================
            LÓGICA HÍBRIDA DE PANTALLA COMPLETA CON CONTROL DE BOTONES
@@ -532,19 +512,16 @@
             const isNativeFull = !!document.fullscreenElement;
 
             if (isWindowFull || isNativeFull) {
-                // Ocultar encabezado, pie de página y botones inferiores
                 header.classList.add('hide-element');
                 footer.classList.add('hide-element');
                 controlsWrapper.classList.add('hide-element');
             } else {
-                // Mostrar todos los controles al salir de pantalla completa
                 header.classList.remove('hide-element');
                 footer.classList.remove('hide-element');
                 controlsWrapper.classList.remove('hide-element');
             }
         }
 
-        // Doble Clic en el contenedor para alternar pantalla completa nativa
         container.addEventListener('dblclick', (e) => {
             if (e.target.closest('.quiz-option') || e.target.closest('a')) return;
 
@@ -568,7 +545,7 @@
 
         document.addEventListener('fullscreenchange', checkFullscreenMetrics);
 
-        // Inicialización
+        // Inicialización de la app
         slides.forEach((slide, index) => {
             if(index !== 0) slide.classList.remove('active');
         });

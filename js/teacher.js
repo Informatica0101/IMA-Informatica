@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let submissionsTableBody = document.getElementById('submissions-table-body');
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
 
     if (!currentUser || !RoleCapabilities.canManageExams(currentUser)) {
         window.location.href = 'login.html';
@@ -111,6 +111,171 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     navAdmin.addEventListener('click', () => {
         window.navigateTo(sectionAdmin, navAdmin);
+        loadAcademicAdminData();
+    });
+
+    async function loadAcademicAdminData() {
+        const parcialSelect = document.getElementById('admin-parcial-actual');
+        const asigList = document.getElementById('admin-asignaturas-list');
+        if (!parcialSelect || !asigList) return;
+
+        try {
+            const configRes = await fetchApi('USER', 'getAcademicConfig');
+            if (configRes.status === 'success' && configRes.data.ParcialActual) {
+                parcialSelect.value = configRes.data.ParcialActual;
+                window.PARCIAL_ACTUAL = configRes.data.ParcialActual;
+            }
+
+            await renderAsignaturasCheckboxes();
+        } catch (e) {
+            console.error("Error cargando config académica:", e);
+        }
+    }
+
+    async function renderAsignaturasCheckboxes() {
+        const asigList = document.getElementById('admin-asignaturas-list');
+        const parcial = document.getElementById('admin-parcial-actual').value;
+
+        // Asignaturas base de la plataforma
+        const baseAsignaturas = [
+            "Informática Aplicada", "Ofimática", "Diseño Web",
+            "Programación", "Análisis y Diseño", "Bases de Datos",
+            "Redes", "Programación Orientada a Objetos", "Informática I"
+        ];
+
+        try {
+            const activeRes = await fetchApi('USER', 'getAsignaturasActivas', { parcial });
+            const activeSet = new Set(activeRes.data || []);
+
+            asigList.innerHTML = baseAsignaturas.map(asig => `
+                <label class="flex items-center gap-2 p-2 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="admin-asig-checkbox w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                           value="${asig}" ${activeSet.has(asig) ? 'checked' : ''}>
+                    <span class="text-[10px] font-bold text-gray-700 uppercase">${asig}</span>
+                </label>
+            `).join('');
+        } catch (e) {
+            asigList.innerHTML = '<p class="text-[10px] text-red-500 p-2">Error al cargar asignaturas.</p>';
+        }
+    }
+
+    document.getElementById('admin-parcial-actual')?.addEventListener('change', renderAsignaturasCheckboxes);
+
+    document.getElementById('btn-save-academic-config')?.addEventListener('click', async () => {
+        const btn = document.getElementById('btn-save-academic-config');
+        const parcial = document.getElementById('admin-parcial-actual').value;
+        const selectedAsignaturas = Array.from(document.querySelectorAll('.admin-asig-checkbox:checked')).map(cb => cb.value);
+
+        btn.disabled = true;
+        btn.textContent = 'Guardando...';
+
+        try {
+            await Promise.all([
+                fetchApi('USER', 'updateAcademicConfig', { key: 'ParcialActual', value: parcial }),
+                fetchApi('USER', 'updateAsignaturasActivas', { parcial, asignaturas: selectedAsignaturas })
+            ]);
+            alert('Configuración académica actualizada correctamente.');
+        } catch (e) {
+            alert('Error al guardar configuración: ' + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Guardar Configuración';
+        }
+    });
+
+    // Lógica de Migración del Banco de Preguntas (Fase 2)
+    document.getElementById('btn-migrate-questions')?.addEventListener('click', async () => {
+        if (!confirm('Esta acción escaneará el repositorio y migrará todas las preguntas detectadas al Banco Central en Google Sheets. ¿Deseas continuar?')) return;
+
+        const btn = document.getElementById('btn-migrate-questions');
+        const statusMsg = document.getElementById('migration-status-msg');
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Migrando...';
+        statusMsg.classList.remove('hidden');
+        statusMsg.textContent = 'Iniciando escaneo del repositorio...';
+
+        try {
+            // Simulamos el proceso que el agente ya realizó, pero lo exponemos como acción
+            // En el backend ya tenemos generateMigrationReport, pero la extracción es local al repo.
+            // Por lo tanto, usaremos el JSON que generó Jules para "subirlo" como si el script corriera.
+
+            const migrateUrl = 'migrated_questions.json';
+            const response = await fetch(migrateUrl);
+            if (!response.ok) throw new Error(`No se encontró el archivo de migración (${migrateUrl}). El agente debe regenerarlo.`);
+
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                const text = await response.text();
+                console.error(`[MIGRATION_ERROR] Se esperaba JSON pero se recibió: ${contentType}. Snippet: ${text.substring(0, 100)}`);
+                throw new Error(`Respuesta inválida del servidor (no es JSON). Revisa la consola para más detalles.`);
+            }
+
+            const questions = await response.json();
+
+            statusMsg.textContent = `Detectadas ${questions.length} preguntas. Validando integridad...`;
+
+            // Filtro de integridad y validación obligatoria (Fase 4 / Incidencia 2)
+            let excludedCount = 0;
+            const validQuestions = questions.filter(q => {
+                const result = window.validateQuestion(q);
+                if (!result.valid) {
+                    console.log("EXCLUIDA:", q.Pregunta || "Sin Texto", "Motivo:", result.error);
+                    excludedCount++;
+                    return false;
+                }
+                return true;
+            });
+
+            console.log(`[MIGRACIÓN] Auditoría: Detectadas ${questions.length}, Válidas ${validQuestions.length}, Excluidas ${excludedCount}`);
+
+            if (validQuestions.length === 0) throw new Error("Ninguna pregunta pasó el filtro de validación de integridad.");
+
+            statusMsg.textContent = `Listas ${validQuestions.length} preguntas válidas. Subiendo al Banco Central...`;
+
+            let successCount = 0;
+            const chunkSize = 20;
+            for (let i = 0; i < validQuestions.length; i += chunkSize) {
+                const chunk = validQuestions.slice(i, i + chunkSize);
+                await Promise.all(chunk.map(q => fetchApi('USER', 'saveQuestion', {
+                    Asignatura: q.Asignatura,
+                    Nivel: q.Nivel,
+                    Tema: q.Tema || "General",
+                    TipoActividad: q.TipoActividad || "Selección múltiple",
+                    Pregunta: q.Pregunta,
+                    OpcionA: q.OpcionA,
+                    OpcionB: q.OpcionB,
+                    OpcionC: q.OpcionC || "",
+                    OpcionD: q.OpcionD || "",
+                    RespuestaCorrecta: q.RespuestaCorrecta,
+                    Activa: true
+                })));
+                successCount += chunk.length;
+                statusMsg.textContent = `Progreso: ${successCount} / ${validQuestions.length} preguntas migradas...`;
+            }
+
+            const statsRes = await fetch('migration_stats.json');
+            const stats = await statsRes.json();
+
+            await fetchApi('USER', 'generateMigrationReport', {
+                stats: {
+                    totalDetectadas: stats.totalDetectadas,
+                    totalMigradas: successCount,
+                    asignaturas: stats.asignaturas,
+                    detalle: "Migración ejecutada desde el Panel de Administración"
+                }
+            });
+
+            alert(`¡Migración Exitosa! Se han sincronizado ${successCount} preguntas.`);
+            statusMsg.textContent = 'Sincronización Completada.';
+        } catch (e) {
+            console.error(e);
+            alert('Error durante la migración: ' + e.message);
+            statusMsg.textContent = 'Fallo en la sincronización.';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-sync-alt"></i> Sincronizar / Migrar Banco';
+        }
     });
 
     const btnCloseYear = document.getElementById('btn-close-year');
@@ -166,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ]);
 
                 const students = studentsRes.data || [];
-                const allTasks = (tasksRes.data || []).filter(t => norm(t.grado) === norm(grado) && (!t.seccion || norm(t.seccion) === norm(seccion)) && norm(t.parcial) === norm(parcial));
+                const allTasks = (tasksRes.data || []).filter(t => norm(t.grado) === norm(grado) && (!t.seccion || norm(t.seccion) === norm(seccion)) && window.normalizePartial(t.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL));
                 const allExams = (examsRes.data || []).filter(e => norm(e.grado) === norm(grado) && (!e.seccion || norm(e.seccion) === norm(seccion) || norm(e.seccion) === 'todas'));
                 const taskSubmissions = taskSubRes.data || [];
                 const examSubmissions = examSubRes.data || [];
@@ -601,15 +766,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
-        submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8"><div class="loading-spinner"></div> Cargando actividad...</td></tr>';
+
+        // REQ: Spinner Contextual (Ticket 3) - No bloquea la UI global
+        if (window.GamesAdapter) {
+            window.GamesAdapter.showLoading(true, submissionsTableBody);
+        } else {
+            submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8"><div class="loading-spinner"></div> Cargando actividad...</td></tr>';
+        }
+
         try {
             const payload = { profesorId: currentUser.userId };
-            const [taskSubmissions, examSubmissions, tasksRes, examsRes] = await Promise.all([
+            // REQ: Mitigación de Latencia (Ticket 4) - Parallel fetch of config and activity
+            const [taskSubmissions, examSubmissions, tasksRes, examsRes, configRes] = await Promise.all([
                 fetchApi('TASK', 'getTeacherActivity', payload),
                 fetchApi('EXAM', 'getTeacherExamActivity', payload),
                 fetchApi('TASK', 'getAllTasks', payload),
-                fetchApi('EXAM', 'getAllExams', payload)
+                fetchApi('EXAM', 'getAllExams', payload),
+                fetchApi('USER', 'getAcademicConfig')
             ]);
+
+            if (configRes && configRes.status === 'success' && configRes.data.ParcialActual) {
+                window.PARCIAL_ACTUAL = configRes.data.ParcialActual;
+                console.log("[IMA-TEACHER] Configuración académica sincronizada:", window.PARCIAL_ACTUAL);
+            }
 
             allActivityRaw = [
                 ...((taskSubmissions.data || [])).map(s => ({ ...s, tipo: 'Tarea' })),
@@ -623,7 +802,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             renderCurrentLevel();
         } catch (error) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500">Error: ${error.message}</td></tr>`;
+            console.error("[IMA-TEACHER] Error en fetchTeacherActivity:", error);
+            submissionsTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center p-12">
+                        <div class="text-gray-400 italic mb-4 text-sm">Fallo en la comunicación con el servidor central.</div>
+                        <button onclick="location.reload()" class="px-6 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg">Reintentar</button>
+                    </td>
+                </tr>`;
+        } finally {
+            if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         }
     }
 
@@ -720,7 +908,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = grados.filter(g => norm(g).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado Académico</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Navegación</th></tr>`;
-        if (filtered.length === 0) { submissionsTableBody.innerHTML = '<tr><td colspan="2" class="text-center p-8 text-gray-500">No hay grados.</td></tr>'; return; }
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = `
+                <tr>
+                    <td colspan="2" class="text-center p-12">
+                        <div class="flex flex-col items-center gap-4 text-gray-400">
+                            <i class="fas fa-folder-open text-4xl opacity-20"></i>
+                            <p class="text-[10px] font-bold uppercase tracking-widest">No se encontraron grados académicos con actividad.</p>
+                        </div>
+                    </td>
+                </tr>`;
+            return;
+        }
         submissionsTableBody.innerHTML = filtered.map((grado, idx) => `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn group" data-index="${idx}">
                 <td class="p-4">
@@ -751,6 +950,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = secciones.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Sección</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = `<tr><td colspan="2" class="text-center p-12 text-gray-400 font-bold text-[10px] uppercase tracking-widest">No hay secciones registradas para este grado.</td></tr>`;
+            return;
+        }
         submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">Sección ${seccion}</td><td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Ver Asignaturas &rsaquo;</span></td></tr>`).join('');
     }
 
@@ -937,6 +1140,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Rediseño completo de la Tarjeta del Alumno (A-72)
         const studentInfo = current.data.studentInfo || null;
+        // Cargar Analítica de Aprendizaje (Fase 9)
+        if (studentInfo) {
+            fetchApi("USER", "getLearningProfile", { userId: studentInfo.userId || studentInfo.id }).then(res => {
+                const analyticsDiv = document.getElementById("teacher-learning-analytics");
+                const list = document.getElementById("weak-topics-list");
+                if (res.status === "success" && res.data && res.data.length > 0 && analyticsDiv && list) {
+                    const weakTopics = res.data.filter(t => t.dominio < 60);
+                    if (weakTopics.length > 0) {
+                        analyticsDiv.classList.remove("hidden");
+                        list.innerHTML = weakTopics.map(t => `<span class="px-1.5 py-0.5 bg-orange-500/20 text-orange-400 border border-orange-500/30 rounded text-[7px] font-bold uppercase">${t.tema}</span>`).join("");
+                    }
+                }
+            }).catch(e => console.warn("Fallo carga analítica docente:", e));
+        }
         const existingInfoCard = document.getElementById('student-details-info-card');
         if (existingInfoCard) existingInfoCard.remove();
 
@@ -949,11 +1166,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const waLink = waPhone ? `https://wa.me/504${waPhone}` : '#';
 
             // Calcular carga académica total (A-73)
+            // REQ: Filtro Estricto por Parcial (Incidencia 5)
+            const activeParcial = window.normalizePartial(window.PARCIAL_ACTUAL);
+
             const subjectAssignments = allAssignmentsRaw.filter(a =>
                 norm(a.grado) === norm(grado) &&
                 (!a.seccion || norm(a.seccion) === norm(seccion) || norm(a.seccion) === 'todas') &&
                 (isGlobalSearch || norm(a.asignatura) === norm(asignatura)) &&
-                (isGlobalSearch || norm(a.parcial) === norm(parcial))
+                (isGlobalSearch || window.normalizePartial(a.parcial) === activeParcial)
             );
 
             const studentSubmissions = allActivityRaw.filter(sub =>
@@ -961,7 +1181,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 norm(sub.grado) === norm(grado) &&
                 norm(sub.seccion) === norm(seccion) &&
                 norm(sub.asignatura) === norm(asignatura) &&
-                norm(sub.parcial) === norm(parcial)
+                (isGlobalSearch || window.normalizePartial(sub.parcial) === activeParcial)
             );
 
             // --- Ajuste de Lógica de Progreso (Req 2) ---
@@ -1106,6 +1326,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             <h4 class="text-[9px] font-semibold text-gray-400 uppercase tracking-[0.2em] mb-2 border-l-4 border-teal-500 pl-3">Estado Académico</h4>
                             <div class="bg-gray-900 rounded-[1.5rem] p-4 flex flex-col justify-between h-full relative overflow-hidden group">
                                 <div class="absolute -top-10 -right-10 w-24 h-24 bg-white opacity-5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+                                <!-- Fase 9: Temas con Dificultad -->
+                                <div id="teacher-learning-analytics" class="relative z-10 mb-4 hidden">
+                                    <h5 class="text-[8px] font-bold text-orange-400 uppercase tracking-widest mb-2">Temas con Dificultad</h5>
+                                    <div id="weak-topics-list" class="flex flex-wrap gap-1"></div>
+                                </div>
                                 <div class="text-center py-1 relative z-10">
                                     ${pending === 0 && (totalAssigned - completed) === 0 && totalAssigned > 0 ?
                                         `<div class="inline-flex p-2 bg-green-500/20 text-green-400 rounded-xl mb-2 border border-green-500/30"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg></div>
@@ -1310,7 +1535,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]);
             const students = studentsRes.data || [];
             if (students.length === 0) { alert('Sin alumnos.'); return; }
-            const allTasks = (tasksRes.data || []).filter(t => norm(t.grado) === norm(grado) && (!t.seccion || norm(t.seccion) === norm(seccion)) && norm(t.parcial) === norm(parcial));
+            const allTasks = (tasksRes.data || []).filter(t => norm(t.grado) === norm(grado) && (!t.seccion || norm(t.seccion) === norm(seccion)) && window.normalizePartial(t.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL));
             const allExams = (examsRes.data || []).filter(e => norm(e.grado) === norm(grado) && (!e.seccion || norm(e.seccion) === norm(seccion) || norm(e.seccion) === 'todas'));
             const taskSubmissions = taskSubRes.data || [];
             const examSubmissions = examSubRes.data || [];

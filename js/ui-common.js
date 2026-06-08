@@ -47,7 +47,7 @@ window.setupCommonUI = function() {
         const modal = document.getElementById('profile-modal');
         if (!modal) return;
 
-        const user = JSON.parse(localStorage.getItem('currentUser'));
+        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         if (!user) {
             // Si no hay sesión, invitar a login (si existe modal de login)
             const loginModal = document.getElementById('login-modal');
@@ -108,13 +108,14 @@ window.setupCommonUI = function() {
     // --- Logout Logic (Global) ---
     window.handleLogout = () => {
         localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
         window.location.href = 'login.html';
     };
 
     // Portal Redirect Logic
     const portalLink = document.getElementById('nav-portal-link');
     const mobilePortalLink = document.getElementById('mobile-portal-link');
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
 
     if (currentUser) {
         const dest = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
@@ -164,16 +165,24 @@ window.setupCommonUI = function() {
                 window.syncNavWithState(state);
             }
         } else if (state.type === 'academic-menu') {
-            window.openAcademicMenu(false); // Asegurar que el modal esté visible al navegar atrás/adelante
+            // REQ 8: Garantía de contexto en Navegación (Fase 8)
+            const modal = document.getElementById('academic-menu-modal');
+            if (modal && modal.classList.contains('hidden')) {
+                window.openAcademicMenu(false);
+            }
             if (state.level === 'root') {
                 window.resetAcademicMenu(false);
             } else {
                 window.renderHierarchyLevel(state.menuType, state.level, state.params, false);
             }
         } else if (state.type === 'modal-close') {
-            // Si el estado es de modal (forward), lo abrimos
             if (state.modalId === 'academic-menu-modal') window.openAcademicMenu(false);
             if (state.modalId === 'profile-modal') window.openProfileModal(false);
+        }
+
+        // REQ 8: Restaurar posición de scroll al navegar atrás
+        if (state.scrollPos !== undefined) {
+            window.scrollTo({ top: state.scrollPos, behavior: 'auto' });
         }
     };
 
@@ -237,7 +246,7 @@ window.setupCommonUI = function() {
     if (profileForm) {
         profileForm.onsubmit = async (e) => {
             e.preventDefault();
-            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
             if (!user) {
                 alert('Sesión no encontrada. Por favor inicie sesión de nuevo.');
                 window.location.href = 'login.html';
@@ -363,6 +372,7 @@ window.handleHeaderAction = function(action) {
 };
 
 window.openAcademicMenu = function(pushState = true) {
+    const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
     let modal = document.getElementById('academic-menu-modal');
     if (!modal) {
         modal = document.createElement('div');
@@ -427,7 +437,7 @@ window.openAcademicMenu = function(pushState = true) {
     window.resetAcademicMenu(false);
 
     if (pushState) {
-        history.pushState({ type: 'modal-close', modalId: 'academic-menu-modal' }, '');
+        history.pushState({ type: 'modal-close', modalId: 'academic-menu-modal', scrollPos }, '');
     }
 };
 
@@ -446,7 +456,7 @@ window.resetAcademicMenu = function(pushState = true) {
     document.getElementById('academic-menu-options').classList.remove('hidden');
     document.getElementById('hierarchy-navigation').classList.add('hidden');
     if (pushState) {
-        history.pushState({ type: 'academic-menu', level: 'root' }, '');
+        history.pushState({ type: 'academic-menu', level: 'root', scrollPos: window.pageYOffset }, '');
     }
 };
 
@@ -458,7 +468,7 @@ window.openAcademicHierarchy = function(type) {
 window.showAcademicHierarchy = function(type) {
     const options = document.getElementById('academic-menu-options');
     const nav = document.getElementById('hierarchy-navigation');
-    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}');
     const isProfesor = user.rol === 'Profesor';
 
     if (options) options.classList.add('hidden');
@@ -474,7 +484,7 @@ window.showAcademicHierarchy = function(type) {
 window.renderHierarchyLevel = function(type, level, params = {}, pushState = true) {
     const container = document.getElementById('hierarchy-options');
     const label = document.getElementById('hierarchy-label');
-    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}');
     const role = user.rol || 'Invitado';
 
     if (!container) return;
@@ -505,7 +515,7 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
             // REQ 7: Filtrado por Autorización (Parcial Actual/Anteriores)
             if (gradeObjA) {
                 items = [...new Set(gradeObjA.subjects
-                    .filter(s => window.checkSectionHelper(s.sections, params.seccion) && window.isContentAuthorized(s.partial))
+                    .filter(s => window.checkSectionHelper(s.sections, params.seccion) && window.isContentAuthorized(s.partial, s.name))
                     .map(s => s.name)
                 )];
             }
@@ -570,7 +580,7 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
     }
 
     if (pushState) {
-        history.pushState({ type: 'academic-menu', menuType: type, level, params }, '');
+        history.pushState({ type: 'academic-menu', menuType: type, level, params, scrollPos: window.pageYOffset }, '');
     }
 
     container.innerHTML = items.map(item => {
@@ -585,7 +595,7 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
             const subject = gradeObj.subjects.find(s =>
                 s.name === item &&
                 window.checkSectionHelper(s.sections, params.seccion) &&
-                window.isContentAuthorized(s.partial)
+                window.isContentAuthorized(s.partial, s.name)
             );
             if (subject) {
                 newParams.parcial = subject.partial;
@@ -609,7 +619,7 @@ window.renderCommonNav = function() {
     const mobileCoursesMenu = document.getElementById('mobile-courses-menu');
     const mobileContentMenu = document.getElementById('mobile-content-menu');
 
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     const isProfesor = currentUser && currentUser.rol === 'Profesor';
 
     function buildHierarchy(data) {
@@ -662,7 +672,7 @@ window.renderCommonNav = function() {
                 return html;
             } else {
                 // REQ 7: Los estudiantes solo ven el contenido autorizado (Garantía de Scope)
-                return filteredSubjects.filter(s => window.isContentAuthorized(s.partial)).map(subj => `
+                return filteredSubjects.filter(s => window.isContentAuthorized(s.partial, s.name)).map(subj => `
                     <div class="relative group/subj">
                         <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">
                             ${subj.name} <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>
@@ -705,7 +715,7 @@ window.renderCommonNav = function() {
                 return html;
             } else {
                 // REQ 7: Los estudiantes solo ven el contenido autorizado (Garantía de Scope)
-                return filteredSubjects.filter(s => window.isContentAuthorized(s.partial)).map(subj => `
+                return filteredSubjects.filter(s => window.isContentAuthorized(s.partial, s.name)).map(subj => `
                     <button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle('hidden')">
                         ${subj.name} <span>&#9662;</span>
                     </button>

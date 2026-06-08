@@ -29,6 +29,8 @@ let errors = 0;
 let timerInterval;
 let startTime;
 let gameStarted = false;
+let questionStartTime = 0;
+let responseChanges = 0;
 let answerBlocked = false; // To prevent multiple clicks on answer buttons for a single question
 
 // DOM Elements for Game - These will be assigned inside initializePeripheralsGame
@@ -56,23 +58,44 @@ let localGameStorage; // Variable to hold the gameDataStorage object passed from
 // Function to initialize DOM elements and attach event listeners
 // This function now accepts the gameDataStorage object
 async function initializePeripheralsGame(gameDataStorage) {
-    localGameStorage = gameDataStorage; // Store the passed object
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const isGuest = !user;
 
-    // Cargar récord personal
-    try {
-        const records = await GamesAdapter.getPersonalRecord();
-        const myRecord = records["Periféricos"];
-        if (myRecord) {
-            const recordDiv = document.getElementById('personal-record-init');
-            const scoreSpan = document.getElementById('init-max-score');
-            if (recordDiv && scoreSpan) {
-                recordDiv.classList.remove('hidden');
-                scoreSpan.textContent = myRecord.maxScore;
-            }
+    if (window.GamesAdapter) {
+        const { lb, record } = await GamesAdapter.init('perifericos');
+
+        // Mini Leaderboard
+        const miniLb = document.getElementById('mini-leaderboard');
+        if (miniLb && lb && lb.global) {
+            miniLb.innerHTML = lb.global.slice(0, 3).map((u, i) => `
+                <div class="flex items-center justify-between text-[10px] font-bold">
+                    <span class="text-indigo-700">${i+1}. ${u.nombre.split(' ')[0]}</span>
+                    <span class="text-indigo-500">${u.promedio}%</span>
+                </div>
+            `).join('');
         }
-    } catch(e) {
-        console.error("Error loading record:", e);
+
+        // Récord
+        const myRecord = record?.["Juego de Periféricos"] || JSON.parse(localStorage.getItem('guest_record_perifericos') || 'null');
+        if (myRecord) {
+            const scoreSpan = document.getElementById('init-max-score');
+            if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || 0;
+        }
     }
+
+    if (isGuest) {
+        document.getElementById('guest-mode-warning')?.classList.remove('hidden');
+        const guestBtn = document.getElementById('continue-guest-btn');
+        if (guestBtn) {
+            guestBtn.classList.remove('hidden');
+            guestBtn.onclick = () => {
+                document.getElementById('guest-mode-warning')?.classList.add('hidden');
+                guestBtn.classList.add('hidden');
+            };
+        }
+    }
+
+    localGameStorage = gameDataStorage; // Store the passed object
 
     // Use a setTimeout to ensure all DOM elements are parsed and available
     // before attempting to get their references and attach listeners.
@@ -99,12 +122,21 @@ async function initializePeripheralsGame(gameDataStorage) {
 
         // Console log to confirm initialization and element finding
         console.log("initializePeripheralsGame: Elementos DOM inicializados.");
+        if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         if (!startMenu || !startGameButton || !correctAnswersDisplay) {
             console.error("initializePeripheralsGame: ¡ERROR! No se encontraron todos los elementos DOM esperados.");
         }
 
         // Attach Event Listeners - MOVED INSIDE THIS setTimeout
-        if (startGameButton) startGameButton.addEventListener('click', startGame);
+        if (startGameButton) {
+            startGameButton.addEventListener('click', () => {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
+                }
+                if (window.requestWakeLock) window.requestWakeLock();
+                startGame();
+            });
+        }
         if (endGameButton) endGameButton.addEventListener('click', endGame);
         // Ensure retryGameButton is not null before attaching listener
         const retryGameButton = document.getElementById('retry-game-button'); // Re-get inside here
@@ -131,6 +163,16 @@ async function initializePeripheralsGame(gameDataStorage) {
 
         // Initial state for the game, now that elements are guaranteed to be ready
         resetGame();
+
+        // Control de Abandono (Fase 11)
+        const handleAbandonment = () => {
+            if (gamePlayArea && !gamePlayArea.classList.contains('hidden')) {
+                alert('Evaluación cancelada por cambio de pestaña o ventana.');
+                location.reload();
+            }
+        };
+        window.addEventListener('blur', handleAbandonment);
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') handleAbandonment(); });
 
     }, 200); // 200ms delay to ensure DOM is fully ready
 }
@@ -163,6 +205,8 @@ function displayPeripheral() {
         const peripheral = shuffledPeripherals[currentPeripheralIndex];
         if (peripheralName) peripheralName.textContent = peripheral.name;
         if (peripheralDescription) peripheralDescription.textContent = peripheral.description;
+        questionStartTime = Date.now();
+        responseChanges = 0;
         if (peripheral.image && peripheralImage) {
             peripheralImage.src = peripheral.image;
             peripheralImage.classList.remove('hidden');
@@ -199,6 +243,7 @@ function displayPeripheral() {
 }
 
 function checkAnswer(selectedType) {
+    const responseTime = Date.now() - questionStartTime;
     if (answerBlocked) return; // Prevent multiple answers for the same question
     answerBlocked = true;
 
@@ -207,6 +252,21 @@ function checkAnswer(selectedType) {
     const selectedButton = document.querySelector(`.answer-button[data-type="${selectedType}"]`);
 
     if (answerButtons) answerButtons.forEach(button => button.disabled = true); // Disable all answer buttons immediately
+
+    // Captura de Analítica Unificada (Fase 5)
+    if (window.GamesAdapter) {
+        GamesAdapter.recordAction({
+            asignatura: 'Informática I',
+            nivel: 'Básico',
+            preguntaId: 'perif_' + peripheral.name,
+            tema: 'Hardware',
+            respuestaSeleccionada: selectedType,
+            respuestaCorrecta: correctType,
+            esCorrecta: selectedType === correctType,
+            tiempoRespuesta: responseTime,
+            cambiosRespuesta: responseChanges
+        });
+    }
 
     if (selectedType === correctType) {
         score++;
@@ -291,8 +351,19 @@ function endGame() {
     if (incorrectAnswersDisplay) incorrectAnswersDisplay.textContent = errors;
     if (finalTimeDisplay) finalTimeDisplay.textContent = finalTimeFormatted;
 
-    // Guardar en el portal
-    GamesAdapter.saveResult("Periféricos", `Completado con ${score} aciertos en ${finalTimeFormatted}`, score);
+    // Guardar en el portal vía Adaptador Unificado
+    if (window.GamesAdapter) {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (user) {
+            GamesAdapter.finishSession('Informática I', 'Básico', score);
+        } else {
+            const recordKey = 'guest_record_perifericos';
+            const existing = JSON.parse(localStorage.getItem(recordKey) || '{"maxScore": 0}');
+            if (score > existing.maxScore) {
+                localStorage.setItem(recordKey, JSON.stringify({ maxScore: score, date: new Date().toISOString() }));
+            }
+        }
+    }
 }
 
 function resetGame() {

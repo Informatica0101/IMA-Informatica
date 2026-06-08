@@ -406,7 +406,7 @@ function submitAssignment(payload) {
     const rowTareaId = row[1];
     const rowFileId = row[4];
     const rowDate = new Date(row[3]).getTime();
-    return rowUserId == userId && rowTareaId == tareaId && rowFileId == fileId && (now - rowDate < 300000);
+    return String(rowUserId) === String(userId) && String(rowTareaId) === String(tareaId) && String(rowFileId) === String(fileId) && (now - rowDate < 300000);
   });
 
   if (duplicate) {

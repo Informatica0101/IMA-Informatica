@@ -22,3 +22,171 @@ Archivo: js/ui-common.js
 Archivo: juegos/quizpro.html
 - Necesita contenedor para el Top Global.
 - Necesita animación de carga.
+
+AUDITORÍA PROFUNDA - 2026-06-18
+
+Archivo: backend/user-service/Code.gs
+- [HALLAZGO] El switch de doPost no incluye el caso "getGlobalTop", lo que causa el error "Acción no reconocida" reportado.
+- [HALLAZGO] saveGameResult solo guarda el mejor puntaje por nivel, pero el requerimiento pide un registro de cada respuesta individual para analítica.
+- [HALLAZGO] Faltan las hojas: QuizProAnalytics, GameLeaderboards, GameStatistics, y LearningProfile.
+
+Archivo: js/quizpro.js
+- [HALLAZGO] La captura de datos de comportamiento (tiempos, cambios de respuesta) no está implementada.
+- [HALLAZGO] No hay pantalla de carga profesional con mensajes dinámicos.
+- [HALLAZGO] La lógica de desbloqueo solo considera el puntaje >= 70, pero debe integrar el Índice de Dominio.
+
+Archivo: juegos/quizpro.html
+- [HALLAZGO] El Top Global no tiene un contenedor visual robusto integrado en el flujo de pantallas.
+
+Archivo: js/index-ui.js
+- [HALLAZGO] loadGame descarga el JS cada vez, pero no hay un manejo de estados de carga (spinners) uniforme para todos los juegos antes de su inicialización completa.
+
+Archivo: js/data.js
+- [HALLAZGO] Inconsistencia en nombres de parciales entre Décimo ("Primer Parcial") y Undécimo ("I Parcial"). Esto afecta a isContentAuthorized.
+
+LIMPIEZA DE REPOSITORIO
+- Se identificaron archivos .txt sin referencias en el código:
+  - Portafolio/Silabos/Planes/Readme.txt
+  - III_BTP_A/dw_II/contenido/text.txt
+  - III_BTP_A/introduccionDW.txt
+  - II_BTP_A/Programacion/II Parcial/text.txt
+
+AUDITORÍA DE CENTRALIZACIÓN Y ADMINISTRACIÓN - 2026-06-18
+
+Archivo: backend/user-service/Code.gs
+- [VERIFICADO] switch de doPost incluye todos los nuevos endpoints: getQuestionBank, saveQuestion, getAcademicConfig, updateAcademicConfig, getAsignaturasActivas, updateAsignaturasActivas, generateMigrationReport.
+- [VERIFICADO] Lógica de gestión automática de hojas implementada en getOrCreateSheet (7 nuevas hojas soportadas).
+- [VERIFICADO] Normalización de strings para búsquedas robustas en el banco.
+
+Archivo: js/quizpro.js
+- [VERIFICADO] loadQuestions refactorizado para usar fetchApi('getQuestionBank').
+- [VERIFICADO] Implementado generador de distractores inteligentes (pulling from same topic).
+- [VERIFICADO] Implementadas actividades multi-modales (Verdadero/Falso, Completar).
+- [VERIFICADO] Aplicada regla .quiz-image para visualización de componentes.
+
+Archivo: teacher-dashboard.html / js/teacher.js
+- [VERIFICADO] Panel de Administración expandido con Gestión Académica y Banco de Preguntas.
+- [VERIFICADO] Sincronización bidireccional de configuración académica con el backend.
+- [VERIFICADO] Herramienta de migración operativa (client-side extraction + chunked backend push).
+
+Archivo: js/config.js / js/ui-common.js
+- [VERIFICADO] Eliminada dependencia de window.PARCIAL_ACTUAL estático.
+- [VERIFICADO] Implementada validación cruzada por Parcial y por AsignaturasActivas (Dynamic Scope Guard).
+
+REPORTE DE AUDITORÍA MULTIDIMENSIONAL - 2026-06-18
+
+1. CUMPLIMIENTO DE REQUERIMIENTOS (13 Fases)
+- Fase 1 (Analítica Unificada): COMPLETADA. recordAnalytics implementado.
+- Fase 2 (Nuevas Hojas): COMPLETADA. getOrCreateSheet gestiona las 7 nuevas hojas.
+- Fase 3 (Pantallas de Carga): COMPLETADA. GamesAdapter centraliza los estados.
+- Fase 4 (Top Global): COMPLETADA. getGlobalTop implementado y vinculado.
+- Fase 5 (Comportamiento): COMPLETADA. Captura de tiempo y cambios de respuesta operativa.
+- Fase 6 (Sistema Confianza): COMPLETADA. Cálculo en backend basado en tiempo relativo.
+- Fase 7 (Sistema Adivinación): COMPLETADA. Heurística de tiempo extremandamente rápido.
+- Fase 8 (Sistema Dominio): COMPLETADA. Índice de Dominio calculado y persistido.
+- Fase 9 (Perfil de Dominio): COMPLETADA. Visualización en Dashboards.
+- Fase 10 (Auditoría Pedagógica): PARCIAL. Se migraron contenidos, pero falta validación masiva.
+- Fase 11 (Evolución QuizPro): COMPLETADA. Banco Central, Ordenamiento, Multi-modalidad.
+- Fase 12 (Mejora UX/UI): COMPLETADA. Rediseño Tailwind v4 en minijuegos.
+- Fase 13 (Desbloqueos): COMPLETADA. checkCrossGradeLock integra Índice de Dominio.
+
+2. ERRORES FUNCIONALES Y LÓGICA
+- [CORREGIDO] isContentAuthorized en navegación móvil no recibía el nombre de la asignatura, rompiendo el filtrado dinámico.
+- [VERIFICADO] El generador de distractores inteligentes funciona, pero puede mejorar en diversidad si el banco es pequeño.
+
+3. SINTAXIS E INTEGRIDAD
+- [VERIFICADO] No se detectan llaves desbalanceadas ni errores de parsing críticos.
+- [LIMPIEZA] Eliminados archivos temporales del agente (.py, .json).
+
+4. CONDICIONES DE CARRERA
+- [VERIFICADO] student.js usa 'activeUploads' para bloquear el envío mientras hay archivos en proceso.
+- [VERIFICADO] quizpro.js usa 'isProcessingAnswer' para evitar dobles clics en opciones.
+
+5. FUNCIONES HUÉRFANAS
+- loadQuestionsLegacy permanece como fallback de seguridad.
+
+AUDITORÍA DE INTEGRACIÓN FINAL - 2026-06-03
+
+Archivo: backend/user-service/Code.gs
+- [CONFIRMADO] El endpoint 'getGlobalTop' está presente y correctamente mapeado en doPost.
+- [CONFIRMADO] recordAnalytics implementa lógica de Confianza (basada en tiempo relativo), Adivinación (heurística de rapidez/error) y Dominio (70/30 ponderado).
+- [CONFIRMADO] updateLearningProfile persiste el dominio por tema (Algoritmos, Variables, etc.) con promedio ponderado.
+- [CONFIRMADO] getOrCreateSheet garantiza la existencia de las 7 hojas de analítica y estadística.
+
+Archivo: js/quizpro.js
+- [CONFIRMADO] Integración completa con GamesAdapter para ciclo de vida.
+- [CONFIRMADO] Implementación de captura de datos de comportamiento (responseTime, responseChanges) en checkAnswer.
+- [CONFIRMADO] Lógica de desbloqueo multifactor (Nota >= 70 AND Dominio >= 60/70) operativa en navigateToLevels.
+- [CONFIRMADO] Soporte para tipos de pregunta: ordering, matching, memory, transcription, completion.
+- [CONFIRMADO] Estandarización de respuestaCorrecta vía window.normalizeQuestion evita errores 'undefined'.
+
+Archivo: js/games-adapter.js
+- [CONFIRMADO] Gestión de loading-overlay con mensajes dinámicos académicos.
+- [CONFIRMADO] Centralización de recordAction para envío asíncrono a recordAnalytics.
+
+Archivo: js/config.js
+- [CONFIRMADO] Implementado Guardián de Alcance (isContentAuthorized) con normalización de parciales (I Parcial -> Primer Parcial).
+- [CONFIRMADO] Fallback de seguridad para GamesAdapter implementado.
+
+AUDITORÍA DE BANCO DE PREGUNTAS (ICR v3.1 & Phase 10) - 2026-06-18
+- Se revisaron 771 reactivos clasificados como "General".
+- [CORRECCIÓN] "2. ¿Para qué se usa <th>?" -> Respuesta cambiada de "<th>" a "C" (Encabezados de tabla).
+- [CORRECCIÓN] "¿Cuántos dígitos binarios (bits) se necesitan...?" -> Respuesta cambiada de "4" a "B" (4).
+- [CORRECCIÓN] "¿Cuál de los siguientes NO es un símbolo válido en el sistema hexadecimal?" -> Respuesta cambiada de "G" a "B" (G).
+- [CORRECCIÓN] "¿Qué letra representa el valor decimal 15 en hexadecimal?" -> Respuesta cambiada de "F" a "B" (F).
+- [CORRECCIÓN] "¿Cuál es la base del sistema de numeración binario?" -> Respuesta cambiada de "2" a "C" (2).
+- [CORRECCIÓN] "Al convertir el número binario 1001 a decimal..." -> Respuesta cambiada de "9" a "A" (9).
+- [CORRECCIÓN] "¿Qué carácter se utiliza para indicar una referencia absoluta?" -> Respuesta cambiada de "$" a "D" ($).
+- [CORRECCIÓN] "¿Cuál es el símbolo que debe iniciar toda fórmula...?" -> Respuesta cambiada de "=" a "B" (=).
+- [CORRECCIÓN] "¿Qué operador se usa para multiplicar en una fórmula?" -> Respuesta cambiada de "*" a "B" (*).
+- [RECLASIFICACIÓN] 215 preguntas de Diseño Web migradas de "General" a temas como: "Estilos CSS", "Fundamentos Web", "DOM y JavaScript".
+- [RECLASIFICACIÓN] 252 preguntas de Informática I migradas de "General" a: "Hardware y Almacenamiento", "Sistemas de Numeración", "Procesadores de Texto", etc.
+- [RECLASIFICACIÓN] 80 preguntas de Ofimática migradas de "General" a: "Excel: Formato Condicional", "Excel: Automatización (VBA)".
+- [RECLASIFICACIÓN] 155 preguntas de Programación migradas de "General" a: "Lógica de Programación", "Estructuras de Control", "Bases de Datos".
+- [RECLASIFICACIÓN] 69 preguntas con Asignatura "General" reasignadas a "Análisis y Diseño" (con temas de SDLC, Gestión de Proyectos) e "Informática I".
+
+AUDITORÍA DE ARQUITECTURA Y REGRESIONES - 2026-06-18
+- [CORREGIDO] Loader de QuizPro: Agregado bloque finally para liberación garantizada del overlay.
+- [AUDITADO] Banco JSON Local: Normalización de 771 registros a camelCase y eliminación de tags "General".
+- [CORREGIDO] Rutas de Activos: Corregida ruta src="imagenes/logo.png" por src="../imagenes/logo.png" en juegos/.
+- [CORREGIDO] Seguridad de API: Implementado API Guard en js/api.js para validar JSON vs HTML.
+- [VERIFICADO] Modo Invitado: Confirmada persistencia local para WebMaster y Periféricos.
+
+AUDITORÍA DE CONECTIVIDAD Y ESTABILIDAD (v3.3) - 2026-06-18
+
+Archivo: js/config.js
+- [HALLAZGO] SERVICE_URLS no estaba exportado globalmente, lo que dificultaba el acceso desde otros módulos.
+- [HALLAZGO] El fallback de GamesAdapter era demasiado simple y no devolvía estructuras compatibles con los juegos.
+
+Archivo: js/api.js
+- [HALLAZGO] fetchApi lanzaba excepciones no controladas en fallos de red, rompiendo la ejecución de scripts posteriores.
+- [HALLAZGO] El error Toast intentaba inyectarse antes de que document.body estuviera disponible en algunos casos.
+
+Archivo: js/index-ui.js
+- [HALLAZGO] Varias manipulaciones del DOM carecían de comprobaciones de nulidad, causando TypeErrors si los elementos no existían en la página.
+- [HALLAZGO] loadNews no manejaba el caso de "sin noticias" o "error de servidor" con un fallback visual aceptable.
+
+Archivo: js/auth.js
+- [HALLAZGO] El login no persistía todos los campos académicos necesarios (grado, sección) en el objeto del usuario.
+
+Archivo: student-dashboard.html & teacher-dashboard.html
+- [HALLAZGO] Existían filas <tr> y elementos estáticos de ejemplo que ensuciaban la carga dinámica de datos reales.
+
+Archivo: js/exam.js
+- [HALLAZGO] loadExam no activaba el GamesAdapter.showLoading, dejando al usuario sin feedback visual durante la carga.
+- [HALLAZGO] No se registraba el intento de entrega en la analítica conductual.
+
+Archivo: Global (HTML)
+- [HALLAZGO] Inconsistencia en el orden de carga: games-adapter.js debe cargarse antes de los scripts dependientes.
+- [HALLAZGO] Versiones de caché (v21) obsoletas tras cambios mayores.
+
+AUDITORÍA DE REGRESIÓN CRÍTICA - 2026-06-18
+Archivo: js/config.js
+- [HALLAZGO] La función 'normalizePartial' está definida pero NO exportada al objeto global 'window'.
+- [IMPACTO] Esto causa un 'TypeError: window.normalizePartial is not a function' en student.js y teacher.js, bloqueando la carga de actividades académicas.
+
+Archivo: js/student.js
+- [HALLAZGO] fetchAllActivities utiliza Promise.all para paralelismo (Ticket 4), pero si ocurre un error durante el procesamiento de datos post-fetch (ej. por el fallo de normalizePartial), el loader de GamesAdapter podría no liberarse correctamente si no está en un bloque try/finally robusto.
+
+Archivo: js/teacher.js
+- [HALLAZGO] Múltiples llamadas secuenciales a fetchApi detectadas en el flujo de administración académica (loadAcademicAdminData -> renderAsignaturasCheckboxes), violando la arquitectura de latencia mínima de Ticket 4.

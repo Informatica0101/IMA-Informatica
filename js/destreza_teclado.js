@@ -36,14 +36,14 @@ const gameWords = {
     especial: [
         { word: "ñ", type: "special", hint: "Letra 'ñ'" },
         { word: "ü", type: "special", hint: "Letra 'ü'" },
-        { word: "á", type: "special", hint: "Alt+160" },
-        { word: "é", type: "special", hint: "Alt+130" },
-        { word: "í", type: "special", hint: "Alt+161" },
-        { word: "ó", type: "special", hint: "Alt+162" },
-        { word: "ú", type: "special", hint: "Alt+163" },
-        { word: "¿", type: "special", hint: "Alt+168" },
-        { word: "¡", type: "special", hint: "Alt+173" },
-        { word: "€", type: "special", hint: "Alt+0128" },
+        { word: "á", type: "special", hint: "Alt+160 / ' + a" },
+        { word: "é", type: "special", hint: "Alt+130 / ' + e" },
+        { word: "í", type: "special", hint: "Alt+161 / ' + i" },
+        { word: "ó", type: "special", hint: "Alt+162 / ' + o" },
+        { word: "ú", type: "special", hint: "Alt+163 / ' + u" },
+        { word: "¿", type: "special", hint: "Alt+168 / Shift+?" },
+        { word: "¡", type: "special", hint: "Alt+173 / Shift+!" },
+        { word: "€", type: "special", hint: "Alt+0128 / AltGr+E" },
         { word: "Ctrl+C", type: "shortcut", hint: "Copiar" },
         { word: "Ctrl+V", type: "shortcut", "hint": "Pegar" },
         { word: "Ctrl+X", type: "shortcut", hint: "Cortar" },
@@ -71,7 +71,9 @@ let gameTimerInterval;
 let timeRemainingSeconds; // Usaremos segundos con decimales para mayor precisión
 const MAX_CONSECUTIVE_ERRORS = 3;
 const UPDATE_INTERVAL_MS = 50; // Intervalo de actualización de la barra de tiempo en milisegundos
-let gameActive = false; // Nueva bandera para controlar el estado del juego
+let gameActive = false;
+let questionStartTime = 0;
+let responseChanges = 0; // Nueva bandera para controlar el estado del juego
 
 // Configuración de tiempo por longitud de palabra
 const timeSettings = {
@@ -173,7 +175,10 @@ function calculateWPM() {
 // --- Lógica del Juego ---
 
 // Inicializa el juego al cargar la página o al volver a jugar
-window.initDexterityGame = function() {
+window.initDexterityGame = async function() {
+    if (window.GamesAdapter) {
+        await GamesAdapter.init('destreza');
+    }
     console.log('initDexterityGame called'); // Log de depuración
     // Asignar elementos del DOM
     gameStartMenu = document.getElementById('game-start-menu');
@@ -206,6 +211,18 @@ window.initDexterityGame = function() {
     if (retryGameButton) retryGameButton.addEventListener('click', startGame);
     if (exitResultsButton) exitResultsButton.addEventListener('click', exitGame);
 
+    if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
+
+    // Control de Abandono (Fase 11)
+    const handleAbandonment = () => {
+        if (gamePlayArea && !gamePlayArea.classList.contains('hidden')) {
+            alert('Sesión cancelada por cambio de ventana.');
+            location.reload();
+        }
+    };
+    window.addEventListener('blur', handleAbandonment);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') handleAbandonment(); });
+
     // Mostrar menú de inicio al cargar
     showScreen('game-start-menu');
 };
@@ -213,6 +230,14 @@ window.initDexterityGame = function() {
 // Inicia un nuevo juego
 function startGame() {
     console.log('startGame function called'); // Log de depuración
+
+    // Habilitar pantalla completa (v3.2)
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
+    }
+    // Activar Wake Lock (v3.2)
+    if (window.requestWakeLock) window.requestWakeLock();
+
     resetGame();
     gameActive = true; // El juego está activo
     showScreen('game-play-area');
@@ -323,6 +348,8 @@ function loadNewWord() {
     timeRemainingSeconds = currentWord.timeLimit; // Inicializar tiempo restante para la nueva palabra
 
     if (currentWordDisplay) currentWordDisplay.textContent = currentWord.word;
+    questionStartTime = Date.now();
+    responseChanges = 0;
     if (specialCharHint) {
         if (currentWord.type === "special" || currentWord.type === "shortcut") {
             specialCharHint.textContent = `Pista: ${currentWord.hint}`;
@@ -441,6 +468,22 @@ function handleInput() {
 
     // Caso 3: La longitud de la entrada coincide con la longitud de la palabra objetivo
     if (inputText.length === targetWord.length) {
+        const responseTime = Date.now() - questionStartTime;
+        // Captura de Analítica Unificada (Fase 5)
+        if (window.GamesAdapter) {
+            GamesAdapter.recordAction({
+                asignatura: 'Ofimática I',
+                nivel: ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel],
+                preguntaId: 'kbd_' + currentWord.word,
+                tema: 'Escritura',
+                respuestaSeleccionada: inputText,
+                respuestaCorrecta: targetWord,
+                esCorrecta: inputText.toLowerCase() === targetWord.toLowerCase(),
+                tiempoRespuesta: responseTime,
+                cambiosRespuesta: responseChanges
+            });
+        }
+
         // Para la coincidencia final, comparamos el input y el target en minúsculas.
         // Esto permite que "Ctrl+Z" y "ctrl+z" sean correctos.
         // Si el input original coincide exactamente con el target original (incluyendo acentos y caso)
@@ -614,7 +657,7 @@ function endGame() {
 
     // Integración con GamesAdapter
     if (window.GamesAdapter) {
-        GamesAdapter.saveResult("Destreza Teclado", `Puntaje: ${totalScore} (WPM: ${wpm}, Precisión: ${precision}%)`, totalScore);
+        GamesAdapter.finishSession('Ofimática I', ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel], totalScore);
     }
 
     console.log(`Final Correct Words: ${correctWordsCount}`); // Log de depuración
