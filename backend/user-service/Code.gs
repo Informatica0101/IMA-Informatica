@@ -116,6 +116,7 @@ function doPost(e) {
       case "getWhatsAppLink": result = getWhatsAppLink(payload); break;
       case "getStudents": result = getStudents(payload); break;
       case "getUserInfo": result = getUserInfo(payload); break;
+      case "loginWithGoogle": result = loginWithGoogle(payload); break;
       case "getGlobalTop": result = getGlobalTop(payload); break;
       case "recordAnalytics": result = recordAnalytics(payload); break;
       case "getLearningProfile": result = getLearningProfile(payload); break;
@@ -182,8 +183,82 @@ function registerUser(payload) {
   const hashedPassword = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password)
     .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
 
-  sheet.appendRow([userId, nombre, grado || "", seccion || "", email, hashedPassword, "Estudiante", telefono || "", numeroLista || ""]);
+  sheet.appendRow([userId, nombre, grado || "", seccion || "", email, hashedPassword, "Estudiante", telefono || "", numeroLista || "", "", "complete"]);
   return { status: "success", userId };
+}
+
+/**
+ * REQ: Autenticación con Google Identity Services (Tarea 1)
+ * Verifica el ID Token y gestiona el ciclo de vida del usuario Google.
+ */
+function loginWithGoogle(payload) {
+  const { idToken } = payload;
+  if (!idToken) throw new Error("ID Token ausente.");
+
+  try {
+    // Verificación del Token de Google mediante el endpoint de validación oficial
+    // NOTA: En Apps Script no podemos usar la librería oficial de cliente de Google Node.js directamente,
+    // usamos el endpoint de validación de tokens de Google.
+    const response = UrlFetchApp.fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+    const tokenInfo = JSON.parse(response.getContentText());
+
+    if (tokenInfo.aud !== "810005963548-0916n9af4tsjfu4tohi1c7qrgal6dhmc.apps.googleusercontent.com") {
+      throw new Error("Token no emitido para este cliente.");
+    }
+
+    const { sub, email, name, picture } = tokenInfo;
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getSheetOrThrow(ss, "Usuarios");
+    const data = sheet.getDataRange().getValues();
+
+    // Buscar usuario por google_sub (Columna J - nueva) o por email
+    // Mapeo: A:userId, B:nombre, C:grado, D:seccion, E:email, F:password, G:rol, H:telefono, I:numeroLista, J:google_sub, K:account_status
+    let userRowIndex = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][9]) === String(sub) || String(data[i][4]).toLowerCase() === email.toLowerCase()) {
+        userRowIndex = i;
+        break;
+      }
+    }
+
+    let userId, account_status;
+    if (userRowIndex !== -1) {
+      // Usuario existente
+      userId = data[userRowIndex][0];
+      account_status = data[userRowIndex][10] || "complete";
+
+      // Vincular sub si no estaba vinculado
+      if (!data[userRowIndex][9]) {
+        sheet.getRange(userRowIndex + 1, 10).setValue(sub);
+      }
+    } else {
+      // Nuevo usuario automático
+      userId = "USR-G-" + new Date().getTime();
+      account_status = "incomplete"; // Requiere onboarding (Grado/Sección)
+      sheet.appendRow([userId, name, "", "", email, "GOOGLE_AUTH", "Estudiante", "", "", sub, account_status]);
+    }
+
+    // Retornar datos frescos
+    const freshData = sheet.getRange(userRowIndex === -1 ? sheet.getLastRow() : userRowIndex + 1, 1, 1, 11).getValues()[0];
+
+    return {
+      status: "success",
+      data: {
+        userId: freshData[0],
+        nombre: freshData[1],
+        grado: freshData[2],
+        seccion: freshData[3],
+        email: freshData[4],
+        rol: freshData[6],
+        google_sub: freshData[9],
+        account_status: freshData[10]
+      }
+    };
+
+  } catch (e) {
+    logDebug("Error en validación Google:", e.message);
+    throw new Error("Fallo en la validación de identidad con Google: " + e.message);
+  }
 }
 
 function loginUser(payload) {
@@ -201,7 +276,18 @@ function loginUser(payload) {
     if ((row[4]?.toString().toLowerCase().trim() === lowerId || row[1]?.toString().toLowerCase().trim() === lowerId) && row[5] === hashedPassword) {
       return {
         status: "success",
-        data: { userId: row[0], nombre: row[1], grado: row[2], seccion: row[3], email: row[4], rol: row[6], telefono: row[7] || "", numeroLista: row[8] || "" }
+        data: {
+          userId: row[0],
+          nombre: row[1],
+          grado: row[2],
+          seccion: row[3],
+          email: row[4],
+          rol: row[6],
+          telefono: row[7] || "",
+          numeroLista: row[8] || "",
+          google_sub: row[9] || "",
+          account_status: row[10] || "complete"
+        }
       };
     }
   }
@@ -383,22 +469,29 @@ function updateUserProfile(payload) {
     userRow[8] = String(numeroLista).trim();
   }
 
-  // Persistencia Atómica garantizando el mapeo A-I
+  // Persistencia Atómica garantizando el mapeo A-K (Tarea 1)
   try {
-    // Forzar que el array tenga exactamente 9 elementos
+    // Asegurar el estado del perfil si se completaron los campos requeridos
+    if (userRow[10] === 'incomplete' && userRow[2] && userRow[3]) {
+      userRow[10] = 'complete';
+    }
+
+    // Forzar que el array tenga exactamente 11 elementos
     const rowToSave = [
-      String(userRow[0]), // A: userId
-      String(userRow[1]), // B: nombre
-      String(userRow[2]), // C: grado
-      String(userRow[3]), // D: seccion
-      String(userRow[4]), // E: email
-      String(userRow[5]), // F: password
-      String(userRow[6]), // G: rol
-      String(userRow[7]), // H: telefono
-      String(userRow[8])  // I: numeroLista
+      String(userRow[0] || ""), // A: userId
+      String(userRow[1] || ""), // B: nombre
+      String(userRow[2] || ""), // C: grado
+      String(userRow[3] || ""), // D: seccion
+      String(userRow[4] || ""), // E: email
+      String(userRow[5] || ""), // F: password
+      String(userRow[6] || ""), // G: rol
+      String(userRow[7] || ""), // H: telefono
+      String(userRow[8] || ""), // I: numeroLista
+      String(userRow[9] || ""), // J: google_sub
+      String(userRow[10] || "complete") // K: account_status
     ];
 
-    sheet.getRange(rowIndex + 1, 1, 1, 9).setValues([rowToSave]);
+    sheet.getRange(rowIndex + 1, 1, 1, 11).setValues([rowToSave]);
     logDebug("Perfil guardado exitosamente en hoja Usuarios mediante setValues atómico");
   } catch (e) {
     logDebug("Error al escribir en la hoja", e.message);
@@ -854,7 +947,9 @@ function getOrCreateSheet(ss, name) {
 }
 
 /**
- * SISTEMA UNIFICADO DE ANALÍTICA EDUCATIVA (FASE 2)
+ * SISTEMA UNIFICADO DE ANALÍTICA EDUCATIVA (ICR v3.2 - Tarea 2)
+ * Evalúa 3 dimensiones: Resultado (Exactitud), Desempeño (Eficiencia/Consistencia)
+ * y Aprendizaje Real (Mastery acumulado).
  */
 
 function recordAnalytics(payload) {
@@ -958,9 +1053,11 @@ function recordAnalytics(payload) {
   ]);
 
   // 8. Actualizar Perfil de Aprendizaje (70/30 Rule)
+  // CAPA 4: Aprendizaje Real (Mastery) - Basado en ICR (Confianza de Respuesta)
   updateLearningProfile(ss, userId, asignatura, tema, nivel, esCorrecta, ICR);
 
   // REQ: Actualizar Dominio Agregado del Nivel (para Desbloqueo Robusto)
+  // CAPA 3: Historial (Agregador de Nivel)
   updateLearningProfile(ss, userId, asignatura, "__NIVEL_COMPLETO__", nivel, esCorrecta, ICR);
 
   // 9. Actualizar Leaderboard

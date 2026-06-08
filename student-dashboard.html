@@ -80,6 +80,51 @@
         </div>
     </header>
 
+    <!-- Modal de Onboarding Obligatorio (Tarea 1) -->
+    <div id="onboarding-modal" class="fixed inset-0 bg-gray-900/90 flex items-center justify-center hidden z-[9999] backdrop-blur-md">
+        <div class="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-2xl w-full max-w-md mx-4 animate-fade-in-up border-4 border-blue-600/10">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-sm border border-blue-100">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tighter leading-none mb-2">Casi listo</h2>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest leading-relaxed">Completa tu perfil académico para acceder a todas las funciones.</p>
+            </div>
+
+            <form id="onboarding-form" class="space-y-6">
+                <div>
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Nombre Completo</label>
+                    <input type="text" id="onboarding-nombre" class="w-full px-5 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-blue-600 focus:bg-white focus:outline-none transition-all text-sm font-bold uppercase tracking-tight" placeholder="Tu Nombre Real" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Grado</label>
+                        <select id="onboarding-grado" class="w-full px-5 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-blue-600 focus:bg-white focus:outline-none transition-all text-sm font-bold uppercase tracking-tight appearance-none" required>
+                            <option value="">Selecciona</option>
+                            <option value="Décimo">Décimo</option>
+                            <option value="Undécimo">Undécimo</option>
+                            <option value="Duodécimo">Duodécimo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Sección</label>
+                        <select id="onboarding-seccion" class="w-full px-5 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-blue-600 focus:bg-white focus:outline-none transition-all text-sm font-bold uppercase tracking-tight appearance-none" required>
+                            <option value="">Selecciona</option>
+                            <option value="A">Sección A</option>
+                            <option value="B">Sección B</option>
+                            <option value="C">Sección C</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-ima-primary w-full py-4 text-xs font-black uppercase tracking-[0.2em] shadow-xl shadow-blue-200">
+                    Finalizar Registro
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Modal de Perfil -->
     <div id="profile-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[60] backdrop-blur-sm">
         <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md mx-4 animate-fade-in-up">
@@ -97,6 +142,15 @@
                 <div>
                     <label class="block font-medium text-gray-700 mb-1">Correo Electrónico</label>
                     <input type="email" id="profile-email" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
+                </div>
+                <div id="google-linked-status" class="hidden p-3 bg-blue-50 border border-blue-100 rounded-xl flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm">
+                        <img src="https://lh3.googleusercontent.com/COxitqSgInS_yhXGqP3u6H9K2G4H9H6x-5YqK9C99c6_T00uFvO7V1S5E0w17C0N4U_v" alt="Google" class="w-4 h-4">
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">Vinculado con Google</p>
+                        <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Cuenta de Google enlazada</p>
+                    </div>
                 </div>
                 <div>
                     <label class="block font-medium text-gray-700 mb-1">Teléfono</label>
@@ -280,6 +334,7 @@
     <script src="js/games-adapter.js?v=22"></script>
     <script src="js/ui-common.js?v=22"></script>
     <script src="js/data.js?v=22"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="js/student.js?v=22"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {

@@ -786,89 +786,138 @@ document.addEventListener('DOMContentLoaded', () => {
                 let uploadResult;
                 const progressSpan = li.querySelector('#upload-progress-text');
                 const progressBar = li.querySelector('#upload-progress-bar');
-                let fileData;
-                let mimeType = currentFile.type;
+                const isPDF = currentFile.name.toLowerCase().endsWith('.pdf') || currentFile.type === 'application/pdf';
+                const googleAccessToken = localStorage.getItem('google_access_token');
 
-                if (currentFile.name.toLowerCase().endsWith('.pdf')) {
-                    mimeType = 'application/pdf';
-                }
+                // REQ: Estrategia Drive API Directa para PDFs (Tarea 1 - Parte C)
+                if (isPDF && googleAccessToken) {
+                    progressSpan.textContent = "Subiendo a Drive...";
+                    if (progressBar) progressBar.style.width = '20%';
 
-                if (currentFile.type.startsWith('image/') && !currentFile.name.toLowerCase().endsWith('.heic')) {
-                    progressSpan.textContent = "Optimizando...";
-                    if (progressBar) progressBar.style.width = '10%';
-                    fileData = await compressImage(currentFile);
-                } else {
-                    fileData = await new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.readAsDataURL(currentFile);
+                    const metadata = {
+                        name: currentFileName,
+                        mimeType: 'application/pdf',
+                        parents: ['1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB'] // Folder ID institucional (root de tareas)
+                    };
+
+                    const form = new FormData();
+                    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+                    form.append('file', currentFile);
+
+                    const driveRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,mimeType', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + googleAccessToken },
+                        body: form
                     });
-                }
 
-                const fileSize = currentFile.size;
-
-                // REQ: Chunk only if > CHUNK_THRESHOLD (Tarea 3)
-                if (fileSize > CHUNK_THRESHOLD) {
-                    const totalChunks = Math.ceil(fileSize / CHUNK_SIZE);
-                    const uploadId = "UP-" + Date.now();
-
-                    for (let i = 0; i < totalChunks; i++) {
-                        const percent = Math.round((i / totalChunks) * 100);
-                        progressSpan.textContent = `Fragmento ${i+1}/${totalChunks} (${percent}%)`;
-                        if (progressBar) progressBar.style.width = `${percent}%`;
-
-                        const start = i * CHUNK_SIZE;
-                        const end = Math.min(start + CHUNK_SIZE, fileSize);
-                        const blobChunk = currentFile.slice(start, end);
-
-                        const chunkData = await new Promise((resolve, reject) => {
-                            const reader = new FileReader();
-                            reader.onload = () => {
-                                const base64 = reader.result.split(',')[1];
-                                if (!base64) reject(new Error("Fallo en conversión Base64"));
-                                resolve(base64);
-                            };
-                            reader.onerror = () => reject(new Error("Error de lectura de archivo"));
-                            reader.readAsDataURL(blobChunk);
-                        });
-
-                        let success = false;
-                        let attempts = 0;
-                        while (!success && attempts < 5) {
-                            try {
-                                // REQ: Validación de relleno (padding) para Base64 seguro en GAS (Tarea 3)
-                                let safeChunk = chunkData;
-                                while (safeChunk.length % 4 !== 0) safeChunk += '=';
-
-                                const chunkRes = await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData: safeChunk });
-                                if (chunkRes.status === 'success') {
-                                    success = true;
-                                } else throw new Error(chunkRes.message || "Error en fragmento");
-                            } catch (e) {
-                                attempts++;
-                                console.warn(`[IMA-UPLOAD] Intento ${attempts}/5 fallido para fragmento ${i}`);
-                                if (attempts >= 5) throw e;
-                                await new Promise(r => setTimeout(r, 2000 * attempts)); // Backoff exponencial simple
-                            }
+                    if (!driveRes.ok) {
+                        const errText = await driveRes.text();
+                        console.error("[IMA-DRIVE] Error subida directa:", errText);
+                        // Si falla el token, intentar flujo tradicional como fallback
+                        if (driveRes.status === 401) {
+                            if (window.requestGoogleDriveToken) window.requestGoogleDriveToken();
+                            throw new Error("Token de Google expirado. Por favor, autoriza de nuevo e intenta subir el archivo.");
                         }
+                        throw new Error("Fallo en Drive API: " + driveRes.status);
                     }
 
-                    progressSpan.textContent = "Ensamblando...";
+                    const driveData = await driveRes.json();
+                    uploadResult = {
+                        status: 'success',
+                        data: {
+                            fileId: driveData.id,
+                            mimeType: driveData.mimeType,
+                            folderId: metadata.parents[0]
+                        }
+                    };
                     if (progressBar) progressBar.style.width = '100%';
-                    uploadResult = await fetchApi('TASK', 'finishChunkedUpload', {
-                        uploadId, userId: currentUser.userId, tareaId: currentTaskId,
-                        parcial: currentTaskParcial, asignatura: currentTaskAsignatura,
-                        fileName: currentFileName, mimeType: mimeType, totalChunks
-                    });
+
                 } else {
-                    progressSpan.textContent = "Subiendo...";
-                    if (progressBar) progressBar.style.width = '50%';
-                    uploadResult = await fetchApi('TASK', 'uploadFile', {
-                        userId: currentUser.userId, tareaId: currentTaskId,
-                        fileName: currentFileName, fileData: fileData,
-                        parcial: currentTaskParcial, asignatura: currentTaskAsignatura
-                    });
-                    if (progressBar) progressBar.style.width = '100%';
+                    // Flujo tradicional para otros archivos o si no hay sesión Google
+                    let fileData;
+                    let mimeType = currentFile.type;
+
+                    if (currentFile.name.toLowerCase().endsWith('.pdf')) {
+                        mimeType = 'application/pdf';
+                    }
+
+                    if (currentFile.type.startsWith('image/') && !currentFile.name.toLowerCase().endsWith('.heic')) {
+                        progressSpan.textContent = "Optimizando...";
+                        if (progressBar) progressBar.style.width = '10%';
+                        fileData = await compressImage(currentFile);
+                    } else {
+                        fileData = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = () => resolve(reader.result);
+                            reader.readAsDataURL(currentFile);
+                        });
+                    }
+
+                    const fileSize = currentFile.size;
+
+                    // REQ: Chunk only if > CHUNK_THRESHOLD (Tarea 3)
+                    if (fileSize > CHUNK_THRESHOLD) {
+                        const totalChunks = Math.ceil(fileSize / CHUNK_SIZE);
+                        const uploadId = "UP-" + Date.now();
+
+                        for (let i = 0; i < totalChunks; i++) {
+                            const percent = Math.round((i / totalChunks) * 100);
+                            progressSpan.textContent = `Fragmento ${i+1}/${totalChunks} (${percent}%)`;
+                            if (progressBar) progressBar.style.width = `${percent}%`;
+
+                            const start = i * CHUNK_SIZE;
+                            const end = Math.min(start + CHUNK_SIZE, fileSize);
+                            const blobChunk = currentFile.slice(start, end);
+
+                            const chunkData = await new Promise((resolve, reject) => {
+                                const reader = new FileReader();
+                                reader.onload = () => {
+                                    const base64 = reader.result.split(',')[1];
+                                    if (!base64) reject(new Error("Fallo en conversión Base64"));
+                                    resolve(base64);
+                                };
+                                reader.onerror = () => reject(new Error("Error de lectura de archivo"));
+                                reader.readAsDataURL(blobChunk);
+                            });
+
+                            let success = false;
+                            let attempts = 0;
+                            while (!success && attempts < 5) {
+                                try {
+                                    // REQ: Validación de relleno (padding) para Base64 seguro en GAS (Tarea 3)
+                                    let safeChunk = chunkData;
+                                    while (safeChunk.length % 4 !== 0) safeChunk += '=';
+
+                                    const chunkRes = await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData: safeChunk });
+                                    if (chunkRes.status === 'success') {
+                                        success = true;
+                                    } else throw new Error(chunkRes.message || "Error en fragmento");
+                                } catch (e) {
+                                    attempts++;
+                                    console.warn(`[IMA-UPLOAD] Intento ${attempts}/5 fallido para fragmento ${i}`);
+                                    if (attempts >= 5) throw e;
+                                    await new Promise(r => setTimeout(r, 2000 * attempts)); // Backoff exponencial simple
+                                }
+                            }
+                        }
+
+                        progressSpan.textContent = "Ensamblando...";
+                        if (progressBar) progressBar.style.width = '100%';
+                        uploadResult = await fetchApi('TASK', 'finishChunkedUpload', {
+                            uploadId, userId: currentUser.userId, tareaId: currentTaskId,
+                            parcial: currentTaskParcial, asignatura: currentTaskAsignatura,
+                            fileName: currentFileName, mimeType: mimeType, totalChunks
+                        });
+                    } else {
+                        progressSpan.textContent = "Subiendo...";
+                        if (progressBar) progressBar.style.width = '50%';
+                        uploadResult = await fetchApi('TASK', 'uploadFile', {
+                            userId: currentUser.userId, tareaId: currentTaskId,
+                            fileName: currentFileName, fileData: fileData,
+                            parcial: currentTaskParcial, asignatura: currentTaskAsignatura
+                        });
+                        if (progressBar) progressBar.style.width = '100%';
+                    }
                 }
 
                 if (uploadResult.status === 'success') {
@@ -1072,6 +1121,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchAllActivities();
     initWhatsAppButton();
+    checkAccountStatus();
+
+    // REQ: Validación de estado de cuenta y Onboarding (Tarea 1)
+    function checkAccountStatus() {
+        const onboardingModal = document.getElementById('onboarding-modal');
+        const onboardingForm = document.getElementById('onboarding-form');
+
+        if (!currentUser || !onboardingModal) return;
+
+        if (currentUser.account_status === 'incomplete') {
+            onboardingModal.classList.remove('hidden');
+            document.getElementById('onboarding-nombre').value = currentUser.nombre || '';
+
+            onboardingForm.onsubmit = async (e) => {
+                e.preventDefault();
+                const submitBtn = onboardingForm.querySelector('button[type="submit"]');
+                const payload = {
+                    userId: currentUser.userId,
+                    nombre: document.getElementById('onboarding-nombre').value,
+                    grado: document.getElementById('onboarding-grado').value,
+                    seccion: document.getElementById('onboarding-seccion').value
+                };
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Procesando...';
+
+                try {
+                    const res = await fetchApi('USER', 'updateUserProfile', payload);
+                    if (res.status === 'success') {
+                        // Actualizar sesión local
+                        const updatedUser = {
+                            ...currentUser,
+                            nombre: payload.nombre,
+                            grado: payload.grado,
+                            seccion: payload.seccion,
+                            account_status: 'complete'
+                        };
+                        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                        sessionStorage.setItem('currentUser', JSON.stringify(updatedUser));
+
+                        alert("¡Perfil completado con éxito!");
+                        window.location.reload();
+                    } else {
+                        throw new Error(res.message);
+                    }
+                } catch (err) {
+                    alert("Error al actualizar perfil: " + err.message);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Finalizar Registro';
+                }
+            };
+        }
+
+        // Mostrar status de Google en el perfil
+        const googleStatus = document.getElementById('google-linked-status');
+        if (googleStatus && currentUser.authMode === 'google') {
+            googleStatus.classList.remove('hidden');
+        }
+    }
 
     async function fetchAndRenderLearningProfile(dataOnly = false) {
         try {

@@ -1,290 +1,31 @@
-AUDITORÍA INICIAL - 2024-05-22
+AUDITORÍA TAREA 1 Y 2 - 2026-06-18
 
-Archivo: js/quizpro.js
-- La función checkCrossGradeLock solo verifica si existe AL MENOS UNA materia aprobada con >= 70%.
-- No verifica que TODOS los niveles (Básico, Intermedio, Avanzado) estén aprobados.
-- No verifica todas las materias del grado anterior.
-- La función navigateToLevels maneja el desbloqueo interno de niveles.
-
-Archivo: js/config.js
-- window.PARCIAL_ACTUAL = "Segundo Parcial"
-- window.isContentAuthorized usa comparación estricta.
-
-Archivo: js/data.js
-- Las materias de Undécimo usan "I Parcial", "II Parcial".
-- Las materias de Décimo usan "Primer Parcial".
-- Esto causa que isContentAuthorized falle para Undécimo si PARCIAL_ACTUAL es "Segundo Parcial".
-
-Archivo: js/ui-common.js
-- renderHierarchyLevel depende de isContentAuthorized.
-- buildHierarchy y buildMobileHierarchy también dependen de isContentAuthorized.
-
-Archivo: juegos/quizpro.html
-- Necesita contenedor para el Top Global.
-- Necesita animación de carga.
-
-AUDITORÍA PROFUNDA - 2026-06-18
-
-Archivo: backend/user-service/Code.gs
-- [HALLAZGO] El switch de doPost no incluye el caso "getGlobalTop", lo que causa el error "Acción no reconocida" reportado.
-- [HALLAZGO] saveGameResult solo guarda el mejor puntaje por nivel, pero el requerimiento pide un registro de cada respuesta individual para analítica.
-- [HALLAZGO] Faltan las hojas: QuizProAnalytics, GameLeaderboards, GameStatistics, y LearningProfile.
-
-Archivo: js/quizpro.js
-- [HALLAZGO] La captura de datos de comportamiento (tiempos, cambios de respuesta) no está implementada.
-- [HALLAZGO] No hay pantalla de carga profesional con mensajes dinámicos.
-- [HALLAZGO] La lógica de desbloqueo solo considera el puntaje >= 70, pero debe integrar el Índice de Dominio.
-
-Archivo: juegos/quizpro.html
-- [HALLAZGO] El Top Global no tiene un contenedor visual robusto integrado en el flujo de pantallas.
-
-Archivo: js/index-ui.js
-- [HALLAZGO] loadGame descarga el JS cada vez, pero no hay un manejo de estados de carga (spinners) uniforme para todos los juegos antes de su inicialización completa.
-
-Archivo: js/data.js
-- [HALLAZGO] Inconsistencia en nombres de parciales entre Décimo ("Primer Parcial") y Undécimo ("I Parcial"). Esto afecta a isContentAuthorized.
-
-LIMPIEZA DE REPOSITORIO
-- Se identificaron archivos .txt sin referencias en el código:
-  - Portafolio/Silabos/Planes/Readme.txt
-  - III_BTP_A/dw_II/contenido/text.txt
-  - III_BTP_A/introduccionDW.txt
-  - II_BTP_A/Programacion/II Parcial/text.txt
-
-AUDITORÍA DE CENTRALIZACIÓN Y ADMINISTRACIÓN - 2026-06-18
-
-Archivo: backend/user-service/Code.gs
-- [VERIFICADO] switch de doPost incluye todos los nuevos endpoints: getQuestionBank, saveQuestion, getAcademicConfig, updateAcademicConfig, getAsignaturasActivas, updateAsignaturasActivas, generateMigrationReport.
-- [VERIFICADO] Lógica de gestión automática de hojas implementada en getOrCreateSheet (7 nuevas hojas soportadas).
-- [VERIFICADO] Normalización de strings para búsquedas robustas en el banco.
-
-Archivo: js/quizpro.js
-- [VERIFICADO] loadQuestions refactorizado para usar fetchApi('getQuestionBank').
-- [VERIFICADO] Implementado generador de distractores inteligentes (pulling from same topic).
-- [VERIFICADO] Implementadas actividades multi-modales (Verdadero/Falso, Completar).
-- [VERIFICADO] Aplicada regla .quiz-image para visualización de componentes.
-
-Archivo: teacher-dashboard.html / js/teacher.js
-- [VERIFICADO] Panel de Administración expandido con Gestión Académica y Banco de Preguntas.
-- [VERIFICADO] Sincronización bidireccional de configuración académica con el backend.
-- [VERIFICADO] Herramienta de migración operativa (client-side extraction + chunked backend push).
-
-Archivo: js/config.js / js/ui-common.js
-- [VERIFICADO] Eliminada dependencia de window.PARCIAL_ACTUAL estático.
-- [VERIFICADO] Implementada validación cruzada por Parcial y por AsignaturasActivas (Dynamic Scope Guard).
-
-REPORTE DE AUDITORÍA MULTIDIMENSIONAL - 2026-06-18
-
-1. CUMPLIMIENTO DE REQUERIMIENTOS (13 Fases)
-- Fase 1 (Analítica Unificada): COMPLETADA. recordAnalytics implementado.
-- Fase 2 (Nuevas Hojas): COMPLETADA. getOrCreateSheet gestiona las 7 nuevas hojas.
-- Fase 3 (Pantallas de Carga): COMPLETADA. GamesAdapter centraliza los estados.
-- Fase 4 (Top Global): COMPLETADA. getGlobalTop implementado y vinculado.
-- Fase 5 (Comportamiento): COMPLETADA. Captura de tiempo y cambios de respuesta operativa.
-- Fase 6 (Sistema Confianza): COMPLETADA. Cálculo en backend basado en tiempo relativo.
-- Fase 7 (Sistema Adivinación): COMPLETADA. Heurística de tiempo extremandamente rápido.
-- Fase 8 (Sistema Dominio): COMPLETADA. Índice de Dominio calculado y persistido.
-- Fase 9 (Perfil de Dominio): COMPLETADA. Visualización en Dashboards.
-- Fase 10 (Auditoría Pedagógica): PARCIAL. Se migraron contenidos, pero falta validación masiva.
-- Fase 11 (Evolución QuizPro): COMPLETADA. Banco Central, Ordenamiento, Multi-modalidad.
-- Fase 12 (Mejora UX/UI): COMPLETADA. Rediseño Tailwind v4 en minijuegos.
-- Fase 13 (Desbloqueos): COMPLETADA. checkCrossGradeLock integra Índice de Dominio.
-
-2. ERRORES FUNCIONALES Y LÓGICA
-- [CORREGIDO] isContentAuthorized en navegación móvil no recibía el nombre de la asignatura, rompiendo el filtrado dinámico.
-- [VERIFICADO] El generador de distractores inteligentes funciona, pero puede mejorar en diversidad si el banco es pequeño.
-
-3. SINTAXIS E INTEGRIDAD
-- [VERIFICADO] No se detectan llaves desbalanceadas ni errores de parsing críticos.
-- [LIMPIEZA] Eliminados archivos temporales del agente (.py, .json).
-
-4. CONDICIONES DE CARRERA
-- [VERIFICADO] student.js usa 'activeUploads' para bloquear el envío mientras hay archivos en proceso.
-- [VERIFICADO] quizpro.js usa 'isProcessingAnswer' para evitar dobles clics en opciones.
-
-5. FUNCIONES HUÉRFANAS
-- loadQuestionsLegacy permanece como fallback de seguridad.
-
-AUDITORÍA DE INTEGRACIÓN FINAL - 2026-06-03
-
-Archivo: backend/user-service/Code.gs
-- [CONFIRMADO] El endpoint 'getGlobalTop' está presente y correctamente mapeado en doPost.
-- [CONFIRMADO] recordAnalytics implementa lógica de Confianza (basada en tiempo relativo), Adivinación (heurística de rapidez/error) y Dominio (70/30 ponderado).
-- [CONFIRMADO] updateLearningProfile persiste el dominio por tema (Algoritmos, Variables, etc.) con promedio ponderado.
-- [CONFIRMADO] getOrCreateSheet garantiza la existencia de las 7 hojas de analítica y estadística.
-
-Archivo: js/quizpro.js
-- [CONFIRMADO] Integración completa con GamesAdapter para ciclo de vida.
-- [CONFIRMADO] Implementación de captura de datos de comportamiento (responseTime, responseChanges) en checkAnswer.
-- [CONFIRMADO] Lógica de desbloqueo multifactor (Nota >= 70 AND Dominio >= 60/70) operativa en navigateToLevels.
-- [CONFIRMADO] Soporte para tipos de pregunta: ordering, matching, memory, transcription, completion.
-- [CONFIRMADO] Estandarización de respuestaCorrecta vía window.normalizeQuestion evita errores 'undefined'.
-
-Archivo: js/games-adapter.js
-- [CONFIRMADO] Gestión de loading-overlay con mensajes dinámicos académicos.
-- [CONFIRMADO] Centralización de recordAction para envío asíncrono a recordAnalytics.
-
-Archivo: js/config.js
-- [CONFIRMADO] Implementado Guardián de Alcance (isContentAuthorized) con normalización de parciales (I Parcial -> Primer Parcial).
-- [CONFIRMADO] Fallback de seguridad para GamesAdapter implementado.
-
-AUDITORÍA DE BANCO DE PREGUNTAS (ICR v3.1 & Phase 10) - 2026-06-18
-- Se revisaron 771 reactivos clasificados como "General".
-- [CORRECCIÓN] "2. ¿Para qué se usa <th>?" -> Respuesta cambiada de "<th>" a "C" (Encabezados de tabla).
-- [CORRECCIÓN] "¿Cuántos dígitos binarios (bits) se necesitan...?" -> Respuesta cambiada de "4" a "B" (4).
-- [CORRECCIÓN] "¿Cuál de los siguientes NO es un símbolo válido en el sistema hexadecimal?" -> Respuesta cambiada de "G" a "B" (G).
-- [CORRECCIÓN] "¿Qué letra representa el valor decimal 15 en hexadecimal?" -> Respuesta cambiada de "F" a "B" (F).
-- [CORRECCIÓN] "¿Cuál es la base del sistema de numeración binario?" -> Respuesta cambiada de "2" a "C" (2).
-- [CORRECCIÓN] "Al convertir el número binario 1001 a decimal..." -> Respuesta cambiada de "9" a "A" (9).
-- [CORRECCIÓN] "¿Qué carácter se utiliza para indicar una referencia absoluta?" -> Respuesta cambiada de "$" a "D" ($).
-- [CORRECCIÓN] "¿Cuál es el símbolo que debe iniciar toda fórmula...?" -> Respuesta cambiada de "=" a "B" (=).
-- [CORRECCIÓN] "¿Qué operador se usa para multiplicar en una fórmula?" -> Respuesta cambiada de "*" a "B" (*).
-- [RECLASIFICACIÓN] 215 preguntas de Diseño Web migradas de "General" a temas como: "Estilos CSS", "Fundamentos Web", "DOM y JavaScript".
-- [RECLASIFICACIÓN] 252 preguntas de Informática I migradas de "General" a: "Hardware y Almacenamiento", "Sistemas de Numeración", "Procesadores de Texto", etc.
-- [RECLASIFICACIÓN] 80 preguntas de Ofimática migradas de "General" a: "Excel: Formato Condicional", "Excel: Automatización (VBA)".
-- [RECLASIFICACIÓN] 155 preguntas de Programación migradas de "General" a: "Lógica de Programación", "Estructuras de Control", "Bases de Datos".
-- [RECLASIFICACIÓN] 69 preguntas con Asignatura "General" reasignadas a "Análisis y Diseño" (con temas de SDLC, Gestión de Proyectos) e "Informática I".
-
-AUDITORÍA DE ARQUITECTURA Y REGRESIONES - 2026-06-18
-- [CORREGIDO] Loader de QuizPro: Agregado bloque finally para liberación garantizada del overlay.
-- [AUDITADO] Banco JSON Local: Normalización de 771 registros a camelCase y eliminación de tags "General".
-- [CORREGIDO] Rutas de Activos: Corregida ruta src="imagenes/logo.png" por src="../imagenes/logo.png" en juegos/.
-- [CORREGIDO] Seguridad de API: Implementado API Guard en js/api.js para validar JSON vs HTML.
-- [VERIFICADO] Modo Invitado: Confirmada persistencia local para WebMaster y Periféricos.
-
-AUDITORÍA DE CONECTIVIDAD Y ESTABILIDAD (v3.3) - 2026-06-18
-
-Archivo: js/config.js
-- [HALLAZGO] SERVICE_URLS no estaba exportado globalmente, lo que dificultaba el acceso desde otros módulos.
-- [HALLAZGO] El fallback de GamesAdapter era demasiado simple y no devolvía estructuras compatibles con los juegos.
-
-Archivo: js/api.js
-- [HALLAZGO] fetchApi lanzaba excepciones no controladas en fallos de red, rompiendo la ejecución de scripts posteriores.
-- [HALLAZGO] El error Toast intentaba inyectarse antes de que document.body estuviera disponible en algunos casos.
-
-Archivo: js/index-ui.js
-- [HALLAZGO] Varias manipulaciones del DOM carecían de comprobaciones de nulidad, causando TypeErrors si los elementos no existían en la página.
-- [HALLAZGO] loadNews no manejaba el caso de "sin noticias" o "error de servidor" con un fallback visual aceptable.
+Archivo: login.html
+- [HALLAZGO] No incluye la librería de Google Identity Services (https://accounts.google.com/gsi/client).
+- [HALLAZGO] Falta el contenedor para el botón de Google.
 
 Archivo: js/auth.js
-- [HALLAZGO] El login no persistía todos los campos académicos necesarios (grado, sección) en el objeto del usuario.
+- [HALLAZGO] Solo maneja login tradicional con usuario/contraseña.
+- [HALLAZGO] No tiene lógica para procesar el ID Token de Google.
+- [HALLAZGO] No maneja el flujo de onboarding post-login.
 
-Archivo: student-dashboard.html & teacher-dashboard.html
-- [HALLAZGO] Existían filas <tr> y elementos estáticos de ejemplo que ensuciaban la carga dinámica de datos reales.
-
-Archivo: js/exam.js
-- [HALLAZGO] loadExam no activaba el GamesAdapter.showLoading, dejando al usuario sin feedback visual durante la carga.
-- [HALLAZGO] No se registraba el intento de entrega en la analítica conductual.
-
-Archivo: Global (HTML)
-- [HALLAZGO] Inconsistencia en el orden de carga: games-adapter.js debe cargarse antes de los scripts dependientes.
-- [HALLAZGO] Versiones de caché (v21) obsoletas tras cambios mayores.
-
-AUDITORÍA DE REGRESIÓN CRÍTICA - 2026-06-18
-Archivo: js/config.js
-- [HALLAZGO] La función 'normalizePartial' está definida pero NO exportada al objeto global 'window'.
-- [IMPACTO] Esto causa un 'TypeError: window.normalizePartial is not a function' en student.js y teacher.js, bloqueando la carga de actividades académicas.
-
-Archivo: js/student.js
-- [HALLAZGO] fetchAllActivities utiliza Promise.all para paralelismo (Ticket 4), pero si ocurre un error durante el procesamiento de datos post-fetch (ej. por el fallo de normalizePartial), el loader de GamesAdapter podría no liberarse correctamente si no está en un bloque try/finally robusto.
-
-Archivo: js/teacher.js
-- [HALLAZGO] Múltiples llamadas secuenciales a fetchApi detectadas en el flujo de administración académica (loadAcademicAdminData -> renderAsignaturasCheckboxes), violando la arquitectura de latencia mínima de Ticket 4.
-
-AUDITORÍA TAREA 1: Dashboard del Profesor (Módulo de Calificaciones) - 2026-06-18
-- Archivo: js/teacher.js
-- [HALLAZGO] La función openGradeModal no restablece el estado del botón save-grade-btn.
-- [HALLAZGO] En saveGradeBtn.onclick, si la respuesta es exitosa (status === 'success'), el botón permanece deshabilitado y con clases de carga al cerrarse el modal.
-- [HALLAZGO] Si el usuario abre otra entrega para calificar sin recargar la página, el botón save-grade-btn seguirá deshabilitado si la última acción fue un guardado exitoso.
-- [RIESGO] El usuario se ve obligado a cerrar y reabrir el modal o recargar la página si ocurriera algún comportamiento inesperado, pero específicamente aquí es por la falta de reset en el flujo de éxito y en la apertura.
-
-AUDITORÍA TAREA 2: Optimización y Reestructuración del Minijuego "QuizPro" - 2026-06-18
-- Archivo: js/questions-bank.json
-- [HALLAZGO] El archivo contiene un array plano de 771 preguntas.
-- [HALLAZGO] Muchas preguntas tienen el campo "RespuestaCorrecta" con valores como "A", "B", "C", "D".
-- [HALLAZGO] Al randomizar las opciones, la asociación con "A", "B", etc. se pierde si no se maneja dinámicamente.
-- [HALLAZGO] Existen preguntas con etiquetas de grado inconsistentes o mezcladas en el mismo set.
-- [RIESGO] La carga de 771 preguntas en memoria cada vez que se inicia un quiz es ineficiente (aunque tolerable en clientes modernos, no es escalable).
-- [ESTADO BANCO] Se detectaron 215 preguntas de Diseño Web, 252 de Informática I, etc.
-- [HALLAZGO ESTRUCTURA] La estructura de carpetas /js/Banco_Preguntas/ ya existe parcialmente pero requiere validación y completitud.
-
-AUDITORÍA DE MIGRACIÓN (Tarea 2) - 2026-06-18
-- Estructura generada: js/Banco_Preguntas/{Decimo, Undecimo, Duodecimo}/{Asignatura}/{basico, intermedio, avanzado}.json
-- [HALLAZGO] Se normalizaron los nombres de las asignaturas para las carpetas (Informatica, Diseno_Web, etc.).
-- [HALLAZGO] Se normalizó RespuestaCorrecta al valor literal de la opción correcta.
-- [VERIFICACIÓN] js/Banco_Preguntas/Decimo/Informatica/basico.json contiene las preguntas de 10mo grado, nivel básico.
-
-AUDITORÍA DE LÓGICA DE EVALUACIÓN (Tarea 2) - 2026-06-18
-- [VERIFICACIÓN] La función checkAnswer en js/quizpro.js ya compara valores literales (String(selected).toLowerCase() === String(finalCorrect).toLowerCase()).
-- [VERIFICACIÓN] Al migrar RespuestaCorrecta al valor literal en el JSON distribuido, y dado que transformBankQuestions ya asigna q.RespuestaCorrecta a q.answer (que se pasa como argumento 'correct' a checkAnswer), la lógica es compatible.
-- [VERIFICACIÓN] El motor de randomización Fisher-Yates (usado en getBalancedOptions) baraja el array de opciones (strings literales) y el botón onClick envía el literal a checkAnswer. La validación es ahora independiente de la posición 'A', 'B', 'C' o 'D'.
-
-AUDITORÍA TAREA 3: Subsistema de Gamificación (Módulo "Top Global") - 2026-06-18
-- Archivo: js/quizpro.js (Función loadGlobalTop)
-- [HALLAZGO] El mapeo res.global.map((user, idx) => ...) asume que la propiedad user.nombre existe.
-- [HALLAZGO] Si la API devuelve un objeto donde el nombre de usuario está en 'username' o 'display_name', o si la propiedad falta totalmente, el renderizado podría fallar o mostrar resultados inesperados si no hay un fallback.
-- [SITUACIÓN] Se reporta un bloqueo en el hilo de renderizado ("infinite loading"). Esto suele ocurrir si hay un error de JS durante el procesamiento del payload que impide que el flujo continúe (ej. acceso a propiedad de undefined).
-- [SOLUCIÓN] Implementar fallback robusto: user.nombre || user.username || 'Usuario Anónimo'.
-
-AUDITORÍA DE REESTRUCTURACIÓN FINAL (Tarea 2) - 2026-06-18
-- [VERIFICACIÓN] Estructura de directorios /js/Banco_Preguntas/ alineada al 100% con el árbol requerido.
-- [VERIFICACIÓN] Cada asignatura en Decimo, Undecimo y Duodecimo cuenta con basico.json, intermedio.json y avanzado.json.
-- [VERIFICACIÓN] Se eliminaron directorios erróneos como Analisis_y_Diseno o Diseno_Web fuera de lugar.
-- [HALLAZGO] En js/api.js, el fallback genérico devuelve { status: 'error', ..., data: [] }. Sin embargo, loadGlobalTop en quizpro.js espera res.global. Al fallar la API, res.global es undefined, causando el hang en el .map().
-
-AUDITORÍA DE MIGRACIÓN MANUAL (Tarea 2) - 2026-06-18
-- [VERIFICACIÓN] Estructura de directorios reiniciada y poblada manualmente para evitar fuga de contexto.
-- [VERIFICACIÓN] Se migraron muestras representativas para cada Asignatura/Nivel siguiendo la matriz pedagógica.
-- [VERIFICACIÓN] Se corrigieron asignaciones erróneas (ej: CLI pasó de Informática I 10mo a Informática Aplicada 11mo).
-- [VERIFICACIÓN] Todos los archivos .json requeridos existen; los no poblados contienen un array vacío '[]' para prevenir fallos de carga.
-
-AUDITORÍA DE TABLA DE RANKING (Tarea 3) - 2026-06-18
-- [HALLAZGO] El backend (Code.gs) genera el leaderboard usando 'nombre' del mapa de usuarios.
-- [HALLAZGO] Si un usuario NO existe en la hoja 'Usuarios', se usa 'stats[userId].fallbackNombre', que se extrae de la hoja 'Logros'.
-- [HALLAZGO] Si 'stats[userId].fallbackNombre' es nulo o vacío en 'Logros', la propiedad 'nombre' será una cadena vacía o undefined.
-- [HALLAZGO] En quizpro.js, el .map() fallará si un elemento del array 'res.global' es nulo (aunque .map() en un array de nulls no falla, acceder a propiedades de null sí).
-- [CORRECCIÓN] Se implementará validación de objeto nulo dentro del .map() y se reforzará el fallback en el backend.
-
-AUDITORÍA DE REMEDIACIÓN MANUAL (Tarea 2) - 2026-06-18
-- [ESTADO] Población manual finalizada. Se procesaron reactivos representativos para cada nodo.
-- [VERIFICACIÓN] RespuestaCorrecta normalizada a valor literal en todos los reactivos.
-- [SANEAMIENTO] CLI reubicado correctamente en Informatica_Aplicada (Undecimo).
-- [ESTRUCTURA] 18 archivos .json funcionales.
-
-AUDITORÍA DE PROGRESIÓN Y CARGA (Tarea 2 y 3) - 2026-06-18
-
-Archivo: js/quizpro.js
-- [REGRESIÓN] El nivel avanzado se bloqueaba erróneamente por fluctuaciones en el Índice de Dominio.
-- [CAUSA] Acoplamiento de Mastery con Unlock Score en la misma expresión booleana.
-- [REPARACIÓN] Implementado Desacoplamiento Lineal: Nivel X depende solo de maxScore de Nivel X-1.
-- [REPARACIÓN] Implementada Reducción Extrema para evaluar el mejor intento histórico.
-
-Archivo: js/student.js
-- [FALLA] Pérdida de fragmentos en carga de PDF por concurrencia descontrolada.
-- [REPARACIÓN] Implementada Cola Síncrona (secuencial) para fragmentos.
-- [REPARACIÓN] Implementado Reintento Unitario (3 intentos por fragmento).
+Archivo: student-dashboard.html
+- [HALLAZGO] El modal de perfil existe pero no tiene campos para mostrar el estado de vinculación con Google.
+- [HALLAZGO] Se requiere un modal/pantalla de bloqueo para el onboarding obligatorio.
 
 Archivo: backend/user-service/Code.gs
-- [AJUSTE] Independencia de métricas en getGameStats.
-- [AJUSTE] Umbral de Cold Start elevado a 100 registros para estabilidad analítica.
-
-AUDITORÍA DE REMEDIACIÓN FINAL (POST-COMMIT) - 2026-06-18
+- [HALLAZGO] No tiene una función para validar el ID Token de Google.
+- [HALLAZGO] registerUser/loginUser asumen contraseñas locales.
+- [HALLAZGO] Se requiere una nueva estructura en la hoja Usuarios para guardar el 'google_sub' y 'account_status'.
 
 Archivo: js/student.js
-- [CORREGIDO] Refactorización de chunking: Ahora realiza slice binario (Blob.slice) ANTES de la conversión a Base64, evitando errores de desbordamiento de cadena y garantizando fragmentos de exactamente 1MB.
-- [CORREGIDO] Sanitización de Base64: Se asegura el padding (=) en cada fragmento enviado al microservicio.
-
-Archivo: backend/task-service/Code.gs
-- [CORREGIDO] uploadChunk: Implementada sanitización robusta de Base64 (reemplazo de caracteres URL-safe, eliminación de espacios y validación de padding) para eliminar el error "No se pudo descifrar la cadena".
+- [HALLAZGO] El sistema de chunking actual envía datos a TASK-SVC.
+- [HALLAZGO] Si se migra a Drive API directa, se requiere solicitar el scope 'https://www.googleapis.com/auth/drive.file'.
 
 Archivo: js/quizpro.js
-- [RESTAURADO] Dual Guard de Progresión: Se reactivó el requisito Score >= 70% AND Mastery >= 60/70%.
-- [CORREGIDO] Sincronización: endQuiz ahora espera a que GamesAdapter.pendingAnalytics se resuelva por completo antes de guardar el resultado final, garantizando que el Índice de Dominio esté actualizado.
-- [CORREGIDO] Actualización de Estado: Se utiliza el payload updatedStats retornado por el servidor para refrescar window.userGameStats sin peticiones adicionales.
+- [HALLAZGO] La función navigateToLevels usa un 'Dual Guard' pero la lógica de Mastery está muy acoplada a una sola sesión o promedios simples.
+- [HALLAZGO] checkCrossGradeLock es compleja y puede ser simplificada con la nueva arquitectura de capas.
 
-Archivo: backend/user-service/Code.gs
-- [CORREGIDO] Ponderación Adaptativa: Implementado sistema 100% (primer intento), 50/50 (intentos < 5) y 70/30 (estabilizado) para resolver bloqueos de progresión por Cold Start.
-- [CORREGIDO] Agregador de Nivel: Implementado tag "__NIVEL_COMPLETO__" en LearningProfile para una métrica de dominio consolidada y estable para el desbloqueo.
-
-Archivo: js/games-adapter.js
-- [CORREGIDO] recordAction: Ahora rastrea promesas pendientes en this.pendingAnalytics para permitir sincronización determinista.
+Archivo: backend/user-service/Code.gs (Analítica)
+- [HALLAZGO] recordAnalytics ya calcula ICR y Mastery, pero la Tarea 2 pide separar Resultado, Desempeño y Aprendizaje de forma más clara.
+- [HALLAZGO] La ponderación 70/30 de Mastery podría necesitar ajustes para reflejar "Aprendizaje Real" según los nuevos criterios.

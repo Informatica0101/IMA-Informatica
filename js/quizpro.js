@@ -125,31 +125,29 @@ window.navigateToSubjects = function() {
 };
 
 /**
- * REQ 3.A: Validación Hierárquica de Grados (Nueva Lógica v4)
- * FASE 13: Los grados superiores están bloqueados hasta que TODAS las asignaturas de grados inferiores
- * hayan sido aprobadas con Nota >= 70 e Índice de Dominio >= 60.
+ * REQ: Rediseño de Lógica de Progresión (Tarea 2)
+ * Implementa un sistema de 5 capas: Resultado, Desempeño, Aprendizaje (Mastery), Conductual e Historial.
  */
 function checkCrossGradeLock(subjectName, targetGrade) {
     const targetGradeNum = window.parseGrade(targetGrade);
-    // 10th grade subjects are unlocked by default
+    // CAPA 2 (Mejor Resultado) & CAPA 3 (Historial): Los grados 10 están desbloqueados por defecto.
     if (targetGradeNum <= 10) return false;
 
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const userSection = user?.seccion;
-    const statsArray = Object.values(window.userGameStats);
+    const statsArray = Object.values(window.userGameStats || {});
 
-    // Identify all subjects from previous grades that the student should have completed
+    // CAPA 3 (Historial): Identificar asignaturas de grados previos requeridas.
     const requiredGrades = [];
     if (targetGradeNum > 10) requiredGrades.push(10);
     if (targetGradeNum > 11) requiredGrades.push(11);
 
-    const subjectsToApprove = []; // { name, gradeNum }
+    const subjectsToApprove = [];
     window.presentationData.forEach(block => {
         const bg = window.parseGrade(block.grade);
         if (requiredGrades.includes(bg)) {
             block.subjects.forEach(s => {
                 if (userSection && !window.checkSectionHelper(s.sections, userSection)) return;
-
                 const name = window.normalizeSubject(s.name);
                 if (!subjectsToApprove.some(item => item.name === name && item.gradeNum === bg)) {
                     subjectsToApprove.push({ name, gradeNum: bg });
@@ -158,25 +156,24 @@ function checkCrossGradeLock(subjectName, targetGrade) {
         }
     });
 
-    // Check if EVERY subject in previous grades has all 3 levels approved with Nota >= 70 e Índice de Dominio >= 60
+    // CAPA 4 (Aprendizaje Real): Verificación estricta de aprobación.
+    // El estudiante debe dominar (Mastery >= 60) y haber aprobado (Puntaje >= 70) todos los niveles previos.
     const levels = ['Básico', 'Intermedio', 'Avanzado'];
     for (const req of subjectsToApprove) {
         for (const lvl of levels) {
-            // FASE 13: Validación Cross-Grade (Unlock Score >= 70%)
-            // Se elimina dependencia del dominio para evitar bloqueos por fluctuación (A-149)
             const hasApproval = statsArray.some(s =>
                 window.normalizeSubject(s.subject) === req.name &&
                 window.parseGrade(s.grade) === req.gradeNum &&
                 window.getStandardLevelName(s.level) === lvl &&
-                parseFloat(s.maxScore || 0) >= 70
+                parseFloat(s.maxScore || 0) >= 70 &&
+                parseFloat(s.dominio || 0) >= 60
             );
             if (!hasApproval) {
-                console.log(`Locking ${subjectName}: Missing ${req.name} ${lvl} (${req.gradeNum}) con puntaje suficiente.`);
+                console.log(`[QuizPro-Lock] Bloqueando ${subjectName}: Falta aprobar ${req.name} ${lvl} (${req.gradeNum}) con dominio.`);
                 return true;
             }
         }
     }
-
     return false;
 }
 
@@ -186,97 +183,58 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     document.getElementById('selected-subject-title').textContent = subjectName;
 
     const isTeacher = JSON.parse(localStorage.getItem('currentUser'))?.rol === 'Profesor';
-
-    // UI: Menciones por Asignatura
-    const topContainer = document.getElementById('subject-top-container');
-    const topNames = document.getElementById('subject-top-names');
-    if (topContainer && topNames && window.globalTopData?.subjectTops) {
-        const topList = window.globalTopData.subjectTops[gradeLabel]?.[subjectName];
-        if (topList && topList.length > 0) {
-            topNames.textContent = topList.map(u => u.nombre).join(', ');
-            topContainer.classList.remove('hidden');
-        } else {
-            topContainer.classList.add('hidden');
-        }
-    }
-
-    // REQ 3.B: Progresión Interna por Niveles (Fase 13: Mastery-Based)
-    // Reducción Extrema: Asegurar evaluación del mejor intento histórico (A-149)
     const statsArray = Object.values(window.userGameStats || {});
-
-    // Normalizar criterios de búsqueda para asegurar coincidencia robusta (Tarea 1: Fix)
     const targetGradeNum = window.parseGrade(gradeLabel);
     const targetSubjectNorm = window.normalizeSubject(subjectName);
 
-    // Filtrar estadísticas pertinentes con normalización cruzada
+    // CAPA 3 (Historial): Filtrar solo datos pertinentes a esta asignatura y grado.
     const relevantStats = statsArray.filter(s => {
         if (!s.subject || s.grade === undefined) return false;
         return window.normalizeSubject(s.subject) === targetSubjectNorm &&
                window.parseGrade(s.grade) === targetGradeNum;
     });
 
-    // Obtener el puntaje máximo absoluto para cada nivel (Ignorando otros factores)
-    const getScoreForLevel = (lvlName) => {
+    // CAPA 2 (Mejor Resultado): Obtener el mejor puntaje histórico por nivel.
+    const getBestScore = (lvlName) => {
         const matches = relevantStats.filter(s => window.getStandardLevelName(s.level) === lvlName);
-        if (matches.length === 0) return 0;
-        return Math.max(...matches.map(m => parseFloat(m.maxScore || 0)));
+        return matches.length > 0 ? Math.max(...matches.map(m => parseFloat(m.maxScore || 0))) : 0;
     };
 
-    const basicScore = getScoreForLevel('Básico');
-    const interScore = getScoreForLevel('Intermedio');
-
-    const btnInter = document.getElementById('btn-intermedio');
-    const cardInter = document.getElementById('level-intermedio');
-    const btnAvan = document.getElementById('btn-avanzado');
-    const cardAvan = document.getElementById('level-avanzado');
-
-    // FASE 13: Progresión Académica Basada en Dominio (Dual Guard)
-    // Regla: Para desbloquear el siguiente nivel, el estudiante debe alcanzar:
-    // 1. Nota (Score) >= 70%
-    // 2. Índice de Dominio (Mastery) >= 60% (Intermedio) o >= 70% (Avanzado)
-
-    // Obtener Mastery para cada nivel
-    const getMasteryForLevel = (lvlName) => {
+    // CAPA 4 (Aprendizaje Real - Mastery): Obtener el dominio consolidado.
+    const getMastery = (lvlName) => {
         const matches = relevantStats.filter(s => window.getStandardLevelName(s.level) === lvlName);
-        if (matches.length === 0) return 0;
-        return Math.max(...matches.map(m => parseFloat(m.dominio || 0)));
+        return matches.length > 0 ? Math.max(...matches.map(m => parseFloat(m.dominio || 0))) : 0;
     };
 
-    const basicMastery = getMasteryForLevel('Básico');
-    const interMastery = getMasteryForLevel('Intermedio');
+    const basicScore = getBestScore('Básico');
+    const basicMastery = getMastery('Básico');
+    const interScore = getBestScore('Intermedio');
+    const interMastery = getMastery('Intermedio');
 
+    // DUAL GUARD: Desbloqueo basado en CAPA 2 (Puntaje) + CAPA 4 (Dominio).
     const canUnlockInter = isTeacher || (basicScore >= 70 && basicMastery >= 60);
     const canUnlockAvan = isTeacher || (interScore >= 70 && interMastery >= 70);
 
-    // UI Intermedio
-    if (canUnlockInter) {
-        btnInter.disabled = false;
-        btnInter.innerHTML = 'Entrar';
-        btnInter.classList.replace('bg-gray-300', 'bg-gray-900');
-        btnInter.classList.remove('cursor-not-allowed');
-        cardInter.classList.remove('locked');
-    } else {
-        btnInter.disabled = true;
-        btnInter.innerHTML = `<i class="fas fa-lock mr-2"></i> Bloqueado`;
-        btnInter.classList.replace('bg-gray-900', 'bg-gray-300');
-        btnInter.classList.add('cursor-not-allowed');
-        cardInter.classList.add('locked');
-    }
+    const updateLevelUI = (levelId, btnId, canUnlock) => {
+        const card = document.getElementById(levelId);
+        const btn = document.getElementById(btnId);
+        if (canUnlock) {
+            btn.disabled = false;
+            btn.innerHTML = 'Entrar';
+            btn.classList.replace('bg-gray-300', 'bg-gray-900');
+            btn.classList.remove('cursor-not-allowed');
+            card.classList.remove('locked');
+        } else {
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-lock mr-2"></i> Bloqueado`;
+            btn.classList.replace('bg-gray-900', 'bg-gray-300');
+            btn.classList.add('cursor-not-allowed');
+            card.classList.add('locked');
+        }
+    };
 
-    // UI Avanzado
-    if (canUnlockAvan) {
-        btnAvan.disabled = false;
-        btnAvan.innerHTML = 'Entrar';
-        btnAvan.classList.replace('bg-gray-300', 'bg-gray-900');
-        btnAvan.classList.remove('cursor-not-allowed');
-        cardAvan.classList.remove('locked');
-    } else {
-        btnAvan.disabled = true;
-        btnAvan.innerHTML = `<i class="fas fa-lock mr-2"></i> Bloqueado`;
-        btnAvan.classList.replace('bg-gray-900', 'bg-gray-300');
-        btnAvan.classList.add('cursor-not-allowed');
-        cardAvan.classList.add('locked');
-    }
+    updateLevelUI('level-intermedio', 'btn-intermedio', canUnlockInter);
+    updateLevelUI('level-avanzado', 'btn-avanzado', canUnlockAvan);
 
     document.getElementById('subjects-screen').classList.add('hidden');
     document.getElementById('levels-screen').classList.remove('hidden');

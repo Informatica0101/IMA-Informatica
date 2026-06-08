@@ -2,15 +2,97 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
 
-    // Si el usuario ya está logueado, redirigir al dashboard correspondiente (buscando en ambos storages)
+    // Si el usuario ya está logueado, redirigir al dashboard correspondiente (evitando bucles)
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     if (currentUser) {
-        if (currentUser.rol === 'Profesor') {
-            window.location.href = 'teacher-dashboard.html';
-        } else {
-            window.location.href = 'student-dashboard.html';
+        const isTeacher = currentUser.rol === 'Profesor';
+        const dest = isTeacher ? 'teacher-dashboard.html' : 'student-dashboard.html';
+        const onAuthPage = window.location.pathname.includes('login.html') || window.location.pathname.includes('register.html') || window.location.pathname === '/' || window.location.pathname.endsWith('index.html');
+
+        if (onAuthPage) {
+            window.location.href = dest;
         }
     }
+
+    // REQ: Cliente para obtención de Access Token (Tarea 1 - Parte C)
+    let tokenClient;
+    if (window.google) {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: '810005963548-0916n9af4tsjfu4tohi1c7qrgal6dhmc.apps.googleusercontent.com',
+            scope: 'https://www.googleapis.com/auth/drive.file',
+            callback: (tokenResponse) => {
+                if (tokenResponse && tokenResponse.access_token) {
+                    console.log("[IMA-AUTH] Google Access Token obtenido para Drive");
+                    localStorage.setItem('google_access_token', tokenResponse.access_token);
+                    // Si hay una subida pendiente, dispararla aquí (se manejará en student.js)
+                    window.dispatchEvent(new CustomEvent('google-token-ready', { detail: tokenResponse.access_token }));
+                }
+            },
+        });
+    }
+
+    window.requestGoogleDriveToken = () => {
+        if (tokenClient) {
+            tokenClient.requestAccessToken({ prompt: 'none' }); // Intentar silenciosamente primero
+        }
+    };
+
+    // REQ: Manejador de respuesta de Google GIS (Tarea 1)
+    window.handleCredentialResponse = async (response) => {
+        console.log("[IMA-AUTH] Google ID Token recibido");
+        const idToken = response.credential;
+
+        try {
+            if (window.GamesAdapter) window.GamesAdapter.showLoading(true);
+
+            // Enviar token al backend para validación y login/registro automático
+            const result = await fetchApi('USER', 'loginWithGoogle', { idToken });
+
+            if (result.status === 'success' && result.data) {
+                const userData = {
+                    userId: result.data.userId,
+                    google_sub: result.data.google_sub,
+                    nombre: result.data.nombre,
+                    email: result.data.email,
+                    rol: result.data.rol || 'Estudiante',
+                    grado: result.data.grado,
+                    seccion: result.data.seccion,
+                    account_status: result.data.account_status,
+                    loginTimestamp: Date.now(),
+                    authMode: 'google'
+                };
+
+                // Persistencia de sesión
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+                sessionStorage.setItem('currentUser', JSON.stringify(userData));
+
+                console.log(`[IMA-AUTH] Sesión Google iniciada para ${userData.nombre}. Status: ${userData.account_status}`);
+
+                // Solicitar token de acceso para Drive de forma proactiva
+                if (tokenClient) {
+                    tokenClient.requestAccessToken();
+                }
+
+                // Redirección basada en estado de perfil
+                if (userData.account_status === 'incomplete') {
+                    window.location.href = 'student-dashboard.html?onboarding=true';
+                } else {
+                    if (userData.rol === 'Profesor') {
+                        window.location.href = 'teacher-dashboard.html';
+                    } else {
+                        window.location.href = 'student-dashboard.html';
+                    }
+                }
+            } else {
+                alert("Error en la autenticación con Google: " + (result.message || "Fallo en la validación del servidor."));
+            }
+        } catch (error) {
+            console.error('[IMA-AUTH] Error en login Google:', error);
+            alert("No se pudo completar el inicio de sesión con Google. Revisa tu conexión.");
+        } finally {
+            if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
+        }
+    };
 
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {

@@ -16,6 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=22">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
 
@@ -67,6 +68,31 @@
     <main class="mt-[4rem] flex-grow flex items-center justify-center py-12 px-4">
         <div class="card-ima p-8 md:p-10 w-full max-w-sm">
             <h2 class="text-xl font-semibold mb-8 text-center text-gray-900 uppercase tracking-tighter">Iniciar Sesión</h2>
+            <div id="google-signin-container" class="mb-6">
+                <div id="g_id_onload"
+                     data-client_id="810005963548-0916n9af4tsjfu4tohi1c7qrgal6dhmc.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="left"
+                     data-width="100%">
+                </div>
+            </div>
+
+            <div class="relative flex items-center justify-center mb-6">
+                <div class="flex-grow border-t border-gray-200"></div>
+                <span class="flex-shrink mx-4 text-gray-400 text-[10px] font-bold uppercase tracking-widest">o entrar con correo</span>
+                <div class="flex-grow border-t border-gray-200"></div>
+            </div>
+
             <form id="login-form" class="space-y-5" aria-labelledby="login-title">
                 <h2 id="login-title" class="sr-only">Formulario de Inicio de Sesión</h2>
                 <div>

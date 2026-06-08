@@ -203,3 +203,22 @@ DESCRIPCIÓN: Implementado sistema de Ponderación Adaptativa en el Perfil de Do
 ARCHIVO: js/quizpro.js
 LINEAS: 235-250, 1285-1310
 DESCRIPCIÓN: Restauración de la regla de Progresión Dual (Nota + Dominio). Se implementó un flujo de sincronización determinista en endQuiz que espera la resolución de todas las analíticas asíncronas antes de proceder al guardado final. Se utiliza el retorno actualizado del servidor para refrescar el estado local sin peticiones extra.
+
+FECHA: 2026-06-18
+ARCHIVO: login.html
+DESCRIPCIÓN: Integración de la librería Google Identity Services (GIS) y adición del botón "Continuar con Google" para autenticación segura.
+
+ARCHIVO: js/auth.js
+DESCRIPCIÓN: Implementación del manejador `handleCredentialResponse` para procesar el ID Token de Google, solicitud proactiva de Access Token para Drive con el scope 'drive.file', y lógica de redirección basada en el estado del perfil (`account_status`).
+
+ARCHIVO: backend/user-service/Code.gs
+DESCRIPCIÓN: Implementación del endpoint `loginWithGoogle` con validación de JWT mediante el endpoint oficial de Google. Se extendió el mapeo de la hoja 'Usuarios' para incluir `google_sub` (columna J) y `account_status` (columna K). Refactorización de `recordAnalytics` para implementar el sistema de 5 capas de QuizPro, asegurando que el Mastery Index refleje el "Aprendizaje Real" con ponderación adaptativa.
+
+ARCHIVO: student-dashboard.html
+DESCRIPCIÓN: Implementación del modal de Onboarding obligatorio para completar datos académicos (Nombre, Grado, Sección). Se añadió un indicador visual de vinculación con Google en el modal de perfil.
+
+ARCHIVO: js/student.js
+DESCRIPCIÓN: Implementación de la estrategia de subida directa a Google Drive API v3 para archivos PDF, permitiendo omitir los límites de Google Apps Script. Se añadió la validación de `account_status` para activar el onboarding si es necesario.
+
+ARCHIVO: js/quizpro.js
+DESCRIPCIÓN: Rediseño total de la lógica de progresión y desbloqueo. Se implementó el sistema de 5 capas (Resultado, Desempeño, Aprendizaje, Conductual e Historial) en `checkCrossGradeLock` y `navigateToLevels`, aplicando el "Dual Guard" (Puntaje >= 70% y Mastery >= 60/70%) basándose en el historial consolidado.
