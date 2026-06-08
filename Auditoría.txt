@@ -225,3 +225,9 @@ AUDITORÍA TAREA 3: Subsistema de Gamificación (Módulo "Top Global") - 2026-06
 - [HALLAZGO] Si la API devuelve un objeto donde el nombre de usuario está en 'username' o 'display_name', o si la propiedad falta totalmente, el renderizado podría fallar o mostrar resultados inesperados si no hay un fallback.
 - [SITUACIÓN] Se reporta un bloqueo en el hilo de renderizado ("infinite loading"). Esto suele ocurrir si hay un error de JS durante el procesamiento del payload que impide que el flujo continúe (ej. acceso a propiedad de undefined).
 - [SOLUCIÓN] Implementar fallback robusto: user.nombre || user.username || 'Usuario Anónimo'.
+
+AUDITORÍA DE REESTRUCTURACIÓN FINAL (Tarea 2) - 2026-06-18
+- [VERIFICACIÓN] Estructura de directorios /js/Banco_Preguntas/ alineada al 100% con el árbol requerido.
+- [VERIFICACIÓN] Cada asignatura en Decimo, Undecimo y Duodecimo cuenta con basico.json, intermedio.json y avanzado.json.
+- [VERIFICACIÓN] Se eliminaron directorios erróneos como Analisis_y_Diseno o Diseno_Web fuera de lugar.
+- [HALLAZGO] En js/api.js, el fallback genérico devuelve { status: 'error', ..., data: [] }. Sin embargo, loadGlobalTop en quizpro.js espera res.global. Al fallar la API, res.global es undefined, causando el hang en el .map().

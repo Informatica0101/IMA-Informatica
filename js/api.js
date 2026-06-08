@@ -88,6 +88,7 @@ async function fetchApi(service, action, payload, retryCount = 0) {
 
         // Estructuras de fallback según la acción solicitada (v3.3)
         if (action === 'getNews') return { status: 'success', data: [], isFallback: true };
+        if (action === 'getGlobalTop') return { status: 'success', global: [], subjectTops: {}, isFallback: true };
         if (action.startsWith('get')) return { status: 'success', data: [], isFallback: true };
         if (action === 'loginUser') return { status: 'error', message: 'Servicio de autenticación no disponible.', isFallback: true };
 

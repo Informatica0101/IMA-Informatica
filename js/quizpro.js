@@ -1268,7 +1268,7 @@ async function loadGlobalTop() {
         const res = await fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' });
         console.log("[QuizPro] Respuesta Ranking:", res);
 
-        if (res.status === 'success') {
+        if (res.status === 'success' && res.global) {
             window.globalTopData = res;
             body.innerHTML = res.global.map((user, idx) => `
                 <tr class="hover:bg-blue-50/30 transition-colors">

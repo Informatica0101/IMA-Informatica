@@ -171,3 +171,7 @@ DESCRIPCIÓN: Se añadió un fallback para la propiedad del nombre de usuario en
 [2026-06-18 11:50]
 ARCHIVO: js/quizpro.js
 DESCRIPCIÓN: Se corrigió la lógica de carga distribuida para manejar correctamente el tipo de dato de 'selectedGrado' mediante window.parseGrade y se normalizaron los nombres de archivo para eliminar acentos (basico.json, etc.), asegurando la compatibilidad con el sistema de archivos y evitando errores 404.
+
+[2026-06-18 12:15]
+ARCHIVO: js/api.js, js/quizpro.js
+DESCRIPCIÓN: Se corrigió el hang en el ranking global. js/api.js ahora devuelve un objeto con 'global: []' como fallback para getGlobalTop, y js/quizpro.js valida la existencia de res.global antes de mapear, evitando errores de 'undefined' que bloqueaban el hilo de renderizado.
