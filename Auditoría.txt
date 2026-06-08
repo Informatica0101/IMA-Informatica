@@ -190,3 +190,38 @@ Archivo: js/student.js
 
 Archivo: js/teacher.js
 - [HALLAZGO] Múltiples llamadas secuenciales a fetchApi detectadas en el flujo de administración académica (loadAcademicAdminData -> renderAsignaturasCheckboxes), violando la arquitectura de latencia mínima de Ticket 4.
+
+AUDITORÍA TAREA 1: Dashboard del Profesor (Módulo de Calificaciones) - 2026-06-18
+- Archivo: js/teacher.js
+- [HALLAZGO] La función openGradeModal no restablece el estado del botón save-grade-btn.
+- [HALLAZGO] En saveGradeBtn.onclick, si la respuesta es exitosa (status === 'success'), el botón permanece deshabilitado y con clases de carga al cerrarse el modal.
+- [HALLAZGO] Si el usuario abre otra entrega para calificar sin recargar la página, el botón save-grade-btn seguirá deshabilitado si la última acción fue un guardado exitoso.
+- [RIESGO] El usuario se ve obligado a cerrar y reabrir el modal o recargar la página si ocurriera algún comportamiento inesperado, pero específicamente aquí es por la falta de reset en el flujo de éxito y en la apertura.
+
+AUDITORÍA TAREA 2: Optimización y Reestructuración del Minijuego "QuizPro" - 2026-06-18
+- Archivo: js/questions-bank.json
+- [HALLAZGO] El archivo contiene un array plano de 771 preguntas.
+- [HALLAZGO] Muchas preguntas tienen el campo "RespuestaCorrecta" con valores como "A", "B", "C", "D".
+- [HALLAZGO] Al randomizar las opciones, la asociación con "A", "B", etc. se pierde si no se maneja dinámicamente.
+- [HALLAZGO] Existen preguntas con etiquetas de grado inconsistentes o mezcladas en el mismo set.
+- [RIESGO] La carga de 771 preguntas en memoria cada vez que se inicia un quiz es ineficiente (aunque tolerable en clientes modernos, no es escalable).
+- [ESTADO BANCO] Se detectaron 215 preguntas de Diseño Web, 252 de Informática I, etc.
+- [HALLAZGO ESTRUCTURA] La estructura de carpetas /js/Banco_Preguntas/ ya existe parcialmente pero requiere validación y completitud.
+
+AUDITORÍA DE MIGRACIÓN (Tarea 2) - 2026-06-18
+- Estructura generada: js/Banco_Preguntas/{Decimo, Undecimo, Duodecimo}/{Asignatura}/{basico, intermedio, avanzado}.json
+- [HALLAZGO] Se normalizaron los nombres de las asignaturas para las carpetas (Informatica, Diseno_Web, etc.).
+- [HALLAZGO] Se normalizó RespuestaCorrecta al valor literal de la opción correcta.
+- [VERIFICACIÓN] js/Banco_Preguntas/Decimo/Informatica/basico.json contiene las preguntas de 10mo grado, nivel básico.
+
+AUDITORÍA DE LÓGICA DE EVALUACIÓN (Tarea 2) - 2026-06-18
+- [VERIFICACIÓN] La función checkAnswer en js/quizpro.js ya compara valores literales (String(selected).toLowerCase() === String(finalCorrect).toLowerCase()).
+- [VERIFICACIÓN] Al migrar RespuestaCorrecta al valor literal en el JSON distribuido, y dado que transformBankQuestions ya asigna q.RespuestaCorrecta a q.answer (que se pasa como argumento 'correct' a checkAnswer), la lógica es compatible.
+- [VERIFICACIÓN] El motor de randomización Fisher-Yates (usado en getBalancedOptions) baraja el array de opciones (strings literales) y el botón onClick envía el literal a checkAnswer. La validación es ahora independiente de la posición 'A', 'B', 'C' o 'D'.
+
+AUDITORÍA TAREA 3: Subsistema de Gamificación (Módulo "Top Global") - 2026-06-18
+- Archivo: js/quizpro.js (Función loadGlobalTop)
+- [HALLAZGO] El mapeo res.global.map((user, idx) => ...) asume que la propiedad user.nombre existe.
+- [HALLAZGO] Si la API devuelve un objeto donde el nombre de usuario está en 'username' o 'display_name', o si la propiedad falta totalmente, el renderizado podría fallar o mostrar resultados inesperados si no hay un fallback.
+- [SITUACIÓN] Se reporta un bloqueo en el hilo de renderizado ("infinite loading"). Esto suele ocurrir si hay un error de JS durante el procesamiento del payload que impide que el flujo continúe (ej. acceso a propiedad de undefined).
+- [SOLUCIÓN] Implementar fallback robusto: user.nombre || user.username || 'Usuario Anónimo'.
