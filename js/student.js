@@ -815,6 +815,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const uploadId = "UP-" + Date.now();
                     const rawBase64 = fileData.split(',')[1];
 
+                    // Implementación de Cola Síncrona y Reintento Unitario (Tarea 3)
                     for (let i = 0; i < totalChunks; i++) {
                         const percent = Math.round((i / totalChunks) * 100);
                         progressSpan.textContent = `Subiendo ${percent}%`;
@@ -822,7 +823,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         const start = i * (CHUNK_SIZE * 1.33);
                         const chunk = rawBase64.substring(start, start + (CHUNK_SIZE * 1.33));
-                        await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData: chunk });
+
+                        let success = false;
+                        let attempts = 0;
+                        while (!success && attempts < 3) {
+                            try {
+                                const chunkRes = await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData: chunk });
+                                if (chunkRes.status === 'success') {
+                                    success = true;
+                                } else {
+                                    throw new Error(chunkRes.message || "Fallo en servidor");
+                                }
+                            } catch (e) {
+                                attempts++;
+                                console.warn(`[IMA-UPLOAD] Reintento ${attempts}/3 para fragmento ${i}:`, e.message);
+                                if (attempts >= 3) throw new Error(`No se pudo subir el fragmento ${i} tras 3 intentos.`);
+                                // Pequeña espera antes de reintentar
+                                await new Promise(r => setTimeout(r, 1000));
+                            }
+                        }
                     }
 
                     progressSpan.textContent = "Finalizando...";

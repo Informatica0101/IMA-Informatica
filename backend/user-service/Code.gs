@@ -4,7 +4,7 @@
 
 const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
 const FRONTEND_URL = "https://informatica0101.github.io";
-// URL: https://script.google.com/macros/s/AKfycbzw1XIJtB8-DVWkKaFu_8st3KXfwWoPDaWkiSIRDo9HwQzx2-BoDOwr_wXO20sAld8T/exec
+// URL: https://script.google.com/macros/s/AKfycbzBljfR1dNJriFLRB816UU4EXUDSy0IfszZ8fjiwpPa6DZ5YPQtUHuCj9mY2LtCynHf/exec
 const DEBUG_MODE = true;
 // SECRET_KEY se obtiene de ScriptProperties para mayor seguridad
 const SECRET_KEY = PropertiesService.getScriptProperties().getProperty('SECRET_KEY') || "IMA-PORTAL-DEVELOPMENT-KEY-UNSECURE";
@@ -19,7 +19,7 @@ const ANALYTICS_CONFIG = {
     MASTERY: { historico: 0.7, actual: 0.3 }
   },
   CALIBRATION: {
-    THRESHOLD: 15,
+    THRESHOLD: 100, // REQ: Mínimo 100 respuestas para estabilizar perfil
     GLOBAL_WEIGHT: 0.8,
     ANCHOR_SUBJECT: "Informática",
     ANCHOR_GRADE: 10,
@@ -462,14 +462,17 @@ function saveGameResult(payload) {
 
   if (existingIndex !== -1) {
     const oldScore = parseFloat(data[existingIndex][5] || 0);
+    // REQ: Unlock Score (maxScore) - Nunca disminuir, reemplazar si el nuevo es superior (Atómico)
     if (score > oldScore) {
       sheet.getRange(existingIndex + 1, 1).setValue(new Date()); // fecha_logro
       sheet.getRange(existingIndex + 1, 6).setValue(score);    // porcentaje_obtenido
       if (totalTime) sheet.getRange(existingIndex + 1, 9).setValue(totalTime);
+      logDebug(`Unlock Score actualizado para ${userId}: ${oldScore} -> ${score}`);
     }
   } else {
     // Estructura: [Fecha, UserId, Alumno, Juego, Asignatura, Puntaje, Nivel, Grado, TiempoTotal]
     sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, asignatura || "General", score, normNivel, grado || "", totalTime || 0]);
+    logDebug(`Nuevo Unlock Score registrado para ${userId}: ${score}`);
   }
   return { status: "success" };
 }

@@ -219,20 +219,18 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     const bestInter = getBestStat('Intermedio');
 
     const basicScore = parseFloat(bestBasic.maxScore);
-    const basicDominio = parseFloat(bestBasic.dominioPromedio || bestBasic.dominio || 0);
-
     const interScore = parseFloat(bestInter.maxScore);
-    const interDominio = parseFloat(bestInter.dominioPromedio || bestInter.dominio || 0);
 
     const btnInter = document.getElementById('btn-intermedio');
     const cardInter = document.getElementById('level-intermedio');
     const btnAvan = document.getElementById('btn-avanzado');
     const cardAvan = document.getElementById('level-avanzado');
 
-    // FASE 13: Desacoplamiento Lineal (A-149)
+    // FASE 13: Desacoplamiento Lineal y Unlock Score (A-149)
+    // Regla: Únicamente el Unlock Score (maxScore >= 70) activa el desbloqueo.
     // Intermedio depende de Básico; Avanzado depende UNICAMENTE de Intermedio.
-    const canUnlockInter = isTeacher || (basicScore >= 70 && basicDominio >= 60);
-    const canUnlockAvan = isTeacher || (interScore >= 70 && interDominio >= 70);
+    const canUnlockInter = isTeacher || (basicScore >= 70);
+    const canUnlockAvan = isTeacher || (interScore >= 70);
 
     // UI Intermedio
     if (canUnlockInter) {
