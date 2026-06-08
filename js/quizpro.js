@@ -162,16 +162,16 @@ function checkCrossGradeLock(subjectName, targetGrade) {
     const levels = ['Básico', 'Intermedio', 'Avanzado'];
     for (const req of subjectsToApprove) {
         for (const lvl of levels) {
-            // FASE 13: Validación Cross-Grade (Nota >= 70 + Dominio >= 60)
+            // FASE 13: Validación Cross-Grade (Unlock Score >= 70%)
+            // Se elimina dependencia del dominio para evitar bloqueos por fluctuación (A-149)
             const hasApproval = statsArray.some(s =>
                 window.normalizeSubject(s.subject) === req.name &&
                 window.parseGrade(s.grade) === req.gradeNum &&
                 window.getStandardLevelName(s.level) === lvl &&
-                parseFloat(s.maxScore || 0) >= 70 &&
-                parseFloat(s.dominioPromedio || s.dominio || 0) >= 60
+                parseFloat(s.maxScore || 0) >= 70
             );
             if (!hasApproval) {
-                console.log(`Locking ${subjectName}: Missing ${req.name} ${lvl} (${req.gradeNum}) con dominio suficiente.`);
+                console.log(`Locking ${subjectName}: Missing ${req.name} ${lvl} (${req.gradeNum}) con puntaje suficiente.`);
                 return true;
             }
         }
@@ -201,28 +201,52 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     }
 
     // REQ 3.B: Progresión Interna por Niveles (Fase 13: Mastery-Based)
-    const stats = Object.values(window.userGameStats).filter(s =>
-        window.normalizeSubject(s.subject) === window.normalizeSubject(subjectName) &&
-        window.parseGrade(s.grade) === window.parseGrade(gradeLabel)
-    );
+    // Reducción Extrema: Asegurar evaluación del mejor intento histórico (A-149)
+    const statsArray = Object.values(window.userGameStats || {});
 
-    const basicStat = stats.find(s => window.getStandardLevelName(s.level) === 'Básico');
-    const interStat = stats.find(s => window.getStandardLevelName(s.level) === 'Intermedio');
+    // Normalizar criterios de búsqueda para asegurar coincidencia robusta (Tarea 1: Fix)
+    const targetGradeNum = window.parseGrade(gradeLabel);
+    const targetSubjectNorm = window.normalizeSubject(subjectName);
 
-    const basicScore = basicStat?.maxScore || 0;
-    const basicDominio = basicStat?.dominioPromedio || basicStat?.dominio || 0;
+    // Filtrar estadísticas pertinentes con normalización cruzada
+    const relevantStats = statsArray.filter(s => {
+        if (!s.subject || s.grade === undefined) return false;
+        return window.normalizeSubject(s.subject) === targetSubjectNorm &&
+               window.parseGrade(s.grade) === targetGradeNum;
+    });
 
-    const interScore = interStat?.maxScore || 0;
-    const interDominio = interStat?.dominioPromedio || interStat?.dominio || 0;
+    // Obtener el puntaje máximo absoluto para cada nivel (Ignorando otros factores)
+    const getScoreForLevel = (lvlName) => {
+        const matches = relevantStats.filter(s => window.getStandardLevelName(s.level) === lvlName);
+        if (matches.length === 0) return 0;
+        return Math.max(...matches.map(m => parseFloat(m.maxScore || 0)));
+    };
+
+    const basicScore = getScoreForLevel('Básico');
+    const interScore = getScoreForLevel('Intermedio');
 
     const btnInter = document.getElementById('btn-intermedio');
     const cardInter = document.getElementById('level-intermedio');
     const btnAvan = document.getElementById('btn-avanzado');
     const cardAvan = document.getElementById('level-avanzado');
 
-    // FASE 13: Los niveles se desbloquean si Nota >= 70 Y Dominio >= 60/70
-    const canUnlockInter = isTeacher || (basicScore >= 70 && basicDominio >= 60);
-    const canUnlockAvan = isTeacher || (basicScore >= 70 && interScore >= 70 && basicDominio >= 60 && interDominio >= 70);
+    // FASE 13: Progresión Académica Basada en Dominio (Dual Guard)
+    // Regla: Para desbloquear el siguiente nivel, el estudiante debe alcanzar:
+    // 1. Nota (Score) >= 70%
+    // 2. Índice de Dominio (Mastery) >= 60% (Intermedio) o >= 70% (Avanzado)
+
+    // Obtener Mastery para cada nivel
+    const getMasteryForLevel = (lvlName) => {
+        const matches = relevantStats.filter(s => window.getStandardLevelName(s.level) === lvlName);
+        if (matches.length === 0) return 0;
+        return Math.max(...matches.map(m => parseFloat(m.dominio || 0)));
+    };
+
+    const basicMastery = getMasteryForLevel('Básico');
+    const interMastery = getMasteryForLevel('Intermedio');
+
+    const canUnlockInter = isTeacher || (basicScore >= 70 && basicMastery >= 60);
+    const canUnlockAvan = isTeacher || (interScore >= 70 && interMastery >= 70);
 
     // UI Intermedio
     if (canUnlockInter) {
@@ -1257,8 +1281,34 @@ async function endQuiz() {
     };
 
     if (typeof fetchApi === 'function') {
-        await fetchApi('USER', 'saveGameResult', payload);
-        // REQ 5: Actualizar stats y refrescar UI de niveles para reflejar el desbloqueo
+        // REQ: Esperar a que las analíticas pendientes se procesen antes de guardar resultado final
+        if (window.GamesAdapter && window.GamesAdapter.pendingAnalytics) {
+            await Promise.all(window.GamesAdapter.pendingAnalytics);
+        }
+
+        const res = await fetchApi('USER', 'saveGameResult', payload);
+
+        // Sincronización Local Inmediata con datos reales del Servidor (Tarea 2)
+        if (res.status === 'success' && res.updatedStats) {
+            window.userGameStats = { ...window.userGameStats, ...res.updatedStats };
+            console.log("[QuizPro] Sincronización local completada con éxito.");
+        } else {
+            // Fallback manual si el servidor no retorna los stats actualizados
+            const lvl = window.getStandardLevelName(selectedDifficulty);
+            const key = `QuizPro_${selectedAsignatura}_${selectedGrado}_${lvl}`;
+            if (!window.userGameStats[key] || finalPercent > (window.userGameStats[key].maxScore || 0)) {
+                window.userGameStats[key] = {
+                    ...window.userGameStats[key],
+                    subject: selectedAsignatura,
+                    level: lvl,
+                    grade: selectedGrado,
+                    maxScore: Math.max(finalPercent, window.userGameStats[key]?.maxScore || 0),
+                    date: new Date().toISOString()
+                };
+            }
+        }
+
+        // Refrescar tabla y UI
         await loadPerformanceTable();
     }
 }

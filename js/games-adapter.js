@@ -121,16 +121,25 @@ window.GamesAdapter = {
         };
         this.state.currentSession.actions.push(action);
 
+        // REQ: Track pending analytical calls for final synchronization (Tarea 2)
+        if (!this.pendingAnalytics) this.pendingAnalytics = [];
+
         // Envío asíncrono para no bloquear UI
         const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         if (user) {
-            fetchApi('USER', 'recordAnalytics', {
+            const promise = fetchApi('USER', 'recordAnalytics', {
                 userId: user.userId,
                 grado: user.grado,
                 gameId: this.state.currentSession.gameId,
                 gameName: this.state.currentSession.gameId, // Por ahora igual
                 ...action
             }).catch(e => console.warn("[GamesAdapter] Fallo registro analítico:", e));
+
+            this.pendingAnalytics.push(promise);
+            // Limpieza automática
+            promise.finally(() => {
+                this.pendingAnalytics = this.pendingAnalytics.filter(p => p !== promise);
+            });
         }
     },
 

@@ -250,3 +250,41 @@ AUDITORÍA DE REMEDIACIÓN MANUAL (Tarea 2) - 2026-06-18
 - [VERIFICACIÓN] RespuestaCorrecta normalizada a valor literal en todos los reactivos.
 - [SANEAMIENTO] CLI reubicado correctamente en Informatica_Aplicada (Undecimo).
 - [ESTRUCTURA] 18 archivos .json funcionales.
+
+AUDITORÍA DE PROGRESIÓN Y CARGA (Tarea 2 y 3) - 2026-06-18
+
+Archivo: js/quizpro.js
+- [REGRESIÓN] El nivel avanzado se bloqueaba erróneamente por fluctuaciones en el Índice de Dominio.
+- [CAUSA] Acoplamiento de Mastery con Unlock Score en la misma expresión booleana.
+- [REPARACIÓN] Implementado Desacoplamiento Lineal: Nivel X depende solo de maxScore de Nivel X-1.
+- [REPARACIÓN] Implementada Reducción Extrema para evaluar el mejor intento histórico.
+
+Archivo: js/student.js
+- [FALLA] Pérdida de fragmentos en carga de PDF por concurrencia descontrolada.
+- [REPARACIÓN] Implementada Cola Síncrona (secuencial) para fragmentos.
+- [REPARACIÓN] Implementado Reintento Unitario (3 intentos por fragmento).
+
+Archivo: backend/user-service/Code.gs
+- [AJUSTE] Independencia de métricas en getGameStats.
+- [AJUSTE] Umbral de Cold Start elevado a 100 registros para estabilidad analítica.
+
+AUDITORÍA DE REMEDIACIÓN FINAL (POST-COMMIT) - 2026-06-18
+
+Archivo: js/student.js
+- [CORREGIDO] Refactorización de chunking: Ahora realiza slice binario (Blob.slice) ANTES de la conversión a Base64, evitando errores de desbordamiento de cadena y garantizando fragmentos de exactamente 1MB.
+- [CORREGIDO] Sanitización de Base64: Se asegura el padding (=) en cada fragmento enviado al microservicio.
+
+Archivo: backend/task-service/Code.gs
+- [CORREGIDO] uploadChunk: Implementada sanitización robusta de Base64 (reemplazo de caracteres URL-safe, eliminación de espacios y validación de padding) para eliminar el error "No se pudo descifrar la cadena".
+
+Archivo: js/quizpro.js
+- [RESTAURADO] Dual Guard de Progresión: Se reactivó el requisito Score >= 70% AND Mastery >= 60/70%.
+- [CORREGIDO] Sincronización: endQuiz ahora espera a que GamesAdapter.pendingAnalytics se resuelva por completo antes de guardar el resultado final, garantizando que el Índice de Dominio esté actualizado.
+- [CORREGIDO] Actualización de Estado: Se utiliza el payload updatedStats retornado por el servidor para refrescar window.userGameStats sin peticiones adicionales.
+
+Archivo: backend/user-service/Code.gs
+- [CORREGIDO] Ponderación Adaptativa: Implementado sistema 100% (primer intento), 50/50 (intentos < 5) y 70/30 (estabilizado) para resolver bloqueos de progresión por Cold Start.
+- [CORREGIDO] Agregador de Nivel: Implementado tag "__NIVEL_COMPLETO__" en LearningProfile para una métrica de dominio consolidada y estable para el desbloqueo.
+
+Archivo: js/games-adapter.js
+- [CORREGIDO] recordAction: Ahora rastrea promesas pendientes en this.pendingAnalytics para permitir sincronización determinista.
