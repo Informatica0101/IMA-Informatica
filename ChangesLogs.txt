@@ -153,3 +153,29 @@ ARCHIVO: js/student.js
 ARCHIVO: js/teacher.js
 - Línea 126: Sincronización de window.PARCIAL_ACTUAL agregada a loadAcademicAdminData.
 - Línea 780: Refactorizada fetchTeacherActivity para incluir getAcademicConfig en Promise.all (Ticket 4).
+
+[2026-06-18 10:30]
+ARCHIVO: js/teacher.js
+LINEAS: 1581-1583, 1638-1640
+DESCRIPCIÓN: Se implementó el restablecimiento explícito del estado del botón 'save-grade-btn' tanto al abrir el modal (openGradeModal) como al recibir una respuesta exitosa del servidor. Esto soluciona el bug de persistencia de estado deshabilitado entre entregas secuenciales.
+
+[2026-06-18 11:15]
+ARCHIVO: js/Banco_Preguntas/ (Múltiples JSON)
+DESCRIPCIÓN: Migración del banco de preguntas plano (js/questions-bank.json) a una estructura distribuida por Grado/Asignatura/Nivel. Se normalizó el campo 'RespuestaCorrecta' para almacenar el valor literal en lugar de un índice estático, permitiendo la randomización de opciones sin perder la integridad de la evaluación.
+
+[2026-06-18 11:35]
+ARCHIVO: js/quizpro.js
+LINEAS: 1274-1275
+DESCRIPCIÓN: Se añadió un fallback para la propiedad del nombre de usuario en el renderizado del Ranking Global. Esto previene el bloqueo del hilo de renderizado (infinite loading) cuando la API no resuelve o devuelve una propiedad diferente a 'nombre'.
+
+[2026-06-18 11:50]
+ARCHIVO: js/quizpro.js
+DESCRIPCIÓN: Se corrigió la lógica de carga distribuida para manejar correctamente el tipo de dato de 'selectedGrado' mediante window.parseGrade y se normalizaron los nombres de archivo para eliminar acentos (basico.json, etc.), asegurando la compatibilidad con el sistema de archivos y evitando errores 404.
+
+[2026-06-18 12:15]
+ARCHIVO: js/api.js, js/quizpro.js
+DESCRIPCIÓN: Se corrigió el hang en el ranking global. js/api.js ahora devuelve un objeto con 'global: []' como fallback para getGlobalTop, y js/quizpro.js valida la existencia de res.global antes de mapear, evitando errores de 'undefined' que bloqueaban el hilo de renderizado.
+
+[2026-06-18 12:45]
+ARCHIVO: backend/user-service/Code.gs
+DESCRIPCIÓN: Se reforzó el filtrado de nulos e inválidos en getGlobalTop para asegurar la integridad del JSON de respuesta.

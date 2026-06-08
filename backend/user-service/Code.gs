@@ -582,8 +582,10 @@ function getGlobalTop(payload) {
     });
   }
 
-  // Ordenar Global
-  globalLeaderboard.sort((a, b) => b.promedio - a.promedio);
+  // Ordenar Global y Limpiar nulos/inválidos (Tarea 3)
+  const cleanLeaderboard = globalLeaderboard
+    .filter(u => u && u.nombre && !isNaN(u.promedio))
+    .sort((a, b) => b.promedio - a.promedio);
 
   // Procesar Top por Asignatura (Empates incluidos)
   const finalSubjectTops = {};
@@ -599,7 +601,7 @@ function getGlobalTop(payload) {
 
   return {
     status: "success",
-    global: globalLeaderboard.slice(0, 10), // Top 10 Global
+    global: cleanLeaderboard.slice(0, 10), // Limitar a Top 10 para evitar regresión de rendimiento
     subjectTops: finalSubjectTops
   };
 }

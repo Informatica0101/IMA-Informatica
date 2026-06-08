@@ -391,24 +391,42 @@ async function loadQuestions() {
     allPresentationQuestions = [];
     console.log(`[QuizPro] Consultando Banco Central para: ${selectedAsignatura} (${selectedDifficulty})`);
 
-    // FASE 1: Consumo Local (JSON) como fuente primaria
+    // Tarea 2: Reingeniería de Arquitectura de Datos - Carga Distribuida
     try {
-        const localRes = await fetch('js/questions-bank.json');
+        const gradeNum = window.parseGrade ? window.parseGrade(selectedGrado) : parseInt(selectedGrado);
+        const gradeFolder = gradeNum === 10 ? 'Decimo' : (gradeNum === 11 ? 'Undecimo' : 'Duodecimo');
+
+        const mapping = {
+            'Informática': 'Informatica',
+            'Informática Aplicada': 'Informatica_Aplicada',
+            'Diseño Web': 'Diseno_Web',
+            'Programación': 'Programacion',
+            'Análisis y Diseño': 'Analisis_Diseno',
+            'Ofimática': 'Ofimatica',
+            'Informática I': 'Informatica'
+        };
+        const asignaturaFolder = mapping[selectedAsignatura] || selectedAsignatura.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_');
+
+        // Normalizar nombre de archivo para evitar problemas con acentos (Tarea 2: Corrección)
+        const rawLevel = window.getStandardLevelName(selectedDifficulty);
+        const levelFile = rawLevel.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") + '.json';
+
+        const path = `js/Banco_Preguntas/${gradeFolder}/${asignaturaFolder}/${levelFile}`;
+        console.log(`[QuizPro] Intentando cargar desde: ${path}`);
+
+        const localRes = await fetch(path);
         if (localRes.ok) {
             const localData = await localRes.json();
-            const filteredLocal = localData.filter(q =>
-                window.normalizeSubject(q.Asignatura) === window.normalizeSubject(selectedAsignatura) &&
-                window.getStandardLevelName(q.Nivel) === window.getStandardLevelName(selectedDifficulty)
-            );
-
-            if (filteredLocal.length > 0) {
-                console.log(`[QuizPro] Cargadas ${filteredLocal.length} preguntas desde JSON local.`);
-                allPresentationQuestions = transformBankQuestions(filteredLocal);
+            if (localData && localData.length > 0) {
+                console.log(`[QuizPro] Cargadas ${localData.length} preguntas desde arquitectura distribuida.`);
+                allPresentationQuestions = transformBankQuestions(localData);
                 return;
+            } else {
+                console.log(`[QuizPro] Archivo local encontrado pero vacío: ${path}. Continuando a Banco Central.`);
             }
         }
     } catch (e) {
-        console.warn("[QuizPro] Fallo carga de JSON local, reintentando con API...", e);
+        console.warn("[QuizPro] Fallo carga desde arquitectura distribuida, reintentando con Banco Central...", e);
     }
 
     // FASE 2: Consumo API (Google Sheets) como fuente secundaria
@@ -1254,21 +1272,23 @@ async function loadGlobalTop() {
         const res = await fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' });
         console.log("[QuizPro] Respuesta Ranking:", res);
 
-        if (res.status === 'success') {
+        if (res.status === 'success' && Array.isArray(res.global)) {
             window.globalTopData = res;
-            body.innerHTML = res.global.map((user, idx) => `
+            body.innerHTML = res.global
+                .filter(user => user && (user.nombre || user.username || user.display_name))
+                .map((user, idx) => `
                 <tr class="hover:bg-blue-50/30 transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
                             <span class="w-6 h-6 flex items-center justify-center rounded-full ${idx === 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'} text-[10px] font-black">${idx + 1}</span>
                             <div>
-                                <p class="font-bold text-gray-900 leading-none">${user.nombre}</p>
-                                <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">${user.grado}</p>
+                                <p class="font-bold text-gray-900 leading-none">${user.nombre || user.username || user.display_name || 'Usuario'}</p>
+                                <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">${user.grado || 'Grado N/A'}</p>
                             </div>
                         </div>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <span class="text-sm font-black ${user.promedio >= 70 ? 'text-emerald-600' : 'text-gray-400'}">${user.promedio}%</span>
+                        <span class="text-sm font-black ${(user.promedio || 0) >= 70 ? 'text-emerald-600' : 'text-gray-400'}">${user.promedio || 0}%</span>
                     </td>
                 </tr>
             `).join('');

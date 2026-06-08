@@ -1578,6 +1578,10 @@ document.addEventListener('DOMContentLoaded', () => {
         currentEditingEntregaId = entrega.entregaId;
         document.getElementById('student-name-modal').textContent = entrega.alumnoNombre;
 
+        // Restablecer estado del botón de guardado (Tarea 1: Inicialización)
+        saveGradeBtn.disabled = false;
+        saveGradeBtn.classList.remove('btn-loading', 'opacity-50', 'cursor-not-allowed');
+
         // Mostrar información relevante de la entrega (Req 1)
         const taskTitleEl = document.getElementById('grade-modal-task-title');
         const deliveryDateEl = document.getElementById('grade-modal-date');
@@ -1636,6 +1640,8 @@ document.addEventListener('DOMContentLoaded', () => {
             else throw new Error(res.message);
         } catch (error) {
             alert('Error al guardar: ' + error.message);
+        } finally {
+            // Restablecer estado tras éxito o error para el siguiente ciclo (Tarea 1: Restablecimiento)
             saveGradeBtn.disabled = false;
             saveGradeBtn.classList.remove('btn-loading', 'opacity-50', 'cursor-not-allowed');
         }
