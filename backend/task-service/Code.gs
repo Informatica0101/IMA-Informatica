@@ -328,68 +328,93 @@ function uploadFile(payload) {
  * Recibe un trozo de archivo y lo guarda temporalmente.
  */
 function uploadChunk(payload) {
-  const { uploadId, chunkIndex, chunkData } = payload;
+  try {
+    const { uploadId, chunkIndex, chunkData } = payload;
+    if (!uploadId || chunkIndex === undefined || !chunkData) throw new Error("Parámetros de chunk incompletos.");
 
-  const tempRoot = getOrCreateFolder(DriveApp.getRootFolder(), ".temp_uploads");
-  const uploadFolder = getOrCreateFolder(tempRoot, uploadId);
+    const tempRoot = getOrCreateFolder(DriveApp.getRootFolder(), ".temp_uploads");
+    const uploadFolder = getOrCreateFolder(tempRoot, uploadId);
 
-  const blob = Utilities.newBlob(Utilities.base64Decode(chunkData), "application/octet-stream", `chunk_${chunkIndex}`);
-  uploadFolder.createFile(blob);
+    const blob = Utilities.newBlob(Utilities.base64Decode(chunkData), "application/octet-stream", `chunk_${chunkIndex}`);
+    uploadFolder.createFile(blob);
 
-  return { status: "success", message: `Chunk ${chunkIndex} recibido.` };
+    return { status: "success", message: `Chunk ${chunkIndex} recibido.` };
+  } catch (e) {
+    logDebug("Error en uploadChunk:", e.message);
+    return { status: "error", message: "Error al procesar fragmento: " + e.message };
+  }
 }
 
 /**
  * Une todos los chunks y crea el archivo final.
  */
 function finishChunkedUpload(payload) {
-  const { uploadId, userId, tareaId, parcial, asignatura, fileName, mimeType, totalChunks } = payload;
-
-  const tempRoot = getOrCreateFolder(DriveApp.getRootFolder(), ".temp_uploads");
-  const uploadFolder = getOrCreateFolder(tempRoot, uploadId);
-  const chunks = uploadFolder.getFiles();
-
-  const chunkMap = {};
-  while (chunks.hasNext()) {
-    const file = chunks.next();
-    const idx = parseInt(file.getName().split('_')[1]);
-    chunkMap[idx] = file.getBlob().getBytes();
-  }
-
-  let combinedBytes = [];
-  for (let i = 0; i < totalChunks; i++) {
-    if (!chunkMap[i]) throw new Error(`Falta el chunk ${i}`);
-    combinedBytes = combinedBytes.concat(chunkMap[i]);
-  }
-
-  const finalBlob = Utilities.newBlob(combinedBytes, mimeType, fileName);
-
-  const alumnoFolder = getStudentFolder(userId);
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const tareasSheet = getSheetOrThrow(ss, "Tareas");
-  const taskData = tareasSheet.getDataRange().getValues().find(row => row[0] === tareaId);
-  const tituloTarea = taskData ? taskData[2] : "Tarea Sin Titulo";
-
-  const parcialFolder = getOrCreateFolder(alumnoFolder, String(parcial || "General"));
-  const asignaturaFolder = getOrCreateFolder(parcialFolder, String(asignatura || "General"));
-  const taskDeliveryFolder = getOrCreateFolder(asignaturaFolder, `${String(tituloTarea)}_${String(userId)}`);
-
-  const file = taskDeliveryFolder.createFile(finalBlob);
-
-  uploadFolder.setTrashed(true);
-
   try {
-    taskDeliveryFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-  } catch (e) {}
+    const { uploadId, userId, tareaId, parcial, asignatura, fileName, mimeType, totalChunks } = payload;
+    if (!uploadId || !userId || !tareaId || totalChunks === undefined) throw new Error("Parámetros incompletos para finalizar subida.");
 
-  return {
-    status: "success",
-    data: {
-      fileId: file.getId(),
-      folderId: taskDeliveryFolder.getId(),
-      mimeType: mimeType
+    const tempRoot = getOrCreateFolder(DriveApp.getRootFolder(), ".temp_uploads");
+    const uploadFolder = getOrCreateFolder(tempRoot, uploadId);
+    const chunks = uploadFolder.getFiles();
+
+    const chunkMap = {};
+    let count = 0;
+    while (chunks.hasNext()) {
+      const file = chunks.next();
+      const idx = parseInt(file.getName().split('_')[1]);
+      chunkMap[idx] = file.getBlob().getBytes();
+      count++;
     }
-  };
+
+    if (count < totalChunks) throw new Error(`Se esperaban ${totalChunks} fragmentos pero solo se encontraron ${count}.`);
+
+    // Optimización de Memoria: Pre-calcular tamaño total y usar Int8Array (Tarea 3)
+    let totalSize = 0;
+    for (let i = 0; i < totalChunks; i++) {
+      if (!chunkMap[i]) throw new Error(`Falta el fragmento número ${i}.`);
+      totalSize += chunkMap[i].length;
+    }
+
+    const combinedBytes = new Int8Array(totalSize);
+    let offset = 0;
+    for (let i = 0; i < totalChunks; i++) {
+      combinedBytes.set(chunkMap[i], offset);
+      offset += chunkMap[i].length;
+    }
+
+    const finalBlob = Utilities.newBlob(combinedBytes, mimeType, fileName);
+
+    const alumnoFolder = getStudentFolder(userId);
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const tareasSheet = getSheetOrThrow(ss, "Tareas");
+    const taskData = tareasSheet.getDataRange().getValues().find(row => row[0] === tareaId);
+    const tituloTarea = taskData ? taskData[2] : "Tarea Sin Titulo";
+
+    const parcialFolder = getOrCreateFolder(alumnoFolder, String(parcial || "General"));
+    const asignaturaFolder = getOrCreateFolder(parcialFolder, String(asignatura || "General"));
+    const taskDeliveryFolder = getOrCreateFolder(asignaturaFolder, `${String(tituloTarea)}_${String(userId)}`);
+
+    const file = taskDeliveryFolder.createFile(finalBlob);
+
+    // Limpieza de temporales
+    try { uploadFolder.setTrashed(true); } catch (e) { logDebug("Fallo limpieza de carpeta temporal:", e.message); }
+
+    try {
+      taskDeliveryFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    } catch (e) {}
+
+    return {
+      status: "success",
+      data: {
+        fileId: file.getId(),
+        folderId: taskDeliveryFolder.getId(),
+        mimeType: mimeType
+      }
+    };
+  } catch (e) {
+    logDebug("Error en finishChunkedUpload:", e.message);
+    return { status: "error", message: "Error al reconstruir el archivo: " + e.message };
+  }
 }
 
 function submitAssignment(payload) {

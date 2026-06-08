@@ -788,8 +788,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 let fileData;
                 let mimeType = currentFile.type;
 
+                // Forzar Mime-Type PDF si falla la detección del navegador (Tarea 3)
+                if (currentFile.name.toLowerCase().endsWith('.pdf')) {
+                    mimeType = 'application/pdf';
+                }
+
                 // Optimización Móvil: Compresión de imágenes (Req 3.3)
-                // (Tarea HEIC) Saltamos compresión para HEIC para preservar formato original
                 if (currentFile.type.startsWith('image/') && !currentFile.name.toLowerCase().endsWith('.heic')) {
                     progressSpan.textContent = "Optimizando...";
                     if (progressBar) progressBar.style.width = '10%';
@@ -802,7 +806,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
 
-                const blobSize = Math.floor((fileData.length - (fileData.indexOf(',') + 1)) * 0.75);
+                // Calcular tamaño real del blob base64 (Tarea 3: Corrección de cálculo)
+                const base64Data = fileData.split(',')[1] || fileData;
+                const blobSize = Math.ceil((base64Data.length * 3) / 4) - (base64Data.endsWith('==') ? 2 : (base64Data.endsWith('=') ? 1 : 0));
 
                 if (blobSize > CHUNK_SIZE) {
                     const totalChunks = Math.ceil(blobSize / CHUNK_SIZE);

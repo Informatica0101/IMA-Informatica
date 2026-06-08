@@ -616,6 +616,11 @@ function getGameStats(payload) {
     const stats = {};
     const userRows = data.filter(r => String(r[1]) === String(userId));
 
+    // Obtener Perfil de Dominio para enriquecer los stats (Tarea 2)
+    const profileSheet = getOrCreateSheet(ss, "LearningProfile");
+    const profileData = profileSheet.getDataRange().getValues().slice(1);
+    const userProfile = profileData.filter(p => String(p[1]) === String(userId));
+
     userRows.forEach(r => {
       const j = r[3];
       const p = parseFloat(r[5] || 0);
@@ -624,10 +629,29 @@ function getGameStats(payload) {
       const grd = r[7];
 
       if (j === "QuizPro") {
+        // Calcular dominio promedio para este nivel/materia
+        const relevantProfile = userProfile.filter(up =>
+          normalizeString(up[2]) === normalizeString(asig) &&
+          getStandardLevelName(up[4]) === getStandardLevelName(lvl)
+        );
+
+        let dominioPromedio = 0;
+        if (relevantProfile.length > 0) {
+          dominioPromedio = Math.round(relevantProfile.reduce((sum, up) => sum + (parseFloat(up[8]) || 0), 0) / relevantProfile.length);
+        }
+
         // Generar llaves únicas por materia, grado y nivel para el frontend
         const key = `QuizPro_${asig}_${grd}_${lvl}`;
         if (!stats[key] || p > stats[key].maxScore) {
-          stats[key] = { maxScore: p, date: r[0], level: lvl, grade: grd, subject: asig };
+          stats[key] = {
+            maxScore: p,
+            dominio: dominioPromedio,
+            dominioPromedio: dominioPromedio,
+            date: r[0],
+            level: lvl,
+            grade: grd,
+            subject: asig
+          };
         }
       } else {
         if (!stats[j] || p > stats[j].maxScore) {

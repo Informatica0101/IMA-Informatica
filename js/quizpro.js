@@ -209,11 +209,11 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     const basicStat = stats.find(s => window.getStandardLevelName(s.level) === 'Básico');
     const interStat = stats.find(s => window.getStandardLevelName(s.level) === 'Intermedio');
 
-    const basicScore = basicStat?.maxScore || 0;
-    const basicDominio = basicStat?.dominioPromedio || basicStat?.dominio || 0;
+    const basicScore = parseFloat(basicStat?.maxScore || 0);
+    const basicDominio = parseFloat(basicStat?.dominioPromedio || basicStat?.dominio || 0);
 
-    const interScore = interStat?.maxScore || 0;
-    const interDominio = interStat?.dominioPromedio || interStat?.dominio || 0;
+    const interScore = parseFloat(interStat?.maxScore || 0);
+    const interDominio = parseFloat(interStat?.dominioPromedio || interStat?.dominio || 0);
 
     const btnInter = document.getElementById('btn-intermedio');
     const cardInter = document.getElementById('level-intermedio');
