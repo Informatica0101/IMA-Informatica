@@ -179,3 +179,10 @@ DESCRIPCIÓN: Se corrigió el hang en el ranking global. js/api.js ahora devuelv
 [2026-06-18 12:45]
 ARCHIVO: backend/user-service/Code.gs
 DESCRIPCIÓN: Se reforzó el filtrado de nulos e inválidos en getGlobalTop para asegurar la integridad del JSON de respuesta.
+
+2026-06-18 14:00 - js/quizpro.js, js/student.js, backend/user-service/Code.gs
+- Refactorización de lógica de desbloqueo (Unlock Score >= 70%).
+- Desacoplamiento de Mastery Index del flujo de acceso.
+- Optimización de carga de archivos (Sequential Queue + Retries).
+- Actualización de endpoints de microservicios (User/Task).
+- Implementación de fase Cold Start (100 reactivos).

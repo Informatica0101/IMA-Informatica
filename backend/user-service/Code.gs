@@ -4,7 +4,7 @@
 
 const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
 const FRONTEND_URL = "https://informatica0101.github.io";
-// URL: https://script.google.com/macros/s/AKfycbzBljfR1dNJriFLRB816UU4EXUDSy0IfszZ8fjiwpPa6DZ5YPQtUHuCj9mY2LtCynHf/exec
+// URL: https://script.google.com/macros/s/AKfycbyJ8avsUWB6l11G1WCHpSJUOgRoeuB45Ys0fm6O6pWRAnAJuO7DGSU9LKuht_wZVeLh/exec
 const DEBUG_MODE = true;
 // SECRET_KEY se obtiene de ScriptProperties para mayor seguridad
 const SECRET_KEY = PropertiesService.getScriptProperties().getProperty('SECRET_KEY') || "IMA-PORTAL-DEVELOPMENT-KEY-UNSECURE";
@@ -632,29 +632,28 @@ function getGameStats(payload) {
       const grd = r[7];
 
       if (j === "QuizPro") {
-        // Calcular dominio promedio para este nivel/materia
+        // Generar llaves únicas por materia, grado y nivel para el frontend
+        const key = `QuizPro_${asig}_${grd}_${lvl}`;
+
+        // Calcular dominio promedio para este nivel/materia (Independiente del puntaje)
         const relevantProfile = userProfile.filter(up =>
           normalizeString(up[2]) === normalizeString(asig) &&
           getStandardLevelName(up[4]) === getStandardLevelName(lvl)
         );
 
-        let dominioPromedio = 0;
+        let dominioAcumulado = 0;
         if (relevantProfile.length > 0) {
-          dominioPromedio = Math.round(relevantProfile.reduce((sum, up) => sum + (parseFloat(up[8]) || 0), 0) / relevantProfile.length);
+          dominioAcumulado = Math.round(relevantProfile.reduce((sum, up) => sum + (parseFloat(up[8]) || 0), 0) / relevantProfile.length);
         }
 
-        // Generar llaves únicas por materia, grado y nivel para el frontend
-        const key = `QuizPro_${asig}_${grd}_${lvl}`;
-        if (!stats[key] || p > stats[key].maxScore) {
-          stats[key] = {
-            maxScore: p,
-            dominio: dominioPromedio,
-            dominioPromedio: dominioPromedio,
-            date: r[0],
-            level: lvl,
-            grade: grd,
-            subject: asig
-          };
+        if (!stats[key]) {
+          stats[key] = { maxScore: p, dominio: dominioAcumulado, dominioPromedio: dominioAcumulado, date: r[0], level: lvl, grade: grd, subject: asig };
+        } else {
+          // CAPA 2: El Unlock Score nunca disminuye (Atómico)
+          if (p > stats[key].maxScore) stats[key].maxScore = p;
+          // CAPA 4: El dominio se actualiza al valor más reciente/acumulado
+          stats[key].dominio = dominioAcumulado;
+          stats[key].dominioPromedio = dominioAcumulado;
         }
       } else {
         if (!stats[j] || p > stats[j].maxScore) {

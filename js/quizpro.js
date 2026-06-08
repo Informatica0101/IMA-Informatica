@@ -162,16 +162,16 @@ function checkCrossGradeLock(subjectName, targetGrade) {
     const levels = ['Básico', 'Intermedio', 'Avanzado'];
     for (const req of subjectsToApprove) {
         for (const lvl of levels) {
-            // FASE 13: Validación Cross-Grade (Nota >= 70 + Dominio >= 60)
+            // FASE 13: Validación Cross-Grade (Unlock Score >= 70%)
+            // Se elimina dependencia del dominio para evitar bloqueos por fluctuación (A-149)
             const hasApproval = statsArray.some(s =>
                 window.normalizeSubject(s.subject) === req.name &&
                 window.parseGrade(s.grade) === req.gradeNum &&
                 window.getStandardLevelName(s.level) === lvl &&
-                parseFloat(s.maxScore || 0) >= 70 &&
-                parseFloat(s.dominioPromedio || s.dominio || 0) >= 60
+                parseFloat(s.maxScore || 0) >= 70
             );
             if (!hasApproval) {
-                console.log(`Locking ${subjectName}: Missing ${req.name} ${lvl} (${req.gradeNum}) con dominio suficiente.`);
+                console.log(`Locking ${subjectName}: Missing ${req.name} ${lvl} (${req.gradeNum}) con puntaje suficiente.`);
                 return true;
             }
         }

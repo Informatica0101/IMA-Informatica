@@ -250,3 +250,20 @@ AUDITORÍA DE REMEDIACIÓN MANUAL (Tarea 2) - 2026-06-18
 - [VERIFICACIÓN] RespuestaCorrecta normalizada a valor literal en todos los reactivos.
 - [SANEAMIENTO] CLI reubicado correctamente en Informatica_Aplicada (Undecimo).
 - [ESTRUCTURA] 18 archivos .json funcionales.
+
+AUDITORÍA DE PROGRESIÓN Y CARGA (Tarea 2 y 3) - 2026-06-18
+
+Archivo: js/quizpro.js
+- [REGRESIÓN] El nivel avanzado se bloqueaba erróneamente por fluctuaciones en el Índice de Dominio.
+- [CAUSA] Acoplamiento de Mastery con Unlock Score en la misma expresión booleana.
+- [REPARACIÓN] Implementado Desacoplamiento Lineal: Nivel X depende solo de maxScore de Nivel X-1.
+- [REPARACIÓN] Implementada Reducción Extrema para evaluar el mejor intento histórico.
+
+Archivo: js/student.js
+- [FALLA] Pérdida de fragmentos en carga de PDF por concurrencia descontrolada.
+- [REPARACIÓN] Implementada Cola Síncrona (secuencial) para fragmentos.
+- [REPARACIÓN] Implementado Reintento Unitario (3 intentos por fragmento).
+
+Archivo: backend/user-service/Code.gs
+- [AJUSTE] Independencia de métricas en getGameStats.
+- [AJUSTE] Umbral de Cold Start elevado a 100 registros para estabilidad analítica.
