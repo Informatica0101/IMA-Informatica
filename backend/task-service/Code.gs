@@ -335,7 +335,12 @@ function uploadChunk(payload) {
     const tempRoot = getOrCreateFolder(DriveApp.getRootFolder(), ".temp_uploads");
     const uploadFolder = getOrCreateFolder(tempRoot, uploadId);
 
-    const blob = Utilities.newBlob(Utilities.base64Decode(chunkData), "application/octet-stream", `chunk_${chunkIndex}`);
+    // REQ: Sanitización de Base64 para evitar "No se pudo descifrar la cadena" (Tarea 3)
+    let sanitizedData = chunkData.replace(/-/g, '+').replace(/_/g, '/');
+    sanitizedData = sanitizedData.replace(/\s/g, ''); // Eliminar espacios o saltos de línea
+    while (sanitizedData.length % 4 !== 0) sanitizedData += '='; // Asegurar padding
+
+    const blob = Utilities.newBlob(Utilities.base64Decode(sanitizedData), "application/octet-stream", `chunk_${chunkIndex}`);
     uploadFolder.createFile(blob);
 
     return { status: "success", message: `Chunk ${chunkIndex} recibido.` };

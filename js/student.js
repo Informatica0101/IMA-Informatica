@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Mi Perfil (Centralizado en ui-common.js) ---
 
-    const CHUNK_SIZE = 1024 * 1024 * 2; // 1MB chunks
+    const CHUNK_SIZE = 1024 * 1024; // 1MB chunks
     const PARCIAL_ORDER = {
         "Cuarto Parcial": 4,
         "Tercer Parcial": 3,
@@ -727,8 +727,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (files.length === 0 || activeUploads > 0) return;
 
         // Configuración de Límites y Fragmentación (Tarea 3: Fix)
-        const CHUNK_THRESHOLD = 10 * 1024 * 1024; // 10MB (Umbral de seguridad para Apps Script atomic POST)
-        const CHUNK_SIZE = 2 * 1024 * 1024; // 2MB por fragmento para maximizar estabilidad en redes móviles
+        const CHUNK_THRESHOLD = 5 * 1024 * 1024; // 5MB (Umbral de seguridad para Apps Script atomic POST)
+        const CHUNK_SIZE = 1024 * 1024; // 1MB por fragmento para maximizar estabilidad en redes móviles
 
         filePreviewContainer.classList.remove('hidden');
         uploadedFilesContainer.classList.remove('hidden');
@@ -805,12 +805,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
 
-                const base64Data = fileData.split(',')[1] || fileData;
-                const blobSize = Math.ceil((base64Data.length * 3) / 4) - (base64Data.endsWith('==') ? 2 : (base64Data.endsWith('=') ? 1 : 0));
+                const fileSize = currentFile.size;
 
                 // REQ: Chunk only if > CHUNK_THRESHOLD (Tarea 3)
-                if (blobSize > CHUNK_THRESHOLD) {
-                    const totalChunks = Math.ceil(blobSize / CHUNK_SIZE);
+                if (fileSize > CHUNK_THRESHOLD) {
+                    const totalChunks = Math.ceil(fileSize / CHUNK_SIZE);
                     const uploadId = "UP-" + Date.now();
 
                     for (let i = 0; i < totalChunks; i++) {
@@ -818,14 +817,30 @@ document.addEventListener('DOMContentLoaded', () => {
                         progressSpan.textContent = `Fragmento ${i+1}/${totalChunks} (${percent}%)`;
                         if (progressBar) progressBar.style.width = `${percent}%`;
 
-                        const start = i * (CHUNK_SIZE * 1.334);
-                        const chunk = base64Data.substring(start, start + (CHUNK_SIZE * 1.334));
+                        const start = i * CHUNK_SIZE;
+                        const end = Math.min(start + CHUNK_SIZE, fileSize);
+                        const blobChunk = currentFile.slice(start, end);
+
+                        const chunkData = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                                const base64 = reader.result.split(',')[1];
+                                if (!base64) reject(new Error("Fallo en conversión Base64"));
+                                resolve(base64);
+                            };
+                            reader.onerror = () => reject(new Error("Error de lectura de archivo"));
+                            reader.readAsDataURL(blobChunk);
+                        });
 
                         let success = false;
                         let attempts = 0;
                         while (!success && attempts < 5) {
                             try {
-                                const chunkRes = await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData: chunk });
+                                // REQ: Validación de relleno (padding) para Base64 seguro en GAS (Tarea 3)
+                                let safeChunk = chunkData;
+                                while (safeChunk.length % 4 !== 0) safeChunk += '=';
+
+                                const chunkRes = await fetchApi('TASK', 'uploadChunk', { uploadId, chunkIndex: i, chunkData: safeChunk });
                                 if (chunkRes.status === 'success') {
                                     success = true;
                                 } else throw new Error(chunkRes.message || "Error en fragmento");

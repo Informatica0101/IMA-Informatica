@@ -186,3 +186,20 @@ DESCRIPCIÓN: Se reforzó el filtrado de nulos e inválidos en getGlobalTop para
 - Optimización de carga de archivos (Sequential Queue + Retries).
 - Actualización de endpoints de microservicios (User/Task).
 - Implementación de fase Cold Start (100 reactivos).
+
+[2026-06-18 16:30]
+ARCHIVO: js/student.js
+LINEAS: 815-840
+DESCRIPCIÓN: Refactorización integral del sistema de fragmentación (chunking). Se sustituyó el slice sobre el string Base64 por un slice binario sobre el objeto Blob/File original. Esto garantiza la integridad de los fragmentos y elimina el error de decodificación causado por la ruptura de caracteres multibyte. Se redujo el tamaño de fragmento a 1MB para mejorar la tasa de éxito en redes inestables.
+
+ARCHIVO: backend/task-service/Code.gs
+LINEAS: 338-341
+DESCRIPCIÓN: Implementada capa de pre-procesamiento de Base64 en el endpoint uploadChunk. Ahora se sanitiza la entrada reemplazando caracteres URL-safe y eliminando cualquier espacio en blanco antes de invocar a Utilities.base64Decode. Se solucionó el error crítico "No se pudo descifrar la cadena".
+
+ARCHIVO: backend/user-service/Code.gs
+LINEAS: 1005-1015
+DESCRIPCIÓN: Implementado sistema de Ponderación Adaptativa en el Perfil de Dominio. Los primeros 5 intentos utilizan un peso 50/50 (histórico/actual) en lugar del estándar 70/30 para facilitar el desbloqueo a estudiantes en fase de inicio. Se agregó el tag "__NIVEL_COMPLETO__" para centralizar la métrica de dominio por nivel.
+
+ARCHIVO: js/quizpro.js
+LINEAS: 235-250, 1285-1310
+DESCRIPCIÓN: Restauración de la regla de Progresión Dual (Nota + Dominio). Se implementó un flujo de sincronización determinista en endQuiz que espera la resolución de todas las analíticas asíncronas antes de proceder al guardado final. Se utiliza el retorno actualizado del servidor para refrescar el estado local sin peticiones extra.

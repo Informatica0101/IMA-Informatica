@@ -474,7 +474,15 @@ function saveGameResult(payload) {
     sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, asignatura || "General", score, normNivel, grado || "", totalTime || 0]);
     logDebug(`Nuevo Unlock Score registrado para ${userId}: ${score}`);
   }
-  return { status: "success" };
+
+  // REQ: Retornar estadísticas actualizadas para sincronización inmediata (Tarea 2)
+  const updatedStats = getGameStats({ userId });
+
+  return {
+    status: "success",
+    message: "Resultado guardado y sincronizado.",
+    updatedStats: updatedStats.data || {}
+  };
 }
 
 /**
@@ -642,8 +650,16 @@ function getGameStats(payload) {
         );
 
         let dominioAcumulado = 0;
-        if (relevantProfile.length > 0) {
-          dominioAcumulado = Math.round(relevantProfile.reduce((sum, up) => sum + (parseFloat(up[8]) || 0), 0) / relevantProfile.length);
+        // PRIORIDAD: Obtener el dominio consolidado del nivel completo
+        const overallEntry = relevantProfile.find(up => up[3] === "__NIVEL_COMPLETO__");
+        if (overallEntry) {
+          dominioAcumulado = Math.round(parseFloat(overallEntry[8]) || 0);
+        } else if (relevantProfile.length > 0) {
+          // Fallback: Promediar temas que no sean genéricos
+          const filtered = relevantProfile.filter(up => up[3] !== "General" && up[3] !== "");
+          if (filtered.length > 0) {
+            dominioAcumulado = Math.round(filtered.reduce((sum, up) => sum + (parseFloat(up[8]) || 0), 0) / filtered.length);
+          }
         }
 
         if (!stats[key]) {
@@ -944,6 +960,9 @@ function recordAnalytics(payload) {
   // 8. Actualizar Perfil de Aprendizaje (70/30 Rule)
   updateLearningProfile(ss, userId, asignatura, tema, nivel, esCorrecta, ICR);
 
+  // REQ: Actualizar Dominio Agregado del Nivel (para Desbloqueo Robusto)
+  updateLearningProfile(ss, userId, asignatura, "__NIVEL_COMPLETO__", nivel, esCorrecta, ICR);
+
   // 9. Actualizar Leaderboard
   updateLeaderboard(ss, gameId, userId, asignatura, grado, ICR);
 
@@ -963,7 +982,8 @@ function recordAnalytics(payload) {
  * Implementa un promedio ponderado (70% histórico / 30% actual) para reflejar progreso real.
  */
 function updateLearningProfile(ss, userId, asignatura, tema, nivel, esCorrecta, dominioActual) {
-  if (!tema || tema === 'General') return; // Evitar dilución de analítica con temas genéricos
+  // REQ: Permitir temas específicos y el agregador de nivel
+  if (tema !== "__NIVEL_COMPLETO__" && (!tema || tema === 'General')) return;
 
   const sheet = getOrCreateSheet(ss, "LearningProfile");
   const data = sheet.getDataRange().getValues();
@@ -990,17 +1010,21 @@ function updateLearningProfile(ss, userId, asignatura, tema, nivel, esCorrecta, 
     const aciertos = (parseInt(data[rowIndex][6]) || 0) + (esCorrecta ? 1 : 0);
     const porcentaje = Math.round((aciertos / intentos) * 100);
 
-    // Promedio Ponderado: El desempeño actual pesa un 30% sobre el acumulado (Fase 8 - Rule 70/30)
-    const W_MASTERY = ANALYTICS_CONFIG.WEIGHTS.MASTERY;
+    // REQ: Sistema de Ponderación Adaptativa para evitar "Stuck Profiles" (Tarea 2)
+    // 1. Fase Inicial (< 5 intentos): 50% histórico / 50% actual para permitir recuperación rápida.
+    // 2. Fase Estabilizada (>= 5 intentos): 70% histórico / 30% actual para integridad a largo plazo.
+    const historicalWeight = intentos < 5 ? 0.5 : ANALYTICS_CONFIG.WEIGHTS.MASTERY.historico;
+    const actualWeight = 1 - historicalWeight;
+
     const dominioHistorico = parseFloat(data[rowIndex][8]) || 0;
-    const nuevoDominio = Math.max(0, Math.min(100, Math.round((dominioHistorico * W_MASTERY.historico) + (dominioActual * W_MASTERY.actual))));
+    const nuevoDominio = Math.max(0, Math.min(100, Math.round((dominioHistorico * historicalWeight) + (dominioActual * actualWeight))));
 
     // Columnas: attempts(F), hits(G), percent(H), masteryIndex(I), lastUpdate(J)
     sheet.getRange(rowIndex + 1, 6, 1, 5).setValues([[intentos, aciertos, porcentaje, nuevoDominio, new Date()]]);
-    logDebug(`Dominio actualizado para ${sTema}: ${nuevoDominio}%`);
+    logDebug(`Dominio actualizado (${intentos < 5 ? 'ADAPTATIVO' : 'ESTÁNDAR'}) para ${sTema}: ${nuevoDominio}%`);
   } else {
     const profileId = "PRF-" + Date.now() + "-" + Math.floor(Math.random() * 100);
-    // [profileId, userId, asignatura, tema, nivel, intentos, aciertos, porcentaje, indiceDominio, ultimaActualizacion]
+    // REQ: Cold Start - El primer intento define el 100% del dominio inicial (Tarea 2)
     sheet.appendRow([profileId, sUserId, sAsig, sTema, sNivel, 1, esCorrecta ? 1 : 0, esCorrecta ? 100 : 0, dominioActual, new Date()]);
   }
 }

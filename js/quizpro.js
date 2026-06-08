@@ -230,11 +230,23 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     const btnAvan = document.getElementById('btn-avanzado');
     const cardAvan = document.getElementById('level-avanzado');
 
-    // FASE 13: Desacoplamiento Lineal y Unlock Score (A-149)
-    // Regla: Únicamente el Unlock Score (maxScore >= 70) activa el desbloqueo.
-    // Intermedio depende de Básico; Avanzado depende UNICAMENTE de Intermedio.
-    const canUnlockInter = isTeacher || (basicScore >= 70);
-    const canUnlockAvan = isTeacher || (interScore >= 70);
+    // FASE 13: Progresión Académica Basada en Dominio (Dual Guard)
+    // Regla: Para desbloquear el siguiente nivel, el estudiante debe alcanzar:
+    // 1. Nota (Score) >= 70%
+    // 2. Índice de Dominio (Mastery) >= 60% (Intermedio) o >= 70% (Avanzado)
+
+    // Obtener Mastery para cada nivel
+    const getMasteryForLevel = (lvlName) => {
+        const matches = relevantStats.filter(s => window.getStandardLevelName(s.level) === lvlName);
+        if (matches.length === 0) return 0;
+        return Math.max(...matches.map(m => parseFloat(m.dominio || 0)));
+    };
+
+    const basicMastery = getMasteryForLevel('Básico');
+    const interMastery = getMasteryForLevel('Intermedio');
+
+    const canUnlockInter = isTeacher || (basicScore >= 70 && basicMastery >= 60);
+    const canUnlockAvan = isTeacher || (interScore >= 70 && interMastery >= 70);
 
     // UI Intermedio
     if (canUnlockInter) {
@@ -1269,19 +1281,31 @@ async function endQuiz() {
     };
 
     if (typeof fetchApi === 'function') {
-        await fetchApi('USER', 'saveGameResult', payload);
+        // REQ: Esperar a que las analíticas pendientes se procesen antes de guardar resultado final
+        if (window.GamesAdapter && window.GamesAdapter.pendingAnalytics) {
+            await Promise.all(window.GamesAdapter.pendingAnalytics);
+        }
 
-        // Sincronización Local Inmediata (Tarea 1: Fix Progresión Reactiva)
-        const lvl = window.getStandardLevelName(selectedDifficulty);
-        const key = `QuizPro_${selectedAsignatura}_${selectedGrado}_${lvl}`;
-        if (!window.userGameStats[key] || finalPercent > (window.userGameStats[key].maxScore || 0)) {
-            window.userGameStats[key] = {
-                subject: selectedAsignatura,
-                level: lvl,
-                grade: selectedGrado,
-                maxScore: finalPercent,
-                date: new Date().toISOString()
-            };
+        const res = await fetchApi('USER', 'saveGameResult', payload);
+
+        // Sincronización Local Inmediata con datos reales del Servidor (Tarea 2)
+        if (res.status === 'success' && res.updatedStats) {
+            window.userGameStats = { ...window.userGameStats, ...res.updatedStats };
+            console.log("[QuizPro] Sincronización local completada con éxito.");
+        } else {
+            // Fallback manual si el servidor no retorna los stats actualizados
+            const lvl = window.getStandardLevelName(selectedDifficulty);
+            const key = `QuizPro_${selectedAsignatura}_${selectedGrado}_${lvl}`;
+            if (!window.userGameStats[key] || finalPercent > (window.userGameStats[key].maxScore || 0)) {
+                window.userGameStats[key] = {
+                    ...window.userGameStats[key],
+                    subject: selectedAsignatura,
+                    level: lvl,
+                    grade: selectedGrado,
+                    maxScore: Math.max(finalPercent, window.userGameStats[key]?.maxScore || 0),
+                    date: new Date().toISOString()
+                };
+            }
         }
 
         // Refrescar tabla y UI
