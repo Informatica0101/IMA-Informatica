@@ -1268,9 +1268,11 @@ async function loadGlobalTop() {
         const res = await fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' });
         console.log("[QuizPro] Respuesta Ranking:", res);
 
-        if (res.status === 'success' && res.global) {
+        if (res.status === 'success' && Array.isArray(res.global)) {
             window.globalTopData = res;
-            body.innerHTML = res.global.map((user, idx) => `
+            body.innerHTML = res.global
+                .filter(user => user && (user.nombre || user.username || user.display_name))
+                .map((user, idx) => `
                 <tr class="hover:bg-blue-50/30 transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
@@ -1282,7 +1284,7 @@ async function loadGlobalTop() {
                         </div>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <span class="text-sm font-black ${user.promedio >= 70 ? 'text-emerald-600' : 'text-gray-400'}">${user.promedio}%</span>
+                        <span class="text-sm font-black ${(user.promedio || 0) >= 70 ? 'text-emerald-600' : 'text-gray-400'}">${user.promedio || 0}%</span>
                     </td>
                 </tr>
             `).join('');

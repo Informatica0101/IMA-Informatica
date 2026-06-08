@@ -1635,16 +1635,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (res.status === 'success') {
                 alert('¡Calificación guardada correctamente!');
                 gradeModal.classList.add('hidden');
-
-                // Restablecer estado tras éxito para el siguiente ciclo (Tarea 1: Restablecimiento)
-                saveGradeBtn.disabled = false;
-                saveGradeBtn.classList.remove('btn-loading', 'opacity-50', 'cursor-not-allowed');
-
                 fetchTeacherActivity();
             }
             else throw new Error(res.message);
         } catch (error) {
             alert('Error al guardar: ' + error.message);
+        } finally {
+            // Restablecer estado tras éxito o error para el siguiente ciclo (Tarea 1: Restablecimiento)
             saveGradeBtn.disabled = false;
             saveGradeBtn.classList.remove('btn-loading', 'opacity-50', 'cursor-not-allowed');
         }

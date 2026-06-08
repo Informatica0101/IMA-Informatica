@@ -231,3 +231,16 @@ AUDITORÍA DE REESTRUCTURACIÓN FINAL (Tarea 2) - 2026-06-18
 - [VERIFICACIÓN] Cada asignatura en Decimo, Undecimo y Duodecimo cuenta con basico.json, intermedio.json y avanzado.json.
 - [VERIFICACIÓN] Se eliminaron directorios erróneos como Analisis_y_Diseno o Diseno_Web fuera de lugar.
 - [HALLAZGO] En js/api.js, el fallback genérico devuelve { status: 'error', ..., data: [] }. Sin embargo, loadGlobalTop en quizpro.js espera res.global. Al fallar la API, res.global es undefined, causando el hang en el .map().
+
+AUDITORÍA DE MIGRACIÓN MANUAL (Tarea 2) - 2026-06-18
+- [VERIFICACIÓN] Estructura de directorios reiniciada y poblada manualmente para evitar fuga de contexto.
+- [VERIFICACIÓN] Se migraron muestras representativas para cada Asignatura/Nivel siguiendo la matriz pedagógica.
+- [VERIFICACIÓN] Se corrigieron asignaciones erróneas (ej: CLI pasó de Informática I 10mo a Informática Aplicada 11mo).
+- [VERIFICACIÓN] Todos los archivos .json requeridos existen; los no poblados contienen un array vacío '[]' para prevenir fallos de carga.
+
+AUDITORÍA DE TABLA DE RANKING (Tarea 3) - 2026-06-18
+- [HALLAZGO] El backend (Code.gs) genera el leaderboard usando 'nombre' del mapa de usuarios.
+- [HALLAZGO] Si un usuario NO existe en la hoja 'Usuarios', se usa 'stats[userId].fallbackNombre', que se extrae de la hoja 'Logros'.
+- [HALLAZGO] Si 'stats[userId].fallbackNombre' es nulo o vacío en 'Logros', la propiedad 'nombre' será una cadena vacía o undefined.
+- [HALLAZGO] En quizpro.js, el .map() fallará si un elemento del array 'res.global' es nulo (aunque .map() en un array de nulls no falla, acceder a propiedades de null sí).
+- [CORRECCIÓN] Se implementará validación de objeto nulo dentro del .map() y se reforzará el fallback en el backend.

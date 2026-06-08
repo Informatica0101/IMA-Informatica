@@ -175,3 +175,7 @@ DESCRIPCIÓN: Se corrigió la lógica de carga distribuida para manejar correcta
 [2026-06-18 12:15]
 ARCHIVO: js/api.js, js/quizpro.js
 DESCRIPCIÓN: Se corrigió el hang en el ranking global. js/api.js ahora devuelve un objeto con 'global: []' como fallback para getGlobalTop, y js/quizpro.js valida la existencia de res.global antes de mapear, evitando errores de 'undefined' que bloqueaban el hilo de renderizado.
+
+[2026-06-18 12:45]
+ARCHIVO: backend/user-service/Code.gs
+DESCRIPCIÓN: Se reforzó el filtrado de nulos e inválidos en getGlobalTop para asegurar la integridad del JSON de respuesta.

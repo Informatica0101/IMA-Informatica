@@ -1,1 +1,30 @@
-[]
+[
+  {
+    "Pregunta": "¿Qué ventaja ofrece la instalación por línea de comandos (CLI)?",
+    "RespuestaCorrecta": "Mayor control y posibilidad de automatización",
+    "Nivel": "Intermedio",
+    "Tema": "CLI (Consola)",
+    "Asignatura": "Informatica_Aplicada",
+    "Grado": 11,
+    "TipoActividad": "opcion_multiple",
+    "OpcionA": "Mayor control y posibilidad de automatización",
+    "OpcionB": "Es más colorida",
+    "OpcionC": "No requiere teclado",
+    "OpcionD": "Es solo para expertos",
+    "Activa": true
+  },
+  {
+    "Pregunta": "¿Qué significa CLI?",
+    "RespuestaCorrecta": "Command Line Interface",
+    "Nivel": "Intermedio",
+    "Tema": "CLI (Consola)",
+    "Asignatura": "Informatica_Aplicada",
+    "Grado": 11,
+    "TipoActividad": "opcion_multiple",
+    "OpcionA": "Command Line Interface",
+    "OpcionB": "Computer Logical Input",
+    "OpcionC": "Central Linux Integration",
+    "OpcionD": "Code Local Index",
+    "Activa": true
+  }
+]
