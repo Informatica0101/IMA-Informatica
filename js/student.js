@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Mi Perfil (Centralizado en ui-common.js) ---
 
-    const CHUNK_SIZE = 1024 * 1024; // 1MB chunks
     const PARCIAL_ORDER = {
         "Cuarto Parcial": 4,
         "Tercer Parcial": 3,
@@ -697,6 +696,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- (Req 3.3) Optimizador de Subida de Alta Fidelidad ---
     let uploadQueue = [];
 
+    /**
+     * Segmentación Lógica por Páginas (Object-Level Parsing) para PDF (Tarea 1)
+     * Divide un PDF en partes independientes válidas y legibles.
+     */
+    async function splitPdfLogically(file, partsCount) {
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+            const totalPages = pdfDoc.getPageCount();
+            const pagesPerPart = Math.ceil(totalPages / partsCount);
+            const segments = [];
+
+            for (let i = 0; i < partsCount; i++) {
+                const startPage = i * pagesPerPart;
+                const endPage = Math.min((i + 1) * pagesPerPart, totalPages);
+
+                if (startPage >= totalPages) break;
+
+                const newPdf = await PDFLib.PDFDocument.create();
+                const pagesToCopy = Array.from({ length: endPage - startPage }, (_, j) => startPage + j);
+                const copiedPages = await newPdf.copyPages(pdfDoc, pagesToCopy);
+
+                copiedPages.forEach(page => newPdf.addPage(page));
+
+                const pdfBytes = await newPdf.save();
+                segments.push(new Blob([pdfBytes], { type: 'application/pdf' }));
+            }
+            return segments;
+        } catch (e) {
+            console.error("[IMA-PDF] Error en segmentación lógica:", e);
+            throw new Error("No se pudo procesar la estructura del PDF. El archivo podría estar protegido o dañado.");
+        }
+    }
+
     async function compressImage(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -796,45 +829,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentFile.type.startsWith('image/') && !currentFile.name.toLowerCase().endsWith('.heic')) {
                     progressSpan.textContent = "Optimizando...";
                     if (progressBar) progressBar.style.width = '10%';
-                    fileData = await compressImage(currentFile);
+                    const optimizedDataUrl = await compressImage(currentFile);
+                    fileData = optimizedDataUrl.split(',')[1];
                 } else {
-                    fileData = await new Promise((resolve) => {
+                    fileData = await new Promise((resolve, reject) => {
                         const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
+                        reader.onload = () => {
+                            const base64 = reader.result.split(',')[1];
+                            if (!base64) reject(new Error("Fallo en conversión Base64"));
+                            resolve(base64);
+                        };
+                        reader.onerror = () => reject(new Error("Error de lectura de archivo"));
                         reader.readAsDataURL(currentFile);
                     });
                 }
 
                 const fileSize = currentFile.size;
 
-                // REQ: Segmentación Binaria Autónoma if >= CHUNK_THRESHOLD (Tarea 1)
+                // REQ: Segmentación Libre de Corrupción (Tarea 1: Reingeniería)
                 if (fileSize >= CHUNK_THRESHOLD) {
                     const totalChunks = Math.ceil(fileSize / CHUNK_SIZE);
-                    const uploadId = "UP-" + Date.now();
+                    let segments = [];
 
-                    for (let i = 0; i < totalChunks; i++) {
-                        const percent = Math.round((i / totalChunks) * 100);
-                        progressSpan.textContent = `Parte ${i+1} de ${totalChunks} (${percent}%)`;
+                    if (mimeType === 'application/pdf') {
+                        progressSpan.textContent = "Analizando estructura PDF...";
+                        segments = await splitPdfLogically(currentFile, totalChunks);
+                    } else {
+                        // Fallback para otros binarios (rebanado plano)
+                        for (let i = 0; i < totalChunks; i++) {
+                            const start = i * CHUNK_SIZE;
+                            const end = Math.min(start + CHUNK_SIZE, fileSize);
+                            segments.push(currentFile.slice(start, end, currentFile.type));
+                        }
+                    }
+
+                    for (let i = 0; i < segments.length; i++) {
+                        const percent = Math.round((i / segments.length) * 100);
+                        progressSpan.textContent = `Parte ${i + 1} de ${segments.length} (${percent}%)`;
                         if (progressBar) progressBar.style.width = `${percent}%`;
 
-                        const start = i * CHUNK_SIZE;
-                        const end = Math.min(start + CHUNK_SIZE, fileSize);
-                        // Segmentación Binaria Autónoma (MIME Integrity)
-                        const blobChunk = currentFile.slice(start, end, currentFile.type);
-
+                        const blobChunk = segments[i];
                         const chunkData = await new Promise((resolve, reject) => {
                             const reader = new FileReader();
-                            reader.onload = () => resolve(reader.result);
+                            reader.onload = () => {
+                                const base64 = reader.result.split(',')[1];
+                                if (!base64) reject(new Error("Fallo en conversión Base64"));
+                                resolve(base64);
+                            };
                             reader.onerror = () => reject(new Error("Error de lectura de archivo"));
                             reader.readAsDataURL(blobChunk);
                         });
 
                         // Nombramiento Estructurado (Tarea 1)
-                        const partFileName = `${currentFileName.split('.')[0]} - Parte ${i + 1} de ${totalChunks}.${currentFileName.split('.').pop()}`;
+                        const partFileName = `${currentFileName.split('.')[0]} - Parte ${i + 1} de ${segments.length}.${currentFileName.split('.').pop()}`;
 
                         let success = false;
                         let attempts = 0;
-                        while (!success && attempts < 3) {
+                        while (!success && attempts < 5) {
                             try {
                                 // Subida Directa e Independiente (Evita Timeout en Reconstrucción)
                                 const chunkRes = await fetchApi('TASK', 'uploadFile', {
@@ -853,9 +904,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 } else throw new Error(chunkRes.message || "Error en subida de parte");
                             } catch (e) {
                                 attempts++;
-                                console.warn(`[IMA-UPLOAD] Intento ${attempts}/3 fallido para parte ${i + 1}`);
-                                if (attempts >= 3) throw e;
-                                await new Promise(r => setTimeout(r, 1500 * attempts));
+                                console.warn(`[IMA-UPLOAD] Intento ${attempts}/5 fallido para parte ${i + 1}`);
+                                if (attempts >= 5) throw e;
+                                await new Promise(r => setTimeout(r, 2000 * attempts));
                             }
                         }
                     }
