@@ -176,5 +176,5 @@ El incumplimiento de CUALQUIER paso
 INVALIDA el proceso completo.
 
 
-— ZONAS SEGURAS (ACCESO RESTRINGIDO - PRECAUCIÓN)
-===================================================================
+------------------------------------------------PROHIBIDO AGREGAR, MODIFICAR O BORRAR CONTENIDO ANTES DE ESTA LINEA------------------------------------------------
+================================================================================================
