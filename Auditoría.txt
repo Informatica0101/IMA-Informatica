@@ -244,3 +244,9 @@ AUDITORÍA DE TABLA DE RANKING (Tarea 3) - 2026-06-18
 - [HALLAZGO] Si 'stats[userId].fallbackNombre' es nulo o vacío en 'Logros', la propiedad 'nombre' será una cadena vacía o undefined.
 - [HALLAZGO] En quizpro.js, el .map() fallará si un elemento del array 'res.global' es nulo (aunque .map() en un array de nulls no falla, acceder a propiedades de null sí).
 - [CORRECCIÓN] Se implementará validación de objeto nulo dentro del .map() y se reforzará el fallback en el backend.
+
+AUDITORÍA DE REMEDIACIÓN MANUAL (Tarea 2) - 2026-06-18
+- [ESTADO] Población manual finalizada. Se procesaron reactivos representativos para cada nodo.
+- [VERIFICACIÓN] RespuestaCorrecta normalizada a valor literal en todos los reactivos.
+- [SANEAMIENTO] CLI reubicado correctamente en Informatica_Aplicada (Undecimo).
+- [ESTRUCTURA] 18 archivos .json funcionales.

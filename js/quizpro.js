@@ -417,9 +417,13 @@ async function loadQuestions() {
         const localRes = await fetch(path);
         if (localRes.ok) {
             const localData = await localRes.json();
-            console.log(`[QuizPro] Cargadas ${localData.length} preguntas desde arquitectura distribuida.`);
-            allPresentationQuestions = transformBankQuestions(localData);
-            return;
+            if (localData && localData.length > 0) {
+                console.log(`[QuizPro] Cargadas ${localData.length} preguntas desde arquitectura distribuida.`);
+                allPresentationQuestions = transformBankQuestions(localData);
+                return;
+            } else {
+                console.log(`[QuizPro] Archivo local encontrado pero vacío: ${path}. Continuando a Banco Central.`);
+            }
         }
     } catch (e) {
         console.warn("[QuizPro] Fallo carga desde arquitectura distribuida, reintentando con Banco Central...", e);
