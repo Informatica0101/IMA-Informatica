@@ -179,8 +179,8 @@ window.normalizeQuestion = function(q) {
     // Mapeo crítico para resolver errores de integridad (v3.2)
     const id = q.id || q.ID || q.PreguntaID || `bank_${Math.random().toString(36).substr(2, 9)}`;
     const Asignatura = q.Asignatura || q.subject || q.asignatura || "Informática I";
-    const Pregunta = q.Pregunta || q.question || q.pregunta || "";
-    const TipoActividad = q.TipoActividad || q.type || q.tipoActividad || "opcion_multiple";
+    const Pregunta = q.Pregunta || q.question || q.pregunta || q.enunciado || "";
+    const TipoActividad = q.TipoActividad || q.type || q.tipoActividad || q.tipo_pregunta || "opcion_multiple";
     const Nivel = q.Nivel || q.nivel || "Básico";
     const Tema = q.Tema || q.tema || (q.tags && q.tags[0]) || "General";
     const Grado = q.Grado || q.grado || 10;
@@ -192,6 +192,7 @@ window.normalizeQuestion = function(q) {
 
     const respuestaCorrecta = q.RespuestaCorrecta ??
                              q.respuestaCorrecta ??
+                             q.respuesta_correcta_literal ??
                              q.answer ??
                              q.correctAnswer ??
                              q.correct_answer ??
@@ -200,9 +201,16 @@ window.normalizeQuestion = function(q) {
                              q.a ??
                              null;
 
-    if (respuestaCorrecta === null && TipoActividad !== 'ordering' && TipoActividad !== 'matching') {
+    if (respuestaCorrecta === null && TipoActividad !== 'ordering' && TipoActividad !== 'matching' && TipoActividad !== 'emparejamiento') {
         console.warn("[IMA-NORMALIZER] No se detectó respuesta correcta para la pregunta:", q);
     }
+
+    // Soporte para taxonomía extendida v5.0
+    const Enunciado = q.enunciado || Pregunta;
+    const TipoPregunta = q.tipo_pregunta || TipoActividad;
+    const RespuestaCorrectaLiteral = q.respuesta_correcta_literal || respuestaCorrecta;
+    const OpcionesVisibles = q.opciones_visibles || q.opciones || [];
+    const Parejas = q.parejas || [];
 
     return {
         ...q,
@@ -218,6 +226,12 @@ window.normalizeQuestion = function(q) {
         OpcionC,
         OpcionD,
         RespuestaCorrecta: (respuestaCorrecta !== null) ? String(respuestaCorrecta).trim() : null,
+        // Campos v5.0
+        enunciado: Enunciado,
+        tipo_pregunta: TipoPregunta,
+        respuesta_correcta_literal: (RespuestaCorrectaLiteral !== null) ? String(RespuestaCorrectaLiteral).trim() : null,
+        opciones_visibles: OpcionesVisibles,
+        parejas: Parejas,
         // Mantener campos para compatibilidad con código existente que use camelCase
         asignatura: Asignatura,
         pregunta: Pregunta,

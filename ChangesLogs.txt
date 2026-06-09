@@ -214,3 +214,6 @@ REINGENIERÍA CARGA MULTIPART (TAREA 1)
   - Líneas 877-882: Se ajustó el mapeo de uploadedFiles para priorizar la carpeta contenedora en entregas segmentadas.
 - Archivo: js/api.js
   - Líneas 23-35: Se integró AbortController con un timeout de 60 segundos en fetchApi.
+2026-06-09 00:10 - js/config.js, js/quizpro.js
+Impacto: Motor de Progresión Académica v5.0 y Motor Polimórfico.
+Descripción: Reimplementación del flujo de desbloqueo basado estrictamente en puntuación histórica (Score >= 70%). Implementación de promoción inter-grado mediante Barrera de Sincronización. Actualización del motor de datos para procesar reactivos polimórficos (V/F, Completación, Emparejamiento, Funcionalidad). Normalización de taxonomía extendida en la capa de configuración.
