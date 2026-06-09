@@ -66,11 +66,29 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchAllActivities() {
         if (!tasksList) return;
 
-        // REQ: Spinner Contextual (Ticket 3) - No bloquea la UI global
-        if (window.GamesAdapter) {
-            window.GamesAdapter.showLoading(true, tasksList);
-        } else {
-            tasksList.innerHTML = '<div class="p-12 text-center"><i class="fas fa-spinner fa-spin text-blue-600 text-3xl mb-4"></i><p class="text-gray-500 font-medium">Sincronizando expediente académico...</p></div>';
+        // REQ: Skeleton Screen (Modulo 3)
+        tasksList.innerHTML = `
+            <div class="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                ${Array(6).fill(0).map(() => `
+                    <div class="p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm space-y-4">
+                        <div class="skeleton h-4 w-1/3 rounded"></div>
+                        <div class="skeleton h-6 w-3/4 rounded"></div>
+                        <div class="skeleton h-20 w-full rounded-2xl"></div>
+                        <div class="flex justify-between items-center">
+                            <div class="skeleton h-8 w-1/2 rounded-xl"></div>
+                            <div class="skeleton h-8 w-8 rounded-full"></div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        // REQ: Offline-First (Modulo 1)
+        if (window.PersistenceManager) {
+            const cached = await window.PersistenceManager.get('academic_stats');
+            if (cached && cached.data) {
+                renderStudentExpediente(cached.data);
+            }
         }
 
         try {
@@ -78,7 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // REQ: Mitigación de Latencia mediante Paralelismo (Ticket 4)
             const [tasksResult, examsResult, profileResult] = await Promise.all([
-                fetchApi('TASK', 'getStudentTasks', payload),
+                fetchApi('TASK', 'getStudentTasks', payload, 0, {
+                    store: 'academic_stats',
+                    onUpdate: (data) => renderStudentExpediente(data)
+                }),
                 fetchApi('EXAM', 'getStudentExams', payload),
                 fetchAndRenderLearningProfile(true) // Obtener datos de perfil sin renderizar aún
             ]);

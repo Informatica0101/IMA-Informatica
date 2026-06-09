@@ -253,3 +253,14 @@ DESCRIPCIÓN: Creación del artefacto normativo de ingeniería psicométrica y d
 
 ARCHIVO: js/Banco_Preguntas/Decimo/Informatica/avanzado.json
 DESCRIPCIÓN: Refactorización integral de 50 reactivos para cumplir con la simetría de longitud y homogeneidad conceptual. Eliminación de pistas visuales por extensión.
+
+REINGENIERÍA HÍBRIDA Y GAMIFICACIÓN (v7.0) - 2026-06-21
+
+- ARCHIVO: js/persistence.js: Creación del motor de persistencia Offline-First (Modulo 1).
+- ARCHIVO: js/api.js: Modificada fetchApi para soportar reconciliación silenciosa y priorización (Modulo 1.1).
+- ARCHIVO: js/auth.js: Implementada política antirretroceso en fusión de datos y recuperación de intención (Modulo 2 y 5).
+- ARCHIVO: js/quizpro.js: Implementado algoritmo de XP v7.0, rangos curriculares y desbloqueo secuencial del 70% (Modulo 4 y 6).
+- ARCHIVO: index.html: Agregado Modal de Triaje "¡Prepárate para Jugar!" (Modulo 5).
+- ARCHIVO: css/style.css: Implementadas clases para Skeleton Screens (Modulo 3).
+- ARCHIVO: student-dashboard.html / teacher-dashboard.html: Removido #loading-overlay en favor de carga asíncrona (Modulo 3).
+- ARCHIVO: backend/user-service/Code.gs: Agregado endpoint mergeGuestData para soporte de fusión nativa (Modulo 2).

@@ -125,22 +125,29 @@ window.GamesAdapter = {
         if (!this.pendingAnalytics) this.pendingAnalytics = [];
 
         // Envío asíncrono para no bloquear UI
+        const activeId = window.PersistenceManager ? window.PersistenceManager.getActiveId() : 'GUEST-FALLBACK';
         const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-        if (user) {
-            const promise = fetchApi('USER', 'recordAnalytics', {
-                userId: user.userId,
-                grado: user.grado,
-                gameId: this.state.currentSession.gameId,
-                gameName: this.state.currentSession.gameId, // Por ahora igual
-                ...action
-            }).catch(e => console.warn("[GamesAdapter] Fallo registro analítico:", e));
 
-            this.pendingAnalytics.push(promise);
-            // Limpieza automática
-            promise.finally(() => {
-                this.pendingAnalytics = this.pendingAnalytics.filter(p => p !== promise);
-            });
-        }
+        // REQ: Guest Analytics Support (Modulo 2)
+        const promise = fetchApi('USER', 'recordAnalytics', {
+            userId: activeId,
+            grado: user ? user.grado : 'Invitado',
+            gameId: this.state.currentSession.gameId,
+            gameName: this.state.currentSession.gameId,
+            isGuest: !user,
+            ...action
+        }).catch(e => {
+            console.warn("[GamesAdapter] Fallo registro analítico. Guardando localmente...", e);
+            if (window.PersistenceManager) {
+                window.PersistenceManager.set('local_progress', action, `pending_anl_${Date.now()}`);
+            }
+        });
+
+        this.pendingAnalytics.push(promise);
+        // Limpieza automática
+        promise.finally(() => {
+            this.pendingAnalytics = this.pendingAnalytics.filter(p => p !== promise);
+        });
     },
 
     async finishSession(asignatura, level, finalScore) {

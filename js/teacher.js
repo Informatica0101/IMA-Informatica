@@ -767,15 +767,27 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
 
-        // REQ: Spinner Contextual (Ticket 3) - No bloquea la UI global
-        if (window.GamesAdapter) {
-            window.GamesAdapter.showLoading(true, submissionsTableBody);
-        } else {
-            submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8"><div class="loading-spinner"></div> Cargando actividad...</td></tr>';
-        }
+        // REQ: Skeleton Screen (Modulo 3)
+        submissionsTableBody.innerHTML = Array(8).fill(0).map(() => `
+            <tr class="animate-pulse">
+                <td class="p-4"><div class="skeleton h-4 w-3/4 rounded"></div></td>
+                <td class="p-4 text-right"><div class="skeleton h-4 w-1/4 rounded ml-auto"></div></td>
+            </tr>
+        `).join('');
 
         try {
             const payload = { profesorId: currentUser.userId };
+
+            // REQ: Offline-First (Modulo 1)
+            if (window.PersistenceManager) {
+                const cached = await window.PersistenceManager.get('academic_stats');
+                if (cached && cached.data) {
+                    allActivityRaw = cached.data.activity;
+                    allAssignmentsRaw = cached.data.assignments;
+                    renderCurrentLevel();
+                }
+            }
+
             // REQ: Mitigación de Latencia (Ticket 4) - Parallel fetch of config and activity
             const [taskSubmissions, examSubmissions, tasksRes, examsRes, configRes] = await Promise.all([
                 fetchApi('TASK', 'getTeacherActivity', payload),
@@ -784,6 +796,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetchApi('EXAM', 'getAllExams', payload),
                 fetchApi('USER', 'getAcademicConfig')
             ]);
+
+            // Guardar para Offline-First (Modulo 1)
+            if (window.PersistenceManager) {
+                const unified = {
+                    activity: [
+                        ...((taskSubmissions.data || [])).map(s => ({ ...s, tipo: 'Tarea' })),
+                        ...((examSubmissions.data || [])).map(s => ({ ...s, tipo: 'Examen' }))
+                    ],
+                    assignments: [
+                        ...((tasksRes.data || [])).map(t => ({ ...t, tipoReal: 'Tarea' })),
+                        ...((examsRes.data || [])).map(e => ({ ...e, tipoReal: 'Examen' }))
+                    ].filter(a => a.estado !== 'Inactiva')
+                };
+                window.PersistenceManager.set('academic_stats', unified);
+            }
 
             if (configRes && configRes.status === 'success' && configRes.data.ParcialActual) {
                 window.PARCIAL_ACTUAL = configRes.data.ParcialActual;

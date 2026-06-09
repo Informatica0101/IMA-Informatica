@@ -126,6 +126,7 @@ function doPost(e) {
       case "getAsignaturasActivas": result = getAsignaturasActivas(payload); break;
       case "updateAsignaturasActivas": result = updateAsignaturasActivas(payload); break;
       case "generateMigrationReport": result = generateMigrationReport(payload); break;
+      case "mergeGuestData": result = mergeGuestData(payload); break;
       default:
         result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -1189,6 +1190,54 @@ function updateAsignaturasActivas(payload) {
   });
 
   return { status: "success" };
+}
+
+/**
+ * REQ: Guest Data Migration & Anti-Rollback (Modulo 2)
+ * Persiste el historial de invitado en la cuenta oficial del alumno.
+ */
+function mergeGuestData(payload) {
+  const { userId, guestId, history, overwrite } = payload;
+  if (!userId || !history) throw new Error("Faltan parámetros de fusión.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const logSheet = getOrCreateSheet(ss, "Logros");
+  const analyticsSheet = getOrCreateSheet(ss, "QuizProAnalytics");
+
+  logDebug(`[MERGE] Iniciando transferencia para ${userId}. Sobrescribir: ${overwrite}`);
+
+  history.forEach(item => {
+    const data = item.data;
+
+    // 1. Migrar Logros (saveGameResult logic)
+    if (data.puntaje !== undefined && data.juego) {
+      saveGameResult({
+        userId,
+        nombreAlumno: data.nombreAlumno,
+        juego: data.juego,
+        asignatura: data.asignatura,
+        puntaje: data.puntaje,
+        nivel: data.nivel,
+        grado: data.grado,
+        totalTime: data.totalTime
+      });
+    }
+
+    // 2. Migrar Analítica (recordAnalytics logic)
+    // Para simplificar, si el item tiene estructura de analítica, se guarda
+    if (data.preguntaId) {
+      const analyticsId = "ANL-MERGE-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+      analyticsSheet.appendRow([
+        analyticsId, new Date(item.updated_at || Date.now()), userId, data.quizId || "",
+        data.gameId || "QuizPro", data.gameName || "QuizPro", data.asignatura,
+        data.grado, data.nivel, data.preguntaId, data.respuestaSeleccionada,
+        data.respuestaCorrecta, data.esCorrecta, data.tiempoRespuesta,
+        0, 0, data.cambiosRespuesta, 0, 0, 0
+      ]);
+    }
+  });
+
+  return { status: "success", message: "Historial de invitado fusionado correctamente." };
 }
 
 function generateMigrationReport(payload) {

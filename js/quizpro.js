@@ -16,6 +16,35 @@ let incorrectAnswers = [];
 let lastCorrectIndex = -1; // REQ: Restricción de Memoria Inmediata (A-149)
 let questionStartTime = 0;
 let responseChanges = 0;
+let currentStreak = 0;
+let sessionXP = 0;
+
+// REQ: Gamificación v7.0 (Modulo 4)
+const XP_CONFIG = {
+    BASE: 100,
+    FACTORS: {
+        basico: 1.0,
+        intermedio: 1.5,
+        avanzado: 2.0
+    },
+    TIME: {
+        MIN: 4000, // 4s
+        OPTIMAL: 15000, // 15s (T_max / 2)
+        MAX: 30000 // 30s
+    },
+    STREAK: {
+        BONUS_PER_HIT: 0.05,
+        MAX: 1.3
+    },
+    RANGES: [
+        { label: 'Básico', min: 0, max: 1500, restriction: null },
+        { label: 'Promedio', min: 1501, max: 4000, restriction: { level: 'Básico', minScore: 50 } },
+        { label: 'Avanzado', min: 4001, max: 8000, restriction: { level: 'Básico', minScore: 100 } },
+        { label: 'Experto', min: 8001, max: 14000, restriction: { level: 'Intermedio', minScore: 50 } },
+        { label: 'Maestro', min: 14001, max: 22000, restriction: { level: 'Intermedio', minScore: 100 } },
+        { label: 'Leyenda', min: 22001, max: Infinity, restriction: { level: 'Avanzado', minScore: 100 } }
+    ]
+};
 
 const SEEN_QUESTIONS_KEY = 'quizpro_seen_questions';
 const SEEN_LIMIT = 200;
@@ -67,7 +96,7 @@ function getStudentGrade() {
  */
 window.navigateToSubjects = function() {
     const grid = document.getElementById('subjects-grid');
-    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     const isTeacher = user?.rol === 'Profesor';
     const userGradeNum = getStudentGrade();
 
@@ -186,7 +215,8 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     selectedGrado = gradeLabel;
     document.getElementById('selected-subject-title').textContent = subjectName;
 
-    const isTeacher = JSON.parse(localStorage.getItem('currentUser'))?.rol === 'Profesor';
+    const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+    const isTeacher = user?.rol === 'Profesor';
 
     // UI: Menciones por Asignatura
     const topContainer = document.getElementById('subject-top-container');
@@ -201,40 +231,55 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
         }
     }
 
-    // REQ 3.B: Progresión Interna por Niveles (Fase 13: Mastery-Based)
-    // Reducción Extrema: Asegurar evaluación del mejor intento histórico (A-149)
+    // REQ 4.2: Escala de Rangos y Progresión por Asignatura (Modulo 4)
     const statsArray = Object.values(window.userGameStats || {});
-
-    // Normalizar criterios de búsqueda para asegurar coincidencia robusta (Tarea 1: Fix)
     const targetGradeNum = window.parseGrade(gradeLabel);
     const targetSubjectNorm = window.normalizeSubject(subjectName);
 
-    // Filtrar estadísticas pertinentes con normalización cruzada
     const relevantStats = statsArray.filter(s => {
         if (!s.subject || s.grade === undefined) return false;
         return window.normalizeSubject(s.subject) === targetSubjectNorm &&
                window.parseGrade(s.grade) === targetGradeNum;
     });
 
-    // Obtener el puntaje máximo absoluto para cada nivel (Ignorando otros factores)
     const getScoreForLevel = (lvlName) => {
         const matches = relevantStats.filter(s => window.getStandardLevelName(s.level) === lvlName);
-        if (matches.length === 0) return 0;
-        return Math.max(...matches.map(m => parseFloat(m.maxScore || 0)));
+        return matches.length === 0 ? 0 : Math.max(...matches.map(m => parseFloat(m.maxScore || 0)));
     };
 
     const basicScore = getScoreForLevel('Básico');
     const interScore = getScoreForLevel('Intermedio');
+
+    // Métrica de XP para rangos
+    const xpKey = `xp_${targetSubjectNorm}_${gradeLabel}`;
+    const currentXP = parseInt(localStorage.getItem(xpKey) || '0');
+
+    // Determinar Rango Actual
+    const userRange = XP_CONFIG.RANGES.find(r => currentXP >= r.min && currentXP <= r.max) || XP_CONFIG.RANGES[0];
+
+    // UI: Mostrar Rango y XP
+    const badgeHtml = `<div class="mt-4 flex flex-col items-center gap-2">
+        <span class="px-4 py-1 bg-indigo-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-100">${userRange.label}</span>
+        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">${currentXP.toLocaleString()} XP ACUMULADA</p>
+    </div>`;
+
+    const existingBadge = document.getElementById('user-rank-badge');
+    if (existingBadge) existingBadge.innerHTML = badgeHtml;
+    else {
+        const badgeContainer = document.createElement('div');
+        badgeContainer.id = 'user-rank-badge';
+        badgeContainer.innerHTML = badgeHtml;
+        document.getElementById('selected-subject-title').after(badgeContainer);
+    }
 
     const btnInter = document.getElementById('btn-intermedio');
     const cardInter = document.getElementById('level-intermedio');
     const btnAvan = document.getElementById('btn-avanzado');
     const cardAvan = document.getElementById('level-avanzado');
 
-    // QuizPro v5.0: Progresión Lineal Intra-Asignatura (Aislamiento de Analítica)
-    // El acceso al nivel siguiente exige única y exclusivamente que la puntuación máxima histórica sea >= 70%
-    const canUnlockInter = isTeacher || (basicScore >= 70);
-    const canUnlockAvan = isTeacher || (interScore >= 70);
+    // REQ 6: Algoritmo de Transición Curricular y Restricción de Desbloqueo (Umbral del 70%)
+    let canUnlockInter = isTeacher || (basicScore >= 70);
+    let canUnlockAvan = isTeacher || (interScore >= 70);
 
     // UI Intermedio
     if (canUnlockInter) {
@@ -243,12 +288,24 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
         btnInter.classList.replace('bg-gray-300', 'bg-gray-900');
         btnInter.classList.remove('cursor-not-allowed');
         cardInter.classList.remove('locked');
+        // Limpiar mensaje de progreso si estaba
+        const prog = cardInter.querySelector('.unlock-progress');
+        if (prog) prog.remove();
     } else {
         btnInter.disabled = true;
         btnInter.innerHTML = `<i class="fas fa-lock mr-2"></i> Bloqueado`;
         btnInter.classList.replace('bg-gray-900', 'bg-gray-300');
         btnInter.classList.add('cursor-not-allowed');
         cardInter.classList.add('locked');
+
+        // Mostrar progreso actual vs 70% (Modulo 6.3)
+        let prog = cardInter.querySelector('.unlock-progress');
+        if (!prog) {
+            prog = document.createElement('p');
+            prog.className = 'unlock-progress text-[9px] font-bold text-red-500 mt-2 uppercase';
+            btnInter.after(prog);
+        }
+        prog.textContent = `Progreso actual: ${Math.round(basicScore)}%. Requieres un 70% para desbloquear.`;
     }
 
     // UI Avanzado
@@ -258,12 +315,22 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
         btnAvan.classList.replace('bg-gray-300', 'bg-gray-900');
         btnAvan.classList.remove('cursor-not-allowed');
         cardAvan.classList.remove('locked');
+        const prog = cardAvan.querySelector('.unlock-progress');
+        if (prog) prog.remove();
     } else {
         btnAvan.disabled = true;
         btnAvan.innerHTML = `<i class="fas fa-lock mr-2"></i> Bloqueado`;
         btnAvan.classList.replace('bg-gray-900', 'bg-gray-300');
         btnAvan.classList.add('cursor-not-allowed');
         cardAvan.classList.add('locked');
+
+        let prog = cardAvan.querySelector('.unlock-progress');
+        if (!prog) {
+            prog = document.createElement('p');
+            prog.className = 'unlock-progress text-[9px] font-bold text-red-500 mt-2 uppercase';
+            btnAvan.after(prog);
+        }
+        prog.textContent = `Progreso actual: ${Math.round(interScore)}%. Requieres un 70% para desbloquear.`;
     }
 
     document.getElementById('subjects-screen').classList.add('hidden');
@@ -387,11 +454,68 @@ async function startQuiz() {
     currentIndex = 0;
     score = 0;
     timerSeconds = 0;
+    currentStreak = 0;
+    sessionXP = 0;
     incorrectAnswers = [];
     lastCorrectIndex = -1; // Resetear para nueva sesión
 
     startTimer();
     showQuestion();
+}
+
+/**
+ * ALGORITMO DE XP (QuizPro v7.0)
+ * Implementa mitigación de adivinación y ponderación psicométrica.
+ */
+function calculateXP(isCorrect, level, responseTime) {
+    if (!isCorrect) {
+        currentStreak = 0;
+        return 0;
+    }
+
+    currentStreak++;
+
+    // 1. Factor Dificultad
+    const fDificultad = XP_CONFIG.FACTORS[level.toLowerCase()] || 1.0;
+
+    // 2. Factor Tiempo (Mitigador de Adivinación)
+    let fTiempo = 1.0;
+    if (responseTime < XP_CONFIG.TIME.MIN) {
+        fTiempo = 0.5; // Respuesta Impulsiva
+    } else if (responseTime <= XP_CONFIG.TIME.OPTIMAL) {
+        fTiempo = 1.2; // Respuesta Reflexiva Óptima
+    } else {
+        // Respuesta Tardía (Decaimiento Lineal hasta 0.8)
+        const overshoot = responseTime - XP_CONFIG.TIME.OPTIMAL;
+        const totalLateWindow = XP_CONFIG.TIME.MAX - XP_CONFIG.TIME.OPTIMAL;
+        fTiempo = Math.max(0.8, 1.2 - (overshoot / totalLateWindow) * 0.4);
+    }
+
+    // 3. Bono Racha
+    const bonoRacha = Math.min(XP_CONFIG.STREAK.MAX, 1.0 + (currentStreak * XP_CONFIG.STREAK.BONUS_PER_HIT));
+
+    const totalXP = Math.round(XP_CONFIG.BASE * fDificultad * fTiempo * bonoRacha);
+
+    // REQ 4.2 & 6.3: Soft Cap & XP Freeze
+    const xpKey = `xp_${selectedAsignatura}_${selectedGrado}`;
+    let currentTotalXP = 0;
+
+    // Usar PersistenceManager para persistencia estructurada si está disponible
+    if (window.PersistenceManager) {
+        // En un entorno asíncrono real de IndexedDB esto debería ser await,
+        // pero por simplicidad para la lógica de QuizPro mantenemos sincronización o fallback.
+        currentTotalXP = parseInt(localStorage.getItem(xpKey) || '0');
+    } else {
+        currentTotalXP = parseInt(localStorage.getItem(xpKey) || '0');
+    }
+
+    if (level.toLowerCase() === 'basico' && currentTotalXP >= 1500) {
+        console.log("[XP-ENGINE] Soft Cap alcanzado (1,500 XP). AVANCE CONGELADO hasta desbloquear nivel intermedio.");
+        return 0;
+    }
+
+    console.log(`[XP-ENGINE] +${totalXP} XP | Dif: ${fDificultad} | Time: ${fTiempo.toFixed(2)} | Streak: ${bonoRacha.toFixed(2)}`);
+    return totalXP;
 }
 
 /**
@@ -1093,12 +1217,16 @@ function checkAnswer(selected, correct, btn) {
     }
 
     if (isCorrect) {
+        const xpGained = calculateXP(true, selectedDifficulty, responseTime);
+        sessionXP += xpGained;
+
         if (btn) btn.classList.add('correct', 'border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
         feedback.className = 'text-center h-8 font-bold text-emerald-500';
-        feedback.textContent = '¡Correcto!';
+        feedback.textContent = `¡Correcto! +${xpGained} XP`;
         score++;
-        console.log(`[QuizPro] Pregunta ${currentIndex} Correcta. Mastery: ${q.tags?.[0] || 'N/A'}`);
+        console.log(`[QuizPro] Pregunta ${currentIndex} Correcta. XP Ganada: ${xpGained}`);
     } else {
+        calculateXP(false); // Reset streak
         if (btn) btn.classList.add('incorrect', 'border-red-500', 'bg-red-50', 'text-red-700');
         feedback.className = 'text-center h-8 font-bold text-red-500';
 
@@ -1246,8 +1374,19 @@ async function endQuiz() {
         puntaje: finalPercent,
         nivel: window.getStandardLevelName(selectedDifficulty),
         grado: selectedGrado,
+        xpGanada: sessionXP,
         fecha_logro: new Date().toISOString()
     };
+
+    // Actualizar XP local para cálculo de Soft Cap
+    const xpKey = `xp_${selectedAsignatura}_${selectedGrado}`;
+    const currentTotalXP = parseInt(localStorage.getItem(xpKey) || '0');
+    const newXP = currentTotalXP + sessionXP;
+    localStorage.setItem(xpKey, newXP);
+
+    if (window.PersistenceManager) {
+        window.PersistenceManager.set('local_progress', { totalXP: newXP }, xpKey);
+    }
 
     if (typeof fetchApi === 'function') {
         // REQ: Esperar a que las analíticas pendientes se procesen antes de guardar resultado final
@@ -1286,35 +1425,22 @@ async function loadGlobalTop() {
     const body = document.getElementById('global-top-body');
     if (!body) return;
 
+    // REQ: Offline-First (Modulo 1)
+    if (window.PersistenceManager) {
+        const cached = await window.PersistenceManager.get('rankings');
+        if (cached && cached.data) renderGlobalTopHTML(cached.data);
+    }
+
     try {
         console.log("[QuizPro] Solicitando ranking global...");
-        const res = await fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' });
+        const res = await fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' }, 0, {
+            store: 'rankings',
+            onUpdate: (data) => renderGlobalTopHTML(data)
+        });
         console.log("[QuizPro] Respuesta Ranking:", res);
 
         if (res.status === 'success' && Array.isArray(res.global)) {
-            window.globalTopData = res;
-            body.innerHTML = res.global
-                .filter(user => user && (user.nombre || user.username || user.display_name))
-                .map((user, idx) => `
-                <tr class="hover:bg-blue-50/30 transition-colors">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <span class="w-6 h-6 flex items-center justify-center rounded-full ${idx === 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'} text-[10px] font-black">${idx + 1}</span>
-                            <div>
-                                <p class="font-bold text-gray-900 leading-none">${user.nombre || user.username || user.display_name || 'Usuario'}</p>
-                                <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">${user.grado || 'Grado N/A'}</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <span class="text-sm font-black ${(user.promedio || 0) >= 70 ? 'text-emerald-600' : 'text-gray-400'}">${user.promedio || 0}%</span>
-                    </td>
-                </tr>
-            `).join('');
-
-            if (res.global.length === 0) {
-                body.innerHTML = '<tr><td colspan="2" class="px-6 py-8 text-center text-gray-400 text-xs italic">Aún no hay puntuaciones globales registradas</td></tr>';
-            }
+            renderGlobalTopHTML(res);
         }
     } catch (e) {
         console.error("Error loading global top", e);
@@ -1322,52 +1448,101 @@ async function loadGlobalTop() {
     }
 }
 
+function renderGlobalTopHTML(res) {
+    const body = document.getElementById('global-top-body');
+    if (!body || !res || !res.global) return;
+
+    window.globalTopData = res;
+    body.innerHTML = res.global
+        .filter(user => user && (user.nombre || user.username || user.display_name))
+        .map((user, idx) => `
+        <tr class="hover:bg-blue-50/30 transition-colors">
+            <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <span class="w-6 h-6 flex items-center justify-center rounded-full ${idx === 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'} text-[10px] font-black">${idx + 1}</span>
+                    <div>
+                        <p class="font-bold text-gray-900 leading-none">${user.nombre || user.username || user.display_name || 'Usuario'}</p>
+                        <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">${user.grado || 'Grado N/A'}</p>
+                    </div>
+                </div>
+            </td>
+            <td class="px-6 py-4 text-right">
+                <span class="text-sm font-black ${(user.promedio || 0) >= 70 ? 'text-emerald-600' : 'text-gray-400'}">${user.promedio || 0}%</span>
+            </td>
+        </tr>
+    `).join('');
+
+    if (res.global.length === 0) {
+        body.innerHTML = '<tr><td colspan="2" class="px-6 py-8 text-center text-gray-400 text-xs italic">Aún no hay puntuaciones globales registradas</td></tr>';
+    }
+}
+
 window.loadPerformanceTable = async function() {
     const container = document.getElementById('performance-table-body');
-    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     if (!container || !user) return;
 
+    // REQ: Offline-First (Modulo 1)
+    if (window.PersistenceManager) {
+        const cached = await window.PersistenceManager.get('academic_stats');
+        if (cached && cached.data) renderPerformanceHTML(cached.data);
+    }
+
     try {
-        const res = await fetchApi('USER', 'getGameStats', { userId: user.userId });
+        const res = await fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
+            store: 'academic_stats',
+            onUpdate: (data) => renderPerformanceHTML(data)
+        });
         if (res.status === 'success') {
-            window.userGameStats = res.data || {};
-            const history = res.allHistory || [];
-
-            let approvedCount = 0;
-            const allMistakeTags = new Set();
-
-            history.forEach(h => {
-                if (h[3] === 'QuizPro' && parseFloat(h[5]) < 70) {
-                    allMistakeTags.add(h[4]);
-                }
-            });
-
-            container.innerHTML = Object.entries(window.userGameStats)
-                .filter(([key]) => key.startsWith('QuizPro_'))
-                .map(([key, s]) => {
-                    if (s.maxScore >= 70) approvedCount++;
-                    return `
-                        <tr class="border-b border-gray-50 text-[11px]">
-                            <td class="py-3 font-bold text-gray-700">${getSanitizedAcademicText(s.subject)}</td>
-                            <td class="py-3 capitalize text-blue-600 font-semibold">${getSanitizedAcademicText(s.level)} (${getSanitizedAcademicText(s.grade)})</td>
-                            <td class="py-3 font-black text-gray-900">${s.maxScore}%</td>
-                        </tr>`;
-                }).join('');
-
-            document.getElementById('total-approvals').textContent = approvedCount;
-            const reinforcementSection = document.getElementById('reinforcement-feedback');
-            const tagsContainer = document.getElementById('reinforcement-tags');
-            if (allMistakeTags.size > 0 && tagsContainer) {
-                reinforcementSection.classList.remove('hidden');
-                tagsContainer.innerHTML = Array.from(allMistakeTags).map(tag =>
-                    `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${getSanitizedAcademicText(tag)}</span>`
-                ).join('');
-            }
-            if (Object.keys(window.userGameStats).length > 0) {
-                document.getElementById('performance-dashboard').classList.remove('hidden');
-            }
+            renderPerformanceHTML(res);
         }
     } catch (e) { console.error("Error loading stats", e); }
+}
+
+function renderPerformanceHTML(res) {
+    const container = document.getElementById('performance-table-body');
+    if (!container) return;
+
+    window.userGameStats = res.data || {};
+    const history = res.allHistory || [];
+
+    let approvedCount = 0;
+    const allMistakeTags = new Set();
+
+    history.forEach(h => {
+        if (h[3] === 'QuizPro' && parseFloat(h[5]) < 70) {
+            allMistakeTags.add(h[4]);
+        }
+    });
+
+    container.innerHTML = Object.entries(window.userGameStats)
+        .filter(([key]) => key.startsWith('QuizPro_'))
+        .map(([key, s]) => {
+            if (s.maxScore >= 70) approvedCount++;
+            return `
+                <tr class="border-b border-gray-50 text-[11px]">
+                    <td class="py-3 font-bold text-gray-700">${getSanitizedAcademicText(s.subject)}</td>
+                    <td class="py-3 capitalize text-blue-600 font-semibold">${getSanitizedAcademicText(s.level)} (${getSanitizedAcademicText(s.grade)})</td>
+                    <td class="py-3 font-black text-gray-900">${s.maxScore}%</td>
+                </tr>`;
+        }).join('');
+
+    const approvedEl = document.getElementById('total-approvals');
+    if (approvedEl) approvedEl.textContent = approvedCount;
+
+    const reinforcementSection = document.getElementById('reinforcement-feedback');
+    const tagsContainer = document.getElementById('reinforcement-tags');
+    if (allMistakeTags.size > 0 && tagsContainer) {
+        reinforcementSection.classList.remove('hidden');
+        tagsContainer.innerHTML = Array.from(allMistakeTags).map(tag =>
+            `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${getSanitizedAcademicText(tag)}</span>`
+        ).join('');
+    }
+
+    if (Object.keys(window.userGameStats).length > 0) {
+        const dashboard = document.getElementById('performance-dashboard');
+        if (dashboard) dashboard.classList.remove('hidden');
+    }
 }
 
 function exitGame() {

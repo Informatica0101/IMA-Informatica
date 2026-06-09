@@ -8,7 +8,7 @@
  * @param {object} payload - Los datos para la acción.
  * @returns {Promise<object>} La respuesta del servicio parseada como JSON.
  */
-async function fetchApi(service, action, payload, retryCount = 0) {
+async function fetchApi(service, action, payload, retryCount = 0, options = {}) {
     const MAX_RETRIES = 2;
     // REQ: Uso de constante global v3.3
     const urls = window.SERVICE_URLS || (typeof SERVICE_URLS !== 'undefined' ? SERVICE_URLS : {});
@@ -31,7 +31,8 @@ async function fetchApi(service, action, payload, retryCount = 0) {
                 'Content-Type': 'text/plain;charset=utf-8',
             },
             body: JSON.stringify({ action, payload }),
-            signal: controller.signal
+            signal: controller.signal,
+            priority: options.priority || 'auto'
         });
         clearTimeout(timeoutId);
 
@@ -53,7 +54,15 @@ async function fetchApi(service, action, payload, retryCount = 0) {
         }
 
         try {
-            return JSON.parse(textResponse);
+            const parsed = JSON.parse(textResponse);
+
+            // REQ: Silent Reconciliation (Modulo 1.1)
+            if (options.store && window.PersistenceManager) {
+                // No esperamos la reconciliación para no bloquear el retorno del JSON parseado
+                window.PersistenceManager.reconcile(options.store, parsed, options.onUpdate);
+            }
+
+            return parsed;
         } catch (e) {
             console.error("Respuesta no es JSON válido:", textResponse);
             throw new Error(`El servidor devolvió una respuesta inválida (no-JSON). URL: ${url}`);

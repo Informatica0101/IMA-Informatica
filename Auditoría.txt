@@ -339,3 +339,32 @@ AUDITORÍA DE ESTÁNDARES PSICOMÉTRICOS (QuizPro v6.0) - 2026-06-21
 - [REPARACIÓN] Implementada refactorización simétrica en js/Banco_Preguntas/Decimo/Informatica/avanzado.json.
 - [REPARACIÓN] Auditado el 100% del banco distribuido (24 nodos) mediante script de validación geométrica.
 - [CREACIÓN] Establecido Manual de Estándares en js/Banco_Preguntas/NORMAS_Y_DISEÑO_REACTIVOS.md.
+
+AUDITORÍA REINGENIERÍA HÍBRIDA (v7.0) - 2026-06-21
+
+Archivo: js/persistence.js
+- [NUEVO] Implementado motor Offline-First con soporte para GUEST_UUID y updated_at.
+- [VERIFICADO] Gestión de ID activo (userId vs guestId) funcional.
+
+Archivo: js/api.js
+- [OPTIMIZADO] fetchApi integra ahora 'Silent Reconciliation' (Modulo 1.1).
+- [VERIFICADO] Soporta prioridad de fetch y disparadores de actualización local.
+
+Archivo: js/auth.js
+- [REFACTOR] mergeGuestData implementa 'Regla del Máximo Promedio' (Modulo 2.3).
+- [NUEVO] Implementado 'Intent Recovery' (Modulo 5.2) para retorno tras login.
+
+Archivo: js/quizpro.js
+- [REFACTOR] navigateToLevels aplica 'Regla de Suficiencia del 70%' (Modulo 6).
+- [NUEVO] Algoritmo de XP v7.0 con mitigador de adivinación y Bono Racha (Modulo 4.1).
+- [NUEVO] Sistema de Rangos (Básico a Leyenda) con Soft Cap en 1,500 XP (Modulo 4.2).
+
+Archivo: index.html / js/index-ui.js
+- [NUEVO] Modal de Triaje "¡Prepárate para Jugar!" intercepta inicios de sesión (Modulo 5.1).
+- [OPTIMIZADO] Removido loader síncrono en favor de Skeleton Screens (Modulo 3).
+
+Archivo: css/style.css
+- [NUEVO] Definidas clases .skeleton y .skeleton-card para carga no bloqueante.
+
+Archivo: backend/user-service/Code.gs
+- [NUEVO] Endpoint 'mergeGuestData' soporta fusión de logros y analítica de invitados.

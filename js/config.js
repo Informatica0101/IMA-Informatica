@@ -55,6 +55,14 @@ window.parseGrade = function(gradeStr) {
     return 10;
 };
 
+window.getSanitizedAcademicText = function(text) {
+    if (!text) return "";
+    return text.toString().trim()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/_/g, " ")
+        .toUpperCase();
+};
+
 window.normalizeSubject = function(name) {
     if (!name) return 'General';
     return name.trim()
