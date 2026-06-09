@@ -125,20 +125,22 @@ window.navigateToSubjects = function() {
 };
 
 /**
- * REQ 3.A: Validación Hierárquica de Grados (Nueva Lógica v4)
- * FASE 13: Los grados superiores están bloqueados hasta que TODAS las asignaturas de grados inferiores
- * hayan sido aprobadas con Nota >= 70 e Índice de Dominio >= 60.
+ * REQ 1.B: Progresión Inter-Grado (Cross-Grade Promotion) - v5.0
+ * El acceso a un grado superior exige la aprobación TOTAL (Básico, Intermedio, Avanzado)
+ * de TODAS las asignaturas de los grados previos con Score >= 70%.
  */
 function checkCrossGradeLock(subjectName, targetGrade) {
     const targetGradeNum = window.parseGrade(targetGrade);
-    // 10th grade subjects are unlocked by default
+
+    // Fase de Calibración Inicial (Décimo Grado): Básico siempre desbloqueado
+    // Nota: Niveles Intermedio y Avanzado de 10mo siguen progresión lineal interna en navigateToLevels
     if (targetGradeNum <= 10) return false;
 
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const userSection = user?.seccion;
-    const statsArray = Object.values(window.userGameStats);
+    const statsArray = Object.values(window.userGameStats || {});
 
-    // Identify all subjects from previous grades that the student should have completed
+    // Identificar todos los grados previos que deben estar completados
     const requiredGrades = [];
     if (targetGradeNum > 10) requiredGrades.push(10);
     if (targetGradeNum > 11) requiredGrades.push(11);
@@ -148,6 +150,7 @@ function checkCrossGradeLock(subjectName, targetGrade) {
         const bg = window.parseGrade(block.grade);
         if (requiredGrades.includes(bg)) {
             block.subjects.forEach(s => {
+                // Solo requerir materias que el estudiante debe cursar según su sección
                 if (userSection && !window.checkSectionHelper(s.sections, userSection)) return;
 
                 const name = window.normalizeSubject(s.name);
@@ -158,12 +161,10 @@ function checkCrossGradeLock(subjectName, targetGrade) {
         }
     });
 
-    // Check if EVERY subject in previous grades has all 3 levels approved with Nota >= 70 e Índice de Dominio >= 60
+    // Barrier Synchronization: Exige aprobación del 100% de niveles de grados previos
     const levels = ['Básico', 'Intermedio', 'Avanzado'];
     for (const req of subjectsToApprove) {
         for (const lvl of levels) {
-            // FASE 13: Validación Cross-Grade (Unlock Score >= 70%)
-            // Se elimina dependencia del dominio para evitar bloqueos por fluctuación (A-149)
             const hasApproval = statsArray.some(s =>
                 window.normalizeSubject(s.subject) === req.name &&
                 window.parseGrade(s.grade) === req.gradeNum &&
@@ -171,7 +172,7 @@ function checkCrossGradeLock(subjectName, targetGrade) {
                 parseFloat(s.maxScore || 0) >= 70
             );
             if (!hasApproval) {
-                console.log(`Locking ${subjectName}: Missing ${req.name} ${lvl} (${req.gradeNum}) con puntaje suficiente.`);
+                console.log(`[QuizPro] Bloqueo Inter-Grado: Falta ${req.name} ${lvl} de ${req.gradeNum}mo Grado.`);
                 return true;
             }
         }
@@ -230,23 +231,10 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     const btnAvan = document.getElementById('btn-avanzado');
     const cardAvan = document.getElementById('level-avanzado');
 
-    // FASE 13: Progresión Académica Basada en Dominio (Dual Guard)
-    // Regla: Para desbloquear el siguiente nivel, el estudiante debe alcanzar:
-    // 1. Nota (Score) >= 70%
-    // 2. Índice de Dominio (Mastery) >= 60% (Intermedio) o >= 70% (Avanzado)
-
-    // Obtener Mastery para cada nivel
-    const getMasteryForLevel = (lvlName) => {
-        const matches = relevantStats.filter(s => window.getStandardLevelName(s.level) === lvlName);
-        if (matches.length === 0) return 0;
-        return Math.max(...matches.map(m => parseFloat(m.dominio || 0)));
-    };
-
-    const basicMastery = getMasteryForLevel('Básico');
-    const interMastery = getMasteryForLevel('Intermedio');
-
-    const canUnlockInter = isTeacher || (basicScore >= 70 && basicMastery >= 60);
-    const canUnlockAvan = isTeacher || (interScore >= 70 && interMastery >= 70);
+    // QuizPro v5.0: Progresión Lineal Intra-Asignatura (Aislamiento de Analítica)
+    // El acceso al nivel siguiente exige única y exclusivamente que la puntuación máxima histórica sea >= 70%
+    const canUnlockInter = isTeacher || (basicScore >= 70);
+    const canUnlockAvan = isTeacher || (interScore >= 70);
 
     // UI Intermedio
     if (canUnlockInter) {
@@ -486,40 +474,48 @@ function transformBankQuestions(data) {
                 // REQ: Normalizar integridad antes de transformar (v3.2)
                 const q = window.normalizeQuestion(rawQ);
 
-                // Heurística de Multi-Modalidad (Fase 4)
-                let type = q.TipoActividad || "Selección múltiple";
-                let options = [q.OpcionA, q.OpcionB, q.OpcionC, q.OpcionD].filter(o => o && o.trim() !== "");
+        // Heurística de Multi-Modalidad (v5.0 Polymorphic Engine)
+        let type = q.tipo_pregunta || q.TipoActividad || "Selección múltiple";
+        let questionText = q.enunciado || q.Pregunta;
+        let answer = q.respuesta_correcta_literal || q.RespuestaCorrecta;
+
+        let options = (q.opciones_visibles && q.opciones_visibles.length > 0)
+                      ? q.opciones_visibles
+                      : [q.OpcionA, q.OpcionB, q.OpcionC, q.OpcionD].filter(o => o && o.trim() !== "");
+
                 let items = q.items || [];
-                let pairs = q.pairs || [];
+        let pairs = (q.parejas && q.parejas.length > 0) ? q.parejas : [];
+
+        // Mapeo de Claves para Parejas (emparejamiento v5.0 usa {clave, valor})
+        if (pairs.length > 0 && pairs[0].clave) {
+            pairs = pairs.map(p => ({ term: p.clave, definition: p.valor }));
+        }
 
                 // Adaptar estructuras según el tipo de actividad si vienen vacíos
                 if (type === 'ordering' && items.length === 0) {
-                    items = options; // En ordering, las opciones A-D son los pasos a ordenar
-                } else if ((type === 'matching' || type === 'memory') && pairs.length === 0) {
-                    // En matching, guardamos pares en formato term|def en las opciones
+            items = options;
+        } else if ((type === 'matching' || type === 'memory' || type === 'emparejamiento') && pairs.length === 0) {
                     options.forEach(opt => {
                         if (opt.includes('|')) {
                             const [term, def] = opt.split('|');
                             pairs.push({ term: term.trim(), definition: def.trim() });
                         }
                     });
-                } else if (type === 'Identificar el componente') {
-                    // Opciones son los nombres de componentes, la imagen está en q.Imagen
                 }
 
                 return {
-                    id: q.PreguntaID || `bank_${Math.random().toString(36).substr(2, 9)}`,
-                    question: q.Pregunta,
+            id: q.id || q.PreguntaID || `bank_${Math.random().toString(36).substr(2, 9)}`,
+            question: questionText,
                     options: options,
                     items: items,
                     pairs: pairs,
-                    answer: q.RespuestaCorrecta,
+            answer: answer,
                     type: type,
-                    explanation: q.Explicacion,
-                    image: q.Imagen,
-                    subject: q.Asignatura,
-                    nivel: q.Nivel,
-                    tags: [q.Tema || "General"]
+            explanation: q.Explicacion || q.explicacion,
+            image: q.Imagen || q.imagen,
+            subject: q.Asignatura || q.asignatura,
+            nivel: q.Nivel || q.nivel,
+            tags: [q.Tema || q.tema || "General"]
                 };
             });
 
@@ -767,7 +763,7 @@ function showQuestion() {
     }
     if (fibBtn) fibBtn.disabled = false;
 
-    if (q.type === 'practice') {
+    if (q.type === 'practice' || q.type === 'funcionalidad') {
         optionsContainer.classList.remove('hidden');
         const codeEl = document.createElement('div');
         codeEl.className = 'bg-gray-900 text-green-400 p-4 rounded-xl font-mono text-xs mb-6 overflow-x-auto whitespace-pre';
@@ -806,14 +802,19 @@ function showQuestion() {
                 input.click();
             }, 500);
         }
-    } else if (q.type === 'Verdadero y Falso') {
+    } else if (q.type === 'Verdadero y Falso' || q.type === 'verdadero_falso') {
         optionsContainer.classList.remove('hidden');
         const opts = ["Verdadero", "Falso"];
         opts.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-card w-full p-6 text-center border-2 border-gray-100 rounded-2xl font-black text-gray-700 bg-white hover:bg-blue-50 hover:border-blue-200 transition-all uppercase tracking-widest text-sm';
             btn.textContent = opt;
-            btn.onclick = () => checkAnswer(opt, q.answer, btn);
+            btn.onclick = () => {
+                // Si la respuesta correcta es literal "Verdadero"/"Falso" o "A"/"B"
+                const isLiteral = (String(q.answer).toLowerCase() === "verdadero" || String(q.answer).toLowerCase() === "falso");
+                const val = isLiteral ? opt : (opt === "Verdadero" ? "A" : "B");
+                checkAnswer(val, q.answer, btn);
+            };
             optionsContainer.appendChild(btn);
         });
     } else if (q.type === 'Identificar el componente') {
@@ -826,7 +827,7 @@ function showQuestion() {
             btn.onclick = () => checkAnswer(opt, q.answer, btn);
             optionsContainer.appendChild(btn);
         });
-    } else if (q.type === 'Completar espacios' || q.type === 'completion' || q.type === 'fill-in-the-blanks') {
+    } else if (q.type === 'Completar espacios' || q.type === 'completion' || q.type === 'fill-in-the-blanks' || q.type === 'completacion') {
         fibContainer.classList.remove('hidden');
         const input = document.getElementById('fib-input');
         input.value = '';
@@ -984,7 +985,7 @@ function showQuestion() {
 
             checkAnswer(allCorrect ? 'Orden Correcto' : 'Orden Incorrecto', 'Orden Correcto');
         };
-    } else if (q.type === 'matching') {
+    } else if (q.type === 'matching' || q.type === 'emparejamiento') {
         matchingContainer.classList.remove('hidden');
         const pairsList = document.getElementById('matching-pairs');
         pairsList.innerHTML = '';
@@ -1039,18 +1040,6 @@ function showQuestion() {
         // Remover elementos de transcripción si existen
         const existingTarget = fibContainer.querySelector('.transcription-target');
         if (existingTarget) existingTarget.remove();
-    } else if (q.type === 'verdadero_falso') {
-        optionsContainer.classList.remove('hidden');
-        const options = ["Verdadero", "Falso"];
-        options.forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'option-card w-full p-4 text-center border-2 border-gray-100 rounded-xl font-black text-gray-700 bg-white hover:bg-blue-50 transition-all uppercase tracking-tighter';
-            btn.textContent = opt;
-            // Map Verdadero/Falso to A/B for internal answer checking consistency
-            const val = opt === "Verdadero" ? "A" : "B";
-            btn.onclick = () => checkAnswer(val, q.answer, btn);
-            optionsContainer.appendChild(btn);
-        });
     } else {
         optionsContainer.classList.remove('hidden');
         const balanced = getBalancedOptions(q.options, q.answer);
@@ -1248,7 +1237,7 @@ async function endQuiz() {
             <div class="mt-6 p-4 bg-orange-50 rounded-2xl border border-orange-100 text-left">
                 <p class="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-2">Temas a reforzar</p>
                 <div class="flex flex-wrap gap-2">
-                    ${uniqueTags.map(tag => `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${tag}</span>`).join('')}
+                    ${uniqueTags.map(tag => `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${getSanitizedAcademicText(tag)}</span>`).join('')}
                 </div>
             </div>`;
         recs.classList.remove('hidden');
@@ -1379,8 +1368,8 @@ window.loadPerformanceTable = async function() {
                     if (s.maxScore >= 70) approvedCount++;
                     return `
                         <tr class="border-b border-gray-50 text-[11px]">
-                            <td class="py-3 font-bold text-gray-700">${s.subject}</td>
-                            <td class="py-3 capitalize text-blue-600 font-semibold">${s.level} (${s.grade})</td>
+                            <td class="py-3 font-bold text-gray-700">${getSanitizedAcademicText(s.subject)}</td>
+                            <td class="py-3 capitalize text-blue-600 font-semibold">${getSanitizedAcademicText(s.level)} (${getSanitizedAcademicText(s.grade)})</td>
                             <td class="py-3 font-black text-gray-900">${s.maxScore}%</td>
                         </tr>`;
                 }).join('');
@@ -1391,7 +1380,7 @@ window.loadPerformanceTable = async function() {
             if (allMistakeTags.size > 0 && tagsContainer) {
                 reinforcementSection.classList.remove('hidden');
                 tagsContainer.innerHTML = Array.from(allMistakeTags).map(tag =>
-                    `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${tag}</span>`
+                    `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${getSanitizedAcademicText(tag)}</span>`
                 ).join('');
             }
             if (Object.keys(window.userGameStats).length > 0) {

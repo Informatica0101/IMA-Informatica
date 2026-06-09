@@ -301,3 +301,19 @@ Archivo: backend/user-service/Code.gs
 
 Archivo: js/games-adapter.js
 - [CORREGIDO] recordAction: Ahora rastrea promesas pendientes en this.pendingAnalytics para permitir sincronización determinista.
+AUDITORÍA REIMPLEMETACIÓN MOTOR DE PROGRESIÓN (v5.0) - 2026-06-08
+Archivo: js/quizpro.js
+- [HALLAZGO] navigateToLevels implementa 'Dual Guard' (Score >= 70% AND Mastery >= 60/70%). Debe ser simplificado a solo Score >= 70%.
+- [HALLAZGO] checkCrossGradeLock usa 'statsArray.some' lo cual es incorrecto para la nueva regla de 'Promoción Inter-Grado' que exige la TOTALIDAD aprobada.
+- [HALLAZGO] transformBankQuestions asume una estructura de banco centralizada previa. Debe adaptarse al esquema polimórfico v5.0.
+- [HALLAZGO] showQuestion maneja 'verdadero_falso', 'memory', 'ordering', 'matching'. Debe alinearse con la nueva taxonomía (completacion, emparejamiento, funcionalidad).
+Archivo: js/config.js
+- [HALLAZGO] normalizeQuestion no incluye campos v5.0 como enunciado, opciones_visibles, parejas, respuesta_correcta_literal.
+AUDITORÍA REIMPLEMETACIÓN MOTOR DE PROGRESIÓN (v5.0) - 2026-06-09 00:10
+Archivo: js/quizpro.js
+- [VERIFICADO] navigateToLevels simplificado a Score >= 70%. Desbloqueo lineal intra-asignatura operativo.
+- [VERIFICADO] checkCrossGradeLock implementa 'Barrier Synchronization' (100% aprobación de grados previos).
+- [VERIFICADO] transformBankQuestions soporta esquema polimórfico v5.0.
+- [VERIFICADO] showQuestion maneja 'verdadero_falso', 'completacion', 'emparejamiento', 'funcionalidad'.
+Archivo: js/config.js
+- [VERIFICADO] normalizeQuestion incluye y mapea campos v5.0.
