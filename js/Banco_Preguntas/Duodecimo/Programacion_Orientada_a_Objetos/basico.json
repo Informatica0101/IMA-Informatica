@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "id": "Q-12-POO-BAS-001",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_Orientada_a_Objetos",
+    "tema": "Paradigma POO",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué es un 'Objeto' en el paradigma de programación orientada a objetos?",
+    "opciones": [
+      "Una instancia de una clase que combina estado y comportamiento.",
+      "Un tipo de dato primitivo como int o float.",
+      "Una secuencia lineal de comandos ejecutables.",
+      "Un error de sintaxis en el código fuente."
+    ],
+    "respuesta_correcta_literal": "Una instancia de una clase que combina estado y comportamiento.",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-POO-BAS-002",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_Orientada_a_Objetos",
+    "tema": "Clases",
+    "tipo_pregunta": "completacion",
+    "enunciado": "La estructura que actúa como un 'plano' o plantilla para crear múltiples objetos se denomina ________.",
+    "opciones_visibles": [
+      "Variable",
+      "Función",
+      "Clase",
+      "Arreglo"
+    ],
+    "respuesta_correcta_literal": "Clase",
+    "nivel": "Básico"
+  }
+]

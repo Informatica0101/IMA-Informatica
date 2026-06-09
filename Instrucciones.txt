@@ -186,3 +186,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - Tarea 3: Optimización y Reestructuración del Minijuego "QuizPro" - Arquitectura Distribuida y Lógica de Evaluación Literal.
 - Tarea 4: Subsistema de Gamificación (Módulo "Top Global") - Fallback en renderizado de ranking.
 - Tarea 5: Reimplementación del Motor de Progresión Académica (v5.0) y Motor de Reactivos Polimórficos.
+- Tarea 6: Auditoría de Banco de Preguntas y Reordenación de la Taxonomía Académica.

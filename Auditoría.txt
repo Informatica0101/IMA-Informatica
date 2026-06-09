@@ -317,3 +317,18 @@ Archivo: js/quizpro.js
 - [VERIFICADO] showQuestion maneja 'verdadero_falso', 'completacion', 'emparejamiento', 'funcionalidad'.
 Archivo: js/config.js
 - [VERIFICADO] normalizeQuestion incluye y mapea campos v5.0.
+
+AUDITORÍA DE BANCO DE PREGUNTAS Y REORDENACIÓN - 2026-06-19
+Archivo: js/Banco_Preguntas/Decimo/Informatica/intermedio.json
+- [MANUAL] Relocalización individual de 16 reactivos de conversiones binarias/hexadecimales hacia Undécimo (Intermedio).
+- [MANUAL] Relocalización de 13 reactivos de CLI, comandos y scripts hacia Undécimo (Avanzado).
+- [VERIFICACIÓN] Normalización estructural: RespuestaCorrecta mapeada a literal (evitando índices posicionales).
+
+Archivo: js/Banco_Preguntas/Decimo/Informatica/avanzado.json
+- [INYECCIÓN] Poblado con 3 reactivos v5.0 (Software, Seguridad, Kernel) para mitigar bucle infinito.
+
+Archivo: js/Banco_Preguntas/Undecimo/Informatica_Aplicada/
+- [ESTADO] intermedio.json (48 ítems), avanzado.json (15 ítems) tras migración manual y saneamiento pedagógico.
+
+Archivo: js/Banco_Preguntas/Duodecimo/Programacion_Orientada_a_Objetos/
+- [MANUAL] Creación y población de niveles Básico e Intermedio ante vacío en el banco legacy.

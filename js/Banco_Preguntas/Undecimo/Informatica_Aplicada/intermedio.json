@@ -642,36 +642,5 @@
     "OpcionC": "10011",
     "OpcionD": "11111",
     "Activa": true
-  },
-  {
-    "id": "Q-11-INFA-INT-001",
-    "grado": "Undecimo",
-    "asignatura": "Informatica_Aplicada",
-    "tema": "Lenguaje binario - conversion",
-    "tipo_pregunta": "completacion",
-    "enunciado": "Al realizar la conversión del número decimal <strong>13</strong> al sistema de numeración binario de base 2, el resultado obtenido corresponde exactamente a ________.",
-    "opciones_visibles": [
-      "1100",
-      "1011",
-      "1101",
-      "1110"
-    ],
-    "respuesta_correcta_literal": "1101",
-    "nivel": "Intermedio"
-  },
-  {
-    "id": "Q-11-INFA-INT-002",
-    "grado": "Undecimo",
-    "asignatura": "Informatica_Aplicada",
-    "tema": "Lenguaje hexadecimal - conversion",
-    "tipo_pregunta": "funcionalidad",
-    "enunciado": "En el sistema de numeración hexadecimal (base 16), empleado frecuentemente en informática para simplificar la representación de bytes, ¿qué valor decimal equivale a la letra <strong>F</strong>?",
-    "opciones": [
-      "Equivale al valor decimal 10.",
-      "Equivale al valor decimal 15.",
-      "Equivale al valor decimal 16."
-    ],
-    "respuesta_correcta_literal": "Equivale al valor decimal 15.",
-    "nivel": "Intermedio"
   }
 ]

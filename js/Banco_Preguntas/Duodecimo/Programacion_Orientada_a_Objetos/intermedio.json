@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "Q-12-POO-INT-001",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_Orientada_a_Objetos",
+    "tema": "Herencia",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "La herencia permite que una clase hija adquiera los atributos y métodos de una clase padre, facilitando la reutilización de código.",
+    "opciones": [
+      "Verdadero",
+      "Falso"
+    ],
+    "respuesta_correcta_literal": "Verdadero",
+    "nivel": "Intermedio"
+  }
+]

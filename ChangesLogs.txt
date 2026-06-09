@@ -217,3 +217,19 @@ REINGENIERÍA CARGA MULTIPART (TAREA 1)
 2026-06-09 00:10 - js/config.js, js/quizpro.js
 Impacto: Motor de Progresión Académica v5.0 y Motor Polimórfico.
 Descripción: Reimplementación del flujo de desbloqueo basado estrictamente en puntuación histórica (Score >= 70%). Implementación de promoción inter-grado mediante Barrera de Sincronización. Actualización del motor de datos para procesar reactivos polimórficos (V/F, Completación, Emparejamiento, Funcionalidad). Normalización de taxonomía extendida en la capa de configuración.
+
+2026-06-19 14:30 | js/Banco_Preguntas/Decimo/Informatica/basico.json, intermedio.json, avanzado.json
+- Relocalización manual de 29 reactivos técnicos y matemáticos hacia Undécimo.
+- Inyección de payload v5.0 en Décimo Avanzado.
+- Normalización de RespuestaCorrecta a valores literales.
+
+2026-06-19 14:35 | js/Banco_Preguntas/Undecimo/Informatica_Aplicada/intermedio.json, avanzado.json
+- Recepción y normalización de reactivos migrados de Décimo.
+- Asignación manual de taxonomía para conversiones y CLI.
+
+2026-06-19 14:40 | js/Banco_Preguntas/Undecimo/Programacion/basico.json
+- Población de nivel básico con reactivo histórico (Alan Turing).
+
+2026-06-19 14:45 | js/Banco_Preguntas/Duodecimo/Programacion_2/ y Programacion_Orientada_a_Objetos/
+- Creación de estructura física de directorios.
+- Inyección manual de reactivos de C++, Python y Paradigma POO.
