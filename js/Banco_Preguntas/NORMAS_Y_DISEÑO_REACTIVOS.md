@@ -1,6 +1,7 @@
-# Manual de Estándares Psicométricos y Especificación Técnica de Reactivos (QuizPro v6.0)
+--------------------------------------------------NO AGREGAR MODIFICAR O ELIMAR TEXTO ANTES Y DESPUÉS DE ESTA LINEA---------------------------------
+# Manual de Estándares Psicométricos y Especificación Técnica de Reactivos (QuizPro v6.1)
 
-Este documento define de manera estricta los principios pedagógicos, restricciones geométricas de longitud, simetría semántica y estructuras sintácticas de objetos lógicos que deben cumplir todos los archivos distribuidos `.json` dentro del ecosistema de evaluación local de QuizPro.
+Este documento define de manera estricta los principios pedagógicos, restricciones geométricas de longitud, simetría semántica y estructuras sintácticas de objetos lógicos que deben cumplir todos los archivos distribuidos `.json` dentro del ecosistema de evaluación local de QuizPro. 
 
 Su aplicación es obligatoria para neutralizar la vulneración de las métricas avanzadas (Índice de Confianza de Respuesta [ICR] e Índice de Adivinación) causada por el descarte visual o la asimetría de los distractores.
 
@@ -139,7 +140,25 @@ Un reactivo que viole la simetría distorsiona los tiempos de respuesta físicos
 
 ---
 
-## 12. ESPECIFICACIÓN SINTÁCTICA Y COMPOSICIÓN DE OBJETOS (.json)
+## 12. RESTRICCIONES DE INTEGRIDAD TÉCNICA Y ANTICORRUPCIÓN DE DATOS
+
+Para preservar la calidad del banco y el respeto al nivel académico de la institución, se establecen tres prohibiciones tecnológicas absolutas sobre los archivos fuentes:
+
+### A. Prohibición de Marcadores de Posición (*Zero Placeholder Policy*)
+Queda estrictamente prohibido el uso de cadenas de texto genéricas, vacías o de prueba automatizada para rellenar los índices de preguntas u opciones (ej. *"Pregunta de validación técnica avanzada 49"*, *"Opción Correcta"*, *"Distractor 1"*, o *"Nulo"*). 
+* Todo reactivo guardado en el JSON local debe contener un enunciado científico real, coherente con la currícula, e incorporar distractores técnicos auténticos y funcionales. El uso de *placeholders* se considerará una falta grave a la integridad del sistema.
+
+### B. Prohibición Absoluta de Scripts de Automatización de Datos
+Está prohibido el uso de scripts, utilidades de conversión automática de archivos (*bulk-parsers*) o algoritmos de inteligencia artificial que realicen cargas masivas sin supervisión humana. 
+* El traspaso de reactivos exige una auditoría obligatoria individual, línea por línea. Sin inspección visual humana, es imposible certificar el cumplimiento semántico, corregir ambigüedades o validar el contexto pedagógico exacto del reactivo.
+
+### C. Erradicación de Respuestas Acopladas (*Anti-Hardcoding Rule*)
+Se prohíbe el uso de la estructura del formato heredado (*legacy*) donde la respuesta correcta se deducía a través del índice posicional rígido del array. 
+* El sistema actual exige la sanitización absoluta del campo `respuesta_correcta_literal`. El valor de este string debe corresponder con exactitud matemática a una de las opciones listadas en el objeto, permitiendo que el motor frontend baraje (*shuffle*) dinámicamente las opciones sin corromper la validación del intento del alumno.
+
+---
+
+## 13. ESPECIFICACIÓN SINTÁCTICA Y COMPOSICIÓN DE OBJETOS (.json)
 
 Todos los reactivos deben estructurarse de forma estricta según el tipo de pregunta, inyectando las etiquetas HTML de formato permitidas y respetando la homogeneidad geométrica de las opciones.
 
@@ -194,7 +213,7 @@ Estructura binaria simétrica para la validación de postulados de arquitectura 
 }
 
 ```
-## 13. MAPA CURRICULAR Y DISTRIBUCIÓN DE TEMAS OBLIGATORIOS
+## 14. MAPA CURRICULAR Y DISTRIBUCIÓN DE TEMAS OBLIGATORIOS
 ### 10.° GRADO — Asignatura: Informática
  * **Nivel Básico:** Historia y evolución de la computación; arquitectura básica del ordenador (Hardware y Software); clasificación y funciones de periféricos (Entrada, Salida y Almacenamiento).
  * **Nivel Intermedio:** Fundamentos de Internet, redes de datos y protocolos; introducción al Internet de las Cosas (IoT); operación de hardware de interfaz humana; unidades de memoria volátil y no volátil (RAM, ROM, HDD, SSD); componentes internos (CPU, Placa Base, Tarjeta de Red).
@@ -222,12 +241,12 @@ Estructura binaria simétrica para la validación de postulados de arquitectura 
 ### 12.° GRADO — Asignatura: Programación II
  * **Nivel Básico:** Transición de entornos lógicos a código real; sintaxis estricta de lenguajes compilados de la familia C (C, C++ o C#); configuración e interfaz de IDEs escolares (Dev-C++, Code::Blocks); estructura fundamental de un programa (librerías, #include, main y uso del ;); tipado de datos rígido nativo.
  * **Nivel Intermedio:** Implementación en código de estructuras condicionales avanzadas (if, else if, switch); bucles e iteraciones dinámicas (for, while, do-while, contadores); captura y formateo de datos por terminal (cin/cout, scanf/printf); operadores avanzados de asignación compuesta e incremento/decremento.
- * **Nivel Avanzado:** Declaración, llenado y lectura de arreglos unidimensionales (vectores) y bidimensionales (matrices) en código compilado; modularización práctica mediante funciones con retorno y paso de parámetros básicos; introducción a la sintaxis limpia y tipado dinámico en Python; depuración manual de errores de sintaxis y lógica en consola.
+ * **Nivel Avanzado:** Declaración, llenado y lectura de arreglos unidimensionales (vectores) y bidimensionales (matrices) en código compilado; modularización práctica mediante funciones con retorno y paso de parámetros; introducción a la sintaxis limpia y tipado dinámico en Python; depuración manual de errores de sintaxis y lógica en consola.
 ### 12.° GRADO — Asignatura: Programación Orientada a Objetos (POO)
  * **Nivel Básico:** El paradigma orientado a objetos y abstracción del mundo real; anatomía de componentes (Clases, Objetos, Atributos y Métodos); ciclo de vida de instancias (constructores parametrizados y destructores); principio de encapsulamiento y modificadores de acceso (Público, Privado, Protegido) con métodos *Getters* y *Setters*.
  * **Nivel Intermedio:** El pilar de la Herencia (jerarquías, reutilización y uso de super/base); el pilar del Polimorfismo (sobrecarga en compilación y sobreescritura en ejecución); clases abstractas e interfaces como contratos estrictos de comportamiento.
  * **Nivel Avanzado:** Relaciones complejas de objetos en memoria (Asociación, Agregación y Composición); aplicación práctica de los principios de diseño SOLID; introducción al uso de patrones de diseño creacionales y estructurales básicos (Singleton, Factory Method).
-## 14. CHECKLIST DE VALIDACIÓN OBLIGATORIA (FILTRO DE CALIDAD)
+## 15. CHECKLIST DE VALIDACIÓN OBLIGATORIA (FILTRO DE CALIDAD)
 Antes de aprobar e integrar cualquier reactivo en los archivos de almacenamiento local, el auditor debe verificar manualmente el cumplimiento de los siguientes indicadores:
  * [ ] **Criterio de Unicidad:** Existe única y exclusivamente una respuesta correcta y objetiva para el enunciado.
  * [ ] **Homogeneidad de Dominio:** Todas las opciones pertenecen estrictamente al mismo campo conceptual y asignatura.
@@ -237,4 +256,13 @@ Antes de aprobar e integrar cualquier reactivo en los archivos de almacenamiento
  * [ ] **Léxico Equivalente:** Ninguna opción destaca visualmente por incorporar palabras clave o términos técnicos de forma exclusiva.
  * [ ] **Plausibilidad de Fallo:** Los distractores representan errores lógicos reales realizables por un alumno con conocimiento incompleto.
  * [ ] **Alineación de Nivel:** La complejidad del reactivo se corresponde estrictamente con el grado y corte temático establecido en la malla.
+ * [ ] **Ausencia de Placeholders:** El reactivo está libre de textos genéricos de relleno o datos nulos de simulación.
+ * [ ] **Desacoplamiento Posicional:** La validación se realiza exclusivamente por respuesta_correcta_literal, erradicando índices *hardcoded*.
 *Si el reactivo falla en cualquiera de los puntos anteriores, es rechazado inmediatamente para su reestructuración manual.*
+```
+---
+
+El documento técnico ha sido actualizado y se encuentra blindado bajo los rigurosos estándares metodológicos requeridos por la institución.
+---
+```
+------------------------------------------------NO AGREGAR, MODIFICAR O ELIMINAR TEXTO ANTES DE ESTA LINEA--------------------------------------
