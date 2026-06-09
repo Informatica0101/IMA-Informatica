@@ -462,20 +462,6 @@
     "Activa": true
   },
   {
-    "Pregunta": "2. Si inserta una imagen y esta actúa como un carácter más que no se puede mover libremente, ¿cuál es su ajuste de texto (Text Wrapping) por defecto?",
-    "RespuestaCorrecta": "En línea con el texto",
-    "Nivel": "Básico",
-    "Tema": "Fundamentos de Computación",
-    "Asignatura": "Informatica",
-    "Grado": 10,
-    "TipoActividad": "opcion_multiple",
-    "OpcionA": "Cuadrado",
-    "OpcionB": "Detrás del texto",
-    "OpcionC": "En línea con el texto",
-    "OpcionD": "Estrecho",
-    "Activa": true
-  },
-  {
     "Pregunta": "4. ¿Cuál es el tamaño de papel estándar utilizado en Honduras, conocido internacionalmente como Carta?",
     "RespuestaCorrecta": "Carta (Tamaño más común)",
     "Nivel": "Básico",
@@ -1627,34 +1613,6 @@
     "OpcionB": "Párrafo",
     "OpcionC": "Estilos",
     "OpcionD": "Edición",
-    "Activa": true
-  },
-  {
-    "Pregunta": "¿Cuál es la función del comando 'Copiar Formato'?",
-    "RespuestaCorrecta": "Aplicar la apariencia de un texto seleccionado a otro",
-    "Nivel": "Básico",
-    "Tema": "Sistemas Operativos",
-    "Asignatura": "Informatica",
-    "Grado": 10,
-    "TipoActividad": "opcion_multiple",
-    "OpcionA": "Aplicar la apariencia de un texto seleccionado a otro",
-    "OpcionB": "Duplicar el texto en el portapapeles",
-    "OpcionC": "Borrar el estilo de la página",
-    "OpcionD": "Cambiar el tamaño de las imágenes",
-    "Activa": true
-  },
-  {
-    "Pregunta": "¿Qué comando se usa para combinar dos o más celdas en una sola en una tabla?",
-    "RespuestaCorrecta": "Combinar celdas",
-    "Nivel": "Básico",
-    "Tema": "Hojas de Cálculo",
-    "Asignatura": "Informatica",
-    "Grado": 10,
-    "TipoActividad": "opcion_multiple",
-    "OpcionA": "Combinar celdas",
-    "OpcionB": "Dividir celdas",
-    "OpcionC": "Autoajustar",
-    "OpcionD": "Alinear",
     "Activa": true
   },
   {

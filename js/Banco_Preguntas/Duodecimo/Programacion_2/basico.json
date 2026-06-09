@@ -1,0 +1,32 @@
+[
+  {
+    "id": "Q-12-PRG2-BAS-001",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Estructura fundamental de un programa",
+    "tipo_pregunta": "completacion",
+    "enunciado": "En lenguajes compilados como C y C++, la directiva del preprocesador que se utiliza al inicio del archivo fuente para incluir la librería estándar de entrada y salida de datos en consola se escribe como <code>#include &lt;________&gt;</code>.",
+    "opciones_visibles": [
+      "conio.h",
+      "iostream",
+      "stdio.h",
+      "math.h"
+    ],
+    "respuesta_correcta_literal": "iostream",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRG2-BAS-002",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Sintaxis",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "En la sintaxis del entorno de desarrollo Dev-C++ empleando el lenguaje C++, omitir el carácter de punto y coma (<code>;</code>) al finalizar una sentencia u operación provocará un error en tiempo de compilación.",
+    "opciones": [
+      "Verdadero",
+      "Falso"
+    ],
+    "respuesta_correcta_literal": "Verdadero",
+    "nivel": "Básico"
+  }
+]

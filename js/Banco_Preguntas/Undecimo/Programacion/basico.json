@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "id": "Q-11-PRG-BAS-001",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Historia de programacion",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "Durante la Segunda Guerra Mundial, el matemático Alan Turing lideró el diseño de la máquina electromecánica 'Bombe'. ¿Cuál era el propósito fundamental de este dispositivo en la historia de la computación?",
+    "opciones": [
+      "Compilar el primer lenguaje de programación de alto nivel de la historia.",
+      "Descifrar los mensajes encriptados por la máquina alemana Enigma.",
+      "Establecer la primera red de comunicación de datos asíncrona."
+    ],
+    "respuesta_correcta_literal": "Descifrar los mensajes encriptados por la máquina alemana Enigma.",
+    "nivel": "Básico"
+  }
+]

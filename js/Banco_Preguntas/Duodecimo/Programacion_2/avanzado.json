@@ -1,0 +1,18 @@
+[
+  {
+    "id": "Q-12-PRG2-AV-001",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Transicion a Lenguajes de Alto Nivel Modernos",
+    "tipo_pregunta": "completacion",
+    "enunciado": "A diferencia de lenguajes de tipado rígido como C++, el lenguaje de programación estructurado y multipropósito ________ no requiere del uso de punto y coma finales ni llaves de apertura, utilizando en su lugar la <strong>indentación u organización de bloques por espacios</strong>.",
+    "opciones_visibles": [
+      "Java",
+      "C#",
+      "Python",
+      "Assembly"
+    ],
+    "respuesta_correcta_literal": "Python",
+    "nivel": "Avanzado"
+  }
+]

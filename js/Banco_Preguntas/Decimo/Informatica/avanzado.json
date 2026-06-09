@@ -1,1 +1,47 @@
-[]
+[
+  {
+    "id": "Q-10-INF-AV-001",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Software",
+    "tipo_pregunta": "completacion",
+    "enunciado": "La clasificación de software que está diseñada específicamente para interactuar directamente con el hardware del ordenador, gestionar los recursos del sistema y proporcionar una plataforma para otras aplicaciones se conoce como software de ________.",
+    "opciones_visibles": [
+      "Aplicación",
+      "Sistema",
+      "Programación",
+      "Utilidad"
+    ],
+    "respuesta_correcta_literal": "Sistema",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-002",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Seguridad Informatica",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "Un software antivirus comercial o de código abierto es capaz de mitigar ataques mediante la detección basada en firmas y el análisis heurístico de comportamientos maliciosos.",
+    "opciones": [
+      "Verdadero",
+      "Falso"
+    ],
+    "respuesta_correcta_literal": "Verdadero",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-003",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Cuál es la función primordial del componente denominado 'Kernel' o núcleo dentro de un sistema operativo como Windows, Linux o macOS?",
+    "opciones": [
+      "Administrar la interfaz gráfica de usuario y los iconos del escritorio.",
+      "Servir de puente directo entre el software de aplicación y el procesamiento físico del hardware.",
+      "Compilar las líneas de código escritas en lenguajes de alto nivel."
+    ],
+    "respuesta_correcta_literal": "Servir de puente directo entre el software de aplicación y el procesamiento físico del hardware.",
+    "nivel": "Avanzado"
+  }
+]
