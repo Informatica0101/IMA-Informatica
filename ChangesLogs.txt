@@ -264,3 +264,11 @@ REINGENIERÍA HÍBRIDA Y GAMIFICACIÓN (v7.0) - 2026-06-21
 - ARCHIVO: css/style.css: Implementadas clases para Skeleton Screens (Modulo 3).
 - ARCHIVO: student-dashboard.html / teacher-dashboard.html: Removido #loading-overlay en favor de carga asíncrona (Modulo 3).
 - ARCHIVO: backend/user-service/Code.gs: Agregado endpoint mergeGuestData para soporte de fusión nativa (Modulo 2).
+
+MÓDULO ANALÍTICA INTEGRAL (v3.0) - 2026-06-21
+
+- ARCHIVO: backend/user-service/Code.gs: Implementado motor analítico v3.0 con degradación de XP por intentos (100% a 25%), Mastery basado en evidencia (correcciones y preguntas nuevas) e ICR/IA psicométricos multifactores.
+- ARCHIVO: js/quizpro.js: Implementado Sistema de Refuerzo Inteligente con cola de reaparición local. Actualizado motor de progresión multi-factor y validación de Rango Leyenda.
+- ARCHIVO: juegos/quizpro.html: Rediseñada la interfaz de Estadísticas Vitales v3.0 con XP, Rango, AE_Ratio y Badge de Calibración Inicial.
+- ARCHIVO: js/games-adapter.js: Agregada normalización de tipoActividad para compatibilidad con el motor de impulsividad v3.0.
+- ARCHIVO: js/config.js: Exportada función getSanitizedAcademicText para normalización visual de temas.

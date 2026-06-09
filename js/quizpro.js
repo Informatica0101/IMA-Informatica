@@ -53,21 +53,20 @@ window.userGameStats = {}; // Cache de logros para validación de bloqueos
 window.globalTopData = null;
 
 window.initQuizPro = async function() {
-    // REQ: Uso del Adaptador Unificado (Fase 3)
+    // REQ 2: Remoción del Bloqueador Visual (Spinner) en favor de carga asíncrona (Modulo 1)
     if (window.GamesAdapter) {
-        await GamesAdapter.init('quizpro');
+        // No esperamos el init síncrono para evitar el bloqueo del hilo de renderizado
+        GamesAdapter.init('quizpro', false);
     }
 
     try {
-        await window.loadPerformanceTable();
-        // loadGlobalTop se maneja internamente por el adaptador
-        await loadGlobalTop(); // Inyectar ranking en el home
+        // Carga en paralelo sin bloquear la UI
+        Promise.all([
+            window.loadPerformanceTable(),
+            loadGlobalTop()
+        ]);
     } catch (e) {
-        console.error("[QuizPro] Error en carga de tablas:", e);
-    } finally {
-        if (window.GamesAdapter) {
-            await GamesAdapter.showLoading(false);
-        }
+        console.error("[QuizPro] Error en carga de tablas asíncrona:", e);
     }
 
     const handleAbandonment = () => {
@@ -242,24 +241,47 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
                window.parseGrade(s.grade) === targetGradeNum;
     });
 
-    const getScoreForLevel = (lvlName) => {
+    const getMetricsForLevel = (lvlName) => {
         const matches = relevantStats.filter(s => window.getStandardLevelName(s.level) === lvlName);
-        return matches.length === 0 ? 0 : Math.max(...matches.map(m => parseFloat(m.maxScore || 0)));
+        if (matches.length === 0) return { score: 0, icr: 0, ia: 0, mastery: 0 };
+
+        return {
+            score: Math.max(...matches.map(m => parseFloat(m.maxScore || 0))),
+            icr: Math.max(...matches.map(m => parseFloat(m.icr || 0))),
+            ia: Math.min(...matches.map(m => parseFloat(m.ia || 100))),
+            mastery: Math.max(...matches.map(m => parseFloat(m.dominio || 0)))
+        };
     };
 
-    const basicScore = getScoreForLevel('Básico');
-    const interScore = getScoreForLevel('Intermedio');
+    const basicMetrics = getMetricsForLevel('Básico');
+    const interMetrics = getMetricsForLevel('Intermedio');
+
+    const basicScore = basicMetrics.score;
+    const interScore = interMetrics.score;
 
     // Métrica de XP para rangos
     const xpKey = `xp_${targetSubjectNorm}_${gradeLabel}`;
     const currentXP = parseInt(localStorage.getItem(xpKey) || '0');
 
-    // Determinar Rango Actual
-    const userRange = XP_CONFIG.RANGES.find(r => currentXP >= r.min && currentXP <= r.max) || XP_CONFIG.RANGES[0];
+    // Determinar Rango Actual (v3.0)
+    let userRange = XP_CONFIG.RANGES.find(r => currentXP >= r.min && currentXP <= r.max) || XP_CONFIG.RANGES[0];
+
+    // REQ: Validación Rango Leyenda (Modulo 4.2 / Spec v3.0)
+    if (currentXP > 22000) {
+        const globalMastery = Object.values(window.userGameStats).reduce((a, b) => a + (b.dominio || 0), 0) / Math.max(Object.keys(window.userGameStats).length, 1);
+        const globalICR = Object.values(window.userGameStats).reduce((a, b) => a + (b.icr || 0), 0) / Math.max(Object.keys(window.userGameStats).length, 1);
+        const globalIA = Object.values(window.userGameStats).reduce((a, b) => a + (b.ia || 0), 0) / Math.max(Object.keys(window.userGameStats).length, 1);
+
+        if (globalMastery >= 85 && globalICR >= 80 && globalIA <= 15) {
+            userRange = { label: 'Leyenda' };
+        } else {
+            userRange = { label: 'Maestro' }; // Downgrade if psychometrics not met
+        }
+    }
 
     // UI: Mostrar Rango y XP
     const badgeHtml = `<div class="mt-4 flex flex-col items-center gap-2">
-        <span class="px-4 py-1 bg-indigo-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-100">${userRange.label}</span>
+        <span class="px-4 py-1 ${userRange.label === 'Leyenda' ? 'bg-amber-500 shadow-amber-200' : 'bg-indigo-600 shadow-indigo-100'} text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">${userRange.label}</span>
         <p class="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">${currentXP.toLocaleString()} XP ACUMULADA</p>
     </div>`;
 
@@ -277,9 +299,27 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     const btnAvan = document.getElementById('btn-avanzado');
     const cardAvan = document.getElementById('level-avanzado');
 
-    // REQ 6: Algoritmo de Transición Curricular y Restricción de Desbloqueo (Umbral del 70%)
-    let canUnlockInter = isTeacher || (basicScore >= 70);
-    let canUnlockAvan = isTeacher || (interScore >= 70);
+    // REQ: Motor de Progresión Multi-factor (v3.0)
+    const checkUnlock = (metrics, targetLevel) => {
+        if (isTeacher) return true;
+
+        // REQ: Fase de Calibración (Cold Start) - No bloquear progresión psicométrica
+        const totalAnswers = Object.values(window.userGameStats).reduce((sum, s) => sum + (s.totalAttempts || 0), 0);
+        if (totalAnswers < 30) return metrics.score >= 70;
+
+        if (targetLevel === 'intermedio') {
+            // Ejemplo para Intermedio: Nota ≥ 70%, Mastery ≥ 55%, ICR ≥ 50%, IA ≤ 40%, 30 preguntas
+            return metrics.score >= 70 && metrics.mastery >= 55 && metrics.icr >= 50 && metrics.ia <= 40 && totalAnswers >= 30;
+        } else if (targetLevel === 'avanzado') {
+            // Ejemplo para Avanzado: Nota ≥ 75%, Mastery ≥ 65%, ICR ≥ 60%, IA ≤ 35%, 75 preguntas, 3 temas dominados
+            const dominatedTopics = relevantStats.filter(s => s.dominio >= 80).length;
+            return metrics.score >= 75 && metrics.mastery >= 65 && metrics.icr >= 60 && metrics.ia <= 35 && totalAnswers >= 75 && dominatedTopics >= 3;
+        }
+        return metrics.score >= 70;
+    };
+
+    let canUnlockInter = checkUnlock(basicMetrics, 'intermedio');
+    let canUnlockAvan = checkUnlock(interMetrics, 'avanzado');
 
     // UI Intermedio
     if (canUnlockInter) {
@@ -288,7 +328,6 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
         btnInter.classList.replace('bg-gray-300', 'bg-gray-900');
         btnInter.classList.remove('cursor-not-allowed');
         cardInter.classList.remove('locked');
-        // Limpiar mensaje de progreso si estaba
         const prog = cardInter.querySelector('.unlock-progress');
         if (prog) prog.remove();
     } else {
@@ -298,14 +337,22 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
         btnInter.classList.add('cursor-not-allowed');
         cardInter.classList.add('locked');
 
-        // Mostrar progreso actual vs 70% (Modulo 6.3)
         let prog = cardInter.querySelector('.unlock-progress');
         if (!prog) {
             prog = document.createElement('p');
             prog.className = 'unlock-progress text-[9px] font-bold text-red-500 mt-2 uppercase';
             btnInter.after(prog);
         }
-        prog.textContent = `Progreso actual: ${Math.round(basicScore)}%. Requieres un 70% para desbloquear.`;
+
+        const totalAnswers = Object.values(window.userGameStats).reduce((sum, s) => sum + (s.totalAttempts || 0), 0);
+        let reason = `Requieres 70% de precisión.`;
+        if (basicMetrics.score >= 70) {
+            if (totalAnswers < 30) reason = `Faltan ${30 - totalAnswers} preguntas evaluadas.`;
+            else if (basicMetrics.mastery < 55) reason = "Dominio insuficiente (Min 55%)";
+            else if (basicMetrics.icr < 50) reason = "Confianza baja (Min 50%)";
+            else if (basicMetrics.ia > 40) reason = "Adivinación alta (Max 40%)";
+        }
+        prog.textContent = `Bloqueado. ${reason}`;
     }
 
     // UI Avanzado
@@ -330,7 +377,20 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
             prog.className = 'unlock-progress text-[9px] font-bold text-red-500 mt-2 uppercase';
             btnAvan.after(prog);
         }
-        prog.textContent = `Progreso actual: ${Math.round(interScore)}%. Requieres un 70% para desbloquear.`;
+
+        const totalAnswers = Object.values(window.userGameStats).reduce((sum, s) => sum + (s.totalAttempts || 0), 0);
+        let reason = `Requieres 75% de precisión.`;
+        if (interMetrics.score >= 75) {
+            if (totalAnswers < 75) reason = `Faltan ${75 - totalAnswers} preguntas evaluadas.`;
+            else if (interMetrics.mastery < 65) reason = "Dominio insuficiente (Min 65%)";
+            else if (interMetrics.icr < 60) reason = "Confianza baja (Min 60%)";
+            else if (interMetrics.ia > 35) reason = "Adivinación alta (Max 35%)";
+            else {
+                const dominatedTopics = relevantStats.filter(s => s.dominio >= 80).length;
+                if (dominatedTopics < 3) reason = `Faltan ${3 - dominatedTopics} temas dominados.`;
+            }
+        }
+        prog.textContent = `Bloqueado. ${reason}`;
     }
 
     document.getElementById('subjects-screen').classList.add('hidden');
@@ -396,9 +456,18 @@ async function startQuiz() {
         return;
     }
 
+    // REQ 3.0: Sistema de Refuerzo Inteligente (Modulo 8)
+    const reinforcementIds = JSON.parse(localStorage.getItem('quizpro_reinforcement') || "[]");
+    let reinforcementQuestions = allPresentationQuestions.filter(q => reinforcementIds.includes(q.id));
+
     let seenIds = JSON.parse(localStorage.getItem(SEEN_QUESTIONS_KEY) || "[]");
-    let freshQuestions = allPresentationQuestions.filter(q => !seenIds.includes(q.id));
-    if (freshQuestions.length < 5) freshQuestions = allPresentationQuestions;
+    let freshQuestions = allPresentationQuestions.filter(q => !seenIds.includes(q.id) && !reinforcementIds.includes(q.id));
+
+    if (freshQuestions.length < 5) freshQuestions = allPresentationQuestions.filter(q => !reinforcementIds.includes(q.id));
+
+    // Mezclar Refuerzo con Nuevas (Priorizando Refuerzo en los primeros slots)
+    let pool = [...shuffleArray(reinforcementQuestions), ...shuffleArray(freshQuestions)];
+    if (pool.length < 1) pool = allPresentationQuestions;
 
     // REQ 2: Algoritmo de Variedad de Fuente (Post-Audit)
     // Agrupar por origen para evitar clustering
@@ -428,7 +497,9 @@ async function startQuiz() {
     }
 
     // REQ: Normalización y Filtro Estricto de Niveles (Incidencias 3 y 4)
-    currentQuizQuestions = interleaved
+    currentQuizQuestions = interleaved.length > 0 ? interleaved : pool;
+
+    currentQuizQuestions = currentQuizQuestions
         .map(q => window.normalizeQuestion(q))
         .filter(q => {
             const qLevel = window.getStandardLevelName(q.nivel || selectedDifficulty);
@@ -494,7 +565,15 @@ function calculateXP(isCorrect, level, responseTime) {
     // 3. Bono Racha
     const bonoRacha = Math.min(XP_CONFIG.STREAK.MAX, 1.0 + (currentStreak * XP_CONFIG.STREAK.BONUS_PER_HIT));
 
-    const totalXP = Math.round(XP_CONFIG.BASE * fDificultad * fTiempo * bonoRacha);
+    // REQ 3.0: Degradación por intentos
+    const q = currentQuizQuestions[currentIndex];
+    const prevAttempts = JSON.parse(localStorage.getItem(`attempts_${q.id}`) || '0');
+    let attemptMultiplier = 1.0;
+    if (prevAttempts === 1) attemptMultiplier = 0.75;
+    else if (prevAttempts === 2) attemptMultiplier = 0.5;
+    else if (prevAttempts >= 3) attemptMultiplier = 0.25;
+
+    const totalXP = Math.round(XP_CONFIG.BASE * fDificultad * fTiempo * bonoRacha * attemptMultiplier);
 
     // REQ 4.2 & 6.3: Soft Cap & XP Freeze
     const xpKey = `xp_${selectedAsignatura}_${selectedGrado}`;
@@ -835,7 +914,10 @@ function showQuestion() {
 
     document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${currentQuizQuestions.length}`;
     document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / currentQuizQuestions.length) * 100}%`;
-    document.getElementById('question-text').textContent = q.question;
+
+    // REQ 3: Sanitización y Renderizado del Enunciado (Inyección HTML Técnico)
+    // Se utiliza innerHTML para procesar etiquetas <code>, <b>, etc.
+    document.getElementById('question-text').innerHTML = q.question;
 
     // REQ: Soporte para imágenes en preguntas
     const existingImg = document.getElementById('question-image');
@@ -1220,6 +1302,14 @@ function checkAnswer(selected, correct, btn) {
         const xpGained = calculateXP(true, selectedDifficulty, responseTime);
         sessionXP += xpGained;
 
+        // REQ 3.0: Sistema de Refuerzo - Eliminar de cola si es correcta
+        let reinforcementIds = JSON.parse(localStorage.getItem('quizpro_reinforcement') || "[]");
+        if (reinforcementIds.includes(q.id)) {
+            reinforcementIds = reinforcementIds.filter(id => id !== q.id);
+            localStorage.setItem('quizpro_reinforcement', JSON.stringify(reinforcementIds));
+            console.log(`[REFUERZO] Pregunta ${q.id} superada. Eliminada de la cola.`);
+        }
+
         if (btn) btn.classList.add('correct', 'border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
         feedback.className = 'text-center h-8 font-bold text-emerald-500';
         feedback.textContent = `¡Correcto! +${xpGained} XP`;
@@ -1227,6 +1317,15 @@ function checkAnswer(selected, correct, btn) {
         console.log(`[QuizPro] Pregunta ${currentIndex} Correcta. XP Ganada: ${xpGained}`);
     } else {
         calculateXP(false); // Reset streak
+
+        // REQ 3.0: Sistema de Refuerzo - Añadir a cola si es incorrecta
+        let reinforcementIds = JSON.parse(localStorage.getItem('quizpro_reinforcement') || "[]");
+        if (!reinforcementIds.includes(q.id)) {
+            reinforcementIds.push(q.id);
+            localStorage.setItem('quizpro_reinforcement', JSON.stringify(reinforcementIds));
+            console.log(`[REFUERZO] Pregunta ${q.id} fallada. Añadida a cola de refuerzo.`);
+        }
+
         if (btn) btn.classList.add('incorrect', 'border-red-500', 'bg-red-50', 'text-red-700');
         feedback.className = 'text-center h-8 font-bold text-red-500';
 
@@ -1248,6 +1347,11 @@ function checkAnswer(selected, correct, btn) {
     }
 
     document.getElementById('score').textContent = `${score} / ${currentIndex + 1}`;
+
+    // Registrar intento para degradación de XP
+    const attempts = JSON.parse(localStorage.getItem(`attempts_${q.id}`) || '0');
+    localStorage.setItem(`attempts_${q.id}`, attempts + 1);
+
     setTimeout(() => {
         window.isProcessingAnswer = false;
         currentIndex++;
@@ -1509,11 +1613,84 @@ function renderPerformanceHTML(res) {
     let approvedCount = 0;
     const allMistakeTags = new Set();
 
+    // REQ 7: Perfil Analítico Avanzado (Modulo 7)
+    let hits = 0;
+    let misses = 0;
+    let totalSpeed = 0;
+    let hitSpeedCount = 0;
+    let impulsiveCount = 0;
+
+    const minTimes = { 'verdadero_falso': 3000, ' Seleccion múltiple': 4000, 'emparejamiento': 8000, 'ordering': 12000, 'completacion': 15000 };
+
     history.forEach(h => {
         if (h[3] === 'QuizPro' && parseFloat(h[5]) < 70) {
             allMistakeTags.add(h[4]);
         }
+
+        // Analizar registros detallados de QuizProAnalytics (h[12] = esCorrecta)
+        if (h.length > 10) { // Indica que es un registro de analítica
+            const isCorrect = String(h[12]) === "true";
+            const time = parseFloat(h[13]) || 0;
+            const type = h[4]; // tipoActividad
+
+            if (isCorrect) {
+                hits++;
+                totalSpeed += time;
+                hitSpeedCount++;
+            } else {
+                misses++;
+            }
+
+            if (time > 0 && minTimes[type] && time < minTimes[type]) {
+                impulsiveCount++;
+            }
+        }
     });
+
+    // Actualizar UI v2.0
+    const aeRatio = hits / Math.max(misses, 1);
+    const avgSpeed = hitSpeedCount > 0 ? (totalSpeed / hitSpeedCount / 1000).toFixed(1) : "0.0";
+    const impulsivity = history.length > 0 ? Math.round((impulsiveCount / history.length) * 100) : 0;
+
+    const elHits = document.getElementById('v2-hits');
+    const elMisses = document.getElementById('v2-misses');
+    const elRatio = document.getElementById('v2-ae-ratio');
+    const elSpeed = document.getElementById('v2-speed');
+    const elImp = document.getElementById('v2-impulsivity');
+
+    if (elHits) elHits.textContent = hits;
+    if (elMisses) elMisses.textContent = misses;
+    if (elRatio) elRatio.textContent = aeRatio.toFixed(1);
+    if (elSpeed) elSpeed.textContent = `${avgSpeed}s`;
+    if (elImp) elImp.textContent = `${impulsivity}%`;
+
+    // ICR / IA / Mastery / XP (v3.0)
+    let latestICR = 0, latestIA = 0, latestMastery = 0, totalXP = 0;
+    const qProLogs = history.filter(h => h.length > 15);
+    if (qProLogs.length > 0) {
+        const last = qProLogs[qProLogs.length - 1];
+        latestICR = Math.round(parseFloat(last[17]) || 0);
+        latestIA = Math.round(parseFloat(last[18]) || 0);
+        latestMastery = Math.round(parseFloat(last[19]) || 0);
+        totalXP = qProLogs.reduce((s, l) => s + (parseFloat(l[20]) || 0), 0);
+    }
+
+    const elMastery = document.getElementById('v2-mastery');
+    const elICR = document.getElementById('v2-icr');
+    const elIA = document.getElementById('v2-ia');
+    const elXP = document.getElementById('v2-total-xp');
+    const calBadge = document.getElementById('calibration-badge');
+
+    if (elMastery) elMastery.textContent = `${latestMastery}%`;
+    if (elICR) elICR.textContent = `${latestICR}%`;
+    if (elIA) elIA.textContent = `${latestIA}%`;
+    if (elXP) elXP.textContent = Math.round(totalXP).toLocaleString();
+
+    // Cold Start Badge (Modulo 7.7)
+    if (calBadge) {
+        if (qProLogs.length > 0 && qProLogs.length < 30) calBadge.classList.remove('hidden');
+        else calBadge.classList.add('hidden');
+    }
 
     container.innerHTML = Object.entries(window.userGameStats)
         .filter(([key]) => key.startsWith('QuizPro_'))
@@ -1542,6 +1719,76 @@ function renderPerformanceHTML(res) {
     if (Object.keys(window.userGameStats).length > 0) {
         const dashboard = document.getElementById('performance-dashboard');
         if (dashboard) dashboard.classList.remove('hidden');
+    }
+
+    // REQ 8: Fortalezas y Debilidades (Modulo 8)
+    if (history.length > 0) {
+        renderDiagnosis(history);
+    }
+}
+
+function renderDiagnosis(history) {
+    const strongEl = document.getElementById('v2-strong-topic');
+    const weakEl = document.getElementById('v2-weak-topic');
+    const linkContainer = document.getElementById('v2-recommendation-link');
+    if (!strongEl || !weakEl) return;
+
+    // Agrupar analítica por tema
+    const topics = {};
+    history.forEach(h => {
+        if (h.length < 15) return;
+        const tema = h[6]; // Asignatura/Tema en logs
+        if (!tema || tema === 'General') return;
+
+        if (!topics[tema]) topics[tema] = { hits: 0, total: 0 };
+        const isCorrect = String(h[12]) === "true";
+        topics[tema].total++;
+        if (isCorrect) topics[tema].hits++;
+    });
+
+    const topicStats = Object.entries(topics)
+        .map(([tema, s]) => ({ tema, mastery: (s.hits / s.total) * 100, total: s.total }))
+        .filter(t => t.total >= 5); // Mínimo 5 preguntas (Modulo 8.1)
+
+    if (topicStats.length === 0) {
+        strongEl.textContent = "Datos insuficientes para generar diagnóstico.";
+        weakEl.textContent = "Sigue practicando para recibir recomendaciones.";
+        return;
+    }
+
+    topicStats.sort((a, b) => b.mastery - a.mastery);
+    const strong = topicStats[0];
+    const weak = topicStats[topicStats.length - 1];
+
+    strongEl.textContent = `${strong.tema} (${Math.round(strong.mastery)}%)`;
+    weakEl.textContent = `${weak.tema} (${Math.round(weak.mastery)}%)`;
+
+    // Recomendación Curricular (Modulo 8.2)
+    if (weak.mastery < 70) {
+        const findPresentation = (tema) => {
+            if (!window.presentationData) return null;
+            for (const grade of window.presentationData) {
+                for (const subject of grade.subjects) {
+                    for (const topic of subject.topics) {
+                        if (topic.title.toLowerCase().includes(tema.toLowerCase()) ||
+                            tema.toLowerCase().includes(topic.title.toLowerCase())) {
+                            return topic.file;
+                        }
+                    }
+                }
+            }
+            return null;
+        };
+
+        const file = findPresentation(weak.tema);
+        if (file && linkContainer) {
+            linkContainer.innerHTML = `
+                <a href="${file}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-700 transition-all shadow-lg shadow-orange-200">
+                    <i class="fas fa-book-open"></i> Repasar Tema
+                </a>
+            `;
+            linkContainer.classList.remove('hidden');
+        }
     }
 }
 

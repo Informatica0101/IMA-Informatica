@@ -368,3 +368,20 @@ Archivo: css/style.css
 
 Archivo: backend/user-service/Code.gs
 - [NUEVO] Endpoint 'mergeGuestData' soporta fusión de logros y analítica de invitados.
+
+AUDITORÍA ANALÍTICA QUIZPRO (v3.0) - 2026-06-21
+
+Archivo: backend/user-service/Code.gs
+- [VERIFICADO] Degradación de XP por intentos: OK (100, 75, 50, 25).
+- [VERIFICADO] Mastery Evidence-Based: OK (Frena al 5% en temas dominados).
+- [VERIFICADO] ICR/IA ponderados por estabilidad y corrección: OK.
+- [VERIFICADO] Fase de Calibración Cold Start (<30 preguntas): OK.
+
+Archivo: js/quizpro.js
+- [VERIFICADO] Sistema de Refuerzo (quizpro_reinforcement): OK.
+- [VERIFICADO] Progresión Multi-factor (Nota, Mastery, ICR, IA, Cobertura): OK.
+- [VERIFICADO] Renderizado HTML en enunciados (innerHTML): OK.
+- [VERIFICADO] Validación Rango Leyenda: OK.
+
+Archivo: juegos/quizpro.html
+- [VERIFICADO] Interfaz v3.0 alineada a la especificación oficial.

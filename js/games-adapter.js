@@ -117,7 +117,8 @@ window.GamesAdapter = {
         const action = {
             ...data,
             timestamp: Date.now(),
-            timeFromStart: Date.now() - this.state.currentSession.startTime
+            timeFromStart: Date.now() - this.state.currentSession.startTime,
+            tipoActividad: data.tipoActividad || data.type // Normalización v2.0
         };
         this.state.currentSession.actions.push(action);
 
@@ -196,14 +197,24 @@ window.GamesAdapter = {
     },
 
     async getLeaderboard(gameId) {
+        // REQ: Offline-First (Modulo 1)
+        if (window.PersistenceManager) {
+            const cached = await window.PersistenceManager.get('rankings');
+            if (cached && cached.data) this.state.leaderboard = cached.data;
+        }
+
         try {
-            const res = await fetchApi('USER', 'getGlobalTop', { gameId });
-            // REQ: Manejo seguro de datos vacíos (v3.2)
-            if (res && res.status === 'success') return res;
-            return { status: 'success', global: [], subjectTops: {} };
+            const res = await fetchApi('USER', 'getGlobalTop', { gameId }, 0, {
+                store: 'rankings'
+            });
+            if (res && res.status === 'success') {
+                this.state.leaderboard = res;
+                return res;
+            }
+            return this.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
         } catch (e) {
             console.warn(`[GamesAdapter] Error obteniendo leaderboard para ${gameId}:`, e);
-            return { status: 'success', global: [], subjectTops: {} };
+            return this.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
         }
     },
 
@@ -216,14 +227,24 @@ window.GamesAdapter = {
             return guestRecords;
         }
 
+        // REQ: Offline-First (Modulo 1)
+        if (window.PersistenceManager) {
+            const cached = await window.PersistenceManager.get('academic_stats');
+            if (cached && cached.data) this.state.personalRecords = cached.data;
+        }
+
         try {
-            const res = await fetchApi('USER', 'getGameStats', { userId: user.userId });
-            // REQ: Manejo seguro de datos vacíos (v3.2)
-            if (res && res.status === 'success' && res.data) return res.data;
-            return {};
+            const res = await fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
+                store: 'academic_stats'
+            });
+            if (res && res.status === 'success' && res.data) {
+                this.state.personalRecords = res.data;
+                return res.data;
+            }
+            return this.state.personalRecords || {};
         } catch (e) {
             console.warn("[GamesAdapter] Error obteniendo record personal:", e);
-            return {};
+            return this.state.personalRecords || {};
         }
     }
 };

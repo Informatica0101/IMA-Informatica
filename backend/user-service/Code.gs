@@ -19,11 +19,21 @@ const ANALYTICS_CONFIG = {
     MASTERY: { historico: 0.7, actual: 0.3 }
   },
   CALIBRATION: {
-    THRESHOLD: 100, // REQ: Mínimo 100 respuestas para estabilizar perfil
+    THRESHOLD: 30, // REQ: Mínimo 30 respuestas para fase de calibración (Cold Start v2.0)
+    SESSION_LIMIT: 3,
     GLOBAL_WEIGHT: 0.8,
     ANCHOR_SUBJECT: "Informática",
     ANCHOR_GRADE: 10,
     ANCHOR_LEVEL: "Básico"
+  },
+  THRESHOLDS: {
+    IMPULSIVITY: {
+      'verdadero_falso': 3000,
+      'Selección múltiple': 4000,
+      'emparejamiento': 8000,
+      'ordering': 12000,
+      'completacion': 15000
+    }
   }
 };
 
@@ -569,8 +579,13 @@ function getGlobalTop(payload) {
       for (const asig in subjects) {
         const levels = subjects[asig];
         const scores = Object.values(levels);
-        // Promedio de la asignatura: suma de niveles / 3 (Divisor fijo por Req)
-        const asigAvg = scores.reduce((a, b) => a + b, 0) / 3;
+
+        // REQ 5: Recalculación del Ranking Global (Alineación del Analytic)
+        // Promedia únicamente los niveles cursados y superados (puntaje > 0)
+        // Evita penalizar por niveles bloqueados. Divisor dinámico.
+        const activeScores = scores.filter(s => s > 0);
+        const asigAvg = activeScores.length > 0 ? (activeScores.reduce((a, b) => a + b, 0) / activeScores.length) : 0;
+
         totalSubjectSum += asigAvg;
 
         // Registrar para top por asignatura
@@ -581,11 +596,11 @@ function getGlobalTop(payload) {
     }
 
     const userGradeNum = parseGradeNum(profile.grado);
-    let globalDivisor = 1;
-    if (userGradeNum === 11) globalDivisor = 5; // 1 (10th) + 4 (11th)
-    if (userGradeNum === 12) globalDivisor = 6; // 1 (10th) + 4 (11th) + 1 (12th)
 
-    const globalAvg = totalSubjectSum / globalDivisor;
+    // REQ 5: Divisor Dinámico basado en asignaturas efectivamente cursadas
+    // Evita la degradación del promedio por la malla curricular no alcanzada.
+    const cursadasCount = Object.keys(userGrades).reduce((sum, grd) => sum + Object.keys(userGrades[grd]).length, 0);
+    const globalAvg = cursadasCount > 0 ? (totalSubjectSum / cursadasCount) : 0;
 
     globalLeaderboard.push({
       nombre: profile.nombre,
@@ -633,6 +648,11 @@ function getGameStats(payload) {
     const profileData = profileSheet.getDataRange().getValues().slice(1);
     const userProfile = profileData.filter(p => String(p[1]) === String(userId));
 
+    // Obtener analítica detallada (v3.0)
+    const analyticsSheet = getOrCreateSheet(ss, "QuizProAnalytics");
+    const analyticsData = analyticsSheet.getDataRange().getValues().slice(1);
+    const detailedLogs = analyticsData.filter(r => String(r[2]) === String(userId));
+
     userRows.forEach(r => {
       const j = r[3];
       const p = parseFloat(r[5] || 0);
@@ -641,36 +661,43 @@ function getGameStats(payload) {
       const grd = r[7];
 
       if (j === "QuizPro") {
-        // Generar llaves únicas por materia, grado y nivel para el frontend
         const key = `QuizPro_${asig}_${grd}_${lvl}`;
-
-        // Calcular dominio promedio para este nivel/materia (Independiente del puntaje)
         const relevantProfile = userProfile.filter(up =>
           normalizeString(up[2]) === normalizeString(asig) &&
           getStandardLevelName(up[4]) === getStandardLevelName(lvl)
         );
 
+        const relevantLogs = detailedLogs.filter(l =>
+          normalizeString(l[6]) === normalizeString(asig) &&
+          getStandardLevelName(l[8]) === getStandardLevelName(lvl)
+        );
+
         let dominioAcumulado = 0;
-        // PRIORIDAD: Obtener el dominio consolidado del nivel completo
         const overallEntry = relevantProfile.find(up => up[3] === "__NIVEL_COMPLETO__");
-        if (overallEntry) {
-          dominioAcumulado = Math.round(parseFloat(overallEntry[8]) || 0);
-        } else if (relevantProfile.length > 0) {
-          // Fallback: Promediar temas que no sean genéricos
-          const filtered = relevantProfile.filter(up => up[3] !== "General" && up[3] !== "");
-          if (filtered.length > 0) {
-            dominioAcumulado = Math.round(filtered.reduce((sum, up) => sum + (parseFloat(up[8]) || 0), 0) / filtered.length);
-          }
-        }
+        if (overallEntry) dominioAcumulado = Math.round(parseFloat(overallEntry[8]) || 0);
+
+        // Promedios ponderados v3.0
+        const avgICR = relevantLogs.length > 0 ? relevantLogs.reduce((s, l) => s + (parseFloat(l[17]) || 0), 0) / relevantLogs.length : 0;
+        const avgIA = relevantLogs.length > 0 ? relevantLogs.reduce((s, l) => s + (parseFloat(l[18]) || 0), 0) / relevantLogs.length : 0;
+        const totalXP = relevantLogs.reduce((s, l) => s + (parseFloat(l[20] || 0)), 0); // Asumimos columna 21 para XP
 
         if (!stats[key]) {
-          stats[key] = { maxScore: p, dominio: dominioAcumulado, dominioPromedio: dominioAcumulado, date: r[0], level: lvl, grade: grd, subject: asig };
+          stats[key] = {
+            maxScore: p,
+            dominio: dominioAcumulado,
+            icr: Math.round(avgICR),
+            ia: Math.round(avgIA),
+            xpAcumulada: totalXP,
+            totalAttempts: relevantLogs.length,
+            date: r[0], level: lvl, grade: grd, subject: asig
+          };
         } else {
-          // CAPA 2: El Unlock Score nunca disminuye (Atómico)
           if (p > stats[key].maxScore) stats[key].maxScore = p;
-          // CAPA 4: El dominio se actualiza al valor más reciente/acumulado
           stats[key].dominio = dominioAcumulado;
-          stats[key].dominioPromedio = dominioAcumulado;
+          stats[key].icr = Math.round(avgICR);
+          stats[key].ia = Math.round(avgIA);
+          stats[key].xpAcumulada = totalXP;
+          stats[key].totalAttempts = relevantLogs.length;
         }
       } else {
         if (!stats[j] || p > stats[j].maxScore) {
@@ -682,7 +709,8 @@ function getGameStats(payload) {
     return {
       status: "success",
       data: stats,
-      allHistory: userRows
+      allHistory: detailedLogs.length > 0 ? detailedLogs : userRows,
+      learningProfile: userProfile
     };
   }
 
@@ -914,11 +942,23 @@ function recordAnalytics(payload) {
   const tiempoBase = (avgPregunta * calibrationWeight) + (avgEstudiante_Historico * (1 - calibrationWeight));
   const ratio = tiempoRespuesta / (tiempoBase || 1);
 
-  // 3. Cálculo de Eficiencia y Puntaje_Rapidez
+  // REQ 3.0: Intent-based XP Degradation
+  const sessionCount = [...new Set(userLogs.map(l => l[3]))].length; // Usar quizId para contar sesiones
+  const attemptsOnThisQuestion = userLogs.filter(l => String(l[9]) === String(preguntaId)).length + 1;
+  let xpMultiplier = 1.0;
+  if (attemptsOnThisQuestion === 2) xpMultiplier = 0.75;
+  else if (attemptsOnThisQuestion === 3) xpMultiplier = 0.5;
+  else if (attemptsOnThisQuestion >= 4) xpMultiplier = 0.25;
+
+  // 3. Cálculo de Eficiencia e Impulsividad (v3.0)
   let puntajeRapidez = 0;
   if (ratio <= 0.5) puntajeRapidez = 100;
   else if (ratio <= 1.0) puntajeRapidez = 100 - ((ratio - 0.5) * 100);
   else puntajeRapidez = Math.max(0, 50 - ((ratio - 1.0) * 20));
+
+  // Mitigación de Impulsividad por Tipo (v3.0)
+  const minExpectedTime = ANALYTICS_CONFIG.THRESHOLDS.IMPULSIVITY[payload.tipoActividad] || 4000;
+  const isImpulsive = tiempoRespuesta < minExpectedTime;
 
   const eficiencia = esCorrecta ? puntajeRapidez : (100 - puntajeRapidez);
 
@@ -929,33 +969,54 @@ function recordAnalytics(payload) {
   else if (cambiosRespuesta === 2) consistencia = 30;
   else consistencia = 0;
 
-  // 5. Índice de Confianza (ICR)
+  // 5. Índice de Confianza (ICR) v3.0 - Multifactores
+  // tasa histórica, estabilidad, corrección de errores
+  const historicAccuracy = userLogs.length > 0 ? (userLogs.filter(l => String(l[12]) === "true").length / userLogs.length) * 100 : 50;
+  const wasPreviouslyFailed = userLogs.some(l => String(l[9]) === String(preguntaId) && String(l[12]) === "false");
+  const isCorrection = wasPreviouslyFailed && esCorrecta;
+
   const W_ICR = ANALYTICS_CONFIG.WEIGHTS.ICR;
   const exactitud = esCorrecta ? 100 : 0;
   const dificultad = parseFloat(dificultadPregunta || 50);
   
-  const ICR = (exactitud * W_ICR.exactitud) + 
+  let ICR = (exactitud * W_ICR.exactitud) +
               (eficiencia * W_ICR.eficiencia) + 
               (dificultad * W_ICR.dificultad) + 
               (consistencia * W_ICR.consistencia);
 
-  // 6. Probabilidad de Adivinación (GP)
+  // Estabilidad v3.0
+  if (isCorrection) ICR += 15;
+  ICR = (ICR * 0.7) + (historicAccuracy * 0.3);
+
+  // 6. Probabilidad de Adivinación (IA/GP) v3.0
   const W_GP = ANALYTICS_CONFIG.WEIGHTS.GP;
   const aciertosGlobales = globalAnalytics.length > 0
     ? (globalAnalytics.filter(r => r[12] === true || r[12] === "true").length / globalAnalytics.length) * 100
     : 50;
 
-  const GP = (puntajeRapidez * W_GP.rapidez) + 
+  let GP = (puntajeRapidez * W_GP.rapidez) +
              ((100 - exactitud) * W_GP.error) + 
              (dificultad * W_GP.dificultad) + 
              ((100 - aciertosGlobales) * W_GP.global);
 
-  // 7. Persistencia de Registro Individual
+  // REQ: Cold Start Calibration Phase (Modulo 7.7)
+  if (isCalibrationMode) {
+      logDebug(`[CALIBRATION] Usuario ${userId} en fase inicial. Métricas psicométricas suavizadas.`);
+      GP = Math.min(GP, 30); // No bloquear por IA
+      ICR = Math.max(ICR, 60); // No penalizar ICR
+  } else if (isImpulsive && !esCorrecta) {
+      GP += 20; // Penalizar adivinación fallida e impulsiva
+      ICR -= 10;
+  }
+
+  // 7. Persistencia de Registro Individual v3.0
+  const totalXP = esCorrecta ? Math.round(100 * xpMultiplier) : 0; // Simplificado para Code.gs, real se calcula en JS
+
   const analyticsId = "ANL-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
   analyticsSheet.appendRow([
     analyticsId, new Date(), userId, quizId || "", gameId, gameName, asignatura, grado, nivel, preguntaId,
     respuestaSeleccionada, respuestaCorrecta, esCorrecta, tiempoRespuesta, tiempoBase, ratio,
-    cambiosRespuesta, Math.round(ICR), Math.round(GP), Math.round(ICR) // Usamos ICR como dominio inicial del registro
+    cambiosRespuesta, Math.round(ICR), Math.round(GP), Math.round(ICR), totalXP
   ]);
 
   // 8. Actualizar Perfil de Aprendizaje (70/30 Rule)
@@ -979,8 +1040,9 @@ function recordAnalytics(payload) {
 }
 
 /**
- * Actualiza el Perfil de Dominio por Concepto (Fase 2)
+ * Actualiza el Perfil de Dominio por Concepto (v3.0)
  * Implementa un promedio ponderado (70% histórico / 30% actual) para reflejar progreso real.
+ * Mastery aumenta principalmente con preguntas nuevas y correcciones.
  */
 function updateLearningProfile(ss, userId, asignatura, tema, nivel, esCorrecta, dominioActual) {
   // REQ: Permitir temas específicos y el agregador de nivel
@@ -1011,18 +1073,21 @@ function updateLearningProfile(ss, userId, asignatura, tema, nivel, esCorrecta, 
     const aciertos = (parseInt(data[rowIndex][6]) || 0) + (esCorrecta ? 1 : 0);
     const porcentaje = Math.round((aciertos / intentos) * 100);
 
-    // REQ: Sistema de Ponderación Adaptativa para evitar "Stuck Profiles" (Tarea 2)
-    // 1. Fase Inicial (< 5 intentos): 50% histórico / 50% actual para permitir recuperación rápida.
-    // 2. Fase Estabilizada (>= 5 intentos): 70% histórico / 30% actual para integridad a largo plazo.
-    const historicalWeight = intentos < 5 ? 0.5 : ANALYTICS_CONFIG.WEIGHTS.MASTERY.historico;
-    const actualWeight = 1 - historicalWeight;
+    // REQ 3.0: Mastery Evidence-Based
+    // Si ya tiene 100% de aciertos en este tema, la repetición no suma dominio significativamente
+    const prevPercent = parseFloat(data[rowIndex][7]) || 0;
+    let actualWeight = 0.3;
+    if (prevPercent >= 90 && esCorrecta) actualWeight = 0.05; // Frenar Mastery repetitivo (Modulo 4)
+
+    const historicalWeight = intentos < 5 ? 0.5 : (1 - actualWeight);
+    const effectiveActualWeight = 1 - historicalWeight;
 
     const dominioHistorico = parseFloat(data[rowIndex][8]) || 0;
-    const nuevoDominio = Math.max(0, Math.min(100, Math.round((dominioHistorico * historicalWeight) + (dominioActual * actualWeight))));
+    const nuevoDominio = Math.max(0, Math.min(100, Math.round((dominioHistorico * historicalWeight) + (dominioActual * effectiveActualWeight))));
 
     // Columnas: attempts(F), hits(G), percent(H), masteryIndex(I), lastUpdate(J)
     sheet.getRange(rowIndex + 1, 6, 1, 5).setValues([[intentos, aciertos, porcentaje, nuevoDominio, new Date()]]);
-    logDebug(`Dominio actualizado (${intentos < 5 ? 'ADAPTATIVO' : 'ESTÁNDAR'}) para ${sTema}: ${nuevoDominio}%`);
+    logDebug(`Dominio actualizado (v3.0) para ${sTema}: ${nuevoDominio}%`);
   } else {
     const profileId = "PRF-" + Date.now() + "-" + Math.floor(Math.random() * 100);
     // REQ: Cold Start - El primer intento define el 100% del dominio inicial (Tarea 2)
