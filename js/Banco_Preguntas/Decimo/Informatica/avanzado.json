@@ -6,12 +6,7 @@
     "tema": "Software",
     "tipo_pregunta": "completacion",
     "enunciado": "La clasificación de software que está diseñada específicamente para interactuar directamente con el hardware del ordenador, gestionar los recursos del sistema y proporcionar una plataforma para otras aplicaciones se conoce como software de ________.",
-    "opciones_visibles": [
-      "Aplicación",
-      "Sistema",
-      "Programación",
-      "Utilidad"
-    ],
+    "opciones_visibles": ["Aplicación", "Sistema", "Programación", "Utilidad"],
     "respuesta_correcta_literal": "Sistema",
     "nivel": "Avanzado"
   },
@@ -22,10 +17,7 @@
     "tema": "Seguridad Informatica",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un software antivirus comercial o de código abierto es capaz de mitigar ataques mediante la detección basada en firmas y el análisis heurístico de comportamientos maliciosos.",
-    "opciones": [
-      "Verdadero",
-      "Falso"
-    ],
+    "opciones": ["Verdadero", "Falso"],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -67,12 +59,7 @@
     "tema": "Seguridad Informatica",
     "tipo_pregunta": "completacion",
     "enunciado": "El tipo de malware que cifra los archivos del usuario y exige un pago para liberarlos se conoce como ________.",
-    "opciones_visibles": [
-      "Virus",
-      "Troyano",
-      "Ransomware",
-      "Gusano"
-    ],
+    "opciones_visibles": ["Virus", "Troyano", "Ransomware", "Gusano"],
     "respuesta_correcta_literal": "Ransomware",
     "nivel": "Avanzado"
   },
@@ -83,10 +70,7 @@
     "tema": "Sistemas Operativos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La gestión de archivos es la función del sistema operativo encargada de organizar y controlar el acceso a los datos almacenados en las unidades de disco.",
-    "opciones": [
-      "Verdadero",
-      "Falso"
-    ],
+    "opciones": ["Verdadero", "Falso"],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -113,12 +97,7 @@
     "tema": "Malware",
     "tipo_pregunta": "completacion",
     "enunciado": "Un programa que parece legítimo pero que al ejecutarse realiza acciones maliciosas se denomina caballo de ________.",
-    "opciones_visibles": [
-      "mar",
-      "madera",
-      "Troya",
-      "guerra"
-    ],
+    "opciones_visibles": ["mar", "madera", "Troya", "guerra"],
     "respuesta_correcta_literal": "Troya",
     "nivel": "Avanzado"
   },
@@ -129,10 +108,7 @@
     "tema": "Software",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El software de programación incluye herramientas como compiladores e intérpretes que los desarrolladores usan para crear otros programas.",
-    "opciones": [
-      "Verdadero",
-      "Falso"
-    ],
+    "opciones": ["Verdadero", "Falso"],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -159,12 +135,7 @@
     "tema": "Seguridad",
     "tipo_pregunta": "completacion",
     "enunciado": "Un 'exploit' de día ________ (Zero-day) es aquel que aprovecha una vulnerabilidad desconocida antes de que el fabricante publique un parche.",
-    "opciones_visibles": [
-      "uno",
-      "cero",
-      "final",
-      "puro"
-    ],
+    "opciones_visibles": ["uno", "cero", "final", "puro"],
     "respuesta_correcta_literal": "cero",
     "nivel": "Avanzado"
   },
@@ -175,10 +146,7 @@
     "tema": "Plataformas",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Android es un sistema operativo móvil basado en el núcleo (kernel) de Linux.",
-    "opciones": [
-      "Verdadero",
-      "Falso"
-    ],
+    "opciones": ["Verdadero", "Falso"],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -205,12 +173,7 @@
     "tema": "Software",
     "tipo_pregunta": "completacion",
     "enunciado": "El software que se distribuye gratuitamente pero que requiere un pago posterior para desbloquear todas sus funciones se llama ________.",
-    "opciones_visibles": [
-      "Freeware",
-      "Shareware",
-      "Adware",
-      "Open Source"
-    ],
+    "opciones_visibles": ["Freeware", "Shareware", "Adware", "Open Source"],
     "respuesta_correcta_literal": "Shareware",
     "nivel": "Avanzado"
   },
@@ -221,10 +184,7 @@
     "tema": "Seguridad",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un cortafuegos (Firewall) es un sistema que supervisa y controla el tráfico de red entrante y saliente basándose en reglas de seguridad.",
-    "opciones": [
-      "Verdadero",
-      "Falso"
-    ],
+    "opciones": ["Verdadero", "Falso"],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -232,560 +192,445 @@
     "id": "Q-10-INF-AV-016",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 16 sobre arquitectura y gestión de sistemas.",
+    "tema": "Malware",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Cuál es la principal diferencia entre un virus y un gusano (worm)?",
     "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
+      "El virus requiere la ejecución de un archivo huésped, mientras que el gusano se propaga automáticamente por la red.",
+      "El virus es inofensivo y el gusano es peligroso.",
+      "El virus solo afecta a Windows y el gusano a Linux.",
+      "No hay diferencia, son sinónimos."
     ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "respuesta_correcta_literal": "El virus requiere la ejecución de un archivo huésped, mientras que el gusano se propaga automáticamente por la red.",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-017",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 17 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "completacion",
+    "enunciado": "La capacidad de un sistema operativo para permitir que varios usuarios ejecuten programas simultáneamente se llama ________.",
+    "opciones_visibles": ["Monousuario", "Multiusuario", "Monotarea", "Hipervínculo"],
+    "respuesta_correcta_literal": "Multiusuario",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-018",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 18 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Seguridad Informatica",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "El phishing es una técnica de ingeniería social que utiliza correos electrónicos fraudulentos para obtener información sensible como contraseñas o datos bancarios.",
+    "opciones": ["Verdadero", "Falso"],
+    "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-019",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 19 sobre arquitectura y gestión de sistemas.",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué es la 'Memoria Virtual' en un sistema operativo?",
     "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
+      "Una técnica que utiliza espacio en el disco duro para simular memoria RAM adicional.",
+      "Un tipo de memoria RAM que no se puede tocar.",
+      "La memoria que usan los videojuegos de realidad virtual.",
+      "Un archivo de texto donde se guardan contraseñas."
     ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "respuesta_correcta_literal": "Una técnica que utiliza espacio en el disco duro para simular memoria RAM adicional.",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-020",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 20 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Software de Aplicación",
+    "tipo_pregunta": "completacion",
+    "enunciado": "Un entorno de desarrollo integrado (IDE) es un ejemplo de software de ________.",
+    "opciones_visibles": ["Sistema", "Aplicación", "Programación", "Hardware"],
+    "respuesta_correcta_literal": "Programación",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-021",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 21 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Seguridad Informatica",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "La detección heurística en un antivirus busca patrones de comportamiento sospechosos en lugar de comparar firmas de archivos conocidos.",
+    "opciones": ["Verdadero", "Falso"],
+    "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-022",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 22 sobre arquitectura y gestión de sistemas.",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué función cumple el sistema de archivos (File System) en un SO?",
     "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
+      "Organizar, almacenar y recuperar archivos en dispositivos de almacenamiento.",
+      "Limpiar el polvo de los ventiladores.",
+      "Aumentar la velocidad del procesador mediante overclocking.",
+      "Dibujar los iconos en la pantalla."
     ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "respuesta_correcta_literal": "Organizar, almacenar y recuperar archivos en dispositivos de almacenamiento.",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-023",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 23 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Malware",
+    "tipo_pregunta": "completacion",
+    "enunciado": "El software diseñado para mostrar anuncios no deseados y recolectar datos de navegación del usuario se llama ________.",
+    "opciones_visibles": ["Adware", "Freeware", "Firmware", "Shareware"],
+    "respuesta_correcta_literal": "Adware",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-024",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 24 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Software",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "El software de código abierto (Open Source) permite a cualquier usuario ver, modificar y distribuir el código fuente del programa.",
+    "opciones": ["Verdadero", "Falso"],
+    "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-025",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 25 sobre arquitectura y gestión de sistemas.",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué significa que un sistema operativo sea 'Portable'?",
     "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
+      "Que puede ser ejecutado en diferentes arquitecturas de hardware con pocos cambios.",
+      "Que cabe en un bolsillo.",
+      "Que no requiere instalación.",
+      "Que se puede llevar en una memoria USB."
     ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "respuesta_correcta_literal": "Que puede ser ejecutado en diferentes arquitecturas de hardware con pocos cambios.",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-026",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 26 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Seguridad",
+    "tipo_pregunta": "completacion",
+    "enunciado": "La práctica de realizar copias de seguridad de los datos para prevenir su pérdida se denomina ________.",
+    "opciones_visibles": ["Backup", "Format", "Defrag", "Phishing"],
+    "respuesta_correcta_literal": "Backup",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-027",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 27 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "La interfaz de línea de comandos (CLI) permite al usuario interactuar con el sistema mediante la escritura de instrucciones de texto.",
+    "opciones": ["Verdadero", "Falso"],
+    "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-028",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 28 sobre arquitectura y gestión de sistemas.",
+    "tema": "Software de Sistema",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Cuál es la función de una utilidad de desfragmentación de disco?",
     "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
+      "Reorganizar los archivos en el disco para que las partes de un mismo archivo estén contiguas, mejorando la velocidad.",
+      "Borrar todos los archivos temporales de internet.",
+      "Cambiar el fondo de pantalla automáticamente.",
+      "Dividir el disco físico en varias particiones lógicas."
     ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "respuesta_correcta_literal": "Reorganizar los archivos en el disco para que las partes de un mismo archivo estén contiguas, mejorando la velocidad.",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-029",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 29 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Malware",
+    "tipo_pregunta": "completacion",
+    "enunciado": "Un tipo de malware que se oculta en el sistema y permite el acceso remoto persistente y el control total por parte de un atacante es un ________.",
+    "opciones_visibles": ["Rootkit", "Spyware", "Adware", "Popup"],
+    "respuesta_correcta_literal": "Rootkit",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-030",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 30 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "Un Sistema Operativo de Tiempo Real (RTOS) está diseñado para procesar datos sin retrasos significativos en el tiempo de respuesta.",
+    "opciones": ["Verdadero", "Falso"],
+    "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-031",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 31 sobre arquitectura y gestión de sistemas.",
+    "tema": "Software",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué es la 'BIOS' (Basic Input/Output System)?",
     "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
+      "Un software de bajo nivel que inicia el hardware durante el proceso de arranque.",
+      "Un programa para editar fotos antiguas.",
+      "El nombre técnico de la memoria RAM.",
+      "Un tipo de conector para monitores."
     ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "respuesta_correcta_literal": "Un software de bajo nivel que inicia el hardware durante el proceso de arranque.",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-032",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 32 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Seguridad",
+    "tipo_pregunta": "completacion",
+    "enunciado": "El proceso de convertir información en un código ilegible para proteger su confidencialidad se llama ________.",
+    "opciones_visibles": ["Cifrado", "Compresión", "Formateo", "Escaneo"],
+    "respuesta_correcta_literal": "Cifrado",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-033",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 33 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "La 'Paginación' es una técnica de gestión de memoria que divide la memoria física en bloques de tamaño fijo llamados marcos.",
+    "opciones": ["Verdadero", "Falso"],
+    "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-034",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 34 sobre arquitectura y gestión de sistemas.",
+    "tema": "Software",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué es un 'Compilador'?",
     "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
+      "Un programa que traduce todo el código fuente de un lenguaje de alto nivel a lenguaje máquina de una sola vez.",
+      "Un programa que traduce el código línea por línea mientras se ejecuta.",
+      "Un editor de texto que autocompleta palabras.",
+      "Un hardware que acelera los cálculos matemáticos."
     ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "respuesta_correcta_literal": "Un programa que traduce todo el código fuente de un lenguaje de alto nivel a lenguaje máquina de una sola vez.",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-035",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 35 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Seguridad",
+    "tipo_pregunta": "completacion",
+    "enunciado": "Un ataque que inunda un servidor con tráfico falso para dejarlo fuera de servicio se conoce como ataque de denegación de servicio o ________.",
+    "opciones_visibles": ["DoS", "Phishing", "SQLi", "Spam"],
+    "respuesta_correcta_literal": "DoS",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-036",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 36 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "Un sistema operativo distribuido gestiona un grupo de computadoras independientes y las hace parecer un solo sistema coherente ante el usuario.",
+    "opciones": ["Verdadero", "Falso"],
+    "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-037",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 37 sobre arquitectura y gestión de sistemas.",
+    "tema": "Hardware/Software",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué es el 'Firmware'?",
     "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
+      "Software grabado permanentemente en un chip de memoria de solo lectura (ROM).",
+      "Software que se puede borrar fácilmente.",
+      "Un tipo de cable de red blindado.",
+      "Un programa de contabilidad para empresas firmes."
     ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "respuesta_correcta_literal": "Software grabado permanentemente en un chip de memoria de solo lectura (ROM).",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-038",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 38 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "completacion",
+    "enunciado": "La parte del sistema operativo que se encarga de decidir qué proceso se ejecuta a continuación en la CPU es el ________.",
+    "opciones_visibles": ["Planificador", "Explorador", "Compilador", "Terminal"],
+    "respuesta_correcta_literal": "Planificador",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-039",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 39 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Malware",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "Un troyano puede abrir una 'puerta trasera' (backdoor) para que un atacante tome control remoto del equipo infectado.",
+    "opciones": ["Verdadero", "Falso"],
+    "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-040",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 40 sobre arquitectura y gestión de sistemas.",
+    "tema": "Software",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué es un 'Intérprete' en programación?",
     "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
+      "Un programa que traduce y ejecuta el código fuente línea por línea en tiempo real.",
+      "Una persona que traduce idiomas.",
+      "Un programa que crea archivos .exe.",
+      "Un componente del monitor que mejora el color."
     ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "respuesta_correcta_literal": "Un programa que traduce y ejecuta el código fuente línea por línea en tiempo real.",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-041",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 41 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Seguridad",
+    "tipo_pregunta": "completacion",
+    "enunciado": "Un software diseñado para infiltrarse en un sistema y dañarlo sin el consentimiento del usuario se llama de forma genérica ________.",
+    "opciones_visibles": ["Malware", "Freeware", "Hardware", "Firmware"],
+    "respuesta_correcta_literal": "Malware",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-042",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 42 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "La fragmentación del disco ocurre cuando los archivos se dividen en trozos dispersos, lo que ralentiza el acceso a los datos.",
+    "opciones": ["Verdadero", "Falso"],
+    "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-043",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 43 sobre arquitectura y gestión de sistemas.",
+    "tema": "Seguridad",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué es la autenticación de dos factores (2FA)?",
     "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
+      "Un método de seguridad que requiere dos formas diferentes de identificación para acceder a una cuenta.",
+      "Escribir la contraseña dos veces para estar seguro.",
+      "Tener dos antivirus instalados al mismo tiempo.",
+      "Usar dos teclados diferentes."
     ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "respuesta_correcta_literal": "Un método de seguridad que requiere dos formas diferentes de identificación para acceder a una cuenta.",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-044",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 44 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "completacion",
+    "enunciado": "El conjunto de reglas que determinan cómo se nombran, guardan y organizan los archivos en un disco se llama ________ de archivos.",
+    "opciones_visibles": ["Sistema", "Árbol", "Menú", "Formato"],
+    "respuesta_correcta_literal": "Sistema",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-045",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 45 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Seguridad",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "Un virus informático siempre necesita un programa anfitrión o archivo ejecutable para infectar un sistema.",
+    "opciones": ["Verdadero", "Falso"],
+    "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-046",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 46 sobre arquitectura y gestión de sistemas.",
+    "tema": "Software de Sistema",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué hace un sistema operativo durante el proceso de 'Swap' o intercambio?",
     "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
+      "Mueve procesos inactivos de la RAM al disco duro para liberar memoria física.",
+      "Intercambia el teclado por el ratón.",
+      "Cambia el idioma del sistema.",
+      "Actualiza el reloj de la computadora."
     ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "respuesta_correcta_literal": "Mueve procesos inactivos de la RAM al disco duro para liberar memoria física.",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-047",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 47 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Malware",
+    "tipo_pregunta": "completacion",
+    "enunciado": "Un malware que se replica a sí mismo a través de una red sin necesidad de intervención humana se llama ________.",
+    "opciones_visibles": ["Gusano", "Virus", "Troyano", "Macro"],
+    "respuesta_correcta_literal": "Gusano",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-048",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 48 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "La 'GUI' (Graphical User Interface) utiliza elementos visuales como iconos y ventanas para facilitar la interacción del usuario.",
+    "opciones": ["Verdadero", "Falso"],
+    "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-049",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 49 sobre arquitectura y gestión de sistemas.",
+    "tema": "Seguridad",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué es un 'Parche de Seguridad'?",
     "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
+      "Una actualización de software diseñada para corregir una vulnerabilidad específica.",
+      "Un trozo de cinta adhesiva sobre la cámara web.",
+      "Un programa que borra el disco duro.",
+      "Una contraseña muy larga."
     ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "respuesta_correcta_literal": "Una actualización de software diseñada para corregir una vulnerabilidad específica.",
     "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-050",
     "grado": "Decimo",
     "asignatura": "Informatica",
-    "tema": "Avanzado",
-    "tipo_pregunta": "opcion_multiple",
-    "enunciado": "Pregunta de validación técnica avanzada 50 sobre arquitectura y gestión de sistemas.",
-    "opciones": [
-      "Opción Correcta",
-      "Distractor 1",
-      "Opción Incorrecta",
-      "Nulo"
-    ],
-    "respuesta_correcta_literal": "Opción Correcta",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "completacion",
+    "enunciado": "El acrónimo del componente del sistema operativo que permite la comunicación con el hardware de red y periféricos es ________.",
+    "opciones_visibles": ["Driver", "Kernel", "BIOS", "Socket"],
+    "respuesta_correcta_literal": "Driver",
     "nivel": "Avanzado"
   }
 ]

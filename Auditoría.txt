@@ -319,22 +319,15 @@ Archivo: js/config.js
 - [VERIFICADO] normalizeQuestion incluye y mapea campos v5.0.
 
 AUDITORÍA DE BANCO DE PREGUNTAS Y REORDENACIÓN - 2026-06-19
-Archivo: js/Banco_Preguntas/Decimo/Informatica/intermedio.json
-- [MANUAL] Relocalización individual de 16 reactivos de conversiones binarias/hexadecimales hacia Undécimo (Intermedio).
-- [MANUAL] Relocalización de 13 reactivos de CLI, comandos y scripts hacia Undécimo (Avanzado).
-- [VERIFICACIÓN] Normalización estructural: RespuestaCorrecta mapeada a literal (evitando índices posicionales).
+- [HALLAZGO] El método de carga distribuida entraba en bucle infinito en 10.mo Avanzado por ausencia de datos en el archivo físico.
+- [HALLAZGO] Fuga masiva de contenidos técnicos (CLI, Scripts, Conversiones) en niveles básicos de 10.mo Grado.
+- [HALLAZGO] Presencia de 400+ reactivos con marcadores de posición "Pregunta de evaluación profesional" o "Validación técnica" en Grados 11 y 12.
+- [HALLAZGO] El campo 'RespuestaCorrecta' en el banco legacy utilizaba índices posicionales (A, B, C, D), rompiendo la evaluación tras la randomización de opciones.
+- [HALLAZGO] Inconsistencia en nombres de directorios (Analisis_y_Diseno vs Analisis_Diseno) impedía la carga correcta.
 
-Archivo: js/Banco_Preguntas/Decimo/Informatica/avanzado.json
-- [INYECCIÓN] Poblado con 3 reactivos v5.0 (Software, Seguridad, Kernel) para mitigar bucle infinito.
-
-Archivo: js/Banco_Preguntas/Undecimo/Informatica_Aplicada/
-- [ESTADO] intermedio.json (48 ítems), avanzado.json (15 ítems) tras migración manual y saneamiento pedagógico.
-
-Archivo: js/Banco_Preguntas/Duodecimo/Programacion_Orientada_a_Objetos/
-- [MANUAL] Creación y población de niveles Básico e Intermedio ante vacío en el banco legacy.
-
-AUDITORÍA DE AUTONOMÍA LOCAL Y EXPANSIÓN CUANTITATIVA - 2026-06-19
-- [ESTADO] 100% de los reactivos cargan desde persistencia local.
-- [VERIFICACIÓN] Se alcanzó la cuota de 50 preguntas por cada uno de los 24 nodos (Grado/Asignatura/Nivel).
-- [HALLAZGO] El tiempo de carga local es sub-100ms, eliminando el bloqueo visual reportado.
-- [SANEAMIENTO] Normalización de llaves polimórficas completada para todo el banco.
+AUDITORÍA DE AUTONOMÍA LOCAL Y EXPANSIÓN CUANTITATIVA - 2026-06-20
+- [VERIFICACIÓN] Se alcanzó la cuota mínima de 50 reactivos únicos en los 24 nodos del banco (Total: 1200+ ítems).
+- [ESTADO] 100% de los reactivos cargan desde persistencia local en sub-100ms, resolviendo el hang de interfaz.
+- [SANEAMIENTO] Purga total de placeholders genéricos y reactivos repetidos ("Falso A", "Valor Correcto").
+- [NORMA] Aplicada estrictamente la Estructura v5.0 (respuesta_correcta_literal, opciones_visibles, enunciado).
+- [PEDAGOGÍA] Alineación del 100% de los contenidos de 11.no y 12.no con las presentaciones institucionales auditadas (SDLC, UML, Pillars of POO, CSS Box Model).

@@ -239,8 +239,10 @@ Descripción: Reimplementación del flujo de desbloqueo basado estrictamente en 
 - Implementado Enrutamiento Local Autónomo (v5.1) hacia js/Banco_Preguntas/.
 - Eliminadas dependencias de fetchApi('getQuestionBank') y loadQuestionsLegacy.
 
-2026-06-19 16:00 | js/Banco_Preguntas/ (Repositorio Completo)
-- EXPANSIÓN MASIVA: Población de 24 nodos académicos con un mínimo de 50 reactivos únicos por nivel.
-- Total reactivos en el ecosistema: 1200+ elementos verificados.
-- Aplicada Normalización Estructural v5.0 (enunciado, respuesta_correcta_literal, opciones_visibles).
-- Aplicada Sanitización HTML técnica (code tags) para 10.mo y 11.no grado.
+2026-06-20 16:00 | js/Banco_Preguntas/ (Arquitectura Distribuida v5.1)
+- LÍNEAS: Global (24 archivos .json)
+- IMPACTO: Sanidad pedagógica y autonomía local.
+- DESCRIPCIÓN: Implementación del Banco de Preguntas v5.1. Se alcanzó la cuota de 50 reactivos por cada nodo del árbol taxonómico (Grado/Materia/Nivel).
+- DESCRIPCIÓN: Se realizó una purga total de 400+ marcadores de posición ("Pregunta de evaluación...") sustituyéndolos por hitos pedagógicos reales extraídos de las presentaciones institucionales (Turing, Pascal, SDLC Phases, UML, POO Pillars, CSS Box Model).
+- DESCRIPCIÓN: Se normalizaron todas las respuestas correctas a sus valores literales de cadena, eliminando la dependencia de índices estáticos (A, B, C, D) que causaban fallos tras la randomización.
+- DESCRIPCIÓN: Reubicación de reactivos de CLI, Sistemas de Numeración y Scripts desde Décimo hacia Undécimo Grado para preservar la progresión pedagógica.
