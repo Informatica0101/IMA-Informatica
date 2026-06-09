@@ -1,1 +1,802 @@
-[]
+[
+  {
+    "id": "Q-11-ANA-AVA-001",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 1 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-002",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 2 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-003",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 3 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-004",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 4 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-005",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 5 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-006",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 6 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-007",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 7 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-008",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 8 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-009",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 9 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-010",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 10 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-011",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 11 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-012",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 12 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-013",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 13 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-014",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 14 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-015",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 15 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-016",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 16 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-017",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 17 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-018",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 18 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-019",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 19 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-020",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 20 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-021",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 21 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-022",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 22 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-023",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 23 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-024",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 24 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-025",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 25 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-026",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 26 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-027",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 27 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-028",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 28 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-029",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 29 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-030",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 30 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-031",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 31 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-032",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 32 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-033",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 33 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-034",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 34 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-035",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 35 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-036",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 36 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-037",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 37 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-038",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 38 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-039",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 39 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-040",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 40 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-041",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 41 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-042",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 42 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-043",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 43 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-044",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 44 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-045",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 45 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-046",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 46 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-047",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 47 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-048",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 48 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-049",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 49 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-ANA-AVA-050",
+    "grado": "Undecimo",
+    "asignatura": "Analisis_Diseno",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 50 para Analisis_Diseno Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  }
+]

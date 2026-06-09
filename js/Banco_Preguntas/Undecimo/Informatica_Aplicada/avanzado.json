@@ -11,7 +11,20 @@
     "OpcionB": "Copiar el archivo a otra carpeta",
     "OpcionC": "Cambiar el nombre del archivo",
     "OpcionD": "Abrir la ventana de Propiedades",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "2. Si un archivo tiene el atributo de 'Solo lectura', ¿qué acción no puede realizar directamente el Explorador de Archivos?",
+    "respuesta_correcta_literal": "Cambiar el nombre del archivo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Gestión de Archivos y Respaldos",
+    "opciones_visibles": [
+      "Visualizar su contenido",
+      "Copiar el archivo a otra carpeta",
+      "Cambiar el nombre del archivo",
+      "Abrir la ventana de Propiedades"
+    ]
   },
   {
     "Pregunta": "7. ¿Qué switch de XCOPY o ROBOCOPY se utiliza para replicar subdirectorios incluso si están vacíos?",
@@ -25,7 +38,20 @@
     "OpcionB": "/y",
     "OpcionC": "/e",
     "OpcionD": "/i",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "7. ¿Qué switch de XCOPY o ROBOCOPY se utiliza para replicar subdirectorios incluso si están vacíos?",
+    "respuesta_correcta_literal": "/e",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Gestión de Archivos y Respaldos",
+    "opciones_visibles": [
+      "/s",
+      "/y",
+      "/e",
+      "/i"
+    ]
   },
   {
     "Pregunta": "9. Deducción: Si al hacer doble clic en una carpeta esta no abre, ¿qué elemento del Explorador de Archivos podrías usar para asegurarte de que la ruta existe y es correcta?",
@@ -39,7 +65,20 @@
     "OpcionB": "La barra de direcciones (ruta)",
     "OpcionC": "El panel de navegación lateral",
     "OpcionD": "El botón de minimizar",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "9. Deducción: Si al hacer doble clic en una carpeta esta no abre, ¿qué elemento del Explorador de Archivos podrías usar para asegurarte de que la ruta existe y es correcta?",
+    "respuesta_correcta_literal": "La barra de direcciones (ruta)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Gestión de Archivos y Respaldos",
+    "opciones_visibles": [
+      "La barra de herramientas de acceso rápido",
+      "La barra de direcciones (ruta)",
+      "El panel de navegación lateral",
+      "El botón de minimizar"
+    ]
   },
   {
     "Pregunta": "¿Cuál es una ventaja de usar la terminal frente a la interfaz gráfica?",
@@ -53,7 +92,20 @@
     "OpcionB": "Es más bonita visualmente",
     "OpcionC": "No requiere saber escribir",
     "OpcionD": "Es más lenta",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es una ventaja de usar la terminal frente a la interfaz gráfica?",
+    "respuesta_correcta_literal": "Control preciso y automatización",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas Operativos",
+    "opciones_visibles": [
+      "Control preciso y automatización",
+      "Es más bonita visualmente",
+      "No requiere saber escribir",
+      "Es más lenta"
+    ]
   },
   {
     "Pregunta": "¿Qué comando se usa para cambiar de directorio en Windows y Linux?",
@@ -67,7 +119,20 @@
     "OpcionB": "dir",
     "OpcionC": "mkdir",
     "OpcionD": "move",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué comando se usa para cambiar de directorio en Windows y Linux?",
+    "respuesta_correcta_literal": "cd",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas Operativos",
+    "opciones_visibles": [
+      "cd",
+      "dir",
+      "mkdir",
+      "move"
+    ]
   },
   {
     "Pregunta": "El comando 'mkdir' sirve para:",
@@ -81,7 +146,20 @@
     "OpcionB": "Borrar un archivo",
     "OpcionC": "Mover un documento",
     "OpcionD": "Reiniciar la terminal",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "El comando 'mkdir' sirve para:",
+    "respuesta_correcta_literal": "Crear una nueva carpeta",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas Operativos",
+    "opciones_visibles": [
+      "Crear una nueva carpeta",
+      "Borrar un archivo",
+      "Mover un documento",
+      "Reiniciar la terminal"
+    ]
   },
   {
     "Pregunta": "¿Qué comando lista el contenido de una carpeta en Windows?",
@@ -95,7 +173,20 @@
     "OpcionB": "ls",
     "OpcionC": "list",
     "OpcionD": "show",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué comando lista el contenido de una carpeta en Windows?",
+    "respuesta_correcta_literal": "dir",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas Operativos",
+    "opciones_visibles": [
+      "dir",
+      "ls",
+      "list",
+      "show"
+    ]
   },
   {
     "Pregunta": "Para mostrar el contenido de un archivo de texto en la terminal de Windows se usa:",
@@ -109,7 +200,20 @@
     "OpcionB": "cat",
     "OpcionC": "open",
     "OpcionD": "read",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Para mostrar el contenido de un archivo de texto en la terminal de Windows se usa:",
+    "respuesta_correcta_literal": "type",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas Operativos",
+    "opciones_visibles": [
+      "type",
+      "cat",
+      "open",
+      "read"
+    ]
   },
   {
     "Pregunta": "¿Qué comando limpia la pantalla de la terminal en Windows?",
@@ -123,7 +227,20 @@
     "OpcionB": "clear",
     "OpcionC": "clean",
     "OpcionD": "reset",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué comando limpia la pantalla de la terminal en Windows?",
+    "respuesta_correcta_literal": "cls",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas Operativos",
+    "opciones_visibles": [
+      "cls",
+      "clear",
+      "clean",
+      "reset"
+    ]
   },
   {
     "Pregunta": "Para mover o renombrar un archivo en Windows se usa el comando:",
@@ -137,7 +254,20 @@
     "OpcionB": "copy",
     "OpcionC": "del",
     "OpcionD": "rename únicamente",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Para mover o renombrar un archivo en Windows se usa el comando:",
+    "respuesta_correcta_literal": "move",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas Operativos",
+    "opciones_visibles": [
+      "move",
+      "copy",
+      "del",
+      "rename únicamente"
+    ]
   },
   {
     "Pregunta": "2. Si inserta una imagen y esta actúa como un carácter más que no se puede mover libremente, ¿cuál es su ajuste de texto (Text Wrapping) por defecto?",
@@ -151,7 +281,20 @@
     "OpcionB": "Detrás del texto",
     "OpcionC": "En línea con el texto",
     "OpcionD": "Estrecho",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "2. Si inserta una imagen y esta actúa como un carácter más que no se puede mover libremente, ¿cuál es su ajuste de texto (Text Wrapping) por defecto?",
+    "respuesta_correcta_literal": "En línea con el texto",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Fundamentos de Computación",
+    "opciones_visibles": [
+      "Cuadrado",
+      "Detrás del texto",
+      "En línea con el texto",
+      "Estrecho"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la función del comando 'Copiar Formato'?",
@@ -165,7 +308,20 @@
     "OpcionB": "Duplicar el texto en el portapapeles",
     "OpcionC": "Borrar el estilo de la página",
     "OpcionD": "Cambiar el tamaño de las imágenes",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la función del comando 'Copiar Formato'?",
+    "respuesta_correcta_literal": "Aplicar la apariencia de un texto seleccionado a otro",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas Operativos",
+    "opciones_visibles": [
+      "Aplicar la apariencia de un texto seleccionado a otro",
+      "Duplicar el texto en el portapapeles",
+      "Borrar el estilo de la página",
+      "Cambiar el tamaño de las imágenes"
+    ]
   },
   {
     "Pregunta": "¿Qué comando se usa para combinar dos o más celdas en una sola en una tabla?",
@@ -179,6 +335,611 @@
     "OpcionB": "Dividir celdas",
     "OpcionC": "Autoajustar",
     "OpcionD": "Alinear",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué comando se usa para combinar dos o más celdas en una sola en una tabla?",
+    "respuesta_correcta_literal": "Combinar celdas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Avanzado",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Hojas de Cálculo",
+    "opciones_visibles": [
+      "Combinar celdas",
+      "Dividir celdas",
+      "Autoajustar",
+      "Alinear"
+    ]
+  },
+  {
+    "id": "Q-11-INFA-AVA-014",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 14 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-015",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 15 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-016",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 16 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-017",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 17 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-018",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 18 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-019",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 19 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-020",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 20 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-021",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 21 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-022",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 22 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-023",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 23 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-024",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 24 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-025",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 25 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-026",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 26 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-027",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 27 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-028",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 28 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-029",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 29 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-030",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 30 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-031",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 31 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-032",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 32 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-033",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 33 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-034",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 34 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-035",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 35 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-036",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 36 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-037",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 37 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-038",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 38 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-039",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 39 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-040",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 40 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-041",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 41 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-042",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 42 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-043",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 43 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-044",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 44 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-045",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 45 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-046",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 46 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-047",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 47 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-048",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 48 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-049",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 49 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-INFA-AVA-050",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 50 para Informatica_Aplicada Avanzado sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
   }
 ]

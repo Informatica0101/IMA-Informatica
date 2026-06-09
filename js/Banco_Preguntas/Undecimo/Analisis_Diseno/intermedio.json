@@ -11,7 +11,20 @@
     "OpcionB": "Vender hardware",
     "OpcionC": "Arreglar impresoras",
     "OpcionD": "Diseñar publicidad",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el objetivo principal de Análisis y Diseño de Sistemas?",
+    "respuesta_correcta_literal": "Comprender el desarrollo de soluciones informáticas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Fundamentos de Sistemas",
+    "opciones_visibles": [
+      "Comprender el desarrollo de soluciones informáticas",
+      "Vender hardware",
+      "Arreglar impresoras",
+      "Diseñar publicidad"
+    ]
   },
   {
     "Pregunta": "Un conjunto de componentes interrelacionados con un objetivo común se define como:",
@@ -25,7 +38,20 @@
     "OpcionB": "Hardware",
     "OpcionC": "Módulo",
     "OpcionD": "Periférico",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Un conjunto de componentes interrelacionados con un objetivo común se define como:",
+    "respuesta_correcta_literal": "Sistema",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Modelado de Sistemas",
+    "opciones_visibles": [
+      "Sistema",
+      "Hardware",
+      "Módulo",
+      "Periférico"
+    ]
   },
   {
     "Pregunta": "¿Qué fase investiga qué debe hacer el nuevo sistema?",
@@ -39,7 +65,20 @@
     "OpcionB": "Diseño",
     "OpcionC": "Codificación",
     "OpcionD": "Mantenimiento",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué fase investiga qué debe hacer el nuevo sistema?",
+    "respuesta_correcta_literal": "Análisis",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ciclo de Vida (SDLC)",
+    "opciones_visibles": [
+      "Análisis",
+      "Diseño",
+      "Codificación",
+      "Mantenimiento"
+    ]
   },
   {
     "Pregunta": "¿Qué fase especifica cómo se construirá el sistema?",
@@ -53,7 +92,20 @@
     "OpcionB": "Prueba",
     "OpcionC": "Planificación",
     "OpcionD": "Despliegue",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué fase especifica cómo se construirá el sistema?",
+    "respuesta_correcta_literal": "Diseño",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ciclo de Vida (SDLC)",
+    "opciones_visibles": [
+      "Diseño",
+      "Prueba",
+      "Planificación",
+      "Despliegue"
+    ]
   },
   {
     "Pregunta": "¿Cuál de estos es un beneficio de un buen Análisis y Diseño?",
@@ -67,7 +119,20 @@
     "OpcionB": "Aumenta el costo total",
     "OpcionC": "Dificulta el trabajo del programador",
     "OpcionD": "Solo sirve para sistemas pequeños",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál de estos es un beneficio de un buen Análisis y Diseño?",
+    "respuesta_correcta_literal": "Reduce errores y retrabajo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ciclo de Vida de Software (SDLC)",
+    "opciones_visibles": [
+      "Reduce errores y retrabajo",
+      "Aumenta el costo total",
+      "Dificulta el trabajo del programador",
+      "Solo sirve para sistemas pequeños"
+    ]
   },
   {
     "Pregunta": "¿Qué significa SDLC?",
@@ -81,7 +146,20 @@
     "OpcionB": "System Design Logic Center",
     "OpcionC": "Secure Data Line Core",
     "OpcionD": "Systematic Delivery Link",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa SDLC?",
+    "respuesta_correcta_literal": "Software Development Life Cycle",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ciclo de Vida (SDLC)",
+    "opciones_visibles": [
+      "Software Development Life Cycle",
+      "System Design Logic Center",
+      "Secure Data Line Core",
+      "Systematic Delivery Link"
+    ]
   },
   {
     "Pregunta": "El profesional que es el puente entre usuarios y desarrolladores es el:",
@@ -95,7 +173,20 @@
     "OpcionB": "Gerente de Finanzas",
     "OpcionC": "Secretario",
     "OpcionD": "Técnico de Redes",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "El profesional que es el puente entre usuarios y desarrolladores es el:",
+    "respuesta_correcta_literal": "Analista de Sistemas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Rol del Analista",
+    "opciones_visibles": [
+      "Analista de Sistemas",
+      "Gerente de Finanzas",
+      "Secretario",
+      "Técnico de Redes"
+    ]
   },
   {
     "Pregunta": "Habilidades fundamentales del analista:",
@@ -109,7 +200,20 @@
     "OpcionB": "Velocidad física",
     "OpcionC": "Diseño artístico",
     "OpcionD": "Ventas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Habilidades fundamentales del analista:",
+    "respuesta_correcta_literal": "Comunicación, lógica y resolución de problemas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Rol del Analista",
+    "opciones_visibles": [
+      "Comunicación, lógica y resolución de problemas",
+      "Velocidad física",
+      "Diseño artístico",
+      "Ventas"
+    ]
   },
   {
     "Pregunta": "El Análisis y Diseño son los __________ del software.",
@@ -123,7 +227,20 @@
     "OpcionB": "Adornos",
     "OpcionC": "Límites",
     "OpcionD": "Pérdidas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "El Análisis y Diseño son los __________ del software.",
+    "respuesta_correcta_literal": "Cimientos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ciclo de Vida de Software (SDLC)",
+    "opciones_visibles": [
+      "Cimientos",
+      "Adornos",
+      "Límites",
+      "Pérdidas"
+    ]
   },
   {
     "Pregunta": "¿Qué incluye la fase de diseño?",
@@ -137,7 +254,20 @@
     "OpcionB": "Solo comprar muebles",
     "OpcionC": "Contratar personal de limpieza",
     "OpcionD": "Instalar cables de luz",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué incluye la fase de diseño?",
+    "respuesta_correcta_literal": "Arquitectura, datos e interfaz",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ciclo de Vida (SDLC)",
+    "opciones_visibles": [
+      "Arquitectura, datos e interfaz",
+      "Solo comprar muebles",
+      "Contratar personal de limpieza",
+      "Instalar cables de luz"
+    ]
   },
   {
     "Pregunta": "¿Cuál es el objetivo principal de Análisis y Diseño de Sistemas I?",
@@ -151,7 +281,20 @@
     "OpcionB": "Solo aprender a programar en Java",
     "OpcionC": "Reparar computadoras físicamente",
     "OpcionD": "Diseñar logotipos para empresas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el objetivo principal de Análisis y Diseño de Sistemas I?",
+    "respuesta_correcta_literal": "Comprender el desarrollo de soluciones informáticas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Fundamentos de Sistemas",
+    "opciones_visibles": [
+      "Comprender el desarrollo de soluciones informáticas",
+      "Solo aprender a programar en Java",
+      "Reparar computadoras físicamente",
+      "Diseñar logotipos para empresas"
+    ]
   },
   {
     "Pregunta": "¿Qué es un sistema en el contexto de esta clase?",
@@ -165,7 +308,20 @@
     "OpcionB": "Solo una computadora potente",
     "OpcionC": "Un programa de oficina",
     "OpcionD": "Un grupo de personas sin tecnología",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es un sistema en el contexto de esta clase?",
+    "respuesta_correcta_literal": "Conjunto de componentes interrelacionados con un objetivo común",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Fundamentos de Sistemas",
+    "opciones_visibles": [
+      "Conjunto de componentes interrelacionados con un objetivo común",
+      "Solo una computadora potente",
+      "Un programa de oficina",
+      "Un grupo de personas sin tecnología"
+    ]
   },
   {
     "Pregunta": "El proceso de investigar 'qué debe hacer' un nuevo sistema se llama:",
@@ -179,7 +335,20 @@
     "OpcionB": "Diseño de Sistemas",
     "OpcionC": "Implementación",
     "OpcionD": "Codificación",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "El proceso de investigar 'qué debe hacer' un nuevo sistema se llama:",
+    "respuesta_correcta_literal": "Análisis de Sistemas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ciclo de Vida de Software (SDLC)",
+    "opciones_visibles": [
+      "Análisis de Sistemas",
+      "Diseño de Sistemas",
+      "Implementación",
+      "Codificación"
+    ]
   },
   {
     "Pregunta": "El proceso de especificar 'cómo se construirá' el sistema se llama:",
@@ -193,7 +362,20 @@
     "OpcionB": "Análisis de Requisitos",
     "OpcionC": "Mantenimiento",
     "OpcionD": "Pruebas unitarias",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "El proceso de especificar 'cómo se construirá' el sistema se llama:",
+    "respuesta_correcta_literal": "Diseño de Sistemas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ciclo de Vida de Software (SDLC)",
+    "opciones_visibles": [
+      "Diseño de Sistemas",
+      "Análisis de Requisitos",
+      "Mantenimiento",
+      "Pruebas unitarias"
+    ]
   },
   {
     "Pregunta": "¿Cuál de estos NO es un beneficio de un buen análisis y diseño?",
@@ -207,7 +389,20 @@
     "OpcionB": "Mejora la satisfacción del usuario",
     "OpcionC": "Gestión eficiente de recursos",
     "OpcionD": "Sistemas más robustos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál de estos NO es un beneficio de un buen análisis y diseño?",
+    "respuesta_correcta_literal": "Aumento de errores y retrabajo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ciclo de Vida de Software (SDLC)",
+    "opciones_visibles": [
+      "Aumento de errores y retrabajo",
+      "Mejora la satisfacción del usuario",
+      "Gestión eficiente de recursos",
+      "Sistemas más robustos"
+    ]
   },
   {
     "Pregunta": "¿Qué significa la sigla SDLC?",
@@ -221,7 +416,20 @@
     "OpcionB": "Software Design Logic Center",
     "OpcionC": "Structured Data Logical Core",
     "OpcionD": "Secure Delivery Life Cycle",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa la sigla SDLC?",
+    "respuesta_correcta_literal": "System Development Life Cycle",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ciclo de Vida (SDLC)",
+    "opciones_visibles": [
+      "System Development Life Cycle",
+      "Software Design Logic Center",
+      "Structured Data Logical Core",
+      "Secure Delivery Life Cycle"
+    ]
   },
   {
     "Pregunta": "¿Cuál es el 'puente' esencial entre usuarios y desarrolladores?",
@@ -235,7 +443,20 @@
     "OpcionB": "El Programador",
     "OpcionC": "El Gerente de Ventas",
     "OpcionD": "El Soporte Técnico",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el 'puente' esencial entre usuarios y desarrolladores?",
+    "respuesta_correcta_literal": "Analista de Sistemas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Rol del Analista",
+    "opciones_visibles": [
+      "Analista de Sistemas",
+      "El Programador",
+      "El Gerente de Ventas",
+      "El Soporte Técnico"
+    ]
   },
   {
     "Pregunta": "Una fase del SDLC que ocurre después del Diseño es:",
@@ -249,7 +470,20 @@
     "OpcionB": "Planificación",
     "OpcionC": "Análisis",
     "OpcionD": "Investigación preliminar",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Una fase del SDLC que ocurre después del Diseño es:",
+    "respuesta_correcta_literal": "Implementación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ciclo de Vida (SDLC)",
+    "opciones_visibles": [
+      "Implementación",
+      "Planificación",
+      "Análisis",
+      "Investigación preliminar"
+    ]
   },
   {
     "Pregunta": "¿Qué habilidades son fundamentales para un analista de sistemas?",
@@ -263,7 +497,20 @@
     "OpcionB": "Solo velocidad al teclear",
     "OpcionC": "Solo diseño gráfico",
     "OpcionD": "Fuerza física",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué habilidades son fundamentales para un analista de sistemas?",
+    "respuesta_correcta_literal": "Comunicación, lógica y resolución de problemas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Rol del Analista",
+    "opciones_visibles": [
+      "Comunicación, lógica y resolución de problemas",
+      "Solo velocidad al teclear",
+      "Solo diseño gráfico",
+      "Fuerza física"
+    ]
   },
   {
     "Pregunta": "El análisis y diseño se consideran los __________ del proyecto de software.",
@@ -277,7 +524,20 @@
     "OpcionB": "Adornos",
     "OpcionC": "Obstáculos",
     "OpcionD": "Costos innecesarios",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "El análisis y diseño se consideran los __________ del proyecto de software.",
+    "respuesta_correcta_literal": "Cimientos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Gestión de Proyectos",
+    "opciones_visibles": [
+      "Cimientos",
+      "Adornos",
+      "Obstáculos",
+      "Costos innecesarios"
+    ]
   },
   {
     "Pregunta": "¿Qué es el Ciclo de Vida de Desarrollo de Software (SDLC)?",
@@ -291,7 +551,20 @@
     "OpcionB": "Solo el tiempo que dura la programación",
     "OpcionC": "Un manual de usuario",
     "OpcionD": "La garantía del software",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es el Ciclo de Vida de Desarrollo de Software (SDLC)?",
+    "respuesta_correcta_literal": "Proceso estructurado que guía la creación de software",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Rol del Analista",
+    "opciones_visibles": [
+      "Proceso estructurado que guía la creación de software",
+      "Solo el tiempo que dura la programación",
+      "Un manual de usuario",
+      "La garantía del software"
+    ]
   },
   {
     "Pregunta": "¿Cuál es una ventaja del Modelo Cascada?",
@@ -305,7 +578,20 @@
     "OpcionB": "Muy flexible ante cambios",
     "OpcionC": "Mucha interacción con el cliente",
     "OpcionD": "Bajo riesgo en etapas tardías",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es una ventaja del Modelo Cascada?",
+    "respuesta_correcta_literal": "Simple y fácil de entender",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Metodologías",
+    "opciones_visibles": [
+      "Simple y fácil de entender",
+      "Muy flexible ante cambios",
+      "Mucha interacción con el cliente",
+      "Bajo riesgo en etapas tardías"
+    ]
   },
   {
     "Pregunta": "El Modelo Cascada se caracteriza por ser:",
@@ -319,7 +605,20 @@
     "OpcionB": "Iterativo y circular",
     "OpcionC": "Caótico",
     "OpcionD": "Desordenado",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "El Modelo Cascada se caracteriza por ser:",
+    "respuesta_correcta_literal": "Lineal y secuencial",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Metodologías",
+    "opciones_visibles": [
+      "Lineal y secuencial",
+      "Iterativo y circular",
+      "Caótico",
+      "Desordenado"
+    ]
   },
   {
     "Pregunta": "¿En qué se basa principalmente el Modelo Espiral?",
@@ -333,7 +632,20 @@
     "OpcionB": "Codificación rápida",
     "OpcionC": "Documentación mínima",
     "OpcionD": "Ventas de marketing",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿En qué se basa principalmente el Modelo Espiral?",
+    "respuesta_correcta_literal": "Gestión de riesgos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Modelos y Metodologías",
+    "opciones_visibles": [
+      "Gestión de riesgos",
+      "Codificación rápida",
+      "Documentación mínima",
+      "Ventas de marketing"
+    ]
   },
   {
     "Pregunta": "¿Cuál de estos es un principio de los Modelos Ágiles?",
@@ -347,7 +659,20 @@
     "OpcionB": "Documentación sobre software funcionando",
     "OpcionC": "Procesos sobre individuos",
     "OpcionD": "Contratos sobre colaboración",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál de estos es un principio de los Modelos Ágiles?",
+    "respuesta_correcta_literal": "Respuesta al cambio sobre seguir un plan",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Modelos y Metodologías",
+    "opciones_visibles": [
+      "Respuesta al cambio sobre seguir un plan",
+      "Documentación sobre software funcionando",
+      "Procesos sobre individuos",
+      "Contratos sobre colaboración"
+    ]
   },
   {
     "Pregunta": "¿Qué son los 'Sprints' en Scrum?",
@@ -361,7 +686,20 @@
     "OpcionB": "Carreras de velocidad de programadores",
     "OpcionC": "Errores críticos del sistema",
     "OpcionD": "Reuniones con inversores",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué son los 'Sprints' en Scrum?",
+    "respuesta_correcta_literal": "Iteraciones cortas de tiempo fijo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Metodologías",
+    "opciones_visibles": [
+      "Iteraciones cortas de tiempo fijo",
+      "Carreras de velocidad de programadores",
+      "Errores críticos del sistema",
+      "Reuniones con inversores"
+    ]
   },
   {
     "Pregunta": "En Scrum, la lista priorizada de funcionalidades se llama:",
@@ -375,7 +713,20 @@
     "OpcionB": "Sprint Backlog",
     "OpcionC": "Daily Scrum",
     "OpcionD": "Master Plan",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "En Scrum, la lista priorizada de funcionalidades se llama:",
+    "respuesta_correcta_literal": "Product Backlog",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ingeniería de Requisitos",
+    "opciones_visibles": [
+      "Product Backlog",
+      "Sprint Backlog",
+      "Daily Scrum",
+      "Master Plan"
+    ]
   },
   {
     "Pregunta": "¿Qué modelo es más adecuado para proyectos con requisitos muy inestables?",
@@ -389,7 +740,20 @@
     "OpcionB": "Cascada",
     "OpcionC": "Lineal simple",
     "OpcionD": "Ninguno",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué modelo es más adecuado para proyectos con requisitos muy inestables?",
+    "respuesta_correcta_literal": "Ágil (Scrum)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Gestión de Proyectos",
+    "opciones_visibles": [
+      "Ágil (Scrum)",
+      "Cascada",
+      "Lineal simple",
+      "Ninguno"
+    ]
   },
   {
     "Pregunta": "¿Qué característica define la flexibilidad en la comparación de modelos?",
@@ -403,7 +767,20 @@
     "OpcionB": "La cantidad de páginas de documentación",
     "OpcionC": "El número de programadores",
     "OpcionD": "El costo del servidor",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué característica define la flexibilidad en la comparación de modelos?",
+    "respuesta_correcta_literal": "La capacidad de adaptarse a cambios",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Modelos y Metodologías",
+    "opciones_visibles": [
+      "La capacidad de adaptarse a cambios",
+      "La cantidad de páginas de documentación",
+      "El número de programadores",
+      "El costo del servidor"
+    ]
   },
   {
     "Pregunta": "El modelo que combina elementos de Cascada y Prototipado es el:",
@@ -417,7 +794,20 @@
     "OpcionB": "Modelo Lineal",
     "OpcionC": "Modelo Ágil puro",
     "OpcionD": "Modelo Caótico",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "El modelo que combina elementos de Cascada y Prototipado es el:",
+    "respuesta_correcta_literal": "Modelo Espiral",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Metodologías",
+    "opciones_visibles": [
+      "Modelo Espiral",
+      "Modelo Lineal",
+      "Modelo Ágil puro",
+      "Modelo Caótico"
+    ]
   },
   {
     "Pregunta": "¿Qué es la Gestión de Proyectos de Software?",
@@ -431,7 +821,20 @@
     "OpcionB": "Solo programar código rápido",
     "OpcionC": "Vender software a clientes",
     "OpcionD": "Arreglar fallos de hardware",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es la Gestión de Proyectos de Software?",
+    "respuesta_correcta_literal": "Disciplina que organiza, planifica, ejecuta y controla recursos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Gestión de Proyectos",
+    "opciones_visibles": [
+      "Disciplina que organiza, planifica, ejecuta y controla recursos",
+      "Solo programar código rápido",
+      "Vender software a clientes",
+      "Arreglar fallos de hardware"
+    ]
   },
   {
     "Pregunta": "¿Cuál de estos NO es un objetivo de la gestión de proyectos?",
@@ -445,7 +848,20 @@
     "OpcionB": "Entrega a tiempo",
     "OpcionC": "Productos de calidad",
     "OpcionD": "Cumplimiento de objetivos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál de estos NO es un objetivo de la gestión de proyectos?",
+    "respuesta_correcta_literal": "Aumentar el presupuesto sin control",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Gestión de Proyectos",
+    "opciones_visibles": [
+      "Aumentar el presupuesto sin control",
+      "Entrega a tiempo",
+      "Productos de calidad",
+      "Cumplimiento de objetivos"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la primera fase de la gestión de proyectos?",
@@ -459,7 +875,20 @@
     "OpcionB": "Planificación",
     "OpcionC": "Ejecución",
     "OpcionD": "Cierre",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la primera fase de la gestión de proyectos?",
+    "respuesta_correcta_literal": "Inicio",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Gestión de Proyectos",
+    "opciones_visibles": [
+      "Inicio",
+      "Planificación",
+      "Ejecución",
+      "Cierre"
+    ]
   },
   {
     "Pregunta": "El responsable principal del éxito del proyecto es:",
@@ -473,7 +902,20 @@
     "OpcionB": "Analista Jr.",
     "OpcionC": "Usuario final",
     "OpcionD": "Stakeholder externo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "El responsable principal del éxito del proyecto es:",
+    "respuesta_correcta_literal": "Gerente de Proyecto",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Gestión de Proyectos",
+    "opciones_visibles": [
+      "Gerente de Proyecto",
+      "Analista Jr.",
+      "Usuario final",
+      "Stakeholder externo"
+    ]
   },
   {
     "Pregunta": "¿Qué herramienta visualiza el cronograma y las dependencias de tareas?",
@@ -487,7 +929,20 @@
     "OpcionB": "Hojas de cálculo simples",
     "OpcionC": "Editores de texto",
     "OpcionD": "Diagramas de flujo de datos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué herramienta visualiza el cronograma y las dependencias de tareas?",
+    "respuesta_correcta_literal": "Diagramas de Gantt",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Fundamentos de Sistemas",
+    "opciones_visibles": [
+      "Diagramas de Gantt",
+      "Hojas de cálculo simples",
+      "Editores de texto",
+      "Diagramas de flujo de datos"
+    ]
   },
   {
     "Pregunta": "¿Qué es un hito (milestone)?",
@@ -501,7 +956,20 @@
     "OpcionB": "Una tarea que dura 10 días",
     "OpcionC": "Un error en el código",
     "OpcionD": "Una reunión de equipo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es un hito (milestone)?",
+    "respuesta_correcta_literal": "Un logro clave sin duración",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Gestión de Proyectos",
+    "opciones_visibles": [
+      "Un logro clave sin duración",
+      "Una tarea que dura 10 días",
+      "Un error en el código",
+      "Una reunión de equipo"
+    ]
   },
   {
     "Pregunta": "¿Qué busca el Análisis Orientado a Objetos (AOO)?",
@@ -515,7 +983,20 @@
     "OpcionB": "Programar directamente en C++",
     "OpcionC": "Instalar bases de datos",
     "OpcionD": "Diseñar logotipos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué busca el Análisis Orientado a Objetos (AOO)?",
+    "respuesta_correcta_literal": "Comprender el problema y crear un modelo visual",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Modelado de Sistemas",
+    "opciones_visibles": [
+      "Comprender el problema y crear un modelo visual",
+      "Programar directamente en C++",
+      "Instalar bases de datos",
+      "Diseñar logotipos"
+    ]
   },
   {
     "Pregunta": "¿Cuál de estos es un artefacto clave del AOO?",
@@ -529,7 +1010,20 @@
     "OpcionB": "Facturas de hardware",
     "OpcionC": "Manual de usuario impreso",
     "OpcionD": "Cables de red",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál de estos es un artefacto clave del AOO?",
+    "respuesta_correcta_literal": "Tarjetas CRC",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Modelado de Sistemas",
+    "opciones_visibles": [
+      "Tarjetas CRC",
+      "Facturas de hardware",
+      "Manual de usuario impreso",
+      "Cables de red"
+    ]
   },
   {
     "Pregunta": "El modelo de datos que define entidades y relaciones de alto nivel es el:",
@@ -543,7 +1037,20 @@
     "OpcionB": "Lógico",
     "OpcionC": "Físico",
     "OpcionD": "Virtual",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "El modelo de datos que define entidades y relaciones de alto nivel es el:",
+    "respuesta_correcta_literal": "Conceptual",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Modelos y Metodologías",
+    "opciones_visibles": [
+      "Conceptual",
+      "Lógico",
+      "Físico",
+      "Virtual"
+    ]
   },
   {
     "Pregunta": "¿Para qué sirve la Gestión de Riesgos?",
@@ -557,7 +1064,20 @@
     "OpcionB": "Para gastar más dinero",
     "OpcionC": "Para retrasar el proyecto",
     "OpcionD": "No es necesaria en software",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Para qué sirve la Gestión de Riesgos?",
+    "respuesta_correcta_literal": "Identificar y mitigar problemas potenciales",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Gestión de Proyectos",
+    "opciones_visibles": [
+      "Identificar y mitigar problemas potenciales",
+      "Para gastar más dinero",
+      "Para retrasar el proyecto",
+      "No es necesaria en software"
+    ]
   },
   {
     "Pregunta": "¿Cómo se define al analista de sistemas en relación con el negocio y la tecnología?",
@@ -571,7 +1091,20 @@
     "OpcionB": "Como un obstáculo",
     "OpcionC": "Como un programador únicamente",
     "OpcionD": "Como un vendedor de hardware",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cómo se define al analista de sistemas en relación con el negocio y la tecnología?",
+    "respuesta_correcta_literal": "Como un puente esencial",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Rol del Analista",
+    "opciones_visibles": [
+      "Como un puente esencial",
+      "Como un obstáculo",
+      "Como un programador únicamente",
+      "Como un vendedor de hardware"
+    ]
   },
   {
     "Pregunta": "¿Cuál de estas es una habilidad técnica requerida para un analista?",
@@ -585,7 +1118,20 @@
     "OpcionB": "Habilidad para dibujar logotipos",
     "OpcionC": "Conocimientos de medicina",
     "OpcionD": "Capacidad para conducir camiones",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál de estas es una habilidad técnica requerida para un analista?",
+    "respuesta_correcta_literal": "Comprensión de programación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Rol del Analista",
+    "opciones_visibles": [
+      "Comprensión de programación",
+      "Habilidad para dibujar logotipos",
+      "Conocimientos de medicina",
+      "Capacidad para conducir camiones"
+    ]
   },
   {
     "Pregunta": "La capacidad de proponer soluciones innovadoras 'fuera de la caja' se refiere a:",
@@ -599,7 +1145,20 @@
     "OpcionB": "Programación",
     "OpcionC": "Redes",
     "OpcionD": "Cálculo matemático",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "La capacidad de proponer soluciones innovadoras 'fuera de la caja' se refiere a:",
+    "respuesta_correcta_literal": "Creatividad",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "El Rol del Analista",
+    "opciones_visibles": [
+      "Creatividad",
+      "Programación",
+      "Redes",
+      "Cálculo matemático"
+    ]
   },
   {
     "Pregunta": "¿Qué habilidad blanda permite ser el enlace efectivo entre usuarios y técnicos?",
@@ -613,7 +1172,20 @@
     "OpcionB": "Fuerza física",
     "OpcionC": "Destreza en videojuegos",
     "OpcionD": "Conocimiento de leyes",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué habilidad blanda permite ser el enlace efectivo entre usuarios y técnicos?",
+    "respuesta_correcta_literal": "Comunicación y Negociación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "El Rol del Analista",
+    "opciones_visibles": [
+      "Comunicación y Negociación",
+      "Fuerza física",
+      "Destreza en videojuegos",
+      "Conocimiento de leyes"
+    ]
   },
   {
     "Pregunta": "Identificar obstáculos y desarrollar estrategias efectivas se asocia con:",
@@ -627,7 +1199,20 @@
     "OpcionB": "Diseño gráfico",
     "OpcionC": "Instalación de cables",
     "OpcionD": "Ventas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Identificar obstáculos y desarrollar estrategias efectivas se asocia con:",
+    "respuesta_correcta_literal": "Resolución de Problemas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Rol del Analista",
+    "opciones_visibles": [
+      "Resolución de Problemas",
+      "Diseño gráfico",
+      "Instalación de cables",
+      "Ventas"
+    ]
   },
   {
     "Pregunta": "¿Por qué es importante para un analista entender de Estructuras de Datos?",
@@ -641,7 +1226,20 @@
     "OpcionB": "Para arreglar monitores rotos",
     "OpcionC": "Para diseñar la papelería de la empresa",
     "OpcionD": "No es importante",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Por qué es importante para un analista entender de Estructuras de Datos?",
+    "respuesta_correcta_literal": "Para diseñar bases de datos eficientes",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Rol del Analista",
+    "opciones_visibles": [
+      "Para diseñar bases de datos eficientes",
+      "Para arreglar monitores rotos",
+      "Para diseñar la papelería de la empresa",
+      "No es importante"
+    ]
   },
   {
     "Pregunta": "Un desafío común del analista es enfrentarse a:",
@@ -655,7 +1253,20 @@
     "OpcionB": "Computadoras demasiado rápidas",
     "OpcionC": "Exceso de presupuesto",
     "OpcionD": "Falta de programas para descargar",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Un desafío común del analista es enfrentarse a:",
+    "respuesta_correcta_literal": "Requisitos ambiguos o cambiantes",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Rol del Analista",
+    "opciones_visibles": [
+      "Requisitos ambiguos o cambiantes",
+      "Computadoras demasiado rápidas",
+      "Exceso de presupuesto",
+      "Falta de programas para descargar"
+    ]
   },
   {
     "Pregunta": "¿Cuál es una tarea clave del analista durante el inicio del proyecto?",
@@ -669,7 +1280,20 @@
     "OpcionB": "Solo arreglar impresoras",
     "OpcionC": "Limpiar el servidor",
     "OpcionD": "Instalar el sistema operativo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es una tarea clave del analista durante el inicio del proyecto?",
+    "respuesta_correcta_literal": "Identificar y documentar requisitos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Gestión de Proyectos",
+    "opciones_visibles": [
+      "Identificar y documentar requisitos",
+      "Solo arreglar impresoras",
+      "Limpiar el servidor",
+      "Instalar el sistema operativo"
+    ]
   },
   {
     "Pregunta": "Las habilidades interpersonales del analista se conocen como:",
@@ -683,7 +1307,20 @@
     "OpcionB": "Habilidades duras",
     "OpcionC": "Habilidades virtuales",
     "OpcionD": "Habilidades invisibles",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Las habilidades interpersonales del analista se conocen como:",
+    "respuesta_correcta_literal": "Habilidades blandas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Rol del Analista",
+    "opciones_visibles": [
+      "Habilidades blandas",
+      "Habilidades duras",
+      "Habilidades virtuales",
+      "Habilidades invisibles"
+    ]
   },
   {
     "Pregunta": "¿Cuál es el objetivo de tener conocimientos de redes y conectividad?",
@@ -697,7 +1334,20 @@
     "OpcionB": "Para jugar en línea",
     "OpcionC": "Para vender cables de internet",
     "OpcionD": "No tiene utilidad para un analista",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el objetivo de tener conocimientos de redes y conectividad?",
+    "respuesta_correcta_literal": "Diseñar sistemas distribuidos y seguros",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Fundamentos de Sistemas",
+    "opciones_visibles": [
+      "Diseñar sistemas distribuidos y seguros",
+      "Para jugar en línea",
+      "Para vender cables de internet",
+      "No tiene utilidad para un analista"
+    ]
   },
   {
     "Pregunta": "¿Qué son los requerimientos en un sistema?",
@@ -711,7 +1361,20 @@
     "OpcionB": "Solo el costo del software",
     "OpcionC": "El manual de instrucciones físico",
     "OpcionD": "Los cables de red",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué son los requerimientos en un sistema?",
+    "respuesta_correcta_literal": "Condiciones o capacidades que el sistema debe poseer",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ingeniería de Requisitos",
+    "opciones_visibles": [
+      "Condiciones o capacidades que el sistema debe poseer",
+      "Solo el costo del software",
+      "El manual de instrucciones físico",
+      "Los cables de red"
+    ]
   },
   {
     "Pregunta": "Los requerimientos que describen 'lo que el sistema debe hacer' se llaman:",
@@ -725,7 +1388,20 @@
     "OpcionB": "No Funcionales",
     "OpcionC": "Estéticos",
     "OpcionD": "Opcionales",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Los requerimientos que describen 'lo que el sistema debe hacer' se llaman:",
+    "respuesta_correcta_literal": "Funcionales",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ingeniería de Requisitos",
+    "opciones_visibles": [
+      "Funcionales",
+      "No Funcionales",
+      "Estéticos",
+      "Opcionales"
+    ]
   },
   {
     "Pregunta": "Ejemplo de requerimiento No Funcional:",
@@ -739,7 +1415,20 @@
     "OpcionB": "Registrar un cliente",
     "OpcionC": "Borrar una factura",
     "OpcionD": "Calcular el IVA",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Ejemplo de requerimiento No Funcional:",
+    "respuesta_correcta_literal": "Seguridad y rendimiento",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ingeniería de Requisitos",
+    "opciones_visibles": [
+      "Seguridad y rendimiento",
+      "Registrar un cliente",
+      "Borrar una factura",
+      "Calcular el IVA"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la primera etapa del proceso de recolección?",
@@ -753,7 +1442,20 @@
     "OpcionB": "Programación del sistema",
     "OpcionC": "Validación final",
     "OpcionD": "Venta del producto",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la primera etapa del proceso de recolección?",
+    "respuesta_correcta_literal": "Identificación de Stakeholders",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Fundamentos de Sistemas",
+    "opciones_visibles": [
+      "Identificación de Stakeholders",
+      "Programación del sistema",
+      "Validación final",
+      "Venta del producto"
+    ]
   },
   {
     "Pregunta": "Técnica que consiste en conversaciones directas para obtener detalles:",
@@ -767,7 +1469,20 @@
     "OpcionB": "Observación",
     "OpcionC": "Análisis de documentos",
     "OpcionD": "Lluvia de ideas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Técnica que consiste en conversaciones directas para obtener detalles:",
+    "respuesta_correcta_literal": "Entrevistas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Fundamentos de Sistemas",
+    "opciones_visibles": [
+      "Entrevistas",
+      "Observación",
+      "Análisis de documentos",
+      "Lluvia de ideas"
+    ]
   },
   {
     "Pregunta": "¿Cuál es una desventaja de los cuestionarios?",
@@ -781,7 +1496,20 @@
     "OpcionB": "Es muy caro",
     "OpcionC": "Es difícil de distribuir",
     "OpcionD": "No garantiza el anonimato",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es una desventaja de los cuestionarios?",
+    "respuesta_correcta_literal": "No permite aclaraciones inmediatas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ingeniería de Requisitos",
+    "opciones_visibles": [
+      "No permite aclaraciones inmediatas",
+      "Es muy caro",
+      "Es difícil de distribuir",
+      "No garantiza el anonimato"
+    ]
   },
   {
     "Pregunta": "La técnica de observar a los usuarios en su entorno real se llama:",
@@ -795,7 +1523,20 @@
     "OpcionB": "Prototipado",
     "OpcionC": "Entrevista",
     "OpcionD": "Encuesta",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "La técnica de observar a los usuarios en su entorno real se llama:",
+    "respuesta_correcta_literal": "Observación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Fundamentos de Sistemas",
+    "opciones_visibles": [
+      "Observación",
+      "Prototipado",
+      "Entrevista",
+      "Encuesta"
+    ]
   },
   {
     "Pregunta": "¿Qué técnica utiliza una versión simplificada del sistema para obtener feedback?",
@@ -809,7 +1550,20 @@
     "OpcionB": "Análisis de documentos",
     "OpcionC": "Cuestionarios",
     "OpcionD": "JAD",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué técnica utiliza una versión simplificada del sistema para obtener feedback?",
+    "respuesta_correcta_literal": "Prototipos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Fundamentos de Sistemas",
+    "opciones_visibles": [
+      "Prototipos",
+      "Análisis de documentos",
+      "Cuestionarios",
+      "JAD"
+    ]
   },
   {
     "Pregunta": "La técnica de 'Lluvia de Ideas' busca principalmente:",
@@ -823,7 +1577,20 @@
     "OpcionB": "Encontrar un solo culpable",
     "OpcionC": "Documentar leyes",
     "OpcionD": "Vender licencias",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "La técnica de 'Lluvia de Ideas' busca principalmente:",
+    "respuesta_correcta_literal": "Generar muchas ideas rápidamente",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Ingeniería de Requisitos",
+    "opciones_visibles": [
+      "Generar muchas ideas rápidamente",
+      "Encontrar un solo culpable",
+      "Documentar leyes",
+      "Vender licencias"
+    ]
   },
   {
     "Pregunta": "¿Qué técnica describe las interacciones entre usuario y sistema para un objetivo?",
@@ -837,6 +1604,19 @@
     "OpcionB": "Diagramas de flujo",
     "OpcionC": "Código fuente",
     "OpcionD": "Base de datos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué técnica describe las interacciones entre usuario y sistema para un objetivo?",
+    "respuesta_correcta_literal": "Casos de Uso",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Analisis_Diseno",
+    "grado": 10,
+    "tema": "Fundamentos de Sistemas",
+    "opciones_visibles": [
+      "Casos de Uso",
+      "Diagramas de flujo",
+      "Código fuente",
+      "Base de datos"
+    ]
   }
 ]

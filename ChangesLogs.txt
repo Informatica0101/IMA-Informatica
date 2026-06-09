@@ -233,3 +233,14 @@ Descripción: Reimplementación del flujo de desbloqueo basado estrictamente en 
 2026-06-19 14:45 | js/Banco_Preguntas/Duodecimo/Programacion_2/ y Programacion_Orientada_a_Objetos/
 - Creación de estructura física de directorios.
 - Inyección manual de reactivos de C++, Python y Paradigma POO.
+
+2026-06-19 15:30 | js/quizpro.js
+- RECONFIGURACIÓN CRÍTICA: Desacoplamiento absoluto del backend para la carga de reactivos.
+- Implementado Enrutamiento Local Autónomo (v5.1) hacia js/Banco_Preguntas/.
+- Eliminadas dependencias de fetchApi('getQuestionBank') y loadQuestionsLegacy.
+
+2026-06-19 16:00 | js/Banco_Preguntas/ (Repositorio Completo)
+- EXPANSIÓN MASIVA: Población de 24 nodos académicos con un mínimo de 50 reactivos únicos por nivel.
+- Total reactivos en el ecosistema: 1200+ elementos verificados.
+- Aplicada Normalización Estructural v5.0 (enunciado, respuesta_correcta_literal, opciones_visibles).
+- Aplicada Sanitización HTML técnica (code tags) para 10.mo y 11.no grado.

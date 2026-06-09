@@ -28,5 +28,773 @@
     ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-003",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 3 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-004",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 4 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-005",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 5 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-006",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 6 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-007",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 7 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-008",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 8 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-009",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 9 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-010",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 10 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-011",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 11 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-012",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 12 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-013",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 13 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-014",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 14 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-015",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 15 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-016",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 16 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-017",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 17 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-018",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 18 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-019",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 19 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-020",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 20 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-021",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 21 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-022",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 22 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-023",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 23 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-024",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 24 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-025",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 25 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-026",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 26 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-027",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 27 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-028",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 28 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-029",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 29 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-030",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 30 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-031",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 31 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-032",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 32 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-033",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 33 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-034",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 34 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-035",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 35 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-036",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 36 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-037",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 37 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-038",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 38 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-039",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 39 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-040",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 40 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-041",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 41 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-042",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 42 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-043",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 43 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-044",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 44 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-045",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 45 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-046",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 46 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-047",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 47 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-048",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 48 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-049",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 49 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-PRO-BÁS-050",
+    "grado": "Duodecimo",
+    "asignatura": "Programacion_2",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 50 para Programacion_2 Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
   }
 ]

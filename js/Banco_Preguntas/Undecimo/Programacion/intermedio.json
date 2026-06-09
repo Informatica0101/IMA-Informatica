@@ -11,7 +11,20 @@
     "OpcionB": "Escribir el código",
     "OpcionC": "Comprar el software",
     "OpcionD": "Formatear el disco",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el primer paso en el análisis de un problema?",
+    "respuesta_correcta_literal": "Definir el problema con precisión",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Algoritmos",
+    "opciones_visibles": [
+      "Definir el problema con precisión",
+      "Escribir el código",
+      "Comprar el software",
+      "Formatear el disco"
+    ]
   },
   {
     "Pregunta": "¿Qué representa la 'Entrada' en el análisis?",
@@ -25,7 +38,20 @@
     "OpcionB": "El resultado final",
     "OpcionC": "El monitor",
     "OpcionD": "El teclado",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué representa la 'Entrada' en el análisis?",
+    "respuesta_correcta_literal": "Los datos iniciales que requiere el programa",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Análisis",
+    "opciones_visibles": [
+      "Los datos iniciales que requiere el programa",
+      "El resultado final",
+      "El monitor",
+      "El teclado"
+    ]
   },
   {
     "Pregunta": "¿Qué representa la 'Salida' en el análisis?",
@@ -39,7 +65,20 @@
     "OpcionB": "La entrada del usuario",
     "OpcionC": "El cable de alimentación",
     "OpcionD": "El procesador",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué representa la 'Salida' en el análisis?",
+    "respuesta_correcta_literal": "Los resultados o información procesada que se desea obtener",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Análisis",
+    "opciones_visibles": [
+      "Los resultados o información procesada que se desea obtener",
+      "La entrada del usuario",
+      "El cable de alimentación",
+      "El procesador"
+    ]
   },
   {
     "Pregunta": "¿Qué pregunta debemos hacernos para definir el Proceso?",
@@ -53,7 +92,20 @@
     "OpcionB": "¿Qué color de letra usar?",
     "OpcionC": "¿Qué marca es la computadora?",
     "OpcionD": "¿Cuánta RAM tiene la PC?",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué pregunta debemos hacernos para definir el Proceso?",
+    "respuesta_correcta_literal": "¿Qué métodos o fórmulas se necesitan para transformar los datos?",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Análisis",
+    "opciones_visibles": [
+      "¿Qué métodos o fórmulas se necesitan para transformar los datos?",
+      "¿Qué color de letra usar?",
+      "¿Qué marca es la computadora?",
+      "¿Cuánta RAM tiene la PC?"
+    ]
   },
   {
     "Pregunta": "¿Cómo se llama la fase que sigue inmediatamente después del Análisis?",
@@ -67,7 +119,20 @@
     "OpcionB": "Codificación",
     "OpcionC": "Pruebas",
     "OpcionD": "Mantenimiento",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cómo se llama la fase que sigue inmediatamente después del Análisis?",
+    "respuesta_correcta_literal": "Diseño del Algoritmo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Diseño del Algoritmo",
+      "Codificación",
+      "Pruebas",
+      "Mantenimiento"
+    ]
   },
   {
     "Pregunta": "1. ¿Cuál es el objetivo principal del análisis del problema?",
@@ -81,7 +146,20 @@
     "OpcionB": "Comprender la naturaleza del problema",
     "OpcionC": "Instalar el compilador",
     "OpcionD": "Comprar hardware",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "1. ¿Cuál es el objetivo principal del análisis del problema?",
+    "respuesta_correcta_literal": "Comprender la naturaleza del problema",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Escribir el código",
+      "Comprender la naturaleza del problema",
+      "Instalar el compilador",
+      "Comprar hardware"
+    ]
   },
   {
     "Pregunta": "2. ¿Qué se define como 'Entrada' en un análisis?",
@@ -95,7 +173,20 @@
     "OpcionB": "Los datos necesarios para la resolución",
     "OpcionC": "El monitor de la PC",
     "OpcionD": "La impresora",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "2. ¿Qué se define como 'Entrada' en un análisis?",
+    "respuesta_correcta_literal": "Los datos necesarios para la resolución",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Análisis",
+    "opciones_visibles": [
+      "Los resultados finales",
+      "Los datos necesarios para la resolución",
+      "El monitor de la PC",
+      "La impresora"
+    ]
   },
   {
     "Pregunta": "3. ¿Qué etapa define el CÓMO se resolverá el problema?",
@@ -109,7 +200,20 @@
     "OpcionB": "Diseño",
     "OpcionC": "Codificación",
     "OpcionD": "Mantenimiento",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "3. ¿Qué etapa define el CÓMO se resolverá el problema?",
+    "respuesta_correcta_literal": "Diseño",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Análisis",
+      "Diseño",
+      "Codificación",
+      "Mantenimiento"
+    ]
   },
   {
     "Pregunta": "4. ¿Qué es el Lenguaje Natural en programación?",
@@ -123,7 +227,20 @@
     "OpcionB": "Idioma cotidiano (español)",
     "OpcionC": "Lenguaje C++",
     "OpcionD": "Inglés técnico",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "4. ¿Qué es el Lenguaje Natural en programación?",
+    "respuesta_correcta_literal": "Idioma cotidiano (español)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Código Binario",
+      "Idioma cotidiano (español)",
+      "Lenguaje C++",
+      "Inglés técnico"
+    ]
   },
   {
     "Pregunta": "5. ¿Cuál es una característica de un buen algoritmo?",
@@ -137,7 +254,20 @@
     "OpcionB": "Que sea ambiguo",
     "OpcionC": "Que sea finito",
     "OpcionD": "Que no tenga orden",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "5. ¿Cuál es una característica de un buen algoritmo?",
+    "respuesta_correcta_literal": "Que sea finito",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Que sea infinito",
+      "Que sea ambiguo",
+      "Que sea finito",
+      "Que no tenga orden"
+    ]
   },
   {
     "Pregunta": "6. ¿Qué pregunta NO pertenece al análisis del problema?",
@@ -151,7 +281,20 @@
     "OpcionB": "¿Qué salidas se desean?",
     "OpcionC": "¿Qué color tendrá el botón?",
     "OpcionD": "¿Qué fórmulas se necesitan?",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "6. ¿Qué pregunta NO pertenece al análisis del problema?",
+    "respuesta_correcta_literal": "¿Qué color tendrá el botón?",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "¿Qué entradas se requieren?",
+      "¿Qué salidas se desean?",
+      "¿Qué color tendrá el botón?",
+      "¿Qué fórmulas se necesitan?"
+    ]
   },
   {
     "Pregunta": "7. ¿Por qué es útil el Lenguaje Natural?",
@@ -165,7 +308,20 @@
     "OpcionB": "Para expresar la lógica claramente",
     "OpcionC": "Para ahorrar electricidad",
     "OpcionD": "Para no usar teclado",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "7. ¿Por qué es útil el Lenguaje Natural?",
+    "respuesta_correcta_literal": "Para expresar la lógica claramente",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Para que la computadora lo ejecute",
+      "Para expresar la lógica claramente",
+      "Para ahorrar electricidad",
+      "Para no usar teclado"
+    ]
   },
   {
     "Pregunta": "8. ¿Qué significa que un algoritmo sea 'preciso'?",
@@ -179,7 +335,20 @@
     "OpcionB": "Que indique exactamente qué acción realizar",
     "OpcionC": "Que use números decimales",
     "OpcionD": "Que sea rápido",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "8. ¿Qué significa que un algoritmo sea 'preciso'?",
+    "respuesta_correcta_literal": "Que indique exactamente qué acción realizar",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Que sea corto",
+      "Que indique exactamente qué acción realizar",
+      "Que use números decimales",
+      "Que sea rápido"
+    ]
   },
   {
     "Pregunta": "9. En el análisis del área de un círculo, ¿qué es el Radio?",
@@ -193,7 +362,20 @@
     "OpcionB": "Un proceso",
     "OpcionC": "Una entrada",
     "OpcionD": "Una constante",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "9. En el análisis del área de un círculo, ¿qué es el Radio?",
+    "respuesta_correcta_literal": "Una entrada",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Una salida",
+      "Un proceso",
+      "Una entrada",
+      "Una constante"
+    ]
   },
   {
     "Pregunta": "10. ¿Qué sigue después del Diseño del Algoritmo?",
@@ -207,7 +389,20 @@
     "OpcionB": "La Codificación",
     "OpcionC": "Comprar el programa",
     "OpcionD": "Apagar la PC",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "10. ¿Qué sigue después del Diseño del Algoritmo?",
+    "respuesta_correcta_literal": "La Codificación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "El Análisis",
+      "La Codificación",
+      "Comprar el programa",
+      "Apagar la PC"
+    ]
   },
   {
     "Pregunta": "¿Cuál es el propósito de clasificar los algoritmos?",
@@ -221,7 +416,20 @@
     "OpcionB": "Gastar más memoria",
     "OpcionC": "Hacer el código más lento",
     "OpcionD": "Que la computadora use más energía",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el propósito de clasificar los algoritmos?",
+    "respuesta_correcta_literal": "Elegir la estrategia más eficiente",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Elegir la estrategia más eficiente",
+      "Gastar más memoria",
+      "Hacer el código más lento",
+      "Que la computadora use más energía"
+    ]
   },
   {
     "Pregunta": "¿Qué técnica consiste en probar todas las opciones posibles?",
@@ -235,7 +443,20 @@
     "OpcionB": "Codiciosos",
     "OpcionC": "Divide y Vencerás",
     "OpcionD": "Probabilísticos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué técnica consiste en probar todas las opciones posibles?",
+    "respuesta_correcta_literal": "Fuerza Bruta",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Fuerza Bruta",
+      "Codiciosos",
+      "Divide y Vencerás",
+      "Probabilísticos"
+    ]
   },
   {
     "Pregunta": "¿Qué estrategia toma la mejor decisión en cada paso local?",
@@ -249,7 +470,20 @@
     "OpcionB": "Divide y Vencerás",
     "OpcionC": "Fuerza Bruta",
     "OpcionD": "Backtracking",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué estrategia toma la mejor decisión en cada paso local?",
+    "respuesta_correcta_literal": "Codiciosos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Algoritmos",
+    "opciones_visibles": [
+      "Codiciosos",
+      "Divide y Vencerás",
+      "Fuerza Bruta",
+      "Backtracking"
+    ]
   },
   {
     "Pregunta": "¿Qué significa 'Top-Down' en el diseño de algoritmos?",
@@ -263,7 +497,20 @@
     "OpcionB": "Empezar a programar sin analizar",
     "OpcionC": "Comprar una computadora nueva",
     "OpcionD": "Dibujar sin orden",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa 'Top-Down' en el diseño de algoritmos?",
+    "respuesta_correcta_literal": "Dividir el problema de lo general a lo más simple",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Dividir el problema de lo general a lo más simple",
+      "Empezar a programar sin analizar",
+      "Comprar una computadora nueva",
+      "Dibujar sin orden"
+    ]
   },
   {
     "Pregunta": "¿Para qué sirve el 'Refinamiento por pasos'?",
@@ -277,7 +524,20 @@
     "OpcionB": "Para borrar el algoritmo",
     "OpcionC": "Para cambiar el idioma",
     "OpcionD": "Para instalar programas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Para qué sirve el 'Refinamiento por pasos'?",
+    "respuesta_correcta_literal": "Para detallar poco a poco los pasos generales",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Algoritmos",
+    "opciones_visibles": [
+      "Para detallar poco a poco los pasos generales",
+      "Para borrar el algoritmo",
+      "Para cambiar el idioma",
+      "Para instalar programas"
+    ]
   },
   {
     "Pregunta": "1. ¿Cuál es la primera etapa para desarrollar un algoritmo?",
@@ -291,7 +551,20 @@
     "OpcionB": "Diseño",
     "OpcionC": "Análisis",
     "OpcionD": "Prueba",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "1. ¿Cuál es la primera etapa para desarrollar un algoritmo?",
+    "respuesta_correcta_literal": "Análisis",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Codificación",
+      "Diseño",
+      "Análisis",
+      "Prueba"
+    ]
   },
   {
     "Pregunta": "2. ¿Qué técnica divide un problema complejo en subproblemas?",
@@ -305,7 +578,20 @@
     "OpcionB": "Divide y Vencerás",
     "OpcionC": "Probabilístico",
     "OpcionD": "Codicioso",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "2. ¿Qué técnica divide un problema complejo en subproblemas?",
+    "respuesta_correcta_literal": "Divide y Vencerás",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Fuerza Bruta",
+      "Divide y Vencerás",
+      "Probabilístico",
+      "Codicioso"
+    ]
   },
   {
     "Pregunta": "3. ¿Cómo se llaman los algoritmos que prueban todas las soluciones?",
@@ -319,7 +605,20 @@
     "OpcionB": "Divide y Vencerás",
     "OpcionC": "Vuelta Atrás",
     "OpcionD": "Dinámica",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "3. ¿Cómo se llaman los algoritmos que prueban todas las soluciones?",
+    "respuesta_correcta_literal": "Fuerza Bruta",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Fuerza Bruta",
+      "Divide y Vencerás",
+      "Vuelta Atrás",
+      "Dinámica"
+    ]
   },
   {
     "Pregunta": "4. ¿Qué algoritmos toman la mejor decisión local en cada paso?",
@@ -333,7 +632,20 @@
     "OpcionB": "Divide y Vencerás",
     "OpcionC": "Codiciosos",
     "OpcionD": "Probabilísticos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "4. ¿Qué algoritmos toman la mejor decisión local en cada paso?",
+    "respuesta_correcta_literal": "Codiciosos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Fuerza Bruta",
+      "Divide y Vencerás",
+      "Codiciosos",
+      "Probabilísticos"
+    ]
   },
   {
     "Pregunta": "5. ¿Qué etapa consiste en traducir el algoritmo a un lenguaje?",
@@ -347,7 +659,20 @@
     "OpcionB": "Diseño",
     "OpcionC": "Codificación",
     "OpcionD": "Refinamiento",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "5. ¿Qué etapa consiste en traducir el algoritmo a un lenguaje?",
+    "respuesta_correcta_literal": "Codificación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Análisis",
+      "Diseño",
+      "Codificación",
+      "Refinamiento"
+    ]
   },
   {
     "Pregunta": "6. ¿Qué técnica de representación usa lenguaje natural?",
@@ -361,7 +686,20 @@
     "OpcionB": "Diagrama de Flujo",
     "OpcionC": "Lenguaje Natural",
     "OpcionD": "Fórmulas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "6. ¿Qué técnica de representación usa lenguaje natural?",
+    "respuesta_correcta_literal": "Lenguaje Natural",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Pseudocódigo",
+      "Diagrama de Flujo",
+      "Lenguaje Natural",
+      "Fórmulas"
+    ]
   },
   {
     "Pregunta": "7. ¿Cuál es el objetivo de la etapa de Diseño?",
@@ -375,7 +713,20 @@
     "OpcionB": "Planear cómo resolver el problema",
     "OpcionC": "Instalar el sistema",
     "OpcionD": "Definir las entradas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "7. ¿Cuál es el objetivo de la etapa de Diseño?",
+    "respuesta_correcta_literal": "Planear cómo resolver el problema",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Comprar la computadora",
+      "Planear cómo resolver el problema",
+      "Instalar el sistema",
+      "Definir las entradas"
+    ]
   },
   {
     "Pregunta": "8. ¿Qué algoritmos guardan resultados para evitar duplicados?",
@@ -389,7 +740,20 @@
     "OpcionB": "Vuelta Atrás",
     "OpcionC": "Programación Dinámica",
     "OpcionD": "Codiciosos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "8. ¿Qué algoritmos guardan resultados para evitar duplicados?",
+    "respuesta_correcta_literal": "Programación Dinámica",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Fuerza Bruta",
+      "Vuelta Atrás",
+      "Programación Dinámica",
+      "Codiciosos"
+    ]
   },
   {
     "Pregunta": "9. ¿Cómo se llama al refinamiento progresivo de un algoritmo?",
@@ -403,7 +767,20 @@
     "OpcionB": "Refinamiento por pasos",
     "OpcionC": "Análisis",
     "OpcionD": "Ejecución",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "9. ¿Cómo se llama al refinamiento progresivo de un algoritmo?",
+    "respuesta_correcta_literal": "Refinamiento por pasos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Codificación",
+      "Refinamiento por pasos",
+      "Análisis",
+      "Ejecución"
+    ]
   },
   {
     "Pregunta": "10. ¿En qué etapa se definen las entradas y salidas?",
@@ -417,7 +794,20 @@
     "OpcionB": "Diseño",
     "OpcionC": "Codificación",
     "OpcionD": "Pruebas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "10. ¿En qué etapa se definen las entradas y salidas?",
+    "respuesta_correcta_literal": "Análisis",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Análisis",
+    "opciones_visibles": [
+      "Análisis",
+      "Diseño",
+      "Codificación",
+      "Pruebas"
+    ]
   },
   {
     "Pregunta": "¿Qué es un diagrama de flujo?",
@@ -431,7 +821,20 @@
     "OpcionB": "Un tipo de cable de red",
     "OpcionC": "Una marca de computadoras",
     "OpcionD": "Un sistema de sonido",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es un diagrama de flujo?",
+    "respuesta_correcta_literal": "Una representación gráfica de un algoritmo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Una representación gráfica de un algoritmo",
+      "Un tipo de cable de red",
+      "Una marca de computadoras",
+      "Un sistema de sonido"
+    ]
   },
   {
     "Pregunta": "¿Qué representa el símbolo del óvalo en un diagrama de flujo?",
@@ -445,7 +848,20 @@
     "OpcionB": "Proceso matemático",
     "OpcionC": "Entrada de datos",
     "OpcionD": "Decisión",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué representa el símbolo del óvalo en un diagrama de flujo?",
+    "respuesta_correcta_literal": "Inicio o Fin del algoritmo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Inicio o Fin del algoritmo",
+      "Proceso matemático",
+      "Entrada de datos",
+      "Decisión"
+    ]
   },
   {
     "Pregunta": "¿Para qué se usa el rombo en los diagramas de flujo?",
@@ -459,7 +875,20 @@
     "OpcionB": "Realizar una suma",
     "OpcionC": "Mostrar el resultado",
     "OpcionD": "Almacenar una variable",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Para qué se usa el rombo en los diagramas de flujo?",
+    "respuesta_correcta_literal": "Tomar decisiones (SI/NO)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Tomar decisiones (SI/NO)",
+      "Realizar una suma",
+      "Mostrar el resultado",
+      "Almacenar una variable"
+    ]
   },
   {
     "Pregunta": "¿Qué representa el rectángulo en un diagrama de flujo?",
@@ -473,7 +902,20 @@
     "OpcionB": "El fin del programa",
     "OpcionC": "Una pregunta",
     "OpcionD": "La entrada del teclado",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué representa el rectángulo en un diagrama de flujo?",
+    "respuesta_correcta_literal": "Un proceso o acción",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Un proceso o acción",
+      "El fin del programa",
+      "Una pregunta",
+      "La entrada del teclado"
+    ]
   },
   {
     "Pregunta": "¿Qué indican las flechas en un diagrama de flujo?",
@@ -487,7 +929,20 @@
     "OpcionB": "La velocidad del procesador",
     "OpcionC": "El brillo de la pantalla",
     "OpcionD": "No tienen significado",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué indican las flechas en un diagrama de flujo?",
+    "respuesta_correcta_literal": "El flujo o dirección de la ejecución",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "El flujo o dirección de la ejecución",
+      "La velocidad del procesador",
+      "El brillo de la pantalla",
+      "No tienen significado"
+    ]
   },
   {
     "Pregunta": "1. ¿Qué es un diagrama de flujo?",
@@ -501,7 +956,20 @@
     "OpcionB": "Óvalo",
     "OpcionC": "Rombo",
     "OpcionD": "Círculo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "1. ¿Qué es un diagrama de flujo?",
+    "respuesta_correcta_literal": "Óvalo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Rectángulo",
+      "Óvalo",
+      "Rombo",
+      "Círculo"
+    ]
   },
   {
     "Pregunta": "2. ¿Qué símbolo se usa para una decisión?",
@@ -515,7 +983,20 @@
     "OpcionB": "Óvalo",
     "OpcionC": "Rombo",
     "OpcionD": "Triángulo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "2. ¿Qué símbolo se usa para una decisión?",
+    "respuesta_correcta_literal": "Rombo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Rectángulo",
+      "Óvalo",
+      "Rombo",
+      "Triángulo"
+    ]
   },
   {
     "Pregunta": "3. ¿Qué representa el rectángulo?",
@@ -529,7 +1010,20 @@
     "OpcionB": "Inicio",
     "OpcionC": "Proceso o acción",
     "OpcionD": "Fin",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "3. ¿Qué representa el rectángulo?",
+    "respuesta_correcta_literal": "Proceso o acción",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Entrada de datos",
+      "Inicio",
+      "Proceso o acción",
+      "Fin"
+    ]
   },
   {
     "Pregunta": "4. ¿En qué dirección debe fluir el diagrama?",
@@ -543,7 +1037,20 @@
     "OpcionB": "De derecha a izquierda",
     "OpcionC": "De arriba hacia abajo",
     "OpcionD": "Cualquier dirección",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "4. ¿En qué dirección debe fluir el diagrama?",
+    "respuesta_correcta_literal": "De arriba hacia abajo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "De abajo hacia arriba",
+      "De derecha a izquierda",
+      "De arriba hacia abajo",
+      "Cualquier dirección"
+    ]
   },
   {
     "Pregunta": "5. ¿Qué símbolo se usa para Entrada y Salida?",
@@ -557,7 +1064,20 @@
     "OpcionB": "Paralelogramo",
     "OpcionC": "Óvalo",
     "OpcionD": "Círculo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "5. ¿Qué símbolo se usa para Entrada y Salida?",
+    "respuesta_correcta_literal": "Paralelogramo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Análisis",
+    "opciones_visibles": [
+      "Rectángulo",
+      "Paralelogramo",
+      "Óvalo",
+      "Círculo"
+    ]
   },
   {
     "Pregunta": "6. ¿Pueden cruzarse las líneas de flujo?",
@@ -571,7 +1091,20 @@
     "OpcionB": "No, nunca",
     "OpcionC": "Solo en diagramas grandes",
     "OpcionD": "A veces",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "6. ¿Pueden cruzarse las líneas de flujo?",
+    "respuesta_correcta_literal": "No, nunca",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Sí, si es necesario",
+      "No, nunca",
+      "Solo en diagramas grandes",
+      "A veces"
+    ]
   },
   {
     "Pregunta": "7. ¿Qué indica una flecha?",
@@ -585,7 +1118,20 @@
     "OpcionB": "El sentido del flujo",
     "OpcionC": "Una pausa",
     "OpcionD": "Un comentario",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "7. ¿Qué indica una flecha?",
+    "respuesta_correcta_literal": "El sentido del flujo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Un error",
+      "El sentido del flujo",
+      "Una pausa",
+      "Un comentario"
+    ]
   },
   {
     "Pregunta": "8. ¿El rombo cuántas salidas suele tener?",
@@ -599,7 +1145,20 @@
     "OpcionB": "Dos (Sí y No)",
     "OpcionC": "Tres",
     "OpcionD": "Ninguna",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "8. ¿El rombo cuántas salidas suele tener?",
+    "respuesta_correcta_literal": "Dos (Sí y No)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Análisis",
+    "opciones_visibles": [
+      "Una",
+      "Dos (Sí y No)",
+      "Tres",
+      "Ninguna"
+    ]
   },
   {
     "Pregunta": "9. ¿Qué es un diagrama de flujo?",
@@ -613,7 +1172,20 @@
     "OpcionB": "Una representación gráfica",
     "OpcionC": "Un virus",
     "OpcionD": "Un hardware",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "9. ¿Qué es un diagrama de flujo?",
+    "respuesta_correcta_literal": "Una representación gráfica",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Un tipo de música",
+      "Una representación gráfica",
+      "Un virus",
+      "Un hardware"
+    ]
   },
   {
     "Pregunta": "10. ¿Para qué sirve documentar con diagramas?",
@@ -627,7 +1199,20 @@
     "OpcionB": "Para guiar la programación",
     "OpcionC": "Para que no se vea el código",
     "OpcionD": "Para nada",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "10. ¿Para qué sirve documentar con diagramas?",
+    "respuesta_correcta_literal": "Para guiar la programación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Para gastar papel",
+      "Para guiar la programación",
+      "Para que no se vea el código",
+      "Para nada"
+    ]
   },
   {
     "Pregunta": "¿Cuál es el primer paso para resolver un problema mediante programación?",
@@ -641,7 +1226,20 @@
     "OpcionB": "Escribir código de inmediato",
     "OpcionC": "Comprar una computadora potente",
     "OpcionD": "Cambiar de monitor",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el primer paso para resolver un problema mediante programación?",
+    "respuesta_correcta_literal": "Identificar y entender el problema claramente",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Algoritmos",
+    "opciones_visibles": [
+      "Identificar y entender el problema claramente",
+      "Escribir código de inmediato",
+      "Comprar una computadora potente",
+      "Cambiar de monitor"
+    ]
   },
   {
     "Pregunta": "¿Qué técnica consiste en descomponer un problema en otros más sencillos?",
@@ -655,7 +1253,20 @@
     "OpcionB": "Fuerza bruta",
     "OpcionC": "Azar",
     "OpcionD": "Instinto",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué técnica consiste en descomponer un problema en otros más sencillos?",
+    "respuesta_correcta_literal": "Divide y vencerás",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Divide y vencerás",
+      "Fuerza bruta",
+      "Azar",
+      "Instinto"
+    ]
   },
   {
     "Pregunta": "¿Qué es una 'alternativa de solución'?",
@@ -669,7 +1280,20 @@
     "OpcionB": "Un error en el algoritmo",
     "OpcionC": "Un componente del hardware",
     "OpcionD": "Una tecla del teclado",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es una 'alternativa de solución'?",
+    "respuesta_correcta_literal": "Diferentes formas posibles de resolver el mismo problema",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Diferentes formas posibles de resolver el mismo problema",
+      "Un error en el algoritmo",
+      "Un componente del hardware",
+      "Una tecla del teclado"
+    ]
   },
   {
     "Pregunta": "¿Qué debemos evaluar al elegir una alternativa de solución?",
@@ -683,7 +1307,20 @@
     "OpcionB": "El color de las ventanas",
     "OpcionC": "La marca del teclado",
     "OpcionD": "El fondo de pantalla",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué debemos evaluar al elegir una alternativa de solución?",
+    "respuesta_correcta_literal": "La eficiencia y los recursos necesarios",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "La eficiencia y los recursos necesarios",
+      "El color de las ventanas",
+      "La marca del teclado",
+      "El fondo de pantalla"
+    ]
   },
   {
     "Pregunta": "¿Qué significa 'validar' un algoritmo?",
@@ -697,7 +1334,20 @@
     "OpcionB": "Borrar el algoritmo",
     "OpcionC": "Publicarlo en redes sociales",
     "OpcionD": "Pintar el diagrama",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa 'validar' un algoritmo?",
+    "respuesta_correcta_literal": "Comprobar que produce los resultados correctos para diferentes datos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Comprobar que produce los resultados correctos para diferentes datos",
+      "Borrar el algoritmo",
+      "Publicarlo en redes sociales",
+      "Pintar el diagrama"
+    ]
   },
   {
     "Pregunta": "1. ¿Cuál es el primer paso para solucionar un problema?",
@@ -711,7 +1361,20 @@
     "OpcionB": "Divide y Vencerás",
     "OpcionC": "Vuelta Atrás",
     "OpcionD": "Probabilístico",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "1. ¿Cuál es el primer paso para solucionar un problema?",
+    "respuesta_correcta_literal": "Divide y Vencerás",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Algoritmos",
+    "opciones_visibles": [
+      "Fuerza Bruta",
+      "Divide y Vencerás",
+      "Vuelta Atrás",
+      "Probabilístico"
+    ]
   },
   {
     "Pregunta": "2. ¿Cómo se llama al diseño que va de lo general a lo particular?",
@@ -725,7 +1388,20 @@
     "OpcionB": "Lateral",
     "OpcionC": "Top-Down",
     "OpcionD": "Circular",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "2. ¿Cómo se llama al diseño que va de lo general a lo particular?",
+    "respuesta_correcta_literal": "Top-Down",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Bottom-Up",
+      "Lateral",
+      "Top-Down",
+      "Circular"
+    ]
   },
   {
     "Pregunta": "3. ¿Qué pregunta define el propósito de un módulo?",
@@ -739,7 +1415,20 @@
     "OpcionB": "¿Qué hace?",
     "OpcionC": "¿Quién lo hace?",
     "OpcionD": "¿Cuándo lo hace?",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "3. ¿Qué pregunta define el propósito de un módulo?",
+    "respuesta_correcta_literal": "¿Qué hace?",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "¿Cómo lo hace?",
+      "¿Qué hace?",
+      "¿Quién lo hace?",
+      "¿Cuándo lo hace?"
+    ]
   },
   {
     "Pregunta": "4. ¿Cuál es una ventaja de dividir problemas?",
@@ -753,7 +1442,20 @@
     "OpcionB": "Facilitar la depuración",
     "OpcionC": "Aumentar la complejidad",
     "OpcionD": "No usar variables",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "4. ¿Cuál es una ventaja de dividir problemas?",
+    "respuesta_correcta_literal": "Facilitar la depuración",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Tardar más tiempo",
+      "Facilitar la depuración",
+      "Aumentar la complejidad",
+      "No usar variables"
+    ]
   },
   {
     "Pregunta": "5. ¿Qué sigue después de dividir y resolver los subproblemas?",
@@ -767,7 +1469,20 @@
     "OpcionB": "Combinar soluciones",
     "OpcionC": "Cambiar de lenguaje",
     "OpcionD": "Reiniciar el análisis",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "5. ¿Qué sigue después de dividir y resolver los subproblemas?",
+    "respuesta_correcta_literal": "Combinar soluciones",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Borrar todo",
+      "Combinar soluciones",
+      "Cambiar de lenguaje",
+      "Reiniciar el análisis"
+    ]
   },
   {
     "Pregunta": "6. ¿Qué técnica se enfoca en el refinamiento sucesivo?",
@@ -781,7 +1496,20 @@
     "OpcionB": "Refinamiento por pasos",
     "OpcionC": "Azar",
     "OpcionD": "Fuerza bruta",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "6. ¿Qué técnica se enfoca en el refinamiento sucesivo?",
+    "respuesta_correcta_literal": "Refinamiento por pasos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Codificación directa",
+      "Refinamiento por pasos",
+      "Azar",
+      "Fuerza bruta"
+    ]
   },
   {
     "Pregunta": "7. ¿Qué representa la 'Entrada' en un módulo?",
@@ -795,7 +1523,20 @@
     "OpcionB": "Los datos necesarios",
     "OpcionC": "El código fuente",
     "OpcionD": "El error encontrado",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "7. ¿Qué representa la 'Entrada' en un módulo?",
+    "respuesta_correcta_literal": "Los datos necesarios",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Análisis",
+    "opciones_visibles": [
+      "El resultado final",
+      "Los datos necesarios",
+      "El código fuente",
+      "El error encontrado"
+    ]
   },
   {
     "Pregunta": "8. ¿Por qué es útil la programación modular?",
@@ -809,7 +1550,20 @@
     "OpcionB": "Para reutilizar código",
     "OpcionC": "Para confundir al usuario",
     "OpcionD": "Para no usar funciones",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "8. ¿Por qué es útil la programación modular?",
+    "respuesta_correcta_literal": "Para reutilizar código",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Para que el programa sea más largo",
+      "Para reutilizar código",
+      "Para confundir al usuario",
+      "Para no usar funciones"
+    ]
   },
   {
     "Pregunta": "9. ¿Qué se define en el Nivel Superior del diseño Top-Down?",
@@ -823,7 +1577,20 @@
     "OpcionB": "El problema global",
     "OpcionC": "El tipo de procesador",
     "OpcionD": "La marca del mouse",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "9. ¿Qué se define en el Nivel Superior del diseño Top-Down?",
+    "respuesta_correcta_literal": "El problema global",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Los detalles mínimos",
+      "El problema global",
+      "El tipo de procesador",
+      "La marca del mouse"
+    ]
   },
   {
     "Pregunta": "10. ¿Qué significa 'Depuración'?",
@@ -837,7 +1604,20 @@
     "OpcionB": "Encontrar y corregir errores",
     "OpcionC": "Instalar antivirus",
     "OpcionD": "Comprar licencias",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "10. ¿Qué significa 'Depuración'?",
+    "respuesta_correcta_literal": "Encontrar y corregir errores",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Escribir rápido",
+      "Encontrar y corregir errores",
+      "Instalar antivirus",
+      "Comprar licencias"
+    ]
   },
   {
     "Pregunta": "¿En qué década se formalizó el concepto de algoritmo?",
@@ -851,7 +1631,20 @@
     "OpcionB": "1930",
     "OpcionC": "1910",
     "OpcionD": "1970",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿En qué década se formalizó el concepto de algoritmo?",
+    "respuesta_correcta_literal": "1930",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "1950",
+      "1930",
+      "1910",
+      "1970"
+    ]
   },
   {
     "Pregunta": "¿Quién demostró la insolubilidad del 'problema del paro'?",
@@ -865,7 +1658,20 @@
     "OpcionB": "Deep Blue",
     "OpcionC": "Alan Turing",
     "OpcionD": "John von Neumann",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Quién demostró la insolubilidad del 'problema del paro'?",
+    "respuesta_correcta_literal": "Alan Turing",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Garry Kasparov",
+      "Deep Blue",
+      "Alan Turing",
+      "John von Neumann"
+    ]
   },
   {
     "Pregunta": "¿Qué dos factores mide la complejidad computacional?",
@@ -879,7 +1685,20 @@
     "OpcionB": "Precio y Tamaño",
     "OpcionC": "Tiempo y Espacio",
     "OpcionD": "Hardware y Software",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué dos factores mide la complejidad computacional?",
+    "respuesta_correcta_literal": "Tiempo y Espacio",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Color y Forma",
+      "Precio y Tamaño",
+      "Tiempo y Espacio",
+      "Hardware y Software"
+    ]
   },
   {
     "Pregunta": "¿Qué es un algoritmo según la definición informal?",
@@ -893,7 +1712,20 @@
     "OpcionB": "Instrucciones sencillas para resolver un problema",
     "OpcionC": "Un lenguaje de programación",
     "OpcionD": "Un componente del CPU",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es un algoritmo según la definición informal?",
+    "respuesta_correcta_literal": "Instrucciones sencillas para resolver un problema",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "Una pieza de hardware",
+      "Instrucciones sencillas para resolver un problema",
+      "Un lenguaje de programación",
+      "Un componente del CPU"
+    ]
   },
   {
     "Pregunta": "¿Qué problema determinó Turing que no puede ser resuelto por computadora?",
@@ -907,7 +1739,20 @@
     "OpcionB": "Juego de Ajedrez",
     "OpcionC": "El Problema del Paro",
     "OpcionD": "Suma de enteros",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué problema determinó Turing que no puede ser resuelto por computadora?",
+    "respuesta_correcta_literal": "El Problema del Paro",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Cálculo de Pi",
+      "Juego de Ajedrez",
+      "El Problema del Paro",
+      "Suma de enteros"
+    ]
   },
   {
     "Pregunta": "¿Cuál es una medida de complejidad mencionada?",
@@ -921,7 +1766,20 @@
     "OpcionB": "Número de instrucciones ejecutadas",
     "OpcionC": "Velocidad de internet",
     "OpcionD": "Precio de la computadora",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es una medida de complejidad mencionada?",
+    "respuesta_correcta_literal": "Número de instrucciones ejecutadas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Número de usuarios",
+      "Número de instrucciones ejecutadas",
+      "Velocidad de internet",
+      "Precio de la computadora"
+    ]
   },
   {
     "Pregunta": "¿Qué permiten los lenguajes de alto nivel al programador?",
@@ -935,7 +1793,20 @@
     "OpcionB": "Escribir instrucciones usando palabras y símbolos",
     "OpcionC": "No usar software",
     "OpcionD": "Modificar el voltaje del CPU",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué permiten los lenguajes de alto nivel al programador?",
+    "respuesta_correcta_literal": "Escribir instrucciones usando palabras y símbolos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Hablar con la máquina en binario",
+      "Escribir instrucciones usando palabras y símbolos",
+      "No usar software",
+      "Modificar el voltaje del CPU"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la principal ventaja de los lenguajes de alto nivel?",
@@ -949,7 +1820,20 @@
     "OpcionB": "Son independientes de la máquina",
     "OpcionC": "Son más caros",
     "OpcionD": "Requieren hardware especial",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la principal ventaja de los lenguajes de alto nivel?",
+    "respuesta_correcta_literal": "Son independientes de la máquina",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Son más lentos",
+      "Son independientes de la máquina",
+      "Son más caros",
+      "Requieren hardware especial"
+    ]
   },
   {
     "Pregunta": "¿Por qué el ajedrez se considera complejo en la práctica?",
@@ -963,7 +1847,20 @@
     "OpcionB": "Las piezas son finitas",
     "OpcionC": "Las posibilidades de movimientos son astronómicas",
     "OpcionD": "No tiene solución teórica",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Por qué el ajedrez se considera complejo en la práctica?",
+    "respuesta_correcta_literal": "Las posibilidades de movimientos son astronómicas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Las reglas cambian",
+      "Las piezas son finitas",
+      "Las posibilidades de movimientos son astronómicas",
+      "No tiene solución teórica"
+    ]
   },
   {
     "Pregunta": "¿Qué significa que un algoritmo sea finito?",
@@ -977,7 +1874,20 @@
     "OpcionB": "Que tiene un fin definido",
     "OpcionC": "Que es infinito",
     "OpcionD": "Que es muy pequeño",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa que un algoritmo sea finito?",
+    "respuesta_correcta_literal": "Que tiene un fin definido",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Que nunca termina",
+      "Que tiene un fin definido",
+      "Que es infinito",
+      "Que es muy pequeño"
+    ]
   },
   {
     "Pregunta": "¿Qué es la programación?",
@@ -991,7 +1901,20 @@
     "OpcionB": "Reparación de diversos componentes de hardware",
     "OpcionC": "Instalación de software y sistemas operativos",
     "OpcionD": "Navegación y búsqueda de información en la web",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es la programación?",
+    "respuesta_correcta_literal": "Creación de instrucciones precisas para la computadora",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Creación de instrucciones precisas para la computadora",
+      "Reparación de diversos componentes de hardware",
+      "Instalación de software y sistemas operativos",
+      "Navegación y búsqueda de información en la web"
+    ]
   },
   {
     "Pregunta": "¿Qué es un algoritmo?",
@@ -1005,7 +1928,20 @@
     "OpcionB": "Componente interno de un procesador moderno",
     "OpcionC": "Programa malicioso que daña archivos del sistema",
     "OpcionD": "Plataforma digital para la interacción social",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es un algoritmo?",
+    "respuesta_correcta_literal": "Pasos ordenados para la solución de un problema",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Pasos ordenados para la solución de un problema",
+      "Componente interno de un procesador moderno",
+      "Programa malicioso que daña archivos del sistema",
+      "Plataforma digital para la interacción social"
+    ]
   },
   {
     "Pregunta": "¿De dónde proviene la palabra 'algoritmo'?",
@@ -1019,7 +1955,20 @@
     "OpcionB": "Del científico británico Alan Turing",
     "OpcionC": "Del empresario tecnológico Bill Gates",
     "OpcionD": "De un término latín que significa alegría",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿De dónde proviene la palabra 'algoritmo'?",
+    "respuesta_correcta_literal": "Del matemático árabe Al-Khwarizmi",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Del matemático árabe Al-Khwarizmi",
+      "Del científico británico Alan Turing",
+      "Del empresario tecnológico Bill Gates",
+      "De un término latín que significa alegría"
+    ]
   },
   {
     "Pregunta": "¿Qué significa que un algoritmo sea 'Finito'?",
@@ -1033,7 +1982,20 @@
     "OpcionB": "Que se ejecuta de forma rápida y eficiente",
     "OpcionC": "Que no presenta ningún tipo de error lógico",
     "OpcionD": "Que puede resolver cualquier tipo de problema",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa que un algoritmo sea 'Finito'?",
+    "respuesta_correcta_literal": "Que cuenta con un número determinado de pasos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Que cuenta con un número determinado de pasos",
+      "Que se ejecuta de forma rápida y eficiente",
+      "Que no presenta ningún tipo de error lógico",
+      "Que puede resolver cualquier tipo de problema"
+    ]
   },
   {
     "Pregunta": "¿Qué significa que un algoritmo sea 'Preciso'?",
@@ -1047,7 +2009,20 @@
     "OpcionB": "Que los resultados son exactos matemáticamente",
     "OpcionC": "Que el código es breve y fácil de leer",
     "OpcionD": "Que no requiere de mucha memoria RAM",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa que un algoritmo sea 'Preciso'?",
+    "respuesta_correcta_literal": "Que cada paso está definido sin ambigúedades",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Que cada paso está definido sin ambigúedades",
+      "Que los resultados son exactos matemáticamente",
+      "Que el código es breve y fácil de leer",
+      "Que no requiere de mucha memoria RAM"
+    ]
   },
   {
     "Pregunta": "¿Qué significa que un algoritmo sea 'Definido'?",
@@ -1061,7 +2036,20 @@
     "OpcionB": "Que tiene un inicio y un final claramente marcados",
     "OpcionC": "Que utiliza variables globales en todo su proceso",
     "OpcionD": "Que está escrito en un lenguaje de alto nivel",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa que un algoritmo sea 'Definido'?",
+    "respuesta_correcta_literal": "Que ante mismas entradas produce siempre lo mismo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Que ante mismas entradas produce siempre lo mismo",
+      "Que tiene un inicio y un final claramente marcados",
+      "Que utiliza variables globales en todo su proceso",
+      "Que está escrito en un lenguaje de alto nivel"
+    ]
   },
   {
     "Pregunta": "¿Qué significa que un algoritmo sea 'General'?",
@@ -1075,7 +2063,20 @@
     "OpcionB": "Que puede ejecutarse en cualquier sistema operativo",
     "OpcionC": "Que es comprendido por cualquier programador",
     "OpcionD": "Que no utiliza funciones o librerías específicas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa que un algoritmo sea 'General'?",
+    "respuesta_correcta_literal": "Que resuelve todos los casos de un mismo problema",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Que resuelve todos los casos de un mismo problema",
+      "Que puede ejecutarse en cualquier sistema operativo",
+      "Que es comprendido por cualquier programador",
+      "Que no utiliza funciones o librerías específicas"
+    ]
   },
   {
     "Pregunta": "¿Cuál es un ejemplo de algoritmo cualitativo?",
@@ -1089,7 +2090,20 @@
     "OpcionB": "Cálculo matemático de impuestos mensuales",
     "OpcionC": "Suma secuencial de una serie de números",
     "OpcionD": "Obtención del promedio final de calificaciones",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es un ejemplo de algoritmo cualitativo?",
+    "respuesta_correcta_literal": "Instrucciones para seguir una receta de cocina",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Instrucciones para seguir una receta de cocina",
+      "Cálculo matemático de impuestos mensuales",
+      "Suma secuencial de una serie de números",
+      "Obtención del promedio final de calificaciones"
+    ]
   },
   {
     "Pregunta": "¿Cuál es un ejemplo de algoritmo cuantitativo?",
@@ -1103,7 +2117,20 @@
     "OpcionB": "Pasos necesarios para cambiar una llanta",
     "OpcionC": "Instrucciones para preparar un sándwich",
     "OpcionD": "Ruta lógica para llegar desde casa al colegio",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es un ejemplo de algoritmo cuantitativo?",
+    "respuesta_correcta_literal": "Cálculo del área de una figura geométrica",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Cálculo del área de una figura geométrica",
+      "Pasos necesarios para cambiar una llanta",
+      "Instrucciones para preparar un sándwich",
+      "Ruta lógica para llegar desde casa al colegio"
+    ]
   },
   {
     "Pregunta": "¿Qué requiere la computadora para ejecutar un algoritmo?",
@@ -1117,7 +2144,20 @@
     "OpcionB": "Capacidad de intuición y pensamiento propio",
     "OpcionC": "Sentido común para interpretar pasos vagos",
     "OpcionD": "Habilidad para adivinar el proceso deseado",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué requiere la computadora para ejecutar un algoritmo?",
+    "respuesta_correcta_literal": "Instrucciones lógicas exactas y sin ambigüedad",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Instrucciones lógicas exactas y sin ambigüedad",
+      "Capacidad de intuición y pensamiento propio",
+      "Sentido común para interpretar pasos vagos",
+      "Habilidad para adivinar el proceso deseado"
+    ]
   },
   {
     "Pregunta": "6. Un algoritmo para 'cambiar llanta' es:",
@@ -1131,7 +2171,20 @@
     "OpcionB": "No computacional y cualitativo",
     "OpcionC": "Computacional y cualitativo",
     "OpcionD": "No computacional y cuantitativo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "6. Un algoritmo para 'cambiar llanta' es:",
+    "respuesta_correcta_literal": "No computacional y cualitativo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Computacional y cuantitativo",
+      "No computacional y cualitativo",
+      "Computacional y cualitativo",
+      "No computacional y cuantitativo"
+    ]
   },
   {
     "Pregunta": "7. ¿Qué fórmula se usa para el área de triángulo?",
@@ -1145,7 +2198,20 @@
     "OpcionB": "Base × Altura",
     "OpcionC": "(Base × Altura) ÷ 2",
     "OpcionD": "Base² × Altura",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "7. ¿Qué fórmula se usa para el área de triángulo?",
+    "respuesta_correcta_literal": "(Base × Altura) ÷ 2",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Base + Altura",
+      "Base × Altura",
+      "(Base × Altura) ÷ 2",
+      "Base² × Altura"
+    ]
   },
   {
     "Pregunta": "8. ¿Qué característica asegura mismo resultado con mismas entradas?",
@@ -1159,7 +2225,20 @@
     "OpcionB": "Preciso",
     "OpcionC": "Definido",
     "OpcionD": "General",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "8. ¿Qué característica asegura mismo resultado con mismas entradas?",
+    "respuesta_correcta_literal": "Definido",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Análisis",
+    "opciones_visibles": [
+      "Finito",
+      "Preciso",
+      "Definido",
+      "General"
+    ]
   },
   {
     "Pregunta": "9. En 'ir al colegio', ¿qué estructura tiene '¿Hay tiempo?'?",
@@ -1173,7 +2252,20 @@
     "OpcionB": "Decisión (SI/NO)",
     "OpcionC": "Repetición",
     "OpcionD": "Inicio",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "9. En 'ir al colegio', ¿qué estructura tiene '¿Hay tiempo?'?",
+    "respuesta_correcta_literal": "Decisión (SI/NO)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Secuencia",
+      "Decisión (SI/NO)",
+      "Repetición",
+      "Inicio"
+    ]
   },
   {
     "Pregunta": "10. ¿Por qué es importante que un algoritmo sea 'general'?",
@@ -1187,7 +2279,20 @@
     "OpcionB": "Para que funcione en diferentes casos del mismo problema",
     "OpcionC": "Para que sea más rápido",
     "OpcionD": "Para que use menos memoria",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "10. ¿Por qué es importante que un algoritmo sea 'general'?",
+    "respuesta_correcta_literal": "Para que funcione en diferentes casos del mismo problema",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Para que sea más corto",
+      "Para que funcione en diferentes casos del mismo problema",
+      "Para que sea más rápido",
+      "Para que use menos memoria"
+    ]
   },
   {
     "Pregunta": "¿Qué hace un compilador con el código fuente?",
@@ -1201,7 +2306,20 @@
     "OpcionB": "Genera código objeto",
     "OpcionC": "Borra el código fuente",
     "OpcionD": "Lo envía por internet",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué hace un compilador con el código fuente?",
+    "respuesta_correcta_literal": "Genera código objeto",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Ejecuta línea a línea",
+      "Genera código objeto",
+      "Borra el código fuente",
+      "Lo envía por internet"
+    ]
   },
   {
     "Pregunta": "¿Cuál es una ventaja de los lenguajes interpretados?",
@@ -1215,7 +2333,20 @@
     "OpcionB": "Diseño más rápido",
     "OpcionC": "No usa intérpretes",
     "OpcionD": "Es más difícil hackear",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es una ventaja de los lenguajes interpretados?",
+    "respuesta_correcta_literal": "Diseño más rápido",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Ejecución más veloz",
+      "Diseño más rápido",
+      "No usa intérpretes",
+      "Es más difícil hackear"
+    ]
   },
   {
     "Pregunta": "¿Qué sucede con las instrucciones de un ciclo en un intérprete?",
@@ -1229,7 +2360,20 @@
     "OpcionB": "Se interpretan siempre",
     "OpcionC": "Se ignoran por rapidez",
     "OpcionD": "Se guardan en un disco",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué sucede con las instrucciones de un ciclo en un intérprete?",
+    "respuesta_correcta_literal": "Se interpretan siempre",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "Solo se traducen una vez",
+      "Se interpretan siempre",
+      "Se ignoran por rapidez",
+      "Se guardan en un disco"
+    ]
   },
   {
     "Pregunta": "¿Cuál lenguaje es un ejemplo de lenguaje compilado?",
@@ -1243,7 +2387,20 @@
     "OpcionB": "PHP",
     "OpcionC": "C++",
     "OpcionD": "JavaScript",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál lenguaje es un ejemplo de lenguaje compilado?",
+    "respuesta_correcta_literal": "C++",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Python",
+      "PHP",
+      "C++",
+      "JavaScript"
+    ]
   },
   {
     "Pregunta": "¿Qué es un bucle en programación?",
@@ -1257,7 +2414,20 @@
     "OpcionB": "Repite instrucciones",
     "OpcionC": "Tipo de dato o variable",
     "OpcionD": "Cable de red o conexión",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es un bucle en programación?",
+    "respuesta_correcta_literal": "Repite instrucciones",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "Error fatal del sistema",
+      "Repite instrucciones",
+      "Tipo de dato o variable",
+      "Cable de red o conexión"
+    ]
   },
   {
     "Pregunta": "¿Cuándo se usa preferentemente el bucle 'Para'?",
@@ -1271,7 +2441,20 @@
     "OpcionB": "Conteo definido",
     "OpcionC": "En compilados solo",
     "OpcionD": "Para apagar la PC",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuándo se usa preferentemente el bucle 'Para'?",
+    "respuesta_correcta_literal": "Conteo definido",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "Si el fin es incierto",
+      "Conteo definido",
+      "En compilados solo",
+      "Para apagar la PC"
+    ]
   },
   {
     "Pregunta": "¿Qué componente define el inicio y el fin del bucle?",
@@ -1285,7 +2468,20 @@
     "OpcionB": "Variable de control",
     "OpcionC": "Incremento de valor",
     "OpcionD": "Nombre del bucle",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué componente define el inicio y el fin del bucle?",
+    "respuesta_correcta_literal": "Rango de ejecución",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "Rango de ejecución",
+      "Variable de control",
+      "Incremento de valor",
+      "Nombre del bucle"
+    ]
   },
   {
     "Pregunta": "¿Qué lenguaje usa 'let i = 0' en su bucle for?",
@@ -1299,7 +2495,20 @@
     "OpcionB": "C++",
     "OpcionC": "Pascal",
     "OpcionD": "Ensamblador",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué lenguaje usa 'let i = 0' en su bucle for?",
+    "respuesta_correcta_literal": "JavaScript",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "JavaScript",
+      "C++",
+      "Pascal",
+      "Ensamblador"
+    ]
   },
   {
     "Pregunta": "¿Cuál es el resultado de un bucle de 1 a 5?",
@@ -1313,7 +2522,20 @@
     "OpcionB": "1, 2, 3, 4, 5",
     "OpcionC": "1, 3, 5",
     "OpcionD": "0, 1, 2, 3, 4",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el resultado de un bucle de 1 a 5?",
+    "respuesta_correcta_literal": "1, 2, 3, 4, 5",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "Uno, dos, tres, cuatro, cinco",
+      "1, 2, 3, 4, 5",
+      "1, 3, 5",
+      "0, 1, 2, 3, 4"
+    ]
   },
   {
     "Pregunta": "¿Qué lenguajes comparten sintaxis de bucle for?",
@@ -1327,7 +2549,20 @@
     "OpcionB": "C, C++ y JS",
     "OpcionC": "SQL, HTML y XML",
     "OpcionD": "Basic y PHP",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué lenguajes comparten sintaxis de bucle for?",
+    "respuesta_correcta_literal": "C, C++ y JS",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Java y Python",
+      "C, C++ y JS",
+      "SQL, HTML y XML",
+      "Basic y PHP"
+    ]
   },
   {
     "Pregunta": "¿Qué describe un lenguaje declarativo?",
@@ -1341,7 +2576,20 @@
     "OpcionB": "Lo que se busca",
     "OpcionC": "Cómo mover la memoria",
     "OpcionD": "Órdenes secuenciales",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué describe un lenguaje declarativo?",
+    "respuesta_correcta_literal": "Lo que se busca",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Pasos para resolverlo",
+      "Lo que se busca",
+      "Cómo mover la memoria",
+      "Órdenes secuenciales"
+    ]
   },
   {
     "Pregunta": "¿Cuál es un ejemplo de lenguaje declarativo?",
@@ -1355,7 +2603,20 @@
     "OpcionB": "SQL",
     "OpcionC": "Java",
     "OpcionD": "Python",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es un ejemplo de lenguaje declarativo?",
+    "respuesta_correcta_literal": "SQL",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "C++",
+      "SQL",
+      "Java",
+      "Python"
+    ]
   },
   {
     "Pregunta": "¿Qué pasa con el orden de ejecución en declarativos?",
@@ -1369,7 +2630,20 @@
     "OpcionB": "No es importante",
     "OpcionC": "Debe ser alfabético",
     "OpcionD": "Lo decide el usuario",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué pasa con el orden de ejecución en declarativos?",
+    "respuesta_correcta_literal": "No es importante",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Paradigmas de Programación",
+    "opciones_visibles": [
+      "Es lo más importante",
+      "No es importante",
+      "Debe ser alfabético",
+      "Lo decide el usuario"
+    ]
   },
   {
     "Pregunta": "¿Cuál es una ventaja de este paradigma?",
@@ -1383,7 +2657,20 @@
     "OpcionB": "Alta abstracción",
     "OpcionC": "Usa menos RAM",
     "OpcionD": "Funciona sin CPU",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es una ventaja de este paradigma?",
+    "respuesta_correcta_literal": "Alta abstracción",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Es el más veloz",
+      "Alta abstracción",
+      "Usa menos RAM",
+      "Funciona sin CPU"
+    ]
   },
   {
     "Pregunta": "¿Qué estructura es fundamental en lenguajes lógicos?",
@@ -1397,7 +2684,20 @@
     "OpcionB": "Las listas",
     "OpcionC": "Los punteros",
     "OpcionD": "Los archivos .exe",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué estructura es fundamental en lenguajes lógicos?",
+    "respuesta_correcta_literal": "Las listas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Los arreglos",
+      "Las listas",
+      "Los punteros",
+      "Los archivos .exe"
+    ]
   },
   {
     "Pregunta": "¿Cuándo se evalúa la condición en el bucle 'Mientras'?",
@@ -1411,7 +2711,20 @@
     "OpcionB": "Antes de ejecutar",
     "OpcionC": "Solo una vez al inicio",
     "OpcionD": "Nunca se evalúa",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuándo se evalúa la condición en el bucle 'Mientras'?",
+    "respuesta_correcta_literal": "Antes de ejecutar",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "Al final del bucle",
+      "Antes de ejecutar",
+      "Solo una vez al inicio",
+      "Nunca se evalúa"
+    ]
   },
   {
     "Pregunta": "¿Qué sucede si la condición es falsa desde el inicio?",
@@ -1425,7 +2738,20 @@
     "OpcionB": "Nunca se ejecuta",
     "OpcionC": "El programa se traba",
     "OpcionD": "Se borra el código",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué sucede si la condición es falsa desde el inicio?",
+    "respuesta_correcta_literal": "Nunca se ejecuta",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "El bucle corre una vez",
+      "Nunca se ejecuta",
+      "El programa se traba",
+      "Se borra el código"
+    ]
   },
   {
     "Pregunta": "¿Qué evitamos al cambiar la variable dentro del bucle?",
@@ -1439,7 +2765,20 @@
     "OpcionB": "Un bucle infinito",
     "OpcionC": "Que se apague la PC",
     "OpcionD": "Un error de sintaxis",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué evitamos al cambiar la variable dentro del bucle?",
+    "respuesta_correcta_literal": "Un bucle infinito",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "Que el programa sea lento",
+      "Un bucle infinito",
+      "Que se apague la PC",
+      "Un error de sintaxis"
+    ]
   },
   {
     "Pregunta": "¿Cuál es un uso común del bucle Mientras?",
@@ -1453,7 +2792,20 @@
     "OpcionB": "Validar entrada",
     "OpcionC": "Para no usar variables",
     "OpcionD": "Es solo para SQL",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es un uso común del bucle Mientras?",
+    "respuesta_correcta_literal": "Validar entrada",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "Saber el fin exacto",
+      "Validar entrada",
+      "Para no usar variables",
+      "Es solo para SQL"
+    ]
   },
   {
     "Pregunta": "¿En qué lenguaje declarativo se basa Prolog?",
@@ -1467,7 +2819,20 @@
     "OpcionB": "Prog. lógica",
     "OpcionC": "Diseño gráfico",
     "OpcionD": "Ensamblador",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿En qué lenguaje declarativo se basa Prolog?",
+    "respuesta_correcta_literal": "Prog. lógica",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Programación imperativa",
+      "Prog. lógica",
+      "Diseño gráfico",
+      "Ensamblador"
+    ]
   },
   {
     "Pregunta": "¿Qué define a una base de datos?",
@@ -1481,7 +2846,20 @@
     "OpcionB": "Sectores de red",
     "OpcionC": "Memoria de RAM",
     "OpcionD": "Espacio de disco",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué define a una base de datos?",
+    "respuesta_correcta_literal": "Banco de datos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Bases de Datos",
+    "opciones_visibles": [
+      "Banco de datos",
+      "Sectores de red",
+      "Memoria de RAM",
+      "Espacio de disco"
+    ]
   },
   {
     "Pregunta": "¿Qué tipo de lenguaje utiliza una BD?",
@@ -1495,7 +2873,20 @@
     "OpcionB": "Tipo declarativo",
     "OpcionC": "Instrucciones",
     "OpcionD": "Estructuración",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué tipo de lenguaje utiliza una BD?",
+    "respuesta_correcta_literal": "Tipo declarativo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "De programación",
+      "Tipo declarativo",
+      "Instrucciones",
+      "Estructuración"
+    ]
   },
   {
     "Pregunta": "¿Cómo se llama el nodo superior?",
@@ -1509,7 +2900,20 @@
     "OpcionB": "Sujeto de datos",
     "OpcionC": "Vínculo de red",
     "OpcionD": "Raíz del árbol",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cómo se llama el nodo superior?",
+    "respuesta_correcta_literal": "Raíz del árbol",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Tronco central",
+      "Sujeto de datos",
+      "Vínculo de red",
+      "Raíz del árbol"
+    ]
   },
   {
     "Pregunta": "¿Quién postuló el modelo relacional?",
@@ -1523,7 +2927,20 @@
     "OpcionB": "Edgar F. Codd",
     "OpcionC": "Steve Jobs",
     "OpcionD": "Ada Lovelace",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Quién postuló el modelo relacional?",
+    "respuesta_correcta_literal": "Edgar F. Codd",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Bases de Datos",
+    "opciones_visibles": [
+      "Bill Gates",
+      "Edgar F. Codd",
+      "Steve Jobs",
+      "Ada Lovelace"
+    ]
   },
   {
     "Pregunta": "¿Cuál BD se usa para datos históricos?",
@@ -1537,7 +2954,20 @@
     "OpcionB": "Base dinámica",
     "OpcionC": "Base de red",
     "OpcionD": "Base de tabla",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál BD se usa para datos históricos?",
+    "respuesta_correcta_literal": "Base estática",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Base estática",
+      "Base dinámica",
+      "Base de red",
+      "Base de tabla"
+    ]
   },
   {
     "Pregunta": "¿Qué permite el modelo de red?",
@@ -1551,7 +2981,20 @@
     "OpcionB": "Varios padres",
     "OpcionC": "Ningún padre",
     "OpcionD": "Solo un hijo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué permite el modelo de red?",
+    "respuesta_correcta_literal": "Varios padres",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Un solo padre",
+      "Varios padres",
+      "Ningún padre",
+      "Solo un hijo"
+    ]
   },
   {
     "Pregunta": "¿Qué almacena una BD de texto?",
@@ -1565,7 +3008,20 @@
     "OpcionB": "Metadatos web",
     "OpcionC": "Fuentes puras",
     "OpcionD": "Índices web",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué almacena una BD de texto?",
+    "respuesta_correcta_literal": "Fuentes puras",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Solo títulos",
+      "Metadatos web",
+      "Fuentes puras",
+      "Índices web"
+    ]
   },
   {
     "Pregunta": "¿Cómo se ve el modelo relacional?",
@@ -1579,7 +3035,20 @@
     "OpcionB": "Formato árbol",
     "OpcionC": "Nube de puntos",
     "OpcionD": "Lista de datos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cómo se ve el modelo relacional?",
+    "respuesta_correcta_literal": "Formato tabla",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Bases de Datos",
+    "opciones_visibles": [
+      "Formato tabla",
+      "Formato árbol",
+      "Nube de puntos",
+      "Lista de datos"
+    ]
   },
   {
     "Pregunta": "¿Qué significa el acrónimo SGBD?",
@@ -1593,7 +3062,20 @@
     "OpcionB": "Soporte lógico",
     "OpcionC": "Salida gráfica",
     "OpcionD": "Sistema gestor",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa el acrónimo SGBD?",
+    "respuesta_correcta_literal": "Sistema gestor",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Bases de Datos",
+    "opciones_visibles": [
+      "Sistema de red",
+      "Soporte lógico",
+      "Salida gráfica",
+      "Sistema gestor"
+    ]
   },
   {
     "Pregunta": "¿Cuál es una desventaja de las BD?",
@@ -1607,7 +3089,20 @@
     "OpcionB": "Riesgos acceso",
     "OpcionC": "Uso de papeles",
     "OpcionD": "Formatos slow",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es una desventaja de las BD?",
+    "respuesta_correcta_literal": "Riesgos acceso",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Poca capacidad",
+      "Riesgos acceso",
+      "Uso de papeles",
+      "Formatos slow"
+    ]
   },
   {
     "Pregunta": "¿Qué caracteriza a la programación lógica?",
@@ -1621,7 +3116,20 @@
     "OpcionB": "Es declarativa",
     "OpcionC": "Manejo de memoria",
     "OpcionD": "Pasos secuenciales",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué caracteriza a la programación lógica?",
+    "respuesta_correcta_literal": "Es declarativa",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Uso de órdenes",
+      "Es declarativa",
+      "Manejo de memoria",
+      "Pasos secuenciales"
+    ]
   },
   {
     "Pregunta": "¿Qué especifica el programador en este paradigma?",
@@ -1635,7 +3143,20 @@
     "OpcionB": "Qué problema resolver",
     "OpcionC": "El hardware a utilizar",
     "OpcionD": "Instrucciones de pasos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué especifica el programador en este paradigma?",
+    "respuesta_correcta_literal": "Qué problema resolver",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Cómo se debe resolver",
+      "Qué problema resolver",
+      "El hardware a utilizar",
+      "Instrucciones de pasos"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la idea esencial de la prog. lógica?",
@@ -1649,7 +3170,20 @@
     "OpcionB": "Lógica + Control",
     "OpcionC": "Datos + Procesos",
     "OpcionD": "Memoria + Código",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la idea esencial de la prog. lógica?",
+    "respuesta_correcta_literal": "Lógica + Control",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Entrada + Salida",
+      "Lógica + Control",
+      "Datos + Procesos",
+      "Memoria + Código"
+    ]
   },
   {
     "Pregunta": "¿En qué lenguaje se basa la prog. lógica?",
@@ -1663,7 +3197,20 @@
     "OpcionB": "Prolog",
     "OpcionC": "Python",
     "OpcionD": "Kotlin",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿En qué lenguaje se basa la prog. lógica?",
+    "respuesta_correcta_literal": "Prolog",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Java++",
+      "Prolog",
+      "Python",
+      "Kotlin"
+    ]
   },
   {
     "Pregunta": "¿Qué es una 'entidad' en este contexto?",
@@ -1677,7 +3224,20 @@
     "OpcionB": "Un objeto",
     "OpcionC": "Un fallo técnico",
     "OpcionD": "Una función",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es una 'entidad' en este contexto?",
+    "respuesta_correcta_literal": "Un objeto",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Bases de Datos",
+    "opciones_visibles": [
+      "Una relación",
+      "Un objeto",
+      "Un fallo técnico",
+      "Una función"
+    ]
   },
   {
     "Pregunta": "¿Cuántas veces corre mínimo el bucle 'Repetir'?",
@@ -1691,7 +3251,20 @@
     "OpcionB": "1 vez",
     "OpcionC": "10 veces",
     "OpcionD": "Infinitas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuántas veces corre mínimo el bucle 'Repetir'?",
+    "respuesta_correcta_literal": "1 vez",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "0 veces",
+      "1 vez",
+      "10 veces",
+      "Infinitas"
+    ]
   },
   {
     "Pregunta": "¿Cuándo se evalúa la condición en 'Repetir'?",
@@ -1705,7 +3278,20 @@
     "OpcionB": "Al final",
     "OpcionC": "Proceso intermedio",
     "OpcionD": "Evaluación previa",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuándo se evalúa la condición en 'Repetir'?",
+    "respuesta_correcta_literal": "Al final",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "Evaluación inicial",
+      "Al final",
+      "Proceso intermedio",
+      "Evaluación previa"
+    ]
   },
   {
     "Pregunta": "¿Qué lenguaje es clásico de la IA?",
@@ -1719,7 +3305,20 @@
     "OpcionB": "Prolog",
     "OpcionC": "Python",
     "OpcionD": "Fortran",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué lenguaje es clásico de la IA?",
+    "respuesta_correcta_literal": "Prolog",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Assembly",
+      "Prolog",
+      "Python",
+      "Fortran"
+    ]
   },
   {
     "Pregunta": "¿Cuándo sale el flujo del bucle 'Repetir'?",
@@ -1733,7 +3332,20 @@
     "OpcionB": "Condición es verdadera",
     "OpcionC": "Error en el algoritmo",
     "OpcionD": "Fallas de comunicación",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuándo sale el flujo del bucle 'Repetir'?",
+    "respuesta_correcta_literal": "Condición es verdadera",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Estructuras de Control",
+    "opciones_visibles": [
+      "Si la condición es falsa",
+      "Condición es verdadera",
+      "Error en el algoritmo",
+      "Fallas de comunicación"
+    ]
   },
   {
     "Pregunta": "¿Cómo se describen los algoritmos según el PDF?",
@@ -1747,7 +3359,20 @@
     "OpcionB": "Conocimiento formal",
     "OpcionC": "Esquemas de procesos",
     "OpcionD": "Secuencias numéricas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cómo se describen los algoritmos según el PDF?",
+    "respuesta_correcta_literal": "Conocimiento formal",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Manual de instrucciones",
+      "Conocimiento formal",
+      "Esquemas de procesos",
+      "Secuencias numéricas"
+    ]
   },
   {
     "Pregunta": "¿Qué es la codificación en programación?",
@@ -1761,7 +3386,20 @@
     "OpcionB": "Comprar una computadora",
     "OpcionC": "Diseñar un logo",
     "OpcionD": "Navegar en internet",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es la codificación en programación?",
+    "respuesta_correcta_literal": "Traducir un algoritmo a un lenguaje de programación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Traducir un algoritmo a un lenguaje de programación",
+      "Comprar una computadora",
+      "Diseñar un logo",
+      "Navegar en internet"
+    ]
   },
   {
     "Pregunta": "¿Qué herramienta se usa para planear la lógica antes de programar?",
@@ -1775,7 +3413,20 @@
     "OpcionB": "Impresora",
     "OpcionC": "Mouse",
     "OpcionD": "Calculadora científica",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué herramienta se usa para planear la lógica antes de programar?",
+    "respuesta_correcta_literal": "Técnicas de representación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Técnicas de representación",
+      "Impresora",
+      "Mouse",
+      "Calculadora científica"
+    ]
   },
   {
     "Pregunta": "¿Qué es el pseudocódigo?",
@@ -1789,7 +3440,20 @@
     "OpcionB": "Un código falso que no sirve",
     "OpcionC": "Un virus",
     "OpcionD": "Un tipo de hardware",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es el pseudocódigo?",
+    "respuesta_correcta_literal": "Un lenguaje intermedio entre el natural y el de programación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Un lenguaje intermedio entre el natural y el de programación",
+      "Un código falso que no sirve",
+      "Un virus",
+      "Un tipo de hardware"
+    ]
   },
   {
     "Pregunta": "¿Qué técnica utiliza símbolos gráficos para representar algoritmos?",
@@ -1803,7 +3467,20 @@
     "OpcionB": "Lenguaje Natural",
     "OpcionC": "Fórmulas",
     "OpcionD": "Pseudocódigo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué técnica utiliza símbolos gráficos para representar algoritmos?",
+    "respuesta_correcta_literal": "Diagramas de Flujo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Diagramas de Flujo",
+      "Lenguaje Natural",
+      "Fórmulas",
+      "Pseudocódigo"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la función del 'Inicio' y 'Fin' en un algoritmo?",
@@ -1817,7 +3494,20 @@
     "OpcionB": "Hacer el programa más largo",
     "OpcionC": "Cambiar el color del texto",
     "OpcionD": "No tienen ninguna función",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la función del 'Inicio' y 'Fin' en un algoritmo?",
+    "respuesta_correcta_literal": "Delimitar la secuencia de pasos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Delimitar la secuencia de pasos",
+      "Hacer el programa más largo",
+      "Cambiar el color del texto",
+      "No tienen ninguna función"
+    ]
   },
   {
     "Pregunta": "1. ¿En qué consiste la codificación?",
@@ -1831,7 +3521,20 @@
     "OpcionB": "Borrar el algoritmo",
     "OpcionC": "Comprar el monitor",
     "OpcionD": "Instalar Windows",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "1. ¿En qué consiste la codificación?",
+    "respuesta_correcta_literal": "Escribir el algoritmo en un lenguaje de programación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Escribir el algoritmo en un lenguaje de programación",
+      "Borrar el algoritmo",
+      "Comprar el monitor",
+      "Instalar Windows"
+    ]
   },
   {
     "Pregunta": "2. ¿Qué se hace en la fase de ejecución?",
@@ -1845,7 +3548,20 @@
     "OpcionB": "Se pone en marcha el programa en la computadora",
     "OpcionC": "Se dibuja el algoritmo",
     "OpcionD": "Se escribe en el cuaderno",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "2. ¿Qué se hace en la fase de ejecución?",
+    "respuesta_correcta_literal": "Se pone en marcha el programa en la computadora",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Se apaga la PC",
+      "Se pone en marcha el programa en la computadora",
+      "Se dibuja el algoritmo",
+      "Se escribe en el cuaderno"
+    ]
   },
   {
     "Pregunta": "3. ¿Cuál es el objetivo de la comprobación?",
@@ -1859,7 +3575,20 @@
     "OpcionB": "Verificar que el programa produce resultados correctos",
     "OpcionC": "Cambiar el color del fondo",
     "OpcionD": "Instalar juegos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "3. ¿Cuál es el objetivo de la comprobación?",
+    "respuesta_correcta_literal": "Verificar que el programa produce resultados correctos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Gastar papel",
+      "Verificar que el programa produce resultados correctos",
+      "Cambiar el color del fondo",
+      "Instalar juegos"
+    ]
   },
   {
     "Pregunta": "4. ¿Cuál de estas NO es una técnica de representación?",
@@ -1873,7 +3602,20 @@
     "OpcionB": "Diagramas de flujo",
     "OpcionC": "Monitor de la PC",
     "OpcionD": "Lenguaje Natural",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "4. ¿Cuál de estas NO es una técnica de representación?",
+    "respuesta_correcta_literal": "Monitor de la PC",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Pseudocódigo",
+      "Diagramas de flujo",
+      "Monitor de la PC",
+      "Lenguaje Natural"
+    ]
   },
   {
     "Pregunta": "5. ¿Qué técnica usa símbolos gráficos estandarizados?",
@@ -1887,7 +3629,20 @@
     "OpcionB": "Diagramas de flujo",
     "OpcionC": "Lenguaje Natural",
     "OpcionD": "Fórmulas",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "5. ¿Qué técnica usa símbolos gráficos estandarizados?",
+    "respuesta_correcta_literal": "Diagramas de flujo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Pseudocódigo",
+      "Diagramas de flujo",
+      "Lenguaje Natural",
+      "Fórmulas"
+    ]
   },
   {
     "Pregunta": "6. ¿Qué es el pseudocódigo?",
@@ -1901,7 +3656,20 @@
     "OpcionB": "Representación textual de la lógica",
     "OpcionC": "Un dibujo",
     "OpcionD": "Un tipo de hardware",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "6. ¿Qué es el pseudocódigo?",
+    "respuesta_correcta_literal": "Representación textual de la lógica",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Un lenguaje de marcas",
+      "Representación textual de la lógica",
+      "Un dibujo",
+      "Un tipo de hardware"
+    ]
   },
   {
     "Pregunta": "7. ¿Cuál es la ventaja de la representación paso a paso?",
@@ -1915,7 +3683,20 @@
     "OpcionB": "Facilita la implementación en código real",
     "OpcionC": "Es más colorida",
     "OpcionD": "No requiere pensar",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "7. ¿Cuál es la ventaja de la representación paso a paso?",
+    "respuesta_correcta_literal": "Facilita la implementación en código real",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Algoritmos",
+    "opciones_visibles": [
+      "Ahorra luz",
+      "Facilita la implementación en código real",
+      "Es más colorida",
+      "No requiere pensar"
+    ]
   },
   {
     "Pregunta": "8. ¿Qué técnica usa el idioma cotidiano (español)?",
@@ -1929,7 +3710,20 @@
     "OpcionB": "Lenguaje Natural",
     "OpcionC": "Binario",
     "OpcionD": "Assembler",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "8. ¿Qué técnica usa el idioma cotidiano (español)?",
+    "respuesta_correcta_literal": "Lenguaje Natural",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Pseudocódigo",
+      "Lenguaje Natural",
+      "Binario",
+      "Assembler"
+    ]
   },
   {
     "Pregunta": "9. ¿Qué fase sigue inmediatamente al Diseño del Algoritmo?",
@@ -1943,7 +3737,20 @@
     "OpcionB": "Análisis",
     "OpcionC": "Codificación",
     "OpcionD": "Venta del software",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "9. ¿Qué fase sigue inmediatamente al Diseño del Algoritmo?",
+    "respuesta_correcta_literal": "Codificación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Mantenimiento",
+      "Análisis",
+      "Codificación",
+      "Venta del software"
+    ]
   },
   {
     "Pregunta": "10. ¿Por qué es importante la comprobación?",
@@ -1957,7 +3764,20 @@
     "OpcionB": "Para que la PC brille",
     "OpcionC": "Para perder tiempo",
     "OpcionD": "Para usar el mouse",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "10. ¿Por qué es importante la comprobación?",
+    "respuesta_correcta_literal": "Para detectar errores antes del uso final",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Para detectar errores antes del uso final",
+      "Para que la PC brille",
+      "Para perder tiempo",
+      "Para usar el mouse"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la principal ventaja del pseudocódigo?",
@@ -1971,7 +3791,20 @@
     "OpcionB": "Se puede ejecutar directamente en cualquier navegador",
     "OpcionC": "Es un lenguaje de bajo nivel",
     "OpcionD": "Solo sirve para algoritmos matemáticos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la principal ventaja del pseudocódigo?",
+    "respuesta_correcta_literal": "Permite centrarse en la lógica sin preocuparse por la sintaxis estricta",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Permite centrarse en la lógica sin preocuparse por la sintaxis estricta",
+      "Se puede ejecutar directamente en cualquier navegador",
+      "Es un lenguaje de bajo nivel",
+      "Solo sirve para algoritmos matemáticos"
+    ]
   },
   {
     "Pregunta": "¿Qué significa 'ordenación simbólica'?",
@@ -1985,7 +3818,20 @@
     "OpcionB": "Ordenar los cables de la computadora",
     "OpcionC": "Limpiar el teclado",
     "OpcionD": "Cambiar el fondo de pantalla",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa 'ordenación simbólica'?",
+    "respuesta_correcta_literal": "Representar los pasos del algoritmo mediante símbolos o palabras clave",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Representar los pasos del algoritmo mediante símbolos o palabras clave",
+      "Ordenar los cables de la computadora",
+      "Limpiar el teclado",
+      "Cambiar el fondo de pantalla"
+    ]
   },
   {
     "Pregunta": "¿Cuál es una palabra clave común en el pseudocódigo?",
@@ -1999,7 +3845,20 @@
     "OpcionB": "Abrir / Cerrar sesión",
     "OpcionC": "Copiar / Pegar",
     "OpcionD": "Minimizar / Maximizar",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es una palabra clave común en el pseudocódigo?",
+    "respuesta_correcta_literal": "Escribir / Leer",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Escribir / Leer",
+      "Abrir / Cerrar sesión",
+      "Copiar / Pegar",
+      "Minimizar / Maximizar"
+    ]
   },
   {
     "Pregunta": "¿Para qué se usa el símbolo '=' en muchos lenguajes o pseudocódigos?",
@@ -2013,7 +3872,20 @@
     "OpcionB": "Decoración del texto",
     "OpcionC": "Borrar datos",
     "OpcionD": "Sumar números",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Para qué se usa el símbolo '=' en muchos lenguajes o pseudocódigos?",
+    "respuesta_correcta_literal": "Asignación de valores",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lenguajes de Programación",
+    "opciones_visibles": [
+      "Asignación de valores",
+      "Decoración del texto",
+      "Borrar datos",
+      "Sumar números"
+    ]
   },
   {
     "Pregunta": "¿Qué es una variable?",
@@ -2027,7 +3899,20 @@
     "OpcionB": "Un error del sistema",
     "OpcionC": "Un tipo de monitor",
     "OpcionD": "Una tecla del teclado",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es una variable?",
+    "respuesta_correcta_literal": "Un espacio de memoria para almacenar un dato que puede cambiar",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Variables y Datos",
+    "opciones_visibles": [
+      "Un espacio de memoria para almacenar un dato que puede cambiar",
+      "Un error del sistema",
+      "Un tipo de monitor",
+      "Una tecla del teclado"
+    ]
   },
   {
     "Pregunta": "1. ¿Qué es el pseudocódigo?",
@@ -2041,7 +3926,20 @@
     "OpcionB": "Falso",
     "OpcionC": "Rápido",
     "OpcionD": "Complicado",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "1. ¿Qué es el pseudocódigo?",
+    "respuesta_correcta_literal": "Falso",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Real",
+      "Falso",
+      "Rápido",
+      "Complicado"
+    ]
   },
   {
     "Pregunta": "2. ¿Para qué sirve la palabra clave 'Leer'?",
@@ -2055,7 +3953,20 @@
     "OpcionB": "Capturar datos de entrada",
     "OpcionC": "Cerrar el programa",
     "OpcionD": "Hacer dibujos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "2. ¿Para qué sirve la palabra clave 'Leer'?",
+    "respuesta_correcta_literal": "Capturar datos de entrada",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Mostrar datos",
+      "Capturar datos de entrada",
+      "Cerrar el programa",
+      "Hacer dibujos"
+    ]
   },
   {
     "Pregunta": "3. ¿Qué símbolo se usa comúnmente para la asignación?",
@@ -2069,7 +3980,20 @@
     "OpcionB": "<-",
     "OpcionC": "++",
     "OpcionD": "!!",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "3. ¿Qué símbolo se usa comúnmente para la asignación?",
+    "respuesta_correcta_literal": "<-",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "==",
+      "<-",
+      "++",
+      "!!"
+    ]
   },
   {
     "Pregunta": "4. ¿Cuál es una ventaja del pseudocódigo?",
@@ -2083,7 +4007,20 @@
     "OpcionB": "Es independiente del lenguaje",
     "OpcionC": "Solo funciona en Windows",
     "OpcionD": "No usa texto",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "4. ¿Cuál es una ventaja del pseudocódigo?",
+    "respuesta_correcta_literal": "Es independiente del lenguaje",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Es difícil de leer",
+      "Es independiente del lenguaje",
+      "Solo funciona en Windows",
+      "No usa texto"
+    ]
   },
   {
     "Pregunta": "5. ¿Qué palabra clave se usa para mostrar resultados?",
@@ -2097,7 +4034,20 @@
     "OpcionB": "Entrar",
     "OpcionC": "Escribir",
     "OpcionD": "Inicio",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "5. ¿Qué palabra clave se usa para mostrar resultados?",
+    "respuesta_correcta_literal": "Escribir",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Leer",
+      "Entrar",
+      "Escribir",
+      "Inicio"
+    ]
   },
   {
     "Pregunta": "6. ¿Cómo termina un bloque de decisión Si-Entonces?",
@@ -2111,7 +4061,20 @@
     "OpcionB": "FinAlgoritmo",
     "OpcionC": "Stop",
     "OpcionD": "Cerrar",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "6. ¿Cómo termina un bloque de decisión Si-Entonces?",
+    "respuesta_correcta_literal": "FinSi",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "FinSi",
+      "FinAlgoritmo",
+      "Stop",
+      "Cerrar"
+    ]
   },
   {
     "Pregunta": "7. ¿Qué representa la 'Selección' en un algoritmo?",
@@ -2125,7 +4088,20 @@
     "OpcionB": "Caminos alternativos",
     "OpcionC": "Repeticiones",
     "OpcionD": "El inicio",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "7. ¿Qué representa la 'Selección' en un algoritmo?",
+    "respuesta_correcta_literal": "Caminos alternativos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Algoritmos",
+    "opciones_visibles": [
+      "Pasos seguidos",
+      "Caminos alternativos",
+      "Repeticiones",
+      "El inicio"
+    ]
   },
   {
     "Pregunta": "8. ¿El pseudocódigo es ejecutado directamente por la PC?",
@@ -2139,7 +4115,20 @@
     "OpcionB": "No, es para humanos",
     "OpcionC": "Solo en Linux",
     "OpcionD": "A veces",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "8. ¿El pseudocódigo es ejecutado directamente por la PC?",
+    "respuesta_correcta_literal": "No, es para humanos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Sí, siempre",
+      "No, es para humanos",
+      "Solo en Linux",
+      "A veces"
+    ]
   },
   {
     "Pregunta": "9. ¿Qué palabra marca el fin de todo el proceso?",
@@ -2153,7 +4142,20 @@
     "OpcionB": "FinAlgoritmo",
     "OpcionC": "Terminar",
     "OpcionD": "Salir",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "9. ¿Qué palabra marca el fin de todo el proceso?",
+    "respuesta_correcta_literal": "FinAlgoritmo",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Lógica de Programación: Análisis",
+    "opciones_visibles": [
+      "FinSi",
+      "FinAlgoritmo",
+      "Terminar",
+      "Salir"
+    ]
   },
   {
     "Pregunta": "10. ¿Qué es la 'Iteración'?",
@@ -2167,6 +4169,19 @@
     "OpcionB": "Una repetición de pasos",
     "OpcionC": "Una resta",
     "OpcionD": "Un saludo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "10. ¿Qué es la 'Iteración'?",
+    "respuesta_correcta_literal": "Una repetición de pasos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Programacion",
+    "grado": 11,
+    "tema": "Fundamentos de Programación",
+    "opciones_visibles": [
+      "Una suma",
+      "Una repetición de pasos",
+      "Una resta",
+      "Un saludo"
+    ]
   }
 ]

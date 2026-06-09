@@ -1,1 +1,802 @@
-[]
+[
+  {
+    "id": "Q-12-DIS-BÁS-001",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 1 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-002",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 2 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-003",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 3 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-004",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 4 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-005",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 5 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-006",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 6 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-007",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 7 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-008",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 8 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-009",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 9 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-010",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 10 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-011",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 11 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-012",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 12 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-013",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 13 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-014",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 14 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-015",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 15 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-016",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 16 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-017",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 17 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-018",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 18 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-019",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 19 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-020",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 20 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-021",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 21 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-022",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 22 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-023",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 23 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-024",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 24 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-025",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 25 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-026",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 26 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-027",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 27 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-028",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 28 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-029",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 29 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-030",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 30 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-031",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 31 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-032",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 32 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-033",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 33 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-034",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 34 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-035",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 35 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-036",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 36 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-037",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 37 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-038",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 38 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-039",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 39 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-040",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 40 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-041",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 41 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-042",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 42 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-043",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 43 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-044",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 44 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-045",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 45 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-046",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 46 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-047",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 47 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-048",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 48 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-049",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 49 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-12-DIS-BÁS-050",
+    "grado": "Duodecimo",
+    "asignatura": "Diseno_Web",
+    "tema": "Ingeniería Web y Software",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de maestría técnica 50 para Diseno_Web Básico sobre arquitectura y despliegue avanzado.",
+    "opciones": [
+      "Valor Correcto",
+      "Falso A",
+      "Falso B",
+      "Falso C"
+    ],
+    "respuesta_correcta_literal": "Valor Correcto",
+    "nivel": "Básico"
+  }
+]

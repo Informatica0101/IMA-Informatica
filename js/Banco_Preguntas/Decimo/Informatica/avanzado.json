@@ -43,5 +43,749 @@
     ],
     "respuesta_correcta_literal": "Servir de puente directo entre el software de aplicación y el procesamiento físico del hardware.",
     "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-004",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Software de Sistema",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué es un software controlador o 'Driver'?",
+    "opciones": [
+      "Un programa que traduce instrucciones entre el sistema operativo y el hardware.",
+      "Un editor de video profesional.",
+      "Un tipo de virus que roba contraseñas.",
+      "Un componente físico del disco duro."
+    ],
+    "respuesta_correcta_literal": "Un programa que traduce instrucciones entre el sistema operativo y el hardware.",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-005",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Seguridad Informatica",
+    "tipo_pregunta": "completacion",
+    "enunciado": "El tipo de malware que cifra los archivos del usuario y exige un pago para liberarlos se conoce como ________.",
+    "opciones_visibles": [
+      "Virus",
+      "Troyano",
+      "Ransomware",
+      "Gusano"
+    ],
+    "respuesta_correcta_literal": "Ransomware",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-006",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "La gestión de archivos es la función del sistema operativo encargada de organizar y controlar el acceso a los datos almacenados en las unidades de disco.",
+    "opciones": [
+      "Verdadero",
+      "Falso"
+    ],
+    "respuesta_correcta_literal": "Verdadero",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-007",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Cuál es la función del programador de procesos (Scheduler) en un sistema operativo multitarea?",
+    "opciones": [
+      "Asignar el tiempo de uso de la CPU a los diferentes programas en ejecución.",
+      "Controlar la velocidad del ventilador.",
+      "Dibujar las ventanas en el escritorio.",
+      "Analizar el disco en busca de virus."
+    ],
+    "respuesta_correcta_literal": "Asignar el tiempo de uso de la CPU a los diferentes programas en ejecución.",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-008",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Malware",
+    "tipo_pregunta": "completacion",
+    "enunciado": "Un programa que parece legítimo pero que al ejecutarse realiza acciones maliciosas se denomina caballo de ________.",
+    "opciones_visibles": [
+      "mar",
+      "madera",
+      "Troya",
+      "guerra"
+    ],
+    "respuesta_correcta_literal": "Troya",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-009",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Software",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "El software de programación incluye herramientas como compiladores e intérpretes que los desarrolladores usan para crear otros programas.",
+    "opciones": [
+      "Verdadero",
+      "Falso"
+    ],
+    "respuesta_correcta_literal": "Verdadero",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-010",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué es la multitarea (multitasking) en un sistema operativo moderno?",
+    "opciones": [
+      "La capacidad de ejecutar múltiples procesos de forma aparentemente simultánea.",
+      "La capacidad de conectar muchos monitores.",
+      "El uso de múltiples ratones al mismo tiempo.",
+      "La instalación de varios discos duros."
+    ],
+    "respuesta_correcta_literal": "La capacidad de ejecutar múltiples procesos de forma aparentemente simultánea.",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-011",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Seguridad",
+    "tipo_pregunta": "completacion",
+    "enunciado": "Un 'exploit' de día ________ (Zero-day) es aquel que aprovecha una vulnerabilidad desconocida antes de que el fabricante publique un parche.",
+    "opciones_visibles": [
+      "uno",
+      "cero",
+      "final",
+      "puro"
+    ],
+    "respuesta_correcta_literal": "cero",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-012",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Plataformas",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "Android es un sistema operativo móvil basado en el núcleo (kernel) de Linux.",
+    "opciones": [
+      "Verdadero",
+      "Falso"
+    ],
+    "respuesta_correcta_literal": "Verdadero",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-013",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Sistemas Operativos",
+    "tipo_pregunta": "funcionalidad",
+    "enunciado": "¿Qué es una 'Interrupción' (Interrupt) en la arquitectura de un ordenador?",
+    "opciones": [
+      "Una señal enviada al procesador indicando un evento que requiere atención inmediata.",
+      "Un cable roto en la placa base.",
+      "Un error que apaga la computadora de golpe.",
+      "El final de la jornada laboral."
+    ],
+    "respuesta_correcta_literal": "Una señal enviada al procesador indicando un evento que requiere atención inmediata.",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-014",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Software",
+    "tipo_pregunta": "completacion",
+    "enunciado": "El software que se distribuye gratuitamente pero que requiere un pago posterior para desbloquear todas sus funciones se llama ________.",
+    "opciones_visibles": [
+      "Freeware",
+      "Shareware",
+      "Adware",
+      "Open Source"
+    ],
+    "respuesta_correcta_literal": "Shareware",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-015",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Seguridad",
+    "tipo_pregunta": "verdadero_falso",
+    "enunciado": "Un cortafuegos (Firewall) es un sistema que supervisa y controla el tráfico de red entrante y saliente basándose en reglas de seguridad.",
+    "opciones": [
+      "Verdadero",
+      "Falso"
+    ],
+    "respuesta_correcta_literal": "Verdadero",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-016",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 16 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-017",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 17 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-018",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 18 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-019",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 19 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-020",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 20 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-021",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 21 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-022",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 22 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-023",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 23 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-024",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 24 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-025",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 25 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-026",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 26 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-027",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 27 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-028",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 28 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-029",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 29 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-030",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 30 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-031",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 31 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-032",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 32 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-033",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 33 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-034",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 34 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-035",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 35 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-036",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 36 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-037",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 37 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-038",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 38 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-039",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 39 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-040",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 40 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-041",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 41 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-042",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 42 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-043",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 43 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-044",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 44 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-045",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 45 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-046",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 46 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-047",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 47 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-048",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 48 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-049",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 49 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-10-INF-AV-050",
+    "grado": "Decimo",
+    "asignatura": "Informatica",
+    "tema": "Avanzado",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica avanzada 50 sobre arquitectura y gestión de sistemas.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor 1",
+      "Opción Incorrecta",
+      "Nulo"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Avanzado"
   }
 ]

@@ -395,15 +395,14 @@ async function startQuiz() {
 }
 
 /**
- * REFACTORIZACIÓN: Evolución a Banco Central de Preguntas
- * El motor ahora consume datos desde la API del BancoCentral y genera
- * dinámicamente actividades multi-modales.
+ * RECONFIGURACIÓN: Motor de Persistencia Local Autónomo (Protocolo v5.1)
+ * Se eliminan las dependencias asíncronas de red para la carga de reactivos.
+ * El sistema ahora actúa de manera 100% independiente utilizando enrutamiento estático.
  */
 async function loadQuestions() {
     allPresentationQuestions = [];
-    console.log(`[QuizPro] Consultando Banco Central para: ${selectedAsignatura} (${selectedDifficulty})`);
+    console.log(`[QuizPro] Enrutamiento Local para: ${selectedAsignatura} (${selectedDifficulty})`);
 
-    // Tarea 2: Reingeniería de Arquitectura de Datos - Carga Distribuida
     try {
         const gradeNum = window.parseGrade ? window.parseGrade(selectedGrado) : parseInt(selectedGrado);
         const gradeFolder = gradeNum === 10 ? 'Decimo' : (gradeNum === 11 ? 'Undecimo' : 'Duodecimo');
@@ -415,54 +414,35 @@ async function loadQuestions() {
             'Programación': 'Programacion',
             'Análisis y Diseño': 'Analisis_Diseno',
             'Ofimática': 'Ofimatica',
-            'Informática I': 'Informatica'
+            'Informática I': 'Informatica',
+            'Programación II': 'Programacion_2',
+            'Programación Orientada a Objetos': 'Programacion_Orientada_a_Objetos'
         };
         const asignaturaFolder = mapping[selectedAsignatura] || selectedAsignatura.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_');
 
-        // Normalizar nombre de archivo para evitar problemas con acentos (Tarea 2: Corrección)
         const rawLevel = window.getStandardLevelName(selectedDifficulty);
         const levelFile = rawLevel.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") + '.json';
 
-        const path = `js/Banco_Preguntas/${gradeFolder}/${asignaturaFolder}/${levelFile}`;
+        // REQ: Desacoplamiento del Backend - Enrutamiento Estático Indexado
+        const isRoot = !window.location.pathname.includes('/juegos/');
+        const pathPrefix = isRoot ? '' : '../';
+        const path = `${pathPrefix}js/Banco_Preguntas/${gradeFolder}/${asignaturaFolder}/${levelFile}`;
         console.log(`[QuizPro] Intentando cargar desde: ${path}`);
 
         const localRes = await fetch(path);
         if (localRes.ok) {
             const localData = await localRes.json();
             if (localData && localData.length > 0) {
-                console.log(`[QuizPro] Cargadas ${localData.length} preguntas desde arquitectura distribuida.`);
+                console.log(`[QuizPro] Persistencia Local: ${localData.length} reactivos cargados.`);
                 allPresentationQuestions = transformBankQuestions(localData);
-                return;
             } else {
-                console.log(`[QuizPro] Archivo local encontrado pero vacío: ${path}. Continuando a Banco Central.`);
+                console.warn(`[QuizPro] El nodo de persistencia está vacío: ${path}`);
             }
+        } else {
+            console.error(`[QuizPro] Error de direccionamiento local: ${path}`);
         }
     } catch (e) {
-        console.warn("[QuizPro] Fallo carga desde arquitectura distribuida, reintentando con Banco Central...", e);
-    }
-
-    // FASE 2: Consumo API (Google Sheets) como fuente secundaria
-    try {
-        const res = await fetchApi('USER', 'getQuestionBank', {
-            asignatura: selectedAsignatura,
-            nivel: window.getStandardLevelName(selectedDifficulty),
-            activaOnly: true
-        });
-
-        if (res.status === 'success' && res.data) {
-            allPresentationQuestions = transformBankQuestions(res.data);
-            console.log(`[QuizPro] Cargadas ${allPresentationQuestions.length} preguntas desde la API del Banco Central.`);
-        }
-
-        // Fallback: Si el banco está vacío para esta nueva asignatura, intentar cargar desde presentaciones legacy
-        if (allPresentationQuestions.length === 0) {
-            console.log("[QuizPro] Banco vacío. Intentando carga legacy de presentaciones...");
-            await loadQuestionsLegacy();
-        }
-
-    } catch (e) {
-        console.error("[QuizPro] Error cargando desde el Banco:", e);
-        await loadQuestionsLegacy();
+        console.error("[QuizPro] Fallo crítico en el motor de persistencia local:", e);
     }
 }
 

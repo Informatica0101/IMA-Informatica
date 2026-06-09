@@ -1,1 +1,802 @@
-[]
+[
+  {
+    "id": "Q-11-PRO-AVA-001",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 1 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-002",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 2 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-003",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 3 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-004",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 4 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-005",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 5 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-006",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 6 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-007",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 7 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-008",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 8 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-009",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 9 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-010",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 10 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-011",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 11 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-012",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 12 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-013",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 13 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-014",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 14 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-015",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 15 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-016",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 16 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-017",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 17 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-018",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 18 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-019",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 19 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-020",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 20 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-021",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 21 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-022",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 22 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-023",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 23 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-024",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 24 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-025",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 25 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-026",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 26 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-027",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 27 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-028",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 28 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-029",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 29 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-030",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 30 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-031",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 31 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-032",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 32 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-033",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 33 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-034",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 34 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-035",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 35 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-036",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 36 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-037",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 37 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-038",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 38 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-039",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 39 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-040",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 40 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-041",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 41 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-042",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 42 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-043",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 43 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-044",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 44 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-045",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 45 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-046",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 46 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-047",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 47 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-048",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 48 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-049",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 49 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  },
+  {
+    "id": "Q-11-PRO-AVA-050",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 50 para Programacion Avanzado sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Avanzado"
+  }
+]

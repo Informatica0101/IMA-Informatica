@@ -11,10 +11,23 @@
     "OpcionB": "Solo procesar datos",
     "OpcionC": "Mostrar imágenes únicamente",
     "OpcionD": "Conectar a internet",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la función principal de los dispositivos de almacenamiento?",
+    "respuesta_correcta_literal": "Guardar y recuperar información",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Guardar y recuperar información",
+      "Solo procesar datos",
+      "Mostrar imágenes únicamente",
+      "Conectar a internet"
+    ]
   },
   {
-    "Pregunta": "¿Qué característica define a la memoria RAM?",
+    "Pregunta": "¿Qué característica define a la memoria <code>RAM</code>?",
     "RespuestaCorrecta": "Es volátil (se borra al apagar)",
     "Nivel": "Intermedio",
     "Tema": "Almacenamiento",
@@ -25,10 +38,23 @@
     "OpcionB": "Es permanente",
     "OpcionC": "Es muy lenta",
     "OpcionD": "Solo almacena video",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué característica define a la memoria <code>RAM</code>?",
+    "respuesta_correcta_literal": "Es volátil (se borra al apagar)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Es volátil (se borra al apagar)",
+      "Es permanente",
+      "Es muy lenta",
+      "Solo almacena video"
+    ]
   },
   {
-    "Pregunta": "¿Qué tipo de memoria contiene las instrucciones de arranque (BIOS/UEFI)?",
+    "Pregunta": "¿Qué tipo de memoria contiene las instrucciones de arranque (<code>BIOS</code>/<code>UEFI</code>)?",
     "RespuestaCorrecta": "ROM",
     "Nivel": "Intermedio",
     "Tema": "Redes",
@@ -39,10 +65,23 @@
     "OpcionB": "RAM",
     "OpcionC": "HDD",
     "OpcionD": "USB",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué tipo de memoria contiene las instrucciones de arranque (<code>BIOS</code>/<code>UEFI</code>)?",
+    "respuesta_correcta_literal": "ROM",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "ROM",
+      "RAM",
+      "HDD",
+      "USB"
+    ]
   },
   {
-    "Pregunta": "¿Cuál es la principal diferencia entre HDD y SSD?",
+    "Pregunta": "¿Cuál es la principal diferencia entre <code>HDD</code> y <code>SSD</code>?",
     "RespuestaCorrecta": "El SSD no tiene partes móviles y es más rápido",
     "Nivel": "Intermedio",
     "Tema": "Redes",
@@ -53,7 +92,20 @@
     "OpcionB": "El HDD es electrónico y el SSD mecánico",
     "OpcionC": "El HDD es más costoso",
     "OpcionD": "No hay diferencias reales",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la principal diferencia entre <code>HDD</code> y <code>SSD</code>?",
+    "respuesta_correcta_literal": "El SSD no tiene partes móviles y es más rápido",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "El SSD no tiene partes móviles y es más rápido",
+      "El HDD es electrónico y el SSD mecánico",
+      "El HDD es más costoso",
+      "No hay diferencias reales"
+    ]
   },
   {
     "Pregunta": "¿Cómo almacenan datos los discos ópticos (CD, DVD)?",
@@ -67,7 +119,20 @@
     "OpcionB": "Mediante magnetismo",
     "OpcionC": "Mediante chips electrónicos",
     "OpcionD": "Mediante calor",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cómo almacenan datos los discos ópticos (CD, DVD)?",
+    "respuesta_correcta_literal": "Mediante láser",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Mediante láser",
+      "Mediante magnetismo",
+      "Mediante chips electrónicos",
+      "Mediante calor"
+    ]
   },
   {
     "Pregunta": "¿Qué es el almacenamiento en la nube?",
@@ -81,7 +146,20 @@
     "OpcionB": "Guardar datos en una caja física",
     "OpcionC": "Un disco duro que flota",
     "OpcionD": "Memoria RAM externa",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es el almacenamiento en la nube?",
+    "respuesta_correcta_literal": "Guardar datos en servidores remotos vía Internet",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Guardar datos en servidores remotos vía Internet",
+      "Guardar datos en una caja física",
+      "Un disco duro que flota",
+      "Memoria RAM externa"
+    ]
   },
   {
     "Pregunta": "En la jerarquía de memoria, los dispositivos más rápidos suelen ser:",
@@ -95,7 +173,20 @@
     "OpcionB": "Más económicos",
     "OpcionC": "De mayor capacidad física",
     "OpcionD": "Muy ruidosos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "En la jerarquía de memoria, los dispositivos más rápidos suelen ser:",
+    "respuesta_correcta_literal": "Más costosos y de menor capacidad",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Más costosos y de menor capacidad",
+      "Más económicos",
+      "De mayor capacidad física",
+      "Muy ruidosos"
+    ]
   },
   {
     "Pregunta": "Ejemplo popular de almacenamiento en la nube:",
@@ -109,7 +200,20 @@
     "OpcionB": "Bloc de notas",
     "OpcionC": "Calculadora",
     "OpcionD": "Paint",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Ejemplo popular de almacenamiento en la nube:",
+    "respuesta_correcta_literal": "Google Drive",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Google Drive",
+      "Bloc de notas",
+      "Calculadora",
+      "Paint"
+    ]
   },
   {
     "Pregunta": "Las direcciones MAC de hardware de red se escriben usualmente en formato:",
@@ -123,10 +227,23 @@
     "OpcionB": "Binario",
     "OpcionC": "Hexadecimal",
     "OpcionD": "Octal",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Las direcciones MAC de hardware de red se escriben usualmente en formato:",
+    "respuesta_correcta_literal": "Hexadecimal",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Decimal",
+      "Binario",
+      "Hexadecimal",
+      "Octal"
+    ]
   },
   {
-    "Pregunta": "¿Qué ventaja ofrece la instalación por línea de comandos (CLI)?",
+    "Pregunta": "¿Qué ventaja ofrece la instalación por línea de comandos (<code>CLI</code>)?",
     "RespuestaCorrecta": "Automatización y resolución de dependencias",
     "Nivel": "Intermedio",
     "Tema": "Sistemas Operativos",
@@ -137,7 +254,20 @@
     "OpcionB": "Es más colorida",
     "OpcionC": "No requiere teclado",
     "OpcionD": "Solo funciona sin internet",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué ventaja ofrece la instalación por línea de comandos (<code>CLI</code>)?",
+    "respuesta_correcta_literal": "Automatización y resolución de dependencias",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Sistemas Operativos",
+    "opciones_visibles": [
+      "Automatización y resolución de dependencias",
+      "Es más colorida",
+      "No requiere teclado",
+      "Solo funciona sin internet"
+    ]
   },
   {
     "Pregunta": "Ejemplo de Hypervisor Tipo 2 (Hosted):",
@@ -151,7 +281,20 @@
     "OpcionB": "VMware ESXi",
     "OpcionC": "Microsoft Hyper-V",
     "OpcionD": "Linux Kernel",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Ejemplo de Hypervisor Tipo 2 (Hosted):",
+    "respuesta_correcta_literal": "Oracle VirtualBox",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Oracle VirtualBox",
+      "VMware ESXi",
+      "Microsoft Hyper-V",
+      "Linux Kernel"
+    ]
   },
   {
     "Pregunta": "Un Hypervisor Tipo 1 se instala:",
@@ -165,7 +308,20 @@
     "OpcionB": "Sobre un sistema operativo anfitrión",
     "OpcionC": "Como un plugin del navegador",
     "OpcionD": "Solo en dispositivos móviles",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Un Hypervisor Tipo 1 se instala:",
+    "respuesta_correcta_literal": "Directamente sobre el hardware",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Directamente sobre el hardware",
+      "Sobre un sistema operativo anfitrión",
+      "Como un plugin del navegador",
+      "Solo en dispositivos móviles"
+    ]
   },
   {
     "Pregunta": "1. ¿Cuál es el principal propósito de la compresión de archivos 'Lossless' (sin pérdida)?",
@@ -179,7 +335,20 @@
     "OpcionB": "Reducir el tamaño sin perder información original",
     "OpcionC": "Añadir metadatos de seguridad",
     "OpcionD": "Aumentar la velocidad de acceso al archivo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "1. ¿Cuál es el principal propósito de la compresión de archivos 'Lossless' (sin pérdida)?",
+    "respuesta_correcta_literal": "Reducir el tamaño sin perder información original",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Reducir la calidad de imágenes y videos",
+      "Reducir el tamaño sin perder información original",
+      "Añadir metadatos de seguridad",
+      "Aumentar la velocidad de acceso al archivo"
+    ]
   },
   {
     "Pregunta": "5. ¿Cuál es la principal ventaja de un respaldo <b>automático</b> sobre uno <b>manual</b>?",
@@ -193,10 +362,23 @@
     "OpcionB": "Asegura la ejecución constante y periódica sin depender de la memoria del usuario",
     "OpcionC": "Es más fácil de configurar",
     "OpcionD": "Permite respaldar solo archivos de imagen",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "5. ¿Cuál es la principal ventaja de un respaldo <b>automático</b> sobre uno <b>manual</b>?",
+    "respuesta_correcta_literal": "Asegura la ejecución constante y periódica sin depender de la memoria del usuario",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Ahorra más espacio en el disco",
+      "Asegura la ejecución constante y periódica sin depender de la memoria del usuario",
+      "Es más fácil de configurar",
+      "Permite respaldar solo archivos de imagen"
+    ]
   },
   {
-    "Pregunta": "6. Deducción: Si guardas tus archivos en el disco C: y en una unidad USB, ¿qué parte de la regla 3-2-1 *no* estás cumpliendo?",
+    "Pregunta": "6. Deducción: Si guardas tus archivos en el disco C: y en una unidad <code>USB</code>, ¿qué parte de la regla 3-2-1 *no* estás cumpliendo?",
     "RespuestaCorrecta": "1 copia fuera del sitio",
     "Nivel": "Intermedio",
     "Tema": "Almacenamiento",
@@ -207,7 +389,20 @@
     "OpcionB": "2 medios diferentes",
     "OpcionC": "1 copia fuera del sitio",
     "OpcionD": "Estás cumpliendo con todas las partes",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "6. Deducción: Si guardas tus archivos en el disco C: y en una unidad <code>USB</code>, ¿qué parte de la regla 3-2-1 *no* estás cumpliendo?",
+    "respuesta_correcta_literal": "1 copia fuera del sitio",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "3 copias",
+      "2 medios diferentes",
+      "1 copia fuera del sitio",
+      "Estás cumpliendo con todas las partes"
+    ]
   },
   {
     "Pregunta": "8. ¿Qué tipo de información se considera un 'metadato' de un archivo?",
@@ -221,7 +416,20 @@
     "OpcionB": "El nombre del archivo",
     "OpcionC": "La fecha de última modificación",
     "OpcionD": "El ícono que representa el archivo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "8. ¿Qué tipo de información se considera un 'metadato' de un archivo?",
+    "respuesta_correcta_literal": "La fecha de última modificación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "El contenido binario del archivo",
+      "El nombre del archivo",
+      "La fecha de última modificación",
+      "El ícono que representa el archivo"
+    ]
   },
   {
     "Pregunta": "¿Qué tipo de red cubre un área geográfica limitada como una casa u oficina?",
@@ -235,7 +443,20 @@
     "OpcionB": "LAN",
     "OpcionC": "MAN",
     "OpcionD": "WAN",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué tipo de red cubre un área geográfica limitada como una casa u oficina?",
+    "respuesta_correcta_literal": "LAN",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "PAN",
+      "LAN",
+      "MAN",
+      "WAN"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la topología de red más común donde todos los dispositivos se conectan a un punto central?",
@@ -249,7 +470,20 @@
     "OpcionB": "Anillo",
     "OpcionC": "Estrella",
     "OpcionD": "Malla",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la topología de red más común donde todos los dispositivos se conectan a un punto central?",
+    "respuesta_correcta_literal": "Estrella",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Bus",
+      "Anillo",
+      "Estrella",
+      "Malla"
+    ]
   },
   {
     "Pregunta": "¿Qué protocolo es la base de Internet y gestiona la comunicación en la mayoría de las redes modernas?",
@@ -263,10 +497,23 @@
     "OpcionB": "FTP",
     "OpcionC": "TCP/IP",
     "OpcionD": "SMTP",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué protocolo es la base de Internet y gestiona la comunicación en la mayoría de las redes modernas?",
+    "respuesta_correcta_literal": "TCP/IP",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "HTTP",
+      "FTP",
+      "TCP/IP",
+      "SMTP"
+    ]
   },
   {
-    "Pregunta": "¿Qué componente de la configuración IP traduce nombres de dominio a direcciones IP numéricas?",
+    "Pregunta": "¿Qué componente de la configuración <code>IP</code> traduce nombres de dominio a direcciones <code>IP</code> numéricas?",
     "RespuestaCorrecta": "Servidor DNS",
     "Nivel": "Intermedio",
     "Tema": "Redes",
@@ -277,10 +524,23 @@
     "OpcionB": "Puerta de Enlace",
     "OpcionC": "Servidor DNS",
     "OpcionD": "Dirección IP",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué componente de la configuración <code>IP</code> traduce nombres de dominio a direcciones <code>IP</code> numéricas?",
+    "respuesta_correcta_literal": "Servidor DNS",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Máscara de Subred",
+      "Puerta de Enlace",
+      "Servidor DNS",
+      "Dirección IP"
+    ]
   },
   {
-    "Pregunta": "Si tu dirección IP es asignada automáticamente por el router, ¿qué método de configuración se está utilizando?",
+    "Pregunta": "Si tu dirección <code>IP</code> es asignada automáticamente por el router, ¿qué método de configuración se está utilizando?",
     "RespuestaCorrecta": "Dinámica (DHCP)",
     "Nivel": "Intermedio",
     "Tema": "Redes",
@@ -291,10 +551,23 @@
     "OpcionB": "Manual",
     "OpcionC": "Dinámica (DHCP)",
     "OpcionD": "Fija",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Si tu dirección <code>IP</code> es asignada automáticamente por el router, ¿qué método de configuración se está utilizando?",
+    "respuesta_correcta_literal": "Dinámica (DHCP)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Estática",
+      "Manual",
+      "Dinámica (DHCP)",
+      "Fija"
+    ]
   },
   {
-    "Pregunta": "¿Qué versión de IP fue creada para reemplazar a IPv4 debido al agotamiento de direcciones?",
+    "Pregunta": "¿Qué versión de <code>IP</code> fue creada para reemplazar a <code>IPv4</code> debido al agotamiento de direcciones?",
     "RespuestaCorrecta": "IPv6",
     "Nivel": "Intermedio",
     "Tema": "Redes",
@@ -305,7 +578,20 @@
     "OpcionB": "IPv5",
     "OpcionC": "IPv6",
     "OpcionD": "IPv7",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué versión de <code>IP</code> fue creada para reemplazar a <code>IPv4</code> debido al agotamiento de direcciones?",
+    "respuesta_correcta_literal": "IPv6",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "IPv3",
+      "IPv5",
+      "IPv6",
+      "IPv7"
+    ]
   },
   {
     "Pregunta": "¿Qué es una Red de Computadoras?",
@@ -319,7 +605,20 @@
     "OpcionB": "Solo una computadora sin cables",
     "OpcionC": "Un programa para dibujar",
     "OpcionD": "Una empresa que vende hardware",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué es una Red de Computadoras?",
+    "respuesta_correcta_literal": "Sistema que interconecta dispositivos para compartir recursos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Sistema que interconecta dispositivos para compartir recursos",
+      "Solo una computadora sin cables",
+      "Un programa para dibujar",
+      "Una empresa que vende hardware"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la red más grande, que conecta países y regiones?",
@@ -333,10 +632,23 @@
     "OpcionB": "LAN",
     "OpcionC": "PAN",
     "OpcionD": "MAN",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la red más grande, que conecta países y regiones?",
+    "respuesta_correcta_literal": "WAN",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "WAN",
+      "LAN",
+      "PAN",
+      "MAN"
+    ]
   },
   {
-    "Pregunta": "La dirección IP única asignada manualmente a un servidor es una IP:",
+    "Pregunta": "La dirección <code>IP</code> única asignada manualmente a un servidor es una <code>IP</code>:",
     "RespuestaCorrecta": "Estática",
     "Nivel": "Intermedio",
     "Tema": "Redes",
@@ -347,7 +659,20 @@
     "OpcionB": "Dinámica",
     "OpcionC": "Virtual",
     "OpcionD": "Invisible",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "La dirección <code>IP</code> única asignada manualmente a un servidor es una <code>IP</code>:",
+    "respuesta_correcta_literal": "Estática",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Estática",
+      "Dinámica",
+      "Virtual",
+      "Invisible"
+    ]
   },
   {
     "Pregunta": "¿Qué función permite al SO ejecutar varios programas a la vez?",
@@ -361,10 +686,23 @@
     "OpcionB": "Paginación",
     "OpcionC": "Drivers",
     "OpcionD": "Seguridad",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué función permite al SO ejecutar varios programas a la vez?",
+    "respuesta_correcta_literal": "Gestión de Procesos (Multitarea)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Gestión de Procesos (Multitarea)",
+      "Paginación",
+      "Drivers",
+      "Seguridad"
+    ]
   },
   {
-    "Pregunta": "La memoria RAM es administrada por la función de:",
+    "Pregunta": "La memoria <code>RAM</code> es administrada por la función de:",
     "RespuestaCorrecta": "Gestión de Memoria",
     "Nivel": "Intermedio",
     "Tema": "Almacenamiento",
@@ -375,10 +713,23 @@
     "OpcionB": "Gestión de Archivos",
     "OpcionC": "Interfaz de Usuario",
     "OpcionD": "Seguridad",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "La memoria <code>RAM</code> es administrada por la función de:",
+    "respuesta_correcta_literal": "Gestión de Memoria",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Gestión de Memoria",
+      "Gestión de Archivos",
+      "Interfaz de Usuario",
+      "Seguridad"
+    ]
   },
   {
-    "Pregunta": "¿Cómo se llama el uso del disco duro como RAM adicional?",
+    "Pregunta": "¿Cómo se llama el uso del disco duro como <code>RAM</code> adicional?",
     "RespuestaCorrecta": "Memoria Virtual",
     "Nivel": "Intermedio",
     "Tema": "Almacenamiento",
@@ -389,10 +740,23 @@
     "OpcionB": "Memoria Flash",
     "OpcionC": "Paginación",
     "OpcionD": "Caché de CPU",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cómo se llama el uso del disco duro como <code>RAM</code> adicional?",
+    "respuesta_correcta_literal": "Memoria Virtual",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Memoria Virtual",
+      "Memoria Flash",
+      "Paginación",
+      "Caché de CPU"
+    ]
   },
   {
-    "Pregunta": "¿Qué significa CLI?",
+    "Pregunta": "¿Qué significa <code>CLI</code>?",
     "RespuestaCorrecta": "Command Line Interface",
     "Nivel": "Intermedio",
     "Tema": "Sistemas Operativos",
@@ -403,10 +767,23 @@
     "OpcionB": "Computer Logic Interconnect",
     "OpcionC": "Central Line Internal",
     "OpcionD": "Critical Link Index",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa <code>CLI</code>?",
+    "respuesta_correcta_literal": "Command Line Interface",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Sistemas Operativos",
+    "opciones_visibles": [
+      "Command Line Interface",
+      "Computer Logic Interconnect",
+      "Central Line Internal",
+      "Critical Link Index"
+    ]
   },
   {
-    "Pregunta": "¿Qué significa CLI?",
+    "Pregunta": "¿Qué significa <code>CLI</code>?",
     "RespuestaCorrecta": "Command Line Interface",
     "Nivel": "Intermedio",
     "Tema": "Sistemas Operativos",
@@ -417,7 +794,20 @@
     "OpcionB": "Common Logic Internal",
     "OpcionC": "Computer Link Interconnect",
     "OpcionD": "Central Line Index",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué significa <code>CLI</code>?",
+    "respuesta_correcta_literal": "Command Line Interface",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Sistemas Operativos",
+    "opciones_visibles": [
+      "Command Line Interface",
+      "Common Logic Internal",
+      "Computer Link Interconnect",
+      "Central Line Index"
+    ]
   },
   {
     "Pregunta": "¿Cuál es el valor decimal de la letra 'A' en hexadecimal?",
@@ -431,7 +821,20 @@
     "OpcionB": "10",
     "OpcionC": "11",
     "OpcionD": "12",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el valor decimal de la letra 'A' en hexadecimal?",
+    "respuesta_correcta_literal": "10",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "9",
+      "10",
+      "11",
+      "12"
+    ]
   },
   {
     "Pregunta": "¿Cuántos dígitos binarios (bits) se necesitan para representar un solo dígito hexadecimal?",
@@ -445,7 +848,20 @@
     "OpcionB": "4",
     "OpcionC": "8",
     "OpcionD": "16",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuántos dígitos binarios (bits) se necesitan para representar un solo dígito hexadecimal?",
+    "respuesta_correcta_literal": "4",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "1",
+      "4",
+      "8",
+      "16"
+    ]
   },
   {
     "Pregunta": "¿Qué número hexadecimal representa el color rojo puro en un código de 6 dígitos?",
@@ -459,7 +875,20 @@
     "OpcionB": "#FFFF00",
     "OpcionC": "#FF0000",
     "OpcionD": "#FFFFFF",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué número hexadecimal representa el color rojo puro en un código de 6 dígitos?",
+    "respuesta_correcta_literal": "#FF0000",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "#0000FF",
+      "#FFFF00",
+      "#FF0000",
+      "#FFFFFF"
+    ]
   },
   {
     "Pregunta": "¿Cuál de los siguientes NO es un símbolo válido en el sistema hexadecimal?",
@@ -473,7 +902,20 @@
     "OpcionB": "G",
     "OpcionC": "F",
     "OpcionD": "D",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál de los siguientes NO es un símbolo válido en el sistema hexadecimal?",
+    "respuesta_correcta_literal": "G",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "A",
+      "G",
+      "F",
+      "D"
+    ]
   },
   {
     "Pregunta": "En informática, ¿dónde se utiliza comúnmente la numeración hexadecimal?",
@@ -487,7 +929,20 @@
     "OpcionB": "En nombres de archivos",
     "OpcionC": "En el tamaño de las fuentes",
     "OpcionD": "En la velocidad del procesador",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "En informática, ¿dónde se utiliza comúnmente la numeración hexadecimal?",
+    "respuesta_correcta_literal": "En direcciones de memoria",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "En direcciones de memoria",
+      "En nombres de archivos",
+      "En el tamaño de las fuentes",
+      "En la velocidad del procesador"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la base del sistema de numeración hexadecimal?",
@@ -501,7 +956,20 @@
     "OpcionB": "Base 8",
     "OpcionC": "Base 10",
     "OpcionD": "Base 16",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la base del sistema de numeración hexadecimal?",
+    "respuesta_correcta_literal": "Base 16",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "Base 2",
+      "Base 8",
+      "Base 10",
+      "Base 16"
+    ]
   },
   {
     "Pregunta": "¿Qué letra representa el valor decimal 15 en hexadecimal?",
@@ -515,7 +983,20 @@
     "OpcionB": "F",
     "OpcionC": "D",
     "OpcionD": "X",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué letra representa el valor decimal 15 en hexadecimal?",
+    "respuesta_correcta_literal": "F",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "E",
+      "F",
+      "D",
+      "X"
+    ]
   },
   {
     "Pregunta": "¿Qué valor decimal tiene el número hexadecimal '10'?",
@@ -529,7 +1010,20 @@
     "OpcionB": "16",
     "OpcionC": "1",
     "OpcionD": "0",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué valor decimal tiene el número hexadecimal '10'?",
+    "respuesta_correcta_literal": "16",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "10",
+      "16",
+      "1",
+      "0"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la base del sistema de numeración binario?",
@@ -543,7 +1037,20 @@
     "OpcionB": "10",
     "OpcionC": "2",
     "OpcionD": "16",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la base del sistema de numeración binario?",
+    "respuesta_correcta_literal": "2",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "8",
+      "10",
+      "2",
+      "16"
+    ]
   },
   {
     "Pregunta": "Al convertir el número binario 1001 a decimal, ¿qué resultado obtienes?",
@@ -557,7 +1064,20 @@
     "OpcionB": "10",
     "OpcionC": "11",
     "OpcionD": "8",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Al convertir el número binario 1001 a decimal, ¿qué resultado obtienes?",
+    "respuesta_correcta_literal": "9",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "9",
+      "10",
+      "11",
+      "8"
+    ]
   },
   {
     "Pregunta": "¿Qué número binario representa el decimal 5?",
@@ -571,7 +1091,20 @@
     "OpcionB": "101",
     "OpcionC": "011",
     "OpcionD": "111",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué número binario representa el decimal 5?",
+    "respuesta_correcta_literal": "101",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "110",
+      "101",
+      "011",
+      "111"
+    ]
   },
   {
     "Pregunta": "Al convertir el número decimal 10 a binario, ¿qué resultado obtienes?",
@@ -585,7 +1118,20 @@
     "OpcionB": "1100",
     "OpcionC": "1001",
     "OpcionD": "1110",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Al convertir el número decimal 10 a binario, ¿qué resultado obtienes?",
+    "respuesta_correcta_literal": "1010",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "1010",
+      "1100",
+      "1001",
+      "1110"
+    ]
   },
   {
     "Pregunta": "¿Cuál es el valor posicional del dígito '1' en el número binario 1000?",
@@ -599,7 +1145,20 @@
     "OpcionB": "2<sup>0</sup> (1)",
     "OpcionC": "2<sup>1</sup> (2)",
     "OpcionD": "2<sup>2</sup> (4)",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el valor posicional del dígito '1' en el número binario 1000?",
+    "respuesta_correcta_literal": "2<sup>3</sup> (8)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "2<sup>3</sup> (8)",
+      "2<sup>0</sup> (1)",
+      "2<sup>1</sup> (2)",
+      "2<sup>2</sup> (4)"
+    ]
   },
   {
     "Pregunta": "Al convertir 1101<sub>2</sub> a decimal, el resultado es:",
@@ -613,7 +1172,20 @@
     "OpcionB": "11",
     "OpcionC": "15",
     "OpcionD": "9",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Al convertir 1101<sub>2</sub> a decimal, el resultado es:",
+    "respuesta_correcta_literal": "13",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "13",
+      "11",
+      "15",
+      "9"
+    ]
   },
   {
     "Pregunta": "¿Qué número decimal es equivalente a 1111<sub>2</sub>?",
@@ -627,7 +1199,20 @@
     "OpcionB": "15",
     "OpcionC": "16",
     "OpcionD": "13",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué número decimal es equivalente a 1111<sub>2</sub>?",
+    "respuesta_correcta_literal": "15",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "14",
+      "15",
+      "16",
+      "13"
+    ]
   },
   {
     "Pregunta": "¿Qué número binario representa el decimal 21?",
@@ -641,6 +1226,83 @@
     "OpcionB": "11010",
     "OpcionC": "10011",
     "OpcionD": "11111",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué número binario representa el decimal 21?",
+    "respuesta_correcta_literal": "10101",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Intermedio",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 11,
+    "tema": "Sistemas de Numeración",
+    "opciones_visibles": [
+      "10101",
+      "11010",
+      "10011",
+      "11111"
+    ]
+  },
+  {
+    "id": "Q-11-INFA-INT-047",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 47 para Informatica_Aplicada Intermedio sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Intermedio"
+  },
+  {
+    "id": "Q-11-INFA-INT-048",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 48 para Informatica_Aplicada Intermedio sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Intermedio"
+  },
+  {
+    "id": "Q-11-INFA-INT-049",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 49 para Informatica_Aplicada Intermedio sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Intermedio"
+  },
+  {
+    "id": "Q-11-INFA-INT-050",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 50 para Informatica_Aplicada Intermedio sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Intermedio"
   }
 ]

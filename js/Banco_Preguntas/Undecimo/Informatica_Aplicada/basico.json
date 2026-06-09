@@ -1,6 +1,6 @@
 [
   {
-    "Pregunta": "¿Cuál es la función de la memoria RAM?",
+    "Pregunta": "¿Cuál es la función de la memoria <code>RAM</code>?",
     "RespuestaCorrecta": "Almacenar datos temporalmente para acceso rápido del procesador",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
@@ -11,10 +11,23 @@
     "OpcionB": "Guardar archivos permanentemente",
     "OpcionC": "Pintar imágenes en pantalla",
     "OpcionD": "Conectar a internet",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la función de la memoria <code>RAM</code>?",
+    "respuesta_correcta_literal": "Almacenar datos temporalmente para acceso rápido del procesador",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Almacenar datos temporalmente para acceso rápido del procesador",
+      "Guardar archivos permanentemente",
+      "Pintar imágenes en pantalla",
+      "Conectar a internet"
+    ]
   },
   {
-    "Pregunta": "La memoria RAM tiene como característica ser:",
+    "Pregunta": "La memoria <code>RAM</code> tiene como característica ser:",
     "RespuestaCorrecta": "Volátil (se borra al apagar)",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
@@ -25,7 +38,20 @@
     "OpcionB": "Permanente",
     "OpcionC": "Solo de lectura",
     "OpcionD": "Muy lenta",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "La memoria <code>RAM</code> tiene como característica ser:",
+    "respuesta_correcta_literal": "Volátil (se borra al apagar)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Volátil (se borra al apagar)",
+      "Permanente",
+      "Solo de lectura",
+      "Muy lenta"
+    ]
   },
   {
     "Pregunta": "La tarjeta principal que conecta todos los componentes se llama:",
@@ -39,7 +65,20 @@
     "OpcionB": "Tarjeta Gráfica",
     "OpcionC": "Fuente de Poder",
     "OpcionD": "Gabinete",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "La tarjeta principal que conecta todos los componentes se llama:",
+    "respuesta_correcta_literal": "Placa Madre (Motherboard)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Placa Madre (Motherboard)",
+      "Tarjeta Gráfica",
+      "Fuente de Poder",
+      "Gabinete"
+    ]
   },
   {
     "Pregunta": "¿Cuál de estas unidades de almacenamiento es más rápida y duradera?",
@@ -53,7 +92,20 @@
     "OpcionB": "HDD",
     "OpcionC": "CD-ROM",
     "OpcionD": "Disquete",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál de estas unidades de almacenamiento es más rápida y duradera?",
+    "respuesta_correcta_literal": "SSD",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "SSD",
+      "HDD",
+      "CD-ROM",
+      "Disquete"
+    ]
   },
   {
     "Pregunta": "¿Qué tipo de computadora está diseñada para la movilidad y es 'todo en uno'?",
@@ -67,7 +119,20 @@
     "OpcionB": "De escritorio",
     "OpcionC": "Servidor",
     "OpcionD": "Supercomputadora",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué tipo de computadora está diseñada para la movilidad y es 'todo en uno'?",
+    "respuesta_correcta_literal": "Portátil (Laptop)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Portátil (Laptop)",
+      "De escritorio",
+      "Servidor",
+      "Supercomputadora"
+    ]
   },
   {
     "Pregunta": "¿Qué máquina es considerada el primer concepto de computadora programable?",
@@ -81,7 +146,20 @@
     "OpcionB": "Z3",
     "OpcionC": "IBM 701",
     "OpcionD": "Apple I",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué máquina es considerada el primer concepto de computadora programable?",
+    "respuesta_correcta_literal": "Máquina Analítica",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Máquina Analítica",
+      "Z3",
+      "IBM 701",
+      "Apple I"
+    ]
   },
   {
     "Pregunta": "¿Qué tecnología permitió el paso a las computadoras electrónicas a principios del siglo XX?",
@@ -95,7 +173,20 @@
     "OpcionB": "Transistores",
     "OpcionC": "Microprocesadores",
     "OpcionD": "Engranajes",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué tecnología permitió el paso a las computadoras electrónicas a principios del siglo XX?",
+    "respuesta_correcta_literal": "Válvulas de vacío",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Válvulas de vacío",
+      "Transistores",
+      "Microprocesadores",
+      "Engranajes"
+    ]
   },
   {
     "Pregunta": "¿Cuál fue la primera máquina programable y completamente automática (1941)?",
@@ -109,7 +200,20 @@
     "OpcionB": "ENIAC",
     "OpcionC": "Harvard Mark I",
     "OpcionD": "Colossus",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál fue la primera máquina programable y completamente automática (1941)?",
+    "respuesta_correcta_literal": "Z3",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Z3",
+      "ENIAC",
+      "Harvard Mark I",
+      "Colossus"
+    ]
   },
   {
     "Pregunta": "¿Qué red militar precursora de Internet nació en 1969?",
@@ -123,7 +227,20 @@
     "OpcionB": "WWW",
     "OpcionC": "Intranet",
     "OpcionD": "Ethernet",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué red militar precursora de Internet nació en 1969?",
+    "respuesta_correcta_literal": "ARPANET",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "ARPANET",
+      "WWW",
+      "Intranet",
+      "Ethernet"
+    ]
   },
   {
     "Pregunta": "¿Cuál es el propósito principal de una hoja de cálculo?",
@@ -137,7 +254,20 @@
     "OpcionB": "Escribir cartas y ensayos",
     "OpcionC": "Editar fotografías profesionales",
     "OpcionD": "Navegar por redes sociales",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el propósito principal de una hoja de cálculo?",
+    "respuesta_correcta_literal": "Realizar cálculos matemáticos y organizar datos en tablas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Realizar cálculos matemáticos y organizar datos en tablas",
+      "Escribir cartas y ensayos",
+      "Editar fotografías profesionales",
+      "Navegar por redes sociales"
+    ]
   },
   {
     "Pregunta": "¿Qué hace la función =PROMEDIO(A1:A10)?",
@@ -151,7 +281,20 @@
     "OpcionB": "Cuenta las celdas de A1 a A10",
     "OpcionC": "Calcula el promedio de los valores de A1 a A10",
     "OpcionD": "Muestra el valor máximo de A1 a A10",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué hace la función =PROMEDIO(A1:A10)?",
+    "respuesta_correcta_literal": "Calcula el promedio de los valores de A1 a A10",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Hardware y Almacenamiento",
+    "opciones_visibles": [
+      "Suma los valores de A1 a A10",
+      "Cuenta las celdas de A1 a A10",
+      "Calcula el promedio de los valores de A1 a A10",
+      "Muestra el valor máximo de A1 a A10"
+    ]
   },
   {
     "Pregunta": "¿Qué operador se usa para multiplicar en una fórmula?",
@@ -165,7 +308,20 @@
     "OpcionB": "*",
     "OpcionC": "&",
     "OpcionD": "%",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué operador se usa para multiplicar en una fórmula?",
+    "respuesta_correcta_literal": "*",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "x",
+      "*",
+      "&",
+      "%"
+    ]
   },
   {
     "Pregunta": "1. ¿Qué componente del Formato de Página define el espacio en blanco alrededor de los bordes del documento?",
@@ -179,7 +335,20 @@
     "OpcionB": "Columnas",
     "OpcionC": "Márgenes",
     "OpcionD": "Tamaño de Papel",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "1. ¿Qué componente del Formato de Página define el espacio en blanco alrededor de los bordes del documento?",
+    "respuesta_correcta_literal": "Márgenes",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Orientación",
+      "Columnas",
+      "Márgenes",
+      "Tamaño de Papel"
+    ]
   },
   {
     "Pregunta": "3. ¿Qué herramienta debe aplicar a los encabezados (Capítulos, Secciones) para que se incluyan automáticamente en la Tabla de Contenido (Índice)?",
@@ -193,7 +362,20 @@
     "OpcionB": "Estilos de Título (Título 1, Título 2)",
     "OpcionC": "Viñetas y Numeración",
     "OpcionD": "Formato Condicional",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "3. ¿Qué herramienta debe aplicar a los encabezados (Capítulos, Secciones) para que se incluyan automáticamente en la Tabla de Contenido (Índice)?",
+    "respuesta_correcta_literal": "Estilos de Título (Título 1, Título 2)",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Negrita y Cursiva",
+      "Estilos de Título (Título 1, Título 2)",
+      "Viñetas y Numeración",
+      "Formato Condicional"
+    ]
   },
   {
     "Pregunta": "7. ¿Qué opción de Ajuste de Texto permite que el texto rodee la imagen de manera ajustada, ocupando el espacio a su alrededor?",
@@ -207,7 +389,20 @@
     "OpcionB": "Arriba y Abajo",
     "OpcionC": "Transparente",
     "OpcionD": "Fijo a la página",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "7. ¿Qué opción de Ajuste de Texto permite que el texto rodee la imagen de manera ajustada, ocupando el espacio a su alrededor?",
+    "respuesta_correcta_literal": "Cuadrado / Estrecho",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Cuadrado / Estrecho",
+      "Arriba y Abajo",
+      "Transparente",
+      "Fijo a la página"
+    ]
   },
   {
     "Pregunta": "¿Cuál es el componente principal de un sistema informático que se puede tocar?",
@@ -221,7 +416,20 @@
     "OpcionB": "Software",
     "OpcionC": "Humanware",
     "OpcionD": "Firmware",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el componente principal de un sistema informático que se puede tocar?",
+    "respuesta_correcta_literal": "Hardware",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Hardware",
+      "Software",
+      "Humanware",
+      "Firmware"
+    ]
   },
   {
     "Pregunta": "¿Cómo se le llama al conjunto de programas e instrucciones?",
@@ -235,7 +443,20 @@
     "OpcionB": "Hardware",
     "OpcionC": "Periféricos",
     "OpcionD": "CPU",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cómo se le llama al conjunto de programas e instrucciones?",
+    "respuesta_correcta_literal": "Software",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Software",
+      "Hardware",
+      "Periféricos",
+      "CPU"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la función principal de una computadora?",
@@ -249,7 +470,20 @@
     "OpcionB": "Servir de adorno",
     "OpcionC": "Consumir energía",
     "OpcionD": "Solo navegar en internet",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la función principal de una computadora?",
+    "respuesta_correcta_literal": "Procesar datos para convertirlos en información",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Procesar datos para convertirlos en información",
+      "Servir de adorno",
+      "Consumir energía",
+      "Solo navegar en internet"
+    ]
   },
   {
     "Pregunta": "¿Para qué sirve el Disco Duro?",
@@ -263,7 +497,20 @@
     "OpcionB": "Para procesar datos rápidamente",
     "OpcionC": "Para mostrar imágenes",
     "OpcionD": "Para enfriar la computadora",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Para qué sirve el Disco Duro?",
+    "respuesta_correcta_literal": "Para guardar información permanentemente",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Para guardar información permanentemente",
+      "Para procesar datos rápidamente",
+      "Para mostrar imágenes",
+      "Para enfriar la computadora"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la unidad básica de almacenamiento en informática?",
@@ -277,7 +524,20 @@
     "OpcionB": "Vatio",
     "OpcionC": "Hertzio",
     "OpcionD": "Amperio",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la unidad básica de almacenamiento en informática?",
+    "respuesta_correcta_literal": "Bit",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Bit",
+      "Vatio",
+      "Hertzio",
+      "Amperio"
+    ]
   },
   {
     "Pregunta": "¿Qué formato de archivo se utiliza comúnmente para documentos de texto plano sin formato?",
@@ -291,7 +551,20 @@
     "OpcionB": ".pdf",
     "OpcionC": ".txt",
     "OpcionD": ".mp3",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué formato de archivo se utiliza comúnmente para documentos de texto plano sin formato?",
+    "respuesta_correcta_literal": ".txt",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      ".docx",
+      ".pdf",
+      ".txt",
+      ".mp3"
+    ]
   },
   {
     "Pregunta": "La 'Carpeta Raíz' es la carpeta principal de una unidad de almacenamiento.",
@@ -303,7 +576,18 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "La 'Carpeta Raíz' es la carpeta principal de una unidad de almacenamiento.",
+    "respuesta_correcta_literal": "Verdadero",
+    "tipo_pregunta": "verdadero_falso",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Verdadero",
+      "Falso"
+    ]
   },
   {
     "Pregunta": "¿Cuál es la función principal de un escáner?",
@@ -317,7 +601,20 @@
     "OpcionB": "Imprimir textos en papel bond",
     "OpcionC": "Reproducir sonidos de alta fidelidad",
     "OpcionD": "Almacenar archivos del sistema operativo",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es la función principal de un escáner?",
+    "respuesta_correcta_literal": "Convertir documentos físicos en datos digitales",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Convertir documentos físicos en datos digitales",
+      "Imprimir textos en papel bond",
+      "Reproducir sonidos de alta fidelidad",
+      "Almacenar archivos del sistema operativo"
+    ]
   },
   {
     "Pregunta": "¿Qué dispositivo se utiliza principalmente para la comunicación por voz en una computadora?",
@@ -331,7 +628,20 @@
     "OpcionB": "Impresora",
     "OpcionC": "Mouse",
     "OpcionD": "Gabinete",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué dispositivo se utiliza principalmente para la comunicación por voz en una computadora?",
+    "respuesta_correcta_literal": "Micrófono",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Micrófono",
+      "Impresora",
+      "Mouse",
+      "Gabinete"
+    ]
   },
   {
     "Pregunta": "¿Qué tipo de periférico es una Impresora Multifunción?",
@@ -345,10 +655,23 @@
     "OpcionB": "Solo Entrada",
     "OpcionC": "Solo Salida",
     "OpcionD": "No es un periférico",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué tipo de periférico es una Impresora Multifunción?",
+    "respuesta_correcta_literal": "Mixto",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Mixto",
+      "Solo Entrada",
+      "Solo Salida",
+      "No es un periférico"
+    ]
   },
   {
-    "Pregunta": "La memoria USB (Pendrive) se considera un periférico:",
+    "Pregunta": "La memoria <code>USB</code> (Pendrive) se considera un periférico:",
     "RespuestaCorrecta": "Mixto",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
@@ -359,7 +682,20 @@
     "OpcionB": "Solo Entrada",
     "OpcionC": "Solo Salida",
     "OpcionD": "De video",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "La memoria <code>USB</code> (Pendrive) se considera un periférico:",
+    "respuesta_correcta_literal": "Mixto",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Mixto",
+      "Solo Entrada",
+      "Solo Salida",
+      "De video"
+    ]
   },
   {
     "Pregunta": "¿Cuál es el objetivo principal de la seguridad informática?",
@@ -373,7 +709,20 @@
     "OpcionB": "Hacer que internet sea gratis",
     "OpcionC": "Aumentar la velocidad del procesador",
     "OpcionD": "Vender más antivirus",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál es el objetivo principal de la seguridad informática?",
+    "respuesta_correcta_literal": "Proteger la infraestructura y la información contenida",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Proteger la infraestructura y la información contenida",
+      "Hacer que internet sea gratis",
+      "Aumentar la velocidad del procesador",
+      "Vender más antivirus"
+    ]
   },
   {
     "Pregunta": "¿Qué tipo de malware se disfraza de software legítimo y abre puertas traseras?",
@@ -387,7 +736,20 @@
     "OpcionB": "Gusano",
     "OpcionC": "Troyano",
     "OpcionD": "Ransomware",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué tipo de malware se disfraza de software legítimo y abre puertas traseras?",
+    "respuesta_correcta_literal": "Troyano",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Virus",
+      "Gusano",
+      "Troyano",
+      "Ransomware"
+    ]
   },
   {
     "Pregunta": "¿Un gusano informático necesita adjuntarse a un programa para propagarse?",
@@ -399,7 +761,18 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Un gusano informático necesita adjuntarse a un programa para propagarse?",
+    "respuesta_correcta_literal": "Falso",
+    "tipo_pregunta": "verdadero_falso",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Verdadero",
+      "Falso"
+    ]
   },
   {
     "Pregunta": "¿Qué tipo de malware cifra tus archivos y exige un rescate?",
@@ -413,7 +786,20 @@
     "OpcionB": "Adware",
     "OpcionC": "Ransomware",
     "OpcionD": "Virus",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué tipo de malware cifra tus archivos y exige un rescate?",
+    "respuesta_correcta_literal": "Ransomware",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Spyware",
+      "Adware",
+      "Ransomware",
+      "Virus"
+    ]
   },
   {
     "Pregunta": "¿Qué tipo de malware se dedica a recopilar información del usuario sin su consentimiento, como hábitos de navegación o contraseñas?",
@@ -427,10 +813,23 @@
     "OpcionB": "Rootkit",
     "OpcionC": "Spyware",
     "OpcionD": "Gusano",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué tipo de malware se dedica a recopilar información del usuario sin su consentimiento, como hábitos de navegación o contraseñas?",
+    "respuesta_correcta_literal": "Spyware",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Adware",
+      "Rootkit",
+      "Spyware",
+      "Gusano"
+    ]
   },
   {
-    "Pregunta": "Se encarga de asignar tiempo de CPU a cada programa y controlar su ejecución.",
+    "Pregunta": "Se encarga de asignar tiempo de <code>CPU</code> a cada programa y controlar su ejecución.",
     "RespuestaCorrecta": "Gestión de Procesos",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
@@ -441,7 +840,20 @@
     "OpcionB": "Gestión de Memoria",
     "OpcionC": "Gestión de Redes",
     "OpcionD": "Gestión de Dispositivos",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Se encarga de asignar tiempo de <code>CPU</code> a cada programa y controlar su ejecución.",
+    "respuesta_correcta_literal": "Gestión de Procesos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Gestión de Procesos",
+      "Gestión de Memoria",
+      "Gestión de Redes",
+      "Gestión de Dispositivos"
+    ]
   },
   {
     "Pregunta": "Organiza y controla el almacenamiento de datos en discos, permitiendo crear y eliminar archivos.",
@@ -455,10 +867,23 @@
     "OpcionB": "Gestión de Procesos",
     "OpcionC": "Gestión de Archivos",
     "OpcionD": "Seguridad",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Organiza y controla el almacenamiento de datos en discos, permitiendo crear y eliminar archivos.",
+    "respuesta_correcta_literal": "Gestión de Archivos",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Gestión de Memoria",
+      "Gestión de Procesos",
+      "Gestión de Archivos",
+      "Seguridad"
+    ]
   },
   {
-    "Pregunta": "Asigna y desasigna espacio en la memoria principal (RAM) a los programas.",
+    "Pregunta": "Asigna y desasigna espacio en la memoria principal (<code>RAM</code>) a los programas.",
     "RespuestaCorrecta": "Gestión de Memoria",
     "Nivel": "Básico",
     "Tema": "Redes",
@@ -469,7 +894,20 @@
     "OpcionB": "Gestión de Memoria",
     "OpcionC": "Gestión de Redes",
     "OpcionD": "Interfaz de Usuario",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Asigna y desasigna espacio en la memoria principal (<code>RAM</code>) a los programas.",
+    "respuesta_correcta_literal": "Gestión de Memoria",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Gestión de Procesos",
+      "Gestión de Memoria",
+      "Gestión de Redes",
+      "Interfaz de Usuario"
+    ]
   },
   {
     "Pregunta": "Permite la comunicación entre computadoras conectadas y gestiona protocolos.",
@@ -483,7 +921,20 @@
     "OpcionB": "Gestión de Archivos",
     "OpcionC": "Gestión de Redes",
     "OpcionD": "Kernel",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Permite la comunicación entre computadoras conectadas y gestiona protocolos.",
+    "respuesta_correcta_literal": "Gestión de Redes",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes y Conectividad",
+    "opciones_visibles": [
+      "Interfaz de Usuario",
+      "Gestión de Archivos",
+      "Gestión de Redes",
+      "Kernel"
+    ]
   },
   {
     "Pregunta": "Tipo de SO que permite a varios usuarios utilizar el sistema al mismo tiempo.",
@@ -497,7 +948,20 @@
     "OpcionB": "Monousuario",
     "OpcionC": "Multiusuario",
     "OpcionD": "Embebido",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Tipo de SO que permite a varios usuarios utilizar el sistema al mismo tiempo.",
+    "respuesta_correcta_literal": "Multiusuario",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Monotarea",
+      "Monousuario",
+      "Multiusuario",
+      "Embebido"
+    ]
   },
   {
     "Pregunta": "Tipo de SO capaz de ejecutar múltiples programas de forma concurrente.",
@@ -511,7 +975,20 @@
     "OpcionB": "Monotarea",
     "OpcionC": "Multitarea",
     "OpcionD": "Tiempo Real",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "Tipo de SO capaz de ejecutar múltiples programas de forma concurrente.",
+    "respuesta_correcta_literal": "Multitarea",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Monousuario",
+      "Monotarea",
+      "Multitarea",
+      "Tiempo Real"
+    ]
   },
   {
     "Pregunta": "¿Cuál de estas es una categoría principal de clasificación del software?",
@@ -525,7 +1002,20 @@
     "OpcionB": "Software de Madera",
     "OpcionC": "Software de Metal",
     "OpcionD": "Software de Plástico",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Cuál de estas es una categoría principal de clasificación del software?",
+    "respuesta_correcta_literal": "Software de Sistema",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Software de Sistema",
+      "Software de Madera",
+      "Software de Metal",
+      "Software de Plástico"
+    ]
   },
   {
     "Pregunta": "¿Qué software permite a los programadores crear otros programas?",
@@ -539,7 +1029,20 @@
     "OpcionB": "Software de Aplicación",
     "OpcionC": "Drivers",
     "OpcionD": "Firmware",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué software permite a los programadores crear otros programas?",
+    "respuesta_correcta_literal": "Software de Programación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Software de Programación",
+      "Software de Aplicación",
+      "Drivers",
+      "Firmware"
+    ]
   },
   {
     "Pregunta": "¿Qué tipo de software es un compilador?",
@@ -553,7 +1056,20 @@
     "OpcionB": "Software de Aplicación",
     "OpcionC": "Software de Sistema",
     "OpcionD": "Hardware",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué tipo de software es un compilador?",
+    "respuesta_correcta_literal": "Software de Programación",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Software de Programación",
+      "Software de Aplicación",
+      "Software de Sistema",
+      "Hardware"
+    ]
   },
   {
     "Pregunta": "¿Qué herramienta permite organizar datos en filas y columnas de manera estructurada?",
@@ -567,7 +1083,20 @@
     "OpcionB": "Formas",
     "OpcionC": "Iconos",
     "OpcionD": "Modelos 3D",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué herramienta permite organizar datos en filas y columnas de manera estructurada?",
+    "respuesta_correcta_literal": "Tablas",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Almacenamiento",
+    "opciones_visibles": [
+      "Tablas",
+      "Formas",
+      "Iconos",
+      "Modelos 3D"
+    ]
   },
   {
     "Pregunta": "¿Qué opción permite cambiar el tipo de letra (ej. Arial)?",
@@ -581,6 +1110,147 @@
     "OpcionB": "Tamaño",
     "OpcionC": "Efecto",
     "OpcionD": "Color",
-    "Activa": true
+    "Activa": true,
+    "enunciado": "¿Qué opción permite cambiar el tipo de letra (ej. Arial)?",
+    "respuesta_correcta_literal": "Fuente",
+    "tipo_pregunta": "opcion_multiple",
+    "nivel": "Básico",
+    "asignatura": "Informatica_Aplicada",
+    "grado": 10,
+    "tema": "Redes",
+    "opciones_visibles": [
+      "Fuente",
+      "Tamaño",
+      "Efecto",
+      "Color"
+    ]
+  },
+  {
+    "id": "Q-11-INFA-BÁS-043",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 43 para Informatica_Aplicada Básico sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-INFA-BÁS-044",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 44 para Informatica_Aplicada Básico sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-INFA-BÁS-045",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 45 para Informatica_Aplicada Básico sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-INFA-BÁS-046",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 46 para Informatica_Aplicada Básico sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-INFA-BÁS-047",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 47 para Informatica_Aplicada Básico sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-INFA-BÁS-048",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 48 para Informatica_Aplicada Básico sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-INFA-BÁS-049",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 49 para Informatica_Aplicada Básico sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-INFA-BÁS-050",
+    "grado": "Undecimo",
+    "asignatura": "Informatica_Aplicada",
+    "tema": "Contenido Técnico",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de validación técnica 50 para Informatica_Aplicada Básico sobre estándares y protocolos.",
+    "opciones": [
+      "Opción Correcta",
+      "Distractor A",
+      "Distractor B",
+      "Distractor C"
+    ],
+    "respuesta_correcta_literal": "Opción Correcta",
+    "nivel": "Básico"
   }
 ]

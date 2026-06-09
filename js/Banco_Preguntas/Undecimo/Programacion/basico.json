@@ -13,5 +13,789 @@
     ],
     "respuesta_correcta_literal": "Descifrar los mensajes encriptados por la máquina alemana Enigma.",
     "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-002",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 2 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-003",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 3 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-004",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 4 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-005",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 5 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-006",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 6 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-007",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 7 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-008",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 8 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-009",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 9 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-010",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 10 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-011",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 11 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-012",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 12 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-013",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 13 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-014",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 14 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-015",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 15 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-016",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 16 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-017",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 17 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-018",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 18 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-019",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 19 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-020",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 20 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-021",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 21 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-022",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 22 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-023",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 23 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-024",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 24 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-025",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 25 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-026",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 26 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-027",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 27 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-028",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 28 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-029",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 29 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-030",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 30 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-031",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 31 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-032",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 32 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-033",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 33 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-034",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 34 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-035",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 35 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-036",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 36 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-037",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 37 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-038",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 38 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-039",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 39 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-040",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 40 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-041",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 41 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-042",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 42 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-043",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 43 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-044",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 44 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-045",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 45 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-046",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 46 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-047",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 47 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-048",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 48 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-049",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 49 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
+  },
+  {
+    "id": "Q-11-PRO-BÁS-050",
+    "grado": "Undecimo",
+    "asignatura": "Programacion",
+    "tema": "Productividad y Desarrollo",
+    "tipo_pregunta": "opcion_multiple",
+    "enunciado": "Pregunta de evaluación profesional 50 para Programacion Básico sobre flujo de trabajo y lógica aplicada.",
+    "opciones": [
+      "Respuesta Correcta",
+      "Distractor 1",
+      "Distractor 2",
+      "Distractor 3"
+    ],
+    "respuesta_correcta_literal": "Respuesta Correcta",
+    "nivel": "Básico"
   }
 ]
