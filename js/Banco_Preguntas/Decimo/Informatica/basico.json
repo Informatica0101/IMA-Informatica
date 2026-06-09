@@ -11,20 +11,7 @@
     "OpcionB": "Memoria RAM",
     "OpcionC": "Disco Duro",
     "OpcionD": "Tarjeta de Video",
-    "Activa": true,
-    "enunciado": "¿Qué componente se encarga de realizar todos los cálculos y procesos lógicos?",
-    "respuesta_correcta_literal": "Procesador (CPU)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Procesador (CPU)",
-      "Memoria RAM",
-      "Disco Duro",
-      "Tarjeta de Video"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué componente almacena el sistema operativo y todos los archivos permanentemente?",
@@ -38,20 +25,7 @@
     "OpcionB": "Memoria RAM",
     "OpcionC": "Procesador",
     "OpcionD": "Fuente de Poder",
-    "Activa": true,
-    "enunciado": "¿Qué componente almacena el sistema operativo y todos los archivos permanentemente?",
-    "respuesta_correcta_literal": "Disco Duro / SSD",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Disco Duro / SSD",
-      "Memoria RAM",
-      "Procesador",
-      "Fuente de Poder"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿A qué componente se conectan todos los demás elementos internos de la PC?",
@@ -65,20 +39,7 @@
     "OpcionB": "Monitor",
     "OpcionC": "Teclado",
     "OpcionD": "Impresora",
-    "Activa": true,
-    "enunciado": "¿A qué componente se conectan todos los demás elementos internos de la PC?",
-    "respuesta_correcta_literal": "Placa Base (Motherboard)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Placa Base (Motherboard)",
-      "Monitor",
-      "Teclado",
-      "Impresora"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué componente suministra energía eléctrica a todas las partes de la computadora?",
@@ -92,20 +53,7 @@
     "OpcionB": "Ventilador",
     "OpcionC": "Gabinete",
     "OpcionD": "Memoria RAM",
-    "Activa": true,
-    "enunciado": "¿Qué componente suministra energía eléctrica a todas las partes de la computadora?",
-    "respuesta_correcta_literal": "Fuente de Poder",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Introducción a la Informática",
-    "opciones_visibles": [
-      "Fuente de Poder",
-      "Ventilador",
-      "Gabinete",
-      "Memoria RAM"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué componente se considera el 'cerebro' de la computadora?",
@@ -119,20 +67,7 @@
     "OpcionB": "RAM",
     "OpcionC": "Placa Madre",
     "OpcionD": "Disco Duro",
-    "Activa": true,
-    "enunciado": "¿Qué componente se considera el 'cerebro' de la computadora?",
-    "respuesta_correcta_literal": "CPU",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Introducción a la Informática",
-    "opciones_visibles": [
-      "CPU",
-      "RAM",
-      "Placa Madre",
-      "Disco Duro"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "El hardware se define como:",
@@ -146,23 +81,10 @@
     "OpcionB": "Programas e instrucciones",
     "OpcionC": "Cables únicamente",
     "OpcionD": "La conexión a internet",
-    "Activa": true,
-    "enunciado": "El hardware se define como:",
-    "respuesta_correcta_literal": "Componentes físicos y tangibles",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Hardware",
-    "opciones_visibles": [
-      "Componentes físicos y tangibles",
-      "Programas e instrucciones",
-      "Cables únicamente",
-      "La conexión a internet"
-    ]
+    "Activa": true
   },
   {
-    "Pregunta": "¿Qué unidad de la <code>CPU</code> realiza las operaciones matemáticas y lógicas?",
+    "Pregunta": "¿Qué unidad de la CPU realiza las operaciones matemáticas y lógicas?",
     "RespuestaCorrecta": "ALU",
     "Nivel": "Básico",
     "Tema": "Introducción a la Informática",
@@ -173,20 +95,7 @@
     "OpcionB": "UC",
     "OpcionC": "Registros",
     "OpcionD": "Caché",
-    "Activa": true,
-    "enunciado": "¿Qué unidad de la <code>CPU</code> realiza las operaciones matemáticas y lógicas?",
-    "respuesta_correcta_literal": "ALU",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Introducción a la Informática",
-    "opciones_visibles": [
-      "ALU",
-      "UC",
-      "Registros",
-      "Caché"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué componente convierte la corriente eléctrica para el resto de piezas?",
@@ -200,20 +109,7 @@
     "OpcionB": "Batería CMOS",
     "OpcionC": "Transformador externo",
     "OpcionD": "Procesador",
-    "Activa": true,
-    "enunciado": "¿Qué componente convierte la corriente eléctrica para el resto de piezas?",
-    "respuesta_correcta_literal": "Fuente de Poder",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Fuente de Poder",
-      "Batería CMOS",
-      "Transformador externo",
-      "Procesador"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Las computadoras extremadamente potentes para investigación avanzada son:",
@@ -227,20 +123,7 @@
     "OpcionB": "Tabletas",
     "OpcionC": "Smartphones",
     "OpcionD": "Microcontroladores",
-    "Activa": true,
-    "enunciado": "Las computadoras extremadamente potentes para investigación avanzada son:",
-    "respuesta_correcta_literal": "Supercomputadoras",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Supercomputadoras",
-      "Tabletas",
-      "Smartphones",
-      "Microcontroladores"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Un sistema computacional especializado dentro de otro aparato es un sistema:",
@@ -254,20 +137,7 @@
     "OpcionB": "Abierto",
     "OpcionC": "Universal",
     "OpcionD": "Externo",
-    "Activa": true,
-    "enunciado": "Un sistema computacional especializado dentro de otro aparato es un sistema:",
-    "respuesta_correcta_literal": "Integrado (Embedded)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Integrado (Embedded)",
-      "Abierto",
-      "Universal",
-      "Externo"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es considerado el primer dispositivo de cálculo, originado en Mesopotamia?",
@@ -281,20 +151,7 @@
     "OpcionB": "Pascalina",
     "OpcionC": "Máquina Analítica",
     "OpcionD": "ENIAC",
-    "Activa": true,
-    "enunciado": "¿Cuál es considerado el primer dispositivo de cálculo, originado en Mesopotamia?",
-    "respuesta_correcta_literal": "Ábaco",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Ábaco",
-      "Pascalina",
-      "Máquina Analítica",
-      "ENIAC"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Quién inventó la Pascalina, la primera calculadora mecánica?",
@@ -308,20 +165,7 @@
     "OpcionB": "Charles Babbage",
     "OpcionC": "Konrad Zuse",
     "OpcionD": "Steve Wozniak",
-    "Activa": true,
-    "enunciado": "¿Quién inventó la Pascalina, la primera calculadora mecánica?",
-    "respuesta_correcta_literal": "Blaise Pascal",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Historia de la Computación",
-    "opciones_visibles": [
-      "Blaise Pascal",
-      "Charles Babbage",
-      "Konrad Zuse",
-      "Steve Wozniak"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué invento de 1947 permitió crear dispositivos más pequeños y eficientes que los tubos de vacío?",
@@ -335,20 +179,7 @@
     "OpcionB": "Circuito Integrado",
     "OpcionC": "Relé",
     "OpcionD": "Fibra Óptica",
-    "Activa": true,
-    "enunciado": "¿Qué invento de 1947 permitió crear dispositivos más pequeños y eficientes que los tubos de vacío?",
-    "respuesta_correcta_literal": "Transistor",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Transistor",
-      "Circuito Integrado",
-      "Relé",
-      "Fibra Óptica"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Quién inventó el circuito integrado en 1958?",
@@ -362,20 +193,7 @@
     "OpcionB": "Bill Gates",
     "OpcionC": "Alan Turing",
     "OpcionD": "Tim Berners-Lee",
-    "Activa": true,
-    "enunciado": "¿Quién inventó el circuito integrado en 1958?",
-    "respuesta_correcta_literal": "Jack Kilby",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Jack Kilby",
-      "Bill Gates",
-      "Alan Turing",
-      "Tim Berners-Lee"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál fue el primer microprocesador comercial lanzado en 1971?",
@@ -389,20 +207,7 @@
     "OpcionB": "Intel 8080",
     "OpcionC": "MOS 6502",
     "OpcionD": "Zilog Z80",
-    "Activa": true,
-    "enunciado": "¿Cuál fue el primer microprocesador comercial lanzado en 1971?",
-    "respuesta_correcta_literal": "Intel 4004",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Intel 4004",
-      "Intel 8080",
-      "MOS 6502",
-      "Zilog Z80"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Quién inventó la World Wide Web (WWW) en el CERN en 1989?",
@@ -416,20 +221,7 @@
     "OpcionB": "Vint Cerf",
     "OpcionC": "Larry Page",
     "OpcionD": "Steve Jobs",
-    "Activa": true,
-    "enunciado": "¿Quién inventó la World Wide Web (WWW) en el CERN en 1989?",
-    "respuesta_correcta_literal": "Tim Berners-Lee",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Tim Berners-Lee",
-      "Vint Cerf",
-      "Larry Page",
-      "Steve Jobs"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es una celda en Excel?",
@@ -443,20 +235,7 @@
     "OpcionB": "El nombre de un archivo",
     "OpcionC": "Un tipo de monitor",
     "OpcionD": "Una tecla especial",
-    "Activa": true,
-    "enunciado": "¿Qué es una celda en Excel?",
-    "respuesta_correcta_literal": "La intersección de una fila y una columna",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Hojas de Cálculo",
-    "opciones_visibles": [
-      "La intersección de una fila y una columna",
-      "El nombre de un archivo",
-      "Un tipo de monitor",
-      "Una tecla especial"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cómo se identifican las columnas en una hoja de cálculo?",
@@ -470,20 +249,7 @@
     "OpcionB": "Con números (1, 2, 3...)",
     "OpcionC": "Con colores",
     "OpcionD": "Con nombres de animales",
-    "Activa": true,
-    "enunciado": "¿Cómo se identifican las columnas en una hoja de cálculo?",
-    "respuesta_correcta_literal": "Con letras (A, B, C...)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Con letras (A, B, C...)",
-      "Con números (1, 2, 3...)",
-      "Con colores",
-      "Con nombres de animales"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cómo se identifican las filas en una hoja de cálculo?",
@@ -497,20 +263,7 @@
     "OpcionB": "Con letras (A, B, C...)",
     "OpcionC": "Con símbolos",
     "OpcionD": "Con iconos",
-    "Activa": true,
-    "enunciado": "¿Cómo se identifican las filas en una hoja de cálculo?",
-    "respuesta_correcta_literal": "Con números (1, 2, 3...)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Con números (1, 2, 3...)",
-      "Con letras (A, B, C...)",
-      "Con símbolos",
-      "Con iconos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Con qué símbolo debe comenzar siempre una fórmula en Excel?",
@@ -524,20 +277,7 @@
     "OpcionB": "Signo más (+)",
     "OpcionC": "Signo de pesos ($)",
     "OpcionD": "Asterisco (*)",
-    "Activa": true,
-    "enunciado": "¿Con qué símbolo debe comenzar siempre una fórmula en Excel?",
-    "respuesta_correcta_literal": "Signo igual (=)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Hojas de Cálculo",
-    "opciones_visibles": [
-      "Signo igual (=)",
-      "Signo más (+)",
-      "Signo de pesos ($)",
-      "Asterisco (*)"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es una hoja de cálculo?",
@@ -551,20 +291,7 @@
     "OpcionB": "Una aplicación para organizar y analizar datos en tablas",
     "OpcionC": "Un editor de texto avanzado",
     "OpcionD": "Un navegador web",
-    "Activa": true,
-    "enunciado": "¿Qué es una hoja de cálculo?",
-    "respuesta_correcta_literal": "Una aplicación para organizar y analizar datos en tablas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Un programa para editar imágenes",
-      "Una aplicación para organizar y analizar datos en tablas",
-      "Un editor de texto avanzado",
-      "Un navegador web"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cómo se llama la barra donde se escriben fórmulas en Excel?",
@@ -578,20 +305,7 @@
     "OpcionB": "Barra de herramientas",
     "OpcionC": "Barra de fórmulas",
     "OpcionD": "Barra de menú",
-    "Activa": true,
-    "enunciado": "¿Cómo se llama la barra donde se escriben fórmulas en Excel?",
-    "respuesta_correcta_literal": "Barra de fórmulas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Hojas de Cálculo",
-    "opciones_visibles": [
-      "Barra de estado",
-      "Barra de herramientas",
-      "Barra de fórmulas",
-      "Barra de menú"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el símbolo que debe iniciar toda fórmula en una hoja de cálculo?",
@@ -605,20 +319,7 @@
     "OpcionB": "=",
     "OpcionC": "-",
     "OpcionD": "#",
-    "Activa": true,
-    "enunciado": "¿Cuál es el símbolo que debe iniciar toda fórmula en una hoja de cálculo?",
-    "respuesta_correcta_literal": "=",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "+",
-      "=",
-      "-",
-      "#"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué función se usa para sumar un rango de celdas?",
@@ -632,20 +333,7 @@
     "OpcionB": "SUMA",
     "OpcionC": "CONTAR",
     "OpcionD": "MAX",
-    "Activa": true,
-    "enunciado": "¿Qué función se usa para sumar un rango de celdas?",
-    "respuesta_correcta_literal": "SUMA",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Hojas de Cálculo",
-    "opciones_visibles": [
-      "PROMEDIO",
-      "SUMA",
-      "CONTAR",
-      "MAX"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de los siguientes es un tipo de dato que puedes ingresar en una celda?",
@@ -659,20 +347,7 @@
     "OpcionB": "Imagen",
     "OpcionC": "Hipervínculo",
     "OpcionD": "Todos los anteriores",
-    "Activa": true,
-    "enunciado": "¿Cuál de los siguientes es un tipo de dato que puedes ingresar en una celda?",
-    "respuesta_correcta_literal": "Todos los anteriores",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Hojas de Cálculo",
-    "opciones_visibles": [
-      "Texto",
-      "Imagen",
-      "Hipervínculo",
-      "Todos los anteriores"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué atajo abre el cuadro de formato de celdas en la mayoría de hojas de cálculo?",
@@ -686,20 +361,7 @@
     "OpcionB": "Ctrl + 1",
     "OpcionC": "Ctrl + C",
     "OpcionD": "Ctrl + S",
-    "Activa": true,
-    "enunciado": "¿Qué atajo abre el cuadro de formato de celdas en la mayoría de hojas de cálculo?",
-    "respuesta_correcta_literal": "Ctrl + 1",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Hojas de Cálculo",
-    "opciones_visibles": [
-      "Ctrl + F",
-      "Ctrl + 1",
-      "Ctrl + C",
-      "Ctrl + S"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Para qué sirve el filtrado de datos?",
@@ -713,20 +375,7 @@
     "OpcionB": "Para mostrar solo los datos que cumplen ciertos criterios",
     "OpcionC": "Para cambiar el formato de los datos",
     "OpcionD": "Para sumar datos automáticamente",
-    "Activa": true,
-    "enunciado": "¿Para qué sirve el filtrado de datos?",
-    "respuesta_correcta_literal": "Para mostrar solo los datos que cumplen ciertos criterios",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Para ocultar filas o columnas",
-      "Para mostrar solo los datos que cumplen ciertos criterios",
-      "Para cambiar el formato de los datos",
-      "Para sumar datos automáticamente"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es la función para encontrar el valor máximo en un rango?",
@@ -740,20 +389,7 @@
     "OpcionB": "MAX",
     "OpcionC": "CONTAR",
     "OpcionD": "SI",
-    "Activa": true,
-    "enunciado": "¿Cuál es la función para encontrar el valor máximo en un rango?",
-    "respuesta_correcta_literal": "MAX",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "MIN",
-      "MAX",
-      "CONTAR",
-      "SI"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿En qué pestaña del procesador de texto se encuentra la opción para insertar una tabla?",
@@ -767,20 +403,7 @@
     "OpcionB": "Inicio",
     "OpcionC": "Diseño de página",
     "OpcionD": "Vista",
-    "Activa": true,
-    "enunciado": "¿En qué pestaña del procesador de texto se encuentra la opción para insertar una tabla?",
-    "respuesta_correcta_literal": "Insertar",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Insertar",
-      "Inicio",
-      "Diseño de página",
-      "Vista"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el propósito de los márgenes en una página?",
@@ -794,20 +417,7 @@
     "OpcionB": "Cambiar el color de las letras",
     "OpcionC": "Insertar una imagen de fondo",
     "OpcionD": "Poner una contraseña al archivo",
-    "Activa": true,
-    "enunciado": "¿Cuál es el propósito de los márgenes en una página?",
-    "respuesta_correcta_literal": "Definir el espacio en blanco alrededor del contenido del documento",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Definir el espacio en blanco alrededor del contenido del documento",
-      "Cambiar el color de las letras",
-      "Insertar una imagen de fondo",
-      "Poner una contraseña al archivo"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué nos permite configurar la opción 'Orientación' en el diseño de página?",
@@ -821,20 +431,7 @@
     "OpcionB": "Cambiar el idioma del texto",
     "OpcionC": "Poner el texto en negrita",
     "OpcionD": "Contar las palabras del documento",
-    "Activa": true,
-    "enunciado": "¿Qué nos permite configurar la opción 'Orientación' en el diseño de página?",
-    "respuesta_correcta_literal": "Elegir entre Vertical u Horizontal",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Elegir entre Vertical u Horizontal",
-      "Cambiar el idioma del texto",
-      "Poner el texto en negrita",
-      "Contar las palabras del documento"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es el encabezado de una página?",
@@ -848,20 +445,7 @@
     "OpcionB": "El título principal del documento únicamente",
     "OpcionC": "Una nota al pie de página",
     "OpcionD": "El nombre del archivo",
-    "Activa": true,
-    "enunciado": "¿Qué es el encabezado de una página?",
-    "respuesta_correcta_literal": "Un texto que se repite en la parte superior de cada página",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Un texto que se repite en la parte superior de cada página",
-      "El título principal del documento únicamente",
-      "Una nota al pie de página",
-      "El nombre del archivo"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Para qué sirve la numeración de páginas?",
@@ -875,20 +459,21 @@
     "OpcionB": "Para que el texto se vea más grande",
     "OpcionC": "Para cambiar el tipo de fuente",
     "OpcionD": "Para insertar dibujos automáticamente",
-    "Activa": true,
-    "enunciado": "¿Para qué sirve la numeración de páginas?",
-    "respuesta_correcta_literal": "Para organizar y facilitar la navegación en documentos extensos",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Para organizar y facilitar la navegación en documentos extensos",
-      "Para que el texto se vea más grande",
-      "Para cambiar el tipo de fuente",
-      "Para insertar dibujos automáticamente"
-    ]
+    "Activa": true
+  },
+  {
+    "Pregunta": "2. Si inserta una imagen y esta actúa como un carácter más que no se puede mover libremente, ¿cuál es su ajuste de texto (Text Wrapping) por defecto?",
+    "RespuestaCorrecta": "En línea con el texto",
+    "Nivel": "Básico",
+    "Tema": "Fundamentos de Computación",
+    "Asignatura": "Informatica",
+    "Grado": 10,
+    "TipoActividad": "opcion_multiple",
+    "OpcionA": "Cuadrado",
+    "OpcionB": "Detrás del texto",
+    "OpcionC": "En línea con el texto",
+    "OpcionD": "Estrecho",
+    "Activa": true
   },
   {
     "Pregunta": "4. ¿Cuál es el tamaño de papel estándar utilizado en Honduras, conocido internacionalmente como Carta?",
@@ -902,20 +487,7 @@
     "OpcionB": "Legal (Más largo)",
     "OpcionC": "Carta (Tamaño más común)",
     "OpcionD": "A3 (Tamaño grande)",
-    "Activa": true,
-    "enunciado": "4. ¿Cuál es el tamaño de papel estándar utilizado en Honduras, conocido internacionalmente como Carta?",
-    "respuesta_correcta_literal": "Carta (Tamaño más común)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "A4 (Tamaño europeo)",
-      "Legal (Más largo)",
-      "Carta (Tamaño más común)",
-      "A3 (Tamaño grande)"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "5. ¿Cómo se llama el símbolo de un ancla que aparece en la imagen y que indica el párrafo al que está ligada?",
@@ -929,20 +501,7 @@
     "OpcionB": "Pie de Foto",
     "OpcionC": "Anclaje",
     "OpcionD": "Posición Fija",
-    "Activa": true,
-    "enunciado": "5. ¿Cómo se llama el símbolo de un ancla que aparece en la imagen y que indica el párrafo al que está ligada?",
-    "respuesta_correcta_literal": "Anclaje",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Marcador de Posición",
-      "Pie de Foto",
-      "Anclaje",
-      "Posición Fija"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "6. Si necesita incluir un gráfico muy ancho en su informe, ¿qué orientación de página es más conveniente usar?",
@@ -956,20 +515,7 @@
     "OpcionB": "Horizontal (Paisaje)",
     "OpcionC": "Márgenes Anchos",
     "OpcionD": "Dos Columnas",
-    "Activa": true,
-    "enunciado": "6. Si necesita incluir un gráfico muy ancho en su informe, ¿qué orientación de página es más conveniente usar?",
-    "respuesta_correcta_literal": "Horizontal (Paisaje)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Vertical (Retrato)",
-      "Horizontal (Paisaje)",
-      "Márgenes Anchos",
-      "Dos Columnas"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "8. ¿Qué acción debe realizar sobre la Tabla de Contenido automática si añade un nuevo título o mueve una sección a otra página?",
@@ -983,20 +529,7 @@
     "OpcionB": "Guardar el documento y Cerrar",
     "OpcionC": "Actualizar Campos",
     "OpcionD": "Cambiar el estilo de Título",
-    "Activa": true,
-    "enunciado": "8. ¿Qué acción debe realizar sobre la Tabla de Contenido automática si añade un nuevo título o mueve una sección a otra página?",
-    "respuesta_correcta_literal": "Actualizar Campos",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Eliminar y Reinsertar",
-      "Guardar el documento y Cerrar",
-      "Actualizar Campos",
-      "Cambiar el estilo de Título"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "9. ¿En qué pestaña de la cinta de opciones se encuentra generalmente la configuración de Márgenes y Orientación?",
@@ -1010,20 +543,7 @@
     "OpcionB": "Referencias",
     "OpcionC": "Disposición / Formato",
     "OpcionD": "Revisar",
-    "Activa": true,
-    "enunciado": "9. ¿En qué pestaña de la cinta de opciones se encuentra generalmente la configuración de Márgenes y Orientación?",
-    "respuesta_correcta_literal": "Disposición / Formato",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Insertar",
-      "Referencias",
-      "Disposición / Formato",
-      "Revisar"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "10. ¿Cuál es la configuración de margen requerida por las Normas APA (Séptima Edición) en los cuatro lados de la página?",
@@ -1037,20 +557,7 @@
     "OpcionB": "$1.5 \text{ pulgada}$",
     "OpcionC": "$2.54 \text{ cm}$ ($1 \text{ pulgada}$)",
     "OpcionD": "$3 \text{ cm}$",
-    "Activa": true,
-    "enunciado": "10. ¿Cuál es la configuración de margen requerida por las Normas APA (Séptima Edición) en los cuatro lados de la página?",
-    "respuesta_correcta_literal": "$2.54 \text{ cm}$ ($1 \text{ pulgada}$)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "$2 \text{ cm}$",
-      "$1.5 \text{ pulgada}$",
-      "$2.54 \text{ cm}$ ($1 \text{ pulgada}$)",
-      "$3 \text{ cm}$"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es la informática?",
@@ -1064,20 +571,7 @@
     "OpcionB": "El estudio de los cables",
     "OpcionC": "La venta de computadoras",
     "OpcionD": "Jugar videojuegos",
-    "Activa": true,
-    "enunciado": "¿Qué es la informática?",
-    "respuesta_correcta_literal": "Ciencia del tratamiento automático de la información",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Ciencia del tratamiento automático de la información",
-      "El estudio de los cables",
-      "La venta de computadoras",
-      "Jugar videojuegos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es un sistema informático?",
@@ -1091,20 +585,7 @@
     "OpcionB": "Solo la computadora",
     "OpcionC": "Un programa de juegos",
     "OpcionD": "Un virus",
-    "Activa": true,
-    "enunciado": "¿Qué es un sistema informático?",
-    "respuesta_correcta_literal": "Conjunto de Hardware, Software y Personal informático",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Conjunto de Hardware, Software y Personal informático",
-      "Solo la computadora",
-      "Un programa de juegos",
-      "Un virus"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estos es un ejemplo de Hardware?",
@@ -1118,20 +599,7 @@
     "OpcionB": "Windows",
     "OpcionC": "Word",
     "OpcionD": "Excel",
-    "Activa": true,
-    "enunciado": "¿Cuál de estos es un ejemplo de Hardware?",
-    "respuesta_correcta_literal": "Monitor",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Hardware",
-    "opciones_visibles": [
-      "Monitor",
-      "Windows",
-      "Word",
-      "Excel"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estos es un ejemplo de Software?",
@@ -1145,20 +613,7 @@
     "OpcionB": "Teclado",
     "OpcionC": "Mouse",
     "OpcionD": "Impresora",
-    "Activa": true,
-    "enunciado": "¿Cuál de estos es un ejemplo de Software?",
-    "respuesta_correcta_literal": "Navegador Web",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Software",
-    "opciones_visibles": [
-      "Navegador Web",
-      "Teclado",
-      "Mouse",
-      "Impresora"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué dispositivo es el cerebro de la computadora?",
@@ -1172,20 +627,7 @@
     "OpcionB": "Monitor",
     "OpcionC": "RAM",
     "OpcionD": "Disco Duro",
-    "Activa": true,
-    "enunciado": "¿Qué dispositivo es el cerebro de la computadora?",
-    "respuesta_correcta_literal": "CPU",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Introducción a la Informática",
-    "opciones_visibles": [
-      "CPU",
-      "Monitor",
-      "RAM",
-      "Disco Duro"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué significa la palabra Informática?",
@@ -1199,20 +641,7 @@
     "OpcionB": "Informe Técnico",
     "OpcionC": "Información Crítica",
     "OpcionD": "Informática General",
-    "Activa": true,
-    "enunciado": "¿Qué significa la palabra Informática?",
-    "respuesta_correcta_literal": "Información Automática",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Información Automática",
-      "Informe Técnico",
-      "Información Crítica",
-      "Informática General"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estos componentes NO es físico?",
@@ -1226,20 +655,7 @@
     "OpcionB": "Memoria RAM",
     "OpcionC": "Tarjeta de Video",
     "OpcionD": "Cable de Poder",
-    "Activa": true,
-    "enunciado": "¿Cuál de estos componentes NO es físico?",
-    "respuesta_correcta_literal": "Sistema Operativo",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Sistema Operativo",
-      "Memoria RAM",
-      "Tarjeta de Video",
-      "Cable de Poder"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿A qué categoría pertenece el Mouse?",
@@ -1253,20 +669,7 @@
     "OpcionB": "Software",
     "OpcionC": "Sistema",
     "OpcionD": "Aplicación",
-    "Activa": true,
-    "enunciado": "¿A qué categoría pertenece el Mouse?",
-    "respuesta_correcta_literal": "Hardware",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Periféricos",
-    "opciones_visibles": [
-      "Hardware",
-      "Software",
-      "Sistema",
-      "Aplicación"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es el Humanware?",
@@ -1280,20 +683,7 @@
     "OpcionB": "Un virus humano",
     "OpcionC": "Un tipo de monitor",
     "OpcionD": "La carcasa de la PC",
-    "Activa": true,
-    "enunciado": "¿Qué es el Humanware?",
-    "respuesta_correcta_literal": "El usuario que utiliza la computadora",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "El usuario que utiliza la computadora",
-      "Un virus humano",
-      "Un tipo de monitor",
-      "La carcasa de la PC"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es un periférico de entrada?",
@@ -1307,20 +697,7 @@
     "OpcionB": "Monitor",
     "OpcionC": "Impresora",
     "OpcionD": "Parlantes",
-    "Activa": true,
-    "enunciado": "¿Cuál es un periférico de entrada?",
-    "respuesta_correcta_literal": "Teclado",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Periféricos",
-    "opciones_visibles": [
-      "Teclado",
-      "Monitor",
-      "Impresora",
-      "Parlantes"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es un periférico de salida?",
@@ -1334,20 +711,7 @@
     "OpcionB": "Mouse",
     "OpcionC": "Escáner",
     "OpcionD": "Micrófono",
-    "Activa": true,
-    "enunciado": "¿Cuál es un periférico de salida?",
-    "respuesta_correcta_literal": "Impresora",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Periféricos",
-    "opciones_visibles": [
-      "Impresora",
-      "Mouse",
-      "Escáner",
-      "Micrófono"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es un dato en informática?",
@@ -1361,20 +725,7 @@
     "OpcionB": "Un libro completo",
     "OpcionC": "Una computadora",
     "OpcionD": "El resultado final de un proceso",
-    "Activa": true,
-    "enunciado": "¿Qué es un dato en informática?",
-    "respuesta_correcta_literal": "Una unidad mínima de información sin sentido en sí misma",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Una unidad mínima de información sin sentido en sí misma",
-      "Un libro completo",
-      "Una computadora",
-      "El resultado final de un proceso"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es la información?",
@@ -1388,20 +739,7 @@
     "OpcionB": "Cables y chips",
     "OpcionC": "Un ratón de computadora",
     "OpcionD": "Electricidad",
-    "Activa": true,
-    "enunciado": "¿Qué es la información?",
-    "respuesta_correcta_literal": "Conjunto de datos procesados con significado",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Conjunto de datos procesados con significado",
-      "Cables y chips",
-      "Un ratón de computadora",
-      "Electricidad"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué dispositivo permite ver lo que procesa la computadora?",
@@ -1415,20 +753,7 @@
     "OpcionB": "CPU",
     "OpcionC": "RAM",
     "OpcionD": "Teclado",
-    "Activa": true,
-    "enunciado": "¿Qué dispositivo permite ver lo que procesa la computadora?",
-    "respuesta_correcta_literal": "Monitor",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Introducción a la Informática",
-    "opciones_visibles": [
-      "Monitor",
-      "CPU",
-      "RAM",
-      "Teclado"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Un conjunto de 8 bits forma un:",
@@ -1442,20 +767,7 @@
     "OpcionB": "Mega",
     "OpcionC": "Giga",
     "OpcionD": "Tera",
-    "Activa": true,
-    "enunciado": "Un conjunto de 8 bits forma un:",
-    "respuesta_correcta_literal": "Byte",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas de Numeración",
-    "opciones_visibles": [
-      "Byte",
-      "Mega",
-      "Giga",
-      "Tera"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es la unidad más pequeña de información en una computadora?",
@@ -1469,20 +781,7 @@
     "OpcionB": "Bit",
     "OpcionC": "Kilobyte",
     "OpcionD": "Gigabyte",
-    "Activa": true,
-    "enunciado": "¿Cuál es la unidad más pequeña de información en una computadora?",
-    "respuesta_correcta_literal": "Bit",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Introducción a la Informática",
-    "opciones_visibles": [
-      "Byte",
-      "Bit",
-      "Kilobyte",
-      "Gigabyte"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Un Terabyte (TB) es más pequeño que un Gigabyte (GB)?",
@@ -1494,18 +793,7 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true,
-    "enunciado": "¿Un Terabyte (TB) es más pequeño que un Gigabyte (GB)?",
-    "respuesta_correcta_literal": "Falso",
-    "tipo_pregunta": "verdadero_falso",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas de Numeración",
-    "opciones_visibles": [
-      "Verdadero",
-      "Falso"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Una ruta absoluta de archivo empieza desde la ubicación actual del usuario?",
@@ -1517,18 +805,7 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true,
-    "enunciado": "¿Una ruta absoluta de archivo empieza desde la ubicación actual del usuario?",
-    "respuesta_correcta_literal": "Falso",
-    "tipo_pregunta": "verdadero_falso",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Gestión de Archivos y Respaldos",
-    "opciones_visibles": [
-      "Verdadero",
-      "Falso"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de los siguientes es un formato de archivo de video?",
@@ -1542,20 +819,7 @@
     "OpcionB": ".mp4",
     "OpcionC": ".wav",
     "OpcionD": ".zip",
-    "Activa": true,
-    "enunciado": "¿Cuál de los siguientes es un formato de archivo de video?",
-    "respuesta_correcta_literal": ".mp4",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Gestión de Archivos y Respaldos",
-    "opciones_visibles": [
-      ".jpg",
-      ".mp4",
-      ".wav",
-      ".zip"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Un Byte está compuesto por 8 Bits.",
@@ -1567,18 +831,7 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true,
-    "enunciado": "Un Byte está compuesto por 8 Bits.",
-    "respuesta_correcta_literal": "Verdadero",
-    "tipo_pregunta": "verdadero_falso",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas de Numeración",
-    "opciones_visibles": [
-      "Verdadero",
-      "Falso"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué herramienta gráfica te permite organizar y gestionar archivos y carpetas en Windows?",
@@ -1592,20 +845,7 @@
     "OpcionB": "Editor de Texto",
     "OpcionC": "Explorador de Archivos",
     "OpcionD": "Calculadora",
-    "Activa": true,
-    "enunciado": "¿Qué herramienta gráfica te permite organizar y gestionar archivos y carpetas en Windows?",
-    "respuesta_correcta_literal": "Explorador de Archivos",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Navegador Web",
-      "Editor de Texto",
-      "Explorador de Archivos",
-      "Calculadora"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "El formato .pdf es ideal para mantener el diseño original de un documento en cualquier dispositivo.",
@@ -1617,18 +857,7 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true,
-    "enunciado": "El formato .pdf es ideal para mantener el diseño original de un documento en cualquier dispositivo.",
-    "respuesta_correcta_literal": "Verdadero",
-    "tipo_pregunta": "verdadero_falso",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Verdadero",
-      "Falso"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué acción realizas para crear una copia de un archivo y colocarla en otro lugar sin eliminar el original?",
@@ -1642,20 +871,7 @@
     "OpcionB": "Eliminar",
     "OpcionC": "Renombrar",
     "OpcionD": "Copiar",
-    "Activa": true,
-    "enunciado": "¿Qué acción realizas para crear una copia de un archivo y colocarla en otro lugar sin eliminar el original?",
-    "respuesta_correcta_literal": "Copiar",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Gestión de Archivos y Respaldos",
-    "opciones_visibles": [
-      "Mover",
-      "Eliminar",
-      "Renombrar",
-      "Copiar"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué función cumplen los periféricos de entrada en un sistema informático?",
@@ -1669,20 +885,7 @@
     "OpcionB": "Muestran los resultados del procesamiento",
     "OpcionC": "Almacenan la información de forma permanente",
     "OpcionD": "Suministran energía a la placa base",
-    "Activa": true,
-    "enunciado": "¿Qué función cumplen los periféricos de entrada en un sistema informático?",
-    "respuesta_correcta_literal": "Permiten introducir datos externos al procesador",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Periféricos",
-    "opciones_visibles": [
-      "Permiten introducir datos externos al procesador",
-      "Muestran los resultados del procesamiento",
-      "Almacenan la información de forma permanente",
-      "Suministran energía a la placa base"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estos dispositivos es un periférico de salida?",
@@ -1696,20 +899,7 @@
     "OpcionB": "Teclado",
     "OpcionC": "Escáner",
     "OpcionD": "Micrófono",
-    "Activa": true,
-    "enunciado": "¿Cuál de estos dispositivos es un periférico de salida?",
-    "respuesta_correcta_literal": "Monitor",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Periféricos",
-    "opciones_visibles": [
-      "Monitor",
-      "Teclado",
-      "Escáner",
-      "Micrófono"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué caracteriza a un periférico mixto o de entrada/salida?",
@@ -1723,20 +913,7 @@
     "OpcionB": "Solo funciona con conexión inalámbrica",
     "OpcionC": "No requiere controladores de software",
     "OpcionD": "Es un componente interno de la CPU",
-    "Activa": true,
-    "enunciado": "¿Qué caracteriza a un periférico mixto o de entrada/salida?",
-    "respuesta_correcta_literal": "Puede tanto enviar como recibir datos del sistema",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Periféricos",
-    "opciones_visibles": [
-      "Puede tanto enviar como recibir datos del sistema",
-      "Solo funciona con conexión inalámbrica",
-      "No requiere controladores de software",
-      "Es un componente interno de la CPU"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué son los periféricos en una computadora?",
@@ -1750,20 +927,7 @@
     "OpcionB": "Solo las partes internas del CPU",
     "OpcionC": "Los cables de corriente únicamente",
     "OpcionD": "El sistema operativo",
-    "Activa": true,
-    "enunciado": "¿Qué son los periféricos en una computadora?",
-    "respuesta_correcta_literal": "Dispositivos que permiten la comunicación con el exterior",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Dispositivos que permiten la comunicación con el exterior",
-      "Solo las partes internas del CPU",
-      "Los cables de corriente únicamente",
-      "El sistema operativo"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Un dispositivo que introduce datos a la computadora se clasifica como:",
@@ -1777,20 +941,7 @@
     "OpcionB": "Salida",
     "OpcionC": "Mixto",
     "OpcionD": "Interno",
-    "Activa": true,
-    "enunciado": "Un dispositivo que introduce datos a la computadora se clasifica como:",
-    "respuesta_correcta_literal": "Entrada",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Introducción a la Informática",
-    "opciones_visibles": [
-      "Entrada",
-      "Salida",
-      "Mixto",
-      "Interno"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estos es el periférico de entrada más común?",
@@ -1804,20 +955,7 @@
     "OpcionB": "Monitor",
     "OpcionC": "Impresora",
     "OpcionD": "Altavoces",
-    "Activa": true,
-    "enunciado": "¿Cuál de estos es el periférico de entrada más común?",
-    "respuesta_correcta_literal": "Teclado",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Periféricos",
-    "opciones_visibles": [
-      "Teclado",
-      "Monitor",
-      "Impresora",
-      "Altavoces"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Los periféricos de salida sirven para:",
@@ -1831,20 +969,7 @@
     "OpcionB": "Escribir instrucciones",
     "OpcionC": "Guardar archivos en la nube",
     "OpcionD": "Reiniciar la PC",
-    "Activa": true,
-    "enunciado": "Los periféricos de salida sirven para:",
-    "respuesta_correcta_literal": "Mostrar los resultados del procesamiento",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Periféricos",
-    "opciones_visibles": [
-      "Mostrar los resultados del procesamiento",
-      "Escribir instrucciones",
-      "Guardar archivos en la nube",
-      "Reiniciar la PC"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "El Monitor es un ejemplo clásico de periférico de:",
@@ -1858,20 +983,7 @@
     "OpcionB": "Entrada",
     "OpcionC": "Almacenamiento",
     "OpcionD": "Procesamiento",
-    "Activa": true,
-    "enunciado": "El Monitor es un ejemplo clásico de periférico de:",
-    "respuesta_correcta_literal": "Salida",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Periféricos",
-    "opciones_visibles": [
-      "Salida",
-      "Entrada",
-      "Almacenamiento",
-      "Procesamiento"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Dispositivo que permite digitalizar documentos físicos:",
@@ -1885,20 +997,7 @@
     "OpcionB": "Impresora",
     "OpcionC": "Monitor",
     "OpcionD": "Mouse",
-    "Activa": true,
-    "enunciado": "Dispositivo que permite digitalizar documentos físicos:",
-    "respuesta_correcta_literal": "Escáner",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Escáner",
-      "Impresora",
-      "Monitor",
-      "Mouse"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estos es un criterio de selección para un periférico?",
@@ -1912,20 +1011,7 @@
     "OpcionB": "Solo el color",
     "OpcionC": "El tamaño de la caja",
     "OpcionD": "La marca del cable",
-    "Activa": true,
-    "enunciado": "¿Cuál de estos es un criterio de selección para un periférico?",
-    "respuesta_correcta_literal": "Propósito, compatibilidad y costo",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Propósito, compatibilidad y costo",
-      "Solo el color",
-      "El tamaño de la caja",
-      "La marca del cable"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Un proyector se clasifica como un periférico de:",
@@ -1939,20 +1025,7 @@
     "OpcionB": "Entrada",
     "OpcionC": "Mixto",
     "OpcionD": "Red",
-    "Activa": true,
-    "enunciado": "Un proyector se clasifica como un periférico de:",
-    "respuesta_correcta_literal": "Salida",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Salida",
-      "Entrada",
-      "Mixto",
-      "Red"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el propósito principal de un procesador de texto?",
@@ -1966,20 +1039,7 @@
     "OpcionB": "Realizar cálculos matemáticos complejos",
     "OpcionC": "Editar videos de alta resolución",
     "OpcionD": "Gestionar bases de datos",
-    "Activa": true,
-    "enunciado": "¿Cuál es el propósito principal de un procesador de texto?",
-    "respuesta_correcta_literal": "Crear, editar y dar formato a documentos de texto",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Crear, editar y dar formato a documentos de texto",
-      "Realizar cálculos matemáticos complejos",
-      "Editar videos de alta resolución",
-      "Gestionar bases de datos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estos es un procesador de texto popular?",
@@ -1993,20 +1053,7 @@
     "OpcionB": "Microsoft Excel",
     "OpcionC": "Google Chrome",
     "OpcionD": "VLC Player",
-    "Activa": true,
-    "enunciado": "¿Cuál de estos es un procesador de texto popular?",
-    "respuesta_correcta_literal": "Microsoft Word",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Microsoft Word",
-      "Microsoft Excel",
-      "Google Chrome",
-      "VLC Player"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué nos permite hacer la función 'Alineación' en un documento?",
@@ -2020,20 +1067,7 @@
     "OpcionB": "Cambiar el color de fondo de la PC",
     "OpcionC": "Instalar una impresora nueva",
     "OpcionD": "Aumentar la velocidad del internet",
-    "Activa": true,
-    "enunciado": "¿Qué nos permite hacer la función 'Alineación' en un documento?",
-    "respuesta_correcta_literal": "Ubicar el texto a la izquierda, derecha, centro o justificado",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Ubicar el texto a la izquierda, derecha, centro o justificado",
-      "Cambiar el color de fondo de la PC",
-      "Instalar una impresora nueva",
-      "Aumentar la velocidad del internet"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es el interlineado?",
@@ -2047,20 +1081,7 @@
     "OpcionB": "El color de la línea del borde",
     "OpcionC": "Un error en el procesador",
     "OpcionD": "Una forma de borrar texto",
-    "Activa": true,
-    "enunciado": "¿Qué es el interlineado?",
-    "respuesta_correcta_literal": "El espacio vertical entre las líneas de un párrafo",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "El espacio vertical entre las líneas de un párrafo",
-      "El color de la línea del borde",
-      "Un error en el procesador",
-      "Una forma de borrar texto"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es la ventaja de usar un procesador de texto frente a una máquina de escribir?",
@@ -2074,20 +1095,7 @@
     "OpcionB": "No requiere electricidad",
     "OpcionC": "Es más pesado de transportar",
     "OpcionD": "Solo se puede usar una vez",
-    "Activa": true,
-    "enunciado": "¿Cuál es la ventaja de usar un procesador de texto frente a una máquina de escribir?",
-    "respuesta_correcta_literal": "Permite corregir errores fácilmente sin desperdiciar papel",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Permite corregir errores fácilmente sin desperdiciar papel",
-      "No requiere electricidad",
-      "Es más pesado de transportar",
-      "Solo se puede usar una vez"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es la función principal de un procesador de palabras?",
@@ -2101,20 +1109,7 @@
     "OpcionB": "Crear y editar documentos de texto",
     "OpcionC": "Reproducir música",
     "OpcionD": "Jugar videojuegos",
-    "Activa": true,
-    "enunciado": "¿Cuál es la función principal de un procesador de palabras?",
-    "respuesta_correcta_literal": "Crear y editar documentos de texto",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Navegar por internet",
-      "Crear y editar documentos de texto",
-      "Reproducir música",
-      "Jugar videojuegos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué tipo de formato de archivo es comúnmente utilizado por Microsoft Word?",
@@ -2128,20 +1123,7 @@
     "OpcionB": ".zip",
     "OpcionC": ".docx",
     "OpcionD": ".jpg",
-    "Activa": true,
-    "enunciado": "¿Qué tipo de formato de archivo es comúnmente utilizado por Microsoft Word?",
-    "respuesta_correcta_literal": ".docx",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      ".mp3",
-      ".zip",
-      ".docx",
-      ".jpg"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Verdadero o Falso: Un procesador de palabras solo puede manejar texto, no imágenes ni gráficos.",
@@ -2153,18 +1135,7 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true,
-    "enunciado": "Verdadero o Falso: Un procesador de palabras solo puede manejar texto, no imágenes ni gráficos.",
-    "respuesta_correcta_literal": "Falso",
-    "tipo_pregunta": "verdadero_falso",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Verdadero",
-      "Falso"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué función te permite cambiar el color y el tamaño de la fuente?",
@@ -2178,20 +1149,7 @@
     "OpcionB": "Formato de texto",
     "OpcionC": "Pegar",
     "OpcionD": "Buscar y reemplazar",
-    "Activa": true,
-    "enunciado": "¿Qué función te permite cambiar el color y el tamaño de la fuente?",
-    "respuesta_correcta_literal": "Formato de texto",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Guardar como...",
-      "Formato de texto",
-      "Pegar",
-      "Buscar y reemplazar"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de los siguientes no es un ejemplo de un procesador de palabras?",
@@ -2205,20 +1163,7 @@
     "OpcionB": "Microsoft Excel",
     "OpcionC": "LibreOffice Writer",
     "OpcionD": "Microsoft Word",
-    "Activa": true,
-    "enunciado": "¿Cuál de los siguientes no es un ejemplo de un procesador de palabras?",
-    "respuesta_correcta_literal": "Microsoft Excel",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Google Docs",
-      "Microsoft Excel",
-      "LibreOffice Writer",
-      "Microsoft Word"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Verdadero o Falso: El formato PDF asegura que un documento se vea igual en cualquier dispositivo.",
@@ -2230,18 +1175,7 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true,
-    "enunciado": "Verdadero o Falso: El formato PDF asegura que un documento se vea igual en cualquier dispositivo.",
-    "respuesta_correcta_literal": "Verdadero",
-    "tipo_pregunta": "verdadero_falso",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Verdadero",
-      "Falso"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es un sinónimo de procesador de palabras?",
@@ -2255,20 +1189,7 @@
     "OpcionB": "Editor de texto",
     "OpcionC": "Presentador de diapositivas",
     "OpcionD": "Base de datos",
-    "Activa": true,
-    "enunciado": "¿Qué es un sinónimo de procesador de palabras?",
-    "respuesta_correcta_literal": "Editor de texto",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Hoja de cálculo",
-      "Editor de texto",
-      "Presentador de diapositivas",
-      "Base de datos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué elemento de un documento es ideal para destacar títulos o secciones importantes?",
@@ -2282,20 +1203,7 @@
     "OpcionB": "Texto sin formato",
     "OpcionC": "Encabezado",
     "OpcionD": "Gráfico",
-    "Activa": true,
-    "enunciado": "¿Qué elemento de un documento es ideal para destacar títulos o secciones importantes?",
-    "respuesta_correcta_literal": "Encabezado",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Pie de página",
-      "Texto sin formato",
-      "Encabezado",
-      "Gráfico"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Verdadero o Falso: Un procesador de palabras no se puede usar para crear tablas.",
@@ -2307,18 +1215,7 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true,
-    "enunciado": "Verdadero o Falso: Un procesador de palabras no se puede usar para crear tablas.",
-    "respuesta_correcta_literal": "Falso",
-    "tipo_pregunta": "verdadero_falso",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Verdadero",
-      "Falso"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el propósito principal de un procesador de palabras?",
@@ -2332,20 +1229,7 @@
     "OpcionB": "Facilitar la comunicación escrita",
     "OpcionC": "Crear animaciones 3D",
     "OpcionD": "Diseñar sitios web",
-    "Activa": true,
-    "enunciado": "¿Cuál es el propósito principal de un procesador de palabras?",
-    "respuesta_correcta_literal": "Facilitar la comunicación escrita",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Automatizar cálculos complejos",
-      "Facilitar la comunicación escrita",
-      "Crear animaciones 3D",
-      "Diseñar sitios web"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es un virus informático?",
@@ -2359,20 +1243,7 @@
     "OpcionB": "Un componente físico dañado",
     "OpcionC": "Una persona que roba cables",
     "OpcionD": "Un archivo de texto largo",
-    "Activa": true,
-    "enunciado": "¿Qué es un virus informático?",
-    "respuesta_correcta_literal": "Un programa malicioso que altera el funcionamiento de la PC",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Seguridad Informática",
-    "opciones_visibles": [
-      "Un programa malicioso que altera el funcionamiento de la PC",
-      "Un componente físico dañado",
-      "Una persona que roba cables",
-      "Un archivo de texto largo"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es la función de un antivirus?",
@@ -2386,20 +1257,7 @@
     "OpcionB": "Hacer que Word escriba solo",
     "OpcionC": "Limpiar el polvo del teclado",
     "OpcionD": "Cargar la batería de la laptop",
-    "Activa": true,
-    "enunciado": "¿Cuál es la función de un antivirus?",
-    "respuesta_correcta_literal": "Detectar, bloquear y eliminar software malicioso",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Seguridad Informática",
-    "opciones_visibles": [
-      "Detectar, bloquear y eliminar software malicioso",
-      "Hacer que Word escriba solo",
-      "Limpiar el polvo del teclado",
-      "Cargar la batería de la laptop"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es el phishing?",
@@ -2413,20 +1271,7 @@
     "OpcionB": "Un deporte acuático",
     "OpcionC": "Un tipo de monitor",
     "OpcionD": "Una marca de mouse",
-    "Activa": true,
-    "enunciado": "¿Qué es el phishing?",
-    "respuesta_correcta_literal": "Una técnica de engaño para robar información confidencial",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Seguridad Informática",
-    "opciones_visibles": [
-      "Una técnica de engaño para robar información confidencial",
-      "Un deporte acuático",
-      "Un tipo de monitor",
-      "Una marca de mouse"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Por qué es importante usar contraseñas seguras?",
@@ -2440,20 +1285,7 @@
     "OpcionB": "Para que no se nos olvide el nombre",
     "OpcionC": "Para que la PC encienda rápido",
     "OpcionD": "Para decorar la pantalla",
-    "Activa": true,
-    "enunciado": "¿Por qué es importante usar contraseñas seguras?",
-    "respuesta_correcta_literal": "Para dificultar el acceso no autorizado a nuestras cuentas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Seguridad Informática",
-    "opciones_visibles": [
-      "Para dificultar el acceso no autorizado a nuestras cuentas",
-      "Para que no se nos olvide el nombre",
-      "Para que la PC encienda rápido",
-      "Para decorar la pantalla"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿La detección por firmas de un antivirus es efectiva contra malware 'zero-day' (nuevo)?",
@@ -2465,18 +1297,7 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true,
-    "enunciado": "¿La detección por firmas de un antivirus es efectiva contra malware 'zero-day' (nuevo)?",
-    "respuesta_correcta_literal": "Falso",
-    "tipo_pregunta": "verdadero_falso",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Seguridad Informática",
-    "opciones_visibles": [
-      "Verdadero",
-      "Falso"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de las siguientes NO es una buena práctica de seguridad informática?",
@@ -2490,20 +1311,7 @@
     "OpcionB": "Descargar software de cualquier sitio web",
     "OpcionC": "Realizar copias de seguridad regularmente",
     "OpcionD": "Mantener el sistema operativo actualizado",
-    "Activa": true,
-    "enunciado": "¿Cuál de las siguientes NO es una buena práctica de seguridad informática?",
-    "respuesta_correcta_literal": "Descargar software de cualquier sitio web",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Seguridad Informática",
-    "opciones_visibles": [
-      "Instalar y actualizar un antivirus",
-      "Descargar software de cualquier sitio web",
-      "Realizar copias de seguridad regularmente",
-      "Mantener el sistema operativo actualizado"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "El término 'Malware' es una abreviatura de 'Malicious Software'.",
@@ -2515,18 +1323,7 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true,
-    "enunciado": "El término 'Malware' es una abreviatura de 'Malicious Software'.",
-    "respuesta_correcta_literal": "Verdadero",
-    "tipo_pregunta": "verdadero_falso",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Software",
-    "opciones_visibles": [
-      "Verdadero",
-      "Falso"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estos métodos de detección de antivirus busca patrones de comportamiento sospechosos en tiempo real, incluso para amenazas desconocidas?",
@@ -2540,20 +1337,7 @@
     "OpcionB": "Detección Heurística",
     "OpcionC": "Análisis de Comportamiento",
     "OpcionD": "Análisis en la Nube",
-    "Activa": true,
-    "enunciado": "¿Cuál de estos métodos de detección de antivirus busca patrones de comportamiento sospechosos en tiempo real, incluso para amenazas desconocidas?",
-    "respuesta_correcta_literal": "Análisis de Comportamiento",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Seguridad Informática",
-    "opciones_visibles": [
-      "Detección por Firmas",
-      "Detección Heurística",
-      "Análisis de Comportamiento",
-      "Análisis en la Nube"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "El Phishing es una técnica que a menudo utiliza correos electrónicos engañosos para obtener información sensible.",
@@ -2565,18 +1349,7 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true,
-    "enunciado": "El Phishing es una técnica que a menudo utiliza correos electrónicos engañosos para obtener información sensible.",
-    "respuesta_correcta_literal": "Verdadero",
-    "tipo_pregunta": "verdadero_falso",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Seguridad Informática",
-    "opciones_visibles": [
-      "Verdadero",
-      "Falso"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Los antivirus solo son útiles si tu computadora ya está infectada.",
@@ -2588,21 +1361,10 @@
     "TipoActividad": "verdadero_falso",
     "OpcionA": "Verdadero",
     "OpcionB": "Falso",
-    "Activa": true,
-    "enunciado": "Los antivirus solo son útiles si tu computadora ya está infectada.",
-    "respuesta_correcta_literal": "Falso",
-    "tipo_pregunta": "verdadero_falso",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Seguridad Informática",
-    "opciones_visibles": [
-      "Verdadero",
-      "Falso"
-    ]
+    "Activa": true
   },
   {
-    "Pregunta": "Controla la comunicación entre la <code>CPU</code> y periféricos como la impresora o el teclado.",
+    "Pregunta": "Controla la comunicación entre la CPU y periféricos como la impresora o el teclado.",
     "RespuestaCorrecta": "Gestión de Dispositivos",
     "Nivel": "Básico",
     "Tema": "Periféricos",
@@ -2613,20 +1375,7 @@
     "OpcionB": "Gestión de Dispositivos",
     "OpcionC": "Interfaz de Usuario",
     "OpcionD": "Gestión de Memoria",
-    "Activa": true,
-    "enunciado": "Controla la comunicación entre la <code>CPU</code> y periféricos como la impresora o el teclado.",
-    "respuesta_correcta_literal": "Gestión de Dispositivos",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Periféricos",
-    "opciones_visibles": [
-      "Gestión de Archivos",
-      "Gestión de Dispositivos",
-      "Interfaz de Usuario",
-      "Gestión de Memoria"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Permite al usuario interactuar con la computadora a través de ventanas, iconos y menús.",
@@ -2640,20 +1389,7 @@
     "OpcionB": "Gestión de Archivos",
     "OpcionC": "Interfaz de Usuario",
     "OpcionD": "Gestión de Dispositivos",
-    "Activa": true,
-    "enunciado": "Permite al usuario interactuar con la computadora a través de ventanas, iconos y menús.",
-    "respuesta_correcta_literal": "Interfaz de Usuario",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Introducción a la Informática",
-    "opciones_visibles": [
-      "Kernel",
-      "Gestión de Archivos",
-      "Interfaz de Usuario",
-      "Gestión de Dispositivos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Protege el sistema contra accesos no autorizados y gestiona permisos de usuario.",
@@ -2667,23 +1403,10 @@
     "OpcionB": "Gestión de Redes",
     "OpcionC": "Seguridad",
     "OpcionD": "Gestión de Memoria",
-    "Activa": true,
-    "enunciado": "Protege el sistema contra accesos no autorizados y gestiona permisos de usuario.",
-    "respuesta_correcta_literal": "Seguridad",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Gestión de Procesos",
-      "Gestión de Redes",
-      "Seguridad",
-      "Gestión de Memoria"
-    ]
+    "Activa": true
   },
   {
-    "Pregunta": "Es el corazón del sistema operativo, gestiona la <code>CPU</code> y reside permanentemente en la memoria.",
+    "Pregunta": "Es el corazón del sistema operativo, gestiona la CPU y reside permanentemente en la memoria.",
     "RespuestaCorrecta": "Kernel",
     "Nivel": "Básico",
     "Tema": "Sistemas Operativos",
@@ -2694,20 +1417,7 @@
     "OpcionB": "Kernel",
     "OpcionC": "Sistema de Archivos",
     "OpcionD": "Driver",
-    "Activa": true,
-    "enunciado": "Es el corazón del sistema operativo, gestiona la <code>CPU</code> y reside permanentemente en la memoria.",
-    "respuesta_correcta_literal": "Kernel",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Shell",
-      "Kernel",
-      "Sistema de Archivos",
-      "Driver"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Sistema operativo de código abierto muy popular en servidores.",
@@ -2721,20 +1431,7 @@
     "OpcionB": "macOS",
     "OpcionC": "Linux",
     "OpcionD": "iOS",
-    "Activa": true,
-    "enunciado": "Sistema operativo de código abierto muy popular en servidores.",
-    "respuesta_correcta_literal": "Linux",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Windows",
-      "macOS",
-      "Linux",
-      "iOS"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Sistema operativo móvil desarrollado por Google.",
@@ -2748,20 +1445,7 @@
     "OpcionB": "Windows Mobile",
     "OpcionC": "Android",
     "OpcionD": "Symbian",
-    "Activa": true,
-    "enunciado": "Sistema operativo móvil desarrollado por Google.",
-    "respuesta_correcta_literal": "Android",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "iOS",
-      "Windows Mobile",
-      "Android",
-      "Symbian"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cómo se llama el conjunto de componentes lógicos de una computadora?",
@@ -2775,20 +1459,7 @@
     "OpcionB": "Hardware",
     "OpcionC": "Firmware",
     "OpcionD": "Peopleware",
-    "Activa": true,
-    "enunciado": "¿Cómo se llama el conjunto de componentes lógicos de una computadora?",
-    "respuesta_correcta_literal": "Software",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Introducción a la Informática",
-    "opciones_visibles": [
-      "Software",
-      "Hardware",
-      "Firmware",
-      "Peopleware"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es la función principal de un Sistema Operativo?",
@@ -2802,20 +1473,7 @@
     "OpcionB": "Limpiar el monitor",
     "OpcionC": "Solo navegar por internet",
     "OpcionD": "Escribir cartas en Word",
-    "Activa": true,
-    "enunciado": "¿Cuál es la función principal de un Sistema Operativo?",
-    "respuesta_correcta_literal": "Administrar los recursos del hardware y servir de interfaz",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Administrar los recursos del hardware y servir de interfaz",
-      "Limpiar el monitor",
-      "Solo navegar por internet",
-      "Escribir cartas en Word"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es el software de aplicación?",
@@ -2829,20 +1487,7 @@
     "OpcionB": "El sistema que arranca la PC",
     "OpcionC": "Los cables internos",
     "OpcionD": "La memoria RAM",
-    "Activa": true,
-    "enunciado": "¿Qué es el software de aplicación?",
-    "respuesta_correcta_literal": "Programas diseñados para realizar tareas específicas del usuario",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Software",
-    "opciones_visibles": [
-      "Programas diseñados para realizar tareas específicas del usuario",
-      "El sistema que arranca la PC",
-      "Los cables internos",
-      "La memoria RAM"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estos es un ejemplo de Sistema Operativo?",
@@ -2856,20 +1501,7 @@
     "OpcionB": "Microsoft Excel",
     "OpcionC": "Google Chrome",
     "OpcionD": "Adobe Photoshop",
-    "Activa": true,
-    "enunciado": "¿Cuál de estos es un ejemplo de Sistema Operativo?",
-    "respuesta_correcta_literal": "Windows 11",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Windows 11",
-      "Microsoft Excel",
-      "Google Chrome",
-      "Adobe Photoshop"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es el software de sistema?",
@@ -2883,20 +1515,7 @@
     "OpcionB": "Juegos de video",
     "OpcionC": "Hojas de cálculo",
     "OpcionD": "Presentaciones multimedia",
-    "Activa": true,
-    "enunciado": "¿Qué es el software de sistema?",
-    "respuesta_correcta_literal": "Programas que permiten el funcionamiento del hardware",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Software",
-    "opciones_visibles": [
-      "Programas que permiten el funcionamiento del hardware",
-      "Juegos de video",
-      "Hojas de cálculo",
-      "Presentaciones multimedia"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es el software?",
@@ -2910,20 +1529,7 @@
     "OpcionB": "Componentes físicos de la PC",
     "OpcionC": "Solo los cables de red",
     "OpcionD": "La pantalla y el teclado",
-    "Activa": true,
-    "enunciado": "¿Qué es el software?",
-    "respuesta_correcta_literal": "Conjunto de programas y reglas informáticas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Software",
-    "opciones_visibles": [
-      "Conjunto de programas y reglas informáticas",
-      "Componentes físicos de la PC",
-      "Solo los cables de red",
-      "La pantalla y el teclado"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "El hardware se diferencia del software porque el hardware es:",
@@ -2937,20 +1543,7 @@
     "OpcionB": "Intangible",
     "OpcionC": "Un conjunto de instrucciones",
     "OpcionD": "Solo programas de juego",
-    "Activa": true,
-    "enunciado": "El hardware se diferencia del software porque el hardware es:",
-    "respuesta_correcta_literal": "Físico y tangible",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Software",
-    "opciones_visibles": [
-      "Físico y tangible",
-      "Intangible",
-      "Un conjunto de instrucciones",
-      "Solo programas de juego"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Windows, macOS y Linux son ejemplos de:",
@@ -2964,20 +1557,7 @@
     "OpcionB": "Software de Aplicación",
     "OpcionC": "Hardware de entrada",
     "OpcionD": "Editores de texto",
-    "Activa": true,
-    "enunciado": "Windows, macOS y Linux son ejemplos de:",
-    "respuesta_correcta_literal": "Sistemas Operativos",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Sistemas Operativos",
-      "Software de Aplicación",
-      "Hardware de entrada",
-      "Editores de texto"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Microsoft Word y Google Chrome son ejemplos de:",
@@ -2991,23 +1571,10 @@
     "OpcionB": "Software de Sistema",
     "OpcionC": "Software de Programación",
     "OpcionD": "Hardware",
-    "Activa": true,
-    "enunciado": "Microsoft Word y Google Chrome son ejemplos de:",
-    "respuesta_correcta_literal": "Software de Aplicación",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Software de Aplicación",
-      "Software de Sistema",
-      "Software de Programación",
-      "Hardware"
-    ]
+    "Activa": true
   },
   {
-    "Pregunta": "La función del Sistema Operativo que administra la <code>RAM</code> se llama:",
+    "Pregunta": "La función del Sistema Operativo que administra la RAM se llama:",
     "RespuestaCorrecta": "Gestión de Memoria",
     "Nivel": "Básico",
     "Tema": "Sistemas Operativos",
@@ -3018,20 +1585,7 @@
     "OpcionB": "Gestión de Archivos",
     "OpcionC": "Interfaz de Usuario",
     "OpcionD": "Gestión de Dispositivos",
-    "Activa": true,
-    "enunciado": "La función del Sistema Operativo que administra la <code>RAM</code> se llama:",
-    "respuesta_correcta_literal": "Gestión de Memoria",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Gestión de Memoria",
-      "Gestión de Archivos",
-      "Interfaz de Usuario",
-      "Gestión de Dispositivos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué componente permite la comunicación entre el hardware y el SO?",
@@ -3045,20 +1599,7 @@
     "OpcionB": "Iconos",
     "OpcionC": "Fondo de pantalla",
     "OpcionD": "Teclado físico",
-    "Activa": true,
-    "enunciado": "¿Qué componente permite la comunicación entre el hardware y el SO?",
-    "respuesta_correcta_literal": "Controladores (Drivers)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Hardware",
-    "opciones_visibles": [
-      "Controladores (Drivers)",
-      "Iconos",
-      "Fondo de pantalla",
-      "Teclado físico"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Un Sistema Operativo móvil muy popular es:",
@@ -3072,20 +1613,7 @@
     "OpcionB": "Windows 95",
     "OpcionC": "Linux Ubuntu",
     "OpcionD": "MS-DOS",
-    "Activa": true,
-    "enunciado": "Un Sistema Operativo móvil muy popular es:",
-    "respuesta_correcta_literal": "Android",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Sistemas Operativos",
-    "opciones_visibles": [
-      "Android",
-      "Windows 95",
-      "Linux Ubuntu",
-      "MS-DOS"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué opción se utiliza para cambiar el tipo de letra en un procesador de texto?",
@@ -3099,20 +1627,35 @@
     "OpcionB": "Párrafo",
     "OpcionC": "Estilos",
     "OpcionD": "Edición",
-    "Activa": true,
-    "enunciado": "¿Qué opción se utiliza para cambiar el tipo de letra en un procesador de texto?",
-    "respuesta_correcta_literal": "Fuente",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Fuente",
-      "Párrafo",
-      "Estilos",
-      "Edición"
-    ]
+    "Activa": true
+  },
+  {
+    "Pregunta": "¿Cuál es la función del comando 'Copiar Formato'?",
+    "RespuestaCorrecta": "Aplicar la apariencia de un texto seleccionado a otro",
+    "Nivel": "Básico",
+    "Tema": "Sistemas Operativos",
+    "Asignatura": "Informatica",
+    "Grado": 10,
+    "TipoActividad": "opcion_multiple",
+    "OpcionA": "Aplicar la apariencia de un texto seleccionado a otro",
+    "OpcionB": "Duplicar el texto en el portapapeles",
+    "OpcionC": "Borrar el estilo de la página",
+    "OpcionD": "Cambiar el tamaño de las imágenes",
+    "Activa": true
+  },
+  {
+    "Pregunta": "¿Qué comando se usa para combinar dos o más celdas en una sola en una tabla?",
+    "RespuestaCorrecta": "Combinar celdas",
+    "Nivel": "Básico",
+    "Tema": "Hojas de Cálculo",
+    "Asignatura": "Informatica",
+    "Grado": 10,
+    "TipoActividad": "opcion_multiple",
+    "OpcionA": "Combinar celdas",
+    "OpcionB": "Dividir celdas",
+    "OpcionC": "Autoajustar",
+    "OpcionD": "Alinear",
+    "Activa": true
   },
   {
     "Pregunta": "¿Cómo se llama la intersección de una fila y una columna en una tabla?",
@@ -3126,20 +1669,7 @@
     "OpcionB": "Cuadro",
     "OpcionC": "Bloque",
     "OpcionD": "Sección",
-    "Activa": true,
-    "enunciado": "¿Cómo se llama la intersección de una fila y una columna en una tabla?",
-    "respuesta_correcta_literal": "Celda",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Celda",
-      "Cuadro",
-      "Bloque",
-      "Sección"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es una fila en una tabla?",
@@ -3153,20 +1683,7 @@
     "OpcionB": "Una línea horizontal de celdas",
     "OpcionC": "Una celda principal",
     "OpcionD": "El encabezado de la tabla",
-    "Activa": true,
-    "enunciado": "¿Qué es una fila en una tabla?",
-    "respuesta_correcta_literal": "Una línea horizontal de celdas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Una línea vertical de celdas",
-      "Una línea horizontal de celdas",
-      "Una celda principal",
-      "El encabezado de la tabla"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Para qué sirve el estilo de fuente 'negrita'?",
@@ -3180,20 +1697,7 @@
     "OpcionB": "Para cambiar el tamaño del texto",
     "OpcionC": "Para enfatizar palabras o frases",
     "OpcionD": "Para alinear el texto al centro",
-    "Activa": true,
-    "enunciado": "¿Para qué sirve el estilo de fuente 'negrita'?",
-    "respuesta_correcta_literal": "Para enfatizar palabras o frases",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Para justificar el texto",
-      "Para cambiar el tamaño del texto",
-      "Para enfatizar palabras o frases",
-      "Para alinear el texto al centro"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el componente de una tabla que define el título de una columna?",
@@ -3207,20 +1711,7 @@
     "OpcionB": "Celda",
     "OpcionC": "Encabezado",
     "OpcionD": "Columna",
-    "Activa": true,
-    "enunciado": "¿Cuál es el componente de una tabla que define el título de una columna?",
-    "respuesta_correcta_literal": "Encabezado",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Fila",
-      "Celda",
-      "Encabezado",
-      "Columna"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es la alineación de texto?",
@@ -3234,20 +1725,7 @@
     "OpcionB": "El color del texto",
     "OpcionC": "La posición del texto",
     "OpcionD": "El tamaño de la fuente",
-    "Activa": true,
-    "enunciado": "¿Qué es la alineación de texto?",
-    "respuesta_correcta_literal": "La posición del texto",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "El tipo de letra",
-      "El color del texto",
-      "La posición del texto",
-      "El tamaño de la fuente"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el componente que se usa para encabezar filas y columnas?",
@@ -3261,20 +1739,7 @@
     "OpcionB": "Una celda de datos",
     "OpcionC": "Una fila",
     "OpcionD": "Una columna",
-    "Activa": true,
-    "enunciado": "¿Cuál es el componente que se usa para encabezar filas y columnas?",
-    "respuesta_correcta_literal": "Una celda de encabezado",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Una celda de encabezado",
-      "Una celda de datos",
-      "Una fila",
-      "Una columna"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cómo se llama la intersección de una fila y una columna?",
@@ -3288,20 +1753,7 @@
     "OpcionB": "Celda",
     "OpcionC": "Segmento",
     "OpcionD": "Intersección",
-    "Activa": true,
-    "enunciado": "¿Cómo se llama la intersección de una fila y una columna?",
-    "respuesta_correcta_literal": "Celda",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Cuadro",
-      "Celda",
-      "Segmento",
-      "Intersección"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "El formato de texto se refiere a:",
@@ -3315,20 +1767,7 @@
     "OpcionB": "Solo a la ortografía",
     "OpcionC": "A la velocidad de escritura",
     "OpcionD": "Al peso del archivo",
-    "Activa": true,
-    "enunciado": "El formato de texto se refiere a:",
-    "respuesta_correcta_literal": "Presentación y estilo del texto",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Presentación y estilo del texto",
-      "Solo a la ortografía",
-      "A la velocidad de escritura",
-      "Al peso del archivo"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Alinear el texto de forma que quede recto por ambos lados se llama:",
@@ -3342,20 +1781,7 @@
     "OpcionB": "Centrado",
     "OpcionC": "Izquierda",
     "OpcionD": "Derecha",
-    "Activa": true,
-    "enunciado": "Alinear el texto de forma que quede recto por ambos lados se llama:",
-    "respuesta_correcta_literal": "Justificado",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Fundamentos de Computación",
-    "opciones_visibles": [
-      "Justificado",
-      "Centrado",
-      "Izquierda",
-      "Derecha"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Un conjunto vertical de celdas en una tabla se llama:",
@@ -3369,20 +1795,7 @@
     "OpcionB": "Fila",
     "OpcionC": "Rango",
     "OpcionD": "Bloque",
-    "Activa": true,
-    "enunciado": "Un conjunto vertical de celdas en una tabla se llama:",
-    "respuesta_correcta_literal": "Columna",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Hojas de Cálculo",
-    "opciones_visibles": [
-      "Columna",
-      "Fila",
-      "Rango",
-      "Bloque"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el atajo de teclado para abrir la ventana de <strong>Fuente</strong> en Microsoft Word?",
@@ -3396,20 +1809,7 @@
     "OpcionB": "Ctrl + D",
     "OpcionC": "Ctrl + M",
     "OpcionD": "Ctrl + L",
-    "Activa": true,
-    "enunciado": "¿Cuál es el atajo de teclado para abrir la ventana de <strong>Fuente</strong> en Microsoft Word?",
-    "respuesta_correcta_literal": "Ctrl + M",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Ctrl + F",
-      "Ctrl + D",
-      "Ctrl + M",
-      "Ctrl + L"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el atajo para aplicar <strong>Cursiva</strong> en Word?",
@@ -3423,20 +1823,7 @@
     "OpcionB": "Ctrl + K",
     "OpcionC": "Ctrl + I",
     "OpcionD": "Ctrl + B",
-    "Activa": true,
-    "enunciado": "¿Cuál es el atajo para aplicar <strong>Cursiva</strong> en Word?",
-    "respuesta_correcta_literal": "Ctrl + K",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Ctrl + U",
-      "Ctrl + K",
-      "Ctrl + I",
-      "Ctrl + B"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué atajo usas para <strong>Guardar</strong> un documento en Word?",
@@ -3450,20 +1837,7 @@
     "OpcionB": "Ctrl + G",
     "OpcionC": "Ctrl + W",
     "OpcionD": "Ctrl + V",
-    "Activa": true,
-    "enunciado": "¿Qué atajo usas para <strong>Guardar</strong> un documento en Word?",
-    "respuesta_correcta_literal": "Ctrl + S",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Ctrl + S",
-      "Ctrl + G",
-      "Ctrl + W",
-      "Ctrl + V"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el atajo para <strong>Copiar</strong> texto en Word?",
@@ -3477,20 +1851,7 @@
     "OpcionB": "Ctrl + V",
     "OpcionC": "Ctrl + C",
     "OpcionD": "Ctrl + P",
-    "Activa": true,
-    "enunciado": "¿Cuál es el atajo para <strong>Copiar</strong> texto en Word?",
-    "respuesta_correcta_literal": "Ctrl + C",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Ctrl + X",
-      "Ctrl + V",
-      "Ctrl + C",
-      "Ctrl + P"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué atajo se usa para <strong>Pegar</strong> texto en Word?",
@@ -3504,20 +1865,7 @@
     "OpcionB": "Ctrl + X",
     "OpcionC": "Ctrl + C",
     "OpcionD": "Ctrl + V",
-    "Activa": true,
-    "enunciado": "¿Qué atajo se usa para <strong>Pegar</strong> texto en Word?",
-    "respuesta_correcta_literal": "Ctrl + V",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Ctrl + P",
-      "Ctrl + X",
-      "Ctrl + C",
-      "Ctrl + V"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el atajo para <strong>Cortar</strong> texto en Word?",
@@ -3531,20 +1879,7 @@
     "OpcionB": "Ctrl + X",
     "OpcionC": "Ctrl + V",
     "OpcionD": "Ctrl + Z",
-    "Activa": true,
-    "enunciado": "¿Cuál es el atajo para <strong>Cortar</strong> texto en Word?",
-    "respuesta_correcta_literal": "Ctrl + X",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Ctrl + C",
-      "Ctrl + X",
-      "Ctrl + V",
-      "Ctrl + Z"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el atajo para <strong>Deshacer</strong> la última acción en Word?",
@@ -3558,20 +1893,7 @@
     "OpcionB": "Ctrl + Z",
     "OpcionC": "Ctrl + A",
     "OpcionD": "Ctrl + F",
-    "Activa": true,
-    "enunciado": "¿Cuál es el atajo para <strong>Deshacer</strong> la última acción en Word?",
-    "respuesta_correcta_literal": "Ctrl + Z",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Ctrl + Y",
-      "Ctrl + Z",
-      "Ctrl + A",
-      "Ctrl + F"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué atajo se usa para <strong>Rehacer</strong> la última acción deshecha?",
@@ -3585,20 +1907,7 @@
     "OpcionB": "Ctrl + R",
     "OpcionC": "Ctrl + Y",
     "OpcionD": "Ctrl + X",
-    "Activa": true,
-    "enunciado": "¿Qué atajo se usa para <strong>Rehacer</strong> la última acción deshecha?",
-    "respuesta_correcta_literal": "Ctrl + Y",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Ctrl + Z",
-      "Ctrl + R",
-      "Ctrl + Y",
-      "Ctrl + X"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el atajo para <strong>Seleccionar todo</strong> el contenido del documento?",
@@ -3612,19 +1921,6 @@
     "OpcionB": "Ctrl + A",
     "OpcionC": "Ctrl + L",
     "OpcionD": "Ctrl + E",
-    "Activa": true,
-    "enunciado": "¿Cuál es el atajo para <strong>Seleccionar todo</strong> el contenido del documento?",
-    "respuesta_correcta_literal": "Ctrl + A",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Básico",
-    "asignatura": "Informatica",
-    "grado": 10,
-    "tema": "Procesadores de Texto",
-    "opciones_visibles": [
-      "Ctrl + S",
-      "Ctrl + A",
-      "Ctrl + L",
-      "Ctrl + E"
-    ]
+    "Activa": true
   }
 ]

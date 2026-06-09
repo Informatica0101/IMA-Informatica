@@ -6,7 +6,12 @@
     "tema": "Transicion a Lenguajes de Alto Nivel Modernos",
     "tipo_pregunta": "completacion",
     "enunciado": "A diferencia de lenguajes de tipado rígido como C++, el lenguaje de programación estructurado y multipropósito ________ no requiere del uso de punto y coma finales ni llaves de apertura, utilizando en su lugar la <strong>indentación u organización de bloques por espacios</strong>.",
-    "opciones_visibles": ["Java", "C#", "Python", "Assembly"],
+    "opciones_visibles": [
+      "Java ",
+      "C#   ",
+      "Pytho",
+      "Assem"
+    ],
     "respuesta_correcta_literal": "Python",
     "nivel": "Avanzado"
   },
@@ -33,7 +38,12 @@
     "tema": "Modularización Práctica",
     "tipo_pregunta": "completacion",
     "enunciado": "Un bloque de código modular que realiza una tarea específica y devuelve un valor al programa principal se denomina ________.",
-    "opciones_visibles": ["Variable", "Bucle", "Función", "Librería"],
+    "opciones_visibles": [
+      "Variabl",
+      "Bucle  ",
+      "Función",
+      "Librerí"
+    ],
     "respuesta_correcta_literal": "Función",
     "nivel": "Avanzado"
   },
@@ -45,10 +55,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un error de sintaxis en programación?",
     "opciones": [
-      "Un error que impide que el programa se compile porque no cumple las reglas del lenguaje.",
+      "Un error que impide que el programa se compile porque no cumple ",
       "Un error que ocurre cuando el usuario ingresa mal su contraseña.",
-      "Un fallo que hace que el programa sume mal los números.",
-      "Un problema físico en el teclado de la computadora."
+      "Un fallo que hace que el programa sume mal los números.         ",
+      "Un problema físico en el teclado de la computadora.             "
     ],
     "respuesta_correcta_literal": "Un error que impide que el programa se compile porque no cumple las reglas del lenguaje.",
     "nivel": "Avanzado"
@@ -60,7 +70,12 @@
     "tema": "Matrices",
     "tipo_pregunta": "completacion",
     "enunciado": "Para declarar una matriz bidimensional de 3 filas y 4 columnas en C++, la sintaxis correcta es <code>int matriz[________][________];</code>.",
-    "opciones_visibles": ["3, 4", "3][4", "4][3", "3, 4"],
+    "opciones_visibles": [
+      "3, 4",
+      "3][4",
+      "4][3",
+      "3, 4"
+    ],
     "respuesta_correcta_literal": "3][4",
     "nivel": "Avanzado"
   },
@@ -71,7 +86,10 @@
     "tema": "Modularización",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En C++, una función puede recibir parámetros por valor o por referencia.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -83,10 +101,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué significa que Python sea un lenguaje de tipado dinámico?",
     "opciones": [
-      "Que no es necesario declarar el tipo de dato de una variable, ya que se determina al asignarle un valor.",
-      "Que las variables cambian de color en el editor automáticamente.",
-      "Que el programa solo puede correr en computadoras con mucha memoria.",
-      "Que el lenguaje se traduce a binario mientras el usuario escribe."
+      "Que no es necesario declarar el tipo de dato de una variable, ya que se det",
+      "Que las variables cambian de color en el editor automáticamente.           ",
+      "Que el programa solo puede correr en computadoras con mucha memoria.       ",
+      "Que el lenguaje se traduce a binario mientras el usuario escribe.          "
     ],
     "respuesta_correcta_literal": "Que no es necesario declarar el tipo de dato de una variable, ya que se determina al asignarle un valor.",
     "nivel": "Avanzado"
@@ -98,7 +116,12 @@
     "tema": "Depuración",
     "tipo_pregunta": "completacion",
     "enunciado": "Un error que ocurre durante la ejecución del programa (como dividir por cero) se llama error de ________.",
-    "opciones_visibles": ["Compilación", "Lógica", "Tiempo de ejecución", "Sintaxis"],
+    "opciones_visibles": [
+      "Compilación",
+      "Lógica     ",
+      "Tiempo de e",
+      "Sintaxis   "
+    ],
     "respuesta_correcta_literal": "Tiempo de ejecución",
     "nivel": "Avanzado"
   },
@@ -110,9 +133,9 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Para qué sirve la instrucción <code>return</code> dentro de una función?",
     "opciones": [
-      "Para finalizar la ejecución de la función y devolver un valor al llamador.",
-      "Para repetir la función desde el principio.",
-      "Para borrar todas las variables locales.",
+      "Para finalizar la ejecución de la función y devolver",
+      "Para repetir la función desde el principio.         ",
+      "Para borrar todas las variables locales.            ",
       "Para imprimir un mensaje en la pantalla del usuario."
     ],
     "respuesta_correcta_literal": "Para finalizar la ejecución de la función y devolver un valor al llamador.",
@@ -125,7 +148,10 @@
     "tema": "Arreglos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El primer elemento de un arreglo en C++ siempre se encuentra en el índice 0.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -136,7 +162,12 @@
     "tema": "Python - Listas",
     "tipo_pregunta": "completacion",
     "enunciado": "En Python, la estructura equivalente a un arreglo dinámico que puede crecer y encogerse se llama ________.",
-    "opciones_visibles": ["Vector", "Arreglo", "Lista", "Colección"],
+    "opciones_visibles": [
+      "Vector",
+      "Arregl",
+      "Lista ",
+      "Colecc"
+    ],
     "respuesta_correcta_literal": "Lista",
     "nivel": "Avanzado"
   },
@@ -148,10 +179,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un prototipo de función en C++?",
     "opciones": [
-      "Una declaración de la función al principio del archivo que indica su nombre, parámetros y retorno.",
-      "Una versión de prueba del programa que no funciona del todo bien.",
-      "Un dibujo del diagrama de flujo de la función.",
-      "La primera vez que se ejecuta el código en la computadora."
+      "Una declaración de la función al principio del archivo que indica ",
+      "Una versión de prueba del programa que no funciona del todo bien. ",
+      "Un dibujo del diagrama de flujo de la función.                    ",
+      "La primera vez que se ejecuta el código en la computadora.        "
     ],
     "respuesta_correcta_literal": "Una declaración de la función al principio del archivo que indica su nombre, parámetros y retorno.",
     "nivel": "Avanzado"
@@ -163,7 +194,10 @@
     "tema": "Depuración",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un error de lógica es aquel donde el programa compila y corre, pero produce resultados incorrectos.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -190,7 +224,12 @@
     "tema": "Python - Bucles",
     "tipo_pregunta": "completacion",
     "enunciado": "En Python, para recorrer los elementos de una lista uno por uno se utiliza frecuentemente el bucle ________.",
-    "opciones_visibles": ["for", "while", "repeat", "do"],
+    "opciones_visibles": [
+      "for ",
+      "whil",
+      "repe",
+      "do  "
+    ],
     "respuesta_correcta_literal": "for",
     "nivel": "Avanzado"
   },
@@ -202,10 +241,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué significa que una función sea de tipo <code>void</code> en C++?",
     "opciones": [
-      "Que la función no devuelve ningún valor al finalizar su ejecución.",
-      "Que la función está vacía y no tiene código adentro.",
-      "Que la función solo puede manejar números enteros.",
-      "Que la función borra el archivo fuente al terminar."
+      "Que la función no devuelve ningún valor al finalizar s",
+      "Que la función está vacía y no tiene código adentro.  ",
+      "Que la función solo puede manejar números enteros.    ",
+      "Que la función borra el archivo fuente al terminar.   "
     ],
     "respuesta_correcta_literal": "Que la función no devuelve ningún valor al finalizar su ejecución.",
     "nivel": "Avanzado"
@@ -217,7 +256,10 @@
     "tema": "Sintaxis C++",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Olvidar un punto y coma (;) al final de una instrucción en C++ provocará un error de compilación.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -228,7 +270,12 @@
     "tema": "Arreglos",
     "tipo_pregunta": "completacion",
     "enunciado": "Un arreglo que contiene otros arreglos como sus elementos se conoce como arreglo ________ (o matriz).",
-    "opciones_visibles": ["Simple", "Multidimensional", "Virtual", "Dinámico"],
+    "opciones_visibles": [
+      "Simple   ",
+      "Multidime",
+      "Virtual  ",
+      "Dinámico "
+    ],
     "respuesta_correcta_literal": "Multidimensional",
     "nivel": "Avanzado"
   },
@@ -240,10 +287,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué función se utiliza en Python para capturar datos ingresados por el usuario desde el teclado?",
     "opciones": [
-      "input()",
-      "cin",
-      "scanf()",
-      "read()"
+      "input",
+      "cin  ",
+      "scanf",
+      "read("
     ],
     "respuesta_correcta_literal": "input()",
     "nivel": "Avanzado"
@@ -255,7 +302,12 @@
     "tema": "Librerías C++",
     "tipo_pregunta": "completacion",
     "enunciado": "Para usar la función <code>pow()</code> (potencia) en C++, se debe incluir la librería encabezado <code>&lt;________&gt;</code>.",
-    "opciones_visibles": ["iostream", "string", "cmath", "iomanip"],
+    "opciones_visibles": [
+      "iostre",
+      "string",
+      "cmath ",
+      "iomani"
+    ],
     "respuesta_correcta_literal": "cmath",
     "nivel": "Avanzado"
   },
@@ -267,10 +319,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es el ámbito (scope) de una variable?",
     "opciones": [
-      "La parte del programa donde la variable es visible y puede ser utilizada.",
-      "El tamaño en bytes que ocupa la variable en la RAM.",
-      "El nombre técnico que se le da a las constantes.",
-      "La cantidad de veces que la variable cambia de valor."
+      "La parte del programa donde la variable es visible y pue",
+      "El tamaño en bytes que ocupa la variable en la RAM.     ",
+      "El nombre técnico que se le da a las constantes.        ",
+      "La cantidad de veces que la variable cambia de valor.   "
     ],
     "respuesta_correcta_literal": "La parte del programa donde la variable es visible y puede ser utilizada.",
     "nivel": "Avanzado"
@@ -282,7 +334,12 @@
     "tema": "Python - Comentarios",
     "tipo_pregunta": "completacion",
     "enunciado": "En Python, los comentarios de una sola línea comienzan con el carácter ________.",
-    "opciones_visibles": ["//", "/*", "#", "::"],
+    "opciones_visibles": [
+      "/",
+      "/",
+      "#",
+      ":"
+    ],
     "respuesta_correcta_literal": "#",
     "nivel": "Avanzado"
   },
@@ -293,7 +350,10 @@
     "tema": "Arreglos - Límites",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Acceder a un índice negativo en un arreglo de C++ es una operación segura y permitida.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Falso",
     "nivel": "Avanzado"
   },
@@ -305,10 +365,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "Para recorrer todos los elementos de una matriz de 5x5, ¿cuántos bucles anidados se necesitan?",
     "opciones": [
-      "Dos bucles (uno para filas y otro para columnas).",
-      "Un solo bucle es suficiente.",
-      "Cinco bucles, uno para cada fila.",
-      "Ninguno, se hace automáticamente."
+      "Dos bucles (uno para filas y otro p",
+      "Un solo bucle es suficiente.       ",
+      "Cinco bucles, uno para cada fila.  ",
+      "Ninguno, se hace automáticamente.  "
     ],
     "respuesta_correcta_literal": "Dos bucles (uno para filas y otro para columnas).",
     "nivel": "Avanzado"
@@ -320,7 +380,12 @@
     "tema": "Python - Salida",
     "tipo_pregunta": "completacion",
     "enunciado": "La función nativa de Python para mostrar información en la consola es ________.",
-    "opciones_visibles": ["cout", "print", "display", "echo"],
+    "opciones_visibles": [
+      "cout ",
+      "print",
+      "displ",
+      "echo "
+    ],
     "respuesta_correcta_literal": "print",
     "nivel": "Avanzado"
   },
@@ -332,10 +397,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un 'Breakpoint' o punto de interrupción?",
     "opciones": [
-      "Un marcador que detiene la ejecución del programa en una línea específica para inspeccionar variables.",
-      "El momento exacto en que la computadora se apaga por error.",
-      "Una línea de código que borra el historial de navegación.",
-      "Un comando para acelerar el procesador al doble de su velocidad."
+      "Un marcador que detiene la ejecución del programa en una línea específ",
+      "El momento exacto en que la computadora se apaga por error.           ",
+      "Una línea de código que borra el historial de navegación.             ",
+      "Un comando para acelerar el procesador al doble de su velocidad.      "
     ],
     "respuesta_correcta_literal": "Un marcador que detiene la ejecución del programa en una línea específica para inspeccionar variables.",
     "nivel": "Avanzado"
@@ -347,7 +412,10 @@
     "tema": "C++ - Main",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Todo programa en C++ debe tener una función llamada <code>main()</code>, que es el punto de inicio de la ejecución.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -358,7 +426,12 @@
     "tema": "Modularización",
     "tipo_pregunta": "completacion",
     "enunciado": "Las variables declaradas dentro de una función se llaman variables ________.",
-    "opciones_visibles": ["Globales", "Locales", "Estáticas", "Públicas"],
+    "opciones_visibles": [
+      "Globales",
+      "Locales ",
+      "Estática",
+      "Públicas"
+    ],
     "respuesta_correcta_literal": "Locales",
     "nivel": "Avanzado"
   },
@@ -370,10 +443,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué hace el operador <code>**</code> en Python?",
     "opciones": [
-      "Calcula la potencia (ej: 2 ** 3 es 8).",
-      "Multiplica por dos.",
-      "Es un comentario especial.",
-      "Compara si dos valores son iguales."
+      "Calcula la potencia (ej: 2 **",
+      "Multiplica por dos.          ",
+      "Es un comentario especial.   ",
+      "Compara si dos valores son ig"
     ],
     "respuesta_correcta_literal": "Calcula la potencia (ej: 2 ** 3 es 8).",
     "nivel": "Avanzado"
@@ -385,7 +458,12 @@
     "tema": "Depuración",
     "tipo_pregunta": "completacion",
     "enunciado": "La herramienta del IDE que permite ejecutar el programa paso a paso se llama ________.",
-    "opciones_visibles": ["Compiler", "Debugger", "Linker", "Editor"],
+    "opciones_visibles": [
+      "Compile",
+      "Debugge",
+      "Linker ",
+      "Editor "
+    ],
     "respuesta_correcta_literal": "Debugger",
     "nivel": "Avanzado"
   },
@@ -397,10 +475,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Para qué sirve <code>#include &lt;string&gt;</code>?",
     "opciones": [
-      "Para poder usar el tipo de dato string y manipular cadenas de texto.",
-      "Para poder usar la pantalla a color.",
-      "Para conectar el programa a internet.",
-      "Para borrar archivos del disco duro."
+      "Para poder usar el tipo de dato string y man",
+      "Para poder usar la pantalla a color.        ",
+      "Para conectar el programa a internet.       ",
+      "Para borrar archivos del disco duro.        "
     ],
     "respuesta_correcta_literal": "Para poder usar el tipo de dato string y manipular cadenas de texto.",
     "nivel": "Avanzado"
@@ -412,7 +490,10 @@
     "tema": "Python - Identación",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En Python, una identación incorrecta provocará un error y el programa no funcionará.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -423,7 +504,12 @@
     "tema": "Arreglos",
     "tipo_pregunta": "completacion",
     "enunciado": "Para saber el tamaño total en bytes de un arreglo en C++, se usa el operador ________.",
-    "opciones_visibles": ["length", "size", "sizeof", "count"],
+    "opciones_visibles": [
+      "lengt",
+      "size ",
+      "sizeo",
+      "count"
+    ],
     "respuesta_correcta_literal": "sizeof",
     "nivel": "Avanzado"
   },
@@ -435,10 +521,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué sucede cuando pasas un parámetro 'por valor'?",
     "opciones": [
-      "Se crea una copia del dato; los cambios dentro de la función no afectan a la variable original.",
-      "La función usa la variable original y puede cambiar su valor permanentemente.",
-      "El programa se detiene hasta que el usuario valide el dato.",
-      "El valor se borra automáticamente después de usarse."
+      "Se crea una copia del dato; los cambios dentro de la función no afecta",
+      "La función usa la variable original y puede cambiar su valor permanent",
+      "El programa se detiene hasta que el usuario valide el dato.           ",
+      "El valor se borra automáticamente después de usarse.                  "
     ],
     "respuesta_correcta_literal": "Se crea una copia del dato; los cambios dentro de la función no afectan a la variable original.",
     "nivel": "Avanzado"
@@ -450,7 +536,12 @@
     "tema": "Python - If",
     "tipo_pregunta": "completacion",
     "enunciado": "En Python, la palabra clave para escribir un 'Sino Si' (else if) es ________.",
-    "opciones_visibles": ["elseif", "elif", "elsif", "else if"],
+    "opciones_visibles": [
+      "elsei",
+      "elif ",
+      "elsif",
+      "else "
+    ],
     "respuesta_correcta_literal": "elif",
     "nivel": "Avanzado"
   },
@@ -461,7 +552,10 @@
     "tema": "Depuración",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La 'Prueba de Escritorio' es una técnica manual para verificar la lógica de un algoritmo antes de codificarlo.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -473,10 +567,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Para qué sirve <code>using namespace std;</code>?",
     "opciones": [
-      "Para evitar escribir 'std::' antes de objetos como cout, cin y endl.",
+      "Para evitar escribir 'std::' antes de objetos como cou",
       "Para activar las funciones de internet en el programa.",
-      "Para que el programa sea compatible con Linux.",
-      "Para declarar todas las variables como globales."
+      "Para que el programa sea compatible con Linux.        ",
+      "Para declarar todas las variables como globales.      "
     ],
     "respuesta_correcta_literal": "Para evitar escribir 'std::' antes de objetos como cout, cin y endl.",
     "nivel": "Avanzado"
@@ -488,7 +582,12 @@
     "tema": "Matrices",
     "tipo_pregunta": "completacion",
     "enunciado": "Una matriz cuadrada es aquella que tiene el mismo número de ________ y columnas.",
-    "opciones_visibles": ["Variables", "Filas", "Funciones", "Índices"],
+    "opciones_visibles": [
+      "Variabl",
+      "Filas  ",
+      "Funcion",
+      "Índices"
+    ],
     "respuesta_correcta_literal": "Filas",
     "nivel": "Avanzado"
   },
@@ -500,10 +599,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué tipo de dato devuelve la función <code>input()</code> en Python por defecto?",
     "opciones": [
-      "Siempre devuelve una cadena de texto (string).",
-      "Devuelve un número entero automáticamente.",
-      "Devuelve un valor booleano.",
-      "No devuelve nada."
+      "Siempre devuelve una cadena de te",
+      "Devuelve un número entero automát",
+      "Devuelve un valor booleano.      ",
+      "No devuelve nada.                "
     ],
     "respuesta_correcta_literal": "Siempre devuelve una cadena de texto (string).",
     "nivel": "Avanzado"
@@ -515,7 +614,10 @@
     "tema": "C++ - Const",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Una variable declarada con <code>const</code> no puede cambiar su valor durante la ejecución del programa.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -526,7 +628,12 @@
     "tema": "Funciones",
     "tipo_pregunta": "completacion",
     "enunciado": "La información que una función envía de vuelta al programa principal se llama valor de ________.",
-    "opciones_visibles": ["Envío", "Entrada", "Retorno", "Salida"],
+    "opciones_visibles": [
+      "Envío ",
+      "Entrad",
+      "Retorn",
+      "Salida"
+    ],
     "respuesta_correcta_literal": "Retorno",
     "nivel": "Avanzado"
   },
@@ -538,10 +645,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué hace el operador <code>%</code> en C++?",
     "opciones": [
-      "Calcula el residuo de una división entera (módulo).",
+      "Calcula el residuo de una división ",
       "Calcula el porcentaje de un número.",
-      "Divide dos números decimales.",
-      "Es un comentario de código."
+      "Divide dos números decimales.      ",
+      "Es un comentario de código.        "
     ],
     "respuesta_correcta_literal": "Calcula el residuo de una división entera (módulo).",
     "nivel": "Avanzado"
@@ -553,7 +660,10 @@
     "tema": "Python - Listas",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En Python, una lista puede contener elementos de diferentes tipos de datos al mismo tiempo.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -564,7 +674,12 @@
     "tema": "Modularización",
     "tipo_pregunta": "completacion",
     "enunciado": "Dividir un problema complejo en subproblemas más pequeños se conoce como la técnica de ________ y vencerás.",
-    "opciones_visibles": ["Sumar", "Dividir", "Restar", "Multiplicar"],
+    "opciones_visibles": [
+      "Sumar  ",
+      "Dividir",
+      "Restar ",
+      "Multipl"
+    ],
     "respuesta_correcta_literal": "Dividir",
     "nivel": "Avanzado"
   },
@@ -576,10 +691,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es un beneficio de usar un Debugger?",
     "opciones": [
-      "Permite encontrar errores difíciles de ver a simple vista observando el valor de las variables en tiempo real.",
-      "Hace que el código se escriba solo.",
-      "Elimina todos los virus de la computadora.",
-      "Aumenta la resolución de la pantalla."
+      "Permite encontrar errores difíciles de ver a simple vist",
+      "Hace que el código se escriba solo.                     ",
+      "Elimina todos los virus de la computadora.              ",
+      "Aumenta la resolución de la pantalla.                   "
     ],
     "respuesta_correcta_literal": "Permite encontrar errores difíciles de ver a simple vista observando el valor de las variables en tiempo real.",
     "nivel": "Avanzado"
@@ -591,7 +706,10 @@
     "tema": "Arreglos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un arreglo de caracteres en C++ se puede utilizar para almacenar una palabra o cadena de texto.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -602,7 +720,12 @@
     "tema": "Python - Range",
     "tipo_pregunta": "completacion",
     "enunciado": "En Python, la función ________ se usa comúnmente en los bucles for para generar una secuencia de números.",
-    "opciones_visibles": ["list()", "range()", "seq()", "count()"],
+    "opciones_visibles": [
+      "list()",
+      "range(",
+      "seq() ",
+      "count("
+    ],
     "respuesta_correcta_literal": "range()",
     "nivel": "Avanzado"
   },
@@ -614,10 +737,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué hace <code>#include &lt;iomanip&gt;</code>?",
     "opciones": [
-      "Permite manipular el formato de entrada y salida (como fijar decimales).",
-      "Permite dibujar gráficos en la consola.",
-      "Permite usar el ratón en el programa.",
-      "Permite guardar archivos en PDF."
+      "Permite manipular el formato de entrada y sal",
+      "Permite dibujar gráficos en la consola.      ",
+      "Permite usar el ratón en el programa.        ",
+      "Permite guardar archivos en PDF.             "
     ],
     "respuesta_correcta_literal": "Permite manipular el formato de entrada y salida (como fijar decimales).",
     "nivel": "Avanzado"
@@ -629,7 +752,10 @@
     "tema": "Matrices",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Las matrices en C++ se almacenan en la memoria de forma contigua, fila tras fila.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -640,7 +766,10 @@
     "tema": "Conclusión",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Aprender C++ y Python prepara al estudiante para entender tanto lenguajes de bajo nivel como de alto nivel.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   }

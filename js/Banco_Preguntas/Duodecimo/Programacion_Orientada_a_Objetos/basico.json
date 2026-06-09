@@ -7,10 +7,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es la Programación Orientada a Objetos (POO)?",
     "opciones": [
-      "Un paradigma de programación que usa 'objetos' para representar datos y métodos.",
-      "Un lenguaje de programación para crear páginas web estáticas.",
-      "Una técnica para borrar archivos del sistema automáticamente.",
-      "Un tipo de hardware para procesar gráficos 3D."
+      "Un paradigma de programación que usa 'objetos' para representa",
+      "Un lenguaje de programación para crear páginas web estáticas. ",
+      "Una técnica para borrar archivos del sistema automáticamente. ",
+      "Un tipo de hardware para procesar gráficos 3D.                "
     ],
     "respuesta_correcta_literal": "Un paradigma de programación que usa 'objetos' para representar datos y métodos.",
     "nivel": "Básico"
@@ -22,7 +22,12 @@
     "tema": "Clases",
     "tipo_pregunta": "completacion",
     "enunciado": "Una ________ es una plantilla o molde que define los atributos y comportamientos comunes a todos los objetos de ese tipo.",
-    "opciones_visibles": ["Variable", "Clase", "Función", "Bucle"],
+    "opciones_visibles": [
+      "Variab",
+      "Clase ",
+      "Funció",
+      "Bucle "
+    ],
     "respuesta_correcta_literal": "Clase",
     "nivel": "Básico"
   },
@@ -34,10 +39,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un objeto en POO?",
     "opciones": [
-      "Una instancia específica de una clase con datos propios.",
-      "Una línea de código que suma dos números.",
-      "Un cable que conecta el disco duro.",
-      "El nombre del archivo donde se guarda el programa."
+      "Una instancia específica de una clase con dat",
+      "Una línea de código que suma dos números.    ",
+      "Un cable que conecta el disco duro.          ",
+      "El nombre del archivo donde se guarda el prog"
     ],
     "respuesta_correcta_literal": "Una instancia específica de una clase con datos propios.",
     "nivel": "Básico"
@@ -49,7 +54,10 @@
     "tema": "Abstracción",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La abstracción consiste en ignorar los detalles irrelevantes de un objeto y centrarse en sus características esenciales.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -60,7 +68,12 @@
     "tema": "Atributos",
     "tipo_pregunta": "completacion",
     "enunciado": "Las características o datos que describen a un objeto se denominan ________.",
-    "opciones_visibles": ["Métodos", "Atributos", "Funciones", "Eventos"],
+    "opciones_visibles": [
+      "Métodos ",
+      "Atributo",
+      "Funcione",
+      "Eventos "
+    ],
     "respuesta_correcta_literal": "Atributos",
     "nivel": "Básico"
   },
@@ -72,10 +85,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué representan los métodos de un objeto?",
     "opciones": [
-      "Las acciones o comportamientos que el objeto puede realizar.",
-      "El color y tamaño físico del objeto.",
-      "La dirección de memoria donde se guarda.",
-      "La cantidad de variables globales del sistema."
+      "Las acciones o comportamientos que el objeto ",
+      "El color y tamaño físico del objeto.         ",
+      "La dirección de memoria donde se guarda.     ",
+      "La cantidad de variables globales del sistema"
     ],
     "respuesta_correcta_literal": "Las acciones o comportamientos que el objeto puede realizar.",
     "nivel": "Básico"
@@ -87,7 +100,12 @@
     "tema": "Instanciación",
     "tipo_pregunta": "completacion",
     "enunciado": "El proceso de crear un objeto a partir de una clase se llama ________.",
-    "opciones_visibles": ["Compilación", "Instanciación", "Declaración", "Ejecución"],
+    "opciones_visibles": [
+      "Compilación",
+      "Instanciaci",
+      "Declaración",
+      "Ejecución  "
+    ],
     "respuesta_correcta_literal": "Instanciación",
     "nivel": "Básico"
   },
@@ -98,7 +116,10 @@
     "tema": "Encapsulamiento",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El encapsulamiento permite proteger los datos de un objeto, limitando el acceso directo a ellos desde el exterior.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -109,7 +130,12 @@
     "tema": "Modificadores de Acceso",
     "tipo_pregunta": "opcion_multiple",
     "enunciado": "¿Qué modificador de acceso permite que un atributo sea visto solo dentro de su propia clase?",
-    "opciones": ["Public", "Private", "Protected", "Internal"],
+    "opciones": [
+      "Public ",
+      "Private",
+      "Protect",
+      "Interna"
+    ],
     "respuesta_correcta_literal": "Private",
     "nivel": "Básico"
   },
@@ -120,7 +146,12 @@
     "tema": "Modificadores de Acceso",
     "tipo_pregunta": "completacion",
     "enunciado": "Un atributo marcado como ________ es accesible desde cualquier parte del programa.",
-    "opciones_visibles": ["Secret", "Private", "Public", "Hidden"],
+    "opciones_visibles": [
+      "Secret",
+      "Private",
+      "Public",
+      "Hidden"
+    ],
     "respuesta_correcta_literal": "Public",
     "nivel": "Básico"
   },
@@ -132,10 +163,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Para qué sirven los métodos 'Getter'?",
     "opciones": [
-      "Para obtener o leer el valor de un atributo privado de forma segura.",
-      "Para borrar el objeto de la memoria.",
-      "Para cambiar el nombre de la clase.",
-      "Para instalar librerías externas."
+      "Para obtener o leer el valor de un atributo",
+      "Para borrar el objeto de la memoria.       ",
+      "Para cambiar el nombre de la clase.        ",
+      "Para instalar librerías externas.          "
     ],
     "respuesta_correcta_literal": "Para obtener o leer el valor de un atributo privado de forma segura.",
     "nivel": "Básico"
@@ -147,7 +178,12 @@
     "tema": "Getters y Setters",
     "tipo_pregunta": "completacion",
     "enunciado": "Un método que se utiliza para asignar o modificar el valor de un atributo privado se llama ________.",
-    "opciones_visibles": ["Getter", "Setter", "Constructor", "Deleter"],
+    "opciones_visibles": [
+      "Getter ",
+      "Setter ",
+      "Constru",
+      "Deleter"
+    ],
     "respuesta_correcta_literal": "Setter",
     "nivel": "Básico"
   },
@@ -159,10 +195,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un constructor en una clase?",
     "opciones": [
-      "Un método especial que se ejecuta automáticamente al crear un objeto para inicializarlo.",
-      "La persona que escribe el código del programa.",
-      "Una herramienta del IDE para dibujar interfaces.",
-      "Un tipo de variable que solo guarda constantes."
+      "Un método especial que se ejecuta automáticamente al crea",
+      "La persona que escribe el código del programa.           ",
+      "Una herramienta del IDE para dibujar interfaces.         ",
+      "Un tipo de variable que solo guarda constantes.          "
     ],
     "respuesta_correcta_literal": "Un método especial que se ejecuta automáticamente al crear un objeto para inicializarlo.",
     "nivel": "Básico"
@@ -174,7 +210,10 @@
     "tema": "Constructor",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Una clase puede tener más de un constructor si tienen diferentes parámetros (sobrecarga).",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -185,7 +224,12 @@
     "tema": "Destructor",
     "tipo_pregunta": "completacion",
     "enunciado": "El método que se encarga de liberar los recursos y limpiar la memoria cuando un objeto deja de usarse se llama ________.",
-    "opciones_visibles": ["Creator", "Destructor", "Cleaner", "Finalizer"],
+    "opciones_visibles": [
+      "Creator ",
+      "Destruct",
+      "Cleaner ",
+      "Finalize"
+    ],
     "respuesta_correcta_literal": "Destructor",
     "nivel": "Básico"
   },
@@ -197,10 +241,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué define el 'estado' de un objeto en un momento dado?",
     "opciones": [
-      "Los valores actuales de todos sus atributos.",
-      "La cantidad de líneas de código de su clase.",
+      "Los valores actuales de todos sus atribu",
+      "La cantidad de líneas de código de su cl",
       "Si el programa está encendido o apagado.",
-      "El nombre del sistema operativo."
+      "El nombre del sistema operativo.        "
     ],
     "respuesta_correcta_literal": "Los valores actuales de todos sus atributos.",
     "nivel": "Básico"
@@ -212,7 +256,10 @@
     "tema": "Modularidad",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La modularidad permite dividir un sistema en partes independientes y colaborativas.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -223,7 +270,12 @@
     "tema": "Lenguajes POO",
     "tipo_pregunta": "opcion_multiple",
     "enunciado": "¿Cuál de estos lenguajes es un lenguaje orientado a objetos muy popular?",
-    "opciones": ["Java", "HTML", "SQL", "CSS"],
+    "opciones": [
+      "Jav",
+      "HTM",
+      "SQL",
+      "CSS"
+    ],
     "respuesta_correcta_literal": "Java",
     "nivel": "Básico"
   },
@@ -235,10 +287,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un atributo estático (static)?",
     "opciones": [
-      "Un atributo que es compartido por todos los objetos de la misma clase.",
+      "Un atributo que es compartido por todos los o",
       "Un atributo que cambia de valor cada segundo.",
-      "Un atributo que no se puede leer.",
-      "Un atributo que solo guarda texto."
+      "Un atributo que no se puede leer.            ",
+      "Un atributo que solo guarda texto.           "
     ],
     "respuesta_correcta_literal": "Un atributo que es compartido por todos los objetos de la misma clase.",
     "nivel": "Básico"
@@ -250,7 +302,12 @@
     "tema": "Mensajes",
     "tipo_pregunta": "completacion",
     "enunciado": "En POO, la comunicación entre objetos se realiza mediante el envío de ________ (invocación de métodos).",
-    "opciones_visibles": ["Correos", "Mensajes", "Señales", "Datos"],
+    "opciones_visibles": [
+      "Correo",
+      "Mensaj",
+      "Señale",
+      "Datos "
+    ],
     "respuesta_correcta_literal": "Mensajes",
     "nivel": "Básico"
   },
@@ -261,7 +318,10 @@
     "tema": "Clases y Objetos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un solo plano (clase) puede usarse para construir muchos edificios (objetos) diferentes.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -272,7 +332,12 @@
     "tema": "Atributos",
     "tipo_pregunta": "funcionalidad",
     "enunciado": "Si tenemos una clase 'Coche', ¿cuál sería un atributo lógico?",
-    "opciones": ["Color", "Arrancar", "Frenar", "Girar"],
+    "opciones": [
+      "Color ",
+      "Arranc",
+      "Frenar",
+      "Girar "
+    ],
     "respuesta_correcta_literal": "Color",
     "nivel": "Básico"
   },
@@ -283,7 +348,12 @@
     "tema": "Métodos",
     "tipo_pregunta": "funcionalidad",
     "enunciado": "Si tenemos una clase 'Coche', ¿cuál sería un método lógico?",
-    "opciones": ["Marca", "Modelo", "Acelerar", "Placa"],
+    "opciones": [
+      "Marca ",
+      "Modelo",
+      "Aceler",
+      "Placa "
+    ],
     "respuesta_correcta_literal": "Acelerar",
     "nivel": "Básico"
   },
@@ -294,7 +364,12 @@
     "tema": "Constructor por Defecto",
     "tipo_pregunta": "completacion",
     "enunciado": "Si un programador no escribe un constructor, el compilador suele crear un constructor por ________ sin parámetros.",
-    "opciones_visibles": ["Error", "Defecto", "Obligación", "Suerte"],
+    "opciones_visibles": [
+      "Error  ",
+      "Defecto",
+      "Obligac",
+      "Suerte "
+    ],
     "respuesta_correcta_literal": "Defecto",
     "nivel": "Básico"
   },
@@ -305,7 +380,10 @@
     "tema": "Ocultamiento de Información",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El ocultamiento de información es un sinónimo directo del concepto de encapsulamiento.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -317,10 +395,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué significa el modificador 'Protected'?",
     "opciones": [
-      "El atributo es accesible dentro de la clase y en sus clases hijas (herencia).",
-      "El atributo está protegido por una contraseña.",
-      "Nadie puede acceder al atributo, ni siquiera la propia clase.",
-      "El atributo solo puede usarse en sistemas operativos protegidos."
+      "El atributo es accesible dentro de la clase y en sus clases hi",
+      "El atributo está protegido por una contraseña.                ",
+      "Nadie puede acceder al atributo, ni siquiera la propia clase. ",
+      "El atributo solo puede usarse en sistemas operativos protegido"
     ],
     "respuesta_correcta_literal": "El atributo es accesible dentro de la clase y en sus clases hijas (herencia).",
     "nivel": "Básico"
@@ -332,7 +410,12 @@
     "tema": "Identidad de un Objeto",
     "tipo_pregunta": "completacion",
     "enunciado": "La propiedad que permite distinguir a un objeto de otro, incluso si tienen los mismos atributos, se llama ________.",
-    "opciones_visibles": ["Nombre", "Identidad", "Valor", "Tipo"],
+    "opciones_visibles": [
+      "Nombre",
+      "Identi",
+      "Valor ",
+      "Tipo  "
+    ],
     "respuesta_correcta_literal": "Identidad",
     "nivel": "Básico"
   },
@@ -343,7 +426,10 @@
     "tema": "Parámetros del Constructor",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Los constructores pueden recibir parámetros para asignar valores a los atributos en el momento del nacimiento del objeto.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -355,10 +441,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es una ventaja de la POO sobre la programación estructural?",
     "opciones": [
-      "Mejor organización del código y facilidad para modelar el mundo real.",
-      "El código estructural es siempre más rápido de ejecutar.",
-      "La POO no requiere el uso de variables.",
-      "La POO es solo para programas de una sola línea."
+      "Mejor organización del código y facilidad para modela",
+      "El código estructural es siempre más rápido de ejecut",
+      "La POO no requiere el uso de variables.              ",
+      "La POO es solo para programas de una sola línea.     "
     ],
     "respuesta_correcta_literal": "Mejor organización del código y facilidad para modelar el mundo real.",
     "nivel": "Básico"
@@ -370,7 +456,12 @@
     "tema": "Referencia 'this'",
     "tipo_pregunta": "completacion",
     "enunciado": "En muchos lenguajes (Java, C++), la palabra clave ________ se usa para referirse al objeto actual dentro de sus propios métodos.",
-    "opciones_visibles": ["self", "me", "this", "current"],
+    "opciones_visibles": [
+      "self",
+      "me  ",
+      "this",
+      "curr"
+    ],
     "respuesta_correcta_literal": "this",
     "nivel": "Básico"
   },
@@ -381,7 +472,10 @@
     "tema": "Sobrecarga de Métodos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La sobrecarga de métodos permite definir varios métodos con el mismo nombre pero con diferentes parámetros.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -393,10 +487,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "Si creamos dos objetos de la clase 'Persona' llamados Juan y Maria, ¿qué comparten?",
     "opciones": [
-      "La estructura (tienen los mismos atributos como nombre, edad).",
+      "La estructura (tienen los mismos atributos c",
       "Exactamente los mismos valores en sus datos.",
       "La misma dirección física en la memoria RAM.",
-      "El mismo cerebro electrónico."
+      "El mismo cerebro electrónico.               "
     ],
     "respuesta_correcta_literal": "La estructura (tienen los mismos atributos como nombre, edad).",
     "nivel": "Básico"
@@ -408,7 +502,12 @@
     "tema": "Encapsulamiento",
     "tipo_pregunta": "completacion",
     "enunciado": "El encapsulamiento agrupa datos y métodos en una sola unidad llamada ________.",
-    "opciones_visibles": ["Paquete", "Clase", "Librería", "Variable"],
+    "opciones_visibles": [
+      "Paquete",
+      "Clase  ",
+      "Librerí",
+      "Variabl"
+    ],
     "respuesta_correcta_literal": "Clase",
     "nivel": "Básico"
   },
@@ -419,7 +518,10 @@
     "tema": "Acceso a Métodos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Para llamar a un método de un objeto en Java se usa el operador punto (.), por ejemplo: objeto.metodo().",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -430,7 +532,12 @@
     "tema": "Diagrama de Clases",
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué se usa para representar visualmente las clases y sus relaciones?",
-    "opciones": ["UML (Unified Modeling Language)", "Diagramas de flujo", "Mapas de bits", "Planos de AutoCAD"],
+    "opciones": [
+      "UML (Unified Modeli",
+      "Diagramas de flujo ",
+      "Mapas de bits      ",
+      "Planos de AutoCAD  "
+    ],
     "respuesta_correcta_literal": "UML (Unified Modeling Language)",
     "nivel": "Básico"
   },
@@ -441,7 +548,12 @@
     "tema": "Atributos",
     "tipo_pregunta": "completacion",
     "enunciado": "En la clase 'CuentaBancaria', el 'Saldo' es un ________.",
-    "opciones_visibles": ["Método", "Atributo", "Evento", "Constructor"],
+    "opciones_visibles": [
+      "Método ",
+      "Atribut",
+      "Evento ",
+      "Constru"
+    ],
     "respuesta_correcta_literal": "Atributo",
     "nivel": "Básico"
   },
@@ -452,7 +564,12 @@
     "tema": "Métodos",
     "tipo_pregunta": "funcionalidad",
     "enunciado": "En la clase 'CuentaBancaria', 'RetirarEfectivo' es un ________.",
-    "opciones": ["Método", "Atributo", "Variable", "Símbolo"],
+    "opciones": [
+      "Método ",
+      "Atribut",
+      "Variabl",
+      "Símbolo"
+    ],
     "respuesta_correcta_literal": "Método",
     "nivel": "Básico"
   },
@@ -463,7 +580,10 @@
     "tema": "Visibilidad",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Poner todos los atributos como Públicos es una mala práctica de programación en POO.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -474,7 +594,12 @@
     "tema": "Constructores",
     "tipo_pregunta": "completacion",
     "enunciado": "El constructor de una clase suele tener el mismo ________ que la propia clase.",
-    "opciones_visibles": ["Tamaño", "Nombre", "Tipo", "Color"],
+    "opciones_visibles": [
+      "Tamañ",
+      "Nombr",
+      "Tipo ",
+      "Color"
+    ],
     "respuesta_correcta_literal": "Nombre",
     "nivel": "Básico"
   },
@@ -486,9 +611,9 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué permite la herencia básica?",
     "opciones": [
-      "Crear una nueva clase basada en una clase existente.",
-      "Borrar el código de la clase padre.",
-      "Duplicar el espacio en el disco duro.",
+      "Crear una nueva clase basada en una clase",
+      "Borrar el código de la clase padre.      ",
+      "Duplicar el espacio en el disco duro.    ",
       "Enviar correos electrónicos entre clases."
     ],
     "respuesta_correcta_literal": "Crear una nueva clase basada en una clase existente.",
@@ -501,7 +626,10 @@
     "tema": "Abstracción",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un ejemplo de abstracción es manejar un coche sabiendo qué hace el pedal, sin saber exactamente cómo funciona el motor interno.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -512,7 +640,12 @@
     "tema": "Instancias",
     "tipo_pregunta": "completacion",
     "enunciado": "Si 'Gato' es la clase, 'Misifú' es el ________.",
-    "opciones_visibles": ["Atributo", "Objeto", "Constructor", "Método"],
+    "opciones_visibles": [
+      "Atribut",
+      "Objeto ",
+      "Constru",
+      "Método "
+    ],
     "respuesta_correcta_literal": "Objeto",
     "nivel": "Básico"
   },
@@ -524,10 +657,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué pasa si intentas acceder a un atributo 'Private' desde fuera de la clase?",
     "opciones": [
-      "Se produce un error de compilación.",
-      "El programa borra el atributo.",
-      "El programa inventa un valor aleatorio.",
-      "El programa se ejecuta normalmente."
+      "Se produce un error de compilación",
+      "El programa borra el atributo.    ",
+      "El programa inventa un valor aleat",
+      "El programa se ejecuta normalmente"
     ],
     "respuesta_correcta_literal": "Se produce un error de compilación.",
     "nivel": "Básico"
@@ -539,7 +672,10 @@
     "tema": "Clases",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Una clase puede no tener atributos y solo tener métodos.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -550,7 +686,12 @@
     "tema": "Constructores",
     "tipo_pregunta": "completacion",
     "enunciado": "La palabra clave ________ en Java se usa para invocar al constructor de la clase padre.",
-    "opciones_visibles": ["this", "super", "parent", "base"],
+    "opciones_visibles": [
+      "this",
+      "supe",
+      "pare",
+      "base"
+    ],
     "respuesta_correcta_literal": "super",
     "nivel": "Básico"
   },
@@ -562,10 +703,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué permite hacer un Setter además de cambiar el valor?",
     "opciones": [
-      "Validar que el nuevo valor sea correcto antes de asignarlo.",
-      "Borrar el código fuente del proyecto.",
-      "Cambiar el nombre de la variable global.",
-      "Imprimir el código en la impresora local."
+      "Validar que el nuevo valor sea correcto ante",
+      "Borrar el código fuente del proyecto.       ",
+      "Cambiar el nombre de la variable global.    ",
+      "Imprimir el código en la impresora local.   "
     ],
     "respuesta_correcta_literal": "Validar que el nuevo valor sea correcto antes de asignarlo.",
     "nivel": "Básico"
@@ -577,7 +718,10 @@
     "tema": "Atributos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Cada objeto tiene su propia copia de los atributos no estáticos.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   },
@@ -588,7 +732,12 @@
     "tema": "Métodos",
     "tipo_pregunta": "completacion",
     "enunciado": "Un método que no devuelve nada tiene como tipo de retorno la palabra ________.",
-    "opciones_visibles": ["null", "empty", "void", "none"],
+    "opciones_visibles": [
+      "null",
+      "empt",
+      "void",
+      "none"
+    ],
     "respuesta_correcta_literal": "void",
     "nivel": "Básico"
   },
@@ -600,10 +749,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es una 'instancia'?",
     "opciones": [
-      "Un objeto concreto nacido de una clase.",
-      "Un error que ocurre una sola vez.",
-      "Una carpeta del sistema de archivos.",
-      "Un cable de conexión de red."
+      "Un objeto concreto nacido de una c",
+      "Un error que ocurre una sola vez. ",
+      "Una carpeta del sistema de archivo",
+      "Un cable de conexión de red.      "
     ],
     "respuesta_correcta_literal": "Un objeto concreto nacido de una clase.",
     "nivel": "Básico"
@@ -615,7 +764,10 @@
     "tema": "Conclusión",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La POO facilita enormemente el mantenimiento de software a gran escala.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Básico"
   }

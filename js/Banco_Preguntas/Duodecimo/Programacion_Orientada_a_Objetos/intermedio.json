@@ -7,10 +7,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es la Herencia en POO?",
     "opciones": [
-      "Un mecanismo que permite crear una clase nueva a partir de una existente, heredando sus miembros.",
-      "La capacidad de un objeto de guardarse en el disco duro.",
-      "Un proceso para borrar variables que ya no se usan.",
-      "La suma de todos los atributos de un programa."
+      "Un mecanismo que permite crear una clase nueva a partir de una",
+      "La capacidad de un objeto de guardarse en el disco duro.      ",
+      "Un proceso para borrar variables que ya no se usan.           ",
+      "La suma de todos los atributos de un programa.                "
     ],
     "respuesta_correcta_literal": "Un mecanismo que permite crear una clase nueva a partir de una existente, heredando sus miembros.",
     "nivel": "Intermedio"
@@ -22,7 +22,12 @@
     "tema": "Jerarquía de Clases",
     "tipo_pregunta": "completacion",
     "enunciado": "En una relación de herencia, la clase original se llama clase padre o superclase, y la nueva clase se llama clase hija o ________.",
-    "opciones_visibles": ["Subclase", "Clase Base", "Clase Maestra", "Clase Final"],
+    "opciones_visibles": [
+      "Subclase  ",
+      "Clase Base",
+      "Clase Maes",
+      "Clase Fina"
+    ],
     "respuesta_correcta_literal": "Subclase",
     "nivel": "Intermedio"
   },
@@ -33,7 +38,10 @@
     "tema": "Herencia - Reutilización",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La principal ventaja de la herencia es la reutilización de código, evitando duplicar lógica común en varias clases.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -45,10 +53,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es el Polimorfismo?",
     "opciones": [
-      "La capacidad de un objeto de tomar diferentes formas o comportarse de manera distinta según el contexto.",
-      "Un error que ocurre cuando un objeto tiene demasiados atributos.",
-      "La técnica de esconder el código dentro de un archivo ejecutable.",
-      "La conexión física entre la CPU y la memoria."
+      "La capacidad de un objeto de tomar diferentes formas o comportarse de",
+      "Un error que ocurre cuando un objeto tiene demasiados atributos.     ",
+      "La técnica de esconder el código dentro de un archivo ejecutable.    ",
+      "La conexión física entre la CPU y la memoria.                        "
     ],
     "respuesta_correcta_literal": "La capacidad de un objeto de tomar diferentes formas o comportarse de manera distinta según el contexto.",
     "nivel": "Intermedio"
@@ -60,7 +68,12 @@
     "tema": "Sobreescritura (Override)",
     "tipo_pregunta": "completacion",
     "enunciado": "Cuando una clase hija redefine un método que heredó de su padre para cambiar su comportamiento, se dice que está haciendo una ________.",
-    "opciones_visibles": ["Sobrecarga", "Sobreescritura", "Instanciación", "Compilación"],
+    "opciones_visibles": [
+      "Sobrecarga  ",
+      "Sobreescritu",
+      "Instanciació",
+      "Compilación "
+    ],
     "respuesta_correcta_literal": "Sobreescritura",
     "nivel": "Intermedio"
   },
@@ -72,10 +85,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es la diferencia entre sobrecarga y sobreescritura?",
     "opciones": [
-      "La sobrecarga ocurre en la misma clase (mismo nombre, distintos parámetros); la sobreescritura ocurre en clases hijas.",
-      "La sobrecarga es para atributos y la sobreescritura para métodos.",
-      "No hay diferencia, son dos nombres para lo mismo.",
-      "La sobrecarga solo funciona en Java y la sobreescritura en C++."
+      "La sobrecarga ocurre en la misma clase (mismo nombre, distintos parámetro",
+      "La sobrecarga es para atributos y la sobreescritura para métodos.        ",
+      "No hay diferencia, son dos nombres para lo mismo.                        ",
+      "La sobrecarga solo funciona en Java y la sobreescritura en C++.          "
     ],
     "respuesta_correcta_literal": "La sobrecarga ocurre en la misma clase (mismo nombre, distintos parámetros); la sobreescritura ocurre en clases hijas.",
     "nivel": "Intermedio"
@@ -88,10 +101,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es una Clase Abstracta?",
     "opciones": [
-      "Una clase que no puede ser instanciada y sirve solo como base para otras clases.",
-      "Una clase que no tiene ningún método.",
-      "Una clase cuyo código es invisible para el programador.",
-      "Una clase que solo puede tener un objeto en todo el programa."
+      "Una clase que no puede ser instanciada y sirve solo como b",
+      "Una clase que no tiene ningún método.                     ",
+      "Una clase cuyo código es invisible para el programador.   ",
+      "Una clase que solo puede tener un objeto en todo el progra"
     ],
     "respuesta_correcta_literal": "Una clase que no puede ser instanciada y sirve solo como base para otras clases.",
     "nivel": "Intermedio"
@@ -103,7 +116,12 @@
     "tema": "Métodos Abstractos",
     "tipo_pregunta": "completacion",
     "enunciado": "Un método que se declara en una clase base pero no tiene implementación (código) se llama método ________.",
-    "opciones_visibles": ["Virtual", "Abstracto", "Estático", "Privado"],
+    "opciones_visibles": [
+      "Virtual",
+      "Abstrac",
+      "Estátic",
+      "Privado"
+    ],
     "respuesta_correcta_literal": "Abstracto",
     "nivel": "Intermedio"
   },
@@ -115,10 +133,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es una Interface en POO?",
     "opciones": [
-      "Un contrato que define qué métodos debe implementar una clase, sin decir cómo hacerlo.",
-      "La pantalla que ve el usuario final del programa.",
-      "Un tipo de cable para conectar periféricos.",
-      "Un programa para diseñar iconos y botones."
+      "Un contrato que define qué métodos debe implementar una",
+      "La pantalla que ve el usuario final del programa.      ",
+      "Un tipo de cable para conectar periféricos.            ",
+      "Un programa para diseñar iconos y botones.             "
     ],
     "respuesta_correcta_literal": "Un contrato que define qué métodos debe implementar una clase, sin decir cómo hacerlo.",
     "nivel": "Intermedio"
@@ -130,7 +148,10 @@
     "tema": "Herencia Múltiple",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En lenguajes como Java, una clase puede heredar directamente de múltiples clases padres al mismo tiempo.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Falso",
     "nivel": "Intermedio"
   },
@@ -141,7 +162,12 @@
     "tema": "Clase Padre / Super",
     "tipo_pregunta": "completacion",
     "enunciado": "Para acceder a un método de la clase padre que ha sido sobreescrito, se utiliza la palabra clave ________.",
-    "opciones_visibles": ["this", "super", "base", "parent"],
+    "opciones_visibles": [
+      "this",
+      "supe",
+      "base",
+      "pare"
+    ],
     "respuesta_correcta_literal": "super",
     "nivel": "Intermedio"
   },
@@ -153,10 +179,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es el 'Upcasting'?",
     "opciones": [
-      "Tratar a un objeto de una clase hija como si fuera de su clase padre.",
-      "Enviar un objeto a un servidor en la nube.",
-      "Borrar un objeto de la memoria RAM.",
-      "Cambiar el nombre de una variable en tiempo de ejecución."
+      "Tratar a un objeto de una clase hija como si fuera",
+      "Enviar un objeto a un servidor en la nube.        ",
+      "Borrar un objeto de la memoria RAM.               ",
+      "Cambiar el nombre de una variable en tiempo de eje"
     ],
     "respuesta_correcta_literal": "Tratar a un objeto de una clase hija como si fuera de su clase padre.",
     "nivel": "Intermedio"
@@ -168,7 +194,12 @@
     "tema": "Final / Sealed",
     "tipo_pregunta": "completacion",
     "enunciado": "Una clase que no permite que otras clases hereden de ella se define con la palabra clave ________.",
-    "opciones_visibles": ["Static", "Final", "Abstract", "Protected"],
+    "opciones_visibles": [
+      "Static ",
+      "Final  ",
+      "Abstrac",
+      "Protect"
+    ],
     "respuesta_correcta_literal": "Final",
     "nivel": "Intermedio"
   },
@@ -179,7 +210,10 @@
     "tema": "Jerarquías",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un objeto de una clase hija 'es un' objeto de la clase padre (relación IS-A).",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -191,10 +225,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es el orden de ejecución de los constructores en una jerarquía de herencia?",
     "opciones": [
-      "Primero se ejecuta el constructor de la clase padre y luego el de la clase hija.",
-      "Primero el de la hija y luego el del padre.",
-      "Se ejecutan al mismo tiempo de forma paralela.",
-      "Solo se ejecuta el de la clase hija."
+      "Primero se ejecuta el constructor de la clase padre",
+      "Primero el de la hija y luego el del padre.        ",
+      "Se ejecutan al mismo tiempo de forma paralela.     ",
+      "Solo se ejecuta el de la clase hija.               "
     ],
     "respuesta_correcta_literal": "Primero se ejecuta el constructor de la clase padre y luego el de la clase hija.",
     "nivel": "Intermedio"
@@ -206,7 +240,12 @@
     "tema": "Polimorfismo Dinámico",
     "tipo_pregunta": "completacion",
     "enunciado": "La capacidad del sistema para decidir qué método ejecutar en tiempo de ejecución se conoce como ligadura ________.",
-    "opciones_visibles": ["Estática", "Dinámica", "Débil", "Rápida"],
+    "opciones_visibles": [
+      "Estáti",
+      "Dinámi",
+      "Débil ",
+      "Rápida"
+    ],
     "respuesta_correcta_literal": "Dinámica",
     "nivel": "Intermedio"
   },
@@ -233,7 +272,10 @@
     "tema": "Protección de Miembros",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Los miembros 'Private' de una clase padre no son accesibles directamente por la clase hija.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -244,7 +286,12 @@
     "tema": "Estructura de Interfaces",
     "tipo_pregunta": "completacion",
     "enunciado": "En Java, para que una clase se comprometa a cumplir una interface se utiliza la palabra clave ________.",
-    "opciones_visibles": ["extends", "implements", "inherits", "uses"],
+    "opciones_visibles": [
+      "extends",
+      "impleme",
+      "inherit",
+      "uses   "
+    ],
     "respuesta_correcta_literal": "implements",
     "nivel": "Intermedio"
   },
@@ -256,10 +303,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuándo se debe usar una Clase Abstracta en lugar de una Interface?",
     "opciones": [
-      "Cuando existe una relación clara de herencia y se quiere compartir código común.",
-      "Cuando no se sabe programar todavía.",
-      "Cuando el programa tiene pocas variables.",
-      "Cuando se quiere que el programa sea más lento."
+      "Cuando existe una relación clara de herencia y se q",
+      "Cuando no se sabe programar todavía.               ",
+      "Cuando el programa tiene pocas variables.          ",
+      "Cuando se quiere que el programa sea más lento.    "
     ],
     "respuesta_correcta_literal": "Cuando existe una relación clara de herencia y se quiere compartir código común.",
     "nivel": "Intermedio"
@@ -271,7 +318,12 @@
     "tema": "Herencia - Sintaxis",
     "tipo_pregunta": "completacion",
     "enunciado": "En Java, para heredar de una clase se utiliza la palabra clave ________.",
-    "opciones_visibles": ["extends", "implements", "inherits", "plus"],
+    "opciones_visibles": [
+      "extends",
+      "impleme",
+      "inherit",
+      "plus   "
+    ],
     "respuesta_correcta_literal": "extends",
     "nivel": "Intermedio"
   },
@@ -282,7 +334,12 @@
     "tema": "Polimorfismo - Ejemplo",
     "tipo_pregunta": "funcionalidad",
     "enunciado": "Si una clase 'Animal' tiene un método 'HacerSonido()', y 'Perro' y 'Gato' lo heredan pero cada uno emite un sonido distinto, esto es un ejemplo de:",
-    "opciones": ["Encapsulamiento", "Polimorfismo", "Instanciación", "Compilación"],
+    "opciones": [
+      "Encapsulamie",
+      "Polimorfismo",
+      "Instanciació",
+      "Compilación "
+    ],
     "respuesta_correcta_literal": "Polimorfismo",
     "nivel": "Intermedio"
   },
@@ -293,7 +350,10 @@
     "tema": "Jerarquía - Object",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En lenguajes como Java o C#, todas las clases heredan automáticamente de una clase base universal llamada 'Object'.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -304,7 +364,12 @@
     "tema": "Sobreescritura - Anotaciones",
     "tipo_pregunta": "completacion",
     "enunciado": "La anotación ________ se usa en Java para indicar explícitamente que un método está redefiniendo uno de la superclase.",
-    "opciones_visibles": ["@Override", "@Deprecated", "@Supress", "@New"],
+    "opciones_visibles": [
+      "@Overrid",
+      "@Depreca",
+      "@Supress",
+      "@New    "
+    ],
     "respuesta_correcta_literal": "@Override",
     "nivel": "Intermedio"
   },
@@ -316,10 +381,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Pueden las interfaces (en versiones clásicas de Java) tener atributos variables?",
     "opciones": [
-      "No, solo pueden tener constantes (public static final).",
-      "Sí, cualquier tipo de variable.",
-      "Solo variables privadas.",
-      "Solo si son de tipo entero."
+      "No, solo pueden tener constantes (",
+      "Sí, cualquier tipo de variable.   ",
+      "Solo variables privadas.          ",
+      "Solo si son de tipo entero.       "
     ],
     "respuesta_correcta_literal": "No, solo pueden tener constantes (public static final).",
     "nivel": "Intermedio"
@@ -331,7 +396,10 @@
     "tema": "Herencia de Interfaces",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Una interface puede heredar de otra interface en Java.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -342,7 +410,12 @@
     "tema": "Superclase Abstracta",
     "tipo_pregunta": "completacion",
     "enunciado": "Si una clase tiene al menos un método abstracto, la clase completa DEBE ser declarada como ________.",
-    "opciones_visibles": ["Public", "Abstract", "Static", "Final"],
+    "opciones_visibles": [
+      "Public",
+      "Abstra",
+      "Static",
+      "Final "
+    ],
     "respuesta_correcta_literal": "Abstract",
     "nivel": "Intermedio"
   },
@@ -354,10 +427,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué debe coincidir obligatoriamente en la sobreescritura de un método?",
     "opciones": [
-      "El nombre, el tipo de retorno y los parámetros (la firma completa).",
-      "Solo el nombre.",
-      "Solo los parámetros.",
-      "Nada, se puede cambiar todo."
+      "El nombre, el tipo de retorno y ",
+      "Solo el nombre.                 ",
+      "Solo los parámetros.            ",
+      "Nada, se puede cambiar todo.    "
     ],
     "respuesta_correcta_literal": "El nombre, el tipo de retorno y los parámetros (la firma completa).",
     "nivel": "Intermedio"
@@ -369,7 +442,10 @@
     "tema": "Casting - Downcasting",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El Downcasting es el proceso de convertir una referencia de clase padre de vuelta a una referencia de clase hija, y requiere precaución.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -380,7 +456,12 @@
     "tema": "Final Methods",
     "tipo_pregunta": "completacion",
     "enunciado": "Un método marcado como ________ no puede ser sobreescrito por ninguna subclase.",
-    "opciones_visibles": ["Static", "Private", "Final", "Public"],
+    "opciones_visibles": [
+      "Static",
+      "Privat",
+      "Final ",
+      "Public"
+    ],
     "respuesta_correcta_literal": "Final",
     "nivel": "Intermedio"
   },
@@ -392,10 +473,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es la principal ventaja del polimorfismo para el mantenimiento?",
     "opciones": [
-      "Permite escribir código genérico que funciona con cualquier objeto de una jerarquía.",
-      "Hace que el código se guarde en menos espacio.",
-      "Evita que los virus entren al sistema.",
-      "No tiene ventajas reales."
+      "Permite escribir código genérico que funciona co",
+      "Hace que el código se guarde en menos espacio.  ",
+      "Evita que los virus entren al sistema.          ",
+      "No tiene ventajas reales.                       "
     ],
     "respuesta_correcta_literal": "Permite escribir código genérico que funciona con cualquier objeto de una jerarquía.",
     "nivel": "Intermedio"
@@ -407,7 +488,10 @@
     "tema": "Abstracción - Diseño",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Las interfaces representan comportamientos (lo que el objeto PUEDE hacer), mientras que las clases representan identidades (lo que el objeto ES).",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -418,7 +502,12 @@
     "tema": "Instanceof",
     "tipo_pregunta": "completacion",
     "enunciado": "El operador ________ se usa en Java para verificar si un objeto pertenece a una clase determinada antes de hacer un casting.",
-    "opciones_visibles": ["isType", "instanceof", "check", "compare"],
+    "opciones_visibles": [
+      "isType ",
+      "instanc",
+      "check  ",
+      "compare"
+    ],
     "respuesta_correcta_literal": "instanceof",
     "nivel": "Intermedio"
   },
@@ -430,10 +519,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué heredan las subclases?",
     "opciones": [
-      "Atributos y métodos públicos y protegidos.",
-      "Solo los métodos públicos.",
-      "Solo los atributos privados.",
-      "Absolutamente todo sin excepción."
+      "Atributos y métodos públicos y p",
+      "Solo los métodos públicos.      ",
+      "Solo los atributos privados.    ",
+      "Absolutamente todo sin excepción"
     ],
     "respuesta_correcta_literal": "Atributos y métodos públicos y protegidos.",
     "nivel": "Intermedio"
@@ -445,7 +534,10 @@
     "tema": "Sobrecarga vs Sobreescritura",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La sobrecarga es un ejemplo de polimorfismo en tiempo de compilación.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -456,7 +548,12 @@
     "tema": "Abstract - Implementación",
     "tipo_pregunta": "completacion",
     "enunciado": "La primera clase concreta que hereda de una abstracta está obligada a ________ todos los métodos abstractos pendientes.",
-    "opciones_visibles": ["Borrar", "Implementar", "Ignorar", "Duplicar"],
+    "opciones_visibles": [
+      "Borrar  ",
+      "Implemen",
+      "Ignorar ",
+      "Duplicar"
+    ],
     "respuesta_correcta_literal": "Implementar",
     "nivel": "Intermedio"
   },
@@ -468,10 +565,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué significa que un lenguaje soporte solo herencia simple de clases?",
     "opciones": [
-      "Que una clase solo puede tener un padre directo.",
-      "Que no se puede usar polimorfismo.",
+      "Que una clase solo puede tener un padre d",
+      "Que no se puede usar polimorfismo.       ",
       "Que el programa es muy fácil de escribir.",
-      "Que solo se pueden usar variables enteras."
+      "Que solo se pueden usar variables enteras"
     ],
     "respuesta_correcta_literal": "Que una clase solo puede tener un padre directo.",
     "nivel": "Intermedio"
@@ -483,7 +580,10 @@
     "tema": "Interfaces - Ventaja",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Las interfaces permiten simular un tipo de herencia múltiple, ya que una clase puede implementar muchas interfaces.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -494,7 +594,12 @@
     "tema": "Constructor - Base",
     "tipo_pregunta": "completacion",
     "enunciado": "Si el constructor del padre tiene parámetros, la clase hija debe invocarlos usando ________ en su primera línea.",
-    "opciones_visibles": ["this", "super", "call", "start"],
+    "opciones_visibles": [
+      "this",
+      "supe",
+      "call",
+      "star"
+    ],
     "respuesta_correcta_literal": "super",
     "nivel": "Intermedio"
   },
@@ -506,10 +611,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es la composición (HAS-A) frente a la herencia (IS-A)?",
     "opciones": [
-      "Es cuando una clase contiene un objeto de otra clase como atributo.",
-      "Es cuando una clase borra a otra.",
-      "Es un tipo de error de memoria RAM.",
-      "Es el nombre del servidor principal."
+      "Es cuando una clase contiene un objeto de ",
+      "Es cuando una clase borra a otra.         ",
+      "Es un tipo de error de memoria RAM.       ",
+      "Es el nombre del servidor principal.      "
     ],
     "respuesta_correcta_literal": "Es cuando una clase contiene un objeto de otra clase como atributo.",
     "nivel": "Intermedio"
@@ -521,7 +626,10 @@
     "tema": "Polimorfismo Estático",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La sobrecarga de métodos se resuelve durante la compilación del programa.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -533,10 +641,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué sucede si intentas hacer <code>new ClaseAbstracta()</code>?",
     "opciones": [
-      "El compilador genera un error porque no se pueden crear instancias de clases abstractas.",
-      "Se crea un objeto vacío.",
-      "La computadora se apaga.",
-      "Se crea un objeto de la clase Object."
+      "El compilador genera un error porque no se ",
+      "Se crea un objeto vacío.                   ",
+      "La computadora se apaga.                   ",
+      "Se crea un objeto de la clase Object.      "
     ],
     "respuesta_correcta_literal": "El compilador genera un error porque no se pueden crear instancias de clases abstractas.",
     "nivel": "Intermedio"
@@ -548,7 +656,12 @@
     "tema": "Interface - Sintaxis",
     "tipo_pregunta": "completacion",
     "enunciado": "Para definir una interface en Java se usa la palabra clave ________.",
-    "opciones_visibles": ["class", "interface", "contract", "module"],
+    "opciones_visibles": [
+      "class  ",
+      "interfa",
+      "contrac",
+      "module "
+    ],
     "respuesta_correcta_literal": "interface",
     "nivel": "Intermedio"
   },
@@ -559,7 +672,10 @@
     "tema": "Herencia - Límites",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Heredar demasiados niveles (jerarquías muy profundas) puede hacer que el código sea difícil de entender y mantener.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -571,10 +687,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Por qué querrías declarar una clase como 'Final'?",
     "opciones": [
-      "Para evitar que sea modificada a través de herencia por razones de seguridad o diseño.",
-      "Para que el programa termine más rápido.",
-      "Para borrarla del disco duro al final.",
-      "Para que ocupe menos memoria RAM."
+      "Para evitar que sea modificada a través de herenc",
+      "Para que el programa termine más rápido.         ",
+      "Para borrarla del disco duro al final.           ",
+      "Para que ocupe menos memoria RAM.                "
     ],
     "respuesta_correcta_literal": "Para evitar que sea modificada a través de herencia por razones de seguridad o diseño.",
     "nivel": "Intermedio"
@@ -586,7 +702,12 @@
     "tema": "Protected - Acceso",
     "tipo_pregunta": "completacion",
     "enunciado": "El modificador ________ es el más común para permitir que las hijas accedan a los datos del padre manteniendo cierta privacidad externa.",
-    "opciones_visibles": ["Public", "Protected", "Private", "Final"],
+    "opciones_visibles": [
+      "Public",
+      "Protec",
+      "Privat",
+      "Final "
+    ],
     "respuesta_correcta_literal": "Protected",
     "nivel": "Intermedio"
   },
@@ -597,7 +718,10 @@
     "tema": "Sobreescritura - Retorno",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un método sobreescrito puede cambiar su tipo de retorno a uno completamente diferente (ej. de int a String).",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Falso",
     "nivel": "Intermedio"
   },
@@ -609,10 +733,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es la clase 'Raíz'?",
     "opciones": [
-      "La clase en el nivel más alto de una jerarquía de la cual todas las demás heredan.",
-      "La clase que se encarga de borrar archivos temporales.",
-      "El nombre de la función principal main.",
-      "Un componente del hardware del servidor."
+      "La clase en el nivel más alto de una jerarquía de la ",
+      "La clase que se encarga de borrar archivos temporales",
+      "El nombre de la función principal main.              ",
+      "Un componente del hardware del servidor.             "
     ],
     "respuesta_correcta_literal": "La clase en el nivel más alto de una jerarquía de la cual todas las demás heredan.",
     "nivel": "Intermedio"
@@ -624,7 +748,12 @@
     "tema": "Polimorfismo - Casting",
     "tipo_pregunta": "completacion",
     "enunciado": "Convertir una referencia de tipo Animal a una de tipo Perro se llama ________ (Downcasting).",
-    "opciones_visibles": ["Casting Superior", "Casting Inferior", "Casting Nulo", "Casting Rápido"],
+    "opciones_visibles": [
+      "Casting Superi",
+      "Casting Inferi",
+      "Casting Nulo  ",
+      "Casting Rápido"
+    ],
     "respuesta_correcta_literal": "Casting Inferior",
     "nivel": "Intermedio"
   },
@@ -635,7 +764,10 @@
     "tema": "Conclusión - Intermedio",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El dominio de la herencia y el polimorfismo es fundamental para el diseño de frameworks y librerías modernas.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   }

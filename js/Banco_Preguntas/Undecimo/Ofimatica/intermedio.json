@@ -11,20 +11,7 @@
     "OpcionB": "Una herramienta para dar formato a una celda basada en una regla",
     "OpcionC": "Una función matemática",
     "OpcionD": "Una forma de ocultar datos",
-    "Activa": true,
-    "enunciado": "¿Qué es el Formato Condicional?",
-    "respuesta_correcta_literal": "Una herramienta para dar formato a una celda basada en una regla",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Formato Condicional",
-    "opciones_visibles": [
-      "Un tipo de celda",
-      "Una herramienta para dar formato a una celda basada en una regla",
-      "Una función matemática",
-      "Una forma de ocultar datos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Para qué sirve el Formato Condicional?",
@@ -38,20 +25,7 @@
     "OpcionB": "Para sumar automáticamente los valores",
     "OpcionC": "Para visualizar rápidamente tendencias y valores importantes",
     "OpcionD": "Para crear gráficos",
-    "Activa": true,
-    "enunciado": "¿Para qué sirve el Formato Condicional?",
-    "respuesta_correcta_literal": "Para visualizar rápidamente tendencias y valores importantes",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Formato Condicional",
-    "opciones_visibles": [
-      "Para cambiar el nombre de una hoja de cálculo",
-      "Para sumar automáticamente los valores",
-      "Para visualizar rápidamente tendencias y valores importantes",
-      "Para crear gráficos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Una regla que usa una fórmula personalizada siempre comienza con:",
@@ -65,20 +39,7 @@
     "OpcionB": "`()`",
     "OpcionC": "`<>`",
     "OpcionD": "`#`",
-    "Activa": true,
-    "enunciado": "Una regla que usa una fórmula personalizada siempre comienza con:",
-    "respuesta_correcta_literal": "`=`",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Formato Condicional",
-    "opciones_visibles": [
-      "`=`",
-      "`()`",
-      "`<>`",
-      "`#`"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Si tienes dos reglas que se aplican a la misma celda, ¿cuál tiene prioridad?",
@@ -92,20 +53,7 @@
     "OpcionB": "La que fue creada al último",
     "OpcionC": "La que está más arriba en el Administrador de reglas",
     "OpcionD": "La que tiene el formato más simple",
-    "Activa": true,
-    "enunciado": "Si tienes dos reglas que se aplican a la misma celda, ¿cuál tiene prioridad?",
-    "respuesta_correcta_literal": "La que está más arriba en el Administrador de reglas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Formato Condicional",
-    "opciones_visibles": [
-      "La que fue creada primero",
-      "La que fue creada al último",
-      "La que está más arriba en el Administrador de reglas",
-      "La que tiene el formato más simple"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "La fórmula `=C2 > 1000` resaltará las celdas en la columna C que:",
@@ -119,20 +67,7 @@
     "OpcionB": "Son iguales a 1000",
     "OpcionC": "Son mayores a 1000",
     "OpcionD": "Son menores a 1000",
-    "Activa": true,
-    "enunciado": "La fórmula `=C2 > 1000` resaltará las celdas en la columna C que:",
-    "respuesta_correcta_literal": "Son mayores a 1000",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Contienen el número 1000",
-      "Son iguales a 1000",
-      "Son mayores a 1000",
-      "Son menores a 1000"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estas visualizaciones usa una barra horizontal proporcional al valor?",
@@ -146,20 +81,7 @@
     "OpcionB": "Escalas de Color",
     "OpcionC": "Conjuntos de Íconos",
     "OpcionD": "Gráficos de Tarta",
-    "Activa": true,
-    "enunciado": "¿Cuál de estas visualizaciones usa una barra horizontal proporcional al valor?",
-    "respuesta_correcta_literal": "Barras de Datos",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Barras de Datos",
-      "Escalas de Color",
-      "Conjuntos de Íconos",
-      "Gráficos de Tarta"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué visualización usa un degradado de color según el valor?",
@@ -173,20 +95,7 @@
     "OpcionB": "Barras de Datos",
     "OpcionC": "Conjuntos de Íconos",
     "OpcionD": "Filtros",
-    "Activa": true,
-    "enunciado": "¿Qué visualización usa un degradado de color según el valor?",
-    "respuesta_correcta_literal": "Escalas de Color",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Escalas de Color",
-      "Barras de Datos",
-      "Conjuntos de Íconos",
-      "Filtros"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Para agregar flechas o semáforos a una celda se usa:",
@@ -200,20 +109,7 @@
     "OpcionB": "Barras de Datos",
     "OpcionC": "Fórmulas complejas",
     "OpcionD": "Macros",
-    "Activa": true,
-    "enunciado": "Para agregar flechas o semáforos a una celda se usa:",
-    "respuesta_correcta_literal": "Conjuntos de Íconos",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Conjuntos de Íconos",
-      "Barras de Datos",
-      "Fórmulas complejas",
-      "Macros"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "La opción 'Detener si es verdad' sirve para:",
@@ -227,20 +123,7 @@
     "OpcionB": "Cerrar el programa",
     "OpcionC": "Borrar el contenido de la celda",
     "OpcionD": "Reiniciar la PC",
-    "Activa": true,
-    "enunciado": "La opción 'Detener si es verdad' sirve para:",
-    "respuesta_correcta_literal": "Evitar que se apliquen reglas posteriores",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Evitar que se apliquen reglas posteriores",
-      "Cerrar el programa",
-      "Borrar el contenido de la celda",
-      "Reiniciar la PC"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿En qué pestaña de Excel se encuentra usualmente el Formato Condicional?",
@@ -254,20 +137,7 @@
     "OpcionB": "Insertar",
     "OpcionC": "Fórmulas",
     "OpcionD": "Datos",
-    "Activa": true,
-    "enunciado": "¿En qué pestaña de Excel se encuentra usualmente el Formato Condicional?",
-    "respuesta_correcta_literal": "Inicio",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Formato Condicional",
-    "opciones_visibles": [
-      "Inicio",
-      "Insertar",
-      "Fórmulas",
-      "Datos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "En la instrucción Range(\"A1\").Value = \"Hola\", ¿qué representa '.Value'?",
@@ -281,20 +151,7 @@
     "OpcionB": "Una Propiedad",
     "OpcionC": "Un Método",
     "OpcionD": "Una Variable",
-    "Activa": true,
-    "enunciado": "En la instrucción Range(\"A1\").Value = \"Hola\", ¿qué representa '.Value'?",
-    "respuesta_correcta_literal": "Una Propiedad",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Un Objeto",
-      "Una Propiedad",
-      "Un Método",
-      "Una Variable"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Para qué sirve el comando 'MsgBox' en VBA?",
@@ -308,20 +165,7 @@
     "OpcionB": "Para guardar un valor",
     "OpcionC": "Para mostrar un mensaje al usuario",
     "OpcionD": "Para borrar el disco duro",
-    "Activa": true,
-    "enunciado": "¿Para qué sirve el comando 'MsgBox' en VBA?",
-    "respuesta_correcta_literal": "Para mostrar un mensaje al usuario",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Macros y Automatización",
-    "opciones_visibles": [
-      "Para escribir en una celda",
-      "Para guardar un valor",
-      "Para mostrar un mensaje al usuario",
-      "Para borrar el disco duro"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Todo el código de una macro (procedimiento) se escribe entre:",
@@ -335,20 +179,7 @@
     "OpcionB": "Start...End",
     "OpcionC": "Begin...Finish",
     "OpcionD": "If...End If",
-    "Activa": true,
-    "enunciado": "Todo el código de una macro (procedimiento) se escribe entre:",
-    "respuesta_correcta_literal": "Sub...End Sub",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Macros y Automatización",
-    "opciones_visibles": [
-      "Sub...End Sub",
-      "Start...End",
-      "Begin...Finish",
-      "If...End If"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué significa la sigla VBA?",
@@ -362,20 +193,7 @@
     "OpcionB": "Virtual Basic Array",
     "OpcionC": "Visual Binary Assembler",
     "OpcionD": "Verified Basic App",
-    "Activa": true,
-    "enunciado": "¿Qué significa la sigla VBA?",
-    "respuesta_correcta_literal": "Visual Basic for Applications",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Macros y Automatización",
-    "opciones_visibles": [
-      "Visual Basic for Applications",
-      "Virtual Basic Array",
-      "Visual Binary Assembler",
-      "Verified Basic App"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué combinación de teclas abre el Editor de VBA (VBE)?",
@@ -389,20 +207,7 @@
     "OpcionB": "Ctrl + Alt + Del",
     "OpcionC": "Alt + F4",
     "OpcionD": "Ctrl + V",
-    "Activa": true,
-    "enunciado": "¿Qué combinación de teclas abre el Editor de VBA (VBE)?",
-    "respuesta_correcta_literal": "Alt + F11",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Macros y Automatización",
-    "opciones_visibles": [
-      "Alt + F11",
-      "Ctrl + Alt + Del",
-      "Alt + F4",
-      "Ctrl + V"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué palabra clave se usa para crear o declarar una variable en VBA?",
@@ -416,20 +221,7 @@
     "OpcionB": "Var",
     "OpcionC": "New",
     "OpcionD": "Create",
-    "Activa": true,
-    "enunciado": "¿Qué palabra clave se usa para crear o declarar una variable en VBA?",
-    "respuesta_correcta_literal": "Dim",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Macros y Automatización",
-    "opciones_visibles": [
-      "Dim",
-      "Var",
-      "New",
-      "Create"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el tipo de dato correcto para almacenar texto?",
@@ -443,20 +235,7 @@
     "OpcionB": "Integer",
     "OpcionC": "Boolean",
     "OpcionD": "Date",
-    "Activa": true,
-    "enunciado": "¿Cuál es el tipo de dato correcto para almacenar texto?",
-    "respuesta_correcta_literal": "String",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "String",
-      "Integer",
-      "Boolean",
-      "Date"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué extensión debe tener un libro de Excel para conservar el código VBA?",
@@ -470,20 +249,7 @@
     "OpcionB": ".xlsx",
     "OpcionC": ".docx",
     "OpcionD": ".pdf",
-    "Activa": true,
-    "enunciado": "¿Qué extensión debe tener un libro de Excel para conservar el código VBA?",
-    "respuesta_correcta_literal": ".xlsm",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Macros y Automatización",
-    "opciones_visibles": [
-      ".xlsm",
-      ".xlsx",
-      ".docx",
-      ".pdf"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "En VBA, una acción que un objeto puede realizar (como borrar) se llama:",
@@ -497,20 +263,7 @@
     "OpcionB": "Propiedad",
     "OpcionC": "Atributo",
     "OpcionD": "Evento",
-    "Activa": true,
-    "enunciado": "En VBA, una acción que un objeto puede realizar (como borrar) se llama:",
-    "respuesta_correcta_literal": "Método",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Macros y Automatización",
-    "opciones_visibles": [
-      "Método",
-      "Propiedad",
-      "Atributo",
-      "Evento"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Para referirse a la celda B5 en VBA, se utiliza:",
@@ -524,20 +277,7 @@
     "OpcionB": "Cell(\"B5\")",
     "OpcionC": "Target(B5)",
     "OpcionD": "Select(B5)",
-    "Activa": true,
-    "enunciado": "Para referirse a la celda B5 en VBA, se utiliza:",
-    "respuesta_correcta_literal": "Range(\"B5\")",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Macros y Automatización",
-    "opciones_visibles": [
-      "Range(\"B5\")",
-      "Cell(\"B5\")",
-      "Target(B5)",
-      "Select(B5)"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es una hoja de cálculo?",
@@ -551,20 +291,7 @@
     "OpcionB": "Software para editar fotos",
     "OpcionC": "Un sistema operativo",
     "OpcionD": "Un navegador web",
-    "Activa": true,
-    "enunciado": "¿Qué es una hoja de cálculo?",
-    "respuesta_correcta_literal": "Aplicación para organizar y analizar datos en tablas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Aplicación para organizar y analizar datos en tablas",
-      "Software para editar fotos",
-      "Un sistema operativo",
-      "Un navegador web"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Las unidades básicas de una hoja de cálculo son:",
@@ -578,20 +305,7 @@
     "OpcionB": "Párrafos",
     "OpcionC": "Diapositivas",
     "OpcionD": "Capas",
-    "Activa": true,
-    "enunciado": "Las unidades básicas de una hoja de cálculo son:",
-    "respuesta_correcta_literal": "Celdas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Celdas",
-      "Párrafos",
-      "Diapositivas",
-      "Capas"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es la función de la barra de fórmulas?",
@@ -605,20 +319,7 @@
     "OpcionB": "Cambiar el color de fondo",
     "OpcionC": "Imprimir el documento",
     "OpcionD": "Cerrar el programa",
-    "Activa": true,
-    "enunciado": "¿Cuál es la función de la barra de fórmulas?",
-    "respuesta_correcta_literal": "Introducir y editar datos o fórmulas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Introducir y editar datos o fórmulas",
-      "Cambiar el color de fondo",
-      "Imprimir el documento",
-      "Cerrar el programa"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué atajo de teclado abre el cuadro de formato de celdas?",
@@ -632,20 +333,7 @@
     "OpcionB": "Ctrl + C",
     "OpcionC": "Ctrl + V",
     "OpcionD": "Alt + F4",
-    "Activa": true,
-    "enunciado": "¿Qué atajo de teclado abre el cuadro de formato de celdas?",
-    "respuesta_correcta_literal": "Ctrl + 1",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Ctrl + 1",
-      "Ctrl + C",
-      "Ctrl + V",
-      "Alt + F4"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Todas las fórmulas en una hoja de cálculo deben comenzar con:",
@@ -659,20 +347,7 @@
     "OpcionB": "Signo más (+)",
     "OpcionC": "Una letra",
     "OpcionD": "Un paréntesis",
-    "Activa": true,
-    "enunciado": "Todas las fórmulas en una hoja de cálculo deben comenzar con:",
-    "respuesta_correcta_literal": "Signo igual (=)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Signo igual (=)",
-      "Signo más (+)",
-      "Una letra",
-      "Un paréntesis"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué función se utiliza para sumar un rango de celdas?",
@@ -686,20 +361,7 @@
     "OpcionB": "TOTAL",
     "OpcionC": "ADD",
     "OpcionD": "CALCULAR",
-    "Activa": true,
-    "enunciado": "¿Qué función se utiliza para sumar un rango de celdas?",
-    "respuesta_correcta_literal": "SUMA",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "SUMA",
-      "TOTAL",
-      "ADD",
-      "CALCULAR"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "La función que calcula el promedio de un conjunto de valores es:",
@@ -713,20 +375,7 @@
     "OpcionB": "MEDIA",
     "OpcionC": "SUMA/CONTAR",
     "OpcionD": "VALOR.MEDIO",
-    "Activa": true,
-    "enunciado": "La función que calcula el promedio de un conjunto de valores es:",
-    "respuesta_correcta_literal": "PROMEDIO",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "PROMEDIO",
-      "MEDIA",
-      "SUMA/CONTAR",
-      "VALOR.MEDIO"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué herramienta permite mostrar solo los datos que cumplen ciertos criterios?",
@@ -740,20 +389,7 @@
     "OpcionB": "Ordenar",
     "OpcionC": "Formato condicional",
     "OpcionD": "Validación",
-    "Activa": true,
-    "enunciado": "¿Qué herramienta permite mostrar solo los datos que cumplen ciertos criterios?",
-    "respuesta_correcta_literal": "Filtrar",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Filtrar",
-      "Ordenar",
-      "Formato condicional",
-      "Validación"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Reorganizar los datos de mayor a menor se conoce como:",
@@ -767,20 +403,7 @@
     "OpcionB": "Ordenar ascendente",
     "OpcionC": "Filtrado rápido",
     "OpcionD": "Agrupación",
-    "Activa": true,
-    "enunciado": "Reorganizar los datos de mayor a menor se conoce como:",
-    "respuesta_correcta_literal": "Ordenar descendente",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Ordenar descendente",
-      "Ordenar ascendente",
-      "Filtrado rápido",
-      "Agrupación"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estos es un tipo de dato válido en una celda?",
@@ -794,20 +417,7 @@
     "OpcionB": "Solo texto",
     "OpcionC": "Solo imágenes",
     "OpcionD": "Solo sonidos",
-    "Activa": true,
-    "enunciado": "¿Cuál de estos es un tipo de dato válido en una celda?",
-    "respuesta_correcta_literal": "Texto, Números, Fechas y Fórmulas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Texto, Números, Fechas y Fórmulas",
-      "Solo texto",
-      "Solo imágenes",
-      "Solo sonidos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué permite realizar la Función SI (IF) en Excel?",
@@ -821,20 +431,7 @@
     "OpcionB": "Solo sumas automáticas",
     "OpcionC": "Cambiar el color de la hoja",
     "OpcionD": "Borrar datos duplicados",
-    "Activa": true,
-    "enunciado": "¿Qué permite realizar la Función SI (IF) en Excel?",
-    "respuesta_correcta_literal": "Evaluaciones condicionales",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Evaluaciones condicionales",
-      "Solo sumas automáticas",
-      "Cambiar el color de la hoja",
-      "Borrar datos duplicados"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es la estructura correcta de la función SI?",
@@ -848,20 +445,7 @@
     "OpcionB": "=SI(valor; condición)",
     "OpcionC": "=IF(prueba; error)",
     "OpcionD": "=SI(condición)",
-    "Activa": true,
-    "enunciado": "¿Cuál es la estructura correcta de la función SI?",
-    "respuesta_correcta_literal": "=SI(prueba_lógica; valor_verdadero; valor_falso)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "=SI(prueba_lógica; valor_verdadero; valor_falso)",
-      "=SI(valor; condición)",
-      "=IF(prueba; error)",
-      "=SI(condición)"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Si queremos evaluar varias condiciones una dentro de otra, usamos una función SI __________.",
@@ -875,20 +459,7 @@
     "OpcionB": "Simple",
     "OpcionC": "Circular",
     "OpcionD": "Inversa",
-    "Activa": true,
-    "enunciado": "Si queremos evaluar varias condiciones una dentro de otra, usamos una función SI __________.",
-    "respuesta_correcta_literal": "Anidada",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Anidada",
-      "Simple",
-      "Circular",
-      "Inversa"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el principal beneficio de los gráficos en Excel?",
@@ -902,20 +473,7 @@
     "OpcionB": "Hacer la hoja más pesada",
     "OpcionC": "Ocultar errores de cálculo",
     "OpcionD": "No tienen beneficio",
-    "Activa": true,
-    "enunciado": "¿Cuál es el principal beneficio de los gráficos en Excel?",
-    "respuesta_correcta_literal": "Visualizar tendencias y patrones rápidamente",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Visualizar tendencias y patrones rápidamente",
-      "Hacer la hoja más pesada",
-      "Ocultar errores de cálculo",
-      "No tienen beneficio"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué tipo de gráfico es ideal para mostrar proporciones de un total?",
@@ -929,20 +487,7 @@
     "OpcionB": "Gráfico de Líneas",
     "OpcionC": "Gráfico de Dispersión",
     "OpcionD": "Gráfico de Barras",
-    "Activa": true,
-    "enunciado": "¿Qué tipo de gráfico es ideal para mostrar proporciones de un total?",
-    "respuesta_correcta_literal": "Gráfico Circular (Pastel)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Gráfico Circular (Pastel)",
-      "Gráfico de Líneas",
-      "Gráfico de Dispersión",
-      "Gráfico de Barras"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué gráfico usarías para mostrar tendencias a lo largo del tiempo?",
@@ -956,20 +501,7 @@
     "OpcionB": "Gráfico Circular",
     "OpcionC": "Gráfico de Áreas",
     "OpcionD": "Gráfico de Radar",
-    "Activa": true,
-    "enunciado": "¿Qué gráfico usarías para mostrar tendencias a lo largo del tiempo?",
-    "respuesta_correcta_literal": "Gráfico de Líneas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Gráfico de Líneas",
-      "Gráfico Circular",
-      "Gráfico de Áreas",
-      "Gráfico de Radar"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es una Tabla Dinámica?",
@@ -983,20 +515,7 @@
     "OpcionB": "Una tabla que se mueve sola por la pantalla",
     "OpcionC": "Un tipo de gráfico animado",
     "OpcionD": "Una fórmula para sumar celdas",
-    "Activa": true,
-    "enunciado": "¿Qué es una Tabla Dinámica?",
-    "respuesta_correcta_literal": "Herramienta interactiva para resumir y analizar grandes datos",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Herramienta interactiva para resumir y analizar grandes datos",
-      "Una tabla que se mueve sola por la pantalla",
-      "Un tipo de gráfico animado",
-      "Una fórmula para sumar celdas"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿En qué área de la tabla dinámica se colocan los datos numéricos que se quieren sumar o promediar?",
@@ -1010,20 +529,7 @@
     "OpcionB": "Filtros",
     "OpcionC": "Filas",
     "OpcionD": "Columnas",
-    "Activa": true,
-    "enunciado": "¿En qué área de la tabla dinámica se colocan los datos numéricos que se quieren sumar o promediar?",
-    "respuesta_correcta_literal": "Valores",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Valores",
-      "Filtros",
-      "Filas",
-      "Columnas"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Para insertar un gráfico o tabla dinámica, debemos ir a la pestaña:",
@@ -1037,20 +543,7 @@
     "OpcionB": "Inicio",
     "OpcionC": "Datos",
     "OpcionD": "Revisar",
-    "Activa": true,
-    "enunciado": "Para insertar un gráfico o tabla dinámica, debemos ir a la pestaña:",
-    "respuesta_correcta_literal": "Insertar",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Insertar",
-      "Inicio",
-      "Datos",
-      "Revisar"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "El componente del gráfico que identifica qué representa cada color se llama:",
@@ -1064,20 +557,7 @@
     "OpcionB": "Título",
     "OpcionC": "Eje X",
     "OpcionD": "Etiqueta",
-    "Activa": true,
-    "enunciado": "El componente del gráfico que identifica qué representa cada color se llama:",
-    "respuesta_correcta_literal": "Leyenda",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Leyenda",
-      "Título",
-      "Eje X",
-      "Etiqueta"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es un procesador de texto?",
@@ -1091,20 +571,7 @@
     "OpcionB": "Software para editar video",
     "OpcionC": "Un gestor de correos",
     "OpcionD": "Una base de datos de libros",
-    "Activa": true,
-    "enunciado": "¿Qué es un procesador de texto?",
-    "respuesta_correcta_literal": "Programa para crear y editar documentos digitales",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Programa para crear y editar documentos digitales",
-      "Software para editar video",
-      "Un gestor de correos",
-      "Una base de datos de libros"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estos es un ejemplo de formato de carácter?",
@@ -1118,20 +585,7 @@
     "OpcionB": "Sangría de primera línea",
     "OpcionC": "Alineación justificada",
     "OpcionD": "Márgenes de página",
-    "Activa": true,
-    "enunciado": "¿Cuál de estos es un ejemplo de formato de carácter?",
-    "respuesta_correcta_literal": "Tipo y tamaño de fuente",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Tipo y tamaño de fuente",
-      "Sangría de primera línea",
-      "Alineación justificada",
-      "Márgenes de página"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Negrita, Cursiva y Subrayado son ejemplos de:",
@@ -1145,20 +599,7 @@
     "OpcionB": "Tipos de párrafo",
     "OpcionC": "Formatos de página",
     "OpcionD": "Objetos insertados",
-    "Activa": true,
-    "enunciado": "Negrita, Cursiva y Subrayado son ejemplos de:",
-    "respuesta_correcta_literal": "Estilos de texto",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Estilos de texto",
-      "Tipos de párrafo",
-      "Formatos de página",
-      "Objetos insertados"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué opción define la posición del texto (izquierda, derecha, centrado)?",
@@ -1172,20 +613,7 @@
     "OpcionB": "Interlineado",
     "OpcionC": "Orientación",
     "OpcionD": "Margen",
-    "Activa": true,
-    "enunciado": "¿Qué opción define la posición del texto (izquierda, derecha, centrado)?",
-    "respuesta_correcta_literal": "Alineación",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Alineación",
-      "Interlineado",
-      "Orientación",
-      "Margen"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué formato de página permite elegir entre Vertical u Horizontal?",
@@ -1199,20 +627,7 @@
     "OpcionB": "Encabezado",
     "OpcionC": "Interlineado",
     "OpcionD": "Estilo de fuente",
-    "Activa": true,
-    "enunciado": "¿Qué formato de página permite elegir entre Vertical u Horizontal?",
-    "respuesta_correcta_literal": "Orientación",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Orientación",
-      "Encabezado",
-      "Interlineado",
-      "Estilo de fuente"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "La función que permite corregir palabras mal escritas se llama:",
@@ -1226,20 +641,7 @@
     "OpcionB": "Buscar y reemplazar",
     "OpcionC": "Coautoría",
     "OpcionD": "Insertar objeto",
-    "Activa": true,
-    "enunciado": "La función que permite corregir palabras mal escritas se llama:",
-    "respuesta_correcta_literal": "Revisión ortográfica",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Revisión ortográfica",
-      "Buscar y reemplazar",
-      "Coautoría",
-      "Insertar objeto"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de estos NO es un objeto que se pueda insertar en un procesador de texto?",
@@ -1253,20 +655,7 @@
     "OpcionB": "Tablas",
     "OpcionC": "Hipervínculos",
     "OpcionD": "Un procesador físico",
-    "Activa": true,
-    "enunciado": "¿Cuál de estos NO es un objeto que se pueda insertar en un procesador de texto?",
-    "respuesta_correcta_literal": "Un procesador físico",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Imágenes",
-      "Tablas",
-      "Hipervínculos",
-      "Un procesador físico"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué herramienta permite que varias personas editen un documento al mismo tiempo?",
@@ -1280,20 +669,7 @@
     "OpcionB": "Formato de carácter",
     "OpcionC": "Configuración de página",
     "OpcionD": "Ruler (Regla)",
-    "Activa": true,
-    "enunciado": "¿Qué herramienta permite que varias personas editen un documento al mismo tiempo?",
-    "respuesta_correcta_literal": "Herramientas colaborativas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Herramientas colaborativas",
-      "Formato de carácter",
-      "Configuración de página",
-      "Ruler (Regla)"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Es el procesador de texto más usado en el mundo:",
@@ -1307,20 +683,7 @@
     "OpcionB": "LibreOffice Writer",
     "OpcionC": "Google Docs",
     "OpcionD": "Apple Pages",
-    "Activa": true,
-    "enunciado": "Es el procesador de texto más usado en el mundo:",
-    "respuesta_correcta_literal": "Microsoft Word",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Microsoft Word",
-      "LibreOffice Writer",
-      "Google Docs",
-      "Apple Pages"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "LibreOffice Writer es conocido por ser:",
@@ -1334,20 +697,7 @@
     "OpcionB": "Exclusivo para Mac",
     "OpcionC": "Solo funciona sin internet",
     "OpcionD": "Es un programa de diseño",
-    "Activa": true,
-    "enunciado": "LibreOffice Writer es conocido por ser:",
-    "respuesta_correcta_literal": "Gratuito y de código abierto",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Gratuito y de código abierto",
-      "Exclusivo para Mac",
-      "Solo funciona sin internet",
-      "Es un programa de diseño"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué tipo de referencia de celda cambia automáticamente cuando se copia a otra celda?",
@@ -1361,20 +711,7 @@
     "OpcionB": "Relativa",
     "OpcionC": "Mixta",
     "OpcionD": "Fija",
-    "Activa": true,
-    "enunciado": "¿Qué tipo de referencia de celda cambia automáticamente cuando se copia a otra celda?",
-    "respuesta_correcta_literal": "Relativa",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Absoluta",
-      "Relativa",
-      "Mixta",
-      "Fija"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué carácter se utiliza para indicar una referencia absoluta?",
@@ -1388,20 +725,7 @@
     "OpcionB": "&",
     "OpcionC": "#",
     "OpcionD": "$",
-    "Activa": true,
-    "enunciado": "¿Qué carácter se utiliza para indicar una referencia absoluta?",
-    "respuesta_correcta_literal": "$",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "*",
-      "&",
-      "#",
-      "$"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "La fórmula `=A1+B1` en la celda C1 se copia a la celda C2. ¿Qué fórmula aparecerá en C2?",
@@ -1415,20 +739,7 @@
     "OpcionB": "`=A2+B2`",
     "OpcionC": "`=C1+D1`",
     "OpcionD": "`=A1+C1`",
-    "Activa": true,
-    "enunciado": "La fórmula `=A1+B1` en la celda C1 se copia a la celda C2. ¿Qué fórmula aparecerá en C2?",
-    "respuesta_correcta_literal": "`=A2+B2`",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "`=A1+B1`",
-      "`=A2+B2`",
-      "`=C1+D1`",
-      "`=A1+C1`"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "En la fórmula `=$A1`, la referencia a la columna está:",
@@ -1442,20 +753,7 @@
     "OpcionB": "Mixta",
     "OpcionC": "Absoluta",
     "OpcionD": "No existe",
-    "Activa": true,
-    "enunciado": "En la fórmula `=$A1`, la referencia a la columna está:",
-    "respuesta_correcta_literal": "Absoluta",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Relativa",
-      "Mixta",
-      "Absoluta",
-      "No existe"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál de las siguientes es una referencia mixta?",
@@ -1469,20 +767,7 @@
     "OpcionB": "`$A$1`",
     "OpcionC": "`A$1`",
     "OpcionD": "`1A`",
-    "Activa": true,
-    "enunciado": "¿Cuál de las siguientes es una referencia mixta?",
-    "respuesta_correcta_literal": "`A$1`",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "`A1`",
-      "`$A$1`",
-      "`A$1`",
-      "`1A`"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Si quieres calcular una serie de precios con IVA, ¿qué tipo de referencia usarías para la celda que contiene el porcentaje de IVA?",
@@ -1496,20 +781,7 @@
     "OpcionB": "Absoluta",
     "OpcionC": "Mixta",
     "OpcionD": "Ninguna de las anteriores",
-    "Activa": true,
-    "enunciado": "Si quieres calcular una serie de precios con IVA, ¿qué tipo de referencia usarías para la celda que contiene el porcentaje de IVA?",
-    "respuesta_correcta_literal": "Absoluta",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Relativa",
-      "Absoluta",
-      "Mixta",
-      "Ninguna de las anteriores"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Al copiar la fórmula `=B$2` de la celda C3 a C4, ¿cómo cambia la fórmula?",
@@ -1523,20 +795,7 @@
     "OpcionB": "`=B$3`",
     "OpcionC": "`=C$2`",
     "OpcionD": "`=C$3`",
-    "Activa": true,
-    "enunciado": "Al copiar la fórmula `=B$2` de la celda C3 a C4, ¿cómo cambia la fórmula?",
-    "respuesta_correcta_literal": "`=B$2`",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "`=B$2`",
-      "`=B$3`",
-      "`=C$2`",
-      "`=C$3`"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué ocurre con una referencia relativa como `A5` si la fórmula se copia una fila hacia abajo y una columna a la derecha?",
@@ -1550,20 +809,7 @@
     "OpcionB": "`B5`",
     "OpcionC": "`B6`",
     "OpcionD": "`$A$5`",
-    "Activa": true,
-    "enunciado": "¿Qué ocurre con una referencia relativa como `A5` si la fórmula se copia una fila hacia abajo y una columna a la derecha?",
-    "respuesta_correcta_literal": "`B6`",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "`A6`",
-      "`B5`",
-      "`B6`",
-      "`$A$5`"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Si quieres fijar la fila pero permitir que la columna cambie, ¿cuál es la sintaxis correcta?",
@@ -1577,20 +823,7 @@
     "OpcionB": "`B$5`",
     "OpcionC": "`B5$`",
     "OpcionD": "`B$5$`",
-    "Activa": true,
-    "enunciado": "Si quieres fijar la fila pero permitir que la columna cambie, ¿cuál es la sintaxis correcta?",
-    "respuesta_correcta_literal": "`B$5`",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "`$B5`",
-      "`B$5`",
-      "`B5$`",
-      "`B$5$`"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "En una fórmula que utiliza `SUMA`, ¿qué tipo de referencia se usa normalmente para el rango de celdas?",
@@ -1604,20 +837,7 @@
     "OpcionB": "Mixta",
     "OpcionC": "Relativa",
     "OpcionD": "Ninguna de las anteriores",
-    "Activa": true,
-    "enunciado": "En una fórmula que utiliza `SUMA`, ¿qué tipo de referencia se usa normalmente para el rango de celdas?",
-    "respuesta_correcta_literal": "Relativa",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Absoluta",
-      "Mixta",
-      "Relativa",
-      "Ninguna de las anteriores"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es un modelo de datos en Excel?",
@@ -1631,20 +851,7 @@
     "OpcionB": "Un tipo de gráfico",
     "OpcionC": "Una función de búsqueda",
     "OpcionD": "Una plantilla de formato",
-    "Activa": true,
-    "enunciado": "¿Qué es un modelo de datos en Excel?",
-    "respuesta_correcta_literal": "Una colección de tablas relacionadas",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Una colección de tablas relacionadas",
-      "Un tipo de gráfico",
-      "Una función de búsqueda",
-      "Una plantilla de formato"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué herramienta de Excel se usa para crear relaciones en un modelo de datos?",
@@ -1658,20 +865,7 @@
     "OpcionB": "Tablas Dinámicas",
     "OpcionC": "Power Query",
     "OpcionD": "Formato Condicional",
-    "Activa": true,
-    "enunciado": "¿Qué herramienta de Excel se usa para crear relaciones en un modelo de datos?",
-    "respuesta_correcta_literal": "Power Pivot",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Power Pivot",
-      "Tablas Dinámicas",
-      "Power Query",
-      "Formato Condicional"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué es una 'medida' en el modelo de datos?",
@@ -1685,20 +879,7 @@
     "OpcionB": "Una fila de datos",
     "OpcionC": "Una columna de texto",
     "OpcionD": "Un tipo de filtro",
-    "Activa": true,
-    "enunciado": "¿Qué es una 'medida' en el modelo de datos?",
-    "respuesta_correcta_literal": "Un cálculo usando fórmulas DAX",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Un cálculo usando fórmulas DAX",
-      "Una fila de datos",
-      "Una columna de texto",
-      "Un tipo de filtro"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cuál es el beneficio principal de usar un modelo de datos?",
@@ -1712,20 +893,7 @@
     "OpcionB": "Simplifica la entrada de datos",
     "OpcionC": "Se eliminan las fórmulas de la hoja de cálculo",
     "OpcionD": "Mejora la estética de la tabla",
-    "Activa": true,
-    "enunciado": "¿Cuál es el beneficio principal de usar un modelo de datos?",
-    "respuesta_correcta_literal": "Permite analizar grandes volúmenes de datos rápidamente",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Permite analizar grandes volúmenes de datos rápidamente",
-      "Simplifica la entrada de datos",
-      "Se eliminan las fórmulas de la hoja de cálculo",
-      "Mejora la estética de la tabla"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué tipo de relación es la más común en un modelo de datos?",
@@ -1739,20 +907,7 @@
     "OpcionB": "Uno a Uno (1:1)",
     "OpcionC": "Muchos a Muchos (M:M)",
     "OpcionD": "Ninguna",
-    "Activa": true,
-    "enunciado": "¿Qué tipo de relación es la más común en un modelo de datos?",
-    "respuesta_correcta_literal": "Uno a Muchos (1:M)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Uno a Muchos (1:M)",
-      "Uno a Uno (1:1)",
-      "Muchos a Muchos (M:M)",
-      "Ninguna"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Las relaciones entre tablas se establecen a través de:",
@@ -1766,20 +921,7 @@
     "OpcionB": "El color de las celdas",
     "OpcionC": "El nombre de la hoja",
     "OpcionD": "Fórmulas de suma",
-    "Activa": true,
-    "enunciado": "Las relaciones entre tablas se establecen a través de:",
-    "respuesta_correcta_literal": "Una columna común (ID)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Una columna común (ID)",
-      "El color de las celdas",
-      "El nombre de la hoja",
-      "Fórmulas de suma"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Qué lenguaje se usa para crear fórmulas avanzadas en Power Pivot?",
@@ -1793,20 +935,7 @@
     "OpcionB": "HTML",
     "OpcionC": "SQL",
     "OpcionD": "CSS",
-    "Activa": true,
-    "enunciado": "¿Qué lenguaje se usa para crear fórmulas avanzadas en Power Pivot?",
-    "respuesta_correcta_literal": "DAX",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "DAX",
-      "HTML",
-      "SQL",
-      "CSS"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Una relación de Muchos a Muchos (M:M) requiere de:",
@@ -1820,20 +949,7 @@
     "OpcionB": "Solo dos tablas",
     "OpcionC": "Borrar datos",
     "OpcionD": "No es posible en Excel",
-    "Activa": true,
-    "enunciado": "Una relación de Muchos a Muchos (M:M) requiere de:",
-    "respuesta_correcta_literal": "Una tabla intermedia",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Una tabla intermedia",
-      "Solo dos tablas",
-      "Borrar datos",
-      "No es posible en Excel"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "¿Cómo se llama la vista donde se arrastran columnas para crear relaciones?",
@@ -1847,20 +963,7 @@
     "OpcionB": "Vista de Datos",
     "OpcionC": "Vista de Impresión",
     "OpcionD": "Vista de Hoja",
-    "Activa": true,
-    "enunciado": "¿Cómo se llama la vista donde se arrastran columnas para crear relaciones?",
-    "respuesta_correcta_literal": "Vista de Diagrama",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Vista de Diagrama",
-      "Vista de Datos",
-      "Vista de Impresión",
-      "Vista de Hoja"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "Power Pivot es un __________ integrado en Excel para modelos avanzados.",
@@ -1874,20 +977,7 @@
     "OpcionB": "Virus",
     "OpcionC": "Hardware",
     "OpcionD": "Navegador",
-    "Activa": true,
-    "enunciado": "Power Pivot es un __________ integrado en Excel para modelos avanzados.",
-    "respuesta_correcta_literal": "Complemento",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Complemento",
-      "Virus",
-      "Hardware",
-      "Navegador"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "1. ¿Cuál es el principal objetivo de usar la herramienta de <strong>Validación de Datos</strong>?",
@@ -1901,20 +991,7 @@
     "OpcionB": "Restringir los valores que se pueden introducir en una celda",
     "OpcionC": "Ocultar filas que no cumplen un criterio",
     "OpcionD": "Sumar automáticamente los datos",
-    "Activa": true,
-    "enunciado": "1. ¿Cuál es el principal objetivo de usar la herramienta de <strong>Validación de Datos</strong>?",
-    "respuesta_correcta_literal": "Restringir los valores que se pueden introducir en una celda",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Cambiar el formato de la tabla",
-      "Restringir los valores que se pueden introducir en una celda",
-      "Ocultar filas que no cumplen un criterio",
-      "Sumar automáticamente los datos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "2. ¿Qué criterio de validación usaría si desea que el usuario solo elija entre 'Licenciado', 'Ingeniero' o 'Técnico'?",
@@ -1928,20 +1005,7 @@
     "OpcionB": "Lista",
     "OpcionC": "Fecha",
     "OpcionD": "Personalizada",
-    "Activa": true,
-    "enunciado": "2. ¿Qué criterio de validación usaría si desea que el usuario solo elija entre 'Licenciado', 'Ingeniero' o 'Técnico'?",
-    "respuesta_correcta_literal": "Lista",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Número Entero",
-      "Lista",
-      "Fecha",
-      "Personalizada"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "3. ¿Qué herramienta nos permite ocultar filas temporalmente para enfocarnos solo en registros que cumplen un criterio (ej. solo ver ventas mayores a L. 5,000)?",
@@ -1955,20 +1019,7 @@
     "OpcionB": "Formato Condicional",
     "OpcionC": "Buscar y Reemplazar",
     "OpcionD": "Filtrado de Datos",
-    "Activa": true,
-    "enunciado": "3. ¿Qué herramienta nos permite ocultar filas temporalmente para enfocarnos solo en registros que cumplen un criterio (ej. solo ver ventas mayores a L. 5,000)?",
-    "respuesta_correcta_literal": "Filtrado de Datos",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Validación de Datos",
-      "Formato Condicional",
-      "Buscar y Reemplazar",
-      "Filtrado de Datos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "4. Un <strong>Mensaje de Entrada</strong> en la Validación de Datos sirve como:",
@@ -1982,20 +1033,7 @@
     "OpcionB": "Una instrucción preventiva que aparece al seleccionar la celda",
     "OpcionC": "Una forma de aplicar formato de moneda",
     "OpcionD": "Un resumen de la tabla",
-    "Activa": true,
-    "enunciado": "4. Un <strong>Mensaje de Entrada</strong> en la Validación de Datos sirve como:",
-    "respuesta_correcta_literal": "Una instrucción preventiva que aparece al seleccionar la celda",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Una alerta obligatoria que detiene la entrada",
-      "Una instrucción preventiva que aparece al seleccionar la celda",
-      "Una forma de aplicar formato de moneda",
-      "Un resumen de la tabla"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "5. ¿Qué sucede con las filas que no cumplen el criterio cuando se aplica un <strong>Filtro</strong>?",
@@ -2009,20 +1047,7 @@
     "OpcionB": "Se mueven a una hoja diferente",
     "OpcionC": "Se marcan con un color, pero siguen visibles",
     "OpcionD": "Se ocultan temporalmente",
-    "Activa": true,
-    "enunciado": "5. ¿Qué sucede con las filas que no cumplen el criterio cuando se aplica un <strong>Filtro</strong>?",
-    "respuesta_correcta_literal": "Se ocultan temporalmente",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Análisis de Datos",
-    "opciones_visibles": [
-      "Se eliminan permanentemente de la hoja",
-      "Se mueven a una hoja diferente",
-      "Se marcan con un color, pero siguen visibles",
-      "Se ocultan temporalmente"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "6. Si necesitas asegurarte de que un campo de ID solo contenga números entre 1000 y 9999, ¿qué criterio de validación sería más adecuado?",
@@ -2036,20 +1061,7 @@
     "OpcionB": "Número Entero",
     "OpcionC": "Decimal",
     "OpcionD": "Lista",
-    "Activa": true,
-    "enunciado": "6. Si necesitas asegurarte de que un campo de ID solo contenga números entre 1000 y 9999, ¿qué criterio de validación sería más adecuado?",
-    "respuesta_correcta_literal": "Número Entero",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Longitud de Texto",
-      "Número Entero",
-      "Decimal",
-      "Lista"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "7. ¿En qué pestaña de la cinta de opciones se encuentran generalmente las herramientas de <strong>Validación y Filtrado</strong>?",
@@ -2063,20 +1075,7 @@
     "OpcionB": "Insertar",
     "OpcionC": "Fórmulas",
     "OpcionD": "Datos",
-    "Activa": true,
-    "enunciado": "7. ¿En qué pestaña de la cinta de opciones se encuentran generalmente las herramientas de <strong>Validación y Filtrado</strong>?",
-    "respuesta_correcta_literal": "Datos",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Inicio",
-      "Insertar",
-      "Fórmulas",
-      "Datos"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "8. Deducción: Si la columna 'Salario' está validada para ser 'Mayor que 5000' y alguien ingresa '4999', ¿qué aparecerá?",
@@ -2090,20 +1089,7 @@
     "OpcionB": "El dato se acepta, pero se marca con color",
     "OpcionC": "El <strong>Mensaje de Error</strong> configurado",
     "OpcionD": "Automáticamente se corrige a 5000",
-    "Activa": true,
-    "enunciado": "8. Deducción: Si la columna 'Salario' está validada para ser 'Mayor que 5000' y alguien ingresa '4999', ¿qué aparecerá?",
-    "respuesta_correcta_literal": "El <strong>Mensaje de Error</strong> configurado",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "El dato se acepta y se formatea",
-      "El dato se acepta, pero se marca con color",
-      "El <strong>Mensaje de Error</strong> configurado",
-      "Automáticamente se corrige a 5000"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "9. ¿Cuál es un beneficio directo de la <strong>consistencia</strong> de datos, lograda mediante la validación?",
@@ -2117,20 +1103,7 @@
     "OpcionB": "Facilita la aplicación de fórmulas y filtros sin errores",
     "OpcionC": "Reduce el tamaño del archivo",
     "OpcionD": "Aumenta la velocidad de impresión",
-    "Activa": true,
-    "enunciado": "9. ¿Cuál es un beneficio directo de la <strong>consistencia</strong> de datos, lograda mediante la validación?",
-    "respuesta_correcta_literal": "Facilita la aplicación de fórmulas y filtros sin errores",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Excel Avanzado",
-    "opciones_visibles": [
-      "Permite usar más colores en la tabla",
-      "Facilita la aplicación de fórmulas y filtros sin errores",
-      "Reduce el tamaño del archivo",
-      "Aumenta la velocidad de impresión"
-    ]
+    "Activa": true
   },
   {
     "Pregunta": "10. Deducción: Un <strong>Filtro Avanzado</strong> es útil cuando...",
@@ -2144,19 +1117,6 @@
     "OpcionB": "Se necesita buscar datos usando criterios complejos (ej. País = 'Honduras' Y Salario > 15000)",
     "OpcionC": "Se quiere cambiar el nombre de las columnas",
     "OpcionD": "Se desea hacer una gráfica de barras",
-    "Activa": true,
-    "enunciado": "10. Deducción: Un <strong>Filtro Avanzado</strong> es útil cuando...",
-    "respuesta_correcta_literal": "Se necesita buscar datos usando criterios complejos (ej. País = 'Honduras' Y Salario > 15000)",
-    "tipo_pregunta": "opcion_multiple",
-    "nivel": "Intermedio",
-    "asignatura": "Ofimatica",
-    "grado": 11,
-    "tema": "Análisis de Datos",
-    "opciones_visibles": [
-      "Solo se quiere filtrar por un valor",
-      "Se necesita buscar datos usando criterios complejos (ej. País = 'Honduras' Y Salario > 15000)",
-      "Se quiere cambiar el nombre de las columnas",
-      "Se desea hacer una gráfica de barras"
-    ]
+    "Activa": true
   }
 ]

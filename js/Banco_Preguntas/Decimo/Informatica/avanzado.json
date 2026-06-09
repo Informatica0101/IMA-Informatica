@@ -6,8 +6,13 @@
     "tema": "Software",
     "tipo_pregunta": "completacion",
     "enunciado": "La clasificación de software que está diseñada específicamente para interactuar directamente con el hardware del ordenador, gestionar los recursos del sistema y proporcionar una plataforma para otras aplicaciones se conoce como software de ________.",
-    "opciones_visibles": ["Aplicación", "Sistema", "Programación", "Utilidad"],
-    "respuesta_correcta_literal": "Sistema",
+    "opciones_visibles": [
+      "Sistema Principal",
+      "Sistema Operativo",
+      "Sistema de Redes",
+      "Sistema Binario"
+    ],
+    "respuesta_correcta_literal": "Sistema Operativo",
     "nivel": "Avanzado"
   },
   {
@@ -17,7 +22,10 @@
     "tema": "Seguridad Informatica",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un software antivirus comercial o de código abierto es capaz de mitigar ataques mediante la detección basada en firmas y el análisis heurístico de comportamientos maliciosos.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -29,11 +37,11 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es la función primordial del componente denominado 'Kernel' o núcleo dentro de un sistema operativo como Windows, Linux o macOS?",
     "opciones": [
-      "Administrar la interfaz gráfica de usuario y los iconos del escritorio.",
-      "Servir de puente directo entre el software de aplicación y el procesamiento físico del hardware.",
-      "Compilar las líneas de código escritas en lenguajes de alto nivel."
+      "Gestionar la interfaz visual y los elementos gráficos del sistema operativo.",
+      "Actuar como enlace entre las aplicaciones y el procesamiento del hardware.",
+      "Traducir las instrucciones de alto nivel hacia el lenguaje de la máquina."
     ],
-    "respuesta_correcta_literal": "Servir de puente directo entre el software de aplicación y el procesamiento físico del hardware.",
+    "respuesta_correcta_literal": "Actuar como enlace entre las aplicaciones y el procesamiento del hardware.",
     "nivel": "Avanzado"
   },
   {
@@ -44,12 +52,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un software controlador o 'Driver'?",
     "opciones": [
-      "Un programa que traduce instrucciones entre el sistema operativo y el hardware.",
-      "Un editor de video profesional.",
-      "Un tipo de virus que roba contraseñas.",
-      "Un componente físico del disco duro."
+      "Un programa que traduce instrucciones entre el sistema operativo y el hardware físico.",
+      "Un software que permite editar archivos de video de forma profesional y avanzada.",
+      "Un tipo de virus informático que captura las contraseñas de las cuentas de usuario.",
+      "Un componente físico del disco duro que almacena los archivos de forma permanente."
     ],
-    "respuesta_correcta_literal": "Un programa que traduce instrucciones entre el sistema operativo y el hardware.",
+    "respuesta_correcta_literal": "Un programa que traduce instrucciones entre el sistema operativo y el hardware físico.",
     "nivel": "Avanzado"
   },
   {
@@ -59,7 +67,12 @@
     "tema": "Seguridad Informatica",
     "tipo_pregunta": "completacion",
     "enunciado": "El tipo de malware que cifra los archivos del usuario y exige un pago para liberarlos se conoce como ________.",
-    "opciones_visibles": ["Virus", "Troyano", "Ransomware", "Gusano"],
+    "opciones_visibles": [
+      "Ransomware",
+      "Spyware Pro",
+      "Adware Plus",
+      "Malware Fix"
+    ],
     "respuesta_correcta_literal": "Ransomware",
     "nivel": "Avanzado"
   },
@@ -70,7 +83,10 @@
     "tema": "Sistemas Operativos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La gestión de archivos es la función del sistema operativo encargada de organizar y controlar el acceso a los datos almacenados en las unidades de disco.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -82,12 +98,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es la función del programador de procesos (Scheduler) en un sistema operativo multitarea?",
     "opciones": [
-      "Asignar el tiempo de uso de la CPU a los diferentes programas en ejecución.",
-      "Controlar la velocidad del ventilador.",
-      "Dibujar las ventanas en el escritorio.",
-      "Analizar el disco en busca de virus."
+      "Asignar el tiempo de uso de la CPU a los programas.",
+      "Controlar la velocidad de rotación del ventilador.",
+      "Gestionar la visualización de ventanas del sistema.",
+      "Realizar el análisis de virus en el disco rígido."
     ],
-    "respuesta_correcta_literal": "Asignar el tiempo de uso de la CPU a los diferentes programas en ejecución.",
+    "respuesta_correcta_literal": "Asignar el tiempo de uso de la CPU a los programas.",
     "nivel": "Avanzado"
   },
   {
@@ -97,7 +113,12 @@
     "tema": "Malware",
     "tipo_pregunta": "completacion",
     "enunciado": "Un programa que parece legítimo pero que al ejecutarse realiza acciones maliciosas se denomina caballo de ________.",
-    "opciones_visibles": ["mar", "madera", "Troya", "guerra"],
+    "opciones_visibles": [
+      "Troya",
+      "Acero",
+      "Fuego",
+      "Metal"
+    ],
     "respuesta_correcta_literal": "Troya",
     "nivel": "Avanzado"
   },
@@ -108,7 +129,10 @@
     "tema": "Software",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El software de programación incluye herramientas como compiladores e intérpretes que los desarrolladores usan para crear otros programas.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -120,12 +144,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es la multitarea (multitasking) en un sistema operativo moderno?",
     "opciones": [
-      "La capacidad de ejecutar múltiples procesos de forma aparentemente simultánea.",
-      "La capacidad de conectar muchos monitores.",
-      "El uso de múltiples ratones al mismo tiempo.",
-      "La instalación de varios discos duros."
+      "La ejecución de procesos de forma simultánea.",
+      "La conexión de múltiples pantallas al equipo.",
+      "El uso de varios ratones de forma conjunta.",
+      "La instalación de muchos discos en el PC."
     ],
-    "respuesta_correcta_literal": "La capacidad de ejecutar múltiples procesos de forma aparentemente simultánea.",
+    "respuesta_correcta_literal": "La ejecución de procesos de forma simultánea.",
     "nivel": "Avanzado"
   },
   {
@@ -135,8 +159,13 @@
     "tema": "Seguridad",
     "tipo_pregunta": "completacion",
     "enunciado": "Un 'exploit' de día ________ (Zero-day) es aquel que aprovecha una vulnerabilidad desconocida antes de que el fabricante publique un parche.",
-    "opciones_visibles": ["uno", "cero", "final", "puro"],
-    "respuesta_correcta_literal": "cero",
+    "opciones_visibles": [
+      "Cero",
+      "Uno ",
+      "Dos ",
+      "Tres"
+    ],
+    "respuesta_correcta_literal": "Cero",
     "nivel": "Avanzado"
   },
   {
@@ -146,7 +175,10 @@
     "tema": "Plataformas",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Android es un sistema operativo móvil basado en el núcleo (kernel) de Linux.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -159,9 +191,9 @@
     "enunciado": "¿Qué es una 'Interrupción' (Interrupt) en la arquitectura de un ordenador?",
     "opciones": [
       "Una señal enviada al procesador indicando un evento que requiere atención inmediata.",
-      "Un cable roto en la placa base.",
-      "Un error que apaga la computadora de golpe.",
-      "El final de la jornada laboral."
+      "Un fallo físico en los componentes electrónicos que detiene el flujo de datos real.",
+      "Un error lógico que provoca el apagado repentino del sistema operativo principal.",
+      "La finalización programada de todas las tareas activas al terminar el día laboral."
     ],
     "respuesta_correcta_literal": "Una señal enviada al procesador indicando un evento que requiere atención inmediata.",
     "nivel": "Avanzado"
@@ -173,7 +205,12 @@
     "tema": "Software",
     "tipo_pregunta": "completacion",
     "enunciado": "El software que se distribuye gratuitamente pero que requiere un pago posterior para desbloquear todas sus funciones se llama ________.",
-    "opciones_visibles": ["Freeware", "Shareware", "Adware", "Open Source"],
+    "opciones_visibles": [
+      "Shareware",
+      "Freeware ",
+      "Adware   ",
+      "Firmware "
+    ],
     "respuesta_correcta_literal": "Shareware",
     "nivel": "Avanzado"
   },
@@ -184,7 +221,10 @@
     "tema": "Seguridad",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un cortafuegos (Firewall) es un sistema que supervisa y controla el tráfico de red entrante y saliente basándose en reglas de seguridad.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -196,12 +236,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es la principal diferencia entre un virus y un gusano (worm)?",
     "opciones": [
-      "El virus requiere la ejecución de un archivo huésped, mientras que el gusano se propaga automáticamente por la red.",
-      "El virus es inofensivo y el gusano es peligroso.",
-      "El virus solo afecta a Windows y el gusano a Linux.",
-      "No hay diferencia, son sinónimos."
+      "El virus requiere ejecución humana, el gusano se propaga solo.",
+      "El virus es inofensivo, el gusano es extremadamente peligroso.",
+      "El virus afecta a Windows, el gusano afecta solo a Linux.",
+      "No existe diferencia real, ambos términos son sinónimos."
     ],
-    "respuesta_correcta_literal": "El virus requiere la ejecución de un archivo huésped, mientras que el gusano se propaga automáticamente por la red.",
+    "respuesta_correcta_literal": "El virus requiere ejecución humana, el gusano se propaga solo.",
     "nivel": "Avanzado"
   },
   {
@@ -211,7 +251,12 @@
     "tema": "Sistemas Operativos",
     "tipo_pregunta": "completacion",
     "enunciado": "La capacidad de un sistema operativo para permitir que varios usuarios ejecuten programas simultáneamente se llama ________.",
-    "opciones_visibles": ["Monousuario", "Multiusuario", "Monotarea", "Hipervínculo"],
+    "opciones_visibles": [
+      "Multiusuario",
+      "Monousuario ",
+      "Monotarea   ",
+      "Multihilo   "
+    ],
     "respuesta_correcta_literal": "Multiusuario",
     "nivel": "Avanzado"
   },
@@ -222,7 +267,10 @@
     "tema": "Seguridad Informatica",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El phishing es una técnica de ingeniería social que utiliza correos electrónicos fraudulentos para obtener información sensible como contraseñas o datos bancarios.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -234,12 +282,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es la 'Memoria Virtual' en un sistema operativo?",
     "opciones": [
-      "Una técnica que utiliza espacio en el disco duro para simular memoria RAM adicional.",
-      "Un tipo de memoria RAM que no se puede tocar.",
-      "La memoria que usan los videojuegos de realidad virtual.",
-      "Un archivo de texto donde se guardan contraseñas."
+      "Espacio en el disco que simula memoria RAM.",
+      "Memoria RAM física que no puede tocarse.",
+      "Memoria usada en entornos de realidad virtual.",
+      "Archivo de texto donde se guardan las claves."
     ],
-    "respuesta_correcta_literal": "Una técnica que utiliza espacio en el disco duro para simular memoria RAM adicional.",
+    "respuesta_correcta_literal": "Espacio en el disco que simula memoria RAM.",
     "nivel": "Avanzado"
   },
   {
@@ -249,7 +297,12 @@
     "tema": "Software de Aplicación",
     "tipo_pregunta": "completacion",
     "enunciado": "Un entorno de desarrollo integrado (IDE) es un ejemplo de software de ________.",
-    "opciones_visibles": ["Sistema", "Aplicación", "Programación", "Hardware"],
+    "opciones_visibles": [
+      "Programación",
+      "Sistema     ",
+      "Aplicación  ",
+      "Firmware    "
+    ],
     "respuesta_correcta_literal": "Programación",
     "nivel": "Avanzado"
   },
@@ -260,7 +313,10 @@
     "tema": "Seguridad Informatica",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La detección heurística en un antivirus busca patrones de comportamiento sospechosos en lugar de comparar firmas de archivos conocidos.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -272,12 +328,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué función cumple el sistema de archivos (File System) en un SO?",
     "opciones": [
-      "Organizar, almacenar y recuperar archivos en dispositivos de almacenamiento.",
-      "Limpiar el polvo de los ventiladores.",
-      "Aumentar la velocidad del procesador mediante overclocking.",
-      "Dibujar los iconos en la pantalla."
+      "Organizar, almacenar y recuperar archivos en unidades de disco.",
+      "Limpiar el polvo acumulado en los ventiladores de la placa base.",
+      "Aumentar la velocidad del procesador mediante el uso de redes.",
+      "Dibujar los iconos de las carpetas en la pantalla del usuario."
     ],
-    "respuesta_correcta_literal": "Organizar, almacenar y recuperar archivos en dispositivos de almacenamiento.",
+    "respuesta_correcta_literal": "Organizar, almacenar y recuperar archivos en unidades de disco.",
     "nivel": "Avanzado"
   },
   {
@@ -287,7 +343,12 @@
     "tema": "Malware",
     "tipo_pregunta": "completacion",
     "enunciado": "El software diseñado para mostrar anuncios no deseados y recolectar datos de navegación del usuario se llama ________.",
-    "opciones_visibles": ["Adware", "Freeware", "Firmware", "Shareware"],
+    "opciones_visibles": [
+      "Adware  ",
+      "Freeware",
+      "Firmware",
+      "Sharewar"
+    ],
     "respuesta_correcta_literal": "Adware",
     "nivel": "Avanzado"
   },
@@ -298,7 +359,10 @@
     "tema": "Software",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El software de código abierto (Open Source) permite a cualquier usuario ver, modificar y distribuir el código fuente del programa.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -310,12 +374,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué significa que un sistema operativo sea 'Portable'?",
     "opciones": [
-      "Que puede ser ejecutado en diferentes arquitecturas de hardware con pocos cambios.",
-      "Que cabe en un bolsillo.",
-      "Que no requiere instalación.",
-      "Que se puede llevar en una memoria USB."
+      "Ejecutarse en arquitecturas de hardware con pocos cambios.",
+      "Que el sistema cabe dentro de un bolsillo pequeño.",
+      "Que el software no requiere de instalación física.",
+      "Que puede llevarse fácilmente en una memoria externa."
     ],
-    "respuesta_correcta_literal": "Que puede ser ejecutado en diferentes arquitecturas de hardware con pocos cambios.",
+    "respuesta_correcta_literal": "Ejecutarse en arquitecturas de hardware con pocos cambios.",
     "nivel": "Avanzado"
   },
   {
@@ -325,7 +389,12 @@
     "tema": "Seguridad",
     "tipo_pregunta": "completacion",
     "enunciado": "La práctica de realizar copias de seguridad de los datos para prevenir su pérdida se denomina ________.",
-    "opciones_visibles": ["Backup", "Format", "Defrag", "Phishing"],
+    "opciones_visibles": [
+      "Backup",
+      "Format",
+      "Defrag",
+      "Phish "
+    ],
     "respuesta_correcta_literal": "Backup",
     "nivel": "Avanzado"
   },
@@ -336,7 +405,10 @@
     "tema": "Sistemas Operativos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La interfaz de línea de comandos (CLI) permite al usuario interactuar con el sistema mediante la escritura de instrucciones de texto.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -348,12 +420,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es la función de una utilidad de desfragmentación de disco?",
     "opciones": [
-      "Reorganizar los archivos en el disco para que las partes de un mismo archivo estén contiguas, mejorando la velocidad.",
-      "Borrar todos los archivos temporales de internet.",
-      "Cambiar el fondo de pantalla automáticamente.",
-      "Dividir el disco físico en varias particiones lógicas."
+      "Reorganizar archivos para que estén contiguos y ganar velocidad.",
+      "Borrar todos los archivos temporales que se guardan en internet.",
+      "Cambiar el fondo de pantalla de forma totalmente automática.",
+      "Dividir el disco físico en varias particiones de tipo lógico."
     ],
-    "respuesta_correcta_literal": "Reorganizar los archivos en el disco para que las partes de un mismo archivo estén contiguas, mejorando la velocidad.",
+    "respuesta_correcta_literal": "Reorganizar archivos para que estén contiguos y ganar velocidad.",
     "nivel": "Avanzado"
   },
   {
@@ -363,7 +435,12 @@
     "tema": "Malware",
     "tipo_pregunta": "completacion",
     "enunciado": "Un tipo de malware que se oculta en el sistema y permite el acceso remoto persistente y el control total por parte de un atacante es un ________.",
-    "opciones_visibles": ["Rootkit", "Spyware", "Adware", "Popup"],
+    "opciones_visibles": [
+      "Rootkit",
+      "Spyware",
+      "Adware ",
+      "Popup  "
+    ],
     "respuesta_correcta_literal": "Rootkit",
     "nivel": "Avanzado"
   },
@@ -374,7 +451,10 @@
     "tema": "Sistemas Operativos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un Sistema Operativo de Tiempo Real (RTOS) está diseñado para procesar datos sin retrasos significativos en el tiempo de respuesta.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -386,12 +466,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es la 'BIOS' (Basic Input/Output System)?",
     "opciones": [
-      "Un software de bajo nivel que inicia el hardware durante el proceso de arranque.",
-      "Un programa para editar fotos antiguas.",
-      "El nombre técnico de la memoria RAM.",
-      "Un tipo de conector para monitores."
+      "Software de bajo nivel que inicia el hardware en el arranque.",
+      "Un programa diseñado para editar fotos antiguas de cámara.",
+      "El nombre técnico correcto de la memoria RAM principal.",
+      "Un tipo de conector físico para los monitores de tubo."
     ],
-    "respuesta_correcta_literal": "Un software de bajo nivel que inicia el hardware durante el proceso de arranque.",
+    "respuesta_correcta_literal": "Software de bajo nivel que inicia el hardware en el arranque.",
     "nivel": "Avanzado"
   },
   {
@@ -401,7 +481,12 @@
     "tema": "Seguridad",
     "tipo_pregunta": "completacion",
     "enunciado": "El proceso de convertir información en un código ilegible para proteger su confidencialidad se llama ________.",
-    "opciones_visibles": ["Cifrado", "Compresión", "Formateo", "Escaneo"],
+    "opciones_visibles": [
+      "Cifrado ",
+      "Compresi",
+      "Formateo",
+      "Escaneo "
+    ],
     "respuesta_correcta_literal": "Cifrado",
     "nivel": "Avanzado"
   },
@@ -412,7 +497,10 @@
     "tema": "Sistemas Operativos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La 'Paginación' es una técnica de gestión de memoria que divide la memoria física en bloques de tamaño fijo llamados marcos.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -424,12 +512,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un 'Compilador'?",
     "opciones": [
-      "Un programa que traduce todo el código fuente de un lenguaje de alto nivel a lenguaje máquina de una sola vez.",
-      "Un programa que traduce el código línea por línea mientras se ejecuta.",
-      "Un editor de texto que autocompleta palabras.",
-      "Un hardware que acelera los cálculos matemáticos."
+      "Traduce todo el código a lenguaje máquina de una sola vez.",
+      "Traduce el código línea por línea mientras se ejecuta.",
+      "Un editor de texto que autocompleta las palabras clave.",
+      "Un hardware que acelera los cálculos matemáticos de CPU."
     ],
-    "respuesta_correcta_literal": "Un programa que traduce todo el código fuente de un lenguaje de alto nivel a lenguaje máquina de una sola vez.",
+    "respuesta_correcta_literal": "Traduce todo el código a lenguaje máquina de una sola vez.",
     "nivel": "Avanzado"
   },
   {
@@ -438,8 +526,13 @@
     "asignatura": "Informatica",
     "tema": "Seguridad",
     "tipo_pregunta": "completacion",
-    "enunciado": "Un ataque que inunda un servidor con tráfico falso para dejarlo fuera de servicio se conoce como ataque de denegación de servicio o ________.",
-    "opciones_visibles": ["DoS", "Phishing", "SQLi", "Spam"],
+    "enunciado": "Un attack que inunda un servidor con tráfico falso para dejarlo fuera de servicio se conoce como attack de denegación de servicio o ________.",
+    "opciones_visibles": [
+      "DoS",
+      "Phi",
+      "SQL",
+      "Spa"
+    ],
     "respuesta_correcta_literal": "DoS",
     "nivel": "Avanzado"
   },
@@ -450,7 +543,10 @@
     "tema": "Sistemas Operativos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un sistema operativo distribuido gestiona un grupo de computadoras independientes y las hace parecer un solo sistema coherente ante el usuario.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -462,12 +558,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es el 'Firmware'?",
     "opciones": [
-      "Software grabado permanentemente en un chip de memoria de solo lectura (ROM).",
-      "Software que se puede borrar fácilmente.",
-      "Un tipo de cable de red blindado.",
-      "Un programa de contabilidad para empresas firmes."
+      "Software grabado permanentemente en un chip de tipo ROM.",
+      "Software que se puede borrar fácilmente por el usuario.",
+      "Un tipo de cable de red blindado para entornos hostiles.",
+      "Un programa de contabilidad para empresas de tipo firme."
     ],
-    "respuesta_correcta_literal": "Software grabado permanentemente en un chip de memoria de solo lectura (ROM).",
+    "respuesta_correcta_literal": "Software grabado permanentemente en un chip de tipo ROM.",
     "nivel": "Avanzado"
   },
   {
@@ -477,8 +573,13 @@
     "tema": "Sistemas Operativos",
     "tipo_pregunta": "completacion",
     "enunciado": "La parte del sistema operativo que se encarga de decidir qué proceso se ejecuta a continuación en la CPU es el ________.",
-    "opciones_visibles": ["Planificador", "Explorador", "Compilador", "Terminal"],
-    "respuesta_correcta_literal": "Planificador",
+    "opciones_visibles": [
+      "Planner",
+      "Explore",
+      "Compile",
+      "Console"
+    ],
+    "respuesta_correcta_literal": "Planner",
     "nivel": "Avanzado"
   },
   {
@@ -488,7 +589,10 @@
     "tema": "Malware",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un troyano puede abrir una 'puerta trasera' (backdoor) para que un atacante tome control remoto del equipo infectado.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -500,12 +604,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un 'Intérprete' en programación?",
     "opciones": [
-      "Un programa que traduce y ejecuta el código fuente línea por línea en tiempo real.",
-      "Una persona que traduce idiomas.",
-      "Un programa que crea archivos .exe.",
-      "Un componente del monitor que mejora el color."
+      "Traduce y ejecuta el código línea por línea en tiempo real.",
+      "Una persona encargada de traducir idiomas extranjeros hoy.",
+      "Un programa que crea archivos de tipo ejecutable o .exe.",
+      "Un componente del monitor que mejora el color de imagen."
     ],
-    "respuesta_correcta_literal": "Un programa que traduce y ejecuta el código fuente línea por línea en tiempo real.",
+    "respuesta_correcta_literal": "Traduce y ejecuta el código línea por línea en tiempo real.",
     "nivel": "Avanzado"
   },
   {
@@ -515,7 +619,12 @@
     "tema": "Seguridad",
     "tipo_pregunta": "completacion",
     "enunciado": "Un software diseñado para infiltrarse en un sistema y dañarlo sin el consentimiento del usuario se llama de forma genérica ________.",
-    "opciones_visibles": ["Malware", "Freeware", "Hardware", "Firmware"],
+    "opciones_visibles": [
+      "Malware",
+      "Service",
+      "Account",
+      "Profile"
+    ],
     "respuesta_correcta_literal": "Malware",
     "nivel": "Avanzado"
   },
@@ -526,7 +635,10 @@
     "tema": "Sistemas Operativos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La fragmentación del disco ocurre cuando los archivos se dividen en trozos dispersos, lo que ralentiza el acceso a los datos.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -538,12 +650,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es la autenticación de dos factores (2FA)?",
     "opciones": [
-      "Un método de seguridad que requiere dos formas diferentes de identificación para acceder a una cuenta.",
+      "Un método que requiere dos formas de identificación.",
       "Escribir la contraseña dos veces para estar seguro.",
-      "Tener dos antivirus instalados al mismo tiempo.",
-      "Usar dos teclados diferentes."
+      "Tener dos antivirus instalados al mismo tiempo hoy.",
+      "Usar dos teclados diferentes en la misma computadora."
     ],
-    "respuesta_correcta_literal": "Un método de seguridad que requiere dos formas diferentes de identificación para acceder a una cuenta.",
+    "respuesta_correcta_literal": "Un método que requiere dos formas de identificación.",
     "nivel": "Avanzado"
   },
   {
@@ -553,7 +665,12 @@
     "tema": "Sistemas Operativos",
     "tipo_pregunta": "completacion",
     "enunciado": "El conjunto de reglas que determinan cómo se nombran, guardan y organizan los archivos en un disco se llama ________ de archivos.",
-    "opciones_visibles": ["Sistema", "Árbol", "Menú", "Formato"],
+    "opciones_visibles": [
+      "Sistema",
+      "Código ",
+      "Esquema",
+      "Gestor "
+    ],
     "respuesta_correcta_literal": "Sistema",
     "nivel": "Avanzado"
   },
@@ -564,7 +681,10 @@
     "tema": "Seguridad",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un virus informático siempre necesita un programa anfitrión o archivo ejecutable para infectar un sistema.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -576,12 +696,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué hace un sistema operativo durante el proceso de 'Swap' o intercambio?",
     "opciones": [
-      "Mueve procesos inactivos de la RAM al disco duro para liberar memoria física.",
-      "Intercambia el teclado por el ratón.",
-      "Cambia el idioma del sistema.",
-      "Actualiza el reloj de la computadora."
+      "Mueve procesos de la RAM al disco para liberar memoria.",
+      "Intercambia el teclado por el ratón de forma física hoy.",
+      "Cambia el idioma del sistema de forma rápida y sencilla.",
+      "Actualiza el reloj de la computadora cada cierto tiempo."
     ],
-    "respuesta_correcta_literal": "Mueve procesos inactivos de la RAM al disco duro para liberar memoria física.",
+    "respuesta_correcta_literal": "Mueve procesos de la RAM al disco para liberar memoria.",
     "nivel": "Avanzado"
   },
   {
@@ -591,7 +711,12 @@
     "tema": "Malware",
     "tipo_pregunta": "completacion",
     "enunciado": "Un malware que se replica a sí mismo a través de una red sin necesidad de intervención humana se llama ________.",
-    "opciones_visibles": ["Gusano", "Virus", "Troyano", "Macro"],
+    "opciones_visibles": [
+      "Gusano",
+      "Virus ",
+      "Troya ",
+      "Macro "
+    ],
     "respuesta_correcta_literal": "Gusano",
     "nivel": "Avanzado"
   },
@@ -602,7 +727,10 @@
     "tema": "Sistemas Operativos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La 'GUI' (Graphical User Interface) utiliza elementos visuales como iconos y ventanas para facilitar la interacción del usuario.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdadero",
+      "Falso    "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -614,12 +742,12 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un 'Parche de Seguridad'?",
     "opciones": [
-      "Una actualización de software diseñada para corregir una vulnerabilidad específica.",
-      "Un trozo de cinta adhesiva sobre la cámara web.",
-      "Un programa que borra el disco duro.",
-      "Una contraseña muy larga."
+      "Actualización de software que corrige una vulnerabilidad.",
+      "Un trozo de cinta adhesiva sobre la cámara web del PC.",
+      "Un programa que borra el disco duro de forma inmediata.",
+      "Una contraseña muy larga que protege todas las cuentas."
     ],
-    "respuesta_correcta_literal": "Una actualización de software diseñada para corregir una vulnerabilidad específica.",
+    "respuesta_correcta_literal": "Actualización de software que corrige una vulnerabilidad.",
     "nivel": "Avanzado"
   },
   {
@@ -629,7 +757,12 @@
     "tema": "Sistemas Operativos",
     "tipo_pregunta": "completacion",
     "enunciado": "El acrónimo del componente del sistema operativo que permite la comunicación con el hardware de red y periféricos es ________.",
-    "opciones_visibles": ["Driver", "Kernel", "BIOS", "Socket"],
+    "opciones_visibles": [
+      "Driver",
+      "Kernel",
+      "Bios  ",
+      "Socket"
+    ],
     "respuesta_correcta_literal": "Driver",
     "nivel": "Avanzado"
   }

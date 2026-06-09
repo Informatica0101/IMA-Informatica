@@ -246,3 +246,10 @@ Descripción: Reimplementación del flujo de desbloqueo basado estrictamente en 
 - DESCRIPCIÓN: Se realizó una purga total de 400+ marcadores de posición ("Pregunta de evaluación...") sustituyéndolos por hitos pedagógicos reales extraídos de las presentaciones institucionales (Turing, Pascal, SDLC Phases, UML, POO Pillars, CSS Box Model).
 - DESCRIPCIÓN: Se normalizaron todas las respuestas correctas a sus valores literales de cadena, eliminando la dependencia de índices estáticos (A, B, C, D) que causaban fallos tras la randomización.
 - DESCRIPCIÓN: Reubicación de reactivos de CLI, Sistemas de Numeración y Scripts desde Décimo hacia Undécimo Grado para preservar la progresión pedagógica.
+
+FECHA: 2026-06-21
+ARCHIVO: js/Banco_Preguntas/NORMAS_Y_DISEÑO_REACTIVOS.md
+DESCRIPCIÓN: Creación del artefacto normativo de ingeniería psicométrica y diseño de reactivos. Establece la regla de oro del 15% de varianza de longitud.
+
+ARCHIVO: js/Banco_Preguntas/Decimo/Informatica/avanzado.json
+DESCRIPCIÓN: Refactorización integral de 50 reactivos para cumplir con la simetría de longitud y homogeneidad conceptual. Eliminación de pistas visuales por extensión.

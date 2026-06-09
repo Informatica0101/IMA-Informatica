@@ -7,10 +7,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "En C++, ¿qué estructura se utiliza para elegir entre múltiples alternativas basadas en el valor de una sola variable entera o de carácter?",
     "opciones": [
-      "switch",
-      "while",
-      "for",
-      "if-else simple"
+      "switch ",
+      "while  ",
+      "for    ",
+      "if-else"
     ],
     "respuesta_correcta_literal": "switch",
     "nivel": "Intermedio"
@@ -22,7 +22,12 @@
     "tema": "Estructuras de Repetición",
     "tipo_pregunta": "completacion",
     "enunciado": "El bucle que evalúa la condición al final, garantizando que el código se ejecute al menos una vez, es el bucle ________.",
-    "opciones_visibles": ["for", "while", "do-while", "foreach"],
+    "opciones_visibles": [
+      "for  ",
+      "while",
+      "do-wh",
+      "forea"
+    ],
     "respuesta_correcta_literal": "do-while",
     "nivel": "Intermedio"
   },
@@ -35,9 +40,9 @@
     "enunciado": "En el lenguaje C++, ¿qué objeto de flujo se utiliza para imprimir datos en la consola?",
     "opciones": [
       "cout",
-      "cin",
-      "print",
-      "printf"
+      "cin ",
+      "prin",
+      "prin"
     ],
     "respuesta_correcta_literal": "cout",
     "nivel": "Intermedio"
@@ -49,7 +54,12 @@
     "tema": "Consola E/S",
     "tipo_pregunta": "completacion",
     "enunciado": "Para capturar datos ingresados por el teclado en C++, se utiliza el objeto <code>________ &gt;&gt; variable;</code>.",
-    "opciones_visibles": ["cout", "cin", "input", "scanf"],
+    "opciones_visibles": [
+      "cout",
+      "cin ",
+      "inpu",
+      "scan"
+    ],
     "respuesta_correcta_literal": "cin",
     "nivel": "Intermedio"
   },
@@ -60,7 +70,10 @@
     "tema": "Operadores Avanzados",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El operador de asignación compuesta <code>x += 5</code> es equivalente a escribir <code>x = x + 5</code>.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -72,10 +85,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué hace el operador de incremento <code>++</code> cuando se coloca después de una variable (post-incremento)?",
     "opciones": [
-      "Incrementa el valor de la variable en 1 después de usar su valor actual en la expresión.",
-      "Multiplica el valor de la variable por dos.",
-      "Borra el valor de la variable de la memoria.",
-      "Divide el valor entre uno."
+      "Incrementa el valor de la variable en 1 después de",
+      "Multiplica el valor de la variable por dos.       ",
+      "Borra el valor de la variable de la memoria.      ",
+      "Divide el valor entre uno.                        "
     ],
     "respuesta_correcta_literal": "Incrementa el valor de la variable en 1 después de usar su valor actual en la expresión.",
     "nivel": "Intermedio"
@@ -87,7 +100,12 @@
     "tema": "Flujo de Control",
     "tipo_pregunta": "completacion",
     "enunciado": "La instrucción ________ se utiliza dentro de un <code>switch</code> para evitar que el flujo 'caiga' en el siguiente caso.",
-    "opciones_visibles": ["stop", "exit", "break", "continue"],
+    "opciones_visibles": [
+      "stop ",
+      "exit ",
+      "break",
+      "conti"
+    ],
     "respuesta_correcta_literal": "break",
     "nivel": "Intermedio"
   },
@@ -101,8 +119,8 @@
     "opciones": [
       "&&",
       "||",
-      "!",
-      "AND"
+      "! ",
+      "AN"
     ],
     "respuesta_correcta_literal": "&&",
     "nivel": "Intermedio"
@@ -114,7 +132,12 @@
     "tema": "Operadores Lógicos",
     "tipo_pregunta": "completacion",
     "enunciado": "El operador lógico <code>||</code> representa la operación ________ (OR), que es verdadera si al menos una de las condiciones es verdadera.",
-    "opciones_visibles": ["conjunción", "disyunción", "negación", "exclusión"],
+    "opciones_visibles": [
+      "conjunció",
+      "disyunció",
+      "negación ",
+      "exclusión"
+    ],
     "respuesta_correcta_literal": "disyunción",
     "nivel": "Intermedio"
   },
@@ -125,7 +148,10 @@
     "tema": "Estructuras de Repetición",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En un bucle <code>for(int i=0; i<10; i++)</code>, la variable 'i' se incrementa en cada iteración.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -137,10 +163,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es la función de un acumulador en un bucle?",
     "opciones": [
-      "Sumar valores variables en cada iteración (ej: suma = suma + precio).",
-      "Contar de uno en uno cuántas veces se repite el proceso.",
-      "Detener el programa si hay un error.",
-      "Cambiar el color de la consola."
+      "Sumar valores variables en cada iteración (ej: s",
+      "Contar de uno en uno cuántas veces se repite el ",
+      "Detener el programa si hay un error.            ",
+      "Cambiar el color de la consola.                 "
     ],
     "respuesta_correcta_literal": "Sumar valores variables en cada iteración (ej: suma = suma + precio).",
     "nivel": "Intermedio"
@@ -152,7 +178,12 @@
     "tema": "Contadores y Acumuladores",
     "tipo_pregunta": "completacion",
     "enunciado": "Una variable que se incrementa en un valor constante (generalmente 1) para contar sucesos se llama ________.",
-    "opciones_visibles": ["Acumulador", "Contador", "Bandera", "Interruptor"],
+    "opciones_visibles": [
+      "Acumulado",
+      "Contador ",
+      "Bandera  ",
+      "Interrupt"
+    ],
     "respuesta_correcta_literal": "Contador",
     "nivel": "Intermedio"
   },
@@ -164,10 +195,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "En C++, ¿qué librería es necesaria para usar <code>cin</code> y <code>cout</code>?",
     "opciones": [
-      "iostream",
-      "cmath",
+      "iostre",
+      "cmath ",
       "string",
-      "stdio.h"
+      "stdio."
     ],
     "respuesta_correcta_literal": "iostream",
     "nivel": "Intermedio"
@@ -179,7 +210,12 @@
     "tema": "Sintaxis",
     "tipo_pregunta": "completacion",
     "enunciado": "Para usar funciones matemáticas avanzadas como <code>pow()</code> o <code>sqrt()</code> en C++, se debe incluir la librería ________.",
-    "opciones_visibles": ["iostream", "cmath", "iomanip", "math.h"],
+    "opciones_visibles": [
+      "iostre",
+      "cmath ",
+      "iomani",
+      "math.h"
+    ],
     "respuesta_correcta_literal": "cmath",
     "nivel": "Intermedio"
   },
@@ -190,7 +226,10 @@
     "tema": "Banderas / Flags",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Una 'Bandera' o 'Flag' es una variable (generalmente booleana) que se utiliza para indicar que un evento ha ocurrido.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -202,10 +241,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué sucede si no se incluye el caso <code>default</code> en un <code>switch</code>?",
     "opciones": [
-      "Si ninguna opción coincide, simplemente no se ejecuta nada dentro del switch.",
-      "El programa produce un error de compilación obligatorio.",
+      "Si ninguna opción coincide, simplemente no se ejecuta nad",
+      "El programa produce un error de compilación obligatorio. ",
       "Se ejecuta automáticamente la primera opción de la lista.",
-      "La computadora se reinicia por seguridad."
+      "La computadora se reinicia por seguridad.                "
     ],
     "respuesta_correcta_literal": "Si ninguna opción coincide, simplemente no se ejecuta nada dentro del switch.",
     "nivel": "Intermedio"
@@ -217,7 +256,12 @@
     "tema": "Consola E/S",
     "tipo_pregunta": "completacion",
     "enunciado": "La secuencia de escape que provoca un salto de línea en la consola de C++ es <code>\\________</code>.",
-    "opciones_visibles": ["t", "n", "a", "s"],
+    "opciones_visibles": [
+      "t",
+      "n",
+      "a",
+      "s"
+    ],
     "respuesta_correcta_literal": "n",
     "nivel": "Intermedio"
   },
@@ -228,7 +272,10 @@
     "tema": "Bucle While",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El bucle <code>while</code> evalúa la condición antes de ejecutar el bloque de instrucciones.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -240,10 +287,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Para qué sirve la instrucción <code>continue</code> en un bucle?",
     "opciones": [
-      "Salta el resto de la iteración actual y pasa a la siguiente evaluación de la condición.",
-      "Termina el bucle de forma definitiva.",
-      "Cierra el programa inmediatamente.",
-      "Repite la misma iteración con los mismos valores."
+      "Salta el resto de la iteración actual y pasa a la s",
+      "Termina el bucle de forma definitiva.              ",
+      "Cierra el programa inmediatamente.                 ",
+      "Repite la misma iteración con los mismos valores.  "
     ],
     "respuesta_correcta_literal": "Salta el resto de la iteración actual y pasa a la siguiente evaluación de la condición.",
     "nivel": "Intermedio"
@@ -255,7 +302,12 @@
     "tema": "Operadores Relacionales",
     "tipo_pregunta": "completacion",
     "enunciado": "El operador relacional que significa 'Diferente de' o 'No igual a' en C++ es <code>________</code>.",
-    "opciones_visibles": ["!=", "==", "<>", "NOT"],
+    "opciones_visibles": [
+      "!=",
+      "==",
+      "<>",
+      "NO"
+    ],
     "respuesta_correcta_literal": "!=",
     "nivel": "Intermedio"
   },
@@ -267,8 +319,8 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué tipo de dato usarías para almacenar el precio de un producto con alta precisión decimal en C++?",
     "opciones": [
-      "double",
-      "int",
+      "doub",
+      "int ",
       "char",
       "bool"
     ],
@@ -282,7 +334,10 @@
     "tema": "Lógica",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En C++, cualquier valor numérico distinto de cero es interpretado como 'true' en una condición lógica.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -293,7 +348,12 @@
     "tema": "Consola E/S",
     "tipo_pregunta": "completacion",
     "enunciado": "El manipulador <code>________</code> de la librería <code>iostream</code> se usa para insertar un salto de línea y limpiar el buffer de salida.",
-    "opciones_visibles": ["endl", "n", "flush", "next"],
+    "opciones_visibles": [
+      "end",
+      "n  ",
+      "flu",
+      "nex"
+    ],
     "respuesta_correcta_literal": "endl",
     "nivel": "Intermedio"
   },
@@ -305,10 +365,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un bucle infinito?",
     "opciones": [
-      "Un bucle cuya condición de salida nunca se cumple, repitiéndose indefinidamente.",
-      "Un bucle que corre exactamente 1000 veces.",
-      "Un bucle que se ejecuta muy rápido gracias al hardware.",
-      "Un error que borra el código fuente."
+      "Un bucle cuya condición de salida nunca se cumple, re",
+      "Un bucle que corre exactamente 1000 veces.           ",
+      "Un bucle que se ejecuta muy rápido gracias al hardwar",
+      "Un error que borra el código fuente.                 "
     ],
     "respuesta_correcta_literal": "Un bucle cuya condición de salida nunca se cumple, repitiéndose indefinidamente.",
     "nivel": "Intermedio"
@@ -320,7 +380,12 @@
     "tema": "Espacios de Nombres",
     "tipo_pregunta": "completacion",
     "enunciado": "Para evitar escribir <code>std::</code> antes de cada comando como <code>cout</code>, se usa la instrucción <code>using namespace ________;</code>.",
-    "opciones_visibles": ["system", "std", "main", "io"],
+    "opciones_visibles": [
+      "sys",
+      "std",
+      "mai",
+      "io "
+    ],
     "respuesta_correcta_literal": "std",
     "nivel": "Intermedio"
   },
@@ -331,7 +396,10 @@
     "tema": "Condicionales Anidados",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Es posible colocar una estructura <code>if</code> dentro de otra estructura <code>if</code> para evaluar condiciones dependientes.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -343,10 +411,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué tipo de datos NO se pueden evaluar directamente en los <code>case</code> de un <code>switch</code> estándar en C++?",
     "opciones": [
-      "Números flotantes (float/double)",
-      "Números enteros (int)",
-      "Caracteres (char)",
-      "Enumeraciones"
+      "Números flotantes (f",
+      "Números enteros (int",
+      "Caracteres (char)   ",
+      "Enumeraciones       "
     ],
     "respuesta_correcta_literal": "Números flotantes (float/double)",
     "nivel": "Intermedio"
@@ -358,7 +426,12 @@
     "tema": "Operadores de Asignación",
     "tipo_pregunta": "completacion",
     "enunciado": "El operador <code>________</code> se utiliza para calcular el resto o residuo de una división entera.",
-    "opciones_visibles": ["/", "*", "%", "^"],
+    "opciones_visibles": [
+      "/",
+      "*",
+      "%",
+      "^"
+    ],
     "respuesta_correcta_literal": "%",
     "nivel": "Intermedio"
   },
@@ -369,7 +442,10 @@
     "tema": "Bucle For",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En la estructura <code>for(inicialización; condición; incremento)</code>, la parte de inicialización se ejecuta solo una vez al principio.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -381,10 +457,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué sucede si intentas guardar un texto con espacios usando <code>cin >> variable_string;</code>?",
     "opciones": [
-      "Solo se guarda la primera palabra, ya que el espacio actúa como delimitador.",
-      "Se guarda todo el texto normalmente.",
-      "Se produce un error de compilación.",
-      "El programa se cierra inesperadamente."
+      "Solo se guarda la primera palabra, ya que el e",
+      "Se guarda todo el texto normalmente.          ",
+      "Se produce un error de compilación.           ",
+      "El programa se cierra inesperadamente.        "
     ],
     "respuesta_correcta_literal": "Solo se guarda la primera palabra, ya que el espacio actúa como delimitador.",
     "nivel": "Intermedio"
@@ -396,7 +472,12 @@
     "tema": "Entrada de Datos",
     "tipo_pregunta": "completacion",
     "enunciado": "Para leer una línea completa de texto incluyendo espacios en C++, se debe usar la función <code>________(cin, variable);</code>.",
-    "opciones_visibles": ["readline", "getline", "readtext", "inputline"],
+    "opciones_visibles": [
+      "readline",
+      "getline ",
+      "readtext",
+      "inputlin"
+    ],
     "respuesta_correcta_literal": "getline",
     "nivel": "Intermedio"
   },
@@ -407,7 +488,10 @@
     "tema": "Lógica",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La expresión <code>!(5 > 3)</code> devuelve falso.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -419,10 +503,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué palabra clave se usa para definir una variable cuyo valor no puede cambiar después de su inicialización?",
     "opciones": [
-      "const",
+      "const ",
       "static",
-      "fixed",
-      "immutable"
+      "fixed ",
+      "immuta"
     ],
     "respuesta_correcta_literal": "const",
     "nivel": "Intermedio"
@@ -434,7 +518,12 @@
     "tema": "Incrementos",
     "tipo_pregunta": "completacion",
     "enunciado": "La instrucción <code>x--</code> es una forma abreviada de escribir <code>x = x - ________</code>.",
-    "opciones_visibles": ["0", "1", "2", "x"],
+    "opciones_visibles": [
+      "0",
+      "1",
+      "2",
+      "x"
+    ],
     "respuesta_correcta_literal": "1",
     "nivel": "Intermedio"
   },
@@ -445,7 +534,10 @@
     "tema": "Estructuras Selectivas",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un <code>switch</code> puede sustituir a cualquier estructura <code>if-else</code> compleja, sin importar las condiciones.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Falso",
     "nivel": "Intermedio"
   },
@@ -457,10 +549,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué hace el operador ternario <code>(condicion ? val1 : val2)</code>?",
     "opciones": [
-      "Es una forma abreviada de un if-else que devuelve val1 si es cierto y val2 si es falso.",
-      "Suma tres números al mismo tiempo.",
-      "Compara si tres variables son iguales.",
-      "Es un bucle que se repite tres veces."
+      "Es una forma abreviada de un if-else que devuelve",
+      "Suma tres números al mismo tiempo.               ",
+      "Compara si tres variables son iguales.           ",
+      "Es un bucle que se repite tres veces.            "
     ],
     "respuesta_correcta_literal": "Es una forma abreviada de un if-else que devuelve val1 si es cierto y val2 si es falso.",
     "nivel": "Intermedio"
@@ -472,7 +564,12 @@
     "tema": "Bucle Do-While",
     "tipo_pregunta": "completacion",
     "enunciado": "A diferencia del <code>while</code>, el bucle <code>do-while</code> termina su sintaxis obligatoriamente con un ________.",
-    "opciones_visibles": ["punto y coma (;)", "dos puntos (:)", "corchete (])", "paréntesis ())"],
+    "opciones_visibles": [
+      "punto y coma (",
+      "dos puntos (:)",
+      "corchete (])  ",
+      "paréntesis ())"
+    ],
     "respuesta_correcta_literal": "punto y coma (;)",
     "nivel": "Intermedio"
   },
@@ -483,7 +580,10 @@
     "tema": "Comentarios",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En C++, los comentarios de varias líneas comienzan con <code>/*</code> y terminan con <code>*/</code>.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -495,10 +595,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué sucede si omites la condición en un bucle <code>for(;;)</code>?",
     "opciones": [
-      "Se crea un bucle infinito.",
-      "El bucle no se ejecuta nunca.",
-      "El compilador marca un error de sintaxis.",
-      "El bucle se ejecuta exactamente una vez."
+      "Se crea un bucle infinito.        ",
+      "El bucle no se ejecuta nunca.     ",
+      "El compilador marca un error de si",
+      "El bucle se ejecuta exactamente un"
     ],
     "respuesta_correcta_literal": "Se crea un bucle infinito.",
     "nivel": "Intermedio"
@@ -510,7 +610,12 @@
     "tema": "Tipos de Datos",
     "tipo_pregunta": "completacion",
     "enunciado": "El tipo de dato que solo puede almacenar un solo símbolo, letra o número entre comillas simples es ________.",
-    "opciones_visibles": ["string", "char", "int", "single"],
+    "opciones_visibles": [
+      "stri",
+      "char",
+      "int ",
+      "sing"
+    ],
     "respuesta_correcta_literal": "char",
     "nivel": "Intermedio"
   },
@@ -521,7 +626,10 @@
     "tema": "Operadores de Asignación",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La expresión <code>x *= 2</code> multiplica el valor actual de x por 2 y guarda el resultado en x.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -534,9 +642,9 @@
     "enunciado": "¿Cuál es el resultado de la expresión <code>(true && false) || true</code>?",
     "opciones": [
       "true",
-      "false",
+      "fals",
       "null",
-      "error"
+      "erro"
     ],
     "respuesta_correcta_literal": "true",
     "nivel": "Intermedio"
@@ -548,7 +656,12 @@
     "tema": "Sintaxis",
     "tipo_pregunta": "completacion",
     "enunciado": "Cada instrucción simple en C++ debe terminar con el carácter de ________ para que el compilador sepa que la orden ha finalizado.",
-    "opciones_visibles": ["coma (,)", "punto (.)", "punto y coma (;)", "dos puntos (:)"],
+    "opciones_visibles": [
+      "coma (,)   ",
+      "punto (.)  ",
+      "punto y com",
+      "dos puntos "
+    ],
     "respuesta_correcta_literal": "punto y coma (;)",
     "nivel": "Intermedio"
   },
@@ -559,7 +672,10 @@
     "tema": "Estructuras de Repetición",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un bucle <code>while</code> puede llegar a no ejecutarse ninguna vez si la condición es falsa desde el inicio.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -571,10 +687,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué hace el operador <code>!</code> (NOT)?",
     "opciones": [
-      "Invierte el valor lógico (true se vuelve false y viceversa).",
-      "Compara si dos valores son iguales.",
-      "Multiplica un número por -1.",
-      "Representa una exclamación en el texto de salida."
+      "Invierte el valor lógico (true se vuelve fa",
+      "Compara si dos valores son iguales.        ",
+      "Multiplica un número por -1.               ",
+      "Representa una exclamación en el texto de s"
     ],
     "respuesta_correcta_literal": "Invierte el valor lógico (true se vuelve false y viceversa).",
     "nivel": "Intermedio"
@@ -586,7 +702,12 @@
     "tema": "Manipulación de Salida",
     "tipo_pregunta": "completacion",
     "enunciado": "Para formatear la salida con un número específico de decimales, se utiliza <code>fixed</code> y <code>setprecision()</code> de la librería ________.",
-    "opciones_visibles": ["iostream", "cmath", "iomanip", "fstream"],
+    "opciones_visibles": [
+      "iostre",
+      "cmath ",
+      "iomani",
+      "fstrea"
+    ],
     "respuesta_correcta_literal": "iomanip",
     "nivel": "Intermedio"
   },
@@ -597,7 +718,10 @@
     "tema": "Estructuras de Control",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En un <code>switch</code>, el caso <code>default</code> es opcional pero recomendable.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   },
@@ -609,10 +733,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es una variable local?",
     "opciones": [
-      "Una variable declarada dentro de una función o bloque que solo existe allí.",
-      "Una variable que se puede usar en todo el programa.",
-      "Una variable que se guarda en el disco duro.",
-      "Una variable que no tiene nombre."
+      "Una variable declarada dentro de una función o blo",
+      "Una variable que se puede usar en todo el programa",
+      "Una variable que se guarda en el disco duro.      ",
+      "Una variable que no tiene nombre.                 "
     ],
     "respuesta_correcta_literal": "Una variable declarada dentro de una función o bloque que solo existe allí.",
     "nivel": "Intermedio"
@@ -624,7 +748,12 @@
     "tema": "Identificadores",
     "tipo_pregunta": "completacion",
     "enunciado": "Los nombres de las variables en C++ no pueden comenzar con un ________.",
-    "opciones_visibles": ["Guion bajo", "Número", "Letra mayúscula", "Letra minúscula"],
+    "opciones_visibles": [
+      "Guion bajo ",
+      "Número     ",
+      "Letra mayús",
+      "Letra minús"
+    ],
     "respuesta_correcta_literal": "Número",
     "nivel": "Intermedio"
   },
@@ -635,7 +764,10 @@
     "tema": "Conclusión - Intermedio",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Dominar el flujo de control y los operadores es esencial para resolver problemas complejos de programación.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Intermedio"
   }

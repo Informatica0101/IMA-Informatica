@@ -7,10 +7,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es la 'Asociación' en el diseño orientado a objetos?",
     "opciones": [
-      "Una relación estructural que describe una conexión entre dos clases (un objeto usa a otro).",
-      "El proceso de borrar una clase del proyecto.",
-      "Un tipo de bucle que asocia variables con números.",
-      "La instalación de un driver para la impresora."
+      "Una relación estructural que describe una conexión entre ",
+      "El proceso de borrar una clase del proyecto.             ",
+      "Un tipo de bucle que asocia variables con números.       ",
+      "La instalación de un driver para la impresora.           "
     ],
     "respuesta_correcta_literal": "Una relación estructural que describe una conexión entre dos clases (un objeto usa a otro).",
     "nivel": "Avanzado"
@@ -23,10 +23,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué caracteriza a la relación de 'Agregación' (relación de todo-parte débil)?",
     "opciones": [
-      "La parte puede existir independientemente del todo (ej: un Profesor en un Departamento).",
-      "Si el objeto 'todo' se destruye, la 'parte' también muere obligatoriamente.",
-      "Es una relación donde las clases no se conocen entre sí.",
-      "Es un método para sumar números en un arreglo."
+      "La parte puede existir independientemente del todo (ej: un Profeso",
+      "Si el objeto 'todo' se destruye, la 'parte' también muere obligato",
+      "Es una relación donde las clases no se conocen entre sí.          ",
+      "Es un método para sumar números en un arreglo.                    "
     ],
     "respuesta_correcta_literal": "La parte puede existir independientemente del todo (ej: un Profesor en un Departamento).",
     "nivel": "Avanzado"
@@ -38,7 +38,12 @@
     "tema": "Composición",
     "tipo_pregunta": "completacion",
     "enunciado": "La ________ es una forma fuerte de agregación donde la 'parte' no tiene sentido sin el 'todo' y su ciclo de vida depende totalmente de este (ej: Habitaciones en una Casa).",
-    "opciones_visibles": ["Asociación", "Herencia", "Composición", "Interfaz"],
+    "opciones_visibles": [
+      "Asociació",
+      "Herencia ",
+      "Composici",
+      "Interfaz "
+    ],
     "respuesta_correcta_literal": "Composición",
     "nivel": "Avanzado"
   },
@@ -49,7 +54,10 @@
     "tema": "Composición",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En la composición, si el objeto contenedor se destruye, los objetos contenidos también se destruyen.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -61,10 +69,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué establece el Principio de Responsabilidad Única (SRP)?",
     "opciones": [
-      "Una clase debe tener una sola razón para cambiar, es decir, debe realizar una sola tarea específica.",
-      "Cada programador es responsable de su propio código.",
-      "El programa solo debe tener una variable global.",
-      "La base de datos solo debe tener una tabla."
+      "Una clase debe tener una sola razón para cambiar, es decir, ",
+      "Cada programador es responsable de su propio código.        ",
+      "El programa solo debe tener una variable global.            ",
+      "La base de datos solo debe tener una tabla.                 "
     ],
     "respuesta_correcta_literal": "Una clase debe tener una sola razón para cambiar, es decir, debe realizar una sola tarea específica.",
     "nivel": "Avanzado"
@@ -76,7 +84,12 @@
     "tema": "Principios SOLID",
     "tipo_pregunta": "completacion",
     "enunciado": "El principio de Abierto/Cerrado (OCP) dice que las entidades de software deben estar abiertas para su extensión, pero ________ para su modificación.",
-    "opciones_visibles": ["Libres", "Cerradas", "Borradas", "Públicas"],
+    "opciones_visibles": [
+      "Libres ",
+      "Cerrada",
+      "Borrada",
+      "Pública"
+    ],
     "respuesta_correcta_literal": "Cerradas",
     "nivel": "Avanzado"
   },
@@ -88,10 +101,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué sugiere el Principio de Sustitución de Liskov (LSP)?",
     "opciones": [
-      "Los objetos de una clase hija deben poder sustituir a objetos de la clase padre sin alterar el funcionamiento del programa.",
-      "Se debe sustituir todo el código antiguo por código nuevo cada año.",
-      "Las variables enteras pueden ser sustituidas por texto en cualquier momento.",
-      "El servidor principal debe ser sustituido si falla una vez."
+      "Los objetos de una clase hija deben poder sustituir a objetos de la clase padre s",
+      "Se debe sustituir todo el código antiguo por código nuevo cada año.              ",
+      "Las variables enteras pueden ser sustituidas por texto en cualquier momento.     ",
+      "El servidor principal debe ser sustituido si falla una vez.                      "
     ],
     "respuesta_correcta_literal": "Los objetos de una clase hija deben poder sustituir a objetos de la clase padre sin alterar el funcionamiento del programa.",
     "nivel": "Avanzado"
@@ -103,7 +116,10 @@
     "tema": "Principios SOLID",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El Principio de Segregación de Interfaces (ISP) indica que es mejor tener muchas interfaces específicas que una sola interfaz general muy grande.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -114,7 +130,12 @@
     "tema": "Principios SOLID",
     "tipo_pregunta": "completacion",
     "enunciado": "El Principio de Inversión de Dependencias (DIP) establece que debemos depender de ________ y no de implementaciones concretas.",
-    "opciones_visibles": ["Variables", "Hardware", "Abstracciones", "Funciones"],
+    "opciones_visibles": [
+      "Variables",
+      "Hardware ",
+      "Abstracci",
+      "Funciones"
+    ],
     "respuesta_correcta_literal": "Abstracciones",
     "nivel": "Avanzado"
   },
@@ -126,10 +147,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es el objetivo del patrón 'Singleton'?",
     "opciones": [
-      "Garantizar que una clase tenga una única instancia en todo el programa y proporcionar un punto de acceso global a ella.",
-      "Crear una lista de todos los objetos del sistema.",
-      "Borrar todos los objetos al cerrar el programa.",
-      "Permitir que una clase herede de diez padres distintos."
+      "Garantizar que una clase tenga una única instancia en todo el progr",
+      "Crear una lista de todos los objetos del sistema.                  ",
+      "Borrar todos los objetos al cerrar el programa.                    ",
+      "Permitir que una clase herede de diez padres distintos.            "
     ],
     "respuesta_correcta_literal": "Garantizar que una clase tenga una única instancia en todo el programa y proporcionar un punto de acceso global a ella.",
     "nivel": "Avanzado"
@@ -141,7 +162,12 @@
     "tema": "Patrones de Diseño",
     "tipo_pregunta": "completacion",
     "enunciado": "El patrón ________ Method define una interfaz para crear un objeto, pero deja que las subclases decidan qué clase instanciar.",
-    "opciones_visibles": ["Singleton", "Factory", "Observer", "Adapter"],
+    "opciones_visibles": [
+      "Singlet",
+      "Factory",
+      "Observe",
+      "Adapter"
+    ],
     "respuesta_correcta_literal": "Factory",
     "nivel": "Avanzado"
   },
@@ -153,10 +179,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Para qué sirve el patrón 'Observer'?",
     "opciones": [
-      "Para notificar automáticamente a múltiples objetos cuando el estado de otro objeto cambia.",
-      "Para espiar las contraseñas de otros usuarios.",
-      "Para mirar el código fuente sin permiso.",
-      "Para contar cuántas veces se ejecuta un bucle."
+      "Para notificar automáticamente a múltiples objetos cuan",
+      "Para espiar las contraseñas de otros usuarios.         ",
+      "Para mirar el código fuente sin permiso.               ",
+      "Para contar cuántas veces se ejecuta un bucle.         "
     ],
     "respuesta_correcta_literal": "Para notificar automáticamente a múltiples objetos cuando el estado de otro objeto cambia.",
     "nivel": "Avanzado"
@@ -168,7 +194,12 @@
     "tema": "Acoplamiento",
     "tipo_pregunta": "completacion",
     "enunciado": "En buen diseño de software, se busca un bajo ________, lo que significa que las clases deben ser lo más independientes posible.",
-    "opciones_visibles": ["Costo", "Acoplamiento", "Código", "Esfuerzo"],
+    "opciones_visibles": [
+      "Costo  ",
+      "Acoplam",
+      "Código ",
+      "Esfuerz"
+    ],
     "respuesta_correcta_literal": "Acoplamiento",
     "nivel": "Avanzado"
   },
@@ -179,7 +210,10 @@
     "tema": "Cohesión",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "La alta cohesión significa que los elementos dentro de una clase están estrechamente relacionados y trabajan para un fin común.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -191,9 +225,9 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un método 'default' en una interfaz de Java moderna?",
     "opciones": [
-      "Un método que tiene una implementación base dentro de la propia interfaz.",
-      "Un método que se borra solo.",
-      "Un método que solo funciona en Windows.",
+      "Un método que tiene una implementación base de",
+      "Un método que se borra solo.                  ",
+      "Un método que solo funciona en Windows.       ",
       "Un error de sintaxis que no se puede corregir."
     ],
     "respuesta_correcta_literal": "Un método que tiene una implementación base dentro de la propia interfaz.",
@@ -206,7 +240,12 @@
     "tema": "Polimorfismo",
     "tipo_pregunta": "completacion",
     "enunciado": "El polimorfismo que ocurre cuando sobrecargamos métodos se conoce como polimorfismo en tiempo de ________.",
-    "opciones_visibles": ["Ejecución", "Compilación", "Diseño", "Vuelo"],
+    "opciones_visibles": [
+      "Ejecuci",
+      "Compila",
+      "Diseño ",
+      "Vuelo  "
+    ],
     "respuesta_correcta_literal": "Compilación",
     "nivel": "Avanzado"
   },
@@ -218,10 +257,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué símbolo representa la 'Composición' en un diagrama de clases UML?",
     "opciones": [
-      "Un rombo relleno de color negro.",
+      "Un rombo relleno de colo",
       "Un rombo vacío (blanco).",
-      "Una flecha punteada.",
-      "Una línea en zigzag."
+      "Una flecha punteada.    ",
+      "Una línea en zigzag.    "
     ],
     "respuesta_correcta_literal": "Un rombo relleno de color negro.",
     "nivel": "Avanzado"
@@ -234,9 +273,9 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué símbolo representa la 'Agregación' en UML?",
     "opciones": [
-      "Un rombo vacío (blanco).",
-      "Un rombo relleno negro.",
-      "Una cruz roja.",
+      "Un rombo vacío (blan",
+      "Un rombo relleno neg",
+      "Una cruz roja.      ",
       "Una estrella dorada."
     ],
     "respuesta_correcta_literal": "Un rombo vacío (blanco).",
@@ -249,7 +288,10 @@
     "tema": "Herencia Múltiple",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "C++ permite la herencia múltiple de clases, lo que puede llevar al problema del 'Diamante'.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -261,10 +303,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es un beneficio de aplicar la Inversión de Dependencias (DIP)?",
     "opciones": [
-      "Facilita las pruebas unitarias y permite cambiar componentes sin romper el sistema.",
-      "Hace que el código sea más corto y difícil de leer.",
-      "Elimina la necesidad de usar una base de datos.",
-      "Aumenta el consumo de memoria RAM para mayor velocidad."
+      "Facilita las pruebas unitarias y permite cambiar componente",
+      "Hace que el código sea más corto y difícil de leer.        ",
+      "Elimina la necesidad de usar una base de datos.            ",
+      "Aumenta el consumo de memoria RAM para mayor velocidad.    "
     ],
     "respuesta_correcta_literal": "Facilita las pruebas unitarias y permite cambiar componentes sin romper el sistema.",
     "nivel": "Avanzado"
@@ -276,7 +318,12 @@
     "tema": "UML - Visibilidad",
     "tipo_pregunta": "completacion",
     "enunciado": "En un diagrama UML, el símbolo <code>-</code> antes de un atributo indica que su visibilidad es ________.",
-    "opciones_visibles": ["Pública", "Privada", "Protegida", "Global"],
+    "opciones_visibles": [
+      "Pública",
+      "Privada",
+      "Protegi",
+      "Global "
+    ],
     "respuesta_correcta_literal": "Privada",
     "nivel": "Avanzado"
   },
@@ -287,7 +334,12 @@
     "tema": "UML - Visibilidad",
     "tipo_pregunta": "completacion",
     "enunciado": "En un diagrama UML, el símbolo <code>+</code> antes de un método indica que su visibilidad es ________.",
-    "opciones_visibles": ["Privada", "Pública", "Oculta", "Virtual"],
+    "opciones_visibles": [
+      "Privada",
+      "Pública",
+      "Oculta",
+      "Virtual"
+    ],
     "respuesta_correcta_literal": "Pública",
     "nivel": "Avanzado"
   },
@@ -298,7 +350,10 @@
     "tema": "Clases Final",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Una clase 'Final' no puede tener subclases.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -310,10 +365,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es la refactorización de código?",
     "opciones": [
-      "Mejorar la estructura interna del código sin cambiar su comportamiento externo.",
-      "Borrar el código y volver a escribirlo desde cero.",
-      "Cambiar el lenguaje de programación del proyecto.",
-      "Traducir el código al español."
+      "Mejorar la estructura interna del código sin cambiar",
+      "Borrar el código y volver a escribirlo desde cero.  ",
+      "Cambiar el lenguaje de programación del proyecto.   ",
+      "Traducir el código al español.                      "
     ],
     "respuesta_correcta_literal": "Mejorar la estructura interna del código sin cambiar su comportamiento externo.",
     "nivel": "Avanzado"
@@ -325,7 +380,12 @@
     "tema": "Patrones de Diseño",
     "tipo_pregunta": "completacion",
     "enunciado": "Los patrones de diseño se dividen en tres categorías principales: Creacionales, Estructurales y de ________.",
-    "opciones_visibles": ["Código", "Comportamiento", "Bases de datos", "Redes"],
+    "opciones_visibles": [
+      "Código   ",
+      "Comportam",
+      "Bases de ",
+      "Redes    "
+    ],
     "respuesta_correcta_literal": "Comportamiento",
     "nivel": "Avanzado"
   },
@@ -337,10 +397,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿En qué consiste la Inyección de Dependencias?",
     "opciones": [
-      "En pasarle a un objeto las dependencias que necesita desde afuera, en lugar de que él las cree internamente.",
-      "En inyectar virus en el sistema para probar el antivirus.",
-      "En conectar cables de red a la placa base.",
-      "En duplicar las variables globales del sistema."
+      "En pasarle a un objeto las dependencias que necesita desde afue",
+      "En inyectar virus en el sistema para probar el antivirus.      ",
+      "En conectar cables de red a la placa base.                     ",
+      "En duplicar las variables globales del sistema.                "
     ],
     "respuesta_correcta_literal": "En pasarle a un objeto las dependencias que necesita desde afuera, en lugar de que él las cree internamente.",
     "nivel": "Avanzado"
@@ -352,7 +412,10 @@
     "tema": "Interfaces",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Una clase puede implementar múltiples interfaces en Java.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -364,10 +427,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es un beneficio directo del encapsulamiento?",
     "opciones": [
-      "Facilidad para cambiar la implementación interna sin afectar a quienes usan la clase.",
+      "Facilidad para cambiar la implementación interna sin af",
       "Hacer que el programa corra en computadoras más viejas.",
-      "Reducir el tamaño de las imágenes del programa.",
-      "No tiene beneficios técnicos reales."
+      "Reducir el tamaño de las imágenes del programa.        ",
+      "No tiene beneficios técnicos reales.                   "
     ],
     "respuesta_correcta_literal": "Facilidad para cambiar la implementación interna sin afectar a quienes usan la clase.",
     "nivel": "Avanzado"
@@ -379,7 +442,12 @@
     "tema": "Colecciones",
     "tipo_pregunta": "completacion",
     "enunciado": "Un ________ es una colección que no permite elementos duplicados.",
-    "opciones_visibles": ["List", "Set", "Map", "Array"],
+    "opciones_visibles": [
+      "Lis",
+      "Set",
+      "Map",
+      "Arr"
+    ],
     "respuesta_correcta_literal": "Set",
     "nivel": "Avanzado"
   },
@@ -391,10 +459,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es un 'Map' (o Diccionario) en programación avanzada?",
     "opciones": [
-      "Una colección que almacena pares de clave-valor.",
-      "Un mapa geográfico digital.",
-      "Un tipo de bucle que dibuja líneas.",
-      "Una lista que solo guarda números negativos."
+      "Una colección que almacena pares de cl",
+      "Un mapa geográfico digital.           ",
+      "Un tipo de bucle que dibuja líneas.   ",
+      "Una lista que solo guarda números nega"
     ],
     "respuesta_correcta_literal": "Una colección que almacena pares de clave-valor.",
     "nivel": "Avanzado"
@@ -406,7 +474,10 @@
     "tema": "Excepciones",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Un bloque Try-Catch se utiliza para capturar y manejar errores en tiempo de ejecución de forma elegante.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -417,7 +488,12 @@
     "tema": "Excepciones",
     "tipo_pregunta": "completacion",
     "enunciado": "La palabra clave ________ se usa para lanzar manualmente una excepción en el código.",
-    "opciones_visibles": ["catch", "try", "throw", "finally"],
+    "opciones_visibles": [
+      "catch",
+      "try  ",
+      "throw",
+      "final"
+    ],
     "respuesta_correcta_literal": "throw",
     "nivel": "Avanzado"
   },
@@ -429,10 +505,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Para qué sirve el bloque 'finally'?",
     "opciones": [
-      "Para ejecutar código que debe correr siempre, ocurra o no una excepción (como cerrar un archivo).",
-      "Para terminar el programa inmediatamente.",
-      "Para borrar la base de datos.",
-      "Es un comentario de fin de archivo."
+      "Para ejecutar código que debe correr siempre, ocur",
+      "Para terminar el programa inmediatamente.         ",
+      "Para borrar la base de datos.                     ",
+      "Es un comentario de fin de archivo.               "
     ],
     "respuesta_correcta_literal": "Para ejecutar código que debe correr siempre, ocurra o no una excepción (como cerrar un archivo).",
     "nivel": "Avanzado"
@@ -444,7 +520,10 @@
     "tema": "Genéricos",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Los 'Generics' permiten crear clases y métodos que funcionan con diferentes tipos de datos manteniendo la seguridad de tipos.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -456,10 +535,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es la 'Dependencia' entre clases en UML?",
     "opciones": [
-      "Una relación transitoria donde una clase usa a otra temporalmente (ej: como parámetro de un método).",
-      "Cuando un servidor depende de otro para tener internet.",
-      "Cuando el programador depende del café para trabajar.",
-      "Cuando la base de datos está llena."
+      "Una relación transitoria donde una clase usa a otra temporal",
+      "Cuando un servidor depende de otro para tener internet.     ",
+      "Cuando el programador depende del café para trabajar.       ",
+      "Cuando la base de datos está llena.                         "
     ],
     "respuesta_correcta_literal": "Una relación transitoria donde una clase usa a otra temporalmente (ej: como parámetro de un método).",
     "nivel": "Avanzado"
@@ -471,7 +550,10 @@
     "tema": "Sobreescritura",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "No se pueden sobreescritos los métodos marcados como 'Static'.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -483,10 +565,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué error ocurre si haces un Downcasting inválido en Java?",
     "opciones": [
-      "ClassCastException",
-      "NullPointerException",
-      "StackOverflowError",
-      "InternetConnectionError"
+      "ClassCastException ",
+      "NullPointerExceptio",
+      "StackOverflowError ",
+      "InternetConnectionE"
     ],
     "respuesta_correcta_literal": "ClassCastException",
     "nivel": "Avanzado"
@@ -498,7 +580,12 @@
     "tema": "Interfaces",
     "tipo_pregunta": "completacion",
     "enunciado": "Una interface que no tiene métodos se conoce como interface ________ (Marker Interface).",
-    "opciones_visibles": ["Vacia", "Marcadora", "Nula", "Falsa"],
+    "opciones_visibles": [
+      "Vacia",
+      "Marca",
+      "Nula ",
+      "Falsa"
+    ],
     "respuesta_correcta_literal": "Marcadora",
     "nivel": "Avanzado"
   },
@@ -509,7 +596,10 @@
     "tema": "SOLID - OCP",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El uso de polimorfismo e interfaces es una excelente forma de cumplir con el principio Abierto/Cerrado.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -520,7 +610,12 @@
     "tema": "Diagrama de Clases",
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué indica una flecha con punta de triángulo vacía en UML?",
-    "opciones": ["Herencia o Generalización.", "Composición fuerte.", "Dependencia temporal.", "Asociación simple."],
+    "opciones": [
+      "Herencia o Generaliza",
+      "Composición fuerte.  ",
+      "Dependencia temporal.",
+      "Asociación simple.   "
+    ],
     "respuesta_correcta_literal": "Herencia o Generalización.",
     "nivel": "Avanzado"
   },
@@ -531,7 +626,12 @@
     "tema": "Diagrama de Clases",
     "tipo_pregunta": "completacion",
     "enunciado": "La línea punteada con una flecha abierta en UML representa una relación de ________.",
-    "opciones_visibles": ["Herencia", "Dependencia", "Agregación", "Composición"],
+    "opciones_visibles": [
+      "Herencia  ",
+      "Dependenci",
+      "Agregación",
+      "Composició"
+    ],
     "respuesta_correcta_literal": "Dependencia",
     "nivel": "Avanzado"
   },
@@ -542,7 +642,10 @@
     "tema": "Garbage Collector",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "El recolector de basura de Java libera automáticamente la memoria de los objetos que ya no tienen ninguna referencia apuntándolos.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -554,10 +657,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Por qué se dice que el encapsulamiento ayuda a la seguridad?",
     "opciones": [
-      "Porque impide que se alteren datos sensibles de forma accidental o malintencionada saltándose las reglas de la clase.",
-      "Porque pone una clave de acceso al archivo .java.",
-      "Porque encripta el código fuente automáticamente.",
-      "Porque apaga el servidor si detecta un intruso."
+      "Porque impide que se alteren datos sensibles de forma accidental ",
+      "Porque pone una clave de acceso al archivo .java.                ",
+      "Porque encripta el código fuente automáticamente.                ",
+      "Porque apaga el servidor si detecta un intruso.                  "
     ],
     "respuesta_correcta_literal": "Porque impide que se alteren datos sensibles de forma accidental o malintencionada saltándose las reglas de la clase.",
     "nivel": "Avanzado"
@@ -569,7 +672,12 @@
     "tema": "Constructores",
     "tipo_pregunta": "completacion",
     "enunciado": "Un constructor que no recibe parámetros se llama constructor ________.",
-    "opciones_visibles": ["Nulo", "Vacío", "Por defecto", "Simple"],
+    "opciones_visibles": [
+      "Nulo  ",
+      "Vacío ",
+      "Por de",
+      "Simple"
+    ],
     "respuesta_correcta_literal": "Por defecto",
     "nivel": "Avanzado"
   },
@@ -580,7 +688,10 @@
     "tema": "Herencia",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En Java, una clase puede heredar de una clase padre e implementar tres interfaces al mismo tiempo.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -592,10 +703,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Qué es una interfaz en el sentido más amplio del diseño?",
     "opciones": [
-      "Un punto de contacto o contrato entre dos sistemas o componentes.",
-      "Un dibujo bonito en la pantalla.",
-      "La parte de atrás de la computadora.",
-      "Un cable de red de alta velocidad."
+      "Un punto de contacto o contrato entre dos",
+      "Un dibujo bonito en la pantalla.         ",
+      "La parte de atrás de la computadora.     ",
+      "Un cable de red de alta velocidad.       "
     ],
     "respuesta_correcta_literal": "Un punto de contacto o contrato entre dos sistemas o componentes.",
     "nivel": "Avanzado"
@@ -607,7 +718,12 @@
     "tema": "Polimorfismo",
     "tipo_pregunta": "completacion",
     "enunciado": "La capacidad de una variable de referencia de apuntar a objetos de diferentes clases hijas se llama ________.",
-    "opciones_visibles": ["Agregación", "Polimorfismo", "Casting", "Enlace"],
+    "opciones_visibles": [
+      "Agregaci",
+      "Polimorf",
+      "Casting ",
+      "Enlace  "
+    ],
     "respuesta_correcta_literal": "Polimorfismo",
     "nivel": "Avanzado"
   },
@@ -618,7 +734,10 @@
     "tema": "UML - Clases",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "En un diagrama de clases, los nombres de las clases abstractas se escriben generalmente en cursiva.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   },
@@ -630,10 +749,10 @@
     "tipo_pregunta": "funcionalidad",
     "enunciado": "¿Cuál es un beneficio de la modularidad en equipos grandes?",
     "opciones": [
-      "Permite que diferentes programadores trabajen en módulos distintos simultáneamente sin estorbarse.",
-      "Hace que el programa sea un solo archivo gigante.",
-      "Evita que se tengan que usar bases de datos.",
-      "No tiene beneficios para el trabajo en equipo."
+      "Permite que diferentes programadores trabajen en módulos di",
+      "Hace que el programa sea un solo archivo gigante.          ",
+      "Evita que se tengan que usar bases de datos.               ",
+      "No tiene beneficios para el trabajo en equipo.             "
     ],
     "respuesta_correcta_literal": "Permite que diferentes programadores trabajen en módulos distintos simultáneamente sin estorbarse.",
     "nivel": "Avanzado"
@@ -645,7 +764,10 @@
     "tema": "Conclusión",
     "tipo_pregunta": "verdadero_falso",
     "enunciado": "Dominar la POO Avanzada y los principios SOLID es clave para convertirse en un arquitecto de software profesional.",
-    "opciones": ["Verdadero", "Falso"],
+    "opciones": [
+      "Verdade",
+      "Falso  "
+    ],
     "respuesta_correcta_literal": "Verdadero",
     "nivel": "Avanzado"
   }
