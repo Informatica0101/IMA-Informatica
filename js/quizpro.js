@@ -1237,7 +1237,7 @@ async function endQuiz() {
             <div class="mt-6 p-4 bg-orange-50 rounded-2xl border border-orange-100 text-left">
                 <p class="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-2">Temas a reforzar</p>
                 <div class="flex flex-wrap gap-2">
-                    ${uniqueTags.map(tag => `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${tag}</span>`).join('')}
+                    ${uniqueTags.map(tag => `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${getSanitizedAcademicText(tag)}</span>`).join('')}
                 </div>
             </div>`;
         recs.classList.remove('hidden');
@@ -1368,8 +1368,8 @@ window.loadPerformanceTable = async function() {
                     if (s.maxScore >= 70) approvedCount++;
                     return `
                         <tr class="border-b border-gray-50 text-[11px]">
-                            <td class="py-3 font-bold text-gray-700">${s.subject}</td>
-                            <td class="py-3 capitalize text-blue-600 font-semibold">${s.level} (${s.grade})</td>
+                            <td class="py-3 font-bold text-gray-700">${getSanitizedAcademicText(s.subject)}</td>
+                            <td class="py-3 capitalize text-blue-600 font-semibold">${getSanitizedAcademicText(s.level)} (${getSanitizedAcademicText(s.grade)})</td>
                             <td class="py-3 font-black text-gray-900">${s.maxScore}%</td>
                         </tr>`;
                 }).join('');
@@ -1380,7 +1380,7 @@ window.loadPerformanceTable = async function() {
             if (allMistakeTags.size > 0 && tagsContainer) {
                 reinforcementSection.classList.remove('hidden');
                 tagsContainer.innerHTML = Array.from(allMistakeTags).map(tag =>
-                    `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${tag}</span>`
+                    `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${getSanitizedAcademicText(tag)}</span>`
                 ).join('');
             }
             if (Object.keys(window.userGameStats).length > 0) {
