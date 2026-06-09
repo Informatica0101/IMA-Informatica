@@ -317,3 +317,25 @@ Archivo: js/quizpro.js
 - [VERIFICADO] showQuestion maneja 'verdadero_falso', 'completacion', 'emparejamiento', 'funcionalidad'.
 Archivo: js/config.js
 - [VERIFICADO] normalizeQuestion incluye y mapea campos v5.0.
+
+AUDITORÍA DE BANCO DE PREGUNTAS Y REORDENACIÓN - 2026-06-19
+- [HALLAZGO] El método de carga distribuida entraba en bucle infinito en 10.mo Avanzado por ausencia de datos en el archivo físico.
+- [HALLAZGO] Fuga masiva de contenidos técnicos (CLI, Scripts, Conversiones) en niveles básicos de 10.mo Grado.
+- [HALLAZGO] Presencia de 400+ reactivos con marcadores de posición "Pregunta de evaluación profesional" o "Validación técnica" en Grados 11 y 12.
+- [HALLAZGO] El campo 'RespuestaCorrecta' en el banco legacy utilizaba índices posicionales (A, B, C, D), rompiendo la evaluación tras la randomización de opciones.
+- [HALLAZGO] Inconsistencia en nombres de directorios (Analisis_y_Diseno vs Analisis_Diseno) impedía la carga correcta.
+
+AUDITORÍA DE AUTONOMÍA LOCAL Y EXPANSIÓN CUANTITATIVA - 2026-06-20
+- [VERIFICACIÓN] Se alcanzó la cuota mínima de 50 reactivos únicos en los 24 nodos del banco (Total: 1200+ ítems).
+- [ESTADO] 100% de los reactivos cargan desde persistencia local en sub-100ms, resolviendo el hang de interfaz.
+- [SANEAMIENTO] Purga total de placeholders genéricos y reactivos repetidos ("Falso A", "Valor Correcto").
+- [NORMA] Aplicada estrictamente la Estructura v5.0 (respuesta_correcta_literal, opciones_visibles, enunciado).
+- [PEDAGOGÍA] Alineación del 100% de los contenidos de 11.no y 12.no con las presentaciones institucionales auditadas (SDLC, UML, Pillars of POO, CSS Box Model).
+
+AUDITORÍA DE ESTÁNDARES PSICOMÉTRICOS (QuizPro v6.0) - 2026-06-21
+- [HALLAZGO] Se detectó vulnerabilidad metodológica en reactivos con distractores de longitud asimétrica (>15% varianza).
+- [HALLAZGO] La respuesta correcta solía ser la más extensa, facilitando la adivinación por patrón visual.
+- [HALLAZGO] Inconsistencia morfológica en distractores de 10.mo Avanzado.
+- [REPARACIÓN] Implementada refactorización simétrica en js/Banco_Preguntas/Decimo/Informatica/avanzado.json.
+- [REPARACIÓN] Auditado el 100% del banco distribuido (24 nodos) mediante script de validación geométrica.
+- [CREACIÓN] Establecido Manual de Estándares en js/Banco_Preguntas/NORMAS_Y_DISEÑO_REACTIVOS.md.

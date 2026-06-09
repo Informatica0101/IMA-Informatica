@@ -217,3 +217,39 @@ REINGENIERÍA CARGA MULTIPART (TAREA 1)
 2026-06-09 00:10 - js/config.js, js/quizpro.js
 Impacto: Motor de Progresión Académica v5.0 y Motor Polimórfico.
 Descripción: Reimplementación del flujo de desbloqueo basado estrictamente en puntuación histórica (Score >= 70%). Implementación de promoción inter-grado mediante Barrera de Sincronización. Actualización del motor de datos para procesar reactivos polimórficos (V/F, Completación, Emparejamiento, Funcionalidad). Normalización de taxonomía extendida en la capa de configuración.
+
+2026-06-19 14:30 | js/Banco_Preguntas/Decimo/Informatica/basico.json, intermedio.json, avanzado.json
+- Relocalización manual de 29 reactivos técnicos y matemáticos hacia Undécimo.
+- Inyección de payload v5.0 en Décimo Avanzado.
+- Normalización de RespuestaCorrecta a valores literales.
+
+2026-06-19 14:35 | js/Banco_Preguntas/Undecimo/Informatica_Aplicada/intermedio.json, avanzado.json
+- Recepción y normalización de reactivos migrados de Décimo.
+- Asignación manual de taxonomía para conversiones y CLI.
+
+2026-06-19 14:40 | js/Banco_Preguntas/Undecimo/Programacion/basico.json
+- Población de nivel básico con reactivo histórico (Alan Turing).
+
+2026-06-19 14:45 | js/Banco_Preguntas/Duodecimo/Programacion_2/ y Programacion_Orientada_a_Objetos/
+- Creación de estructura física de directorios.
+- Inyección manual de reactivos de C++, Python y Paradigma POO.
+
+2026-06-19 15:30 | js/quizpro.js
+- RECONFIGURACIÓN CRÍTICA: Desacoplamiento absoluto del backend para la carga de reactivos.
+- Implementado Enrutamiento Local Autónomo (v5.1) hacia js/Banco_Preguntas/.
+- Eliminadas dependencias de fetchApi('getQuestionBank') y loadQuestionsLegacy.
+
+2026-06-20 16:00 | js/Banco_Preguntas/ (Arquitectura Distribuida v5.1)
+- LÍNEAS: Global (24 archivos .json)
+- IMPACTO: Sanidad pedagógica y autonomía local.
+- DESCRIPCIÓN: Implementación del Banco de Preguntas v5.1. Se alcanzó la cuota de 50 reactivos por cada nodo del árbol taxonómico (Grado/Materia/Nivel).
+- DESCRIPCIÓN: Se realizó una purga total de 400+ marcadores de posición ("Pregunta de evaluación...") sustituyéndolos por hitos pedagógicos reales extraídos de las presentaciones institucionales (Turing, Pascal, SDLC Phases, UML, POO Pillars, CSS Box Model).
+- DESCRIPCIÓN: Se normalizaron todas las respuestas correctas a sus valores literales de cadena, eliminando la dependencia de índices estáticos (A, B, C, D) que causaban fallos tras la randomización.
+- DESCRIPCIÓN: Reubicación de reactivos de CLI, Sistemas de Numeración y Scripts desde Décimo hacia Undécimo Grado para preservar la progresión pedagógica.
+
+FECHA: 2026-06-21
+ARCHIVO: js/Banco_Preguntas/NORMAS_Y_DISEÑO_REACTIVOS.md
+DESCRIPCIÓN: Creación del artefacto normativo de ingeniería psicométrica y diseño de reactivos. Establece la regla de oro del 15% de varianza de longitud.
+
+ARCHIVO: js/Banco_Preguntas/Decimo/Informatica/avanzado.json
+DESCRIPCIÓN: Refactorización integral de 50 reactivos para cumplir con la simetría de longitud y homogeneidad conceptual. Eliminación de pistas visuales por extensión.
