@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         /* REQ: Loading Overlay */
@@ -256,7 +257,9 @@
                         <thead>
                             <tr class="text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">
                                 <th class="px-6 py-3">Jugador</th>
+                                <th class="px-6 py-3">Rango</th>
                                 <th class="px-6 py-3 text-right">Promedio</th>
+                                <th class="px-6 py-3 text-right">XP</th>
                             </tr>
                         </thead>
                         <tbody id="global-top-body" class="text-xs">
@@ -320,6 +323,16 @@
                                 <p class="text-[6px] font-black text-white/30 uppercase mb-1">Adivinación (IA)</p>
                                 <div class="text-[10px] font-bold text-orange-400" id="v2-ia">0%</div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Contenedores de Gráficos (Modulo 5) -->
+                    <div class="mt-6 grid grid-cols-2 gap-4">
+                        <div class="bg-white/5 rounded-2xl p-2">
+                            <canvas id="psychometric-radar-chart" height="120"></canvas>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-2">
+                            <canvas id="learning-trend-chart" height="120"></canvas>
                         </div>
                     </div>
                 </div>

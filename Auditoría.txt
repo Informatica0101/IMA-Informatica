@@ -419,3 +419,27 @@ Archivo: js/config.js
 
 Archivo: Motores de Minijuegos (perifericos_juego.js, webmaster_quiz_juego.js, destreza_teclado.js)
 - [VERIFICADO] Llamada explícita a GamesAdapter.finishSession para telemetría silenciosa.
+
+AUDITORÍA QUIZPRO v7.2 - 2026-06-21
+
+Archivo: js/student.js
+- [HALLAZGO] fetchAllActivities ya implementa Eager Caching para 'academic_stats' pero 'Información de la clase' y 'Lista de actividades' requieren mayor desacoplamiento.
+- [HALLAZGO] renderStudentExpediente calcula progreso pero no incluye los nuevos gráficos psicométricos.
+
+Archivo: js/teacher.js
+- [HALLAZGO] fetchTeacherActivity usa 'academic_stats' para Eager Caching.
+- [HALLAZGO] openGradeModal ya restablece el estado del botón save-grade-btn (Tarea 1 previa).
+- [HALLAZGO] renderDetallesAlumno necesita la inyección de la Tabla Psicométrica y los nuevos gráficos Chart.js.
+- [HALLAZGO] fetchLogros necesita mostrar todos los registros por defecto si no hay filtros.
+
+Archivo: js/quizpro.js
+- [HALLAZGO] initQuizPro usa loadGlobalTop y loadPerformanceTable asíncronos.
+- [HALLAZGO] calculateXP tiene lógica de Soft Cap pero no envía xpGanada explícitamente en todos los flujos de sincronización.
+- [HALLAZGO] loadGlobalTop espera res.global; necesita el campo 'Rango'.
+
+Archivo: backend/user-service/Code.gs
+- [HALLAZGO] saveGameResult maneja Column I como TiempoTotal o XP dependiendo del payload previo. Debe estandarizarse a XP neta (Puntaje Ganado).
+- [HALLAZGO] recordAnalytics ya calcula ICR/IA pero la persistencia en LearningProfile debe ser sumamente estable para los gráficos.
+
+Archivos juegos/*.html
+- [HALLAZGO] Todos los minigames conservan el #loading-overlay que debe ser removido o desactivado en favor de Skeleton Screens.

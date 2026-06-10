@@ -11,7 +11,7 @@
 
 window.SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios.
-  USER: 'https://script.google.com/macros/s/AKfycbwy7yXBlwV5GQ2Dsf1lElQOBPRFeDTCZxBJLXnCP0U/dev',
+  USER: 'https://script.google.com/macros/s/AKfycbzgz0ULhN1_px6DEtI9P_NbCW2ARSxn6JImXw4auWxbcHiBB23iZodrUKzA2wprtCY/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
   TASK: 'https://script.google.com/macros/s/AKfycbxn8xRxUj2hz4UnirI5F-PDwFh9XGZn4QjpveQerzjlXsyM7396gXpRX0Udyjyb-YsJ/exec',
@@ -94,10 +94,31 @@ window.formatearMetricaPsicométrica = function(valor) {
     if (valor === undefined || valor === null) return "0.00";
     const num = parseFloat(valor);
     if (isNaN(num)) return "0.00";
-    // REQ: Redondeo Simétrico Estándar (Fase 3)
-    // Multiplicar por 100, añadir EPSILON para mitigar errores de precisión binaria,
-    // redondear al entero más cercano y dividir por 100.
-    return (Math.round((num + Number.EPSILON) * 100) / 100).toFixed(2);
+    // REQ: Redondeo Simétrico Estándar (Modulo 3)
+    return (Math.round(num * 100) / 100).toFixed(2);
+};
+
+window.redondearMetrica = window.formatearMetricaPsicométrica;
+
+/**
+ * Sanitizador de HTML para etiquetas técnicas permitidas (Modulo 5.4)
+ * Permite renderizar <code>, <b>, <i>, <br>, <pre> de forma segura.
+ */
+window.sanitizarHTMLTecnico = function(html) {
+    if (!html) return '';
+    const temp = document.createElement('div');
+    temp.textContent = html;
+    let sanitized = temp.innerHTML;
+
+    // Restaurar selectivamente etiquetas seguras
+    return sanitized
+        .replace(/&lt;code&gt;/gi, '<code>').replace(/&lt;\/code&gt;/gi, '</code>')
+        .replace(/&lt;b&gt;/gi, '<b>').replace(/&lt;\/b&gt;/gi, '</b>')
+        .replace(/&lt;strong&gt;/gi, '<strong>').replace(/&lt;\/strong&gt;/gi, '</strong>')
+        .replace(/&lt;i&gt;/gi, '<i>').replace(/&lt;\/i&gt;/gi, '</i>')
+        .replace(/&lt;em&gt;/gi, '<em>').replace(/&lt;\/em&gt;/gi, '</em>')
+        .replace(/&lt;br\s*\/?&gt;/gi, '<br>')
+        .replace(/&lt;pre&gt;/gi, '<pre>').replace(/&lt;\/pre&gt;/gi, '</pre>');
 };
 
 /**

@@ -1480,7 +1480,7 @@ async function endQuiz() {
         puntaje: finalPercent,
         nivel: window.getStandardLevelName(selectedDifficulty),
         grado: selectedGrado,
-        xpGanada: sessionXP,
+        xpGanada: sessionXP, // COLUMNA I: Asegurar el envío de XP neta
         fecha_logro: new Date().toISOString()
     };
 
@@ -1553,7 +1553,14 @@ async function loadGlobalTop() {
     // REQ: Offline-First (Modulo 1)
     if (window.PersistenceManager) {
         const cached = await window.PersistenceManager.get('rankings');
-        if (cached && cached.data) renderGlobalTopHTML(cached.data);
+        if (cached && cached.data) {
+            renderGlobalTopHTML(cached.data);
+            fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' }, 0, {
+                store: 'rankings',
+                onUpdate: (data) => renderGlobalTopHTML(data)
+            }).catch(e => console.warn("[Offline-First] Sincronización silenciosa de ranking fallida."));
+            return;
+        }
     }
 
     try {
@@ -1580,22 +1587,32 @@ function renderGlobalTopHTML(res) {
     window.globalTopData = res;
     body.innerHTML = res.global
         .filter(user => user && (user.nombre || user.username || user.display_name))
-        .map((user, idx) => `
-        <tr class="hover:bg-blue-50/30 transition-colors">
-            <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                    <span class="w-6 h-6 flex items-center justify-center rounded-full ${idx === 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'} text-[10px] font-black">${idx + 1}</span>
-                    <div>
-                        <p class="font-bold text-gray-900 leading-none">${user.nombre || user.username || user.display_name || 'Usuario'}</p>
-                        <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">${user.grado || 'Grado N/A'}</p>
+        .map((user, idx) => {
+            const xp = parseInt(user.xp || 0);
+            const range = XP_CONFIG.RANGES.find(r => xp >= r.min && xp <= r.max) || XP_CONFIG.RANGES[0];
+
+            return `
+            <tr class="hover:bg-blue-50/30 transition-colors">
+                <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 flex items-center justify-center rounded-full ${idx === 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'} text-[10px] font-black">${idx + 1}</span>
+                        <div>
+                            <p class="font-bold text-gray-900 leading-none">${user.nombre || user.username || user.display_name || 'Usuario'}</p>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">${user.grado || 'Grado N/A'}</p>
+                        </div>
                     </div>
-                </div>
-            </td>
-            <td class="px-6 py-4 text-right">
-                <span class="text-sm font-black ${(user.promedio || 0) >= 70 ? 'text-emerald-600' : 'text-gray-400'}">${user.promedio || 0}%</span>
-            </td>
-        </tr>
-    `).join('');
+                </td>
+                <td class="px-6 py-4">
+                    <span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[8px] font-black uppercase tracking-widest border border-indigo-100">${range.label}</span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <span class="text-sm font-black ${(user.promedio || 0) >= 70 ? 'text-emerald-600' : 'text-gray-400'}">${user.promedio || 0}%</span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <span class="text-[10px] font-bold text-gray-500">${xp.toLocaleString()}</span>
+                </td>
+            </tr>
+        `;}).join('');
 
     if (res.global.length === 0) {
         body.innerHTML = '<tr><td colspan="2" class="px-6 py-8 text-center text-gray-400 text-xs italic">Aún no hay puntuaciones globales registradas</td></tr>';
@@ -1780,11 +1797,11 @@ function renderDiagnosis(history) {
 
     const topicStats = Object.entries(topics)
         .map(([tema, s]) => ({ tema, mastery: (s.hits / s.total) * 100, total: s.total }))
-        .filter(t => t.total >= 5); // Mínimo 5 preguntas (Modulo 8.1)
+        .filter(t => t.total >= 5); // Mínimo 5 preguntas (Modulo 3.1)
 
     if (topicStats.length === 0) {
         strongEl.textContent = "Datos insuficientes para generar diagnóstico.";
-        weakEl.textContent = "Sigue practicando para recibir recomendaciones.";
+        weakEl.textContent = "Datos insuficientes para generar diagnóstico.";
         return;
     }
 
@@ -1792,8 +1809,11 @@ function renderDiagnosis(history) {
     const strong = topicStats[0];
     const weak = topicStats[topicStats.length - 1];
 
-    strongEl.textContent = `${strong.tema} (${Math.round(strong.mastery)}%)`;
-    weakEl.textContent = `${weak.tema} (${Math.round(weak.mastery)}%)`;
+    strongEl.textContent = `${strong.tema} (${window.redondearMetrica(strong.mastery)}%)`;
+    weakEl.textContent = `${weak.tema} (${window.redondearMetrica(weak.mastery)}%)`;
+
+    // Renderizar Gráficos Chart.js (Modulo 5)
+    renderPsychometricCharts(history);
 
     // Recomendación Curricular (Modulo 8.2)
     if (weak.mastery < 70) {
@@ -1822,6 +1842,85 @@ function renderDiagnosis(history) {
             linkContainer.classList.remove('hidden');
         }
     }
+}
+
+/**
+ * REQ: Gráficos Psicométricos Interactivos (Modulo 5)
+ */
+function renderPsychometricCharts(history) {
+    const radarCtx = document.getElementById('psychometric-radar-chart')?.getContext('2d');
+    const trendCtx = document.getElementById('learning-trend-chart')?.getContext('2d');
+
+    if (!radarCtx || !trendCtx || history.length === 0) return;
+
+    // 1. Datos para Gráfico Radial (Últimas métricas registradas)
+    const qProLogs = history.filter(h => h.length > 15);
+    let latestICR = 0, latestIA = 0, latestMastery = 0;
+
+    if (qProLogs.length > 0) {
+        const last = qProLogs[qProLogs.length - 1];
+        latestICR = parseFloat(last[17]) || 0;
+        latestIA = parseFloat(last[18]) || 0;
+        latestMastery = parseFloat(last[19]) || 0;
+    }
+
+    if (window.radarChartInstance) window.radarChartInstance.destroy();
+    window.radarChartInstance = new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Confianza (ICR)', 'Dominio (Mastery)', 'Adivinación (IA)'],
+            datasets: [{
+                label: 'Estado Cognitivo',
+                data: [latestICR, latestMastery, 100 - latestIA],
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                borderColor: 'rgba(59, 130, 246, 1)',
+                pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: { display: false }
+                }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // 2. Datos para Gráfico de Líneas (Evolución de puntaje)
+    const scores = qProLogs.map(h => parseFloat(h[5])).slice(-10); // Últimas 10 sesiones
+    const labels = scores.map((_, i) => `S${i+1}`);
+
+    if (window.trendChartInstance) window.trendChartInstance.destroy();
+    window.trendChartInstance = new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Promedio de Sesión',
+                data: scores,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3,
+                pointRadius: 4,
+                pointBackgroundColor: '#10b981'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, max: 100, ticks: { font: { size: 8 } } },
+                x: { ticks: { font: { size: 8 } } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
 }
 
 function exitGame() {

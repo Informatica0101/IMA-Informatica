@@ -575,7 +575,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openTaskDetail = (idx) => {
         const item = allTasksExams[idx];
         document.getElementById('detail-titulo').textContent = item.titulo;
-        document.getElementById('detail-descripcion').textContent = item.descripcion || 'Sin descripción.';
+        // REQ 4: Sanitización HTML en la Edición de Tareas (Modulo 5.4)
+        document.getElementById('detail-descripcion').innerHTML = window.sanitizarHTMLTecnico(item.descripcion) || 'Sin descripción.';
         document.getElementById('detail-asignatura').textContent = item.asignatura;
         document.getElementById('detail-parcial').textContent = item.parcial || 'N/A';
         document.getElementById('detail-grado').textContent = item.grado;
@@ -767,12 +768,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
 
-        // REQ: Eager Caching & Offline-First (Modulo 4)
+        // REQ: Eager Caching & Offline-First (Modulo 1)
         let hasLocalData = false;
         if (window.PersistenceManager) {
-            const cached = await window.PersistenceManager.get('academic_stats');
+            const cached = await window.PersistenceManager.get('cache_profesor_data');
             if (cached && cached.data) {
-                console.log("[Offline-First] Renderizando panel docente desde caché local.");
+                console.log("[Offline-First] Renderizando panel docente desde caché local (cache_profesor_data).");
                 allActivityRaw = cached.data.activity || [];
                 allAssignmentsRaw = cached.data.assignments || [];
                 renderCurrentLevel();
@@ -814,7 +815,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ...((examsRes.data || [])).map(e => ({ ...e, tipoReal: 'Examen' }))
                     ].filter(a => a.estado !== 'Inactiva')
                 };
-                window.PersistenceManager.set('academic_stats', unified);
+                window.PersistenceManager.set('cache_profesor_data', unified);
             }
 
             if (configRes && configRes.status === 'success' && configRes.data.ParcialActual) {
@@ -1175,14 +1176,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Cargar Analítica de Aprendizaje (Fase 9)
         if (studentInfo) {
             fetchApi("USER", "getLearningProfile", { userId: studentInfo.userId || studentInfo.id }).then(res => {
-                const analyticsDiv = document.getElementById("teacher-learning-analytics");
-                const list = document.getElementById("weak-topics-list");
-                if (res.status === "success" && res.data && res.data.length > 0 && analyticsDiv && list) {
-                    const weakTopics = res.data.filter(t => t.dominio < 60);
-                    if (weakTopics.length > 0) {
-                        analyticsDiv.classList.remove("hidden");
-                        list.innerHTML = weakTopics.map(t => `<span class="px-1.5 py-0.5 bg-orange-500/20 text-orange-400 border border-orange-500/30 rounded text-[7px] font-bold uppercase">${t.tema}</span>`).join("");
-                    }
+                if (res.status === "success" && res.data) {
+                    renderTeacherPsychometricModule(res.data);
                 }
             }).catch(e => console.warn("Fallo carga analítica docente:", e));
         }
@@ -1812,7 +1807,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const grado = document.getElementById('logros-filter-grado').value;
         const seccion = document.getElementById('logros-filter-seccion').value;
         try {
-            const res = await fetchApi('USER', 'getGameStats', { grado, seccion });
+            // REQ 4: Inicialización de Logros sin filtros obligatorios (Modulo 4)
+            // Si los filtros están vacíos, solicitar todos los datos
+            const res = await fetchApi('USER', 'getGameStats', { grado: grado || null, seccion: seccion || null });
             const data = res.data || [];
 
             // Agrupar por alumno y juego para encontrar el récord máximo
@@ -1956,6 +1953,121 @@ if (newsForm) {
             saveBtn.textContent = 'Publicar';
         }
     };
+}
+
+/**
+ * REQ: Clonación Segura de Tabla Psicométrica y Gráficos (Modulo 3 y 5)
+ * Inyecta el panel analítico del estudiante en la vista del profesor.
+ */
+function renderTeacherPsychometricModule(profileData) {
+    const analyticsDiv = document.getElementById("teacher-learning-analytics");
+    if (!analyticsDiv) return;
+
+    if (!profileData || profileData.length === 0) {
+        analyticsDiv.innerHTML = '<p class="text-[8px] text-gray-500 uppercase font-bold text-center py-4">Datos psicométricos insuficientes.</p>';
+        analyticsDiv.classList.remove("hidden");
+        return;
+    }
+
+    // Calcular promedios para índices rápidos
+    const avgICR = profileData.reduce((s, i) => s + (i.dominio || 0), 0) / profileData.length;
+    const avgMastery = profileData.reduce((s, i) => s + (i.porcentaje || 0), 0) / profileData.length;
+    const avgIA = 100 - avgICR; // Estimación para vista rápida
+
+    analyticsDiv.innerHTML = `
+        <h5 class="text-[8px] font-bold text-blue-400 uppercase tracking-widest mb-4">Análisis Cognitivo del Alumno</h5>
+
+        <!-- Índices Psicométricos (Modulo 5.3) -->
+        <div class="grid grid-cols-3 gap-2 mb-6">
+            <div class="text-center p-2 bg-white/5 rounded-lg border border-white/5">
+                <p class="text-[6px] font-black text-gray-500 uppercase mb-1">Confianza</p>
+                <p class="text-[10px] font-bold text-blue-400">${window.redondearMetrica(avgICR)}%</p>
+            </div>
+            <div class="text-center p-2 bg-white/5 rounded-lg border border-white/5">
+                <p class="text-[6px] font-black text-gray-500 uppercase mb-1">Dominio</p>
+                <p class="text-[10px] font-bold text-emerald-400">${window.redondearMetrica(avgMastery)}%</p>
+            </div>
+            <div class="text-center p-2 bg-white/5 rounded-lg border border-white/5">
+                <p class="text-[6px] font-black text-gray-500 uppercase mb-1">Adivinación</p>
+                <p class="text-[10px] font-bold text-orange-400">${window.redondearMetrica(avgIA)}%</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-white/5 rounded-xl p-2 border border-white/10">
+                <canvas id="teacher-radar-chart" height="120"></canvas>
+            </div>
+            <div class="bg-white/5 rounded-xl p-2 border border-white/10">
+                <canvas id="teacher-trend-chart" height="120"></canvas>
+            </div>
+        </div>
+        <div class="space-y-3">
+             <h6 class="text-[7px] font-black text-gray-500 uppercase tracking-tighter">Fortalezas y Debilidades</h6>
+             <div id="teacher-weak-topics-list" class="flex flex-wrap gap-1"></div>
+        </div>
+    `;
+    analyticsDiv.classList.remove("hidden");
+
+    // Población de temas
+    const list = document.getElementById("teacher-weak-topics-list");
+    const weakTopics = profileData.filter(t => t.dominio < 60 && t.tema !== 'General').slice(0, 5);
+    const strongTopics = profileData.filter(t => t.dominio >= 80 && t.tema !== 'General').slice(0, 3);
+
+    let html = strongTopics.map(t => `<span class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded text-[7px] font-bold uppercase">${t.tema}</span>`).join("");
+    html += weakTopics.map(t => `<span class="px-1.5 py-0.5 bg-orange-500/20 text-orange-400 border border-orange-500/30 rounded text-[7px] font-bold uppercase">${t.tema}</span>`).join("");
+    list.innerHTML = html || '<span class="text-[7px] text-gray-500 italic">Analizando patrones...</span>';
+
+    // Inicializar Gráficos
+    setTimeout(() => {
+        const radarCtx = document.getElementById('teacher-radar-chart')?.getContext('2d');
+        const trendCtx = document.getElementById('teacher-trend-chart')?.getContext('2d');
+        if (!radarCtx || !trendCtx) return;
+
+        const avgICR = profileData.reduce((s, i) => s + (i.dominio || 0), 0) / profileData.length;
+        const avgMastery = profileData.reduce((s, i) => s + (i.porcentaje || 0), 0) / profileData.length;
+
+        if (window.teacherRadarChart) window.teacherRadarChart.destroy();
+        window.teacherRadarChart = new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: ['ICR', 'MST', 'STB'],
+                datasets: [{
+                    data: [avgICR, avgMastery, 100 - (100 - avgICR)],
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 1,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                scales: { r: { beginAtZero: true, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' }, pointLabels: { font: { size: 6 } } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        const trendData = profileData.slice(-5).map(i => i.dominio);
+        if (window.teacherTrendChart) window.teacherTrendChart.destroy();
+        window.teacherTrendChart = new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: trendData.map((_, i) => i + 1),
+                datasets: [{
+                    data: trendData,
+                    borderColor: '#10b981',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { display: false }, x: { display: false } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }, 200);
 }
 
 function toBase64(file) {

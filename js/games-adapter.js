@@ -151,7 +151,7 @@ window.GamesAdapter = {
         });
     },
 
-    async finishSession(asignatura, level, finalScore) {
+    async finishSession(asignatura, level, finalScore, xpGanada = 0) {
         const session = this.state.currentSession;
         if (!session) return;
 
@@ -167,7 +167,8 @@ window.GamesAdapter = {
                     score: finalScore,
                     date: new Date().toISOString(),
                     level,
-                    asignatura
+                    asignatura,
+                    xp: xpGanada
                 };
                 localStorage.setItem('guest_records', JSON.stringify(guestRecords));
             }
@@ -182,7 +183,8 @@ window.GamesAdapter = {
             nivel: level,
             puntaje: finalScore,
             grado: user.grado,
-            totalTime
+            totalTime,
+            xpGanada: xpGanada // COLUMNA I en Spreadsheet
         };
 
         // REQ: Telemetría Silenciosa (Modulo 4)
