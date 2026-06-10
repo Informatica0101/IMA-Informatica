@@ -174,21 +174,28 @@ window.GamesAdapter = {
             return Promise.resolve({ status: 'success', mode: 'guest' });
         }
 
-        try {
-            await fetchApi('USER', 'saveGameResult', {
-                userId: user.userId,
-                nombreAlumno: user.nombre,
-                juego: session.gameId,
-                asignatura,
-                nivel: level,
-                puntaje: finalScore,
-                grado: user.grado,
-                totalTime
-            });
-            console.log(`[GamesAdapter] Sesión finalizada: ${finalScore}%`);
-        } catch (e) {
-            console.error("[GamesAdapter] Error al finalizar sesión:", e);
-        }
+        const payload = {
+            userId: user.userId,
+            nombreAlumno: user.nombre,
+            juego: session.gameId,
+            asignatura,
+            nivel: level,
+            puntaje: finalScore,
+            grado: user.grado,
+            totalTime
+        };
+
+        // REQ: Telemetría Silenciosa (Modulo 4)
+        // No esperamos la red para permitir que el juego muestre la pantalla de éxito inmediatamente
+        fetchApi('USER', 'saveGameResult', payload).then(res => {
+            console.log(`[GamesAdapter] Sesión finalizada y sincronizada: ${finalScore}%`);
+            // Si el juego es QuizPro, ya maneja su propia sincronización local,
+            // pero para otros juegos podríamos actualizar el caché aquí si fuera necesario.
+        }).catch(e => {
+            console.warn("[GamesAdapter] Fallo sincronización de fin de sesión. Se confía en persistencia local previa.", e);
+        });
+
+        return Promise.resolve({ status: 'success', message: 'Resultado registrado localmente.' });
     },
 
     async saveResult(gameId, gameName, asignatura, level, score, behavioralData = {}) {

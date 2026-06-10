@@ -143,7 +143,9 @@ window.PersistenceManager = {
 
         if (!local || serverTimestamp > local.updated_at) {
             console.log(`[Persistence] Server data is newer for ${store}. Updating local...`);
-            const newData = serverData.data || serverData;
+            // REQ: Preservación de estructura (Modulo 1)
+            // Si el objeto ya tiene una propiedad 'data', lo guardamos tal cual para no perder hermanos (ej. allHistory)
+            const newData = (serverData.status === 'success' && serverData.data) ? serverData : (serverData.data || serverData);
             await this.set(store, newData);
             if (onUpdate) onUpdate(newData);
             return 'server_win';

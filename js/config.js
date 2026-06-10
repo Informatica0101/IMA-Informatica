@@ -87,6 +87,20 @@ window.getStandardLevelName = function(lvl) {
  * Centraliza la lógica de visibilidad para prevenir fugas accidentales de contenido.
  */
 /**
+ * REQ: Estandarización Psicométrica (Modulo 2)
+ * Asegura el redondeo simétrico a 2 decimales para métricas de analítica.
+ */
+window.formatearMetricaPsicométrica = function(valor) {
+    if (valor === undefined || valor === null) return "0.00";
+    const num = parseFloat(valor);
+    if (isNaN(num)) return "0.00";
+    // REQ: Redondeo Simétrico Estándar (Fase 3)
+    // Multiplicar por 100, añadir EPSILON para mitigar errores de precisión binaria,
+    // redondear al entero más cercano y dividir por 100.
+    return (Math.round((num + Number.EPSILON) * 100) / 100).toFixed(2);
+};
+
+/**
  * Normaliza nombres de parciales para permitir comparaciones flexibles
  * (ej. "II Parcial" -> "Segundo Parcial")
  */

@@ -969,35 +969,54 @@ function recordAnalytics(payload) {
   else if (cambiosRespuesta === 2) consistencia = 30;
   else consistencia = 0;
 
-  // 5. Índice de Confianza (ICR) v3.0 - Multifactores
-  // tasa histórica, estabilidad, corrección de errores
-  const historicAccuracy = userLogs.length > 0 ? (userLogs.filter(l => String(l[12]) === "true").length / userLogs.length) * 100 : 50;
-  const wasPreviouslyFailed = userLogs.some(l => String(l[9]) === String(preguntaId) && String(l[12]) === "false");
-  const isCorrection = wasPreviouslyFailed && esCorrecta;
+  // 5. Índice de Confianza (ICR) v2.1 (RECALIBRADO PARA EXPERTOS)
+  // Peso: 70% Precisión/Repetibilidad, 30% Estabilidad Tiempo
+  const userAccLog = userLogs.slice(-15); // Últimas 15 para racha
+  const correctCount = userLogs.filter(l => String(l[12]) === "true").length + (esCorrecta ? 1 : 0);
+  const totalEvaluated = userLogs.length + 1;
+  const precisionRatio = correctCount / totalEvaluated;
 
-  const W_ICR = ANALYTICS_CONFIG.WEIGHTS.ICR;
-  const exactitud = esCorrecta ? 100 : 0;
-  const dificultad = parseFloat(dificultadPregunta || 50);
+  // Factor de Estabilidad Tiempo (30%): Se basa en el ratio TRc pero suavizado
+  const factorEstabilidadTiempo = esCorrecta ? Math.min(1.0, 1.2 - (ratio * 0.2)) : (ratio * 0.5);
   
-  let ICR = (exactitud * W_ICR.exactitud) +
-              (eficiencia * W_ICR.eficiencia) + 
-              (dificultad * W_ICR.dificultad) + 
-              (consistencia * W_ICR.consistencia);
+  let ICR = (precisionRatio * 100 * 0.7) + (factorEstabilidadTiempo * 30);
 
-  // Estabilidad v3.0
-  if (isCorrection) ICR += 15;
-  ICR = (ICR * 0.7) + (historicAccuracy * 0.3);
+  // Garantía de Rango Superior para Certeza Absoluta (100% aciertos)
+  if (precisionRatio === 1.0 && esCorrecta) {
+      ICR = Math.max(92, ICR);
+  }
 
-  // 6. Probabilidad de Adivinación (IA/GP) v3.0
+  // 6. Índice de Adivinación (IA) v2.1 (COLAPSO POR MAESTRÍA)
+  // IA colapsa a 0% si hay racha perfecta independiente de la velocidad.
+  const consecutiveHits = (function() {
+      let count = esCorrecta ? 1 : 0;
+      if (!esCorrecta) return 0;
+      for (let i = userLogs.length - 1; i >= 0; i--) {
+          if (String(userLogs[i][12]) === "true") count++;
+          else break;
+      }
+      return count;
+  })();
+
   const W_GP = ANALYTICS_CONFIG.WEIGHTS.GP;
   const aciertosGlobales = globalAnalytics.length > 0
     ? (globalAnalytics.filter(r => r[12] === true || r[12] === "true").length / globalAnalytics.length) * 100
     : 50;
 
-  let GP = (puntajeRapidez * W_GP.rapidez) +
-             ((100 - exactitud) * W_GP.error) + 
-             (dificultad * W_GP.dificultad) + 
-             ((100 - aciertosGlobales) * W_GP.global);
+  const exactitud = esCorrecta ? 100 : 0;
+  const dificultad = parseFloat(dificultadPregunta || 50);
+
+  // IA Base basada en velocidad e incertidumbre global
+  let IA_Base = (puntajeRapidez * W_GP.rapidez) +
+                  ((100 - exactitud) * W_GP.error) +
+                  (dificultad * W_GP.dificultad) +
+                  ((100 - aciertosGlobales) * W_GP.global);
+
+  // Factor Mitigator Exponencial (v2.1)
+  const muestraRacha = Math.max(15, userLogs.length + 1);
+  const factorMitigator = 1.0 - (consecutiveHits / muestraRacha);
+
+  let GP = IA_Base * factorMitigator;
 
   // REQ: Cold Start Calibration Phase (Modulo 7.7)
   if (isCalibrationMode) {

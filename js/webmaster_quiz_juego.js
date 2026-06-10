@@ -2542,19 +2542,9 @@ function endQuiz() {
         quizFinalTime.textContent = finalTimeFormatted;
     }
 
-    // Guardar en el portal vía Adaptador Unificado
+    // Guardar en el portal vía Adaptador Unificado (Sincronización Silenciosa)
     if (window.GamesAdapter) {
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (user) {
-            GamesAdapter.finishSession('Diseño Web', selectedDifficulty, currentScore);
-        } else {
-            // Guest mode persistence
-            const recordKey = 'guest_record_webmaster';
-            const existing = JSON.parse(localStorage.getItem(recordKey) || '{"maxScore": 0}');
-            if (currentScore > existing.maxScore) {
-                localStorage.setItem(recordKey, JSON.stringify({ maxScore: currentScore, date: new Date().toISOString() }));
-            }
-        }
+        GamesAdapter.finishSession('Diseño Web', selectedDifficulty, currentScore);
     }
 
     // Check if there's a next level

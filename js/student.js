@@ -66,29 +66,36 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchAllActivities() {
         if (!tasksList) return;
 
-        // REQ: Skeleton Screen (Modulo 3)
-        tasksList.innerHTML = `
-            <div class="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-                ${Array(6).fill(0).map(() => `
-                    <div class="p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm space-y-4">
-                        <div class="skeleton h-4 w-1/3 rounded"></div>
-                        <div class="skeleton h-6 w-3/4 rounded"></div>
-                        <div class="skeleton h-20 w-full rounded-2xl"></div>
-                        <div class="flex justify-between items-center">
-                            <div class="skeleton h-8 w-1/2 rounded-xl"></div>
-                            <div class="skeleton h-8 w-8 rounded-full"></div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-
-        // REQ: Offline-First (Modulo 1)
+        // REQ: Eager Caching & Offline-First (Modulo 4)
+        // Priorizar renderizado local de 0ms
+        let hasLocalData = false;
         if (window.PersistenceManager) {
             const cached = await window.PersistenceManager.get('academic_stats');
             if (cached && cached.data) {
+                console.log("[Offline-First] Renderizando actividades desde caché local.");
                 renderStudentExpediente(cached.data);
+                // Si ya tenemos caché, procedemos a conciliación silenciosa sin bloquear la UI
+                hasLocalData = true;
             }
+        }
+
+        if (!hasLocalData) {
+            // REQ: Skeleton Screen (Modulo 3)
+            tasksList.innerHTML = `
+                <div class="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                    ${Array(6).fill(0).map(() => `
+                        <div class="p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm space-y-4">
+                            <div class="skeleton h-4 w-1/3 rounded"></div>
+                            <div class="skeleton h-6 w-3/4 rounded"></div>
+                            <div class="skeleton h-20 w-full rounded-2xl"></div>
+                            <div class="flex justify-between items-center">
+                                <div class="skeleton h-8 w-1/2 rounded-xl"></div>
+                                <div class="skeleton h-8 w-8 rounded-full"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         }
 
         try {

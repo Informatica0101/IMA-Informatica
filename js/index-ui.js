@@ -538,17 +538,19 @@ async function loadNews() {
     // REQ: Skeleton Screen para Noticias (Modulo 3)
     newsSection.classList.remove('hidden');
 
-    // Si hay caché local, usarla inmediatamente (Offline-First Modulo 1)
+    // REQ: Eager Caching & Offline-First (Modulo 4)
+    let hasLocalNews = false;
     if (window.PersistenceManager) {
-        window.PersistenceManager.get('news').then(cached => {
-            if (cached && cached.data && cached.data.length > 0) {
-                console.log("[IMA-INDEX] Renderizado inmediato desde caché local.");
-                renderNewsHTML(cached.data);
-            }
-        });
+        const cached = await window.PersistenceManager.get('news');
+        if (cached && cached.data && cached.data.length > 0) {
+            console.log("[IMA-INDEX] Renderizado inmediato desde caché local.");
+            renderNewsHTML(cached.data);
+            hasLocalNews = true;
+        }
     }
 
-    newsContainer.innerHTML = Array(3).fill(0).map(() => `
+    if (!hasLocalNews) {
+        newsContainer.innerHTML = Array(3).fill(0).map(() => `
         <div class="bg-white rounded-[2rem] border border-gray-100 overflow-hidden animate-pulse">
             <div class="h-56 skeleton"></div>
             <div class="p-8 space-y-4">
@@ -562,7 +564,7 @@ async function loadNews() {
 
     try {
         // Consultar con reconciliación silenciosa
-        const res = await fetchApi('USER', 'getNews', {}, 0, {
+        let res = await fetchApi('USER', 'getNews', {}, 0, {
             store: 'news',
             onUpdate: (data) => renderNewsHTML(data)
         });

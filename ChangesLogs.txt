@@ -272,3 +272,14 @@ MÓDULO ANALÍTICA INTEGRAL (v3.0) - 2026-06-21
 - ARCHIVO: juegos/quizpro.html: Rediseñada la interfaz de Estadísticas Vitales v3.0 con XP, Rango, AE_Ratio y Badge de Calibración Inicial.
 - ARCHIVO: js/games-adapter.js: Agregada normalización de tipoActividad para compatibilidad con el motor de impulsividad v3.0.
 - ARCHIVO: js/config.js: Exportada función getSanitizedAcademicText para normalización visual de temas.
+
+REINGENIERÍA HÍBRIDA Y PSICOMETRÍA (v7.1) - 2026-06-10
+
+- ARCHIVO: js/persistence.js: Implementación de IndexedDB para arquitectura Offline-First.
+- ARCHIVO: js/api.js: Refactorización de fetchApi para reconciliación silenciosa y actualización asíncrona de caché.
+- ARCHIVO: js/auth.js: Implementación de 'Regla del Máximo Promedio' para migración de invitados y sistema 'Intent Recovery'.
+- ARCHIVO: backend/user-service/Code.gs: Recalibración exponencial del Índice de Adivinación y ajuste 70/30 del ICR.
+- ARCHIVO: js/quizpro.js: Implementación de algoritmo XP v7.0, sistema de rangos (Soft Cap 1,500 XP), fase de calibración (30 preguntas) y desbloqueo local predictivo (0ms).
+- ARCHIVO: Dashboards (student.js, teacher.js, index-ui.js): Implementación de Eager Caching y Skeleton Screens. Remoción del loader síncrono.
+- ARCHIVO: js/config.js: Adición de window.formatearMetricaPsicométrica para redondeo simétrico estandarizado.
+- ARCHIVO: Motores Minijuegos: Actualización para despacho de telemetría silenciosa mediante GamesAdapter.finishSession.

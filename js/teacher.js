@@ -767,26 +767,31 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
 
-        // REQ: Skeleton Screen (Modulo 3)
-        submissionsTableBody.innerHTML = Array(8).fill(0).map(() => `
-            <tr class="animate-pulse">
-                <td class="p-4"><div class="skeleton h-4 w-3/4 rounded"></div></td>
-                <td class="p-4 text-right"><div class="skeleton h-4 w-1/4 rounded ml-auto"></div></td>
-            </tr>
-        `).join('');
+        // REQ: Eager Caching & Offline-First (Modulo 4)
+        let hasLocalData = false;
+        if (window.PersistenceManager) {
+            const cached = await window.PersistenceManager.get('academic_stats');
+            if (cached && cached.data) {
+                console.log("[Offline-First] Renderizando panel docente desde caché local.");
+                allActivityRaw = cached.data.activity || [];
+                allAssignmentsRaw = cached.data.assignments || [];
+                renderCurrentLevel();
+                hasLocalData = true;
+            }
+        }
+
+        if (!hasLocalData) {
+            // REQ: Skeleton Screen (Modulo 3)
+            submissionsTableBody.innerHTML = Array(8).fill(0).map(() => `
+                <tr class="animate-pulse">
+                    <td class="p-4"><div class="skeleton h-4 w-3/4 rounded"></div></td>
+                    <td class="p-4 text-right"><div class="skeleton h-4 w-1/4 rounded ml-auto"></div></td>
+                </tr>
+            `).join('');
+        }
 
         try {
             const payload = { profesorId: currentUser.userId };
-
-            // REQ: Offline-First (Modulo 1)
-            if (window.PersistenceManager) {
-                const cached = await window.PersistenceManager.get('academic_stats');
-                if (cached && cached.data) {
-                    allActivityRaw = cached.data.activity;
-                    allAssignmentsRaw = cached.data.assignments;
-                    renderCurrentLevel();
-                }
-            }
 
             // REQ: Mitigación de Latencia (Ticket 4) - Parallel fetch of config and activity
             const [taskSubmissions, examSubmissions, tasksRes, examsRes, configRes] = await Promise.all([

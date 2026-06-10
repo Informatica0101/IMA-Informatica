@@ -318,7 +318,9 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
         return metrics.score >= 70;
     };
 
-    let canUnlockInter = checkUnlock(basicMetrics, 'intermedio');
+    // REQ: Prioridad de Desbloqueo Local (0ms) para fase de calibración
+    const localLevelsState = JSON.parse(localStorage.getItem('levels_state') || '{"intermedio": {"bloqueado": true}}');
+    let canUnlockInter = !localLevelsState.intermedio.bloqueado || checkUnlock(basicMetrics, 'intermedio');
     let canUnlockAvan = checkUnlock(interMetrics, 'avanzado');
 
     // UI Intermedio
@@ -520,7 +522,7 @@ async function startQuiz() {
 
             return true;
         })
-        .slice(0, 15);
+        .slice(0, (selectedDifficulty.toLowerCase() === 'basico' ? 30 : 15));
 
     currentIndex = 0;
     score = 0;
@@ -1488,8 +1490,42 @@ async function endQuiz() {
     const newXP = currentTotalXP + sessionXP;
     localStorage.setItem(xpKey, newXP);
 
+    // REQ: Desbloqueo Predictivo Local (Modulo 1)
+    // Actualizamos el estado local ANTES de la red para asegurar 0ms de latencia en la UI
+    const lvlName = window.getStandardLevelName(selectedDifficulty);
+    const statKey = `QuizPro_${selectedAsignatura}_${selectedGrado}_${lvlName}`;
+
+    if (!window.userGameStats[statKey] || finalPercent > (window.userGameStats[statKey].maxScore || 0)) {
+        window.userGameStats[statKey] = {
+            ...(window.userGameStats[statKey] || {}),
+            subject: selectedAsignatura,
+            level: lvlName,
+            grade: selectedGrado,
+            maxScore: Math.max(finalPercent, window.userGameStats[statKey]?.maxScore || 0),
+            totalAttempts: (window.userGameStats[statKey]?.totalAttempts || 0) + 1,
+            date: new Date().toISOString()
+        };
+    }
+
+    // REQ: Regla del 70% y Desbloqueo de Calibración (Fase de Calibración Básico -> Intermedio)
+    if (lvlName === 'Básico' && approved) {
+        const levelsState = JSON.parse(localStorage.getItem('levels_state') || '{"intermedio": {"bloqueado": true}}');
+        levelsState.intermedio.bloqueado = false;
+        localStorage.setItem('levels_state', JSON.stringify(levelsState));
+        console.log("[QuizPro] Nivel Intermedio desbloqueado localmente (0ms).");
+    }
+
     if (window.PersistenceManager) {
         window.PersistenceManager.set('local_progress', { totalXP: newXP }, xpKey);
+        // REQ: Preservación de Historial en Actualización Predictiva (Modulo 1)
+        window.PersistenceManager.get('academic_stats').then(cached => {
+            if (cached && cached.data) {
+                const updatedData = { ...cached.data, data: window.userGameStats };
+                window.PersistenceManager.set('academic_stats', updatedData);
+            } else {
+                window.PersistenceManager.set('academic_stats', window.userGameStats);
+            }
+        });
     }
 
     if (typeof fetchApi === 'function') {
@@ -1498,30 +1534,15 @@ async function endQuiz() {
             await Promise.all(window.GamesAdapter.pendingAnalytics);
         }
 
-        const res = await fetchApi('USER', 'saveGameResult', payload);
-
-        // Sincronización Local Inmediata con datos reales del Servidor (Tarea 2)
-        if (res.status === 'success' && res.updatedStats) {
-            window.userGameStats = { ...window.userGameStats, ...res.updatedStats };
-            console.log("[QuizPro] Sincronización local completada con éxito.");
-        } else {
-            // Fallback manual si el servidor no retorna los stats actualizados
-            const lvl = window.getStandardLevelName(selectedDifficulty);
-            const key = `QuizPro_${selectedAsignatura}_${selectedGrado}_${lvl}`;
-            if (!window.userGameStats[key] || finalPercent > (window.userGameStats[key].maxScore || 0)) {
-                window.userGameStats[key] = {
-                    ...window.userGameStats[key],
-                    subject: selectedAsignatura,
-                    level: lvl,
-                    grade: selectedGrado,
-                    maxScore: Math.max(finalPercent, window.userGameStats[key]?.maxScore || 0),
-                    date: new Date().toISOString()
-                };
+        // Despacho silencioso: no bloqueamos el renderizado del resultado por la red
+        fetchApi('USER', 'saveGameResult', payload).then(res => {
+            if (res.status === 'success' && res.updatedStats) {
+                window.userGameStats = { ...window.userGameStats, ...res.updatedStats };
+                console.log("[QuizPro] Sincronización silenciosa completada.");
+                // REQ: Re-sincronización total tras éxito para recuperar historial y analítica extendida
+                loadPerformanceTable();
             }
-        }
-
-        // Refrescar tabla y UI
-        await loadPerformanceTable();
+        }).catch(err => console.warn("[QuizPro] Error en sincronización silenciosa (se mantiene estado local):", err));
     }
 }
 
@@ -1589,7 +1610,15 @@ window.loadPerformanceTable = async function() {
     // REQ: Offline-First (Modulo 1)
     if (window.PersistenceManager) {
         const cached = await window.PersistenceManager.get('academic_stats');
-        if (cached && cached.data) renderPerformanceHTML(cached.data);
+        // REQ: Eager caching - si ya tenemos datos, renderizamos y pedimos actualización silenciosa
+        if (cached && cached.data) {
+            renderPerformanceHTML(cached.data);
+            fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
+                store: 'academic_stats',
+                onUpdate: (data) => renderPerformanceHTML(data)
+            }).catch(e => console.warn("[Offline-First] Sincronización silenciosa fallida, usando caché."));
+            return;
+        }
     }
 
     try {
@@ -1607,7 +1636,9 @@ function renderPerformanceHTML(res) {
     const container = document.getElementById('performance-table-body');
     if (!container) return;
 
-    window.userGameStats = res.data || {};
+    // REQ: Soporte polimórfico para Caché y API (Modulo 1)
+    // res puede ser la respuesta completa de la API o solo el objeto de estadísticas
+    window.userGameStats = res.data || (res.id ? null : res) || {};
     const history = res.allHistory || [];
 
     let approvedCount = 0;
@@ -1648,8 +1679,9 @@ function renderPerformanceHTML(res) {
     });
 
     // Actualizar UI v2.0
+    // REQ: Estandarización Psicométrica (Modulo 2)
     const aeRatio = hits / Math.max(misses, 1);
-    const avgSpeed = hitSpeedCount > 0 ? (totalSpeed / hitSpeedCount / 1000).toFixed(1) : "0.0";
+    const avgSpeed = hitSpeedCount > 0 ? (totalSpeed / hitSpeedCount / 1000) : 0;
     const impulsivity = history.length > 0 ? Math.round((impulsiveCount / history.length) * 100) : 0;
 
     const elHits = document.getElementById('v2-hits');
@@ -1660,8 +1692,8 @@ function renderPerformanceHTML(res) {
 
     if (elHits) elHits.textContent = hits;
     if (elMisses) elMisses.textContent = misses;
-    if (elRatio) elRatio.textContent = aeRatio.toFixed(1);
-    if (elSpeed) elSpeed.textContent = `${avgSpeed}s`;
+    if (elRatio) elRatio.textContent = window.formatearMetricaPsicométrica ? window.formatearMetricaPsicométrica(aeRatio) : aeRatio.toFixed(1);
+    if (elSpeed) elSpeed.textContent = `${window.formatearMetricaPsicométrica ? window.formatearMetricaPsicométrica(avgSpeed) : avgSpeed.toFixed(1)}s`;
     if (elImp) elImp.textContent = `${impulsivity}%`;
 
     // ICR / IA / Mastery / XP (v3.0)
@@ -1669,9 +1701,9 @@ function renderPerformanceHTML(res) {
     const qProLogs = history.filter(h => h.length > 15);
     if (qProLogs.length > 0) {
         const last = qProLogs[qProLogs.length - 1];
-        latestICR = Math.round(parseFloat(last[17]) || 0);
-        latestIA = Math.round(parseFloat(last[18]) || 0);
-        latestMastery = Math.round(parseFloat(last[19]) || 0);
+        latestICR = parseFloat(last[17]) || 0;
+        latestIA = parseFloat(last[18]) || 0;
+        latestMastery = parseFloat(last[19]) || 0;
         totalXP = qProLogs.reduce((s, l) => s + (parseFloat(l[20]) || 0), 0);
     }
 
@@ -1681,9 +1713,9 @@ function renderPerformanceHTML(res) {
     const elXP = document.getElementById('v2-total-xp');
     const calBadge = document.getElementById('calibration-badge');
 
-    if (elMastery) elMastery.textContent = `${latestMastery}%`;
-    if (elICR) elICR.textContent = `${latestICR}%`;
-    if (elIA) elIA.textContent = `${latestIA}%`;
+    if (elMastery) elMastery.textContent = `${window.formatearMetricaPsicométrica ? window.formatearMetricaPsicométrica(latestMastery) : latestMastery.toFixed(2)}%`;
+    if (elICR) elICR.textContent = `${window.formatearMetricaPsicométrica ? window.formatearMetricaPsicométrica(latestICR) : latestICR.toFixed(2)}%`;
+    if (elIA) elIA.textContent = `${window.formatearMetricaPsicométrica ? window.formatearMetricaPsicométrica(latestIA) : latestIA.toFixed(2)}%`;
     if (elXP) elXP.textContent = Math.round(totalXP).toLocaleString();
 
     // Cold Start Badge (Modulo 7.7)

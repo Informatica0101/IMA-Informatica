@@ -1129,16 +1129,9 @@
             if (finalErrors) finalErrors.textContent = totalErrors;
             if (finalWPM) finalWPM.textContent = wpm;
 
-            // Guardar en el portal
-            const user = JSON.parse(localStorage.getItem('currentUser'));
-            if (user) {
-                GamesAdapter.saveResult("Destreza en el Teclado", `Completado con ${wpm} WPM`, wpm);
-            } else {
-                const recordKey = 'guest_record_dexterity';
-                const existing = JSON.parse(localStorage.getItem(recordKey) || '{"maxScore": 0}');
-                if (wpm > existing.maxScore) {
-                    localStorage.setItem(recordKey, JSON.stringify({ maxScore: wpm, date: new Date().toISOString() }));
-                }
+            // Guardar en el portal vía Adaptador Unificado (Sincronización Silenciosa)
+            if (window.GamesAdapter) {
+                GamesAdapter.finishSession('Ofimática I', ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel], wpm);
             }
         }
 

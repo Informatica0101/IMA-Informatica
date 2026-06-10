@@ -385,3 +385,37 @@ Archivo: js/quizpro.js
 
 Archivo: juegos/quizpro.html
 - [VERIFICADO] Interfaz v3.0 alineada a la especificación oficial.
+
+AUDITORÍA REINGENIERÍA HÍBRIDA Y PSICOMETRÍA (v7.1) - 2026-06-10
+
+Archivo: js/persistence.js
+- [VERIFICADO] Motor Offline-First con IndexedDB operativo.
+- [VERIFICADO] Gestión de marcas de tiempo (updated_at) para reconciliación silenciosa.
+
+Archivo: js/api.js
+- [VERIFICADO] fetchApi integra 'Silent Reconciliation' con actualización de caché en segundo plano.
+
+Archivo: js/auth.js
+- [VERIFICADO] mergeGuestData implementa 'Regla del Máximo Promedio' y 'Intent Recovery'.
+
+Archivo: js/quizpro.js
+- [VERIFICADO] Algoritmo de XP v7.0 con mitigador de adivinación y Bono Racha.
+- [VERIFICADO] Sistema de Rangos con Soft Cap en 1,500 XP para nivel Básico.
+- [VERIFICADO] Fase de Calibración de 30 preguntas para nivel Básico.
+- [VERIFICADO] Desbloqueo Predictivo Local (0ms) tras aprobación del 70%.
+- [VERIFICADO] Restaurado renderizado HTML técnico (innerHTML) en enunciados.
+
+Archivo: backend/user-service/Code.gs
+- [RECALIBRADO] Algoritmo de Adivinación (IA): Colapso exponencial con rachas perfectas.
+- [RECALIBRADO] Índice de Confianza (ICR): Ponderación 70/30 (precisión/estabilidad) para garantizar >92% con 100% de aciertos.
+
+Archivo: Dashboards (student.js, teacher.js, index-ui.js)
+- [VERIFICADO] Estrategia Eager Caching: Renderizado local instantáneo seguido de actualización silenciosa.
+- [VERIFICADO] Implementación de Skeleton Screens.
+- [CORREGIDO] Remoción definitiva del spinner síncrono (#loading-overlay).
+
+Archivo: js/config.js
+- [NUEVO] window.formatearMetricaPsicométrica garantiza redondeo simétrico a 2 decimales.
+
+Archivo: Motores de Minijuegos (perifericos_juego.js, webmaster_quiz_juego.js, destreza_teclado.js)
+- [VERIFICADO] Llamada explícita a GamesAdapter.finishSession para telemetría silenciosa.
