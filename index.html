@@ -22,18 +22,6 @@
 </head>
 <body class="font-inter antialiased text-gray-900 min-h-screen flex flex-col">
 
-    <!-- Loader Global -->
-    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999] opacity-0 pointer-events-none">
-        <div class="relative w-24 h-24 mb-8">
-            <div class="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
-            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
-            <img src="imagenes/logo.png" alt="Logo Institucional ISEMED" class="absolute inset-4 w-16 h-16 object-contain animate-pulse">
-        </div>
-        <p id="loading-msg" class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] animate-pulse">Iniciando Portal...</p>
-        <div class="w-48 h-1 bg-gray-100 rounded-full mt-6 overflow-hidden">
-            <div id="loading-bar" class="bg-blue-600 h-full transition-all duration-500" style="width: 0%"></div>
-        </div>
-    </div>
 
     <!-- ENCABEZADO INSTITUCIONAL (Req 1 / A-75) -->
     <header id="main-header" class="fixed w-full z-[100] transition-all duration-300 bg-white border-b border-gray-100">
@@ -275,19 +263,36 @@
         </div>
     </div>
 
-    <!-- Modal de Invitado (Prompt Login) -->
-    <div id="guest-prompt-modal" class="fixed inset-0 z-[80] flex items-center justify-center bg-black bg-opacity-75 hidden">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full mx-4 text-center animate-fade-in-up">
-            <div class="bg-yellow-100 text-yellow-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+    <!-- Modal de Triaje de Sesión (Modulo 5) -->
+    <div id="session-triage-modal" class="fixed inset-0 z-[2000] flex items-center justify-center bg-gray-900/98 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
+        <div class="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl max-w-lg w-full mx-4 text-center animate-fade-in-up border border-gray-100">
+            <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-8 text-3xl shadow-inner">
+                <i class="fas fa-gamepad"></i>
             </div>
-            <h3 class="text-xl font-medium text-gray-800 mb-2">¿Quieres guardar tu récord?</h3>
-            <p class="text-gray-600 mb-6">Has obtenido un gran puntaje. Inicia sesión o regístrate para que tus logros queden guardados en tu perfil estudiantil.</p>
-            <div class="grid grid-cols-1 gap-3">
-                <a href="login.html" class="bg-blue-600 text-white font-medium py-3 rounded-xl hover:bg-blue-700 transition-all">Iniciar Sesión</a>
-                <a href="register.html" class="bg-gray-100 text-gray-800 font-medium py-3 rounded-xl hover:bg-gray-200 transition-all">Crear Cuenta</a>
-                <button id="close-guest-modal" class="text-gray-400 text-sm hover:text-gray-600 mt-2">Continuar como invitado</button>
+            <h3 class="text-2xl font-black text-gray-900 uppercase tracking-tighter mb-4">¡Prepárate para Jugar!</h3>
+            <p class="text-gray-500 text-sm mb-10 leading-relaxed">
+                Para guardar tu récord global, acumular XP y subir en el ranking de tu asignatura de forma permanente:
+            </p>
+
+            <div class="space-y-4">
+                <button id="triage-login-btn" class="w-full py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 transform hover:-translate-y-1">
+                    Iniciar Sesión
+                </button>
+
+                <div class="flex items-center gap-4 my-6">
+                    <div class="h-px bg-gray-100 flex-grow"></div>
+                    <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">O también</span>
+                    <div class="h-px bg-gray-100 flex-grow"></div>
+                </div>
+
+                <button id="triage-guest-btn" class="w-full py-5 bg-gray-50 text-gray-700 rounded-2xl font-black uppercase tracking-widest hover:bg-gray-100 transition-all border border-gray-200">
+                    Continuar como Invitado
+                </button>
             </div>
+
+            <button id="close-triage-modal" class="mt-8 text-[10px] font-bold text-gray-400 uppercase tracking-widest hover:text-gray-600 transition-colors">
+                Tal vez luego
+            </button>
         </div>
     </div>
 
@@ -419,6 +424,7 @@
     </div>
 
     <script src="js/config.js?v=22"></script>
+    <script src="js/persistence.js?v=22"></script>
     <script src="js/api.js?v=22"></script>
     <script src="js/games-adapter.js?v=22"></script>
     <script src="js/ui-common.js?v=22"></script>

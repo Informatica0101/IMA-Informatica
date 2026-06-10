@@ -11,7 +11,7 @@
 
 window.SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios.
-  USER: 'https://script.google.com/macros/s/AKfycbw4Q2StmsCyt-OEpTBYnc6x9Xl4WmGZFnONnry0B1Xa9mGa6Mex8Kfw3Pvyf-K1Dhj3/exec',
+  USER: 'https://script.google.com/macros/s/AKfycbwy7yXBlwV5GQ2Dsf1lElQOBPRFeDTCZxBJLXnCP0U/dev',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
   TASK: 'https://script.google.com/macros/s/AKfycbxn8xRxUj2hz4UnirI5F-PDwFh9XGZn4QjpveQerzjlXsyM7396gXpRX0Udyjyb-YsJ/exec',
@@ -55,6 +55,14 @@ window.parseGrade = function(gradeStr) {
     return 10;
 };
 
+window.getSanitizedAcademicText = function(text) {
+    if (!text) return "";
+    return text.toString().trim()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/_/g, " ")
+        .toUpperCase();
+};
+
 window.normalizeSubject = function(name) {
     if (!name) return 'General';
     return name.trim()
@@ -78,6 +86,20 @@ window.getStandardLevelName = function(lvl) {
  * REQ 7: Guardián Global de Alcance (Scope Guard)
  * Centraliza la lógica de visibilidad para prevenir fugas accidentales de contenido.
  */
+/**
+ * REQ: Estandarización Psicométrica (Modulo 2)
+ * Asegura el redondeo simétrico a 2 decimales para métricas de analítica.
+ */
+window.formatearMetricaPsicométrica = function(valor) {
+    if (valor === undefined || valor === null) return "0.00";
+    const num = parseFloat(valor);
+    if (isNaN(num)) return "0.00";
+    // REQ: Redondeo Simétrico Estándar (Fase 3)
+    // Multiplicar por 100, añadir EPSILON para mitigar errores de precisión binaria,
+    // redondear al entero más cercano y dividir por 100.
+    return (Math.round((num + Number.EPSILON) * 100) / 100).toFixed(2);
+};
+
 /**
  * Normaliza nombres de parciales para permitir comparaciones flexibles
  * (ej. "II Parcial" -> "Segundo Parcial")

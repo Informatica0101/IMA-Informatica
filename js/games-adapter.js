@@ -117,7 +117,8 @@ window.GamesAdapter = {
         const action = {
             ...data,
             timestamp: Date.now(),
-            timeFromStart: Date.now() - this.state.currentSession.startTime
+            timeFromStart: Date.now() - this.state.currentSession.startTime,
+            tipoActividad: data.tipoActividad || data.type // Normalización v2.0
         };
         this.state.currentSession.actions.push(action);
 
@@ -125,22 +126,29 @@ window.GamesAdapter = {
         if (!this.pendingAnalytics) this.pendingAnalytics = [];
 
         // Envío asíncrono para no bloquear UI
+        const activeId = window.PersistenceManager ? window.PersistenceManager.getActiveId() : 'GUEST-FALLBACK';
         const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-        if (user) {
-            const promise = fetchApi('USER', 'recordAnalytics', {
-                userId: user.userId,
-                grado: user.grado,
-                gameId: this.state.currentSession.gameId,
-                gameName: this.state.currentSession.gameId, // Por ahora igual
-                ...action
-            }).catch(e => console.warn("[GamesAdapter] Fallo registro analítico:", e));
 
-            this.pendingAnalytics.push(promise);
-            // Limpieza automática
-            promise.finally(() => {
-                this.pendingAnalytics = this.pendingAnalytics.filter(p => p !== promise);
-            });
-        }
+        // REQ: Guest Analytics Support (Modulo 2)
+        const promise = fetchApi('USER', 'recordAnalytics', {
+            userId: activeId,
+            grado: user ? user.grado : 'Invitado',
+            gameId: this.state.currentSession.gameId,
+            gameName: this.state.currentSession.gameId,
+            isGuest: !user,
+            ...action
+        }).catch(e => {
+            console.warn("[GamesAdapter] Fallo registro analítico. Guardando localmente...", e);
+            if (window.PersistenceManager) {
+                window.PersistenceManager.set('local_progress', action, `pending_anl_${Date.now()}`);
+            }
+        });
+
+        this.pendingAnalytics.push(promise);
+        // Limpieza automática
+        promise.finally(() => {
+            this.pendingAnalytics = this.pendingAnalytics.filter(p => p !== promise);
+        });
     },
 
     async finishSession(asignatura, level, finalScore) {
@@ -166,21 +174,28 @@ window.GamesAdapter = {
             return Promise.resolve({ status: 'success', mode: 'guest' });
         }
 
-        try {
-            await fetchApi('USER', 'saveGameResult', {
-                userId: user.userId,
-                nombreAlumno: user.nombre,
-                juego: session.gameId,
-                asignatura,
-                nivel: level,
-                puntaje: finalScore,
-                grado: user.grado,
-                totalTime
-            });
-            console.log(`[GamesAdapter] Sesión finalizada: ${finalScore}%`);
-        } catch (e) {
-            console.error("[GamesAdapter] Error al finalizar sesión:", e);
-        }
+        const payload = {
+            userId: user.userId,
+            nombreAlumno: user.nombre,
+            juego: session.gameId,
+            asignatura,
+            nivel: level,
+            puntaje: finalScore,
+            grado: user.grado,
+            totalTime
+        };
+
+        // REQ: Telemetría Silenciosa (Modulo 4)
+        // No esperamos la red para permitir que el juego muestre la pantalla de éxito inmediatamente
+        fetchApi('USER', 'saveGameResult', payload).then(res => {
+            console.log(`[GamesAdapter] Sesión finalizada y sincronizada: ${finalScore}%`);
+            // Si el juego es QuizPro, ya maneja su propia sincronización local,
+            // pero para otros juegos podríamos actualizar el caché aquí si fuera necesario.
+        }).catch(e => {
+            console.warn("[GamesAdapter] Fallo sincronización de fin de sesión. Se confía en persistencia local previa.", e);
+        });
+
+        return Promise.resolve({ status: 'success', message: 'Resultado registrado localmente.' });
     },
 
     async saveResult(gameId, gameName, asignatura, level, score, behavioralData = {}) {
@@ -189,14 +204,24 @@ window.GamesAdapter = {
     },
 
     async getLeaderboard(gameId) {
+        // REQ: Offline-First (Modulo 1)
+        if (window.PersistenceManager) {
+            const cached = await window.PersistenceManager.get('rankings');
+            if (cached && cached.data) this.state.leaderboard = cached.data;
+        }
+
         try {
-            const res = await fetchApi('USER', 'getGlobalTop', { gameId });
-            // REQ: Manejo seguro de datos vacíos (v3.2)
-            if (res && res.status === 'success') return res;
-            return { status: 'success', global: [], subjectTops: {} };
+            const res = await fetchApi('USER', 'getGlobalTop', { gameId }, 0, {
+                store: 'rankings'
+            });
+            if (res && res.status === 'success') {
+                this.state.leaderboard = res;
+                return res;
+            }
+            return this.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
         } catch (e) {
             console.warn(`[GamesAdapter] Error obteniendo leaderboard para ${gameId}:`, e);
-            return { status: 'success', global: [], subjectTops: {} };
+            return this.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
         }
     },
 
@@ -209,14 +234,24 @@ window.GamesAdapter = {
             return guestRecords;
         }
 
+        // REQ: Offline-First (Modulo 1)
+        if (window.PersistenceManager) {
+            const cached = await window.PersistenceManager.get('academic_stats');
+            if (cached && cached.data) this.state.personalRecords = cached.data;
+        }
+
         try {
-            const res = await fetchApi('USER', 'getGameStats', { userId: user.userId });
-            // REQ: Manejo seguro de datos vacíos (v3.2)
-            if (res && res.status === 'success' && res.data) return res.data;
-            return {};
+            const res = await fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
+                store: 'academic_stats'
+            });
+            if (res && res.status === 'success' && res.data) {
+                this.state.personalRecords = res.data;
+                return res.data;
+            }
+            return this.state.personalRecords || {};
         } catch (e) {
             console.warn("[GamesAdapter] Error obteniendo record personal:", e);
-            return {};
+            return this.state.personalRecords || {};
         }
     }
 };

@@ -193,23 +193,6 @@
 </head>
 <body class="font-inter antialiased text-gray-900 min-h-screen flex flex-col bg-gray-50 full-viewport-mode">
 
-    <!-- REQ: Pantalla de Carga Profesional (Fase 3) -->
-    <div id="loading-overlay" class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center transition-all duration-500 z-[9999] opacity-0 pointer-events-none">
-        <div class="relative w-32 h-32 mb-8">
-            <div class="absolute inset-0 border-4 border-blue-50 rounded-full"></div>
-            <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
-            <div class="absolute inset-0 flex items-center justify-center">
-                <img src="../imagenes/logo.png" alt="Logo Institucional ISEMED" class="w-16 animate-pulse">
-            </div>
-        </div>
-        <div class="text-center space-y-3">
-            <h3 id="loading-msg" class="text-sm font-black text-gray-900 uppercase tracking-[0.3em]">Inicializando...</h3>
-            <p id="loading-submsg" class="text-[10px] font-bold text-blue-500 uppercase tracking-widest animate-pulse">Preparando entorno académico</p>
-        </div>
-        <div class="mt-12 w-48 h-1 bg-gray-100 rounded-full overflow-hidden">
-            <div id="loading-bar" class="h-full bg-blue-600 transition-all duration-1000" style="width: 0%"></div>
-        </div>
-    </div>
 
     <!-- ENCABEZADO INSTITUCIONAL (Solo si se carga solo, no inyectado) -->
     <script>
@@ -285,8 +268,62 @@
                 </div>
             </div>
 
-            <!-- Dashboard de Desempeño (Req 5) -->
+            <!-- Dashboard de Desempeño (Módulo 7: Perfil Analítico v2.0) -->
             <div id="performance-dashboard" class="hidden mt-12 text-left border-t border-gray-100 pt-8 overflow-hidden">
+                <div id="advanced-analytics-v2" class="mb-8 p-6 bg-slate-900 rounded-[2rem] text-white shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/20 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <p class="text-[8px] font-black text-blue-400 uppercase tracking-[0.2em]">Perfil Analítico</p>
+                                <h4 class="text-lg font-bold tracking-tight">Estadísticas Vitales</h4>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <div id="calibration-badge" class="hidden px-2 py-0.5 bg-yellow-400 text-black text-[7px] font-black uppercase rounded mb-1 animate-pulse">Calibración Inicial</div>
+                                <div class="px-3 py-1 bg-white/10 rounded-lg backdrop-blur-md">
+                                    <span id="v2-ae-ratio" class="text-xs font-black text-emerald-400">0.0</span>
+                                    <span class="text-[7px] text-white/50 uppercase ml-1">A/E Ratio</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="space-y-1">
+                                <p class="text-[7px] font-bold text-white/40 uppercase tracking-widest">XP Acumulada</p>
+                                <p id="v2-total-xp" class="text-xl font-black text-indigo-400">0</p>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-[7px] font-bold text-white/40 uppercase tracking-widest">Ratio A/E</p>
+                                <p id="v2-hits-misses" class="text-sm font-bold"><span id="v2-hits" class="text-emerald-400">0</span> / <span id="v2-misses" class="text-red-400">0</span></p>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-[7px] font-bold text-white/40 uppercase tracking-widest">Velocidad Correcta</p>
+                                <p id="v2-speed" class="text-xl font-black">0.0s</p>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-[7px] font-bold text-white/40 uppercase tracking-widest">Impulsividad</p>
+                                <p id="v2-impulsivity" class="text-xl font-black">0%</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-6 border-t border-white/5 grid grid-cols-3 gap-2">
+                            <div class="text-center">
+                                <p class="text-[6px] font-black text-white/30 uppercase mb-1">Mastery</p>
+                                <div class="text-[10px] font-bold text-emerald-400" id="v2-mastery">0%</div>
+                            </div>
+                            <div class="text-center border-x border-white/5">
+                                <p class="text-[6px] font-black text-white/30 uppercase mb-1">Confianza (ICR)</p>
+                                <div class="text-[10px] font-bold text-blue-400" id="v2-icr">0%</div>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-[6px] font-black text-white/30 uppercase mb-1">Adivinación (IA)</p>
+                                <div class="text-[10px] font-bold text-orange-400" id="v2-ia">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex justify-between items-end mb-6">
                     <div>
                         <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">Mi Historial</h3>
@@ -306,10 +343,28 @@
                     </table>
                 </div>
 
-                <!-- Reinforcement Feedback -->
-                <div id="reinforcement-feedback" class="hidden mt-6 p-4 bg-orange-50 rounded-2xl border border-orange-100">
-                    <p class="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-2">Temas a Reforzar</p>
-                    <div id="reinforcement-tags" class="flex flex-wrap gap-2">
+                <!-- Módulo 8: Fortalezas, Debilidades y Refuerzo -->
+                <div id="reinforcement-feedback" class="hidden mt-6 space-y-4">
+                    <div class="p-6 bg-emerald-50 rounded-[2rem] border border-emerald-100 relative overflow-hidden">
+                         <div class="relative z-10">
+                            <p class="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-2">Pilar Académico (Fortaleza)</p>
+                            <h5 id="v2-strong-topic" class="text-sm font-bold text-gray-800">Analizando...</h5>
+                         </div>
+                         <i class="fas fa-arrow-up absolute -right-4 -bottom-4 text-6xl text-emerald-200/50"></i>
+                    </div>
+
+                    <div class="p-6 bg-orange-50 rounded-[2rem] border border-orange-100 relative overflow-hidden">
+                        <div class="relative z-10">
+                            <p class="text-[9px] font-black text-orange-600 uppercase tracking-widest mb-2">Refuerzo Prioritario (Debilidad)</p>
+                            <h5 id="v2-weak-topic" class="text-sm font-bold text-gray-800">Analizando...</h5>
+                            <div id="v2-recommendation-link" class="mt-4 hidden">
+                                <!-- Link to presentation -->
+                            </div>
+                        </div>
+                        <i class="fas fa-lightbulb absolute -right-4 -bottom-4 text-6xl text-orange-200/50"></i>
+                    </div>
+
+                    <div id="reinforcement-tags" class="flex flex-wrap gap-2 pt-4">
                         <!-- Injected by JS -->
                     </div>
                 </div>
@@ -501,6 +556,7 @@
     </script>
 
     <script src="../js/config.js?v=22"></script>
+    <script src="../js/persistence.js?v=22"></script>
     <script src="../js/api.js?v=22"></script>
     <script src="../js/games-adapter.js?v=22"></script>
     <script src="../js/ui-common.js?v=22"></script>

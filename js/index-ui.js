@@ -178,6 +178,54 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo({ top: mainContentTitle.offsetTop - 100, behavior: 'smooth' });
     }
 
+    /**
+     * REQ: Session Triage (Modulo 5)
+     * Intercepta el inicio de juegos para validar sesión o proponer modo invitado.
+     */
+    function triageGameLaunch(gameId, html, js, initFn, title) {
+        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+
+        if (user) {
+            // Usuario ya autenticado, lanzar directamente
+            return safeLoadGame(gameId, html, js, initFn, title);
+        }
+
+        // Mostrar modal de triaje
+        const modal = document.getElementById('session-triage-modal');
+        if (!modal) return safeLoadGame(gameId, html, js, initFn, title);
+
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.add('opacity-100'), 10);
+
+        const loginBtn = document.getElementById('triage-login-btn');
+        const guestBtn = document.getElementById('triage-guest-btn');
+        const closeBtn = document.getElementById('close-triage-modal');
+
+        const closeTriage = () => {
+            modal.classList.remove('opacity-100');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        };
+
+        loginBtn.onclick = () => {
+            // REQ: Intent Recovery (Modulo 5.2)
+            const intent = {
+                activityType: "minigame",
+                activityId: gameId,
+                html, js, initFn, title,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('quizpro_interrupted_intent', JSON.stringify(intent));
+            window.location.href = 'login.html';
+        };
+
+        guestBtn.onclick = () => {
+            closeTriage();
+            safeLoadGame(gameId, html, js, initFn, title);
+        };
+
+        closeBtn.onclick = closeTriage;
+    }
+
     async function loadGame(gameId, htmlPath, jsPath, initFnName, title) {
         // Estrategia de Aislamiento Total (Post-Commit Audit)
         const wrapper = document.getElementById('main-content-wrapper');
@@ -275,13 +323,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (showActivitiesButton) showActivitiesButton.addEventListener('click', renderActivityList);
     const pBtn = document.getElementById('select-peripherals-game-button');
-    if (pBtn) pBtn.addEventListener('click', loadPeripheralsGame);
+    if (pBtn) pBtn.addEventListener('click', () => triageGameLaunch('peripherals', 'juegos/perifericos.html', 'js/perifericos_juego.js', 'initializePeripheralsGame', 'Juego de Periféricos'));
     const wBtn = document.getElementById('select-webmaster-quiz-button');
-    if (wBtn) wBtn.addEventListener('click', loadWebMasterQuiz);
+    if (wBtn) wBtn.addEventListener('click', () => triageGameLaunch('webmaster', 'juegos/webmaster_quiz.html', 'js/webmaster_quiz_juego.js', 'initQuizGame', 'WebMaster Quiz'));
     const qBtn = document.getElementById('select-quiz-pro-button');
-    if (qBtn) qBtn.addEventListener('click', loadQuizPro);
+    if (qBtn) qBtn.addEventListener('click', () => triageGameLaunch('quizpro', 'juegos/quizpro.html', 'js/quizpro.js', 'initQuizPro', 'QuizPro'));
     const dBtn = document.getElementById('select-dexterity-game-button');
-    if (dBtn) dBtn.addEventListener('click', loadDexterityGame);
+    if (dBtn) dBtn.addEventListener('click', () => triageGameLaunch('dexterity', 'juegos/destreza_teclado.html', 'js/destreza_teclado.js', 'initDexterityGame', 'Destreza en el Teclado'));
     if (backToMainActivitiesButton) backToMainActivitiesButton.addEventListener('click', renderInitialActivityButton);
 
     // Game Storage
@@ -317,10 +365,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (game) {
             console.log(`[IMA-INDEX] Auto-loading game: ${game}`);
             switch(game) {
-                case 'peripherals': window.loadPeripheralsGame(); break;
-                case 'webmaster': window.loadWebMasterQuiz(); break;
-                case 'quizpro': window.loadQuizPro(); break;
-                case 'dexterity': window.loadDexterityGame(); break;
+                case 'peripherals': triageGameLaunch('peripherals', 'juegos/perifericos.html', 'js/perifericos_juego.js', 'initializePeripheralsGame', 'Juego de Periféricos'); break;
+                case 'webmaster': triageGameLaunch('webmaster', 'juegos/webmaster_quiz.html', 'js/webmaster_quiz_juego.js', 'initQuizGame', 'WebMaster Quiz'); break;
+                case 'quizpro': triageGameLaunch('quizpro', 'juegos/quizpro.html', 'js/quizpro.js', 'initQuizPro', 'QuizPro'); break;
+                case 'dexterity': triageGameLaunch('dexterity', 'juegos/destreza_teclado.html', 'js/destreza_teclado.js', 'initDexterityGame', 'Destreza en el Teclado'); break;
             }
         }
     }
@@ -487,17 +535,40 @@ async function loadNews() {
     const newsContainer = document.getElementById('news-container');
     if (!newsSection || !newsContainer) return;
 
-    // REQ: Spinner Contextual para Noticias (Ticket 3)
+    // REQ: Skeleton Screen para Noticias (Modulo 3)
     newsSection.classList.remove('hidden');
-    newsContainer.innerHTML = `
-        <div class="col-span-full flex flex-col items-center justify-center p-12 animate-fade-in">
-            <div class="w-10 h-10 border-4 border-blue-50 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-            <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] animate-pulse">Sincronizando Novedades...</p>
+
+    // REQ: Eager Caching & Offline-First (Modulo 4)
+    let hasLocalNews = false;
+    if (window.PersistenceManager) {
+        const cached = await window.PersistenceManager.get('news');
+        if (cached && cached.data && cached.data.length > 0) {
+            console.log("[IMA-INDEX] Renderizado inmediato desde caché local.");
+            renderNewsHTML(cached.data);
+            hasLocalNews = true;
+        }
+    }
+
+    if (!hasLocalNews) {
+        newsContainer.innerHTML = Array(3).fill(0).map(() => `
+        <div class="bg-white rounded-[2rem] border border-gray-100 overflow-hidden animate-pulse">
+            <div class="h-56 skeleton"></div>
+            <div class="p-8 space-y-4">
+                <div class="flex gap-2"><div class="skeleton h-4 w-16 rounded"></div><div class="skeleton h-4 w-24 rounded"></div></div>
+                <div class="skeleton h-8 w-full rounded"></div>
+                <div class="skeleton h-4 w-3/4 rounded"></div>
+                <div class="skeleton h-4 w-1/2 rounded"></div>
+            </div>
         </div>
-    `;
+    `).join('');
+    }
 
     try {
-        let res = await fetchApi('USER', 'getNews', {});
+        // Consultar con reconciliación silenciosa
+        let res = await fetchApi('USER', 'getNews', {}, 0, {
+            store: 'news',
+            onUpdate: (data) => renderNewsHTML(data)
+        });
 
         // REQ: Noticia fallback si el servidor falla (v3.3)
         if (!res || res.status !== 'success' || !res.data || res.data.length === 0) {
@@ -516,79 +587,88 @@ async function loadNews() {
         }
 
         if (res.status === 'success' && res.data && res.data.length > 0) {
-            console.log("[IMA-INDEX] Renderizando noticias:", res.data.length);
-            newsSection.classList.remove('hidden');
-
-            // Mostrar las 3 noticias más recientes (o todas si hay menos de 3)
-            const newsToShow = res.data.slice(0, 3);
-
-            const newsHtml = newsToShow.map((n, idx) => {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = n.contenido;
-
-                // Extraer un fragmento representativo del contenido (Fase 13: Extracto Inteligente)
-                let excerpt = "";
-                const paragraphs = tempDiv.querySelectorAll('p');
-
-                if (paragraphs.length > 0) {
-                    // Buscar primer párrafo con contenido real
-                    for(const p of paragraphs) {
-                        const text = p.innerText.trim();
-                        if (text.length > 20) {
-                            excerpt = text;
-                            break;
-                        }
-                    }
-                }
-
-                if (!excerpt) {
-                    excerpt = tempDiv.innerText.trim();
-                }
-
-                // Limitar longitud para vista previa
-                const limit = idx === 0 ? 250 : 120;
-                if (excerpt.length > limit) {
-                    excerpt = excerpt.substring(0, limit) + "...";
-                }
-
-                const imgUrl = (typeof window.convertDriveLink === 'function') ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl;
-
-                return `
-                <div class="${idx === 0 ? 'md:col-span-2 lg:col-span-2' : ''} bg-white rounded-[2rem] border border-gray-100 overflow-hidden group hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50 transition-all duration-500">
-                    <div class="${idx === 0 ? 'flex flex-col md:flex-row h-full' : 'flex flex-col'}">
-                        ${n.imagenUrl ? `
-                            <div class="${idx === 0 ? 'md:w-1/2 h-72 md:h-full' : 'h-56'} overflow-hidden">
-                                <img src="${imgUrl}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
-                            </div>
-                        ` : `
-                            <div class="${idx === 0 ? 'md:w-1/2 h-72 md:h-full' : 'h-56'} bg-gray-50 flex items-center justify-center text-gray-200">
-                                <i class="fas fa-newspaper text-6xl"></i>
-                            </div>
-                        `}
-                        <div class="p-8 ${idx === 0 ? 'md:w-1/2 flex flex-col justify-center' : 'flex-grow flex flex-col'}">
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="text-[9px] font-semibold uppercase tracking-[0.2em] text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">${n.categoria}</span>
-                                <span class="text-[10px] font-medium text-gray-300 uppercase tracking-wider">${new Date(n.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} ${n.hora ? '• ' + n.hora.substring(0,5) : ''}</span>
-                            </div>
-                            <h3 class="${idx === 0 ? 'text-2xl md:text-3xl' : 'text-xl'} font-semibold text-gray-900 mb-4 leading-tight group-hover:text-blue-600 transition-colors uppercase tracking-tighter">${n.titulo}</h3>
-                            <p class="text-gray-500 text-sm leading-relaxed mb-6 ${idx === 0 ? 'line-clamp-4' : 'line-clamp-3'} font-medium">${excerpt}</p>
-                            <div class="mt-auto pt-6 border-t border-gray-50">
-                                <button onclick='window.showNewsDetail(${JSON.stringify(n).replace(/'/g, "&apos;")})' class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 hover:text-blue-800 transition-all">
-                                    Seguir Leyendo
-                                    <svg class="w-3 h-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `;
-            }).join('');
-
-            newsContainer.innerHTML = newsHtml;
+            renderNewsHTML(res.data);
         }
     } catch (e) {
         console.error("Error loading news:", e);
     }
+}
+
+function renderNewsHTML(inputData) {
+    const newsContainer = document.getElementById('news-container');
+    // REQ: Normalización de entrada para soportar Offline-First (v3.3)
+    const data = (inputData && inputData.status === 'success' && Array.isArray(inputData.data)) ? inputData.data : (Array.isArray(inputData) ? inputData : []);
+
+    if (!newsContainer || data.length === 0) return;
+
+    console.log("[IMA-INDEX] Renderizando noticias:", data.length);
+
+    // Mostrar las 3 noticias más recientes (o todas si hay menos de 3)
+    const newsToShow = data.slice(0, 3);
+
+    const newsHtml = newsToShow.map((n, idx) => {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = n.contenido;
+
+        // Extraer un fragmento representativo del contenido (Fase 13: Extracto Inteligente)
+        let excerpt = "";
+        const paragraphs = tempDiv.querySelectorAll('p');
+
+        if (paragraphs.length > 0) {
+            // Buscar primer párrafo con contenido real
+            for(const p of paragraphs) {
+                const text = p.innerText.trim();
+                if (text.length > 20) {
+                    excerpt = text;
+                    break;
+                }
+            }
+        }
+
+        if (!excerpt) {
+            excerpt = tempDiv.innerText.trim();
+        }
+
+        // Limitar longitud para vista previa
+        const limit = idx === 0 ? 250 : 120;
+        if (excerpt.length > limit) {
+            excerpt = excerpt.substring(0, limit) + "...";
+        }
+
+        const imgUrl = (typeof window.convertDriveLink === 'function') ? window.convertDriveLink(n.imagenUrl) : n.imagenUrl;
+
+        return `
+        <div class="${idx === 0 ? 'md:col-span-2 lg:col-span-2' : ''} bg-white rounded-[2rem] border border-gray-100 overflow-hidden group hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50 transition-all duration-500">
+            <div class="${idx === 0 ? 'flex flex-col md:flex-row h-full' : 'flex flex-col'}">
+                ${n.imagenUrl ? `
+                    <div class="${idx === 0 ? 'md:w-1/2 h-72 md:h-full' : 'h-56'} overflow-hidden">
+                        <img src="${imgUrl}" alt="${n.titulo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
+                    </div>
+                ` : `
+                    <div class="${idx === 0 ? 'md:w-1/2 h-72 md:h-full' : 'h-56'} bg-gray-50 flex items-center justify-center text-gray-200">
+                        <i class="fas fa-newspaper text-6xl"></i>
+                    </div>
+                `}
+                <div class="p-8 ${idx === 0 ? 'md:w-1/2 flex flex-col justify-center' : 'flex-grow flex flex-col'}">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-[9px] font-semibold uppercase tracking-[0.2em] text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">${n.categoria}</span>
+                        <span class="text-[10px] font-medium text-gray-300 uppercase tracking-wider">${new Date(n.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} ${n.hora ? '• ' + n.hora.substring(0,5) : ''}</span>
+                    </div>
+                    <h3 class="${idx === 0 ? 'text-2xl md:text-3xl' : 'text-xl'} font-semibold text-gray-900 mb-4 leading-tight group-hover:text-blue-600 transition-colors uppercase tracking-tighter">${n.titulo}</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6 ${idx === 0 ? 'line-clamp-4' : 'line-clamp-3'} font-medium">${excerpt}</p>
+                    <div class="mt-auto pt-6 border-t border-gray-50">
+                        <button onclick='window.showNewsDetail(${JSON.stringify(n).replace(/'/g, "&apos;")})' class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 hover:text-blue-800 transition-all">
+                            Seguir Leyendo
+                            <svg class="w-3 h-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    }).join('');
+
+    newsContainer.innerHTML = newsHtml;
 }
 
 window.showNewsDetail = function(news) {

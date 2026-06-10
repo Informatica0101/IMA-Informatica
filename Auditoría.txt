@@ -339,3 +339,83 @@ AUDITORÍA DE ESTÁNDARES PSICOMÉTRICOS (QuizPro v6.0) - 2026-06-21
 - [REPARACIÓN] Implementada refactorización simétrica en js/Banco_Preguntas/Decimo/Informatica/avanzado.json.
 - [REPARACIÓN] Auditado el 100% del banco distribuido (24 nodos) mediante script de validación geométrica.
 - [CREACIÓN] Establecido Manual de Estándares en js/Banco_Preguntas/NORMAS_Y_DISEÑO_REACTIVOS.md.
+
+AUDITORÍA REINGENIERÍA HÍBRIDA (v7.0) - 2026-06-21
+
+Archivo: js/persistence.js
+- [NUEVO] Implementado motor Offline-First con soporte para GUEST_UUID y updated_at.
+- [VERIFICADO] Gestión de ID activo (userId vs guestId) funcional.
+
+Archivo: js/api.js
+- [OPTIMIZADO] fetchApi integra ahora 'Silent Reconciliation' (Modulo 1.1).
+- [VERIFICADO] Soporta prioridad de fetch y disparadores de actualización local.
+
+Archivo: js/auth.js
+- [REFACTOR] mergeGuestData implementa 'Regla del Máximo Promedio' (Modulo 2.3).
+- [NUEVO] Implementado 'Intent Recovery' (Modulo 5.2) para retorno tras login.
+
+Archivo: js/quizpro.js
+- [REFACTOR] navigateToLevels aplica 'Regla de Suficiencia del 70%' (Modulo 6).
+- [NUEVO] Algoritmo de XP v7.0 con mitigador de adivinación y Bono Racha (Modulo 4.1).
+- [NUEVO] Sistema de Rangos (Básico a Leyenda) con Soft Cap en 1,500 XP (Modulo 4.2).
+
+Archivo: index.html / js/index-ui.js
+- [NUEVO] Modal de Triaje "¡Prepárate para Jugar!" intercepta inicios de sesión (Modulo 5.1).
+- [OPTIMIZADO] Removido loader síncrono en favor de Skeleton Screens (Modulo 3).
+
+Archivo: css/style.css
+- [NUEVO] Definidas clases .skeleton y .skeleton-card para carga no bloqueante.
+
+Archivo: backend/user-service/Code.gs
+- [NUEVO] Endpoint 'mergeGuestData' soporta fusión de logros y analítica de invitados.
+
+AUDITORÍA ANALÍTICA QUIZPRO (v3.0) - 2026-06-21
+
+Archivo: backend/user-service/Code.gs
+- [VERIFICADO] Degradación de XP por intentos: OK (100, 75, 50, 25).
+- [VERIFICADO] Mastery Evidence-Based: OK (Frena al 5% en temas dominados).
+- [VERIFICADO] ICR/IA ponderados por estabilidad y corrección: OK.
+- [VERIFICADO] Fase de Calibración Cold Start (<30 preguntas): OK.
+
+Archivo: js/quizpro.js
+- [VERIFICADO] Sistema de Refuerzo (quizpro_reinforcement): OK.
+- [VERIFICADO] Progresión Multi-factor (Nota, Mastery, ICR, IA, Cobertura): OK.
+- [VERIFICADO] Renderizado HTML en enunciados (innerHTML): OK.
+- [VERIFICADO] Validación Rango Leyenda: OK.
+
+Archivo: juegos/quizpro.html
+- [VERIFICADO] Interfaz v3.0 alineada a la especificación oficial.
+
+AUDITORÍA REINGENIERÍA HÍBRIDA Y PSICOMETRÍA (v7.1) - 2026-06-10
+
+Archivo: js/persistence.js
+- [VERIFICADO] Motor Offline-First con IndexedDB operativo.
+- [VERIFICADO] Gestión de marcas de tiempo (updated_at) para reconciliación silenciosa.
+
+Archivo: js/api.js
+- [VERIFICADO] fetchApi integra 'Silent Reconciliation' con actualización de caché en segundo plano.
+
+Archivo: js/auth.js
+- [VERIFICADO] mergeGuestData implementa 'Regla del Máximo Promedio' y 'Intent Recovery'.
+
+Archivo: js/quizpro.js
+- [VERIFICADO] Algoritmo de XP v7.0 con mitigador de adivinación y Bono Racha.
+- [VERIFICADO] Sistema de Rangos con Soft Cap en 1,500 XP para nivel Básico.
+- [VERIFICADO] Fase de Calibración de 30 preguntas para nivel Básico.
+- [VERIFICADO] Desbloqueo Predictivo Local (0ms) tras aprobación del 70%.
+- [VERIFICADO] Restaurado renderizado HTML técnico (innerHTML) en enunciados.
+
+Archivo: backend/user-service/Code.gs
+- [RECALIBRADO] Algoritmo de Adivinación (IA): Colapso exponencial con rachas perfectas.
+- [RECALIBRADO] Índice de Confianza (ICR): Ponderación 70/30 (precisión/estabilidad) para garantizar >92% con 100% de aciertos.
+
+Archivo: Dashboards (student.js, teacher.js, index-ui.js)
+- [VERIFICADO] Estrategia Eager Caching: Renderizado local instantáneo seguido de actualización silenciosa.
+- [VERIFICADO] Implementación de Skeleton Screens.
+- [CORREGIDO] Remoción definitiva del spinner síncrono (#loading-overlay).
+
+Archivo: js/config.js
+- [NUEVO] window.formatearMetricaPsicométrica garantiza redondeo simétrico a 2 decimales.
+
+Archivo: Motores de Minijuegos (perifericos_juego.js, webmaster_quiz_juego.js, destreza_teclado.js)
+- [VERIFICADO] Llamada explícita a GamesAdapter.finishSession para telemetría silenciosa.

@@ -655,7 +655,7 @@ function endGame() {
     const scoreTitle = gameResultScreen.querySelector('h3');
     if (scoreTitle) scoreTitle.textContent = `¡Juego Terminado! Puntaje: ${totalScore}`;
 
-    // Integración con GamesAdapter
+    // Integración con GamesAdapter (Sincronización Silenciosa)
     if (window.GamesAdapter) {
         GamesAdapter.finishSession('Ofimática I', ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel], totalScore);
     }

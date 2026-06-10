@@ -351,18 +351,9 @@ function endGame() {
     if (incorrectAnswersDisplay) incorrectAnswersDisplay.textContent = errors;
     if (finalTimeDisplay) finalTimeDisplay.textContent = finalTimeFormatted;
 
-    // Guardar en el portal vía Adaptador Unificado
+    // Guardar en el portal vía Adaptador Unificado (Sincronización Silenciosa)
     if (window.GamesAdapter) {
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (user) {
-            GamesAdapter.finishSession('Informática I', 'Básico', score);
-        } else {
-            const recordKey = 'guest_record_perifericos';
-            const existing = JSON.parse(localStorage.getItem(recordKey) || '{"maxScore": 0}');
-            if (score > existing.maxScore) {
-                localStorage.setItem(recordKey, JSON.stringify({ maxScore: score, date: new Date().toISOString() }));
-            }
-        }
+        GamesAdapter.finishSession('Informática I', 'Básico', score);
     }
 }
 

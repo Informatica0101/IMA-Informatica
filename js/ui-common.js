@@ -130,6 +130,9 @@ window.setupCommonUI = function() {
     // Render Navigation
     window.renderCommonNav();
 
+    // REQ: Event for child scripts (v3.3)
+    document.dispatchEvent(new CustomEvent('common-ui-ready'));
+
     // --- (A-77) Global History Navigation System ---
     const handlePopState = (event) => {
         const state = event.state;
