@@ -283,3 +283,59 @@ REINGENIERÍA HÍBRIDA Y PSICOMETRÍA (v7.1) - 2026-06-10
 - ARCHIVO: Dashboards (student.js, teacher.js, index-ui.js): Implementación de Eager Caching y Skeleton Screens. Remoción del loader síncrono.
 - ARCHIVO: js/config.js: Adición de window.formatearMetricaPsicométrica para redondeo simétrico estandarizado.
 - ARCHIVO: Motores Minijuegos: Actualización para despacho de telemetría silenciosa mediante GamesAdapter.finishSession.
+
+FECHA: 2026-06-21
+ARCHIVO: js/persistence.js
+- Líneas 8-9: Incrementada DB_VERSION a 2 y agregados almacenes 'cache_estudiante_dashboard' y 'cache_profesor_data'.
+
+ARCHIVO: js/student.js
+- Líneas 70-85: Implementado Eager Caching para carga inmediata del dashboard desde IndexedDB.
+- Líneas 130-138: Persistencia silenciosa de actividades en cache local.
+- Líneas 1190-1195: Implementado umbral de 5 preguntas para renderizado psicométrico.
+- Líneas 1260-1275: Agregados contenedores para gráficos Radar y Trend Line.
+- Líneas 1324-1380: Implementada función renderStudentCharts con Chart.js para análisis cognitivo.
+
+ARCHIVO: js/teacher.js
+- Líneas 770-785: Implementado Eager Caching para carga inmediata del panel docente.
+- Líneas 815-820: Persistencia de datos del profesor en 'cache_profesor_data'.
+- Líneas 578: Sanitización HTML (innerHTML) en la vista de descripción de tareas.
+- Líneas 1178-1182: Integración de llamada a renderTeacherPsychometricModule en detalles del alumno.
+- Líneas 1809: Inicialización de logros sin filtros obligatorios mediante envío de null al backend.
+- Líneas 1955-2045: Implementado módulo de clonación psicométrica (Gráficos y Tablas) para vista docente.
+
+ARCHIVO: js/quizpro.js
+- Líneas 1485: Inyección de 'xpGanada' en el payload de sincronización final.
+- Líneas 1585-1615: Actualizado renderizado del ranking global con columnas 'Rango' y 'XP'.
+- Líneas 1790-1800: Aplicado Estándar de Redondeo Simétrico a 2 decimales en diagnósticos.
+- Líneas 1830-1910: Implementada función renderPsychometricCharts con Chart.js para modo juego.
+
+ARCHIVO: backend/user-service/Code.gs
+- Líneas 445-495: Refactorizada función saveGameResult para persistir XP neta en Columna I y asegurar monotonicidad.
+- Líneas 615-625: Incluida la propiedad 'xp' en el objeto retornado por getGlobalTop.
+- Líneas 732-735: Permitida la consulta total de logros (getGameStats) cuando no se envían filtros de grado/seccion.
+
+ARCHIVO: juegos/quizpro.html
+- Líneas 13: Inclusión de CDN de Chart.js.
+- Líneas 260-265: Actualizada cabecera de la tabla de ranking global.
+- Líneas 325-335: Agregados contenedores canvas para gráficos psicométricos.
+
+ARCHIVO: juegos/perifericos.html, webmaster_quiz.html, destreza_teclado.html
+- Masivo: Remoción del elemento #loading-overlay y sustitución por Skeleton Screens controlados por CSS.
+
+ARCHIVO: index.html, student-dashboard.html, teacher-dashboard.html
+- Masivo: Inclusión de CDN de Chart.js para soporte de visualización de datos.
+
+ARCHIVO: js/config.js
+- Línea 101: Exportada función window.redondearMetrica vinculada al formateador psicométrico.
+- Línea 103: Implementada función window.sanitizarHTMLTecnico para renderizado seguro de etiquetas técnicas (Modulo 5.4).
+
+ARCHIVO: js/student.js
+- Línea 621: Aplicado sanitizador HTML en la descripción de actividades del estudiante.
+- Línea 1344, 1370: Implementada destrucción de instancias (studentRadarChart, studentTrendChart) para optimización de memoria.
+
+ARCHIVO: js/teacher.js
+- Línea 579: Aplicado sanitizador HTML en la vista de detalle de actividades del profesor.
+- Línea 2029, 2049: Implementada destrucción de instancias (teacherRadarChart, teacherTrendChart) para optimización de memoria.
+
+ARCHIVO: js/quizpro.js
+- Línea 1556: Implementado Eager Caching para el ranking global con sincronización silenciosa (Modulo 1.1).

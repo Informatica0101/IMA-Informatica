@@ -66,14 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchAllActivities() {
         if (!tasksList) return;
 
-        // REQ: Eager Caching & Offline-First (Modulo 4)
-        // Priorizar renderizado local de 0ms
+        // REQ: Eager Caching & Offline-First (Modulo 1)
+        // Priorizar renderizado local de 0ms desde cache_estudiante_dashboard
         let hasLocalData = false;
         if (window.PersistenceManager) {
-            const cached = await window.PersistenceManager.get('academic_stats');
+            const cached = await window.PersistenceManager.get('cache_estudiante_dashboard');
             if (cached && cached.data) {
-                console.log("[Offline-First] Renderizando actividades desde caché local.");
-                renderStudentExpediente(cached.data);
+                console.log("[Offline-First] Renderizando actividades desde caché local (cache_estudiante_dashboard).");
+                allActivitiesData = cached.data.allActivities || [];
+                renderStudentExpediente(allActivitiesData);
+                renderParcialTabs(allActivitiesData);
                 // Si ya tenemos caché, procedemos a conciliación silenciosa sin bloquear la UI
                 hasLocalData = true;
             }
@@ -103,10 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // REQ: Mitigación de Latencia mediante Paralelismo (Ticket 4)
             const [tasksResult, examsResult, profileResult] = await Promise.all([
-                fetchApi('TASK', 'getStudentTasks', payload, 0, {
-                    store: 'academic_stats',
-                    onUpdate: (data) => renderStudentExpediente(data)
-                }),
+                fetchApi('TASK', 'getStudentTasks', payload),
                 fetchApi('EXAM', 'getStudentExams', payload),
                 fetchAndRenderLearningProfile(true) // Obtener datos de perfil sin renderizar aún
             ]);
@@ -128,6 +127,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         asignatura: (exam.asignatura || 'General').trim(),
                         parcial: (exam.parcial || 'Sin Parcial').trim()
                     })));
+                }
+
+                // Persistir en cache_estudiante_dashboard para el próximo inicio (Modulo 1)
+                if (window.PersistenceManager) {
+                    window.PersistenceManager.set('cache_estudiante_dashboard', {
+                        allActivities: allActivities,
+                        timestamp: Date.now()
+                    });
                 }
 
                 allActivities.sort((a, b) => {
@@ -611,7 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="assignment-content overflow-hidden max-h-0 transition-all duration-300 ease-in-out group-[.is-expanded]:max-h-[1200px]">
                         <div class="pt-4 mt-4 border-t border-gray-50">
                             <div class="assignment-content-scroll scroll-minimalist mb-4">
-                                <div class="text-gray-600 text-sm font-medium mb-5 leading-relaxed quill-content">${activity.descripcion || 'Sin descripción.'}</div>
+                                <div class="text-gray-600 text-sm font-medium mb-5 leading-relaxed quill-content">${window.sanitizarHTMLTecnico(activity.descripcion) || 'Sin descripción.'}</div>
                             </div>
                             <div class="flex justify-center md:justify-start">
                                 ${actionButtonHtml}
@@ -1181,6 +1188,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const profileContainer = document.getElementById('learning-profile-integration');
         if (!profileContainer) return;
 
+        // REQ 3: Muestra mínima local para renderizado de tabla (Modulo 3.1)
+        const validData = (profileData || []).filter(i => i.intentos >= 5);
+
+        if (validData.length === 0) {
+             profileContainer.innerHTML = '<div class="p-6 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 rounded-[2rem] border border-gray-100 mt-8">Datos insuficientes para generar diagnóstico psicométrico.</div>';
+             return;
+        }
+
         try {
                 // REQ: Recomendaciones académicas con enlaces directos
                 const findPresentation = (tema) => {
@@ -1198,13 +1213,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     return null;
                 };
 
-                const sortedByDominio = [...profileData].sort((a, b) => b.dominio - a.dominio);
+                const sortedByDominio = [...validData].sort((a, b) => b.dominio - a.dominio);
 
                 // REQ: Filtrar temas genéricos (v3.2)
                 const strengths = sortedByDominio.filter(i => i.dominio >= 80 && i.tema !== 'General').slice(0, 3);
                 const weaknesses = sortedByDominio.filter(i => i.dominio < 60 && i.tema !== 'General').reverse().slice(0, 3);
 
-                const avgDominio = Math.round(profileData.reduce((sum, item) => sum + item.dominio, 0) / profileData.length);
+                const avgDominio = Math.round(validData.reduce((sum, item) => sum + item.dominio, 0) / validData.length);
 
                 let classification = "Requiere Refuerzo";
                 let badgeClass = "bg-orange-50 text-orange-600";
@@ -1243,6 +1258,22 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
 
+                        <!-- REQ: Gráficos Psicométricos (Modulo 5) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div class="bg-gray-50/50 p-6 rounded-[2rem] border border-gray-100 flex flex-col items-center">
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">Estado Cognitivo (Radar)</p>
+                                <div class="w-full max-w-[250px]">
+                                    <canvas id="student-radar-chart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50/50 p-6 rounded-[2rem] border border-gray-100 flex flex-col items-center">
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">Curva de Aprendizaje</p>
+                                <div class="w-full h-[200px]">
+                                    <canvas id="student-trend-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Fortalezas -->
                             <div class="bg-emerald-50/30 border border-emerald-100/50 p-5 rounded-[2rem]">
@@ -1256,7 +1287,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     ${strengths.length > 0 ? strengths.map(s => `
                                         <div class="flex items-center justify-between">
                                             <span class="text-xs font-bold text-gray-700 uppercase tracking-tighter">${s.tema}</span>
-                                            <span class="text-[10px] font-black text-emerald-600 bg-white px-2 py-0.5 rounded-lg shadow-sm border border-emerald-100">${s.dominio}%</span>
+                                            <span class="text-[10px] font-black text-emerald-600 bg-white px-2 py-0.5 rounded-lg shadow-sm border border-emerald-100">${window.redondearMetrica(s.dominio)}%</span>
                                         </div>
                                     `).join('') : '<p class="text-[10px] text-gray-400 italic">Sigue practicando para identificar tus fortalezas</p>'}
                                 </div>
@@ -1278,7 +1309,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <div class="flex flex-col gap-1">
                                             <div class="flex items-center justify-between">
                                                 <span class="text-xs font-bold text-gray-700 uppercase tracking-tighter">${w.tema}</span>
-                                                <span class="text-[10px] font-black text-orange-600">${w.dominio}%</span>
+                                                <span class="text-[10px] font-black text-orange-600">${window.redondearMetrica(w.dominio)}%</span>
                                             </div>
                                             <button onclick="${action}" class="w-max text-[9px] font-black text-orange-700 uppercase tracking-widest hover:underline flex items-center gap-1">
                                                 <i class="fas fa-book-open text-[8px]"></i> ${file ? 'Repasar Ahora' : 'Ver Presentación'}
@@ -1290,9 +1321,76 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                 `;
+
+                // Inicializar Gráficos con Chart.js
+                setTimeout(() => renderStudentCharts(profileData), 100);
         } catch (e) {
             console.error("Error al renderizar perfil de dominio:", e);
         }
+    }
+
+    /**
+     * REQ: Gráficos Psicométricos Interactivos (Modulo 5)
+     */
+    function renderStudentCharts(profileData) {
+        const radarCtx = document.getElementById('student-radar-chart')?.getContext('2d');
+        const trendCtx = document.getElementById('student-trend-chart')?.getContext('2d');
+
+        if (!radarCtx || !trendCtx || !profileData || profileData.length === 0) return;
+
+        // 1. Datos para Radar (Promedios de las métricas principales)
+        const avgICR = profileData.reduce((s, i) => s + (i.dominio || 0), 0) / profileData.length;
+        const avgMastery = profileData.reduce((s, i) => s + (i.porcentaje || 0), 0) / profileData.length;
+        // IA simulada inversamente proporcional al dominio para visualización
+        const avgIA = 100 - avgICR;
+
+        if (window.studentRadarChart) window.studentRadarChart.destroy();
+        window.studentRadarChart = new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Confianza', 'Dominio', 'Estabilidad'],
+                datasets: [{
+                    data: [avgICR, avgMastery, 100 - avgIA],
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    pointBackgroundColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: { r: { beginAtZero: true, max: 100, ticks: { display: false } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // 2. Trend Line (Histórico de dominio por tema)
+        const trendData = profileData.slice(-7).map(i => i.dominio);
+        const trendLabels = profileData.slice(-7).map(i => i.tema.substring(0, 5));
+
+        if (window.studentTrendChart) window.studentTrendChart.destroy();
+        window.studentTrendChart = new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: trendLabels,
+                datasets: [{
+                    label: 'Dominio por Tema',
+                    data: trendData,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100, ticks: { font: { size: 8 } } },
+                    x: { ticks: { font: { size: 8 } } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
     }
 
     window.addEventListener('beforeunload', (e) => {

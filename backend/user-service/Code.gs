@@ -441,13 +441,15 @@ function updateUserProfile(payload) {
  * F: porcentaje_obtenido
  * G: nivel_alcanzado
  * H: grado
+ * I: XP (Puntaje Ganado o XP acumulada incremental)
  */
 function saveGameResult(payload) {
-  const { userId, nombreAlumno, juego, asignatura, puntaje, nivel, grado, totalTime } = payload || {};
+  const { userId, nombreAlumno, juego, asignatura, puntaje, nivel, grado, xpGanada } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "Logros");
   const data = sheet.getDataRange().getValues();
   const score = parseFloat(puntaje || 0);
+  const xpNeto = parseFloat(xpGanada || 0);
 
   const standardLevel = (lvl) => {
     if (!lvl) return 'Básico';
@@ -474,17 +476,25 @@ function saveGameResult(payload) {
 
   if (existingIndex !== -1) {
     const oldScore = parseFloat(data[existingIndex][5] || 0);
-    // REQ: Unlock Score (maxScore) - Nunca disminuir, reemplazar si el nuevo es superior (Atómico)
+    const oldXP = parseFloat(data[existingIndex][8] || 0);
+
+    // Regla de Monotonicidad Estricta: XP_Histórica + XP_Ganada
+    const newXP = oldXP + xpNeto;
+
+    // Actualizar fecha y XP siempre (siempre incremental)
+    sheet.getRange(existingIndex + 1, 1).setValue(new Date()); // fecha_logro
+    sheet.getRange(existingIndex + 1, 9).setValue(newXP);      // Columna I: XP Incremental
+
+    // REQ: Unlock Score (maxScore) - Nunca disminuir, reemplazar si el nuevo es superior
     if (score > oldScore) {
-      sheet.getRange(existingIndex + 1, 1).setValue(new Date()); // fecha_logro
       sheet.getRange(existingIndex + 1, 6).setValue(score);    // porcentaje_obtenido
-      if (totalTime) sheet.getRange(existingIndex + 1, 9).setValue(totalTime);
       logDebug(`Unlock Score actualizado para ${userId}: ${oldScore} -> ${score}`);
     }
+    logDebug(`XP actualizada para ${userId}: ${oldXP} -> ${newXP}`);
   } else {
-    // Estructura: [Fecha, UserId, Alumno, Juego, Asignatura, Puntaje, Nivel, Grado, TiempoTotal]
-    sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, asignatura || "General", score, normNivel, grado || "", totalTime || 0]);
-    logDebug(`Nuevo Unlock Score registrado para ${userId}: ${score}`);
+    // Estructura: [Fecha, UserId, Alumno, Juego, Asignatura, Puntaje, Nivel, Grado, XP]
+    sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, asignatura || "General", score, normNivel, grado || "", xpNeto]);
+    logDebug(`Nuevo registro de logros para ${userId}: Score=${score}, XP=${xpNeto}`);
   }
 
   // REQ: Retornar estadísticas actualizadas para sincronización inmediata (Tarea 2)
@@ -603,10 +613,15 @@ function getGlobalTop(payload) {
     const cursadasCount = Object.keys(userGrades).reduce((sum, grd) => sum + Object.keys(userGrades[grd]).length, 0);
     const globalAvg = cursadasCount > 0 ? (totalSubjectSum / cursadasCount) : 0;
 
+    // REQ: Enviar XP para cálculo de rangos en el frontend (Modulo 5)
+    const userXP = logRows.filter(r => String(r[1]) === userId && normalizeString(r[3]) === targetGame)
+                          .reduce((s, r) => s + (parseFloat(r[8]) || 0), 0);
+
     globalLeaderboard.push({
       nombre: profile.nombre,
       promedio: Math.round(globalAvg),
-      grado: profile.grado
+      grado: profile.grado,
+      xp: userXP
     });
   }
 
@@ -713,6 +728,11 @@ function getGameStats(payload) {
       allHistory: detailedLogs.length > 0 ? detailedLogs : userRows,
       learningProfile: userProfile
     };
+  }
+
+  // REQ 4: Inicialización sin filtros (Modulo 4)
+  if (!grado && !seccion) {
+      return { status: "success", data: data };
   }
 
   const students = getStudentsByGradoSeccion({ grado, seccion }).data.map(s => s.userId);
