@@ -188,9 +188,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderStudentExpediente(activities) {
+    function renderStudentExpediente(inputActivities) {
         const container = document.getElementById('student-expediente');
         if (!container) return;
+
+        // REQ: Normalización de entrada para soportar Offline-First (v3.3)
+        const activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
 
         // REQ: Filtro Estricto por Parcial (Incidencia 5)
         // No mezclar históricos en el cálculo de progreso actual
@@ -429,9 +432,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderParcialTabs(activities) {
+    function renderParcialTabs(inputActivities) {
         const tabsContainer = document.getElementById('parcial-tabs-container');
         if (!tabsContainer) return;
+
+        // REQ: Normalización de entrada para soportar Offline-First (v3.3)
+        const activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
 
         if (!activities || activities.length === 0) {
             tabsContainer.innerHTML = '';

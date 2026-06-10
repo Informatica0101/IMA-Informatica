@@ -1,3 +1,4 @@
+// NOTA: Las URLs de los microservicios solo se deben actualizar en el frontend (js/config.js), no en este archivo.
 // ============================================================================
 // MICROSERVICIO DE USUARIOS (VERSIÓN INTEGRAL MAYO 2026)
 // ============================================================================

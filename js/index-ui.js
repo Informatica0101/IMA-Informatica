@@ -561,6 +561,7 @@ async function loadNews() {
             </div>
         </div>
     `).join('');
+    }
 
     try {
         // Consultar con reconciliación silenciosa
@@ -593,9 +594,12 @@ async function loadNews() {
     }
 }
 
-function renderNewsHTML(data) {
+function renderNewsHTML(inputData) {
     const newsContainer = document.getElementById('news-container');
-    if (!newsContainer || !data || data.length === 0) return;
+    // REQ: Normalización de entrada para soportar Offline-First (v3.3)
+    const data = (inputData && inputData.status === 'success' && Array.isArray(inputData.data)) ? inputData.data : (Array.isArray(inputData) ? inputData : []);
+
+    if (!newsContainer || data.length === 0) return;
 
     console.log("[IMA-INDEX] Renderizando noticias:", data.length);
 
