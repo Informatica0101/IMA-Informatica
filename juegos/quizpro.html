@@ -6,6 +6,8 @@
     <title>QuizPro - IMA</title>
     <!-- Tailwind CSS v4 -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Chart.js para Analítica v7.2 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Fonts - Inter & Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
@@ -256,7 +258,9 @@
                         <thead>
                             <tr class="text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">
                                 <th class="px-6 py-3">Jugador</th>
-                                <th class="px-6 py-3 text-right">Promedio</th>
+                                <th class="px-6 py-3 text-center">Rango</th>
+                                <th class="px-6 py-3 text-center">Promedio</th>
+                                <th class="px-6 py-3 text-right">XP</th>
                             </tr>
                         </thead>
                         <tbody id="global-top-body" class="text-xs">
@@ -319,6 +323,16 @@
                             <div class="text-center">
                                 <p class="text-[6px] font-black text-white/30 uppercase mb-1">Adivinación (IA)</p>
                                 <div class="text-[10px] font-bold text-orange-400" id="v2-ia">0%</div>
+                            </div>
+                        </div>
+
+                        <!-- REQ: Gráficos Psicométricos (Modulo 5.2 - v7.2) -->
+                        <div class="mt-6 grid grid-cols-2 gap-4 h-32">
+                            <div class="bg-white/5 rounded-xl p-2">
+                                <canvas id="chart-radar-psychometric"></canvas>
+                            </div>
+                            <div class="bg-white/5 rounded-xl p-2">
+                                <canvas id="chart-line-trend"></canvas>
                             </div>
                         </div>
                     </div>

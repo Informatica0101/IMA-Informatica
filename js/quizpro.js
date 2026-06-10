@@ -578,7 +578,9 @@ function calculateXP(isCorrect, level, responseTime) {
     const totalXP = Math.round(XP_CONFIG.BASE * fDificultad * fTiempo * bonoRacha * attemptMultiplier);
 
     // REQ 4.2 & 6.3: Soft Cap & XP Freeze
-    const xpKey = `xp_${selectedAsignatura}_${selectedGrado}`;
+    const targetSubjectNorm = window.normalizeSubject(selectedAsignatura);
+    const gradeLabel = selectedGrado;
+    const xpKey = `xp_${targetSubjectNorm}_${gradeLabel}`;
     let currentTotalXP = 0;
 
     // Usar PersistenceManager para persistencia estructurada si está disponible
@@ -1480,7 +1482,7 @@ async function endQuiz() {
         puntaje: finalPercent,
         nivel: window.getStandardLevelName(selectedDifficulty),
         grado: selectedGrado,
-        xpGanada: sessionXP,
+        xpGanada: sessionXP, // REQ: Campo xp Ganada explícito (Modulo 2 - v7.2)
         fecha_logro: new Date().toISOString()
     };
 
@@ -1580,25 +1582,36 @@ function renderGlobalTopHTML(res) {
     window.globalTopData = res;
     body.innerHTML = res.global
         .filter(user => user && (user.nombre || user.username || user.display_name))
-        .map((user, idx) => `
-        <tr class="hover:bg-blue-50/30 transition-colors">
-            <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                    <span class="w-6 h-6 flex items-center justify-center rounded-full ${idx === 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'} text-[10px] font-black">${idx + 1}</span>
-                    <div>
-                        <p class="font-bold text-gray-900 leading-none">${user.nombre || user.username || user.display_name || 'Usuario'}</p>
-                        <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">${user.grado || 'Grado N/A'}</p>
+        .map((user, idx) => {
+            // REQ: Inclusión de la Columna "Rango" en el Top Global (Modulo 5.1 - v7.2)
+            const xp = parseInt(user.totalXP || 0);
+            let userRange = XP_CONFIG.RANGES.find(r => xp >= r.min && xp <= r.max) || XP_CONFIG.RANGES[0];
+
+            return `
+            <tr class="hover:bg-blue-50/30 transition-colors">
+                <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 flex items-center justify-center rounded-full ${idx === 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'} text-[10px] font-black">${idx + 1}</span>
+                        <div>
+                            <p class="font-bold text-gray-900 leading-none">${user.nombre || user.username || user.display_name || 'Usuario'}</p>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">${user.grado || 'Grado N/A'}</p>
+                        </div>
                     </div>
-                </div>
-            </td>
-            <td class="px-6 py-4 text-right">
-                <span class="text-sm font-black ${(user.promedio || 0) >= 70 ? 'text-emerald-600' : 'text-gray-400'}">${user.promedio || 0}%</span>
-            </td>
-        </tr>
-    `).join('');
+                </td>
+                <td class="px-6 py-4 text-center">
+                    <span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-lg text-[8px] font-black uppercase tracking-widest">${user.rango || userRange.label}</span>
+                </td>
+                <td class="px-6 py-4 text-center">
+                    <span class="text-sm font-black ${(user.promedio || 0) >= 70 ? 'text-emerald-600' : 'text-gray-400'}">${user.promedio || 0}%</span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <span class="text-[10px] font-bold text-gray-900">${xp.toLocaleString()}</span>
+                </td>
+            </tr>
+        `;}).join('');
 
     if (res.global.length === 0) {
-        body.innerHTML = '<tr><td colspan="2" class="px-6 py-8 text-center text-gray-400 text-xs italic">Aún no hay puntuaciones globales registradas</td></tr>';
+        body.innerHTML = '<tr><td colspan="3" class="px-6 py-8 text-center text-gray-400 text-xs italic">Aún no hay puntuaciones globales registradas</td></tr>';
     }
 }
 
@@ -1718,6 +1731,9 @@ function renderPerformanceHTML(res) {
     if (elIA) elIA.textContent = `${window.formatearMetricaPsicométrica ? window.formatearMetricaPsicométrica(latestIA) : latestIA.toFixed(2)}%`;
     if (elXP) elXP.textContent = Math.round(totalXP).toLocaleString();
 
+    // REQ: Inyección de Gráficos Psicométricos (Modulo 5.2 - v7.2)
+    renderPsychometricCharts(latestICR, latestMastery, latestIA, qProLogs);
+
     // Cold Start Badge (Modulo 7.7)
     if (calBadge) {
         if (qProLogs.length > 0 && qProLogs.length < 30) calBadge.classList.remove('hidden');
@@ -1821,6 +1837,79 @@ function renderDiagnosis(history) {
             `;
             linkContainer.classList.remove('hidden');
         }
+    }
+}
+
+/**
+ * REQ: Renderizado de Gráficos Interactivos (Modulo 5.2 - v7.2)
+ * Utiliza Chart.js para visualizar el balance psicométrico y tendencia.
+ */
+let radarChartInstance = null;
+let lineChartInstance = null;
+
+function renderPsychometricCharts(icr, mastery, ia, logs) {
+    if (typeof Chart === 'undefined') return;
+
+    const radarCtx = document.getElementById('chart-radar-psychometric')?.getContext('2d');
+    const lineCtx = document.getElementById('chart-line-trend')?.getContext('2d');
+
+    if (radarCtx) {
+        if (radarChartInstance) radarChartInstance.destroy();
+        radarChartInstance = new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Confianza', 'Dominio', 'Precisión'],
+                datasets: [{
+                    data: [icr, mastery, (100 - ia)],
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(59, 130, 246, 1)'
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    r: {
+                        min: 0, max: 100,
+                        ticks: { display: false },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                        pointLabels: { color: 'rgba(255, 255, 255, 0.5)', font: { size: 7 } }
+                    }
+                }
+            }
+        });
+    }
+
+    if (lineCtx) {
+        if (lineChartInstance) lineChartInstance.destroy();
+        const trendData = logs.slice(-10).map(l => parseFloat(l[5]) || 0); // Puntos de las últimas 10 sesiones
+        lineChartInstance = new Chart(lineCtx, {
+            type: 'line',
+            data: {
+                labels: trendData.map((_, i) => i + 1),
+                datasets: [{
+                    data: trendData,
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: {
+                        min: 0, max: 100,
+                        display: false
+                    }
+                }
+            }
+        });
     }
 }
 

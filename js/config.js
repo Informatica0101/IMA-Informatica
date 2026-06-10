@@ -101,6 +101,17 @@ window.formatearMetricaPsicométrica = function(valor) {
 };
 
 /**
+ * REQ: Redondeo Simétrico Estándar (Modulo 3 - v7.2)
+ * Asegura precisión en salidas analíticas de tablas.
+ */
+window.redondearMetrica = function(valor) {
+    if (valor === undefined || valor === null) return "0.00";
+    const num = parseFloat(valor);
+    if (isNaN(num)) return "0.00";
+    return (Math.round((num + Number.EPSILON) * 100) / 100).toFixed(2);
+};
+
+/**
  * Normaliza nombres de parciales para permitir comparaciones flexibles
  * (ej. "II Parcial" -> "Segundo Parcial")
  */

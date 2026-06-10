@@ -6,7 +6,7 @@
 window.PersistenceManager = {
     DB_NAME: 'IMA_Persistence_DB',
     DB_VERSION: 1,
-    STORES: ['news', 'academic_stats', 'rankings', 'user_profile', 'local_progress'],
+    STORES: ['news', 'academic_stats', 'rankings', 'user_profile', 'local_progress', 'cache_estudiante_dashboard', 'cache_profesor_data'],
     _db: null,
 
     /**

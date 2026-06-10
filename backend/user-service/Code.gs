@@ -443,11 +443,12 @@ function updateUserProfile(payload) {
  * H: grado
  */
 function saveGameResult(payload) {
-  const { userId, nombreAlumno, juego, asignatura, puntaje, nivel, grado, totalTime } = payload || {};
+  const { userId, nombreAlumno, juego, asignatura, puntaje, nivel, grado, xpGanada } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "Logros");
   const data = sheet.getDataRange().getValues();
   const score = parseFloat(puntaje || 0);
+  const xpNeto = parseFloat(xpGanada || 0);
 
   const standardLevel = (lvl) => {
     if (!lvl) return 'Básico';
@@ -474,17 +475,23 @@ function saveGameResult(payload) {
 
   if (existingIndex !== -1) {
     const oldScore = parseFloat(data[existingIndex][5] || 0);
-    // REQ: Unlock Score (maxScore) - Nunca disminuir, reemplazar si el nuevo es superior (Atómico)
+    const oldXP = parseFloat(data[existingIndex][8] || 0);
+
+    // REQ: Unlock Score (maxScore) - Nunca disminuir
     if (score > oldScore) {
-      sheet.getRange(existingIndex + 1, 1).setValue(new Date()); // fecha_logro
       sheet.getRange(existingIndex + 1, 6).setValue(score);    // porcentaje_obtenido
-      if (totalTime) sheet.getRange(existingIndex + 1, 9).setValue(totalTime);
-      logDebug(`Unlock Score actualizado para ${userId}: ${oldScore} -> ${score}`);
     }
+
+    // REQ: Monotonicidad Estricta de XP (Suma Incremental) en Columna I (index 8)
+    const newTotalXP = oldXP + xpNeto;
+    sheet.getRange(existingIndex + 1, 9).setValue(newTotalXP);
+    sheet.getRange(existingIndex + 1, 1).setValue(new Date()); // fecha_logro
+
+    logDebug(`Persistencia XP (Col I) actualizada para ${userId}: ${oldXP} + ${xpNeto} = ${newTotalXP}`);
   } else {
-    // Estructura: [Fecha, UserId, Alumno, Juego, Asignatura, Puntaje, Nivel, Grado, TiempoTotal]
-    sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, asignatura || "General", score, normNivel, grado || "", totalTime || 0]);
-    logDebug(`Nuevo Unlock Score registrado para ${userId}: ${score}`);
+    // Estructura: [Fecha, UserId, Alumno, Juego, Asignatura, Puntaje, Nivel, Grado, XP_GANADA]
+    sheet.appendRow([new Date(), userId, nombreAlumno || "Anónimo", juego, asignatura || "General", score, normNivel, grado || "", xpNeto]);
+    logDebug(`Nuevo registro de logros con XP en Columna I para ${userId}: ${xpNeto} XP`);
   }
 
   // REQ: Retornar estadísticas actualizadas para sincronización inmediata (Tarea 2)
@@ -854,7 +861,7 @@ function getOrCreateSheet(ss, name) {
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
-    if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Asignatura", "Puntaje", "Nivel", "Grado", "TiempoTotal"]);
+    if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Asignatura", "Puntaje", "Nivel", "Grado", "XP"]);
     if (name === "NoticiasPortal") sheet.appendRow(["Fecha", "Hora", "Título", "Contenido", "ImagenUrl", "Categoría"]);
     if (name === "Clases") sheet.appendRow(["Grado", "Seccion", "WhatsAppLink"]);
     if (name === "BancoPreguntas") {

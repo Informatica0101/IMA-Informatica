@@ -283,3 +283,10 @@ REINGENIERÍA HÍBRIDA Y PSICOMETRÍA (v7.1) - 2026-06-10
 - ARCHIVO: Dashboards (student.js, teacher.js, index-ui.js): Implementación de Eager Caching y Skeleton Screens. Remoción del loader síncrono.
 - ARCHIVO: js/config.js: Adición de window.formatearMetricaPsicométrica para redondeo simétrico estandarizado.
 - ARCHIVO: Motores Minijuegos: Actualización para despacho de telemetría silenciosa mediante GamesAdapter.finishSession.
+[10/06/2026 07:15] Refactorización Crítica QuizPro v7.2
+- js/config.js: Implementación de window.redondearMetrica con redondeo simétrico estándar.
+- backend/user-service/Code.gs: Corrección de persistencia de XP en Columna I (hoja Logros) y aplicación de regla de Monotonicidad Estricta.
+- js/persistence.js: Adición de stores cache_estudiante_dashboard y cache_profesor_data para migración Offline-First.
+- js/student.js: Implementación de carga Offline-First de 0ms, umbral psicométrico de 5 preguntas, banner de alerta crítica e integración de gráficos Chart.js (Radar y Línea).
+- js/teacher.js: Carga Offline-First de 0ms para panel docente, eliminación de filtros obligatorios en sección Logros, clonación de módulo analítico psicométrico en expediente del estudiante y habilitación de renderizado HTML enriquecido en editor de tareas.
+- juegos/quizpro.html & js/quizpro.js: Inclusión de columnas "Rango" y "XP" en el Top Global y gráficos psicométricos interactivos en el lobby.

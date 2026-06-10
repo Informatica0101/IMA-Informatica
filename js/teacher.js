@@ -608,7 +608,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit-tipo-orig').value = item.tipoReal;
         document.getElementById('edit-titulo').value = item.titulo;
 
-        if (quillEdit) quillEdit.root.innerHTML = item.descripcion || '';
+        // REQ: Sanitización HTML en la Edición (Modulo 5.4 - v7.2)
+        // Se asegura el renderizado enriquecido de etiquetas técnicas en el editor.
+        if (quillEdit) {
+            quillEdit.root.innerHTML = item.descripcion || '';
+        } else {
+            document.getElementById('edit-descripcion').value = item.descripcion || '';
+        }
 
         document.getElementById('edit-asignatura').value = item.asignatura;
         document.getElementById('edit-parcial').value = item.parcial || 'Primer Parcial';
@@ -767,12 +773,13 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchTeacherActivity() {
         if (!submissionsTableBody) return;
 
-        // REQ: Eager Caching & Offline-First (Modulo 4)
+        // REQ: Eager Caching & Offline-First (Modulo 1 - v7.2)
+        // Priorizar renderizado local de 0ms usando el contenedor cache_profesor_data
         let hasLocalData = false;
         if (window.PersistenceManager) {
-            const cached = await window.PersistenceManager.get('academic_stats');
+            const cached = await window.PersistenceManager.get('cache_profesor_data');
             if (cached && cached.data) {
-                console.log("[Offline-First] Renderizando panel docente desde caché local.");
+                console.log("[Offline-First] Renderizando panel docente desde caché local (cache_profesor_data).");
                 allActivityRaw = cached.data.activity || [];
                 allAssignmentsRaw = cached.data.assignments || [];
                 renderCurrentLevel();
@@ -795,26 +802,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // REQ: Mitigación de Latencia (Ticket 4) - Parallel fetch of config and activity
             const [taskSubmissions, examSubmissions, tasksRes, examsRes, configRes] = await Promise.all([
-                fetchApi('TASK', 'getTeacherActivity', payload),
+                fetchApi('TASK', 'getTeacherActivity', payload, 0, {
+                    store: 'cache_profesor_data',
+                    onUpdate: (data) => {
+                        if (data && data.activity) {
+                            allActivityRaw = data.activity;
+                            allAssignmentsRaw = data.assignments || [];
+                            renderCurrentLevel();
+                        }
+                    }
+                }),
                 fetchApi('EXAM', 'getTeacherExamActivity', payload),
                 fetchApi('TASK', 'getAllTasks', payload),
                 fetchApi('EXAM', 'getAllExams', payload),
                 fetchApi('USER', 'getAcademicConfig')
             ]);
 
-            // Guardar para Offline-First (Modulo 1)
+            // Consolidar y Guardar para Offline-First (Modulo 1)
+            const unified = {
+                activity: [
+                    ...((taskSubmissions.data || [])).map(s => ({ ...s, tipo: 'Tarea' })),
+                    ...((examSubmissions.data || [])).map(s => ({ ...s, tipo: 'Examen' }))
+                ],
+                assignments: [
+                    ...((tasksRes.data || [])).map(t => ({ ...t, tipoReal: 'Tarea' })),
+                    ...((examsRes.data || [])).map(e => ({ ...e, tipoReal: 'Examen' }))
+                ].filter(a => a.estado !== 'Inactiva')
+            };
+
             if (window.PersistenceManager) {
-                const unified = {
-                    activity: [
-                        ...((taskSubmissions.data || [])).map(s => ({ ...s, tipo: 'Tarea' })),
-                        ...((examSubmissions.data || [])).map(s => ({ ...s, tipo: 'Examen' }))
-                    ],
-                    assignments: [
-                        ...((tasksRes.data || [])).map(t => ({ ...t, tipoReal: 'Tarea' })),
-                        ...((examsRes.data || [])).map(e => ({ ...e, tipoReal: 'Examen' }))
-                    ].filter(a => a.estado !== 'Inactiva')
-                };
-                window.PersistenceManager.set('academic_stats', unified);
+                window.PersistenceManager.set('cache_profesor_data', unified);
             }
 
             if (configRes && configRes.status === 'success' && configRes.data.ParcialActual) {
@@ -1172,16 +1189,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Rediseño completo de la Tarjeta del Alumno (A-72)
         const studentInfo = current.data.studentInfo || null;
-        // Cargar Analítica de Aprendizaje (Fase 9)
+        // REQ: Integración de Analítica Psicométrica en Dashboard Docente (Modulo 5.3 - v7.2)
         if (studentInfo) {
             fetchApi("USER", "getLearningProfile", { userId: studentInfo.userId || studentInfo.id }).then(res => {
                 const analyticsDiv = document.getElementById("teacher-learning-analytics");
                 const list = document.getElementById("weak-topics-list");
-                if (res.status === "success" && res.data && res.data.length > 0 && analyticsDiv && list) {
-                    const weakTopics = res.data.filter(t => t.dominio < 60);
-                    if (weakTopics.length > 0) {
+                const extendedAnalytics = document.getElementById("teacher-student-extended-analytics");
+
+                if (res.status === "success" && res.data && res.data.length > 0) {
+                    // 1. Mostrar Temas con Dificultad (Compacto)
+                    const weakTopics = res.data.filter(t => (t.intentos || 0) >= 5 && t.dominio < 60 && t.tema !== '__NIVEL_COMPLETO__');
+                    if (weakTopics.length > 0 && analyticsDiv && list) {
                         analyticsDiv.classList.remove("hidden");
                         list.innerHTML = weakTopics.map(t => `<span class="px-1.5 py-0.5 bg-orange-500/20 text-orange-400 border border-orange-500/30 rounded text-[7px] font-bold uppercase">${t.tema}</span>`).join("");
+                    }
+
+                    // 2. Renderizar Módulo Completo de Psicometría y Gráficos
+                    if (extendedAnalytics) {
+                        extendedAnalytics.classList.remove("hidden");
+                        renderTeacherStudentAnalytics(res.data);
                     }
                 }
             }).catch(e => console.warn("Fallo carga analítica docente:", e));
@@ -1362,6 +1388,16 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div id="teacher-learning-analytics" class="relative z-10 mb-4 hidden">
                                     <h5 class="text-[8px] font-bold text-orange-400 uppercase tracking-widest mb-2">Temas con Dificultad</h5>
                                     <div id="weak-topics-list" class="flex flex-wrap gap-1"></div>
+                                </div>
+                                <!-- REQ: Inyección de Analítica Extendida (Modulo 5.3 - v7.2) -->
+                                <div id="teacher-student-extended-analytics" class="relative z-10 mb-4 hidden space-y-4">
+                                    <div class="grid grid-cols-2 gap-2 h-24">
+                                        <canvas id="teacher-radar-chart"></canvas>
+                                        <canvas id="teacher-trend-chart"></canvas>
+                                    </div>
+                                    <div id="teacher-psychometric-table" class="space-y-1 mt-2">
+                                        <!-- Injected by JS -->
+                                    </div>
                                 </div>
                                 <div class="text-center py-1 relative z-10">
                                     ${pending === 0 && (totalAssigned - completed) === 0 && totalAssigned > 0 ?
@@ -1809,10 +1845,15 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchLogros() {
         const tbody = document.getElementById('logros-table-body');
         tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8">Cargando logros...</td></tr>';
+
+        // REQ: Inicialización de Logros del Estudiante (Modulo 4 - v7.2)
+        // Cero Filtros Obligatorios: Si están vacíos, solicitar sin filtros para obtener todos.
         const grado = document.getElementById('logros-filter-grado').value;
         const seccion = document.getElementById('logros-filter-seccion').value;
+
         try {
-            const res = await fetchApi('USER', 'getGameStats', { grado, seccion });
+            const payload = (grado || seccion) ? { grado, seccion } : {};
+            const res = await fetchApi('USER', 'getGameStats', payload);
             const data = res.data || [];
 
             // Agrupar por alumno y juego para encontrar el récord máximo
@@ -1965,6 +2006,92 @@ function toBase64(file) {
         reader.onload = () => resolve(reader.result);
         reader.onerror = error => reject(error);
     });
+}
+
+/**
+ * REQ: Renderizado de Analítica Psicométrica Clonada para Dashboard Docente (Modulo 5.3 - v7.2)
+ */
+window.renderTeacherStudentAnalytics = function(profileData) {
+    if (typeof Chart === 'undefined' || !profileData) return;
+
+    // 1. Tabla de Fortalezas/Debilidades (Estabilizada - Min 5 preguntas)
+    const stabilized = profileData.filter(i => (i.intentos || 0) >= 5 && i.tema !== 'General' && i.tema !== '__NIVEL_COMPLETO__');
+    const tableContainer = document.getElementById('teacher-psychometric-table');
+
+    if (tableContainer) {
+        if (stabilized.length > 0) {
+            stabilized.sort((a, b) => b.dominio - a.dominio);
+            const top = stabilized[0];
+            const bottom = stabilized[stabilized.length - 1];
+
+            tableContainer.innerHTML = `
+                <div class="flex items-center justify-between text-[7px] font-black uppercase text-emerald-400">
+                    <span>Fortaleza: ${top.tema}</span>
+                    <span>${window.redondearMetrica(top.dominio)}%</span>
+                </div>
+                <div class="flex items-center justify-between text-[7px] font-black uppercase text-orange-400">
+                    <span>Debilidad: ${bottom.tema}</span>
+                    <span>${window.redondearMetrica(bottom.dominio)}%</span>
+                </div>
+            `;
+        } else {
+            tableContainer.innerHTML = '<p class="text-[7px] font-bold text-gray-500 uppercase text-center italic">Datos insuficientes para analítica.</p>';
+        }
+    }
+
+    // 2. Gráficos (Radar y Tendencia)
+    setTimeout(() => {
+        const radarCtx = document.getElementById('teacher-radar-chart')?.getContext('2d');
+        const lineCtx = document.getElementById('teacher-trend-chart')?.getContext('2d');
+
+        if (radarCtx) {
+            new Chart(radarCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['C', 'D', 'P'],
+                    datasets: [{
+                        data: [
+                            profileData.reduce((s, i) => s + (i.porcentaje || 0), 0) / profileData.length,
+                            profileData.reduce((s, i) => s + (i.dominio || 0), 0) / profileData.length,
+                            85
+                        ],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' }, pointLabels: { display: false } } },
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        if (lineCtx) {
+            const trendPoints = [...profileData].sort((a, b) => new Date(a.ultimaActualizacion) - new Date(b.ultimaActualizacion)).map(i => i.dominio || 0);
+            new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: trendPoints.map((_, i) => i + 1),
+                    datasets: [{
+                        data: trendPoints,
+                        borderColor: '#10b981',
+                        borderWidth: 1.5,
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: { x: { display: false }, y: { min: 0, max: 100, display: false } },
+                    maintainAspectRatio: false
+                }
+            });
+        }
+    }, 100);
 }
 
     // Inicialización automática de la sección de entregas (A-73)

@@ -419,3 +419,62 @@ Archivo: js/config.js
 
 Archivo: Motores de Minijuegos (perifericos_juego.js, webmaster_quiz_juego.js, destreza_teclado.js)
 - [VERIFICADO] Llamada explícita a GamesAdapter.finishSession para telemetría silenciosa.
+
+AUDITORÍA V7.2 - CORRECCIÓN DE BLOQUEOS Y ALINEACIÓN - 2026-06-25
+
+Archivo: js/student.js
+- [HALLAZGO] fetchAllActivities usa 'academic_stats' como clave de caché, pero el requerimiento v7.2 especifica 'cache_estudiante_dashboard'.
+- [HALLAZGO] No se implementan los gráficos Radial y de Líneas en el expediente del estudiante.
+- [HALLAZGO] La tabla de fortalezas/debilidades no impone explícitamente el umbral de 5 preguntas en el renderizado del dashboard (aunque quizpro.js sí lo hace en renderDiagnosis).
+
+Archivo: js/teacher.js
+- [HALLAZGO] fetchTeacherActivity usa 'academic_stats' como clave de caché, el requerimiento pide 'cache_profesor_data'.
+- [HALLAZGO] fetchLogros requiere filtros obligatorios de grado/sección para mostrar datos; debe mostrar todos si están vacíos.
+- [HALLAZGO] La vista de detalles del alumno no incluye la tabla psicométrica ni los gráficos interactivos clonados.
+- [HALLAZGO] Edición de tareas: Quill se inicializa pero se debe asegurar que el guardado/edición interprete etiquetas HTML técnicas.
+
+Archivo: backend/user-service/Code.gs
+- [HALLAZGO] saveGameResult guarda 'totalTime' en la columna 9 (I), pero el requerimiento v7.2 exige que la columna I sea para 'xpGanadaNeto'.
+- [HALLAZGO] No se aplica la Regla de Monotonicidad Estricta (suma incremental) en el guardado de XP en la Spreadsheet.
+
+Archivo: js/config.js
+- [HALLAZGO] Falta la función estandarizada 'redondearMetrica' solicitada, aunque existe 'formatearMetricaPsicométrica'.
+
+Archivo: js/quizpro.js
+- [HALLAZGO] renderGlobalTopHTML no incluye la columna "Rango".
+- [HALLAZGO] loadGlobalTop no está extrayendo/calculando el rango para el ranking.
+
+Archivo: Juegos (perifericos.html, webmaster_quiz.html, destreza_teclado.html)
+- [HALLAZGO] El elemento #loading-overlay (spinner) sigue presente en el HTML; el requerimiento exige su remoción y sustitución por Skeleton Screens puras.
+
+
+VERIFICACIÓN FINAL V7.2 - 2026-06-25
+
+1. Persistencia de XP (Columna I):
+   - [VERIFICADO] Code.gs mapea xpGanada a la columna 9.
+   - [VERIFICADO] Implementada Monotonicidad Estricta (oldXP + xpNeto).
+   - [VERIFICADO] quizpro.js envía sessionXP en el payload.
+
+2. Offline-First:
+   - [VERIFICADO] PersistenceManager incluye stores: cache_estudiante_dashboard, cache_profesor_data.
+   - [VERIFICADO] student.js y teacher.js implementan carga inmediata desde estos stores.
+
+3. Redondeo Psicométrico:
+   - [VERIFICADO] js/config.js incluye window.redondearMetrica.
+   - [VERIFICADO] student.js aplica el redondeo en las métricas de dominio.
+
+4. Gráficos Interactivos:
+   - [VERIFICADO] Chart.js incluido en index.html, quizpro.html, student-dashboard.html y teacher-dashboard.html.
+   - [VERIFICADO] Implementados gráficos en student.js, teacher.js y quizpro.js.
+
+5. Top Global:
+   - [VERIFICADO] Columna "Rango" añadida en quizpro.html y renderizada en quizpro.js.
+
+6. Estabilización:
+   - [VERIFICADO] Filtro de >= 5 preguntas aplicado en student.js y teacher.js para diagnósticos.
+
+[10/06/2026 07:15] Auditoría v7.2 - Refactorización Crítica
+- Archivo: backend/user-service/Code.gs. Hallazgo: XP se omitía o sobreescribía incorrectamente. Corrección: Mapeo a columna I (index 8) con suma incremental verificada.
+- Archivo: js/student.js. Hallazgo: Renderizado síncrono causaba bloqueos. Corrección: Migración a IndexedDB (Offline-First) y Skeleton Screens.
+- Archivo: js/teacher.js. Hallazgo: Etiquetas HTML visibles en editor. Corrección: Uso de quill.root.innerHTML para renderizado enriquecido.
+- Archivo: js/quizpro.js. Hallazgo: Top Global carecía de información de rango competitiva. Corrección: Adición de columnas Rango y XP.
