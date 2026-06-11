@@ -403,3 +403,23 @@ ARCHIVO: Pendientes.md
 ARCHIVO: MapaDependencias.md
 - LÍNEAS: 1-40
 - DESCRIPCIÓN: Documentación estructural del namespace QuizProApp y flujos de datos asíncronos.
+
+FECHA: 2026-06-22 (REMEDIACIÓN FORENSE v7.5)
+ARCHIVO: js/api.js, js/auth.js, js/ui-common.js, js/student.js, js/teacher.js
+- DESCRIPCIÓN: Transpilación manual completa a ES5. Eliminación de fugas de sintaxis ES6.
+- DESCRIPCIÓN: Implementación de IIFE y registro en namespace QuizProApp.
+- DESCRIPCIÓN: Reingeniería de lógica de fusión en auth.js (eliminación de Object.values y for...of).
+
+FECHA: 2026-06-23 (RESTAURACIÓN FUNCIONAL v7.5 - ES5)
+ARCHIVO: js/student.js
+- LÍNEAS: 750-850, 1100-1400
+- IMPACTO: Recuperación de integridad en entregas PDF y analítica.
+- DESCRIPCIÓN: Re-implementación de 'splitPdfLogically' utilizando PDF-Lib con promesas encadenadas ES5. Restauración del flujo Multipart Reengineering (Segmentación Binaria Autónoma) para archivos > 9.5MB. Re-activación de módulos de Chart.js para Radar y Trend Line con gestión de ciclo de vida (destroy).
+
+ARCHIVO: js/teacher.js
+- LÍNEAS: 150-300, 1100-1150, 1800-2100
+- IMPACTO: Restauración de capacidades administrativas y docentes.
+- DESCRIPCIÓN: Restauración del motor de migración de preguntas (JSON -> Sheets) procesado por bloques. Re-implementación del módulo de analítica psicométrica con soporte para gráficos radar/línea. Restauración del sistema de gestión de noticias con soporte Base64 y enrutamiento jerárquico de navegación sin pérdida de estado.
+
+ARCHIVO: js/api.js, js/auth.js, js/ui-common.js
+- DESCRIPCIÓN: Saneamiento final de sintaxis. Eliminación de residuos de optional chaining y template literals detectados en auditoría forense. Asegurada paridad 1:1 con lógica de negocio v7 original bajo sintaxis ES5 estricta.

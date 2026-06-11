@@ -7,7 +7,7 @@
 - **Dependencias Expuestas:** sw.js, QuizProApp
 - **Descripción del Alcance:** Reemplazar 'async/await' por promesas tradicionales, 'const/let' por 'var', y eliminar arrow functions, template literals, optional chaining y spread operators.
 - **Criterios de Aceptación:** Carga limpia de todos los scripts en IE11/AB Browser sin errores de sintaxis.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [T-FORENSE-02] Restauración de Blindaje Namespace QuizProApp
 - **Origen del Hallazgo:** Auditoría Forense v7.5 - 2026-06-22
@@ -16,7 +16,7 @@
 - **Dependencias Expuestas:** MapaDependencias.md
 - **Descripción del Alcance:** Envolver los archivos en IIFE y registrar las funciones en QuizProApp para evitar colisiones globales.
 - **Criterios de Aceptación:** window.QuizProApp debe contener todos los métodos; no deben existir variables globales huérfanas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [T-FORENSE-03] Remediación de Lógica de Fusión (auth.js)
 - **Origen del Hallazgo:** Auditoría Forense v7.5 - 2026-06-22
@@ -25,4 +25,13 @@
 - **Dependencias Expuestas:** PersistenceManager
 - **Descripción del Alcance:** Sustituir Object.values y bucles for...of por iteración manual ES5 compatible para asegurar la migración de GUEST_UUID.
 - **Criterios de Aceptación:** Sincronización exitosa de XP de invitado en navegadores legacy.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
+
+### [T-RESTAURACION-01] Recuperación de Lógica de Negocio Advanced
+- **Origen del Hallazgo:** Auditoría Forense de Regresión - 2026-06-23
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** js/student.js, js/teacher.js
+- **Dependencias Expuestas:** PDF-Lib, Chart.js, Banco_Preguntas
+- **Descripción del Alcance:** Restaurar funciones de parsing de PDF, subida multipart y analítica psicométrica eliminadas en la remediación anterior. Todo debe ser implementado en ES5 estricto.
+- **Criterios de Aceptación:** Subida exitosa de archivos > 10MB con fragmentación y visualización de gráficos radar en el dashboard.
+- **Estado:** [X] Completada
