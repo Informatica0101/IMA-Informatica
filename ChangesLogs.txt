@@ -380,3 +380,26 @@ ARCHIVO: js/persistence.js
 ARCHIVO: sw.js
 - Optimización: Reingeniería de Stale-While-Revalidate para mayor fluidez en navegadores legacy.
 - Mejora: Manejo de errores con Response(404/500) controlados.
+
+FECHA: 2026-06-22 (AUDITORÍA FORENSE v7.5)
+ARCHIVO: Auditoría.txt
+- DESCRIPCIÓN: Registro de hallazgos forenses detectando fugas masivas de ES6 en el núcleo del sistema (api.js, student.js, auth.js, ui-common.js, teacher.js).
+
+ARCHIVO: Pendientes.md
+- DESCRIPCIÓN: Creación del registro oficial de tareas de remediación para transpilación ES5 y unificación de namespace.
+
+ARCHIVO: MapaDependencias.md
+- DESCRIPCIÓN: Creación del inventario estructural del sistema para garantizar la trazabilidad de módulos y funciones.
+
+FECHA: 2026-06-22 (AUDITORÍA FORENSE v7.5)
+ARCHIVO: Auditoría.txt
+- LÍNEAS: Nueva sección final.
+- DESCRIPCIÓN: Implementación de Matriz de Rastreo Forense. Identificación de 10 puntos críticos de regresión ES6 y quiebres de lógica en el Dashboard de Estudiante/Profesor y API.
+
+ARCHIVO: Pendientes.md
+- LÍNEAS: 1-25
+- DESCRIPCIÓN: Creación del archivo de gestión de tareas sustituyendo Instrucciones.txt. Registro de tareas T-FORENSE-01 a 03.
+
+ARCHIVO: MapaDependencias.md
+- LÍNEAS: 1-40
+- DESCRIPCIÓN: Documentación estructural del namespace QuizProApp y flujos de datos asíncronos.
