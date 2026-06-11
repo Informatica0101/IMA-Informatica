@@ -75,6 +75,23 @@ var QuizProApp = window.QuizProApp || {};
 
     app.redondearMetrica = app.formatearMetricaPsicométrica;
 
+    /**
+     * Helper manual para extraer parámetros de la URL (ES5 compatible).
+     * @param {string} param - Nombre del parámetro.
+     * @returns {string|null} - Valor del parámetro o null.
+     */
+    app.getUrlParam = function(param) {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (decodeURIComponent(pair[0]) === param) {
+                return decodeURIComponent(pair[1]);
+            }
+        }
+        return null;
+    };
+
     app.sanitizarHTMLTecnico = function(html) {
         if (!html) return '';
         var temp = document.createElement('div');

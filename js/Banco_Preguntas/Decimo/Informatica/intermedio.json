@@ -504,20 +504,6 @@
     "Activa": true
   },
   {
-    "Pregunta": "¿Qué es la topología de red en bus?",
-    "RespuestaCorrecta": "Los dispositivos se conectan a un único cable central",
-    "Nivel": "Intermedio",
-    "Tema": "Redes",
-    "Asignatura": "Informatica",
-    "Grado": 10,
-    "TipoActividad": "opcion_multiple",
-    "OpcionA": "Cada PC se conecta a todos los demás",
-    "OpcionB": "Los dispositivos se conectan a un único cable central",
-    "OpcionC": "Conexión a través de un satélite",
-    "OpcionD": "Red sin cables físicos",
-    "Activa": true
-  },
-  {
     "Pregunta": "¿Qué es una red de área personal (PAN)?",
     "RespuestaCorrecta": "Conexión de dispositivos personales (ej. celular y reloj)",
     "Nivel": "Intermedio",

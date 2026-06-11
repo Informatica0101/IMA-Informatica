@@ -100,5 +100,23 @@ AUDITORÍA FORENSE DE CUMPLIMIENTO Y BLINDAJE (v7.6) - 2026-06-23
    - [PASADO] Bloque de 10mo (Informática) consolidado con 150 reactivos de fundamentos (Redes/Algoritmos/DFD).
    - [VERIFICADO] Cumplimiento del 100% de 'NORMAS_Y_DISEÑO_REACTIVOS.md' en el bloque de 10mo.
 
+--------------------------------------------------------------------------------
+AUDITORÍA FORENSE DE MOTORES DE JUEGO (v7.6) - 2026-06-23
+--------------------------------------------------------------------------------
+
+MATRIZ DE RASTREO FORENSE - REGRESIÓN Y FUGAS DE NAMESPACE
+
+| [Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5] |
+| :--- | :--- | :--- | :--- | :--- |
+| js/destreza_teclado.js:4 | Namespace / Sintaxis | `const gameWords = { ... }` | Contaminación global. Quiebre en AB Browser por 'const'. | Encapsular en IIFE y usar `var`. |
+| js/destreza_teclado.js:156 | Sintaxis | `QuizProApp.initDexterityGame = async function() {` | SyntaxError: 'async' no soportado en motores legacy. | Usar promesas tradicionales (.then). |
+| js/destreza_teclado.js:197 | Sintaxis | `availableWords = shuffleArray([...gameWords[difficultyKey]]);` | SyntaxError: Spread operator no soportado. | Usar `slice()` o `concat()`. |
+| js/perifericos_juego.js:2 | Namespace / Sintaxis | `const peripherals = [ ... ]` | Contaminación global. Bloqueo de carga por 'const'. | Encapsular en IIFE y usar `var`. |
+| js/perifericos_juego.js:49 | Sintaxis | `miniLb.innerHTML = lb.global.slice(0, 3).map((u, i) => ...` | SyntaxError: Arrow functions no soportadas. | Usar `function(u, i)`. |
+| js/perifericos_juego.js:55 | Sintaxis | `const myRecord = record?.["Juego de Periféricos"]` | SyntaxError: Optional chaining no soportado. | Usar validación ternaria o `&&`. |
+| js/webmaster_quiz_juego.js:4 | Namespace / Sintaxis | `const quizData = { ... }` | Contaminación global masiva. SyntaxError fatal. | Encapsular en IIFE y usar `var`. |
+| js/webmaster_quiz_juego.js:815 | Sintaxis | `QuizProApp.initQuizGame = async function() {` | SyntaxError: 'async' no soportado. | Usar promesas tradicionales. |
+| js/webmaster_quiz_juego.js:818 | Sintaxis | `const { lb, record } = await GamesAdapter.init('webmaster');` | SyntaxError: Destructuring y await no soportados. | Acceso directo a propiedades y `.then()`. |
+
 DIAGNÓSTICO TÉCNICO FINAL v7.6:
-El ecosistema ha alcanzado el estado de Blindaje Total. Se ha neutralizado la deuda de compatibilidad legacy y se ha restaurado la coherencia pedagógica del banco de preguntas. La aplicación está lista para despliegue en hardware institucional restringido.
+El ecosistema presenta una "isla de modernidad" incompatible en los motores de juegos. Mientras que la estructura principal cumple con ES5, los minijuegos actúan como puntos de fallo críticos que impedirán la ejecución de actividades evaluativas en el hardware del instituto. Se requiere remediación inmediata bajo el namespace QuizProApp.

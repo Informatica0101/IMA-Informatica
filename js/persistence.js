@@ -5,6 +5,8 @@
 var QuizProApp = window.QuizProApp || {};
 
 (function(app) {
+    "use strict";
+
     app.PersistenceManager = {
         DB_NAME: 'IMA_Persistence_DB',
         DB_VERSION: 2,

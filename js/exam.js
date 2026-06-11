@@ -60,8 +60,7 @@ var QuizProApp = window.QuizProApp || {};
                             startBtn.addEventListener('click', function() {
                                 if (startOverlay) {
                                     startOverlay.classList.add('opacity-0', 'pointer-events-none');
-var QuizProApp = window.QuizProApp || {};
-                                    setTimeout(function(app) { startOverlay.classList.add('hidden'); }, 500);
+                                    setTimeout(function() { startOverlay.classList.add('hidden'); }, 500);
                                 }
                                 startTimer(timeLimitFromApi);
                                 requestFullscreen();
@@ -282,8 +281,7 @@ var QuizProApp = window.QuizProApp || {};
 
             updateTimerDisplay();
 
-var QuizProApp = window.QuizProApp || {};
-            var timerInterval = setInterval(function(app) {
+            var timerInterval = setInterval(function() {
                 timeRemaining--;
                 if (timeRemaining <= 0) {
                     clearInterval(timerInterval);

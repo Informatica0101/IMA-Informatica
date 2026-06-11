@@ -5,6 +5,10 @@
 var QuizProApp = window.QuizProApp || {};
 
 (function(app) {
+    "use strict";
+
+    var studentRadarChart = null;
+    var studentTrendChart = null;
 
     document.addEventListener('DOMContentLoaded', function() {
         var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
@@ -1428,8 +1432,8 @@ var QuizProApp = window.QuizProApp || {};
             var avgMastery = sumMastery / profileData.length;
             var avgIA = 100 - avgICR;
 
-            if (window.studentRadarChart) window.studentRadarChart.destroy();
-            window.studentRadarChart = new Chart(radarCtx, {
+            if (studentRadarChart) studentRadarChart.destroy();
+            studentRadarChart = new Chart(radarCtx, {
                 type: 'radar',
                 data: {
                     labels: ['Confianza', 'Dominio', 'Estabilidad'],
@@ -1455,8 +1459,8 @@ var QuizProApp = window.QuizProApp || {};
                 trendLabels.push(recentProfileData[i].tema.substring(0, 5));
             }
 
-            if (window.studentTrendChart) window.studentTrendChart.destroy();
-            window.studentTrendChart = new Chart(trendCtx, {
+            if (studentTrendChart) studentTrendChart.destroy();
+            studentTrendChart = new Chart(trendCtx, {
                 type: 'line',
                 data: {
                     labels: trendLabels,

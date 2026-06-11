@@ -5,6 +5,10 @@
 var QuizProApp = window.QuizProApp || {};
 
 (function(app) {
+    "use strict";
+
+    var tRadar = null;
+    var tTrend = null;
 
     document.addEventListener('DOMContentLoaded', function() {
         var RoleCapabilities = {
@@ -1121,16 +1125,16 @@ var QuizProApp = window.QuizProApp || {};
                 var tCtx = tEl ? tEl.getContext('2d') : null;
                 if (!rCtx || !tCtx) return;
 
-                if (window.tRadar) window.tRadar.destroy();
-                window.tRadar = new Chart(rCtx, {
+                if (tRadar) tRadar.destroy();
+                tRadar = new Chart(rCtx, {
                     type: 'radar',
                     data: { labels: ['ICR','MST','STB'], datasets: [{ data: [avgD, avgP, avgD], backgroundColor: 'rgba(59,130,246,0.2)', borderColor: '#3b82f6', borderWidth: 1, pointRadius: 0 }] },
                     options: { scales: { r: { beginAtZero: true, max: 100, ticks: { display: false } } }, plugins: { legend: { display: false } } }
                 });
 
                 var trendData = profileData.slice(-5).map(function(item) { return item.dominio; });
-                if (window.tTrend) window.tTrend.destroy();
-                window.tTrend = new Chart(tCtx, {
+                if (tTrend) tTrend.destroy();
+                tTrend = new Chart(tCtx, {
                     type: 'line',
                     data: { labels: trendData.map(function(_,i){return i+1;}), datasets: [{ data: trendData, borderColor: '#10b981', borderWidth: 2, tension: 0.4, pointRadius: 0, fill: false }] },
                     options: { scales: { y: { display: false }, x: { display: false } }, plugins: { legend: { display: false } } }

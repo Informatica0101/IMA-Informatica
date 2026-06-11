@@ -147,9 +147,9 @@
     <script src="js/ui-common.js?v=22"></script>
     <script src="js/results.js?v=22"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.setupCommonUI) window.setupCommonUI();
-            if (window.renderCommonNav) window.renderCommonNav();
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.QuizProApp && window.QuizProApp.setupCommonUI) window.QuizProApp.setupCommonUI();
+            if (window.QuizProApp && window.QuizProApp.renderCommonNav) window.QuizProApp.renderCommonNav();
         });
     </script>
 </body>

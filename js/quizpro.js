@@ -5,6 +5,8 @@
 var QuizProApp = window.QuizProApp || {};
 
 (function(app) {
+    "use strict";
+
     // --- State Variables ---
     var allPresentationQuestions = [];
     var currentQuizQuestions = [];
@@ -543,7 +545,7 @@ var QuizProApp = window.QuizProApp || {};
             codeEl.textContent = q.code; optCont.appendChild(codeEl);
             app.getBalancedOptions(q.options, q.answer).forEach(function(opt) {
                 var btn = document.createElement('button'); btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
-                btn.textContent = opt; btn.onclick = function() { app.checkAnswer(opt, q.answer, btn); }; optCont.appendChild(btn);
+                btn.innerText = opt; btn.onclick = function() { app.checkAnswer(opt, q.answer, btn); }; optCont.appendChild(btn);
             });
         } else if (q.type === 'transcription') {
             fibCont.classList.remove('hidden');
@@ -558,7 +560,7 @@ var QuizProApp = window.QuizProApp || {};
             optCont.classList.remove('hidden');
             ["Verdadero", "Falso"].forEach(function(opt) {
                 var btn = document.createElement('button'); btn.className = 'option-card w-full p-6 text-center border-2 border-gray-100 rounded-2xl font-black text-gray-700 bg-white hover:bg-blue-50 transition-all uppercase tracking-widest text-sm';
-                btn.textContent = opt; btn.onclick = function() { var val = (String(q.answer).toLowerCase().indexOf('v') === 0) ? opt : (opt === "Verdadero" ? "A" : "B"); app.checkAnswer(val, q.answer, btn); }; optCont.appendChild(btn);
+                btn.innerText = opt; btn.onclick = function() { var val = (String(q.answer).toLowerCase().indexOf('v') === 0) ? opt : (opt === "Verdadero" ? "A" : "B"); app.checkAnswer(val, q.answer, btn); }; optCont.appendChild(btn);
             });
         } else if (q.type === 'memory') {
             matchCont.classList.remove('hidden');
@@ -594,7 +596,7 @@ var QuizProApp = window.QuizProApp || {};
             optCont.classList.remove('hidden');
             app.getBalancedOptions(q.options, q.answer).forEach(function(opt) {
                 var btn = document.createElement('button'); btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
-                btn.textContent = opt; btn.onclick = function() { app.checkAnswer(opt, q.answer, btn); }; optCont.appendChild(btn);
+                btn.innerText = opt; btn.onclick = function() { app.checkAnswer(opt, q.answer, btn); }; optCont.appendChild(btn);
             });
         }
         app.registerSeenQuestion(q.id);

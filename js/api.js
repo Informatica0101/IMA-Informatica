@@ -5,6 +5,8 @@
 var QuizProApp = window.QuizProApp || {};
 
 (function(app) {
+    "use strict";
+
     /**
      * Helper unificado para realizar llamadas a los microservicios.
      * @param {string} service - El nombre del servicio (ej. 'USER', 'TASK', 'EXAM').
