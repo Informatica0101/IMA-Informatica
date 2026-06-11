@@ -460,3 +460,23 @@ Archivo: js/persistence.js
 
 Archivo: Seguridad (js/config.js)
 - [HALLAZGO] Falta de restricciones nativas para mitigar la inspección accidental del código fuente y herramientas de desarrollo.
+
+AUDITORÍA DE BLINDAJE DE PERSISTENCIA v7.5 - 2026-06-22
+
+Archivo: js/persistence.js
+- [VERIFICADO] La purga de datos en clearTelemetry() utiliza ahora un cursor selectivo.
+- [SANEAMIENTO] Se conservan los registros consolidados de XP y niveles; solo se eliminan las entradas 'pending_anl_'.
+- [VERIFICADO] Bucle de sincronización asíncrona robusto que espera a Promise.all antes de limpiar.
+
+Archivo: sw.js
+- [VERIFICADO] Transpilación absoluta a ES5 (var, function, .then).
+- [HALLAZGO] Remoción de async/await y arrow functions para prevenir SyntaxError en motores legacy.
+- [OPTIMIZACIÓN] Implementado fallback Response(404) en fallos de red/caché para evitar bloqueo de hilo.
+
+Archivo: js/games-adapter.js
+- [REFACTOR] Integración en el espacio de nombres QuizProApp.
+- [VERIFICADO] Transpilación a ES5 y manejo de contexto (self = this) en promesas.
+
+Espacio de Nombres (QuizProApp):
+- [CONSOLIDADO] Centralización de todas las utilidades en un objeto raíz único.
+- [ENCAPSULADO] Uso de IIFEs en todos los archivos del núcleo para evitar colisiones.

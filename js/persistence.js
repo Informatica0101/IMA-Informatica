@@ -168,20 +168,31 @@ var QuizProApp = window.QuizProApp || {};
 
         /**
          * REQ v7.5: Telemetry Cleanup Logic.
-         * Clears raw telemetry data from 'local_progress' after successful sync.
+         * Clears ONLY raw telemetry data (keys starting with 'pending_anl_')
+         * after successful sync. Consolidated progress (XP, levels) is PRESERVED.
          */
         clearTelemetry: function() {
             var self = this;
-            console.log("[Persistence] Cleaning up telemetry data...");
+            console.log("[Persistence] Cleaning up raw telemetry payloads...");
             return this.init().then(function() {
-                var transaction = self._db.transaction(['local_progress'], 'readwrite');
-                var objectStore = transaction.objectStore('local_progress');
-                var request = objectStore.clear();
-
                 return new Promise(function(resolve, reject) {
-                    request.onsuccess = function() {
-                        console.log("[Persistence] Telemetry cache optimized.");
-                        resolve();
+                    var transaction = self._db.transaction(['local_progress'], 'readwrite');
+                    var objectStore = transaction.objectStore('local_progress');
+                    var request = objectStore.openKeyCursor();
+
+                    request.onsuccess = function(event) {
+                        var cursor = event.target.result;
+                        if (cursor) {
+                            var key = cursor.key;
+                            // Only delete raw analytical records, preserve consolidated state
+                            if (typeof key === 'string' && key.indexOf('pending_anl_') === 0) {
+                                objectStore["delete"](key);
+                            }
+                            cursor["continue"]();
+                        } else {
+                            console.log("[Persistence] Telemetry cache optimized. Consolidated data preserved.");
+                            resolve();
+                        }
                     };
                     request.onerror = function(e) { reject(e); };
                 });

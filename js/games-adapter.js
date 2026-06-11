@@ -1,280 +1,283 @@
 /**
- * Adaptador Unificado para Minijuegos (Fase 1)
+ * Adaptador Unificado para Minijuegos (Fase 1) - QuizPro v7.5
+ * Strict ES5 Implementation with Namespacing.
  */
-window.GamesAdapter = {
-    // REQ: Mensajes dinámicos de carga
-    loadingMessages: [
-        "Cargando estadísticas...",
-        "Preparando actividad...",
-        "Calculando progreso académico...",
-        "Obteniendo ranking global...",
-        "Analizando desempeño anterior..."
-    ],
+var QuizProApp = window.QuizProApp || {};
 
-    state: {
-        currentSession: null,
-        personalRecords: {}
-    },
+(function(app) {
+    app.GamesAdapter = {
+        // REQ: Mensajes dinámicos de carga
+        loadingMessages: [
+            "Cargando estadísticas...",
+            "Preparando actividad...",
+            "Calculando progreso académico...",
+            "Obteniendo ranking global...",
+            "Analizando desempeño anterior..."
+        ],
 
-    async init(gameId, autoHide = true) {
-        console.log(`[GamesAdapter] Iniciando sesión para: ${gameId}`);
-        this.state.currentSession = {
-            gameId,
-            startTime: Date.now(),
-            actions: []
-        };
-        await this.showLoading(true);
+        state: {
+            currentSession: null,
+            personalRecords: {}
+        },
 
-        // REQ: Pre-carga segura con timeout (Fase 2)
-        try {
-            const timeout = (ms) => new Promise(resolve => setTimeout(() => resolve('TIMEOUT'), ms));
+        init: function(gameId, autoHide) {
+            var self = this;
+            if (autoHide === undefined) autoHide = true;
+            console.log("[GamesAdapter] Iniciando sesión para: " + gameId);
 
-            const results = await Promise.race([
-                Promise.all([
-                    this.getLeaderboard(gameId).catch(e => null),
-                    this.getPersonalRecord().catch(e => ({}))
-                ]),
-                timeout(5000)
-            ]);
+            this.state.currentSession = {
+                gameId: gameId,
+                startTime: Date.now(),
+                actions: []
+            };
 
-            if (results === 'TIMEOUT') {
-                console.warn("[GamesAdapter] Timeout en pre-carga de datos, continuando con valores por defecto.");
-                this.state.personalRecords = {};
-                if (autoHide) await this.showLoading(false);
+            return this.showLoading(true).then(function() {
+                var timeoutPromise = new Promise(function(resolve) {
+                    setTimeout(function() { resolve('TIMEOUT'); }, 5000);
+                });
+
+                var dataPromise = Promise.all([
+                    self.getLeaderboard(gameId)["catch"](function() { return null; }),
+                    self.getPersonalRecord()["catch"](function() { return {}; })
+                ]);
+
+                return Promise.race([dataPromise, timeoutPromise]);
+            }).then(function(results) {
+                if (results === 'TIMEOUT') {
+                    console.warn("[GamesAdapter] Timeout en pre-carga de datos.");
+                    self.state.personalRecords = {};
+                    if (autoHide) return self.showLoading(false).then(function() { return { lb: { global: [], subjectTops: {} }, record: {} }; });
+                    return { lb: { global: [], subjectTops: {} }, record: {} };
+                }
+
+                var lb = results[0];
+                var record = results[1];
+                self.state.personalRecords = record || {};
+                var safeLb = lb || { global: [], subjectTops: {} };
+
+                if (autoHide) {
+                    return self.showLoading(false).then(function() {
+                        return { lb: safeLb, record: record || {} };
+                    });
+                }
+                return { lb: safeLb, record: record || {} };
+            })["catch"](function(e) {
+                console.error("[GamesAdapter] Error crítico en init:", e);
+                self.state.personalRecords = {};
+                if (autoHide) return self.showLoading(false).then(function() { return { lb: { global: [], subjectTops: {} }, record: {} }; });
                 return { lb: { global: [], subjectTops: {} }, record: {} };
+            });
+        },
+
+        showLoading: function(active, container) {
+            var self = this;
+            if (active === undefined) active = true;
+
+            // REQ: Soporte para Spinner Contextual (Ticket 3)
+            if (container && active) {
+                container.innerHTML = '<div class="flex flex-col items-center justify-center p-8 animate-fade-in contextual-loader w-full col-span-full">' +
+                        '<div class="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mb-4"></div>' +
+                        '<p class="text-[10px] font-black text-blue-600 uppercase tracking-widest animate-pulse">' + self.loadingMessages[Math.floor(Math.random() * self.loadingMessages.length)] + '</p>' +
+                    '</div>';
+                return Promise.resolve();
             }
 
-            const [lb, record] = results;
-            this.state.personalRecords = record || {};
+            var overlay = document.getElementById('loading-overlay');
+            var msgEl = document.getElementById('loading-msg');
+            var bar = document.getElementById('loading-bar');
 
-            // REQ: Asegurar que el ranking tenga estructura base (v3.2)
-            const safeLb = lb || { global: [], subjectTops: {} };
+            if (!overlay) return Promise.resolve();
 
-            return { lb: safeLb, record: record || {} };
-        } catch (e) {
-            console.error("[GamesAdapter] Error crítico en init:", e);
-            this.state.personalRecords = {};
-            return { lb: { global: [], subjectTops: {} }, record: {} };
-        } finally {
-            // REQ: Liberar loader siempre ( QA Automático )
-            // Si autoHide es false, el llamador es responsable de cerrar el loader tras renderizar.
-            if (autoHide) await this.showLoading(false);
-        }
-    },
+            if (active) {
+                overlay.classList.remove('pointer-events-none');
+                overlay.classList.add('opacity-100');
+                if (bar) bar.style.width = '30%';
 
-    async showLoading(active = true, container = null) {
-        // REQ: Soporte para Spinner Contextual (Ticket 3)
-        if (container && active) {
-            console.log("[GamesAdapter] Mostrando loader contextual en:", container.id || container.className);
-            container.innerHTML = `
-                <div class="flex flex-col items-center justify-center p-8 animate-fade-in contextual-loader w-full col-span-full">
-                    <div class="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-                    <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest animate-pulse">${this.loadingMessages[Math.floor(Math.random() * this.loadingMessages.length)]}</p>
-                </div>
-            `;
-            return Promise.resolve();
-        }
+                var i = 0;
+                this.loadingInterval = setInterval(function() {
+                    if (msgEl) msgEl.textContent = self.loadingMessages[i % self.loadingMessages.length];
+                    if (bar) bar.style.width = Math.min(90, 30 + (i * 10)) + '%';
+                    i++;
+                }, 800);
+                return Promise.resolve();
+            } else {
+                var contextualLoaders = document.querySelectorAll('.contextual-loader');
+                for (var j = 0; j < contextualLoaders.length; j++) contextualLoaders[j].parentNode.removeChild(contextualLoaders[j]);
 
-        const overlay = document.getElementById('loading-overlay');
-        const msgEl = document.getElementById('loading-msg');
-        const bar = document.getElementById('loading-bar');
+                clearInterval(this.loadingInterval);
+                if (bar) bar.style.width = '100%';
 
-        if (!overlay) return;
+                return new Promise(function(resolve) {
+                    setTimeout(function() {
+                        overlay.classList.add('opacity-0', 'pointer-events-none');
+                        overlay.classList.remove('opacity-100');
+                        resolve();
+                    }, 800);
+                });
+            }
+        },
 
-        if (active) {
-            overlay.classList.remove('pointer-events-none');
-            overlay.classList.add('opacity-100');
-            if (bar) bar.style.width = '30%';
+        recordAction: function(data) {
+            if (!this.state.currentSession) return;
 
-            let i = 0;
-            this.loadingInterval = setInterval(() => {
-                if (msgEl) msgEl.textContent = this.loadingMessages[i % this.loadingMessages.length];
-                if (bar) bar.style.width = Math.min(90, 30 + (i * 10)) + '%';
-                i++;
-            }, 800);
-        } else {
-            // Limpiar loaders contextuales si existen
-            document.querySelectorAll('.contextual-loader').forEach(el => el.remove());
+            var action = {};
+            for (var key in data) { if (Object.prototype.hasOwnProperty.call(data, key)) action[key] = data[key]; }
 
-            // REQ 9: Asegurar renderizado final antes de ocultar (Fase 9)
-            clearInterval(this.loadingInterval);
-            if (bar) bar.style.width = '100%';
+            action.timestamp = Date.now();
+            action.timeFromStart = Date.now() - this.state.currentSession.startTime;
+            action.tipoActividad = data.tipoActividad || data.type;
 
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    overlay.classList.add('opacity-0', 'pointer-events-none');
-                    overlay.classList.remove('opacity-100');
-                    console.log("[GamesAdapter] Loader finalizado. Render completo.");
-                    resolve();
-                }, 800); // Buffer para suavizar transición visual
+            this.state.currentSession.actions.push(action);
+
+            if (!this.pendingAnalytics) this.pendingAnalytics = [];
+
+            var persistence = app.PersistenceManager || window.PersistenceManager;
+            var activeId = persistence ? persistence.getActiveId() : 'GUEST-FALLBACK';
+            var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+            var user = userRaw ? JSON.parse(userRaw) : null;
+
+            var payload = {
+                userId: activeId,
+                grado: user ? user.grado : 'Invitado',
+                gameId: this.state.currentSession.gameId,
+                gameName: this.state.currentSession.gameId,
+                isGuest: !user
+            };
+            for (var k in action) { if (Object.prototype.hasOwnProperty.call(action, k)) payload[k] = action[k]; }
+
+            var self = this;
+            var promise = window.fetchApi('USER', 'recordAnalytics', payload)["catch"](function(e) {
+                console.warn("[GamesAdapter] Fallo registro analítico. Guardando localmente...");
+                if (persistence) {
+                    persistence.set('local_progress', action, "pending_anl_" + Date.now());
+                }
+            });
+
+            this.pendingAnalytics.push(promise);
+            promise["finally"](function() {
+                self.pendingAnalytics = self.pendingAnalytics.filter(function(p) { return p !== promise; });
+            });
+        },
+
+        finishSession: function(asignatura, level, finalScore, xpGanada) {
+            var session = this.state.currentSession;
+            if (!session) return Promise.resolve();
+            if (xpGanada === undefined) xpGanada = 0;
+
+            var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+            var user = userRaw ? JSON.parse(userRaw) : null;
+            var totalTime = Date.now() - session.startTime;
+
+            if (!user) {
+                var guestRecords = JSON.parse(localStorage.getItem('guest_records') || '{}');
+                if (!guestRecords[session.gameId] || finalScore > guestRecords[session.gameId].score) {
+                    guestRecords[session.gameId] = {
+                        score: finalScore,
+                        date: new Date().toISOString(),
+                        level: level,
+                        asignatura: asignatura,
+                        xp: xpGanada
+                    };
+                    localStorage.setItem('guest_records', JSON.stringify(guestRecords));
+                }
+                return Promise.resolve({ status: 'success', mode: 'guest' });
+            }
+
+            var payload = {
+                userId: user.userId,
+                nombreAlumno: user.nombre,
+                juego: session.gameId,
+                asignatura: asignatura,
+                nivel: level,
+                puntaje: finalScore,
+                grado: user.grado,
+                totalTime: totalTime,
+                xpGanada: xpGanada
+            };
+
+            window.fetchApi('USER', 'saveGameResult', payload)["catch"](function(e) {
+                console.warn("[GamesAdapter] Fallo sincronización de fin de sesión.", e);
+            });
+
+            return Promise.resolve({ status: 'success', message: 'Resultado registrado localmente.' });
+        },
+
+        saveResult: function(gameId, gameName, asignatura, level, score, behavioralData) {
+            return this.finishSession(asignatura, level, score);
+        },
+
+        getLeaderboard: function(gameId) {
+            var self = this;
+            var persistence = app.PersistenceManager || window.PersistenceManager;
+            var promise = Promise.resolve();
+
+            if (persistence) {
+                promise = persistence.get('rankings').then(function(cached) {
+                    if (cached && cached.data) self.state.leaderboard = cached.data;
+                });
+            }
+
+            return promise.then(function() {
+                return window.fetchApi('USER', 'getGlobalTop', { gameId: gameId }, 0, { store: 'rankings' });
+            }).then(function(res) {
+                if (res && res.status === 'success') {
+                    self.state.leaderboard = res;
+                    return res;
+                }
+                return self.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
+            })["catch"](function() {
+                return self.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
+            });
+        },
+
+        getPersonalRecord: function() {
+            var self = this;
+            var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+            var user = userRaw ? JSON.parse(userRaw) : null;
+
+            if (!user) {
+                var guestRecords = JSON.parse(localStorage.getItem('guest_records') || '{}');
+                return Promise.resolve(guestRecords);
+            }
+
+            var persistence = app.PersistenceManager || window.PersistenceManager;
+            var promise = Promise.resolve();
+
+            if (persistence) {
+                promise = persistence.get('academic_stats').then(function(cached) {
+                    if (cached && cached.data) self.state.personalRecords = cached.data;
+                });
+            }
+
+            return promise.then(function() {
+                return window.fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, { store: 'academic_stats' });
+            }).then(function(res) {
+                if (res && res.status === 'success' && res.data) {
+                    self.state.personalRecords = res.data;
+                    return res.data;
+                }
+                return self.state.personalRecords || {};
+            })["catch"](function() {
+                return self.state.personalRecords || {};
             });
         }
-    },
+    };
 
-    recordAction(data) {
-        if (!this.state.currentSession) return;
+    window.GamesAdapter = app.GamesAdapter;
 
-        const action = {
-            ...data,
-            timestamp: Date.now(),
-            timeFromStart: Date.now() - this.state.currentSession.startTime,
-            tipoActividad: data.tipoActividad || data.type // Normalización v2.0
-        };
-        this.state.currentSession.actions.push(action);
-
-        // REQ: Track pending analytical calls for final synchronization (Tarea 2)
-        if (!this.pendingAnalytics) this.pendingAnalytics = [];
-
-        // Envío asíncrono para no bloquear UI
-        const activeId = window.PersistenceManager ? window.PersistenceManager.getActiveId() : 'GUEST-FALLBACK';
-        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-
-        // REQ: Guest Analytics Support (Modulo 2)
-        const promise = fetchApi('USER', 'recordAnalytics', {
-            userId: activeId,
-            grado: user ? user.grado : 'Invitado',
-            gameId: this.state.currentSession.gameId,
-            gameName: this.state.currentSession.gameId,
-            isGuest: !user,
-            ...action
-        }).catch(e => {
-            console.warn("[GamesAdapter] Fallo registro analítico. Guardando localmente...", e);
-            if (window.PersistenceManager) {
-                window.PersistenceManager.set('local_progress', action, `pending_anl_${Date.now()}`);
-            }
-        });
-
-        this.pendingAnalytics.push(promise);
-        // Limpieza automática
-        promise.finally(() => {
-            this.pendingAnalytics = this.pendingAnalytics.filter(p => p !== promise);
-        });
-    },
-
-    async finishSession(asignatura, level, finalScore, xpGanada = 0) {
-        const session = this.state.currentSession;
-        if (!session) return;
-
-        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-        const totalTime = Date.now() - session.startTime;
-
-        // REQ: Persistencia local para Invitados (Ticket 2)
-        if (!user) {
-            console.log("[GamesAdapter] Modo Invitado: Guardando récord local.");
-            const guestRecords = JSON.parse(localStorage.getItem('guest_records') || '{}');
-            if (!guestRecords[session.gameId] || finalScore > guestRecords[session.gameId].score) {
-                guestRecords[session.gameId] = {
-                    score: finalScore,
-                    date: new Date().toISOString(),
-                    level,
-                    asignatura,
-                    xp: xpGanada
-                };
-                localStorage.setItem('guest_records', JSON.stringify(guestRecords));
-            }
-            return Promise.resolve({ status: 'success', mode: 'guest' });
-        }
-
-        const payload = {
-            userId: user.userId,
-            nombreAlumno: user.nombre,
-            juego: session.gameId,
-            asignatura,
-            nivel: level,
-            puntaje: finalScore,
-            grado: user.grado,
-            totalTime,
-            xpGanada: xpGanada // COLUMNA I en Spreadsheet
-        };
-
-        // REQ: Telemetría Silenciosa (Modulo 4)
-        // No esperamos la red para permitir que el juego muestre la pantalla de éxito inmediatamente
-        fetchApi('USER', 'saveGameResult', payload).then(res => {
-            console.log(`[GamesAdapter] Sesión finalizada y sincronizada: ${finalScore}%`);
-            // Si el juego es QuizPro, ya maneja su propia sincronización local,
-            // pero para otros juegos podríamos actualizar el caché aquí si fuera necesario.
-        }).catch(e => {
-            console.warn("[GamesAdapter] Fallo sincronización de fin de sesión. Se confía en persistencia local previa.", e);
-        });
-
-        return Promise.resolve({ status: 'success', message: 'Resultado registrado localmente.' });
-    },
-
-    async saveResult(gameId, gameName, asignatura, level, score, behavioralData = {}) {
-        // Método legacy para compatibilidad
-        return this.finishSession(asignatura, level, score);
-    },
-
-    async getLeaderboard(gameId) {
-        // REQ: Offline-First (Modulo 1)
-        if (window.PersistenceManager) {
-            const cached = await window.PersistenceManager.get('rankings');
-            if (cached && cached.data) this.state.leaderboard = cached.data;
-        }
-
-        try {
-            const res = await fetchApi('USER', 'getGlobalTop', { gameId }, 0, {
-                store: 'rankings'
-            });
-            if (res && res.status === 'success') {
-                this.state.leaderboard = res;
-                return res;
-            }
-            return this.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
-        } catch (e) {
-            console.warn(`[GamesAdapter] Error obteniendo leaderboard para ${gameId}:`, e);
-            return this.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
-        }
-    },
-
-    async getPersonalRecord() {
-        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-
-        // REQ: Consultar récords locales para Invitados
-        if (!user) {
-            const guestRecords = JSON.parse(localStorage.getItem('guest_records') || '{}');
-            return guestRecords;
-        }
-
-        // REQ: Offline-First (Modulo 1)
-        if (window.PersistenceManager) {
-            const cached = await window.PersistenceManager.get('academic_stats');
-            if (cached && cached.data) this.state.personalRecords = cached.data;
-        }
-
-        try {
-            const res = await fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
-                store: 'academic_stats'
-            });
-            if (res && res.status === 'success' && res.data) {
-                this.state.personalRecords = res.data;
-                return res.data;
-            }
-            return this.state.personalRecords || {};
-        } catch (e) {
-            console.warn("[GamesAdapter] Error obteniendo record personal:", e);
-            return this.state.personalRecords || {};
-        }
-    }
-};
-
-/**
- * REQ: Wake Lock API (v3.2)
- * Evita que la pantalla se apague durante el juego.
- */
-let wakeLock = null;
-async function requestWakeLock() {
-    try {
+    var wakeLock = null;
+    app.requestWakeLock = function() {
         if ('wakeLock' in navigator) {
-            wakeLock = await navigator.wakeLock.request('screen');
-            console.log('[GamesAdapter] Wake Lock activado');
+            navigator.wakeLock.request('screen').then(function(lock) {
+                wakeLock = lock;
+                console.log('[GamesAdapter] Wake Lock activado');
+            })["catch"](function(err) {
+                console.warn('[GamesAdapter] Fallo Wake Lock:', err);
+            });
         }
-    } catch (err) {
-        console.warn('[GamesAdapter] Fallo Wake Lock:', err);
-    }
-}
-window.requestWakeLock = requestWakeLock;
+    };
+    window.requestWakeLock = app.requestWakeLock;
 
+    console.log("[GamesAdapter] Cargado correctamente.");
 
-// REQ: Garantía de disponibilidad para Incidencia 1
-console.log("[GamesAdapter] Cargado correctamente.");
+})(QuizProApp);

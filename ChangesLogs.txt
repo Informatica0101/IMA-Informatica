@@ -359,3 +359,13 @@ ARCHIVO: js/persistence.js
 ARCHIVO: js/config.js
 - Masivo: Transpilación a ES5.
 - Líneas 292-335: Implementación de interceptores de teclado y mouse para deshabilitar clic derecho, F12 y combinaciones de inspección de código.
+
+FECHA: 2026-06-22 (CIERRE v7.5)
+ARCHIVO: js/config.js, js/persistence.js, js/quizpro.js, js/games-adapter.js
+- Masivo: Implementación de arquitectura de Espacio de Nombres (QuizProApp) y encapsulamiento vía IIFEs.
+- Masivo: Transpilación manual exhaustiva a ES5 (remoción de spreads, Object.values, Array.from y async/await).
+- Corrección: Refactorización de clearTelemetry para purga selectiva de búfer analítico preservando progreso consolidado.
+
+ARCHIVO: sw.js
+- Masivo: Transpilación a ES5 y migración de async/await a cadenas de promesas tradicionales.
+- Mejora: Implementación de manejador de errores seguro con retorno de Response(404) para evitar bloqueos de hilo.

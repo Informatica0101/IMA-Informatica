@@ -138,13 +138,17 @@ self.addEventListener('fetch', function(event) {
             cache.put(event.request, networkResponse.clone());
           }
           return networkResponse;
-        })["catch"](function() {
-           // Si falla la red y no hay caché, podemos retornar un fallback opcional
-           console.log("[SW] Fallo de red y sin caché para:", event.request.url);
+        })["catch"](function(err) {
+           // REQ v7.5: Safe controlled response on failure
+           console.log("[SW] Network/Cache error for:", event.request.url, err);
+           // Returns a simple 404-like response instead of throwing to prevent thread freeze
+           return new Response('Offline content unavailable', { status: 404, statusText: 'Offline' });
         });
 
         // Retornamos el caché inmediatamente si existe, si no, esperamos a la red
         return cachedResponse || fetchPromise;
+      })["catch"](function() {
+          return new Response('Persistence failure', { status: 500 });
       });
     })
   );
