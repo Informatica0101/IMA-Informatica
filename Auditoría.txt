@@ -120,3 +120,24 @@ MATRIZ DE RASTREO FORENSE - REGRESIÓN Y FUGAS DE NAMESPACE
 
 DIAGNÓSTICO TÉCNICO FINAL v7.6:
 El ecosistema presenta una "isla de modernidad" incompatible en los motores de juegos. Mientras que la estructura principal cumple con ES5, los minijuegos actúan como puntos de fallo críticos que impedirán la ejecución de actividades evaluativas en el hardware del instituto. Se requiere remediación inmediata bajo el namespace QuizProApp.
+
+--------------------------------------------------------------------------------
+AUDITORÍA FORENSE DEEP-DIVE (Nivel Atómico) - 2026-06-24
+--------------------------------------------------------------------------------
+
+MATRIZ DE RASTREO FORENSE - HALLAZGOS DE INTEGRIDAD Y BLINDAJE
+
+| [Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5] |
+| :--- | :--- | :--- | :--- | :--- |
+| js/quizpro.js:560 | Integridad de UI | `btn.innerText = opt;` | Impide renderizado de etiquetas técnicas (<code>, <b>) soportadas por v7.5. | Usar `btn.innerHTML = app.sanitizarHTMLTecnico(opt);` |
+| js/quizpro.js:685 | Regresión Telemetría | `app.endQuiz = function() { ... app.fetchApi('USER', 'saveGameResult', payload) ... }` | Riesgo de pérdida de telemetría atómica por cierre de sesión antes de resolver `pendingAnalytics`. | Integrar `Promise.all(QuizProApp.GamesAdapter.pendingAnalytics || [])` antes de la sincronización final. |
+| index.html (varias) | Blindaje Namespace | `onclick="handleHeaderAction('show-activities')"` | Intento de llamada a función global inexistente. Quiebre de interacción. | Actualizar a `onclick="QuizProApp.handleHeaderAction('show-activities')"` |
+| js/index-ui.js (varias) | Redundancia Riesgosa | `var QuizProApp = window.QuizProApp \|\| {};` (dentro de handlers) | Re-declaración innecesaria del namespace dentro de scopes locales. Riesgo de inconsistencia. | Eliminar re-declaraciones internas; usar la referencia `app` del IIFE. |
+| js/games-adapter.js:125 | Fuga de Estado | `actions: []` | Los 'actions' se acumulan si no se reinicia el objeto `state.currentSession` correctamente entre reintentos. | Asegurar limpieza total del stack de telemetría en `init()`. |
+| js/Banco_Preguntas/Decimo/Informatica/basico.json | Esquema de Datos | `"RespuestaCorrecta": "..."` | Inconsistencia con el motor v7.6 que prioriza `respuesta_correcta_literal`. | Normalizar llaves a snake_case o asegurar que `normalizeQuestion` mapee correctamente. |
+| js/destreza_teclado.js:460 | Blindaje Namespace | `})(window.QuizProApp);` | Uso de `window.QuizProApp` en lugar de `QuizProApp` (o `app` inyectado). | Estandarizar a `})(QuizProApp);` para coherencia. |
+
+DIAGNÓSTICO TÉCNICO DE NIVEL ATÓMICO:
+1. QUIEBRE DE RENDERIZADO TÉCNICO: La regresión a `innerText` en el motor QuizPro invalida la capacidad de mostrar código fuente en las preguntas de programación.
+2. INSEGURIDAD EN TELEMETRÍA: La falta de sincronización determinista en `endQuiz` con respecto a las analíticas de `GamesAdapter` genera una ventana de pérdida de datos de aproximadamente 1-2 segundos.
+3. VIOLACIÓN DE BLINDAJE (v7.6): Persisten múltiples fugas hacia el objeto `window` en los atributos `onclick` de los archivos HTML, ignorando la jerarquía `QuizProApp`.

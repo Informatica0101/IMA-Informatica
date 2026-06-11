@@ -52,3 +52,30 @@
 - **Descripción del Alcance:** Erradicar asignaciones directas a 'window'. Migrar métodos de navegación y lógica al objeto raíz 'QuizProApp'. Sustituir 'URLSearchParams' por helper manual.
 - **Criterios de Aceptación:** 0 variables globales huérfanas en el objeto window (excepto QuizProApp). Carga funcional en IE11 sin ReferenceError.
 - **Estado:** [X] Completada
+
+### [T-ATÓMICA-01] Saneamiento de Renderizado Técnico y Telemetría Determinista
+- **Origen del Hallazgo:** Auditoría Deep-Dive - 2026-06-24
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** js/quizpro.js, js/games-adapter.js, index.html
+- **Dependencias Expuestas:** QuizProApp.sanitizarHTMLTecnico, GamesAdapter.pendingAnalytics
+- **Descripción del Alcance:** 1) Sustituir innerText por innerHTML sanitizado en renderizado de opciones. 2) Implementar espera de pendingAnalytics en endQuiz. 3) Actualizar onclick en HTML a la jerarquía QuizProApp.
+- **Criterios de Aceptación:** Visualización correcta de etiquetas <code> en el quiz; Sincronización completa de analítica antes de redirección.
+- **Estado:** [ ] Pendiente
+
+### [T-ATÓMICA-02] Normalización de Esquema de Banco de Preguntas
+- **Origen del Hallazgo:** Auditoría Deep-Dive - 2026-06-24
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** js/Banco_Preguntas/ (todos los .json)
+- **Dependencias Expuestas:** QuizProApp.normalizeQuestion
+- **Descripción del Alcance:** Unificar las llaves de respuesta a 'respuesta_correcta_literal' en todos los archivos JSON para eliminar ambigüedad en el motor v7.6.
+- **Criterios de Aceptación:** 100% de los reactivos utilizan la llave estándar snake_case.
+- **Estado:** [ ] Pendiente
+
+### [T-ATÓMICA-03] Limpieza de Redundancias y Estandarización de Footers
+- **Origen del Hallazgo:** Auditoría Deep-Dive - 2026-06-24
+- **Severidad/Clasificación:** Bajo
+- **Archivos Involucrados:** js/index-ui.js, js/destreza_teclado.js, js/perifericos_juego.js, js/webmaster_quiz_juego.js
+- **Dependencias Expuestas:** QuizProApp
+- **Descripción del Alcance:** Eliminar re-declaraciones de QuizProApp dentro de funciones y estandarizar el cierre de IIFEs al objeto 'app' o 'QuizProApp' local.
+- **Criterios de Aceptación:** Consistencia en la estructura de módulos.
+- **Estado:** [ ] Pendiente
