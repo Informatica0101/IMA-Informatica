@@ -339,3 +339,23 @@ ARCHIVO: js/teacher.js
 
 ARCHIVO: js/quizpro.js
 - Línea 1556: Implementado Eager Caching para el ranking global con sincronización silenciosa (Modulo 1.1).
+
+FECHA: 2026-06-22
+ARCHIVO: sw.js
+- Líneas 1: Actualización de CACHE_NAME a v7.5.
+- Líneas 66-90: Inclusión de los 24 módulos JSON del banco de preguntas en el array ASSETS para precarga activa y autonomía 100% Offline-First.
+
+ARCHIVO: js/quizpro.js
+- Masivo: Transpilación manual de sintaxis ES6 a ES5 compatible (eliminación de backticks, arrow functions y declaraciones let/const) para asegurar renderizado en entornos legacy.
+- Líneas 385-420: Refactorización de la lógica de desbloqueo. El nivel Intermedio ahora requiere estrictamente Score >= 70% y superación del Cold Start (> 25 preguntas).
+- Línea 486: Implementación de vaciado de arrays de preguntas y resultados (Memory Liberation) al seleccionar un nuevo nivel.
+- Línea 682: Refactorización de enrutamiento estático de reactivos utilizando concatenación de strings ES5.
+
+ARCHIVO: js/persistence.js
+- Masivo: Transpilación a ES5.
+- Líneas 156-175: Implementación de la función clearTelemetry para purga de búfer local tras éxito de sincronización.
+- Líneas 183-195: Integración de listener 'online' para disparo de sincronización de fondo y optimización de caché.
+
+ARCHIVO: js/config.js
+- Masivo: Transpilación a ES5.
+- Líneas 292-335: Implementación de interceptores de teclado y mouse para deshabilitar clic derecho, F12 y combinaciones de inspección de código.

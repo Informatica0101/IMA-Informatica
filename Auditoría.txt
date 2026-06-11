@@ -443,3 +443,20 @@ Archivo: backend/user-service/Code.gs
 
 Archivos juegos/*.html
 - [HALLAZGO] Todos los minigames conservan el #loading-overlay que debe ser removido o desactivado en favor de Skeleton Screens.
+
+AUDITORÍA DE CONSOLIDACIÓN v7.5 - 2026-06-22
+
+Archivo: sw.js
+- [HALLAZGO] Ausencia de archivos JSON del banco de preguntas en la lista de precarga.
+- [RIESGO] Posibles errores 404 en modo offline al cambiar de asignatura/nivel.
+
+Archivo: js/quizpro.js
+- [HALLAZGO] Uso extensivo de sintaxis ES6 (Template literals, Arrow functions, const/let).
+- [HALLAZGO] La lógica de desbloqueo de nivel Intermedio dependía de múltiples factores psicométricos.
+- [HALLAZGO] No se liberaba la memoria de reactivos anteriores al cambiar de bloque.
+
+Archivo: js/persistence.js
+- [HALLAZGO] Retención crónica de bitácoras de telemetría (local_progress) sin mecanismo de purga tras sincronización.
+
+Archivo: Seguridad (js/config.js)
+- [HALLAZGO] Falta de restricciones nativas para mitigar la inspección accidental del código fuente y herramientas de desarrollo.

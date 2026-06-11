@@ -1,5 +1,5 @@
-const CACHE_NAME = 'informatic-app-v4.0';
-const ASSETS = [
+var CACHE_NAME = 'informatic-app-v7.5';
+var ASSETS = [
   './',
   './index.html',
   './index.html?v=22',
@@ -63,14 +63,38 @@ const ASSETS = [
   './III_BTP_A/terminologia_basica_html_css.html',
   './III_BTP_A/hipervinculos_imagenes.html',
   './III_BTP_A/listas_comentarios_html.html',
-  './III_BTP_A/fuentes_color_fondo.html'
+  './III_BTP_A/fuentes_color_fondo.html',
+  './js/Banco_Preguntas/Decimo/Informatica/basico.json',
+  './js/Banco_Preguntas/Decimo/Informatica/intermedio.json',
+  './js/Banco_Preguntas/Decimo/Informatica/avanzado.json',
+  './js/Banco_Preguntas/Undecimo/Informatica_Aplicada/basico.json',
+  './js/Banco_Preguntas/Undecimo/Informatica_Aplicada/intermedio.json',
+  './js/Banco_Preguntas/Undecimo/Informatica_Aplicada/avanzado.json',
+  './js/Banco_Preguntas/Undecimo/Ofimatica/basico.json',
+  './js/Banco_Preguntas/Undecimo/Ofimatica/intermedio.json',
+  './js/Banco_Preguntas/Undecimo/Ofimatica/avanzado.json',
+  './js/Banco_Preguntas/Undecimo/Analisis_Diseno/basico.json',
+  './js/Banco_Preguntas/Undecimo/Analisis_Diseno/intermedio.json',
+  './js/Banco_Preguntas/Undecimo/Analisis_Diseno/avanzado.json',
+  './js/Banco_Preguntas/Undecimo/Programacion/basico.json',
+  './js/Banco_Preguntas/Undecimo/Programacion/intermedio.json',
+  './js/Banco_Preguntas/Undecimo/Programacion/avanzado.json',
+  './js/Banco_Preguntas/Duodecimo/Programacion_2/basico.json',
+  './js/Banco_Preguntas/Duodecimo/Programacion_2/intermedio.json',
+  './js/Banco_Preguntas/Duodecimo/Programacion_2/avanzado.json',
+  './js/Banco_Preguntas/Duodecimo/Programacion_Orientada_a_Objetos/basico.json',
+  './js/Banco_Preguntas/Duodecimo/Programacion_Orientada_a_Objetos/intermedio.json',
+  './js/Banco_Preguntas/Duodecimo/Programacion_Orientada_a_Objetos/avanzado.json',
+  './js/Banco_Preguntas/Duodecimo/Diseno_Web/basico.json',
+  './js/Banco_Preguntas/Duodecimo/Diseno_Web/intermedio.json',
+  './js/Banco_Preguntas/Duodecimo/Diseno_Web/avanzado.json'
 ];
 
 // Instalar el Service Worker y cachear los recursos
-self.addEventListener('install', event => {
+self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
+      .then(function(cache) {
         console.log('Cache abierto');
         return cache.addAll(ASSETS);
       })
@@ -78,11 +102,11 @@ self.addEventListener('install', event => {
 });
 
 // Activar el Service Worker y eliminar cachés antiguos
-self.addEventListener('activate', event => {
+self.addEventListener('activate', function(event) {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
+    caches.keys().then(function(cacheNames) {
       return Promise.all(
-        cacheNames.map(cacheName => {
+        cacheNames.map(function(cacheName) {
           if (cacheName !== CACHE_NAME) {
             console.log('Borrando caché antiguo:', cacheName);
             return caches.delete(cacheName);
@@ -93,28 +117,28 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Estrategia: Stale-While-Revalidate para mayor velocidad y resiliencia offline (v4.0)
-self.addEventListener('fetch', event => {
+// Estrategia: Stale-While-Revalidate para mayor velocidad y resiliencia offline (v7.5 ES5)
+self.addEventListener('fetch', function(event) {
   // Omitir peticiones a APIs dinámicas de Google Apps Script (siempre red)
-  if (event.request.url.includes('script.google.com')) {
+  if (event.request.url.indexOf('script.google.com') !== -1) {
     return;
   }
 
   // Ignorar peticiones de Analytics/Tracking si las hubiera
-  if (event.request.url.includes('analytics')) {
+  if (event.request.url.indexOf('analytics') !== -1) {
     return;
   }
 
   event.respondWith(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.match(event.request).then(cachedResponse => {
-        const fetchPromise = fetch(event.request).then(networkResponse => {
+    caches.open(CACHE_NAME).then(function(cache) {
+      return cache.match(event.request).then(function(cachedResponse) {
+        var fetchPromise = fetch(event.request).then(function(networkResponse) {
           // Si la respuesta es válida, actualizamos el caché en segundo plano
           if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
             cache.put(event.request, networkResponse.clone());
           }
           return networkResponse;
-        }).catch(() => {
+        })["catch"](function() {
            // Si falla la red y no hay caché, podemos retornar un fallback opcional
            console.log("[SW] Fallo de red y sin caché para:", event.request.url);
         });
@@ -125,16 +149,3 @@ self.addEventListener('fetch', event => {
     })
   );
 });
-
-async function fetchWithTimeout(request, timeout = 3000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-  try {
-    const response = await fetch(request, { signal: controller.signal });
-    clearTimeout(id);
-    return response;
-  } catch (error) {
-    clearTimeout(id);
-    throw error;
-  }
-}
