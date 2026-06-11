@@ -480,3 +480,21 @@ Archivo: js/games-adapter.js
 Espacio de Nombres (QuizProApp):
 - [CONSOLIDADO] Centralización de todas las utilidades en un objeto raíz único.
 - [ENCAPSULADO] Uso de IIFEs en todos los archivos del núcleo para evitar colisiones.
+
+AUDITORÍA DE INTEGRACIÓN v7.5 FINAL - 2026-06-22
+
+Archivo: js/games-adapter.js
+- [CORREGIDO] Referencias a PersistenceManager actualizadas al namespace QuizProApp.
+- [VERIFICADO] Los minijuegos acceden correctamente a las estadísticas locales.
+
+Archivo: js/persistence.js
+- [VERIFICADO] clearTelemetry() blindado para borrar solo payloads 'pending_anl_'.
+- [CONFIRMADO] Se preserva el objeto consolidado de progreso del estudiante tras la sincronización.
+
+Archivo: sw.js
+- [OPTIMIZADO] Lógica de fetch reestructurada para evitar bloqueos por revalidación de red en segundo plano.
+- [VERIFICADO] Fallbacks seguros ante fallos totales de persistencia (Caché + Red).
+
+Seguridad y Sanitización:
+- [CONFIRMADO] Sanitización de etiquetas <span>, <p> y <code> operativa en vistas de tareas.
+- [CONFIRMADO] Interceptores nativos activos y consistentes bajo el namespace global.

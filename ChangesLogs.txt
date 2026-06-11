@@ -369,3 +369,14 @@ ARCHIVO: js/config.js, js/persistence.js, js/quizpro.js, js/games-adapter.js
 ARCHIVO: sw.js
 - Masivo: Transpilación a ES5 y migración de async/await a cadenas de promesas tradicionales.
 - Mejora: Implementación de manejador de errores seguro con retorno de Response(404) para evitar bloqueos de hilo.
+
+FECHA: 2026-06-22 (ENTREGA FINAL v7.5)
+ARCHIVO: js/games-adapter.js
+- Corrección: Actualización de punteros de persistencia al namespace QuizProApp.PersistenceManager.
+
+ARCHIVO: js/persistence.js
+- Mejora: Implementación de borrado quirúrgico en clearTelemetry preservando XP y niveles.
+
+ARCHIVO: sw.js
+- Optimización: Reingeniería de Stale-While-Revalidate para mayor fluidez en navegadores legacy.
+- Mejora: Manejo de errores con Response(404/500) controlados.

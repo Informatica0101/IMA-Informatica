@@ -117,39 +117,47 @@ self.addEventListener('activate', function(event) {
   );
 });
 
-// Estrategia: Stale-While-Revalidate para mayor velocidad y resiliencia offline (v7.5 ES5)
+// Estrategia: Stale-While-Revalidate optimizada (v7.5 ES5)
 self.addEventListener('fetch', function(event) {
-  // Omitir peticiones a APIs dinámicas de Google Apps Script (siempre red)
-  if (event.request.url.indexOf('script.google.com') !== -1) {
+  // 1. Filtros de exclusión (siempre red)
+  var url = event.request.url;
+  if (url.indexOf('script.google.com') !== -1 || url.indexOf('analytics') !== -1) {
     return;
   }
 
-  // Ignorar peticiones de Analytics/Tracking si las hubiera
-  if (event.request.url.indexOf('analytics') !== -1) {
+  // 2. Manejo de peticiones GET (Caché compatible)
+  if (event.request.method !== 'GET') {
     return;
   }
 
   event.respondWith(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.match(event.request).then(function(cachedResponse) {
-        var fetchPromise = fetch(event.request).then(function(networkResponse) {
-          // Si la respuesta es válida, actualizamos el caché en segundo plano
-          if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-            cache.put(event.request, networkResponse.clone());
-          }
-          return networkResponse;
-        })["catch"](function(err) {
-           // REQ v7.5: Safe controlled response on failure
-           console.log("[SW] Network/Cache error for:", event.request.url, err);
-           // Returns a simple 404-like response instead of throwing to prevent thread freeze
-           return new Response('Offline content unavailable', { status: 404, statusText: 'Offline' });
-        });
-
-        // Retornamos el caché inmediatamente si existe, si no, esperamos a la red
-        return cachedResponse || fetchPromise;
-      })["catch"](function() {
-          return new Response('Persistence failure', { status: 500 });
+    caches.match(event.request).then(function(cachedResponse) {
+      // Definimos la promesa de red para revalidación
+      var networkFetch = fetch(event.request).then(function(networkResponse) {
+        // Validar respuesta antes de cachear
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          var responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then(function(cache) {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      })["catch"](function(err) {
+        console.log("[SW] Network revalidation failed:", url);
+        // Si no hay caché y la red falla, devolvemos un estado seguro
+        if (!cachedResponse) {
+          return new Response('Contenido no disponible sin conexión.', {
+            status: 404,
+            headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+          });
+        }
       });
+
+      // Retorno inmediato: Caché si existe, si no, Red.
+      return cachedResponse || networkFetch;
+    })["catch"](function() {
+      // Fallback crítico
+      return new Response('Error de persistencia en el Service Worker.', { status: 500 });
     })
   );
 });

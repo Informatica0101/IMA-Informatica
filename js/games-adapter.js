@@ -131,7 +131,7 @@ var QuizProApp = window.QuizProApp || {};
 
             if (!this.pendingAnalytics) this.pendingAnalytics = [];
 
-            var persistence = app.PersistenceManager || window.PersistenceManager;
+            var persistence = app.PersistenceManager || QuizProApp.PersistenceManager;
             var activeId = persistence ? persistence.getActiveId() : 'GUEST-FALLBACK';
             var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
             var user = userRaw ? JSON.parse(userRaw) : null;
@@ -208,7 +208,7 @@ var QuizProApp = window.QuizProApp || {};
 
         getLeaderboard: function(gameId) {
             var self = this;
-            var persistence = app.PersistenceManager || window.PersistenceManager;
+            var persistence = app.PersistenceManager || QuizProApp.PersistenceManager;
             var promise = Promise.resolve();
 
             if (persistence) {
@@ -240,7 +240,7 @@ var QuizProApp = window.QuizProApp || {};
                 return Promise.resolve(guestRecords);
             }
 
-            var persistence = app.PersistenceManager || window.PersistenceManager;
+            var persistence = app.PersistenceManager || QuizProApp.PersistenceManager;
             var promise = Promise.resolve();
 
             if (persistence) {
