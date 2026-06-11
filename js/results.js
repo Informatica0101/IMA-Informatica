@@ -1,118 +1,154 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser) {
-        window.location.href = 'login.html';
-        return;
-    }
+/**
+ * UI Logic for results.html
+ * Transpiled to Strict ES5 for v7.5 Legacy Compatibility
+ */
 
-    // Validar acceso (Profesores siempre, estudiantes solo si es su resultado)
-    const resultsContainer = document.getElementById('results-container');
-    const urlParams = new URLSearchParams(window.location.search);
-    const entregaExamenId = urlParams.get('entregaExamenId');
-    const calificacionParam = urlParams.get('calificacion');
+var QuizProApp = window.QuizProApp || {};
+(function(app) {
+    'use strict';
 
-    async function loadResults() {
-        // Caso A: Datos pasados directamente por URL (Legacy/Instantáneo) (A-26)
-        if (calificacionParam) {
-            try {
-                const rawResultados = urlParams.get('resultados');
-                const rawPreguntas = urlParams.get('preguntas');
-
-                if (!rawResultados || !rawPreguntas) {
-                    throw new Error("Faltan parámetros de resultados o preguntas en la URL.");
-                }
-
-                const resultados = JSON.parse(decodeURIComponent(rawResultados));
-                const preguntas = JSON.parse(decodeURIComponent(rawPreguntas));
-                renderResultsDirect(calificacionParam, resultados, preguntas);
-                return;
-            } catch (e) {
-                console.error("Error al procesar parámetros de URL:", e);
-                resultsContainer.innerHTML = `<p class="text-red-500">Error al cargar resultados directos: ${e.message}</p>`;
-                return;
-            }
-        }
-
-        // Caso B: Fetch desde API por entregaId
-        if (!entregaExamenId) {
-            resultsContainer.innerHTML = '<p class="text-red-500">No se proporcionó un ID de entrega de examen.</p>';
+    document.addEventListener('DOMContentLoaded', function() {
+        var currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || 'null');
+        if (!currentUser) {
+            window.location.href = 'login.html';
             return;
         }
 
-        try {
-            const result = await fetchApi('EXAM', 'getExamResult', { entregaExamenId, userId: currentUser.userId });
+        var resultsContainer = document.getElementById('results-container');
 
-            if (result.status === 'success' && result.data) {
-                renderResults(result.data);
-            } else {
-                // Si el estudiante intenta ver un examen que no es suyo, el backend debería denegarlo
-                throw new Error(result.message || 'No se pudieron cargar los resultados.');
-            }
-        } catch (error) {
-            resultsContainer.innerHTML = `<p class="text-red-500">Error al cargar los resultados: ${error.message}</p>`;
-        }
-    }
+        var entregaExamenId = app.getUrlParam('entregaExamenId');
+        var calificacionParam = app.getUrlParam('calificacion');
 
-    function renderResultsDirect(calificacion, resultados, preguntas) {
-        let detailsHtml = '<div class="space-y-4">';
-        resultados.forEach((res, index) => {
-            // (A-27) Validación de existencia del objeto pregunta
-            const pregunta = (preguntas || []).find(p => p.preguntaId === res.preguntaId);
-            const bgColor = res.esCorrecta ? 'bg-green-100' : 'bg-red-100';
-            const borderColor = res.esCorrecta ? 'border-green-500' : 'border-red-500';
-            const textoPregunta = pregunta && pregunta.textoPregunta ? pregunta.textoPregunta : 'Pregunta no encontrada';
+        function loadResults() {
+            if (!resultsContainer) return;
+            resultsContainer.innerHTML = '<div class="text-center p-8"><i class="fas fa-spinner fa-spin text-4xl text-blue-600"></i><p class="mt-4 text-gray-500">Cargando resultados...</p></div>';
 
-            detailsHtml += `
-                <div class="p-4 rounded border ${borderColor} ${bgColor}">
-                    <p class="font-bold">${index + 1}. ${textoPregunta}</p>
-                    <p class="text-sm">Tu respuesta: <span class="font-mono">${res.respuestaEstudiante || 'No respondida'}</span> ${res.esCorrecta ? '✅' : '❌'}</p>
-                </div>
-            `;
-        });
-        detailsHtml += '</div>';
-
-        resultsContainer.innerHTML = `
-            <p class="text-4xl font-bold text-center mb-6 text-blue-600">Calificación: ${calificacion}%</p>
-            <hr class="my-6">
-            <h3 class="text-xl font-bold mb-4">Detalle de Respuestas</h3>
-            ${detailsHtml}
-        `;
-    }
-
-    function renderResults(data) {
-        const { calificacionTotal, resultadosDetallados, examenTitulo } = data;
-
-        let detailsHtml = '<div class="space-y-4">';
-        resultadosDetallados.forEach((item, index) => {
-            const bgColor = item.esCorrecta ? 'bg-green-100' : (parseFloat(item.score) > 0 ? 'bg-yellow-50' : 'bg-red-100');
-            const borderColor = item.esCorrecta ? 'border-green-500' : (parseFloat(item.score) > 0 ? 'border-yellow-500' : 'border-red-500');
-
-            let displayAnswer = item.respuestaEstudiante;
-            if (item.tipo === 'termino_pareado') {
+            if (!entregaExamenId) {
+                // Fallback: Si no hay ID de entrega, intentar cargar desde parámetros (modo offline/directo)
                 try {
-                    const sMap = JSON.parse(item.respuestaEstudiante || "{}");
-                    displayAnswer = Object.entries(sMap).map(([idx, concept]) => `Definición ${parseInt(idx)+1} → Concepto ${concept}`).join(', ');
-                } catch(e) {}
+                    var rawResultados = app.getUrlParam('resultados');
+                    var rawPreguntas = app.getUrlParam('preguntas');
+                    if (rawResultados) {
+                        var resultados = JSON.parse(decodeURIComponent(rawResultados));
+                        var preguntas = rawPreguntas ? JSON.parse(decodeURIComponent(rawPreguntas)) : [];
+                        renderLocalResults(calificacionParam || 0, resultados, preguntas);
+                        return;
+                    }
+                } catch (e) {
+                    console.error("Error parsing offline results:", e);
+                }
+                resultsContainer.innerHTML = '<div class="text-center p-8 text-red-500">No se encontró la referencia del examen.</div>';
+                return;
             }
 
-            detailsHtml += `
-                <div class="p-4 rounded border ${borderColor} ${bgColor}">
-                    <p class="font-semibold">Pregunta ${index + 1}: ${item.texto}</p>
-                    <p>Respuesta: <span class="font-mono">${displayAnswer || 'No respondida'}</span></p>
-                    <p>Puntaje: <span class="font-bold">${item.score}</span></p>
-                </div>
-            `;
-        });
-        detailsHtml += '</div>';
+            if (app.fetchApi) {
+                app.fetchApi('EXAM', 'getExamResult', {
+                    entregaExamenId: entregaExamenId,
+                    userId: currentUser.userId
+                }).then(function(result) {
+                    if (result.status === 'success') {
+                        renderResults(result.data);
+                    } else {
+                        resultsContainer.innerHTML = '<div class="text-center p-8 text-red-500">Error: ' + (result.message || 'No se pudieron cargar los resultados.') + '</div>';
+                    }
+                }).catch(function(err) {
+                    console.error("Error fetching results:", err);
+                    resultsContainer.innerHTML = '<div class="text-center p-8 text-red-500">Error de conexión al cargar resultados.</div>';
+                });
+            }
+        }
 
-        resultsContainer.innerHTML = `
-            <h2 class="text-2xl font-bold text-center mb-2">Examen: ${examenTitulo}</h2>
-            <p class="text-4xl font-bold text-center mb-6 text-blue-600">Calificación Final: ${calificacionTotal}%</p>
-            <hr class="my-6">
-            <h3 class="text-xl font-bold mb-4">Detalle de Respuestas</h3>
-            ${detailsHtml}
-        `;
-    }
+        function renderLocalResults(score, resultados, preguntas) {
+            var detailsHtml = '<div class="space-y-4">';
+            resultados.forEach(function(res, index) {
+                var pregunta = null;
+                if (preguntas && preguntas.length > 0) {
+                    for (var i = 0; i < preguntas.length; i++) {
+                        if (preguntas[i].preguntaId === res.preguntaId) {
+                            pregunta = preguntas[i];
+                            break;
+                        }
+                    }
+                }
 
-    loadResults();
-});
+                var bgColor = res.esCorrecta ? 'bg-green-100' : 'bg-red-100';
+                var borderColor = res.esCorrecta ? 'border-green-500' : 'border-red-500';
+                var textoPregunta = (pregunta && pregunta.textoPregunta) ? pregunta.textoPregunta : 'Pregunta ' + (index + 1);
+
+                detailsHtml += '<div class="p-4 rounded-lg border-l-4 ' + bgColor + ' ' + borderColor + '">' +
+                    '<p class="font-bold text-gray-800">' + (index + 1) + '. ' + textoPregunta + '</p>' +
+                    '<p class="text-sm mt-2"><span class="font-semibold">Tu respuesta:</span> ' + res.respuestaEstudiante + '</p>' +
+                    (!res.esCorrecta ? '<p class="text-sm text-green-700 font-medium">Respuesta correcta: ' + (res.respuestaCorrecta || '---') + '</p>' : '') +
+                    '</div>';
+            });
+            detailsHtml += '</div>';
+
+            resultsContainer.innerHTML = '<div class="bg-white rounded-3xl shadow-xl p-8 max-w-2xl mx-auto">' +
+                '<div class="text-center mb-8">' +
+                '<h2 class="text-3xl font-bold text-gray-900">Resultado del Examen</h2>' +
+                '<div class="mt-4 inline-block p-6 rounded-full bg-blue-50 border-4 border-blue-100">' +
+                '<span class="text-5xl font-black text-blue-600">' + score + '%</span>' +
+                '</div>' +
+                '</div>' +
+                detailsHtml +
+                '<div class="mt-8 text-center">' +
+                '<a href="student-dashboard.html" class="inline-block px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors">Volver al Dashboard</a>' +
+                '</div>' +
+                '</div>';
+        }
+
+        function renderResults(data) {
+            var calificacionTotal = data.calificacionTotal;
+            var resultadosDetallados = data.resultadosDetallados;
+            var examenTitulo = data.examenTitulo || 'Resultado del Examen';
+
+            var detailsHtml = '<div class="space-y-4">';
+            resultadosDetallados.forEach(function(item, index) {
+                var scoreVal = parseFloat(item.score);
+                var isCorrect = !!item.esCorrecta;
+                var bgColor = isCorrect ? 'bg-green-100' : (scoreVal > 0 ? 'bg-yellow-50' : 'bg-red-100');
+                var borderColor = isCorrect ? 'border-green-500' : (scoreVal > 0 ? 'border-yellow-500' : 'border-red-500');
+
+                var displayAnswer = item.respuestaEstudiante;
+                if (item.tipoPregunta === 'emparejamiento') {
+                    try {
+                        var sMap = JSON.parse(item.respuestaEstudiante || "{}");
+                        var pairs = [];
+                        var keys = Object.keys(sMap);
+                        for (var k = 0; k < keys.length; k++) {
+                            var idx = keys[k];
+                            pairs.push('Definición ' + (parseInt(idx) + 1) + ' → Concepto ' + sMap[idx]);
+                        }
+                        displayAnswer = pairs.join(', ');
+                    } catch (e) {
+                        displayAnswer = item.respuestaEstudiante;
+                    }
+                }
+
+                detailsHtml += '<div class="p-4 rounded-lg border-l-4 ' + bgColor + ' ' + borderColor + '">' +
+                    '<p class="font-bold text-gray-800">' + (index + 1) + '. ' + item.textoPregunta + '</p>' +
+                    '<p class="text-sm mt-2"><span class="font-semibold">Tu respuesta:</span> ' + displayAnswer + '</p>' +
+                    (!isCorrect ? '<p class="text-sm text-green-700 font-medium">Respuesta correcta: ' + (item.respuestaCorrecta || '---') + '</p>' : '') +
+                    (item.retroalimentacion ? '<p class="text-xs italic text-gray-500 mt-1">' + item.retroalimentacion + '</p>' : '') +
+                    '</div>';
+            });
+            detailsHtml += '</div>';
+
+            resultsContainer.innerHTML = '<div class="bg-white rounded-3xl shadow-xl p-8 max-w-2xl mx-auto">' +
+                '<div class="text-center mb-8">' +
+                '<h2 class="text-3xl font-bold text-gray-900">' + examenTitulo + '</h2>' +
+                '<div class="mt-4 inline-block p-6 rounded-full bg-blue-50 border-4 border-blue-100">' +
+                '<span class="text-5xl font-black text-blue-600">' + calificacionTotal + '%</span>' +
+                '</div>' +
+                '</div>' +
+                detailsHtml +
+                '<div class="mt-8 text-center">' +
+                '<a href="student-dashboard.html" class="inline-block px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors">Volver al Dashboard</a>' +
+                '</div>' +
+                '</div>';
+        }
+
+        loadResults();
+    });
+
+})(QuizProApp);

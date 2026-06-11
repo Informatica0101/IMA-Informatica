@@ -423,3 +423,27 @@ ARCHIVO: js/teacher.js
 
 ARCHIVO: js/api.js, js/auth.js, js/ui-common.js
 - DESCRIPCIÓN: Saneamiento final de sintaxis. Eliminación de residuos de optional chaining y template literals detectados en auditoría forense. Asegurada paridad 1:1 con lógica de negocio v7 original bajo sintaxis ES5 estricta.
+
+ARCHIVO: js/index-ui.js, js/results.js, js/exam.js
+- DESCRIPCIÓN: Transpilación manual a ES5 para eliminar fugas de sintaxis ES6 (const, let, arrow functions, async/await).
+- DESCRIPCIÓN: Restauración de enrutamiento asíncrono de noticias y lógica de triaje de sesiones en el portal de acceso.
+- DESCRIPCIÓN: Saneamiento del motor de entrega de exámenes y visualización de resultados para navegadores legacy.
+
+REGISTRO DE CAMBIOS - JUNIO 2026 (v7.6)
+
+ARCHIVO: js/config.js
+- [IMPLEMENTADO] Método 'app.getUrlParam' para extracción manual de parámetros de query string (ES5 puro).
+- [ELIMINADO] Todos los fallbacks globales al objeto 'window' para garantizar blindaje total del namespace.
+
+ARCHIVO: js/ui-common.js, js/index-ui.js
+- [REMEDIADO] Migración masiva de métodos de navegación y lógica de UI al namespace 'QuizProApp'.
+- [REMEDIADO] Saneamiento de listeners 'onclick' en archivos HTML para apuntar a la ruta jerárquica del namespace.
+
+ARCHIVO: js/quizpro.js
+- [CORREGIDO] Sincronización de columnas en el Ranking Global. Implementado orden: Posición ➔ Nombre ➔ Rango ➔ Promedio ➔ XP.
+- [IMPLEMENTADO] Método 'app.getRange' para cálculo dinámico de rangos en tablas del top.
+- [SEGURIDAD] Escapado de HTML en opciones de respuesta mediante el uso de 'innerText' y sanitización de enunciados.
+
+ARCHIVO: js/Banco_Preguntas/ (Auditoría Curricular)
+- [RELOCALIZADO] Reactivos de Numeración y CLI movidos de 10mo a 11mo (Informática Aplicada).
+- [CONSOLIDADO] Bloque de 10mo Informática con 150 reactivos depurados sobre Redes y Algoritmos.

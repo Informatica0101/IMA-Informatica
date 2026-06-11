@@ -35,3 +35,20 @@
 - **Descripción del Alcance:** Restaurar funciones de parsing de PDF, subida multipart y analítica psicométrica eliminadas en la remediación anterior. Todo debe ser implementado en ES5 estricto.
 - **Criterios de Aceptación:** Subida exitosa de archivos > 10MB con fragmentación y visualización de gráficos radar en el dashboard.
 - **Estado:** [X] Completada
+
+### [T-FORENSE-04] Transpilación Crítica de Acceso (index-ui.js)
+- **Origen del Hallazgo:** Auditoría Integral de Calidad v7.5.1 - 2026-06-23
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** js/index-ui.js
+- **Dependencias Expuestas:** login.html, portal access
+- **Descripción del Alcance:** Remediación forense de sintaxis ES6 en la puerta de entrada del portal. Reemplazar arrow functions y async/await por sintaxis ES5 compatible.
+- **Criterios de Aceptación:** El portal debe renderizar noticias y permitir login en AB Browser sin SyntaxError.
+- **Estado:** [X] Completada
+
+### [T-BLINDAJE-01] Blindaje Total de Namespace (v7.6)
+- **Origen del Hallazgo:** Code Review de Integración - 2026-06-23
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** Todo el ecosistema js/ y archivos HTML.
+- **Descripción del Alcance:** Erradicar asignaciones directas a 'window'. Migrar métodos de navegación y lógica al objeto raíz 'QuizProApp'. Sustituir 'URLSearchParams' por helper manual.
+- **Criterios de Aceptación:** 0 variables globales huérfanas en el objeto window (excepto QuizProApp). Carga funcional en IE11 sin ReferenceError.
+- **Estado:** [X] Completada

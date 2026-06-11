@@ -35,15 +35,15 @@ var QuizProApp = window.QuizProApp || {};
             });
         }
 
-        window.openMobileMenu = function(section) {
+        app.openMobileMenu = function(section) {
             window.openAcademicMenu();
         };
 
-        window.closeMobileMenu = function() {
-            window.closeAcademicMenu();
+        app.closeMobileMenu = function() {
+            QuizProApp.closeAcademicMenu();
         };
 
-        window.openProfileModal = function(pushState) {
+        app.openProfileModal = function(pushState) {
             if (pushState === undefined) pushState = true;
             var modal = document.getElementById('profile-modal');
             if (!modal) return;
@@ -81,13 +81,13 @@ var QuizProApp = window.QuizProApp || {};
             }
 
             modal.classList.remove('hidden');
-            if (window.closeAcademicMenu) window.closeAcademicMenu();
+            if (QuizProApp.closeAcademicMenu) QuizProApp.closeAcademicMenu();
             if (pushState) {
                 history.pushState({ type: 'modal-close', modalId: 'profile-modal' }, '');
             }
         };
 
-        window.closeProfileModal = function(doPop) {
+        app.closeProfileModal = function(doPop) {
             if (doPop === undefined) doPop = true;
             var modal = document.getElementById('profile-modal');
             if (modal) modal.classList.add('hidden');
@@ -101,10 +101,10 @@ var QuizProApp = window.QuizProApp || {};
 
         var closeBtn = document.getElementById('close-profile-modal');
         var cancelBtn = document.getElementById('cancel-profile-btn');
-        if (closeBtn) closeBtn.onclick = window.closeProfileModal;
-        if (cancelBtn) cancelBtn.onclick = window.closeProfileModal;
+        if (closeBtn) closeBtn.onclick = QuizProApp.closeProfileModal;
+        if (cancelBtn) cancelBtn.onclick = QuizProApp.closeProfileModal;
 
-        window.handleLogout = function() {
+        app.handleLogout = function() {
             localStorage.removeItem('currentUser');
             sessionStorage.removeItem('currentUser');
             window.location.href = 'login.html';
@@ -124,7 +124,7 @@ var QuizProApp = window.QuizProApp || {};
         var yearSpan = document.getElementById('current-year');
         if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
-        window.renderCommonNav();
+        QuizProApp.renderCommonNav();
 
         document.dispatchEvent(new CustomEvent('common-ui-ready'));
 
@@ -134,11 +134,11 @@ var QuizProApp = window.QuizProApp || {};
             if (!state || (state.type !== 'modal-close' && state.type !== 'academic-menu')) {
                 var academicModal = document.getElementById('academic-menu-modal');
                 if (academicModal && !academicModal.classList.contains('hidden')) {
-                    window.closeAcademicMenu(false);
+                    QuizProApp.closeAcademicMenu(false);
                 }
                 var profileModal = document.getElementById('profile-modal');
                 if (profileModal && !profileModal.classList.contains('hidden')) {
-                    window.closeProfileModal(false);
+                    QuizProApp.closeProfileModal(false);
                 }
                 var loginModal = document.getElementById('login-modal');
                 if (loginModal) {
@@ -153,12 +153,12 @@ var QuizProApp = window.QuizProApp || {};
             if (state.type === 'dashboard-section') {
                 var targetNav = document.getElementById(state.navId);
                 var targetSection = document.getElementById(state.sectionId);
-                if (targetNav && targetSection && window.navigateTo) {
-                    window.navigateTo(targetSection, targetNav, false);
+                if (targetNav && targetSection && QuizProApp.navigateTo) {
+                    QuizProApp.navigateTo(targetSection, targetNav, false);
                 }
             } else if (state.type === 'hierarchical-nav') {
-                if (window.syncNavWithState) {
-                    window.syncNavWithState(state);
+                if (QuizProApp.syncNavWithState) {
+                    QuizProApp.syncNavWithState(state);
                 }
             } else if (state.type === 'academic-menu') {
                 var modalAM = document.getElementById('academic-menu-modal');
@@ -166,9 +166,9 @@ var QuizProApp = window.QuizProApp || {};
                     window.openAcademicMenu(false);
                 }
                 if (state.level === 'root') {
-                    window.resetAcademicMenu(false);
+                    QuizProApp.resetAcademicMenu(false);
                 } else {
-                    window.renderHierarchyLevel(state.menuType, state.level, state.params, false);
+                    QuizProApp.renderHierarchyLevel(state.menuType, state.level, state.params, false);
                 }
             } else if (state.type === 'modal-close') {
                 if (state.modalId === 'academic-menu-modal') window.openAcademicMenu(false);
@@ -264,7 +264,7 @@ var QuizProApp = window.QuizProApp || {};
                 var originalText = submitBtn.textContent;
                 submitBtn.textContent = 'Procesando...';
 
-                if (typeof window.fetchApi !== 'function') {
+                if (typeof app.fetchApi !== 'function') {
                     alert('El servicio de conexión (api.js) no se ha cargado correctamente.');
                     submitBtn.disabled = false;
                     submitBtn.classList.remove('btn-loading');
@@ -272,7 +272,7 @@ var QuizProApp = window.QuizProApp || {};
                     return;
                 }
 
-                window.fetchApi('USER', 'updateUserProfile', payload)
+                app.fetchApi('USER', 'updateUserProfile', payload)
                     .then(function(result) {
                         if (result.status === 'success') {
                             var updatedUser = {};
@@ -289,7 +289,7 @@ var QuizProApp = window.QuizProApp || {};
                             if (teacherNameEl) teacherNameEl.textContent = firstName;
                             if (studentNameEl) studentNameEl.textContent = firstName;
 
-                            if (window.renderWelcomeMessage) window.renderWelcomeMessage();
+                            if (QuizProApp.renderWelcomeMessage) QuizProApp.renderWelcomeMessage();
 
                             alert('Perfil actualizado con éxito.');
                             var modal = document.getElementById('profile-modal');
@@ -314,7 +314,7 @@ var QuizProApp = window.QuizProApp || {};
         }
     };
 
-    window.convertDriveLink = function(driveLink) {
+    app.convertDriveLink = function(driveLink) {
         if (!driveLink || typeof driveLink !== 'string') return '';
         if (driveLink.indexOf('lh3.googleusercontent.com') !== -1) return driveLink;
 
@@ -333,7 +333,7 @@ var QuizProApp = window.QuizProApp || {};
         return driveLink;
     };
 
-    window.checkSectionHelper = function(sectionsField, targetSection) {
+    app.checkSectionHelper = function(sectionsField, targetSection) {
         if (!sectionsField || !targetSection) return true;
         if (Array.isArray(sectionsField)) return sectionsField.indexOf(targetSection) !== -1;
         var parts = sectionsField.split(',');
@@ -343,11 +343,11 @@ var QuizProApp = window.QuizProApp || {};
         return false;
     };
 
-    window.handleHeaderAction = function(action) {
+    app.handleHeaderAction = function(action) {
         if (action === 'show-activities') {
-            if (window.showMainContentSections) {
-                window.showMainContentSections();
-                if (window.renderActivityList) window.renderActivityList();
+            if (QuizProApp.showMainContentSections) {
+                QuizProApp.showMainContentSections();
+                if (QuizProApp.renderActivityList) QuizProApp.renderActivityList();
             } else {
                 window.location.href = 'index.html?action=show-activities';
             }
@@ -355,10 +355,10 @@ var QuizProApp = window.QuizProApp || {};
         if (action === 'cursos' || action === 'contenido' || action === 'show-academic-menu') {
             window.openAcademicMenu();
         }
-        if (window.closeMobileMenu) window.closeMobileMenu();
+        if (QuizProApp.closeMobileMenu) QuizProApp.closeMobileMenu();
     };
 
-    window.openAcademicMenu = function(pushState) {
+    app.openAcademicMenu = function(pushState) {
         if (pushState === undefined) pushState = true;
         var scrollPos = window.pageYOffset || document.documentElement.scrollTop;
         var modal = document.getElementById('academic-menu-modal');
@@ -374,13 +374,13 @@ var QuizProApp = window.QuizProApp || {};
                                 '<h2 class="text-2xl font-semibold text-gray-900 tracking-tight">Recursos</h2>' +
                                 '<p class="text-xs font-medium text-blue-600 uppercase tracking-widest mt-1">Explora tu contenido</p>' +
                             '</div>' +
-                            '<button onclick="window.closeAcademicMenu()" class="text-gray-400 hover:text-gray-600 p-2 transition-colors">' +
+                            '<button onclick="QuizProApp.closeAcademicMenu()" class="text-gray-400 hover:text-gray-600 p-2 transition-colors">' +
                                 '<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>' +
                             '</button>' +
                         '</div>' +
 
                         '<div class="grid grid-cols-1 gap-4" id="academic-menu-options">' +
-                            '<button onclick="window.showAcademicHierarchy(\'Presentaciones\')" class="group flex items-center gap-5 p-5 bg-blue-50/50 rounded-3xl hover:bg-blue-600 transition-all duration-300">' +
+                            '<button onclick="QuizProApp.showAcademicHierarchy(\'Presentaciones\')" class="group flex items-center gap-5 p-5 bg-blue-50/50 rounded-3xl hover:bg-blue-600 transition-all duration-300">' +
                                 '<div class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">' +
                                     '<i class="fas fa-desktop"></i>' +
                                 '</div>' +
@@ -390,7 +390,7 @@ var QuizProApp = window.QuizProApp || {};
                                 '</div>' +
                             '</button>' +
 
-                            '<button onclick="window.showAcademicHierarchy(\'Contenido\')" class="group flex items-center gap-5 p-5 bg-purple-50/50 rounded-3xl hover:bg-purple-600 transition-all duration-300">' +
+                            '<button onclick="QuizProApp.showAcademicHierarchy(\'Contenido\')" class="group flex items-center gap-5 p-5 bg-purple-50/50 rounded-3xl hover:bg-purple-600 transition-all duration-300">' +
                                 '<div class="w-14 h-14 bg-purple-600 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">' +
                                     '<i class="fas fa-file-pdf"></i>' +
                                 '</div>' +
@@ -402,7 +402,7 @@ var QuizProApp = window.QuizProApp || {};
                         '</div>' +
 
                         '<div id="hierarchy-navigation" class="hidden flex flex-col min-h-[300px]">' +
-                            '<button onclick="window.resetAcademicMenu()" class="mb-6 flex items-center gap-2 text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] hover:text-blue-700 transition-colors">' +
+                            '<button onclick="QuizProApp.resetAcademicMenu()" class="mb-6 flex items-center gap-2 text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] hover:text-blue-700 transition-colors">' +
                                 '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>' +
                                 'Regresar' +
                             '</button>' +
@@ -420,14 +420,14 @@ var QuizProApp = window.QuizProApp || {};
 
         modal.classList.remove('hidden');
         setTimeout(function() { modal.classList.add('opacity-100'); }, 10);
-        window.resetAcademicMenu(false);
+        QuizProApp.resetAcademicMenu(false);
 
         if (pushState) {
             history.pushState({ type: 'modal-close', modalId: 'academic-menu-modal', scrollPos: scrollPos }, '');
         }
     };
 
-    window.closeAcademicMenu = function(doPop) {
+    app.closeAcademicMenu = function(doPop) {
         if (doPop === undefined) doPop = true;
         var modal = document.getElementById('academic-menu-modal');
         if (modal) {
@@ -439,7 +439,7 @@ var QuizProApp = window.QuizProApp || {};
         }
     };
 
-    window.resetAcademicMenu = function(pushState) {
+    app.resetAcademicMenu = function(pushState) {
         if (pushState === undefined) pushState = true;
         document.getElementById('academic-menu-options').classList.remove('hidden');
         document.getElementById('hierarchy-navigation').classList.add('hidden');
@@ -448,12 +448,12 @@ var QuizProApp = window.QuizProApp || {};
         }
     };
 
-    window.openAcademicHierarchy = function(type) {
+    app.openAcademicHierarchy = function(type) {
         window.openAcademicMenu();
-        window.showAcademicHierarchy(type);
+        QuizProApp.showAcademicHierarchy(type);
     };
 
-    window.showAcademicHierarchy = function(type) {
+    app.showAcademicHierarchy = function(type) {
         var options = document.getElementById('academic-menu-options');
         var nav = document.getElementById('hierarchy-navigation');
         var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}';
@@ -464,13 +464,13 @@ var QuizProApp = window.QuizProApp || {};
         if (nav) nav.classList.remove('hidden');
 
         if (!isProfesor && user.grado && user.seccion) {
-            window.renderHierarchyLevel(type, 'Asignatura', { grado: user.grado, seccion: user.seccion });
+            QuizProApp.renderHierarchyLevel(type, 'Asignatura', { grado: user.grado, seccion: user.seccion });
         } else {
-            window.renderHierarchyLevel(type, 'Grado');
+            QuizProApp.renderHierarchyLevel(type, 'Grado');
         }
     };
 
-    window.renderHierarchyLevel = function(type, level, params, pushState) {
+    app.renderHierarchyLevel = function(type, level, params, pushState) {
         if (params === undefined) params = {};
         if (pushState === undefined) pushState = true;
         var container = document.getElementById('hierarchy-options');
@@ -483,7 +483,7 @@ var QuizProApp = window.QuizProApp || {};
 
         container.innerHTML = '<div class="p-8 text-center"><i class="fas fa-spinner fa-spin text-blue-600 text-2xl"></i></div>';
 
-        var sourceData = (type === 'Presentaciones') ? (window.presentationData || []) : (window.downloadContentData || []);
+        var sourceData = (type === 'Presentaciones') ? (QuizProApp.presentationData || []) : (QuizProApp.downloadContentData || []);
 
         var items = [];
         var nextLevel = '';
@@ -502,7 +502,7 @@ var QuizProApp = window.QuizProApp || {};
                 label.textContent = 'Selecciona Sección';
                 var gradeObj = null;
                 for (var i = 0; i < sourceData.length; i++) {
-                    if (window.parseGrade(sourceData[i].grade) === window.parseGrade(params.grado)) {
+                    if (QuizProApp.parseGrade(sourceData[i].grade) === QuizProApp.parseGrade(params.grado)) {
                         gradeObj = sourceData[i];
                         break;
                     }
@@ -514,7 +514,7 @@ var QuizProApp = window.QuizProApp || {};
                 label.textContent = 'Selecciona Asignatura';
                 var gradeObjA = null;
                 for (var i = 0; i < sourceData.length; i++) {
-                    if (window.parseGrade(sourceData[i].grade) === window.parseGrade(params.grado)) {
+                    if (QuizProApp.parseGrade(sourceData[i].grade) === QuizProApp.parseGrade(params.grado)) {
                         gradeObjA = sourceData[i];
                         break;
                     }
@@ -524,7 +524,7 @@ var QuizProApp = window.QuizProApp || {};
                     var asigSet = {};
                     for (var i = 0; i < gradeObjA.subjects.length; i++) {
                         var s = gradeObjA.subjects[i];
-                        if (window.checkSectionHelper(s.sections, params.seccion) && window.isContentAuthorized(s.partial, s.name)) {
+                        if (QuizProApp.checkSectionHelper(s.sections, params.seccion) && QuizProApp.isContentAuthorized(s.partial, s.name)) {
                             asigSet[s.name] = true;
                         }
                     }
@@ -541,7 +541,7 @@ var QuizProApp = window.QuizProApp || {};
                 label.textContent = 'Selecciona Parcial';
                 var gradeObjP = null;
                 for (var i = 0; i < sourceData.length; i++) {
-                    if (window.parseGrade(sourceData[i].grade) === window.parseGrade(params.grado)) {
+                    if (QuizProApp.parseGrade(sourceData[i].grade) === QuizProApp.parseGrade(params.grado)) {
                         gradeObjP = sourceData[i];
                         break;
                     }
@@ -550,7 +550,7 @@ var QuizProApp = window.QuizProApp || {};
                     var parcialSet = {};
                     for (var i = 0; i < gradeObjP.subjects.length; i++) {
                         var s = gradeObjP.subjects[i];
-                        if (window.checkSectionHelper(s.sections, params.seccion) && (!params.asignatura || s.name === params.asignatura)) {
+                        if (QuizProApp.checkSectionHelper(s.sections, params.seccion) && (!params.asignatura || s.name === params.asignatura)) {
                             parcialSet[s.partial] = true;
                         }
                     }
@@ -563,7 +563,7 @@ var QuizProApp = window.QuizProApp || {};
                 label.textContent = (type === 'Presentaciones') ? 'Selecciona Tema' : 'Descargar Archivos';
                 var gradeObjT = null;
                 for (var i = 0; i < sourceData.length; i++) {
-                    if (window.parseGrade(sourceData[i].grade) === window.parseGrade(params.grado)) {
+                    if (QuizProApp.parseGrade(sourceData[i].grade) === QuizProApp.parseGrade(params.grado)) {
                         gradeObjT = sourceData[i];
                         break;
                     }
@@ -573,7 +573,7 @@ var QuizProApp = window.QuizProApp || {};
                     var subject = null;
                     for (var i = 0; i < gradeObjT.subjects.length; i++) {
                         var s = gradeObjT.subjects[i];
-                        if (s.name === params.asignatura && s.partial === params.parcial && window.checkSectionHelper(s.sections, params.seccion)) {
+                        if (s.name === params.asignatura && s.partial === params.parcial && QuizProApp.checkSectionHelper(s.sections, params.seccion)) {
                             subject = s;
                             break;
                         }
@@ -627,7 +627,7 @@ var QuizProApp = window.QuizProApp || {};
             if (role !== 'Profesor' && level === 'Asignatura') {
                 var gradeObj = null;
                 for (var j = 0; j < sourceData.length; j++) {
-                    if (window.parseGrade(sourceData[j].grade) === window.parseGrade(params.grado)) {
+                    if (QuizProApp.parseGrade(sourceData[j].grade) === QuizProApp.parseGrade(params.grado)) {
                         gradeObj = sourceData[j];
                         break;
                     }
@@ -635,7 +635,7 @@ var QuizProApp = window.QuizProApp || {};
                 if (gradeObj) {
                     for (var j = 0; j < gradeObj.subjects.length; j++) {
                         var s = gradeObj.subjects[j];
-                        if (s.name === itemStr && window.checkSectionHelper(s.sections, params.seccion) && window.isContentAuthorized(s.partial, s.name)) {
+                        if (s.name === itemStr && QuizProApp.checkSectionHelper(s.sections, params.seccion) && QuizProApp.isContentAuthorized(s.partial, s.name)) {
                             newParams.parcial = s.partial;
                             break;
                         }
@@ -645,7 +645,7 @@ var QuizProApp = window.QuizProApp || {};
 
             var paramsStr = JSON.stringify(newParams).replace(/'/g, "&#39;");
             htmlItems +=
-                '<button onclick=\'window.renderHierarchyLevel("' + type + '", "' + nextLevel + '", ' + paramsStr + ')\' ' +
+                '<button onclick=\'QuizProApp.renderHierarchyLevel("' + type + '", "' + nextLevel + '", ' + paramsStr + ')\' ' +
                         'class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">' +
                     '<span class="text-sm font-semibold text-gray-700">' + itemStr + '</span>' +
                     '<i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>' +
@@ -654,7 +654,7 @@ var QuizProApp = window.QuizProApp || {};
         container.innerHTML = htmlItems;
     };
 
-    window.renderCommonNav = function() {
+    app.renderCommonNav = function() {
         var desktopCoursesMenu = document.getElementById('desktop-courses-menu');
         var desktopContentMenu = document.getElementById('desktop-content-menu');
         var mobileCoursesMenu = document.getElementById('mobile-courses-menu');
@@ -670,13 +670,13 @@ var QuizProApp = window.QuizProApp || {};
             var html = '';
             for (var i = 0; i < data.length; i++) {
                 var grade = data[i];
-                if (!isProfesor && currentUser && currentUser.grado && window.parseGrade(grade.grade) !== window.parseGrade(currentUser.grado)) continue;
+                if (!isProfesor && currentUser && currentUser.grado && QuizProApp.parseGrade(grade.grade) !== QuizProApp.parseGrade(currentUser.grado)) continue;
 
                 var filteredSubjects = [];
                 for (var j = 0; j < grade.subjects.length; j++) {
                     var subj = grade.subjects[j];
                     if (!isProfesor && currentUser && currentUser.seccion) {
-                        if (window.checkSectionHelper(subj.sections, currentUser.seccion)) filteredSubjects.push(subj);
+                        if (QuizProApp.checkSectionHelper(subj.sections, currentUser.seccion)) filteredSubjects.push(subj);
                     } else {
                         filteredSubjects.push(subj);
                     }
@@ -725,7 +725,7 @@ var QuizProApp = window.QuizProApp || {};
                 } else {
                     for (var j = 0; j < filteredSubjects.length; j++) {
                         var subj = filteredSubjects[j];
-                        if (window.isContentAuthorized(subj.partial, subj.name)) {
+                        if (QuizProApp.isContentAuthorized(subj.partial, subj.name)) {
                             html += '<div class="relative group/subj">' +
                                 '<button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">' +
                                     subj.name + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
@@ -748,13 +748,13 @@ var QuizProApp = window.QuizProApp || {};
             var html = '';
             for (var i = 0; i < data.length; i++) {
                 var grade = data[i];
-                if (!isProfesor && currentUser && currentUser.grado && window.parseGrade(grade.grade) !== window.parseGrade(currentUser.grado)) continue;
+                if (!isProfesor && currentUser && currentUser.grado && QuizProApp.parseGrade(grade.grade) !== QuizProApp.parseGrade(currentUser.grado)) continue;
 
                 var filteredSubjects = [];
                 for (var j = 0; j < grade.subjects.length; j++) {
                     var subj = grade.subjects[j];
                     if (!isProfesor && currentUser && currentUser.seccion) {
-                        if (window.checkSectionHelper(subj.sections, currentUser.seccion)) filteredSubjects.push(subj);
+                        if (QuizProApp.checkSectionHelper(subj.sections, currentUser.seccion)) filteredSubjects.push(subj);
                     } else {
                         filteredSubjects.push(subj);
                     }
@@ -782,7 +782,7 @@ var QuizProApp = window.QuizProApp || {};
                 } else {
                     for (var j = 0; j < filteredSubjects.length; j++) {
                         var subj = filteredSubjects[j];
-                        if (window.isContentAuthorized(subj.partial, subj.name)) {
+                        if (QuizProApp.isContentAuthorized(subj.partial, subj.name)) {
                             html += '<button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
                                 subj.name + ' <span>&#9662;</span>' +
                             '</button>' +
@@ -799,10 +799,10 @@ var QuizProApp = window.QuizProApp || {};
             return html;
         }
 
-        if (desktopCoursesMenu) desktopCoursesMenu.innerHTML = buildHierarchy(window.presentationData);
-        if (desktopContentMenu) desktopContentMenu.innerHTML = buildHierarchy(window.downloadContentData);
-        if (mobileCoursesMenu) mobileCoursesMenu.innerHTML = buildMobileHierarchy(window.presentationData);
-        if (mobileContentMenu) mobileContentMenu.innerHTML = buildMobileHierarchy(window.downloadContentData);
+        if (desktopCoursesMenu) desktopCoursesMenu.innerHTML = buildHierarchy(QuizProApp.presentationData);
+        if (desktopContentMenu) desktopContentMenu.innerHTML = buildHierarchy(QuizProApp.downloadContentData);
+        if (mobileCoursesMenu) mobileCoursesMenu.innerHTML = buildMobileHierarchy(QuizProApp.presentationData);
+        if (mobileContentMenu) mobileContentMenu.innerHTML = buildMobileHierarchy(QuizProApp.downloadContentData);
 
         var mobilePortalBottom = document.getElementById('mobile-portal-bottom-nav');
         if (mobilePortalBottom && currentUser) {
@@ -810,6 +810,6 @@ var QuizProApp = window.QuizProApp || {};
         }
     };
 
-    window.setupCommonUI();
+    QuizProApp.setupCommonUI();
 
 })(QuizProApp);

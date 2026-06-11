@@ -71,20 +71,20 @@ var QuizProApp = window.QuizProApp || {};
             }
         }
 
-        function fetchAllActivities() {
+        app.fetchAllActivities = function() {
             if (!tasksList) return;
 
             var hasLocalData = false;
             var renderPromise = Promise.resolve();
 
-            if (window.PersistenceManager) {
-                renderPromise = window.PersistenceManager.get('cache_estudiante_dashboard')
+            if (QuizProApp.PersistenceManager) {
+                renderPromise = QuizProApp.PersistenceManager.get('cache_estudiante_dashboard')
                     .then(function(cached) {
                         if (cached && cached.data) {
                             console.log("[Offline-First] Renderizando actividades desde caché local (cache_estudiante_dashboard).");
                             allActivitiesData = cached.data.allActivities || [];
-                            renderStudentExpediente(allActivitiesData);
-                            renderParcialTabs(allActivitiesData);
+                            app.renderStudentExpediente(allActivitiesData);
+                            app.renderParcialTabs(allActivitiesData);
                             hasLocalData = true;
                         }
                     });
@@ -111,9 +111,9 @@ var QuizProApp = window.QuizProApp || {};
                 var payload = { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion };
 
                 return Promise.all([
-                    window.fetchApi('TASK', 'getStudentTasks', payload),
-                    window.fetchApi('EXAM', 'getStudentExams', payload),
-                    fetchAndRenderLearningProfile(true)
+                    app.fetchApi('TASK', 'getStudentTasks', payload),
+                    app.fetchApi('EXAM', 'getStudentExams', payload),
+                    app.fetchAndRenderLearningProfile(true)
                 ]);
             })
             .then(function(results) {
@@ -141,8 +141,8 @@ var QuizProApp = window.QuizProApp || {};
                     }
                 }
 
-                if (window.PersistenceManager) {
-                    window.PersistenceManager.set('cache_estudiante_dashboard', {
+                if (QuizProApp.PersistenceManager) {
+                    QuizProApp.PersistenceManager.set('cache_estudiante_dashboard', {
                         allActivities: allActivities,
                         timestamp: Date.now()
                     });
@@ -161,11 +161,11 @@ var QuizProApp = window.QuizProApp || {};
                 });
 
                 allActivitiesData = allActivities;
-                renderStudentExpediente(allActivities);
-                if (profileResult) renderLearningProfileData(profileResult);
+                app.renderStudentExpediente(allActivities);
+                if (profileResult) app.renderLearningProfileData(profileResult);
 
                 if (allActivities.length > 0) {
-                    renderParcialTabs(allActivities);
+                    app.renderParcialTabs(allActivities);
                 } else {
                     tasksList.innerHTML =
                         '<div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100 animate-fade-in">' +
@@ -194,11 +194,11 @@ var QuizProApp = window.QuizProApp || {};
                     '</div>';
             })
             ["finally"](function() {
-                if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
+                if (QuizProApp.GamesAdapter) QuizProApp.GamesAdapter.showLoading(false);
             });
         }
 
-        function renderStudentExpediente(inputActivities) {
+        app.renderStudentExpediente = function(inputActivities) {
             var container = document.getElementById('student-expediente');
             if (!container) return;
 
@@ -206,7 +206,7 @@ var QuizProApp = window.QuizProApp || {};
 
             var currentParcialActivities = [];
             for (var i = 0; i < activities.length; i++) {
-                if (window.normalizePartial(activities[i].parcial) === window.normalizePartial(window.PARCIAL_ACTUAL)) {
+                if (QuizProApp.normalizePartial(activities[i].parcial) === QuizProApp.normalizePartial(QuizProApp.PARCIAL_ACTUAL)) {
                     currentParcialActivities.push(activities[i]);
                 }
             }
@@ -402,7 +402,7 @@ var QuizProApp = window.QuizProApp || {};
 
             var profPromise = Promise.resolve();
             if (profesorId) {
-                profPromise = window.fetchApi('USER', 'getUserInfo', { userId: profesorId })
+                profPromise = app.fetchApi('USER', 'getUserInfo', { userId: profesorId })
                     .then(function(res) {
                         if (res.status === 'success' && res.data) {
                             profInfo = res.data;
@@ -411,7 +411,7 @@ var QuizProApp = window.QuizProApp || {};
             }
 
             profPromise.then(function() {
-                return window.fetchApi('USER', 'getWhatsAppLink', { grado: currentUser.grado });
+                return app.fetchApi('USER', 'getWhatsAppLink', { grado: currentUser.grado });
             })
             .then(function(groupRes) {
                 var groupLink = (groupRes.status === 'success' && groupRes.link) ? groupRes.link : null;
@@ -450,7 +450,7 @@ var QuizProApp = window.QuizProApp || {};
             });
         }
 
-        function renderParcialTabs(inputActivities) {
+        app.renderParcialTabs = function(inputActivities) {
             var tabsContainer = document.getElementById('parcial-tabs-container');
             if (!tabsContainer) return;
 
@@ -641,7 +641,7 @@ var QuizProApp = window.QuizProApp || {};
                         '<div class="assignment-content overflow-hidden max-h-0 transition-all duration-300 ease-in-out group-[.is-expanded]:max-h-[1200px]">' +
                             '<div class="pt-4 mt-4 border-t border-gray-50">' +
                                 '<div class="assignment-content-scroll scroll-minimalist mb-4">' +
-                                    '<div class="text-gray-600 text-sm font-medium mb-5 leading-relaxed quill-content">' + (window.sanitizarHTMLTecnico(activity.descripcion) || 'Sin descripción.') + '</div>' +
+                                    '<div class="text-gray-600 text-sm font-medium mb-5 leading-relaxed quill-content">' + (QuizProApp.sanitizarHTMLTecnico(activity.descripcion) || 'Sin descripción.') + '</div>' +
                                 '</div>' +
                                 '<div class="flex justify-center md:justify-start">' +
                                     actionButtonHtml +
@@ -686,7 +686,7 @@ var QuizProApp = window.QuizProApp || {};
                     }
                     uploadedFiles = [];
                     for (var j = 0; j < filesToDelete.length; j++) {
-                        window.fetchApi('TASK', 'deleteFile', { fileId: filesToDelete[j].fileId })["catch"](function(e) { console.warn("Fallo limpieza silenciosa:", e); });
+                        app.fetchApi('TASK', 'deleteFile', { fileId: filesToDelete[j].fileId })["catch"](function(e) { console.warn("Fallo limpieza silenciosa:", e); });
                     }
                 } else {
                     return;
@@ -743,11 +743,11 @@ var QuizProApp = window.QuizProApp || {};
                         var service = type === 'Examen' ? 'EXAM' : 'TASK';
                         var action = type === 'Examen' ? 'deleteExamSubmission' : 'deleteSubmission';
 
-                        window.fetchApi(service, action, { entregaId: entregaId })
+                        app.fetchApi(service, action, { entregaId: entregaId })
                             .then(function(result) {
                                 if (result.status === 'success') {
                                     alert('Entrega eliminada correctamente.');
-                                    fetchAllActivities();
+                                    app.fetchAllActivities();
                                 } else {
                                     throw new Error(result.message);
                                 }
@@ -974,7 +974,7 @@ var QuizProApp = window.QuizProApp || {};
                                     var partFileName = currentFileName.split('.')[0] + ' - Parte ' + (chunkIndex + 1) + ' de ' + segments.length + '.' + currentFileName.split('.').pop();
 
                                     var attemptUpload = function(attempt) {
-                                        return window.fetchApi('TASK', 'uploadFile', {
+                                        return app.fetchApi('TASK', 'uploadFile', {
                                             userId: currentUser.userId,
                                             tareaId: currentTaskId,
                                             fileName: partFileName,
@@ -1009,7 +1009,7 @@ var QuizProApp = window.QuizProApp || {};
                     } else {
                         progressSpan.textContent = "Subiendo...";
                         if (progressBar) progressBar.style.width = '50%';
-                        return window.fetchApi('TASK', 'uploadFile', {
+                        return app.fetchApi('TASK', 'uploadFile', {
                             userId: currentUser.userId, tareaId: currentTaskId,
                             fileName: currentFileName, fileData: fileData,
                             parcial: currentTaskParcial, asignatura: currentTaskAsignatura
@@ -1125,7 +1125,7 @@ var QuizProApp = window.QuizProApp || {};
                     btn.disabled = true;
                     li.style.opacity = '0.5';
 
-                    window.fetchApi('TASK', 'deleteFile', { fileId: fileId })["catch"](function(error) {
+                    app.fetchApi('TASK', 'deleteFile', { fileId: fileId })["catch"](function(error) {
                         console.error("Error al eliminar archivo remoto:", error);
                     });
 
@@ -1168,13 +1168,13 @@ var QuizProApp = window.QuizProApp || {};
                     mimeType: finalMimeType
                 };
 
-                window.fetchApi('TASK', 'submitAssignment', payload)
+                app.fetchApi('TASK', 'submitAssignment', payload)
                     .then(function(result) {
                         if (result.status === 'success') {
                             uploadedFiles = [];
                             alert('¡Tarea entregada exitosamente!');
                             closeSubmissionModal();
-                            fetchAllActivities();
+                            app.fetchAllActivities();
                         } else {
                             throw new Error(result.message);
                         }
@@ -1195,12 +1195,12 @@ var QuizProApp = window.QuizProApp || {};
         /**
          * WhatsApp Group Button Logic
          */
-        window.initWhatsAppButton = function() {
+        app.initWhatsAppButton = function() {
             var waActive = document.getElementById('wa-group-btn');
             var waDisabled = document.getElementById('wa-group-btn-disabled');
             if (!waActive || !waDisabled) return;
 
-            window.fetchApi('USER', 'getWhatsAppLink', { grado: currentUser.grado })
+            app.fetchApi('USER', 'getWhatsAppLink', { grado: currentUser.grado })
                 .then(function(res) {
                     if (res.status === 'success' && res.link) {
                         waActive.href = res.link;
@@ -1218,12 +1218,12 @@ var QuizProApp = window.QuizProApp || {};
                 });
         };
 
-        function fetchAndRenderLearningProfile(dataOnly) {
+        app.fetchAndRenderLearningProfile = function(dataOnly) {
             if (dataOnly === undefined) dataOnly = false;
-            return window.fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId })
+            return app.fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId })
                 .then(function(res) {
                     if (res.status === 'success' && res.data && res.data.length > 0) {
-                        if (!dataOnly) renderLearningProfileData(res.data);
+                        if (!dataOnly) app.renderLearningProfileData(res.data);
                         return res.data;
                     }
                     return null;
@@ -1233,7 +1233,7 @@ var QuizProApp = window.QuizProApp || {};
                 });
         }
 
-        function renderLearningProfileData(profileData) {
+        app.renderLearningProfileData = function(profileData) {
             var profileContainer = document.getElementById('learning-profile-integration');
             if (!profileContainer) return;
 
@@ -1249,9 +1249,9 @@ var QuizProApp = window.QuizProApp || {};
 
             try {
                 var findPresentation = function(tema) {
-                    if (!window.presentationData) return null;
-                    for (var i = 0; i < window.presentationData.length; i++) {
-                        var grade = window.presentationData[i];
+                    if (!QuizProApp.presentationData) return null;
+                    for (var i = 0; i < QuizProApp.presentationData.length; i++) {
+                        var grade = QuizProApp.presentationData[i];
                         for (var j = 0; j < grade.subjects.length; j++) {
                             var subject = grade.subjects[j];
                             for (var k = 0; k < subject.topics.length; k++) {
@@ -1322,7 +1322,7 @@ var QuizProApp = window.QuizProApp || {};
                         strengthsHtml +=
                             '<div class="flex items-center justify-between">' +
                                 '<span class="text-xs font-bold text-gray-700 uppercase tracking-tighter">' + strengths[i].tema + '</span>' +
-                                '<span class="text-[10px] font-black text-emerald-600 bg-white px-2 py-0.5 rounded-lg shadow-sm border border-emerald-100">' + window.redondearMetrica(strengths[i].dominio) + '%</span>' +
+                                '<span class="text-[10px] font-black text-emerald-600 bg-white px-2 py-0.5 rounded-lg shadow-sm border border-emerald-100">' + QuizProApp.redondearMetrica(strengths[i].dominio) + '%</span>' +
                             '</div>';
                     }
                 } else {
@@ -1341,7 +1341,7 @@ var QuizProApp = window.QuizProApp || {};
                             '<div class="flex flex-col gap-1">' +
                                 '<div class="flex items-center justify-between">' +
                                     '<span class="text-xs font-bold text-gray-700 uppercase tracking-tighter">' + w.tema + '</span>' +
-                                    '<span class="text-[10px] font-black text-orange-600">' + window.redondearMetrica(w.dominio) + '%</span>' +
+                                    '<span class="text-[10px] font-black text-orange-600">' + QuizProApp.redondearMetrica(w.dominio) + '%</span>' +
                                 '</div>' +
                                 '<button onclick="' + action + '" class="w-max text-[9px] font-black text-orange-700 uppercase tracking-widest hover:underline flex items-center gap-1">' +
                                     '<i class="fas fa-book-open text-[8px]"></i> ' + (file ? 'Repasar Ahora' : 'Ver Presentación') +
@@ -1404,13 +1404,13 @@ var QuizProApp = window.QuizProApp || {};
                         '</div>' +
                     '</div>';
 
-                setTimeout(function() { renderStudentCharts(profileData); }, 100);
+                setTimeout(function() { app.renderStudentCharts(profileData); }, 100);
             } catch (e) {
                 console.error("Error al renderizar perfil de dominio:", e);
             }
         }
 
-        function renderStudentCharts(profileData) {
+        app.renderStudentCharts = function(profileData) {
             var radarCanvas = document.getElementById('student-radar-chart');
             var trendCanvas = document.getElementById('student-trend-chart');
             if (!radarCanvas || !trendCanvas || !profileData || profileData.length === 0) return;
@@ -1488,8 +1488,8 @@ var QuizProApp = window.QuizProApp || {};
             }
         });
 
-        fetchAllActivities();
-        initWhatsAppButton();
+        app.fetchAllActivities();
+        app.initWhatsAppButton();
 
     });
 

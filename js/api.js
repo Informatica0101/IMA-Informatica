@@ -20,7 +20,7 @@ var QuizProApp = window.QuizProApp || {};
 
         var MAX_RETRIES = 2;
         // REQ: Uso de constante global v3.3
-        var urls = window.SERVICE_URLS || (typeof SERVICE_URLS !== 'undefined' ? SERVICE_URLS : {});
+        var urls = QuizProApp.SERVICE_URLS || (typeof SERVICE_URLS !== 'undefined' ? SERVICE_URLS : {});
 
         if (!urls[service]) {
             console.error("URL para el servicio \"" + service + "\" no encontrada.");
@@ -68,8 +68,8 @@ var QuizProApp = window.QuizProApp || {};
                     var parsed = JSON.parse(textResponse);
 
                     // REQ: Silent Reconciliation (Modulo 1.1)
-                    if (options.store && window.PersistenceManager) {
-                        window.PersistenceManager.reconcile(options.store, parsed, options.onUpdate);
+                    if (options.store && QuizProApp.PersistenceManager) {
+                        QuizProApp.PersistenceManager.reconcile(options.store, parsed, options.onUpdate);
                     }
 
                     return parsed;
@@ -137,6 +137,6 @@ var QuizProApp = window.QuizProApp || {};
     };
 
     // Public Alias for Global Compatibility
-    window.fetchApi = app.fetchApi;
+
 
 })(QuizProApp);

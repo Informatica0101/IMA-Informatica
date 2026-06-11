@@ -43,8 +43,8 @@ var QuizProApp = window.QuizProApp || {};
 
     // --- Initialization ---
     app.initQuizPro = function() {
-        if (window.GamesAdapter) {
-            window.GamesAdapter.init('quizpro', false);
+        if (QuizProApp.GamesAdapter) {
+            QuizProApp.GamesAdapter.init('quizpro', false);
         }
 
         app.loadPerformanceTable();
@@ -75,14 +75,14 @@ var QuizProApp = window.QuizProApp || {};
         var subjectEntries = [];
         var userSection = user ? user.seccion : null;
 
-        if (!window.presentationData) return;
+        if (!QuizProApp.presentationData) return;
 
-        window.presentationData.forEach(function(gradeBlock) {
+        QuizProApp.presentationData.forEach(function(gradeBlock) {
             var blockGradeNum = app.parseGrade(gradeBlock.grade);
             if (isTeacher || blockGradeNum <= userGradeNum) {
                 var seenInBlock = {};
                 gradeBlock.subjects.forEach(function(subj) {
-                    if (!isTeacher && userSection && !window.checkSectionHelper(subj.sections, userSection)) return;
+                    if (!isTeacher && userSection && !QuizProApp.checkSectionHelper(subj.sections, userSection)) return;
 
                     var normName = app.normalizeSubject(subj.name);
                     if (seenInBlock[normName]) return;
@@ -128,9 +128,9 @@ var QuizProApp = window.QuizProApp || {};
         var user = userRaw ? JSON.parse(userRaw) : null;
         var userSection = user ? user.seccion : null;
         var statsArray = [];
-        if (window.userGameStats) {
-            var keys = Object.keys(window.userGameStats);
-            for (var i = 0; i < keys.length; i++) statsArray.push(window.userGameStats[keys[i]]);
+        if (QuizProApp.userGameStats) {
+            var keys = Object.keys(QuizProApp.userGameStats);
+            for (var i = 0; i < keys.length; i++) statsArray.push(QuizProApp.userGameStats[keys[i]]);
         }
 
         var requiredGrades = [];
@@ -138,11 +138,11 @@ var QuizProApp = window.QuizProApp || {};
         if (targetGradeNum > 11) requiredGrades.push(11);
 
         var subjectsToApprove = [];
-        window.presentationData.forEach(function(block) {
+        QuizProApp.presentationData.forEach(function(block) {
             var bg = app.parseGrade(block.grade);
             if (requiredGrades.indexOf(bg) !== -1) {
                 block.subjects.forEach(function(s) {
-                    if (userSection && !window.checkSectionHelper(s.sections, userSection)) return;
+                    if (userSection && !QuizProApp.checkSectionHelper(s.sections, userSection)) return;
                     var name = app.normalizeSubject(s.name);
                     var alreadyAdded = false;
                     for (var j = 0; j < subjectsToApprove.length; j++) {
@@ -185,8 +185,8 @@ var QuizProApp = window.QuizProApp || {};
 
         var topContainer = document.getElementById('subject-top-container');
         var topNames = document.getElementById('subject-top-names');
-        if (topContainer && topNames && window.globalTopData && window.globalTopData.subjectTops) {
-            var topList = window.globalTopData.subjectTops[gradeLabel] ? window.globalTopData.subjectTops[gradeLabel][subjectName] : null;
+        if (topContainer && topNames && QuizProApp.globalTopData && QuizProApp.globalTopData.subjectTops) {
+            var topList = QuizProApp.globalTopData.subjectTops[gradeLabel] ? QuizProApp.globalTopData.subjectTops[gradeLabel][subjectName] : null;
             if (topList && topList.length > 0) {
                 topNames.textContent = topList.map(function(u) { return u.nombre; }).join(', ');
                 topContainer.classList.remove('hidden');
@@ -196,9 +196,9 @@ var QuizProApp = window.QuizProApp || {};
         }
 
         var statsArray = [];
-        if (window.userGameStats) {
-            var keys = Object.keys(window.userGameStats);
-            for (var i = 0; i < keys.length; i++) statsArray.push(window.userGameStats[keys[i]]);
+        if (QuizProApp.userGameStats) {
+            var keys = Object.keys(QuizProApp.userGameStats);
+            for (var i = 0; i < keys.length; i++) statsArray.push(QuizProApp.userGameStats[keys[i]]);
         }
         var targetGradeNum = app.parseGrade(gradeLabel);
         var targetSubjectNorm = app.normalizeSubject(subjectName);
@@ -239,9 +239,9 @@ var QuizProApp = window.QuizProApp || {};
 
         if (currentXP > 22000) {
             var statsValues = [];
-            if (window.userGameStats) {
-                var sKeys = Object.keys(window.userGameStats);
-                for (var k = 0; k < sKeys.length; k++) statsValues.push(window.userGameStats[sKeys[k]]);
+            if (QuizProApp.userGameStats) {
+                var sKeys = Object.keys(QuizProApp.userGameStats);
+                for (var k = 0; k < sKeys.length; k++) statsValues.push(QuizProApp.userGameStats[sKeys[k]]);
             }
             var totalMastery = 0, totalICR = 0, totalIA = 0;
             for (var l = 0; l < statsValues.length; l++) {
@@ -283,9 +283,9 @@ var QuizProApp = window.QuizProApp || {};
         var checkUnlock = function(metrics, targetLevel) {
             if (isTeacher) return true;
             var totalAnswers = 0;
-            if (window.userGameStats) {
-                var keys = Object.keys(window.userGameStats);
-                for (var i = 0; i < keys.length; i++) totalAnswers += (window.userGameStats[keys[i]].totalAttempts || 0);
+            if (QuizProApp.userGameStats) {
+                var keys = Object.keys(QuizProApp.userGameStats);
+                for (var i = 0; i < keys.length; i++) totalAnswers += (QuizProApp.userGameStats[keys[i]].totalAttempts || 0);
             }
             if (targetLevel === 'intermedio') return metrics.score >= 70 && totalAnswers > 25;
             if (targetLevel === 'avanzado') return metrics.score >= 70;
@@ -318,9 +318,9 @@ var QuizProApp = window.QuizProApp || {};
                 btnInter.parentNode.insertBefore(progInter, btnInter.nextSibling);
             }
             var totalAttempts = 0;
-            if (window.userGameStats) {
-                var keysA = Object.keys(window.userGameStats);
-                for (var kA = 0; kA < keysA.length; kA++) totalAttempts += (window.userGameStats[keysA[kA]].totalAttempts || 0);
+            if (QuizProApp.userGameStats) {
+                var keysA = Object.keys(QuizProApp.userGameStats);
+                for (var kA = 0; kA < keysA.length; kA++) totalAttempts += (QuizProApp.userGameStats[keysA[kA]].totalAttempts || 0);
             }
             var reasonInter = 'Requieres 70% de precisión.';
             if (basicMetrics.score >= 70) {
@@ -380,7 +380,7 @@ var QuizProApp = window.QuizProApp || {};
         if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen()["catch"](function(e) { console.warn("FS failed", e); });
         }
-        if (window.requestWakeLock) window.requestWakeLock();
+        if (QuizProApp.requestWakeLock) QuizProApp.requestWakeLock();
         app.startQuiz();
     };
 
@@ -523,7 +523,7 @@ var QuizProApp = window.QuizProApp || {};
         if (q.image) {
             var img = document.createElement('img');
             img.id = 'question-image';
-            img.src = window.convertDriveLink ? window.convertDriveLink(q.image) : q.image;
+            img.src = QuizProApp.convertDriveLink ? QuizProApp.convertDriveLink(q.image) : q.image;
             img.className = 'quiz-image rounded-xl shadow-md mb-6 transition-all hover:scale-105';
             var qTextEl = document.getElementById('question-text');
             qTextEl.parentNode.insertBefore(img, qTextEl.nextSibling);
@@ -601,13 +601,13 @@ var QuizProApp = window.QuizProApp || {};
     };
 
     app.checkAnswer = function(selected, correct, btn) {
-        if (window.isProcessingAnswer) return; window.isProcessingAnswer = true;
+        if (QuizProApp.isProcessingAnswer) return; app.isProcessingAnswer = true;
         var responseTime = Date.now() - questionStartTime;
         var q = app.normalizeQuestion(currentQuizQuestions[currentIndex]);
         var finalCorrect = correct || q.respuestaCorrecta || "N/A";
 
-        if (window.GamesAdapter) {
-            window.GamesAdapter.recordAction({ asignatura: selectedAsignatura, nivel: app.getStandardLevelName(selectedDifficulty), preguntaId: q.id, tema: (q.tags && q.tags.length > 0) ? q.tags[0] : 'General', respuestaSeleccionada: selected, respuestaCorrecta: finalCorrect, esCorrecta: String(selected).trim().toLowerCase() === String(finalCorrect).trim().toLowerCase(), tiempoRespuesta: responseTime, cambiosRespuesta: responseChanges });
+        if (QuizProApp.GamesAdapter) {
+            QuizProApp.GamesAdapter.recordAction({ asignatura: selectedAsignatura, nivel: app.getStandardLevelName(selectedDifficulty), preguntaId: q.id, tema: (q.tags && q.tags.length > 0) ? q.tags[0] : 'General', respuestaSeleccionada: selected, respuestaCorrecta: finalCorrect, esCorrecta: String(selected).trim().toLowerCase() === String(finalCorrect).trim().toLowerCase(), tiempoRespuesta: responseTime, cambiosRespuesta: responseChanges });
         }
 
         var allBtns = document.querySelectorAll('.option-card'); var input = document.getElementById('fib-input');
@@ -630,7 +630,7 @@ var QuizProApp = window.QuizProApp || {};
         }
         document.getElementById('score').textContent = score + " / " + (currentIndex + 1);
         localStorage.setItem("attempts_" + q.id, parseInt(localStorage.getItem("attempts_" + q.id) || '0') + 1);
-        setTimeout(function() { window.isProcessingAnswer = false; currentIndex++; if (currentIndex < currentQuizQuestions.length) app.showQuestion(); else app.endQuiz(); }, 1200);
+        setTimeout(function() { app.isProcessingAnswer = false; currentIndex++; if (currentIndex < currentQuizQuestions.length) app.showQuestion(); else app.endQuiz(); }, 1200);
     };
 
     app.calculateXP = function(isCorrect, level, responseTime) {
@@ -665,29 +665,29 @@ var QuizProApp = window.QuizProApp || {};
 
         var lvlName = app.getStandardLevelName(selectedDifficulty);
         var statKey = "QuizPro_" + selectedAsignatura + "_" + selectedGrado + "_" + lvlName;
-        var existing = window.userGameStats[statKey] || {};
-        window.userGameStats[statKey] = { subject: selectedAsignatura, level: lvlName, grade: selectedGrado, maxScore: Math.max(finalPercent, existing.maxScore || 0), totalAttempts: (existing.totalAttempts || 0) + 1, date: new Date().toISOString() };
+        var existing = QuizProApp.userGameStats[statKey] || {};
+        QuizProApp.userGameStats[statKey] = { subject: selectedAsignatura, level: lvlName, grade: selectedGrado, maxScore: Math.max(finalPercent, existing.maxScore || 0), totalAttempts: (existing.totalAttempts || 0) + 1, date: new Date().toISOString() };
 
         if (lvlName === 'Básico' && approved) {
             var lState = JSON.parse(localStorage.getItem('levels_state') || '{"intermedio": {"bloqueado": true}}');
             lState.intermedio.bloqueado = false; localStorage.setItem('levels_state', JSON.stringify(lState));
         }
 
-        if (window.PersistenceManager) {
-            window.PersistenceManager.get('academic_stats').then(function(c) {
-                if (c && c.data) { var u = c.data; u.data = window.userGameStats; window.PersistenceManager.set('academic_stats', u); }
-                else window.PersistenceManager.set('academic_stats', window.userGameStats);
+        if (QuizProApp.PersistenceManager) {
+            QuizProApp.PersistenceManager.get('academic_stats').then(function(c) {
+                if (c && c.data) { var u = c.data; u.data = QuizProApp.userGameStats; QuizProApp.PersistenceManager.set('academic_stats', u); }
+                else QuizProApp.PersistenceManager.set('academic_stats', QuizProApp.userGameStats);
             });
         }
 
-        if (window.fetchApi) {
+        if (app.fetchApi) {
             var userRaw = localStorage.getItem('currentUser');
             var user = userRaw ? JSON.parse(userRaw) : null;
             if (user) {
                 var payload = { userId: user.userId, nombreAlumno: user.nombre, juego: "QuizPro", asignatura: selectedAsignatura, puntaje: finalPercent, nivel: lvlName, grado: selectedGrado, xpGanada: sessionXP, fecha_logro: new Date().toISOString() };
-                window.fetchApi('USER', 'saveGameResult', payload).then(function(res) {
+                app.fetchApi('USER', 'saveGameResult', payload).then(function(res) {
                     if (res.status === 'success' && res.updatedStats) {
-                        for (var k in res.updatedStats) window.userGameStats[k] = res.updatedStats[k];
+                        for (var k in res.updatedStats) QuizProApp.userGameStats[k] = res.updatedStats[k];
                         app.loadPerformanceTable();
                     }
                 });
@@ -700,10 +700,10 @@ var QuizProApp = window.QuizProApp || {};
         if (!userRaw) return;
         var user = JSON.parse(userRaw);
         var attemptFetch = function() {
-            return window.fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, { store: 'academic_stats', onUpdate: app.renderPerformanceHTML });
+            return app.fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, { store: 'academic_stats', onUpdate: app.renderPerformanceHTML });
         };
-        if (window.PersistenceManager) {
-            window.PersistenceManager.get('academic_stats').then(function(c) {
+        if (QuizProApp.PersistenceManager) {
+            QuizProApp.PersistenceManager.get('academic_stats').then(function(c) {
                 if (c && c.data) { app.renderPerformanceHTML(c.data); attemptFetch(); } else attemptFetch();
             });
         } else attemptFetch();
@@ -712,10 +712,10 @@ var QuizProApp = window.QuizProApp || {};
     app.renderPerformanceHTML = function(res) {
         var container = document.getElementById('performance-table-body');
         if (!container) return;
-        window.userGameStats = res.data || (res.id ? null : res) || {};
+        app.userGameStats = res.data || (res.id ? null : res) || {};
         var approvedCount = 0;
         var statsEntries = [];
-        for (var k in window.userGameStats) { if (k.indexOf('QuizPro_') === 0) statsEntries.push(window.userGameStats[k]); }
+        for (var k in QuizProApp.userGameStats) { if (k.indexOf('QuizPro_') === 0) statsEntries.push(QuizProApp.userGameStats[k]); }
         container.innerHTML = statsEntries.map(function(s) {
             if (s.maxScore >= 70) approvedCount++;
             return '<tr class="border-b border-gray-50 text-[11px]"><td class="py-3 font-bold text-gray-700">' + app.getSanitizedAcademicText(s.subject) + '</td><td class="py-3 capitalize text-blue-600 font-semibold">' + app.getSanitizedAcademicText(s.level) + ' (' + app.getSanitizedAcademicText(s.grade) + ')</td><td class="py-3 font-black text-gray-900">' + s.maxScore + '%</td></tr>';
@@ -728,10 +728,10 @@ var QuizProApp = window.QuizProApp || {};
         var body = document.getElementById('global-top-body');
         if (!body) return;
         var attemptFetch = function() {
-            return window.fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' }, 0, { store: 'rankings', onUpdate: app.renderGlobalTopHTML }).then(app.renderGlobalTopHTML);
+            return app.fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' }, 0, { store: 'rankings', onUpdate: app.renderGlobalTopHTML }).then(app.renderGlobalTopHTML);
         };
-        if (window.PersistenceManager) {
-            window.PersistenceManager.get('rankings').then(function(c) { if (c && c.data) { app.renderGlobalTopHTML(c.data); attemptFetch(); } else attemptFetch(); });
+        if (QuizProApp.PersistenceManager) {
+            QuizProApp.PersistenceManager.get('rankings').then(function(c) { if (c && c.data) { app.renderGlobalTopHTML(c.data); attemptFetch(); } else attemptFetch(); });
         } else attemptFetch();
     };
 
@@ -777,12 +777,12 @@ var QuizProApp = window.QuizProApp || {};
     };
 
     // Public Aliases for HTML
-    window.navigateToSubjects = app.navigateToSubjects;
-    window.navigateToLevels = app.navigateToLevels;
-    window.selectLevel = app.selectLevel;
-    window.initQuizPro = app.initQuizPro;
-    window.backToHome = function() { document.getElementById('subjects-screen').classList.add('hidden'); document.getElementById('home-screen').classList.remove('hidden'); };
-    window.backToSubjects = function() { document.getElementById('levels-screen').classList.add('hidden'); document.getElementById('subjects-screen').classList.remove('hidden'); };
+    app.navigateToSubjects = app.navigateToSubjects;
+    app.navigateToLevels = app.navigateToLevels;
+    QuizProApp.selectLevel = app.selectLevel;
+    app.initQuizPro = app.initQuizPro;
+    app.backToHome = function() { document.getElementById('subjects-screen').classList.add('hidden'); document.getElementById('home-screen').classList.remove('hidden'); };
+    app.backToSubjects = function() { document.getElementById('levels-screen').classList.add('hidden'); document.getElementById('subjects-screen').classList.remove('hidden'); };
     window.exitGame = function() { window.location.href = '../index.html'; };
 
 })(QuizProApp);

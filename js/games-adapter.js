@@ -131,7 +131,7 @@ var QuizProApp = window.QuizProApp || {};
 
             if (!this.pendingAnalytics) this.pendingAnalytics = [];
 
-            var persistence = app.PersistenceManager || QuizProApp.PersistenceManager;
+            var persistence = QuizProApp.PersistenceManager || QuizProApp.PersistenceManager;
             var activeId = persistence ? persistence.getActiveId() : 'GUEST-FALLBACK';
             var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
             var user = userRaw ? JSON.parse(userRaw) : null;
@@ -146,7 +146,7 @@ var QuizProApp = window.QuizProApp || {};
             for (var k in action) { if (Object.prototype.hasOwnProperty.call(action, k)) payload[k] = action[k]; }
 
             var self = this;
-            var promise = window.fetchApi('USER', 'recordAnalytics', payload)["catch"](function(e) {
+            var promise = app.fetchApi('USER', 'recordAnalytics', payload)["catch"](function(e) {
                 console.warn("[GamesAdapter] Fallo registro analítico. Guardando localmente...");
                 if (persistence) {
                     persistence.set('local_progress', action, "pending_anl_" + Date.now());
@@ -195,7 +195,7 @@ var QuizProApp = window.QuizProApp || {};
                 xpGanada: xpGanada
             };
 
-            window.fetchApi('USER', 'saveGameResult', payload)["catch"](function(e) {
+            app.fetchApi('USER', 'saveGameResult', payload)["catch"](function(e) {
                 console.warn("[GamesAdapter] Fallo sincronización de fin de sesión.", e);
             });
 
@@ -208,7 +208,7 @@ var QuizProApp = window.QuizProApp || {};
 
         getLeaderboard: function(gameId) {
             var self = this;
-            var persistence = app.PersistenceManager || QuizProApp.PersistenceManager;
+            var persistence = QuizProApp.PersistenceManager || QuizProApp.PersistenceManager;
             var promise = Promise.resolve();
 
             if (persistence) {
@@ -218,7 +218,7 @@ var QuizProApp = window.QuizProApp || {};
             }
 
             return promise.then(function() {
-                return window.fetchApi('USER', 'getGlobalTop', { gameId: gameId }, 0, { store: 'rankings' });
+                return app.fetchApi('USER', 'getGlobalTop', { gameId: gameId }, 0, { store: 'rankings' });
             }).then(function(res) {
                 if (res && res.status === 'success') {
                     self.state.leaderboard = res;
@@ -240,7 +240,7 @@ var QuizProApp = window.QuizProApp || {};
                 return Promise.resolve(guestRecords);
             }
 
-            var persistence = app.PersistenceManager || QuizProApp.PersistenceManager;
+            var persistence = QuizProApp.PersistenceManager || QuizProApp.PersistenceManager;
             var promise = Promise.resolve();
 
             if (persistence) {
@@ -250,7 +250,7 @@ var QuizProApp = window.QuizProApp || {};
             }
 
             return promise.then(function() {
-                return window.fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, { store: 'academic_stats' });
+                return app.fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, { store: 'academic_stats' });
             }).then(function(res) {
                 if (res && res.status === 'success' && res.data) {
                     self.state.personalRecords = res.data;
@@ -263,7 +263,7 @@ var QuizProApp = window.QuizProApp || {};
         }
     };
 
-    window.GamesAdapter = app.GamesAdapter;
+    app.GamesAdapter = app.GamesAdapter;
 
     var wakeLock = null;
     app.requestWakeLock = function() {
@@ -276,7 +276,7 @@ var QuizProApp = window.QuizProApp || {};
             });
         }
     };
-    window.requestWakeLock = app.requestWakeLock;
+    QuizProApp.requestWakeLock = app.requestWakeLock;
 
     console.log("[GamesAdapter] Cargado correctamente.");
 

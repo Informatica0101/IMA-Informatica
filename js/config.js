@@ -232,20 +232,6 @@ var QuizProApp = window.QuizProApp || {};
         return normalized;
     };
 
-    // --- Legacy Compatibility Fallbacks ---
-    window.SERVICE_URLS = app.SERVICE_URLS;
-    window.PARCIAL_ACTUAL = app.PARCIAL_ACTUAL;
-    window.parseGrade = app.parseGrade;
-    window.getSanitizedAcademicText = app.getSanitizedAcademicText;
-    window.normalizeSubject = app.normalizeSubject;
-    window.getStandardLevelName = app.getStandardLevelName;
-    window.formatearMetricaPsicométrica = app.formatearMetricaPsicométrica;
-    window.redondearMetrica = app.redondearMetrica;
-    window.sanitizarHTMLTecnico = app.sanitizarHTMLTecnico;
-    window.normalizePartial = app.normalizePartial;
-    window.isContentAuthorized = app.isContentAuthorized;
-    window.validateQuestion = app.validateQuestion;
-    window.normalizeQuestion = app.normalizeQuestion;
 
     // --- Native Client Security ---
     (function() {

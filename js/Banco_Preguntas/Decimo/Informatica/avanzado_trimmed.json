@@ -13,8 +13,7 @@
       "Sistema Binario"
     ],
     "respuesta_correcta_literal": "Sistema Operativo",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-002",
@@ -28,8 +27,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-003",
@@ -44,8 +42,7 @@
       "Traducir las instrucciones de alto nivel hacia el lenguaje de la máquina."
     ],
     "respuesta_correcta_literal": "Actuar como enlace entre las aplicaciones y el procesamiento del hardware.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-004",
@@ -61,8 +58,7 @@
       "Un componente físico del disco duro que almacena los archivos de forma permanente."
     ],
     "respuesta_correcta_literal": "Un programa que traduce instrucciones entre el sistema operativo y el hardware físico.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-005",
@@ -78,8 +74,7 @@
       "Malware Fix"
     ],
     "respuesta_correcta_literal": "Ransomware",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-006",
@@ -93,8 +88,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-007",
@@ -110,8 +104,7 @@
       "Realizar el análisis de virus en el disco rígido."
     ],
     "respuesta_correcta_literal": "Asignar el tiempo de uso de la CPU a los programas.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-008",
@@ -127,8 +120,7 @@
       "Metal"
     ],
     "respuesta_correcta_literal": "Troya",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-009",
@@ -142,8 +134,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-010",
@@ -159,8 +150,7 @@
       "La instalación de muchos discos en el PC."
     ],
     "respuesta_correcta_literal": "La ejecución de procesos de forma simultánea.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-011",
@@ -176,8 +166,7 @@
       "Tres"
     ],
     "respuesta_correcta_literal": "Cero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-012",
@@ -191,8 +180,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-013",
@@ -208,8 +196,7 @@
       "La finalización programada de todas las tareas activas al terminar el día laboral."
     ],
     "respuesta_correcta_literal": "Una señal enviada al procesador indicando un evento que requiere atención inmediata.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-014",
@@ -225,8 +212,7 @@
       "Firmware "
     ],
     "respuesta_correcta_literal": "Shareware",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-015",
@@ -240,8 +226,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-016",
@@ -257,8 +242,7 @@
       "No existe diferencia real, ambos términos son sinónimos."
     ],
     "respuesta_correcta_literal": "El virus requiere ejecución humana, el gusano se propaga solo.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-017",
@@ -274,8 +258,7 @@
       "Multihilo   "
     ],
     "respuesta_correcta_literal": "Multiusuario",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-018",
@@ -289,8 +272,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-019",
@@ -306,8 +288,7 @@
       "Archivo de texto donde se guardan las claves."
     ],
     "respuesta_correcta_literal": "Espacio en el disco que simula memoria RAM.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-020",
@@ -323,8 +304,7 @@
       "Firmware    "
     ],
     "respuesta_correcta_literal": "Programación",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-021",
@@ -338,8 +318,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-022",
@@ -355,8 +334,7 @@
       "Dibujar los iconos de las carpetas en la pantalla del usuario."
     ],
     "respuesta_correcta_literal": "Organizar, almacenar y recuperar archivos en unidades de disco.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-023",
@@ -372,8 +350,7 @@
       "Sharewar"
     ],
     "respuesta_correcta_literal": "Adware",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-024",
@@ -387,8 +364,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-025",
@@ -404,8 +380,7 @@
       "Que puede llevarse fácilmente en una memoria externa."
     ],
     "respuesta_correcta_literal": "Ejecutarse en arquitecturas de hardware con pocos cambios.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-026",
@@ -421,8 +396,7 @@
       "Phish "
     ],
     "respuesta_correcta_literal": "Backup",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-027",
@@ -436,8 +410,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-028",
@@ -453,8 +426,7 @@
       "Dividir el disco físico en varias particiones de tipo lógico."
     ],
     "respuesta_correcta_literal": "Reorganizar archivos para que estén contiguos y ganar velocidad.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-029",
@@ -470,8 +442,7 @@
       "Popup  "
     ],
     "respuesta_correcta_literal": "Rootkit",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-030",
@@ -485,8 +456,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-031",
@@ -502,8 +472,7 @@
       "Un tipo de conector físico para los monitores de tubo."
     ],
     "respuesta_correcta_literal": "Software de bajo nivel que inicia el hardware en el arranque.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-032",
@@ -519,8 +488,7 @@
       "Escaneo "
     ],
     "respuesta_correcta_literal": "Cifrado",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-033",
@@ -534,8 +502,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-034",
@@ -551,8 +518,7 @@
       "Un hardware que acelera los cálculos matemáticos de CPU."
     ],
     "respuesta_correcta_literal": "Traduce todo el código a lenguaje máquina de una sola vez.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-035",
@@ -568,8 +534,7 @@
       "Spa"
     ],
     "respuesta_correcta_literal": "DoS",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-036",
@@ -583,8 +548,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-037",
@@ -600,8 +564,7 @@
       "Un programa de contabilidad para empresas de tipo firme."
     ],
     "respuesta_correcta_literal": "Software grabado permanentemente en un chip de tipo ROM.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-038",
@@ -617,8 +580,7 @@
       "Console"
     ],
     "respuesta_correcta_literal": "Planner",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-039",
@@ -632,8 +594,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-040",
@@ -649,8 +610,7 @@
       "Un componente del monitor que mejora el color de imagen."
     ],
     "respuesta_correcta_literal": "Traduce y ejecuta el código línea por línea en tiempo real.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-041",
@@ -666,8 +626,7 @@
       "Profile"
     ],
     "respuesta_correcta_literal": "Malware",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-042",
@@ -681,8 +640,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-043",
@@ -698,8 +656,7 @@
       "Usar dos teclados diferentes en la misma computadora."
     ],
     "respuesta_correcta_literal": "Un método que requiere dos formas de identificación.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-044",
@@ -715,8 +672,7 @@
       "Gestor "
     ],
     "respuesta_correcta_literal": "Sistema",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-045",
@@ -730,8 +686,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-046",
@@ -747,8 +702,7 @@
       "Actualiza el reloj de la computadora cada cierto tiempo."
     ],
     "respuesta_correcta_literal": "Mueve procesos de la RAM al disco para liberar memoria.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-047",
@@ -764,8 +718,7 @@
       "Macro "
     ],
     "respuesta_correcta_literal": "Gusano",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-048",
@@ -779,8 +732,7 @@
       "Falso    "
     ],
     "respuesta_correcta_literal": "Verdadero",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-049",
@@ -796,8 +748,7 @@
       "Una contraseña muy larga que protege todas las cuentas."
     ],
     "respuesta_correcta_literal": "Actualización de software que corrige una vulnerabilidad.",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   },
   {
     "id": "Q-10-INF-AV-050",
@@ -813,7 +764,6 @@
       "Socket"
     ],
     "respuesta_correcta_literal": "Driver",
-    "nivel": "Avanzado",
-    "Grado": 10
+    "nivel": "Avanzado"
   }
 ]

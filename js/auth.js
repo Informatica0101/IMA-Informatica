@@ -30,7 +30,7 @@ var QuizProApp = window.QuizProApp || {};
                 submitBtn.classList.add('btn-loading');
                 submitBtn.disabled = true;
 
-                window.fetchApi('USER', 'loginUser', { identifier: identifier, password: password })
+                app.fetchApi('USER', 'loginUser', { identifier: identifier, password: password })
                     .then(function(result) {
                         if (result.status === 'success' && result.data) {
                             // REQ: Implementar lógica de "Recordarme" (v4.0)
@@ -102,13 +102,13 @@ var QuizProApp = window.QuizProApp || {};
                 submitBtn.classList.add('btn-loading');
                 submitBtn.disabled = true;
 
-                window.fetchApi('USER', 'registerUser', payload)
+                app.fetchApi('USER', 'registerUser', payload)
                     .then(function(result) {
                         if (result.exists) {
                             var confirmUpdate = confirm(result.message + "\n\nDatos encontrados:\nNombre: " + result.data.nombre + "\nGrado Actual: " + result.data.gradoActual + "\nSección: " + result.data.seccionActual + "\n\n¿Deseas actualizar tus datos y promover tu cuenta al nuevo grado/sección ingresado?");
                             if (confirmUpdate) {
                                 payload.forceUpdate = true;
-                                return window.fetchApi('USER', 'registerUser', payload);
+                                return app.fetchApi('USER', 'registerUser', payload);
                             } else {
                                 throw new Error("CANCELLED");
                             }
@@ -149,7 +149,7 @@ var QuizProApp = window.QuizProApp || {};
     app.handlePostLoginRedirection = function(user) {
         // Rutina de fusión si venimos de una sesión de invitado
         var promise = Promise.resolve();
-        if (window.PersistenceManager) {
+        if (QuizProApp.PersistenceManager) {
             promise = app.mergeGuestData(user.userId);
         }
 
@@ -202,7 +202,7 @@ var QuizProApp = window.QuizProApp || {};
             }
         }
 
-        var persistence = window.PersistenceManager;
+        var persistence = QuizProApp.PersistenceManager;
         var getIDBProgress = (persistence) ? persistence.getAll('local_progress') : Promise.resolve([]);
 
         return getIDBProgress.then(function(idbProgress) {
@@ -222,7 +222,7 @@ var QuizProApp = window.QuizProApp || {};
             var localAvg = localCount > 0 ? (localScoreSum / localCount) : 0;
 
             if (localRecords.length > 0) {
-                return window.fetchApi('USER', 'getGameStats', { userId: userId })
+                return app.fetchApi('USER', 'getGameStats', { userId: userId })
                     .then(function(serverStats) {
                         var serverAvg = 0;
                         if (serverStats.status === 'success' && serverStats.data) {
@@ -244,7 +244,7 @@ var QuizProApp = window.QuizProApp || {};
 
                         if (localAvg > serverAvg) {
                             console.log("[IMA-AUTH] Caso A: Progreso local superior. Sobrescribiendo servidor...");
-                            return window.fetchApi('USER', 'mergeGuestData', {
+                            return app.fetchApi('USER', 'mergeGuestData', {
                                 userId: userId,
                                 guestId: guestId,
                                 history: localRecords,

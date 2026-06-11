@@ -61,7 +61,7 @@ async function initializePeripheralsGame(gameDataStorage) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const isGuest = !user;
 
-    if (window.GamesAdapter) {
+    if (QuizProApp.GamesAdapter) {
         const { lb, record } = await GamesAdapter.init('perifericos');
 
         // Mini Leaderboard
@@ -122,7 +122,7 @@ async function initializePeripheralsGame(gameDataStorage) {
 
         // Console log to confirm initialization and element finding
         console.log("initializePeripheralsGame: Elementos DOM inicializados.");
-        if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
+        if (QuizProApp.GamesAdapter) QuizProApp.GamesAdapter.showLoading(false);
         if (!startMenu || !startGameButton || !correctAnswersDisplay) {
             console.error("initializePeripheralsGame: ¡ERROR! No se encontraron todos los elementos DOM esperados.");
         }
@@ -133,7 +133,7 @@ async function initializePeripheralsGame(gameDataStorage) {
                 if (document.documentElement.requestFullscreen) {
                     document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
                 }
-                if (window.requestWakeLock) window.requestWakeLock();
+                if (QuizProApp.requestWakeLock) QuizProApp.requestWakeLock();
                 startGame();
             });
         }
@@ -147,8 +147,8 @@ async function initializePeripheralsGame(gameDataStorage) {
         if (exitGameButton) {
             exitGameButton.addEventListener('click', () => {
                 resetGame(); // Ensure game state is reset
-                if (window.returnToMainContent) {
-                    window.returnToMainContent();
+                if (QuizProApp.returnToMainContent) {
+                    QuizProApp.returnToMainContent();
                 }
             });
         }
@@ -254,7 +254,7 @@ function checkAnswer(selectedType) {
     if (answerButtons) answerButtons.forEach(button => button.disabled = true); // Disable all answer buttons immediately
 
     // Captura de Analítica Unificada (Fase 5)
-    if (window.GamesAdapter) {
+    if (QuizProApp.GamesAdapter) {
         GamesAdapter.recordAction({
             asignatura: 'Informática I',
             nivel: 'Básico',
@@ -352,7 +352,7 @@ function endGame() {
     if (finalTimeDisplay) finalTimeDisplay.textContent = finalTimeFormatted;
 
     // Guardar en el portal vía Adaptador Unificado (Sincronización Silenciosa)
-    if (window.GamesAdapter) {
+    if (QuizProApp.GamesAdapter) {
         GamesAdapter.finishSession('Informática I', 'Básico', score);
     }
 }
@@ -375,4 +375,4 @@ function resetGame() {
 }
 
 // Expose initializePeripheralsGame to the global scope so index.html can call it
-window.initializePeripheralsGame = initializePeripheralsGame;
+QuizProApp.initializePeripheralsGame = initializePeripheralsGame;

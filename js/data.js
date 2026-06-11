@@ -2,7 +2,7 @@
  * Data constants for index.html
  */
 
-window.presentationData = [
+QuizProApp.presentationData = [
     {
         grade: "Décimo",
         sections: ["A", "B"],
@@ -129,7 +129,7 @@ window.presentationData = [
     }
 ];
 
-window.additionalResourcesData = [
+QuizProApp.additionalResourcesData = [
     {
         category: "Artículos",
         items: [
@@ -150,7 +150,7 @@ window.additionalResourcesData = [
     }
 ];
 
-window.downloadContentData = [
+QuizProApp.downloadContentData = [
     {
         grade: "Décimo",
         sections: ["A", "B"],

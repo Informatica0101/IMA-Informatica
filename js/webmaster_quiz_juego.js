@@ -1939,7 +1939,7 @@ function selectDifficulty(difficulty) {
     // Shuffle and take only the first 10 questions for the session
     // REQ: Filtro Estricto de Niveles (Incidencia 4)
     const allQuestionsForLevel = [...quizData[selectedTopic][selectedDifficulty]]
-        .map(q => window.normalizeQuestion(q));
+        .map(q => QuizProApp.normalizeQuestion(q));
 
     shuffleArray(allQuestionsForLevel);
     currentQuestions = allQuestionsForLevel.slice(0, 10);
@@ -2481,7 +2481,7 @@ function checkAnswer(selectedIndex, correctAnswer) {
     const finalCorrect = correctAnswer ?? question.respuestaCorrecta;
 
     // Captura de Analítica Unificada (Fase 5)
-    if (window.GamesAdapter) {
+    if (QuizProApp.GamesAdapter) {
         GamesAdapter.recordAction({
             asignatura: 'Diseño Web',
             nivel: selectedDifficulty,
@@ -2543,7 +2543,7 @@ function endQuiz() {
     }
 
     // Guardar en el portal vía Adaptador Unificado (Sincronización Silenciosa)
-    if (window.GamesAdapter) {
+    if (QuizProApp.GamesAdapter) {
         GamesAdapter.finishSession('Diseño Web', selectedDifficulty, currentScore);
     }
 
@@ -2576,11 +2576,11 @@ function shuffleArray(array) {
 
 // --- Global Initialization Function for the Quiz Game ---
 // This function will be called by index.html after the quiz HTML content is loaded.
-window.initQuizGame = async function() {
+QuizProApp.initQuizGame = async function() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const isGuest = !user;
 
-    if (window.GamesAdapter) {
+    if (QuizProApp.GamesAdapter) {
         const { lb, record } = await GamesAdapter.init('webmaster');
 
         // Renderizar Mini-Leaderboard
@@ -2661,7 +2661,7 @@ window.initQuizGame = async function() {
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
             }
-            if (window.requestWakeLock) window.requestWakeLock();
+            if (QuizProApp.requestWakeLock) QuizProApp.requestWakeLock();
             startQuiz();
         });
     }
@@ -2704,12 +2704,12 @@ window.initQuizGame = async function() {
 
     if (quizExitGameButton) {
         quizExitGameButton.addEventListener('click', () => {
-            // This assumes window.returnToMainContent is defined in the parent index.html
-            if (window.returnToMainContent) {
-                window.returnToMainContent();
+            // This assumes QuizProApp.returnToMainContent is defined in the parent index.html
+            if (QuizProApp.returnToMainContent) {
+                QuizProApp.returnToMainContent();
             } else {
                 // Fallback if not running in the expected parent context
-                console.warn("window.returnToMainContent not found. Cannot return to main content.");
+                console.warn("QuizProApp.returnToMainContent not found. Cannot return to main content.");
                 showScreen('quiz-start-menu'); // Just go back to quiz start menu
             }
         });
@@ -2730,7 +2730,7 @@ window.initQuizGame = async function() {
     window.addEventListener('blur', handleAbandonment);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') handleAbandonment(); });
 
-    if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
+    if (QuizProApp.GamesAdapter) QuizProApp.GamesAdapter.showLoading(false);
     // Initial screen setup - moved inside initQuizGame
     showScreen('quiz-start-menu');
 }; // End of initQuizGame function

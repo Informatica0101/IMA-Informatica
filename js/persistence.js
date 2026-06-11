@@ -204,14 +204,14 @@ var QuizProApp = window.QuizProApp || {};
 
     // Initialize
     app.PersistenceManager.init()["catch"](console.error);
-    window.PersistenceManager = app.PersistenceManager;
+    app.PersistenceManager = app.PersistenceManager;
 
     /**
      * Global background sync for pending telemetry (REQ v7.5)
      * Safely transmits data before clearing local cache.
      */
     window.addEventListener('online', function() {
-        if (window.fetchApi && app.PersistenceManager) {
+        if (app.fetchApi && app.PersistenceManager) {
             app.PersistenceManager.getAll('local_progress').then(function(pending) {
                 if (pending && pending.length > 0) {
                     console.log("[Sync] Found " + pending.length + " pending actions. Syncing...");
@@ -222,7 +222,7 @@ var QuizProApp = window.QuizProApp || {};
 
                     for (var i = 0; i < pending.length; i++) {
                         var action = pending[i].data;
-                        var promise = fetchApi('USER', 'recordAnalytics', {
+                        var promise = app.fetchApi('USER', 'recordAnalytics', {
                             userId: app.PersistenceManager.getActiveId(),
                             grado: user ? user.grado : 'Invitado',
                             gameId: action.gameId || 'QuizPro',

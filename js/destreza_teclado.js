@@ -175,8 +175,8 @@ function calculateWPM() {
 // --- Lógica del Juego ---
 
 // Inicializa el juego al cargar la página o al volver a jugar
-window.initDexterityGame = async function() {
-    if (window.GamesAdapter) {
+QuizProApp.initDexterityGame = async function() {
+    if (QuizProApp.GamesAdapter) {
         await GamesAdapter.init('destreza');
     }
     console.log('initDexterityGame called'); // Log de depuración
@@ -211,7 +211,7 @@ window.initDexterityGame = async function() {
     if (retryGameButton) retryGameButton.addEventListener('click', startGame);
     if (exitResultsButton) exitResultsButton.addEventListener('click', exitGame);
 
-    if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
+    if (QuizProApp.GamesAdapter) QuizProApp.GamesAdapter.showLoading(false);
 
     // Control de Abandono (Fase 11)
     const handleAbandonment = () => {
@@ -236,7 +236,7 @@ function startGame() {
         document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
     }
     // Activar Wake Lock (v3.2)
-    if (window.requestWakeLock) window.requestWakeLock();
+    if (QuizProApp.requestWakeLock) QuizProApp.requestWakeLock();
 
     resetGame();
     gameActive = true; // El juego está activo
@@ -470,7 +470,7 @@ function handleInput() {
     if (inputText.length === targetWord.length) {
         const responseTime = Date.now() - questionStartTime;
         // Captura de Analítica Unificada (Fase 5)
-        if (window.GamesAdapter) {
+        if (QuizProApp.GamesAdapter) {
             GamesAdapter.recordAction({
                 asignatura: 'Ofimática I',
                 nivel: ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel],
@@ -656,7 +656,7 @@ function endGame() {
     if (scoreTitle) scoreTitle.textContent = `¡Juego Terminado! Puntaje: ${totalScore}`;
 
     // Integración con GamesAdapter (Sincronización Silenciosa)
-    if (window.GamesAdapter) {
+    if (QuizProApp.GamesAdapter) {
         GamesAdapter.finishSession('Ofimática I', ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel], totalScore);
     }
 
@@ -669,15 +669,15 @@ function endGame() {
 function exitGame() {
     gameActive = false; // Asegurarse de que el juego esté inactivo al salir
     clearInterval(gameTimerInterval);
-    if (window.returnToMainContent) {
-        window.returnToMainContent();
+    if (QuizProApp.returnToMainContent) {
+        QuizProApp.returnToMainContent();
     } else {
-        console.warn("window.returnToMainContent not found. Cannot return to main content.");
+        console.warn("QuizProApp.returnToMainContent not found. Cannot return to main content.");
         showScreen('game-start-menu'); // Fallback to game start menu
     }
 }
 
 // La inicialización de este juego ahora se maneja directamente desde index.html
-// a través de la función window.initDexterityGame() que se llama en el script.onload
+// a través de la función QuizProApp.initDexterityGame() que se llama en el script.onload
 // del script cargado dinámicamente.
 // No se necesita document.addEventListener('DOMContentLoaded') aquí.

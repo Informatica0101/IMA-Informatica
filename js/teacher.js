@@ -70,7 +70,7 @@ var QuizProApp = window.QuizProApp || {};
             return (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         };
 
-        window.navigateTo = function(targetSection, navElement, pushState) {
+        app.navigateTo = function(targetSection, navElement, pushState) {
             if (pushState === undefined) pushState = true;
             for (var i = 0; i < allSections.length; i++) {
                 if (allSections[i]) allSections[i].classList.add('hidden');
@@ -101,44 +101,44 @@ var QuizProApp = window.QuizProApp || {};
         };
 
         if (navDashboard) navDashboard.addEventListener('click', function() {
-            window.navigateTo(sectionAcademicReports, navDashboard);
-            fetchTeacherActivity();
+            app.navigateTo(sectionAcademicReports, navDashboard);
+            app.fetchTeacherActivity();
         });
         if (navTareas) navTareas.addEventListener('click', function() {
-            window.navigateTo(sectionTareas, navTareas);
+            app.navigateTo(sectionTareas, navTareas);
             if (tareasListView) tareasListView.classList.remove('hidden');
             if (tareasCreateView) tareasCreateView.classList.add('hidden');
             fetchManagementData();
         });
         if (navProyectos) navProyectos.addEventListener('click', function() {
-            window.navigateTo(sectionProyectos, navProyectos);
+            app.navigateTo(sectionProyectos, navProyectos);
             fetchProjects();
         });
         if (navLogros) navLogros.addEventListener('click', function() {
-            window.navigateTo(sectionLogros, navLogros);
+            app.navigateTo(sectionLogros, navLogros);
             fetchLogros();
         });
         if (navNews) navNews.addEventListener('click', function() {
-            window.navigateTo(sectionNews, navNews);
+            app.navigateTo(sectionNews, navNews);
             fetchNewsManagement();
         });
         if (navAdmin) navAdmin.addEventListener('click', function() {
-            window.navigateTo(sectionAdmin, navAdmin);
+            app.navigateTo(sectionAdmin, navAdmin);
             loadAcademicAdminData();
         });
         if (navReportsOld) navReportsOld.addEventListener('click', function() {
-            window.navigateTo(sectionReportes, navReportsOld);
+            app.navigateTo(sectionReportes, navReportsOld);
         });
 
         function loadAcademicAdminData() {
             var parcialSelect = document.getElementById('admin-parcial-actual');
             if (!parcialSelect) return;
 
-            window.fetchApi('USER', 'getAcademicConfig')
+            app.fetchApi('USER', 'getAcademicConfig')
                 .then(function(configRes) {
                     if (configRes.status === 'success' && configRes.data.ParcialActual) {
                         parcialSelect.value = configRes.data.ParcialActual;
-                        window.PARCIAL_ACTUAL = configRes.data.ParcialActual;
+                        QuizProApp.PARCIAL_ACTUAL = configRes.data.ParcialActual;
                     }
                     renderAsignaturasCheckboxes();
                 });
@@ -156,7 +156,7 @@ var QuizProApp = window.QuizProApp || {};
                 "Redes", "Programación Orientada a Objetos", "Informática I"
             ];
 
-            window.fetchApi('USER', 'getAsignaturasActivas', { parcial: parcial })
+            app.fetchApi('USER', 'getAsignaturasActivas', { parcial: parcial })
                 .then(function(activeRes) {
                     var activeList = activeRes.data || [];
                     var html = '';
@@ -192,8 +192,8 @@ var QuizProApp = window.QuizProApp || {};
             btnSaveAdm.textContent = 'Guardando...';
 
             Promise.all([
-                window.fetchApi('USER', 'updateAcademicConfig', { key: 'ParcialActual', value: parcial }),
-                window.fetchApi('USER', 'updateAsignaturasActivas', { parcial: parcial, asignaturas: selectedAsignaturas })
+                app.fetchApi('USER', 'updateAcademicConfig', { key: 'ParcialActual', value: parcial }),
+                app.fetchApi('USER', 'updateAsignaturasActivas', { parcial: parcial, asignaturas: selectedAsignaturas })
             ]).then(function() {
                 alert('Configuración académica actualizada correctamente.');
             })["catch"](function(e) {
@@ -239,7 +239,7 @@ var QuizProApp = window.QuizProApp || {};
                             var promises = [];
                             for (var i = 0; i < chunk.length; i++) {
                                 var q = chunk[i];
-                                promises.push(window.fetchApi('USER', 'saveQuestion', {
+                                promises.push(app.fetchApi('USER', 'saveQuestion', {
                                     Asignatura: q.Asignatura, Nivel: q.Nivel, Tema: q.Tema || "General",
                                     TipoActividad: q.TipoActividad || "Selección múltiple", Pregunta: q.Pregunta,
                                     OpcionA: q.OpcionA, OpcionB: q.OpcionB, OpcionC: q.OpcionC || "",
@@ -292,7 +292,7 @@ var QuizProApp = window.QuizProApp || {};
         };
 
         // --- Navegación Jerárquica ---
-        window.pushNav = function(level, data, pushState) {
+        app.pushNav = function(level, data, pushState) {
             if (isNavigating) return Promise.resolve();
             if (pushState === undefined) pushState = true;
             isNavigating = true;
@@ -302,7 +302,7 @@ var QuizProApp = window.QuizProApp || {};
 
             if (level === 'Alumnos') {
                 if (submissionsTableBody) submissionsTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8">Cargando lista de alumnos...</td></tr>';
-                p = window.fetchApi('USER', 'getStudentsByGradoSeccion', { grado: data.grado, seccion: data.seccion })
+                p = app.fetchApi('USER', 'getStudentsByGradoSeccion', { grado: data.grado, seccion: data.seccion })
                     .then(function(res) {
                         data.students = res.data || [];
                     })["catch"](function() {
@@ -320,7 +320,7 @@ var QuizProApp = window.QuizProApp || {};
             });
         };
 
-        window.popNav = function(doPop) {
+        app.popNav = function(doPop) {
             if (isNavigating) return;
             if (doPop === undefined) doPop = true;
             if (navStack.length > 1) {
@@ -331,14 +331,14 @@ var QuizProApp = window.QuizProApp || {};
             }
         };
 
-        window.syncNavWithState = function(state) {
+        app.syncNavWithState = function(state) {
             if (state.stack) {
                 navStack = [].concat(state.stack);
                 renderCurrentLevel();
             }
         };
 
-        if (backNavBtn) backNavBtn.addEventListener('click', function() { window.popNav(); });
+        if (backNavBtn) backNavBtn.addEventListener('click', function() { app.popNav(); });
 
         var allTasksExams = [];
         function fetchManagementData() {
@@ -347,8 +347,8 @@ var QuizProApp = window.QuizProApp || {};
             tbody.innerHTML = '<tr><td colspan="5" class="text-center p-4">Cargando...</td></tr>';
 
             Promise.all([
-                window.fetchApi('TASK', 'getAllTasks', { profesorId: currentUser.userId }),
-                window.fetchApi('EXAM', 'getAllExams', { profesorId: currentUser.userId })
+                app.fetchApi('TASK', 'getAllTasks', { profesorId: currentUser.userId }),
+                app.fetchApi('EXAM', 'getAllExams', { profesorId: currentUser.userId })
             ]).then(function(results) {
                 var tasks = (results[0].data || []).map(function(t) { t.tipoReal = 'Tarea'; return t; });
                 var exams = (results[1].data || []).map(function(e) { e.tipoReal = 'Examen'; return e; });
@@ -368,7 +368,7 @@ var QuizProApp = window.QuizProApp || {};
             for (var i = 0; i < allTasksExams.length; i++) {
                 var item = allTasksExams[i];
                 html +=
-                    '<tr class="hover:bg-gray-50 transition-colors cursor-pointer group" onclick="window.openTaskDetail(' + i + ')">' +
+                    '<tr class="hover:bg-gray-50 transition-colors cursor-pointer group" onclick="QuizProApp.openTaskDetail(' + i + ')">' +
                         '<td class="p-4">' +
                             '<div class="font-semibold text-gray-900 uppercase tracking-tighter">' + item.titulo + '</div>' +
                             '<div class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest">' + item.tipoReal + '</div>' +
@@ -391,10 +391,10 @@ var QuizProApp = window.QuizProApp || {};
             tbody.innerHTML = html;
         }
 
-        window.openTaskDetail = function(idx) {
+        app.openTaskDetail = function(idx) {
             var item = allTasksExams[idx];
             document.getElementById('detail-titulo').textContent = item.titulo;
-            document.getElementById('detail-descripcion').innerHTML = window.sanitizarHTMLTecnico(item.descripcion) || 'Sin descripción.';
+            document.getElementById('detail-descripcion').innerHTML = QuizProApp.sanitizarHTMLTecnico(item.descripcion) || 'Sin descripción.';
             document.getElementById('detail-asignatura').textContent = item.asignatura;
             document.getElementById('detail-parcial').textContent = item.parcial || 'N/A';
             document.getElementById('detail-grado').textContent = item.grado;
@@ -478,7 +478,7 @@ var QuizProApp = window.QuizProApp || {};
 
             var service = tipo === 'Tarea' ? 'TASK' : 'EXAM';
             var action = tipo === 'Tarea' ? 'updateTask' : 'updateExam';
-            window.fetchApi(service, action, payload)
+            app.fetchApi(service, action, payload)
                 .then(function(res) {
                     if (res.status === 'success') {
                         alert('Actualizado correctamente.');
@@ -493,14 +493,14 @@ var QuizProApp = window.QuizProApp || {};
                 });
         };
 
-        function fetchTeacherActivity() {
+        app.fetchTeacherActivity = function() {
             if (!submissionsTableBody) return;
 
             var hasLocalData = false;
             var renderP = Promise.resolve();
 
-            if (window.PersistenceManager) {
-                renderP = window.PersistenceManager.get('cache_profesor_data')
+            if (QuizProApp.PersistenceManager) {
+                renderP = QuizProApp.PersistenceManager.get('cache_profesor_data')
                     .then(function(cached) {
                         if (cached && cached.data) {
                             console.log("[Offline-First] Panel docente desde caché.");
@@ -524,11 +524,11 @@ var QuizProApp = window.QuizProApp || {};
                 var payload = { profesorId: currentUser.userId };
 
                 return Promise.all([
-                    window.fetchApi('TASK', 'getTeacherActivity', payload),
-                    window.fetchApi('EXAM', 'getTeacherExamActivity', payload),
-                    window.fetchApi('TASK', 'getAllTasks', payload),
-                    window.fetchApi('EXAM', 'getAllExams', payload),
-                    window.fetchApi('USER', 'getAcademicConfig')
+                    app.fetchApi('TASK', 'getTeacherActivity', payload),
+                    app.fetchApi('EXAM', 'getTeacherExamActivity', payload),
+                    app.fetchApi('TASK', 'getAllTasks', payload),
+                    app.fetchApi('EXAM', 'getAllExams', payload),
+                    app.fetchApi('USER', 'getAcademicConfig')
                 ]);
             })
             .then(function(results) {
@@ -539,7 +539,7 @@ var QuizProApp = window.QuizProApp || {};
                 var configRes = results[4];
 
                 if (configRes && configRes.status === 'success' && configRes.data.ParcialActual) {
-                    window.PARCIAL_ACTUAL = configRes.data.ParcialActual;
+                    QuizProApp.PARCIAL_ACTUAL = configRes.data.ParcialActual;
                 }
 
                 allActivityRaw = [];
@@ -554,8 +554,8 @@ var QuizProApp = window.QuizProApp || {};
                     if (examsRes[l].estado !== 'Inactiva') { examsRes[l].tipoReal = 'Examen'; allAssignmentsRaw.push(examsRes[l]); }
                 }
 
-                if (window.PersistenceManager) {
-                    window.PersistenceManager.set('cache_profesor_data', { activity: allActivityRaw, assignments: allAssignmentsRaw });
+                if (QuizProApp.PersistenceManager) {
+                    QuizProApp.PersistenceManager.set('cache_profesor_data', { activity: allActivityRaw, assignments: allAssignmentsRaw });
                 }
 
                 renderCurrentLevel();
@@ -569,7 +569,7 @@ var QuizProApp = window.QuizProApp || {};
                     '</td></tr>';
             })
             ["finally"](function() {
-                if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
+                if (QuizProApp.GamesAdapter) QuizProApp.GamesAdapter.showLoading(false);
             });
         }
 
@@ -808,7 +808,7 @@ var QuizProApp = window.QuizProApp || {};
 
             var studentInfo = current.data.studentInfo || null;
             if (studentInfo) {
-                window.fetchApi("USER", "getLearningProfile", { userId: studentInfo.userId || studentInfo.id })
+                app.fetchApi("USER", "getLearningProfile", { userId: studentInfo.userId || studentInfo.id })
                     .then(function(res) {
                         if (res.status === "success" && res.data) renderTeacherPsychometricModule(res.data);
                     });
@@ -816,11 +816,11 @@ var QuizProApp = window.QuizProApp || {};
                 var existing = document.getElementById('student-details-info-card');
                 if (existing) existing.remove();
 
-                var activeParcial = window.normalizePartial(window.PARCIAL_ACTUAL);
+                var activeParcial = QuizProApp.normalizePartial(QuizProApp.PARCIAL_ACTUAL);
                 var studentSubmissions = [];
                 for (var i = 0; i < allActivityRaw.length; i++) {
                     var sub = allActivityRaw[i];
-                    if (sub.alumnoId == alumnoId && norm(sub.grado) === norm(grado) && norm(sub.seccion) === norm(seccion) && (isGlobalSearch || norm(sub.asignatura) === norm(asignatura)) && (isGlobalSearch || window.normalizePartial(sub.parcial) === activeParcial)) {
+                    if (sub.alumnoId == alumnoId && norm(sub.grado) === norm(grado) && norm(sub.seccion) === norm(seccion) && (isGlobalSearch || norm(sub.asignatura) === norm(asignatura)) && (isGlobalSearch || QuizProApp.normalizePartial(sub.parcial) === activeParcial)) {
                         studentSubmissions.push(sub);
                     }
                 }
@@ -933,11 +933,11 @@ var QuizProApp = window.QuizProApp || {};
                     var itemNav = currentFilteredItems[idxNav];
                     var current = navStack[navStack.length - 1];
 
-                    if (current.level === 'Grados') window.pushNav('Secciones', { grado: itemNav });
-                    else if (current.level === 'Secciones') window.pushNav('Asignaturas', { grado: current.data.grado, seccion: itemNav });
-                    else if (current.level === 'Asignaturas') window.pushNav('Parciales', { grado: current.data.grado, seccion: current.data.seccion, asignatura: itemNav });
-                    else if (current.level === 'Parciales') window.pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: itemNav });
-                    else if (current.level === 'Alumnos') window.pushNav('Detalles', { alumnoId: itemNav.id, alumnoNombre: itemNav.nombre, grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: current.data.parcial, studentInfo: itemNav.rawData });
+                    if (current.level === 'Grados') app.pushNav('Secciones', { grado: itemNav });
+                    else if (current.level === 'Secciones') app.pushNav('Asignaturas', { grado: current.data.grado, seccion: itemNav });
+                    else if (current.level === 'Asignaturas') app.pushNav('Parciales', { grado: current.data.grado, seccion: current.data.seccion, asignatura: itemNav });
+                    else if (current.level === 'Parciales') app.pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: itemNav });
+                    else if (current.level === 'Alumnos') app.pushNav('Detalles', { alumnoId: itemNav.id, alumnoNombre: itemNav.nombre, grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: current.data.parcial, studentInfo: itemNav.rawData });
                 }
             });
         }
@@ -959,7 +959,7 @@ var QuizProApp = window.QuizProApp || {};
         function fetchNewsManagement() {
             if (!newsManagementContainer) return;
             newsManagementContainer.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500">Cargando noticias...</div>';
-            window.fetchApi('USER', 'getNews', {})
+            app.fetchApi('USER', 'getNews', {})
                 .then(function(res) {
                     var data = res.data || [];
                     if (data.length === 0) {
@@ -995,7 +995,7 @@ var QuizProApp = window.QuizProApp || {};
                     contenido: quillNews ? quillNews.root.innerHTML : document.getElementById('news-content').value
                 };
 
-                window.fetchApi('USER', 'createNews', payload)
+                app.fetchApi('USER', 'createNews', payload)
                     .then(function(res) {
                         if (res.status === 'success') {
                             alert('Noticia publicada exitosamente.');
@@ -1051,12 +1051,12 @@ var QuizProApp = window.QuizProApp || {};
             saveGradeBtn.disabled = true;
             saveGradeBtn.classList.add('btn-loading');
 
-            window.fetchApi(type === 'Tarea' ? 'TASK' : 'EXAM', type === 'Tarea' ? 'gradeSubmission' : 'gradeExamSubmission', payload)
+            app.fetchApi(type === 'Tarea' ? 'TASK' : 'EXAM', type === 'Tarea' ? 'gradeSubmission' : 'gradeExamSubmission', payload)
                 .then(function(res) {
                     if (res.status === 'success') {
                         alert('¡Calificación guardada!');
                         gradeModal.classList.add('hidden');
-                        fetchTeacherActivity();
+                        app.fetchTeacherActivity();
                     } else throw new Error(res.message);
                 })["catch"](function(err) { alert(err.message); })
                 ["finally"](function() { saveGradeBtn.disabled = false; saveGradeBtn.classList.remove('btn-loading'); });
@@ -1066,7 +1066,7 @@ var QuizProApp = window.QuizProApp || {};
             var tbody = document.getElementById('logros-table-body');
             if (!tbody) return;
             tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8">Cargando...</td></tr>';
-            window.fetchApi('USER', 'getGameStats', {})
+            app.fetchApi('USER', 'getGameStats', {})
                 .then(function(res) {
                     var data = res.data || [];
                     var html = '';
@@ -1141,8 +1141,8 @@ var QuizProApp = window.QuizProApp || {};
         if (logoutButton) logoutButton.addEventListener('click', function() { localStorage.removeItem('currentUser'); window.location.href = 'login.html'; });
 
         history.replaceState({ type: 'dashboard-section', sectionId: sectionAcademicReports.id, navId: navDashboard.id }, '');
-        window.navigateTo(sectionAcademicReports, navDashboard, false);
-        fetchTeacherActivity();
+        app.navigateTo(sectionAcademicReports, navDashboard, false);
+        app.fetchTeacherActivity();
     });
 
 })(QuizProApp);

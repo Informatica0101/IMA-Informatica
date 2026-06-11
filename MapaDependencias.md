@@ -14,3 +14,8 @@
 
 ## 3. Almacenamiento (Persistence)
 - **IndexedDB (IMA_Persistence_DB):** Almacenes: news, academic_stats, rankings, user_profile, local_progress, cache_estudiante_dashboard, cache_profesor_data.
+
+## 4. Flujos Críticos de Negocio (IMA-CORE)
+- **Segmentación PDF (js/student.js):** Dependencia externa de PDF-Lib. Flujo: File -> splitPdfLogically -> uploadChunks -> submitAssignment.
+- **Migración de Banco (js/teacher.js):** Dependencia de migrated_questions.json. Flujo: localJSON -> processChunk -> saveQuestion -> fetchApi(USER).
+- **Visualización Psicométrica (Charts):** Dependencia de Chart.js v4. Integración vía renderTeacherPsychometricModule y renderStudentCharts.
