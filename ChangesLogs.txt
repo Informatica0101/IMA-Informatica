@@ -339,3 +339,46 @@ ARCHIVO: js/teacher.js
 
 ARCHIVO: js/quizpro.js
 - Línea 1556: Implementado Eager Caching para el ranking global con sincronización silenciosa (Modulo 1.1).
+
+REGISTRO DE MODIFICACIONES - 2026-06-12
+
+ARCHIVO: js/quizpro.js
+- Línea 922: Sustituida asignación directa de innerHTML por llamada a window.sanitizarHTMLTecnico para el enunciado de la pregunta.
+- Líneas 966, 1016, 1240: Implementada inyección de HTML enriquecido en opciones de respuesta múltiple mediante innerHTML y sanitización técnica.
+- Líneas 1072, 1149, 1197, 1208: Aplicado sanitizador HTML en componentes de Memoria, Ordenamiento y Emparejamiento.
+- Línea 1341: Refactorizado feedback de respuesta para interpretar marcado HTML en la solución correcta.
+- Línea 1593: Inyectada restricción clínica de dataset (.slice(0, 5)) en el motor de renderizado del Top Global.
+
+ARCHIVO: js/config.js
+- Línea 107: Evolución de window.sanitizarHTMLTecnico (v7.6) con soporte extendido para etiquetas (p, span, ul, ol, li, a) y preservación controlada de atributos (style, class, href).
+- Línea 300+: Implementación de IIFE de Seguridad Perimetral: interceptores para bloqueo de menú contextual (derecho), teclas de inspección (F12, combos Ctrl+Shift), atajos de sistema (Ctrl+U, Ctrl+S) y restricción global de selección de texto vía CSS Inyectado.
+
+ARCHIVO: js/games-adapter.js
+- Línea 26: Optimizada inicialización de sesión (0ms logic). El sistema ahora omite el loader global si detecta datos válidos en la caché de IndexedDB.
+
+ARCHIVO: js/student.js
+- Línea 106: Implementada condicional para GamesAdapter.showLoading. Se previene la activación del spinner si ya se ha realizado la hidratación desde datos locales.
+
+ARCHIVO: js/teacher.js
+- Línea 797: Implementada condicional para GamesAdapter.showLoading. Se garantiza una interfaz no disruptiva durante la conciliación de datos en segundo plano.
+
+REGISTRO DE ACTUALIZACIONES TÉCNICAS Y ACADÉMICAS V7.6 - 2026-06-13
+
+1. SEGURIDAD Y RENDIMIENTO (CLÍNICO)
+- ARCHIVO: js/config.js: Implementación de IIFE de Seguridad Perimetral. Bloqueo de F12, Ctrl+Shift+I/C/J, Ctrl+U y menú contextual. Inyección de CSS global para restricción de selección de texto.
+- ARCHIVO: js/config.js: Evolución de sanitizarHTMLTecnico para permitir etiquetas p, span, ul, ol, li, a con atributos seguros.
+- ARCHIVO: js/quizpro.js: Aplicada restricción de dataset (.slice(0, 5)) en el renderizado del ranking global.
+- ARCHIVO: js/student.js, js/teacher.js, js/games-adapter.js: Refactorización de lógica de hidratación 0ms. Se eliminaron pantallas de carga disruptivas al detectar datos en caché de IndexedDB.
+
+2. BANCO DE PREGUNTAS (CURRICULAR)
+- ARCHIVOS: js/Banco_Preguntas/ (24 archivos distributed): Normalización total de cuotas. Se garantizan 50 reactivos validados por cada nodo.
+- ARCHIVOS: js/Banco_Preguntas/: Migración de temas avanzados (Sistemas de Numeración, Conversiones y CLI) de 10.mo a 11.no Grado.
+- ARCHIVOS: js/Banco_Preguntas/: Asegurada integridad de esquema (enunciado/respuesta_correcta_literal) en todo el repositorio.
+
+3. PORTAL MULTIMEDIA (ESTRUCTURAL)
+- ARCHIVOS: .html (Directorios de clases): Refactorización masiva de 70+ presentaciones. Inyección del Motor de Navegación v2 (Swipe móvil, Teclado unificado, Fullscreen auto-hide).
+
+4. CONTROL ADMINISTRATIVO (FEATURE)
+- ARCHIVO: js/config.js: Refactorizado hook 'isContentAuthorized' para soportar filtrado de asignaturas activas por parcial.
+- ARCHIVO: js/teacher.js: Implementada persistencia de configuración académica en caché local para efecto cascada inmediato en la UI.
+- ARCHIVO: teacher-dashboard.html: Integrada interfaz de selección de asignaturas en el módulo de Gestión Académica.

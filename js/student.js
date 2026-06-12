@@ -103,6 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const payload = { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion };
 
+            // REQ 2: No disparar loader global si ya renderizamos desde caché
+            if (!hasLocalData && window.GamesAdapter) window.GamesAdapter.showLoading(true);
+
             // REQ: Mitigación de Latencia mediante Paralelismo (Ticket 4)
             const [tasksResult, examsResult, profileResult] = await Promise.all([
                 fetchApi('TASK', 'getStudentTasks', payload),
@@ -205,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // REQ: Filtro Estricto por Parcial (Incidencia 5)
         // No mezclar históricos en el cálculo de progreso actual
         const currentParcialActivities = activities.filter(a =>
-            window.normalizePartial(a.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL)
+            window.isContentAuthorized(a.parcial, a.asignatura)
         );
 
         // --- Ajuste de Lógica de Progreso (Req 2) ---
@@ -488,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 target.classList.add('bg-blue-600', 'text-white');
 
                 const p = target.dataset.parcial;
-                const activitiesInParcial = allActivitiesData.filter(a => a.parcial === p);
+                const activitiesInParcial = allActivitiesData.filter(a => window.isContentAuthorized(a.parcial, a.asignatura));
                 renderSubjectNav(activitiesInParcial, p);
             });
         });
