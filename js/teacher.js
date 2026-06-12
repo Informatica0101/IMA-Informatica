@@ -794,6 +794,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const payload = { profesorId: currentUser.userId };
 
+            // REQ 2: No disparar loader global si ya renderizamos desde caché
+            if (!hasLocalData && window.GamesAdapter) window.GamesAdapter.showLoading(true);
+
             // REQ: Mitigación de Latencia (Ticket 4) - Parallel fetch of config and activity
             const [taskSubmissions, examSubmissions, tasksRes, examsRes, configRes] = await Promise.all([
                 fetchApi('TASK', 'getTeacherActivity', payload),

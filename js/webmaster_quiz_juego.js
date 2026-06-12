@@ -1965,11 +1965,11 @@ function startQuestion() {
     updateTimerDisplay();
 
     const question = currentQuestions[currentQuestionIndex];
-    if (quizQuestion) quizQuestion.textContent = question.question;
+    if (quizQuestion) quizQuestion.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(question.question) : question.question;
     questionStartTime = Date.now();
     responseChanges = 0;
     if (quizHelpText) {
-        quizHelpText.textContent = question.help || ''; // Set help text, now always visible
+        quizHelpText.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(question.help || '') : (question.help || ''); // Set help text, now always visible
         quizHelpText.classList.remove('hidden'); // Ensure help text is visible
     }
 
@@ -2039,7 +2039,7 @@ function setupMultipleChoiceQuestion(question) {
                 'transition-all', 'duration-300', 'ease-in-out',
                 'shadow-md', 'hover:shadow-lg', 'focus:outline-none', 'focus:ring-4', 'focus:ring-blue-300');
             button.dataset.option = index;
-            button.textContent = option;
+            button.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(option) : option;
             button.onclick = () => checkAnswer(index, question.correctAnswer);
             multipleChoiceOptions.appendChild(button);
         });

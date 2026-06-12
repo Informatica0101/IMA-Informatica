@@ -203,8 +203,8 @@ function updateTimer() {
 function displayPeripheral() {
     if (currentPeripheralIndex < shuffledPeripherals.length) {
         const peripheral = shuffledPeripherals[currentPeripheralIndex];
-        if (peripheralName) peripheralName.textContent = peripheral.name;
-        if (peripheralDescription) peripheralDescription.textContent = peripheral.description;
+        if (peripheralName) peripheralName.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(peripheral.name) : peripheral.name;
+        if (peripheralDescription) peripheralDescription.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(peripheral.description) : peripheral.description;
         questionStartTime = Date.now();
         responseChanges = 0;
         if (peripheral.image && peripheralImage) {

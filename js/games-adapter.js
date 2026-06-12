@@ -23,7 +23,15 @@ window.GamesAdapter = {
             startTime: Date.now(),
             actions: []
         };
-        await this.showLoading(true);
+
+        // REQ 2: Optimización de Hidratación. No disparar loader si ya hay datos en caché (0ms logic)
+        let hasCache = false;
+        if (window.PersistenceManager) {
+            const cachedStats = await window.PersistenceManager.get('academic_stats');
+            if (cachedStats && cachedStats.data) hasCache = true;
+        }
+
+        if (!hasCache) await this.showLoading(true);
 
         // REQ: Pre-carga segura con timeout (Fase 2)
         try {

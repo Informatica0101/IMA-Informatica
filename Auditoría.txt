@@ -443,3 +443,27 @@ Archivo: backend/user-service/Code.gs
 
 Archivos juegos/*.html
 - [HALLAZGO] Todos los minigames conservan el #loading-overlay que debe ser removido o desactivado en favor de Skeleton Screens.
+
+AUDITORÍA CLÍNICA DE RENDIMIENTO Y SEGURIDAD - 2026-06-12
+
+Archivo: js/quizpro.js
+- [HALLAZGO] La función renderGlobalTopHTML (Línea 1583) mapea el array res.global sin restricciones de longitud.
+- [HALLAZGO] En showQuestion (Línea 907), las opciones de respuesta se renderizan usando textContent, lo que impide el renderizado de etiquetas HTML enriquecidas solicitadas.
+- [RIESGO] Procesamiento de datasets grandes en el ranking global puede degradar el rendimiento en dispositivos móviles.
+
+Archivo: js/config.js
+- [HALLAZGO] sanitizarHTMLTecnico (Línea 107) tiene una lista blanca limitada (code, b, strong, i, em, br, pre). Faltan: p, span, ul, ol, li, a.
+- [HALLAZGO] No existen interceptores para los eventos contextmenu ni para combinaciones de teclas de inspección (F12, Ctrl+Shift+I, etc.).
+- [HALLAZGO] No se ha implementado la restricción global de selección de texto.
+
+Archivo: js/student.js
+- [HALLAZGO] fetchAllActivities (Línea 66) libera el loader global en el bloque finally, pero se debe asegurar que no se active inicialmente si hasLocalData es true.
+
+Archivo: js/teacher.js
+- [HALLAZGO] fetchTeacherActivity (Línea 768) utiliza Skeleton Screens, lo cual es correcto, pero se debe validar que ninguna llamada dependiente dispare el GamesAdapter.showLoading(true) de forma disruptiva.
+
+Archivo: js/api.js
+- [VERIFICADO] La reconciliación silenciosa (Línea 62) se ejecuta de forma asíncrona (sin await), cumpliendo con el requerimiento de no bloqueo.
+
+Archivo: js/persistence.js
+- [VERIFICADO] El motor Offline-First está correctamente estructurado para soportar el tránsito operativo desde la caché.

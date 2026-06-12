@@ -106,19 +106,23 @@ window.redondearMetrica = window.formatearMetricaPsicométrica;
  */
 window.sanitizarHTMLTecnico = function(html) {
     if (!html) return '';
-    const temp = document.createElement('div');
+    var temp = document.createElement('div');
     temp.textContent = html;
-    let sanitized = temp.innerHTML;
+    var sanitized = temp.innerHTML;
 
-    // Restaurar selectivamente etiquetas seguras
+    // v7.6: Improved whitelist with attribute support (style, class, href)
     return sanitized
-        .replace(/&lt;code&gt;/gi, '<code>').replace(/&lt;\/code&gt;/gi, '</code>')
-        .replace(/&lt;b&gt;/gi, '<b>').replace(/&lt;\/b&gt;/gi, '</b>')
-        .replace(/&lt;strong&gt;/gi, '<strong>').replace(/&lt;\/strong&gt;/gi, '</strong>')
-        .replace(/&lt;i&gt;/gi, '<i>').replace(/&lt;\/i&gt;/gi, '</i>')
-        .replace(/&lt;em&gt;/gi, '<em>').replace(/&lt;\/em&gt;/gi, '</em>')
-        .replace(/&lt;br\s*\/?&gt;/gi, '<br>')
-        .replace(/&lt;pre&gt;/gi, '<pre>').replace(/&lt;\/pre&gt;/gi, '</pre>');
+        .replace(/&lt;(p|span|strong|b|i|em|ul|ol|li|code|pre|br)(.*?)&gt;/gi, function(match, tag, attrs) {
+            var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/on\w+\s*=\s*".*?"/gi, '');
+            return '<' + tag + cleanAttrs + '>';
+        })
+        .replace(/&lt;\/(p|span|strong|b|i|em|ul|ol|li|code|pre)&gt;/gi, '</$1>')
+        .replace(/&lt;a\s+(.*?)&gt;/gi, function(match, attrs) {
+             var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/on\w+\s*=\s*".*?"/gi, '');
+             if (!cleanAttrs.includes('target=')) cleanAttrs += ' target="_blank"';
+             return '<a ' + cleanAttrs + '>';
+        })
+        .replace(/&lt;\/a&gt;/gi, '</a>');
 };
 
 /**
@@ -289,3 +293,46 @@ window.normalizeQuestion = function(q) {
         respuestaCorrecta: (respuestaCorrecta !== null) ? String(respuestaCorrecta).trim() : null
     };
 };
+
+/**
+ * REQ: Perímetro de Seguridad Anti-Debugging y Protección de Código (v7.6)
+ * Implementa interceptores para prevenir ingeniería inversa y extracción de datos.
+ */
+(function() {
+    var blockEvents = function(e) {
+        if (e.stopPropagation) e.stopPropagation();
+        if (e.preventDefault) e.preventDefault();
+        return false;
+    };
+
+    // 1. Bloqueo de Menú Contextual
+    document.addEventListener('contextmenu', blockEvents, false);
+
+    // 2. Bloqueo de Teclas de Inspección y Atajos de Sistema
+    document.addEventListener('keydown', function(e) {
+        // F12
+        if (e.keyCode === 123) return blockEvents(e);
+
+        // Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+U, Ctrl+S
+        if (e.ctrlKey && (e.shiftKey || e.keyCode === 85 || e.keyCode === 83)) {
+            if (e.shiftKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74)) return blockEvents(e);
+            if (e.keyCode === 85 || e.keyCode === 83) return blockEvents(e);
+        }
+
+        // Mac Equivalents (Cmd+Option+I, etc.)
+        if (e.metaKey && e.altKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74 || e.keyCode === 85)) {
+            return blockEvents(e);
+        }
+    }, false);
+
+    // 3. Restricción de Selección de Texto
+    var style = document.createElement('style');
+    style.innerHTML = 'html, body { -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important; } .quill-content, .allow-select { user-select: text !important; -webkit-user-select: text !important; }';
+    document.head.appendChild(style);
+
+    document.addEventListener('selectstart', function(e) {
+        if (!e.target.closest('.quill-content, .allow-select, input, textarea')) return blockEvents(e);
+    }, false);
+
+    console.log("[QuizPro-Security] Perímetro de seguridad activado.");
+})();

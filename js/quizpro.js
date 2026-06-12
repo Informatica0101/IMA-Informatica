@@ -919,7 +919,7 @@ function showQuestion() {
 
     // REQ 3: Sanitización y Renderizado del Enunciado (Inyección HTML Técnico)
     // Se utiliza innerHTML para procesar etiquetas <code>, <b>, etc.
-    document.getElementById('question-text').innerHTML = q.question;
+    document.getElementById('question-text').innerHTML = window.sanitizarHTMLTecnico(q.question);
 
     // REQ: Soporte para imágenes en preguntas
     const existingImg = document.getElementById('question-image');
@@ -962,7 +962,8 @@ function showQuestion() {
         balanced.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
-            btn.textContent = opt;
+            // REQ 3: Renderizado HTML Técnico en Opciones
+            btn.innerHTML = window.sanitizarHTMLTecnico(opt);
             btn.onclick = () => checkAnswer(opt, q.answer, btn);
             optionsContainer.appendChild(btn);
         });
@@ -1011,7 +1012,8 @@ function showQuestion() {
         balanced.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-card w-full p-4 text-center border-2 border-gray-100 rounded-xl font-bold text-gray-700 bg-white hover:bg-blue-50 transition-all uppercase tracking-tighter';
-            btn.textContent = opt;
+            // REQ 3: Renderizado HTML Técnico en Opciones
+            btn.innerHTML = window.sanitizarHTMLTecnico(opt);
             btn.onclick = () => checkAnswer(opt, q.answer, btn);
             optionsContainer.appendChild(btn);
         });
@@ -1067,7 +1069,7 @@ function showQuestion() {
                         <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Revelar</span>
                     </div>
                     <div class="memory-card-back flex items-center justify-center p-4 bg-white border-2 border-blue-500 rounded-2xl shadow-xl">
-                        <span class="text-[10px] font-bold text-gray-800 leading-tight text-center uppercase tracking-tighter">${item.v}</span>
+                        <span class="text-[10px] font-bold text-gray-800 leading-tight text-center uppercase tracking-tighter">${window.sanitizarHTMLTecnico(item.v)}</span>
                     </div>
                 </div>`;
 
@@ -1144,7 +1146,7 @@ function showQuestion() {
             el.innerHTML = `
                 <div class="flex items-center gap-4">
                     <span class="w-6 h-6 bg-blue-50 text-blue-400 rounded-lg flex items-center justify-center text-[10px] font-black">${idx+1}</span>
-                    <span class="text-xs font-bold text-gray-700 font-mono">${item}</span>
+                    <span class="text-xs font-bold text-gray-700 font-mono">${window.sanitizarHTMLTecnico(item)}</span>
                 </div>
                 <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button class="w-8 h-8 bg-gray-100 rounded-lg hover:bg-gray-200" onclick="window.moveOrderItem(this, -1); event.stopPropagation();"><i class="fas fa-chevron-up text-[10px]"></i></button>
@@ -1192,7 +1194,7 @@ function showQuestion() {
                                     class="matching-letter-input w-8 h-8 text-center font-bold border-2 border-blue-100 rounded-lg focus:border-blue-500 outline-none uppercase text-xs"
                                     data-term="${pair.term}"
                                     oninput="responseChanges++" />
-                                <span class="text-[11px] font-semibold text-gray-700">${pair.term}</span>
+                                <span class="text-[11px] font-semibold text-gray-700">${window.sanitizarHTMLTecnico(pair.term)}</span>
                             </div>
                         `).join('')}
                     </div>
@@ -1203,7 +1205,7 @@ function showQuestion() {
                         ${shuffledDefs.map((def, i) => `
                             <div class="flex items-start gap-2 text-[10px] leading-tight">
                                 <span class="font-bold text-blue-600">${letters[i]})</span>
-                                <span class="text-gray-600">${def}</span>
+                                <span class="text-gray-600">${window.sanitizarHTMLTecnico(def)}</span>
                             </div>
                         `).join('')}
                     </div>
@@ -1234,7 +1236,8 @@ function showQuestion() {
         balanced.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
-            btn.textContent = opt;
+            // REQ 3: Renderizado HTML Técnico en Opciones
+            btn.innerHTML = window.sanitizarHTMLTecnico(opt);
             btn.onclick = () => checkAnswer(opt, q.answer, btn);
             optionsContainer.appendChild(btn);
         });
@@ -1335,7 +1338,7 @@ function checkAnswer(selected, correct, btn) {
         // finalCorrect ya fue definido arriba mediante normalizeQuestion
 
         console.error(`[QuizPro] Error en Pregunta ${currentIndex}. Esperaba: ${finalCorrect}, Recibió: ${selected}`);
-        feedback.textContent = `Incorrecto. Era: ${finalCorrect}`;
+        feedback.innerHTML = `Incorrecto. Era: ${window.sanitizarHTMLTecnico(finalCorrect)}`;
         incorrectAnswers.push(q);
 
         // Resaltar la opción correcta en la interfaz
@@ -1587,6 +1590,7 @@ function renderGlobalTopHTML(res) {
     window.globalTopData = res;
     body.innerHTML = res.global
         .filter(user => user && (user.nombre || user.username || user.display_name))
+        .slice(0, 5) // REQ 1: Restricción Clínica de Dataset (Top 5 Estricto)
         .map((user, idx) => {
             const xp = parseInt(user.xp || 0);
             const range = XP_CONFIG.RANGES.find(r => xp >= r.min && xp <= r.max) || XP_CONFIG.RANGES[0];
